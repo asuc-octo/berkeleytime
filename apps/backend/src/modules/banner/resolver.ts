@@ -50,7 +50,11 @@ const resolvers = {
       { bannerId }: { bannerId: string },
       context: GraphQLContext
     ) => {
-      const result = await trackBannerView(bannerId, context.req, context.redis);
+      const result = await trackBannerView(
+        bannerId,
+        context.req,
+        context.redis
+      );
       return result.success;
     },
   },

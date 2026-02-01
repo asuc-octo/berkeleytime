@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { EditPencil, Plus, Trash } from "iconoir-react";
+import { Copy, EditPencil, Plus, Trash } from "iconoir-react";
 
 import { Button, Dialog, Flex, Input } from "@repo/theme";
 
@@ -99,6 +99,21 @@ export default function RouteRedirects() {
     }
   };
 
+  const getRedirectUrl = (fromPath: string) => {
+    // Convert /donate to go/donate for the shareable URL
+    const path = fromPath.startsWith("/") ? fromPath.slice(1) : fromPath;
+    return `${window.location.origin}/go/${path}`;
+  };
+
+  const handleCopyUrl = async (fromPath: string) => {
+    const url = getRedirectUrl(fromPath);
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch (error) {
+      console.error("Failed to copy URL:", error);
+    }
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
@@ -119,15 +134,24 @@ export default function RouteRedirects() {
         <div className={styles.redirectList}>
           {redirects.map((redirect) => (
             <div key={redirect.id} className={styles.redirectCard}>
-              <div className={styles.redirectContent}>
-                <div className={styles.redirectHeader}>
-                  <div className={styles.redirectPaths}>
-                    <span className={styles.fromPath}>{redirect.fromPath}</span>
-                    <span className={styles.arrow}>→</span>
-                    <span className={styles.toPath}>{redirect.toPath}</span>
-                  </div>
-                </div>
-                <div className={styles.redirectMeta}>
+              <Button
+                variant="secondary"
+                size="small"
+                onClick={() => handleCopyUrl(redirect.fromPath)}
+              >
+                <Copy width={14} height={14} />
+                go{redirect.fromPath}
+              </Button>
+              <a
+                href={redirect.toPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.toPath}
+              >
+                {redirect.toPath}
+              </a>
+              <div className={styles.redirectBottom}>
+                <span className={styles.redirectMeta}>
                   {redirect.clickCount} click
                   {redirect.clickCount !== 1 ? "s" : ""} • Created:{" "}
                   {(() => {
@@ -141,27 +165,27 @@ export default function RouteRedirects() {
                         })
                       : "Invalid Date";
                   })()}
+                </span>
+                <div className={styles.redirectActions}>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleOpenEdit(redirect)}
+                  >
+                    <EditPencil width={14} height={14} />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleDelete(redirect.id)}
+                    disabled={deleting}
+                    isDelete
+                  >
+                    <Trash width={14} height={14} />
+                    Delete
+                  </Button>
                 </div>
-              </div>
-              <div className={styles.redirectActions}>
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => handleOpenEdit(redirect)}
-                >
-                  <EditPencil width={14} height={14} />
-                  Edit
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => handleDelete(redirect.id)}
-                  disabled={deleting}
-                  isDelete
-                >
-                  <Trash width={14} height={14} />
-                  Delete
-                </Button>
               </div>
             </div>
           ))}

@@ -31,7 +31,7 @@
 .bannerList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .bannerCard {
@@ -40,22 +40,14 @@
   border-radius: 8px;
   padding: 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.bannerContent {
-  flex: 1;
-  display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.bannerHeader {
+.badgeRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -63,21 +55,21 @@
   color: var(--heading-color);
   font-size: 14px;
   margin: 0;
-  flex: 1;
 }
 
-.persistentBadge {
+.linkText {
+  color: var(--blue-500);
+  margin-left: 6px;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--blue-400);
+  }
+}
+
+.badge {
   background-color: var(--border-color);
   color: var(--paragraph-color);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.highMetricsBadge {
-  background-color: var(--blue-100);
-  color: var(--blue-700);
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 12px;
@@ -87,12 +79,26 @@
 .bannerLink {
   color: var(--blue-500);
   font-size: 13px;
+  font-family: monospace;
   text-decoration: none;
-  
+  word-break: break-all;
+
   &:hover {
-    text-decoration: underline;
-    color: var(--blue-hover);
+    color: var(--blue-400);
   }
+}
+
+.bannerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-top: 1px solid var(--border-color);
 }
 
 .bannerMeta {
@@ -103,7 +109,6 @@
 .bannerActions {
   display: flex;
   gap: 8px;
-  flex-shrink: 0;
 }
 
 .formField {

@@ -137,46 +137,62 @@ export default function Banners() {
         <div className={styles.bannerList}>
           {banners.map((banner) => (
             <div key={banner.id} className={styles.bannerCard}>
-              <div className={styles.bannerContent}>
-                <div className={styles.bannerHeader}>
-                  <p
-                    className={styles.bannerText}
-                    dangerouslySetInnerHTML={{ __html: banner.text }}
-                  />
+              {(banner.persistent ||
+                banner.reappearing ||
+                banner.highMetrics) && (
+                <div className={styles.badgeRow}>
                   {banner.persistent && (
-                    <span className={styles.persistentBadge}>Persistent</span>
+                    <span className={styles.badge}>Persistent</span>
                   )}
                   {banner.reappearing && (
-                    <span className={styles.persistentBadge}>Reappearing</span>
+                    <span className={styles.badge}>Reappearing</span>
                   )}
                   {banner.highMetrics && (
-                    <span className={styles.highMetricsBadge}>High Metrics</span>
+                    <span className={styles.badge}>High Metrics</span>
                   )}
                 </div>
+              )}
+              <p className={styles.bannerText}>
+                <span dangerouslySetInnerHTML={{ __html: banner.text }} />
                 {banner.link && (
-                  <a
-                    href={banner.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.bannerLink}
-                  >
-                    {(banner.linkText || "Open link") + " →"}
-                  </a>
+                  <>
+                    {" "}
+                    <a
+                      href={banner.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.linkText}
+                    >
+                      {banner.linkText || "Open link"} →
+                    </a>
+                  </>
                 )}
-                <div className={styles.bannerMeta}>
+              </p>
+              {banner.link && (
+                <a
+                  href={banner.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.bannerLink}
+                >
+                  {banner.link}
+                </a>
+              )}
+              <div className={styles.bannerBottom}>
+                <span className={styles.bannerMeta}>
                   {banner.highMetrics ? (
-                    <span>
+                    <>
                       {banner.viewCount} view{banner.viewCount !== 1 ? "s" : ""}{" "}
                       • {banner.clickCount} click
                       {banner.clickCount !== 1 ? "s" : ""} •{" "}
                       {banner.dismissCount} dismissal
                       {banner.dismissCount !== 1 ? "s" : ""}
-                    </span>
+                    </>
                   ) : (
-                    <span>
+                    <>
                       {banner.clickCount} click
                       {banner.clickCount !== 1 ? "s" : ""}
-                    </span>
+                    </>
                   )}{" "}
                   • Created:{" "}
                   {(() => {
@@ -206,27 +222,27 @@ export default function Banners() {
                         </>
                       ) : null;
                     })()}
+                </span>
+                <div className={styles.bannerActions}>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleOpenEdit(banner)}
+                  >
+                    <EditPencil width={14} height={14} />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="small"
+                    onClick={() => handleDelete(banner.id)}
+                    disabled={deleting}
+                    isDelete
+                  >
+                    <Trash width={14} height={14} />
+                    Delete
+                  </Button>
                 </div>
-              </div>
-              <div className={styles.bannerActions}>
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => handleOpenEdit(banner)}
-                >
-                  <EditPencil width={14} height={14} />
-                  Edit
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => handleDelete(banner.id)}
-                  disabled={deleting}
-                  isDelete
-                >
-                  <Trash width={14} height={14} />
-                  Delete
-                </Button>
               </div>
             </div>
           ))}

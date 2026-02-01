@@ -8,13 +8,15 @@ import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
 import bannerRoutes from "../../modules/banner/routes";
+import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import staffRoutes from "../../modules/staff/routes";
 import passportLoader from "./passport";
 
 export default async (
   app: Application,
   server: ApolloServer,
-  redis: RedisClientType
+  redis: RedisClientType,
+  root?: Application
 ) => {
   app.use(compression());
 
@@ -68,8 +70,11 @@ export default async (
   // load authentication
   passportLoader(app, redis);
 
-  // load banner routes (click tracking redirect)
-  bannerRoutes(app);
+  // load banner routes (click tracking redirect) - on root for direct access
+  if (root) {
+    bannerRoutes(root);
+    routeRedirectRoutes(root);
+  }
 
   // load staff routes
   staffRoutes(app);

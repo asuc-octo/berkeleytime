@@ -7,9 +7,8 @@ import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
-import Banners from "./app/Banners";
 import Dashboard from "./app/Dashboard";
-import RouteRedirects from "./app/RouteRedirects";
+import Outreach from "./app/Outreach";
 import { signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
@@ -27,12 +26,8 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "banners",
-        element: <Banners />,
-      },
-      {
-        path: "redirects",
-        element: <RouteRedirects />,
+        path: "outreach",
+        element: <Outreach />,
       },
     ],
   },

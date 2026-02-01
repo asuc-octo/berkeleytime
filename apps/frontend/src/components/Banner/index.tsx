@@ -124,34 +124,36 @@ export default function Banner() {
 
   return (
     <div className={styles.root}>
-      <p
-        className={styles.text}
-        dangerouslySetInnerHTML={{ __html: activeBanner.text }}
-      />
-      <div className={styles.actions}>
+      <div className={styles.content}>
+        <p
+          className={styles.text}
+          dangerouslySetInnerHTML={{ __html: activeBanner.text }}
+        />
         {activeBanner.link && clickUrl && (
-          <a
-            className={styles.link}
-            href={clickUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleClick}
-          >
-            <span>{activeBanner.linkText ?? "Learn more"}</span>
-            <ArrowUpRight height={12} width={12} />
-          </a>
-        )}
-        {!activeBanner.persistent && (
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={handleDismiss}
-            aria-label="Close banner"
-          >
-            <Xmark width={16} height={16} />
-          </button>
+          <div className={styles.actions}>
+            <a
+              className={styles.link}
+              href={clickUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleClick}
+            >
+              <span>{activeBanner.linkText ?? "Learn more"}</span>
+              <ArrowUpRight height={12} width={12} />
+            </a>
+          </div>
         )}
       </div>
+      {!activeBanner.persistent && (
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={handleDismiss}
+          aria-label="Close banner"
+        >
+          <Xmark width={16} height={16} />
+        </button>
+      )}
     </div>
   );
 }
