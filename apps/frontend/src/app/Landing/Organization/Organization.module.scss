@@ -102,7 +102,7 @@ $breakpoint: 660px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 24px;
+  gap: 32px;
   flex-wrap: wrap;
   flex: 1;
   max-width: 680px;
@@ -110,7 +110,7 @@ $breakpoint: 660px;
   @media (max-width: $breakpoint) {
     max-width: 100%;
     width: 100%;
-    gap: 16px;
+    gap: 20px;
   }
 }
 
@@ -122,6 +122,36 @@ $breakpoint: 660px;
   &:hover {
     opacity: 0.8;
   }
+}
+
+.ocfContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ocfLogo {
+  height: 45px;
+  width: auto;
+  display: block;
+}
+
+.ocfText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.ocfHostedOn {
+  font-size: 12px;
+  color: var(--paragraph-color);
+  font-weight: 400;
+}
+
+.ocfName {
+  font-size: 24px;
+  color: var(--heading-color);
+  font-weight: 700;
 }
 
 .asucLogoLight,

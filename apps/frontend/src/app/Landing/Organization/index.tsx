@@ -111,21 +111,16 @@ export default function Organization() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div
-                style={{
-                  background: "#ffffff",
-                  padding: "0 8px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  height: "60px",
-                }}
-              >
+              <div className={styles.ocfContainer}>
                 <img
-                  src="/images/ocf.svg"
+                  src="/images/ocf-logo.png"
                   alt="OCF"
-                  style={{ height: "45px", width: "auto", display: "block" }}
+                  className={styles.ocfLogo}
                 />
+                <div className={styles.ocfText}>
+                  <span className={styles.ocfHostedOn}>hosted by</span>
+                  <span className={styles.ocfName}>OCF</span>
+                </div>
               </div>
             </a>
             <a
