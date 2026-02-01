@@ -1,4 +1,9 @@
-import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
+import {
+  ClassModel,
+  CourseModel,
+  IClassItem,
+  ICourseItem,
+} from "@repo/common/models";
 
 import { buildSubjectQuery } from "../../utils/subject";
 import { formatClass } from "../class/formatter";

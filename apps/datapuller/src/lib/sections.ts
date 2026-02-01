@@ -1,6 +1,6 @@
 import { Logger } from "tslog";
 
-import { ISectionItem } from "@repo/common";
+import { ISectionItem } from "@repo/common/models";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";

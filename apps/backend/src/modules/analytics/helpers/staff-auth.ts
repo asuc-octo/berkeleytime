@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { StaffMemberModel } from "@repo/common";
+import { StaffMemberModel } from "@repo/common/models";
 
 import { RequestContext } from "../../../types/request-context";
 

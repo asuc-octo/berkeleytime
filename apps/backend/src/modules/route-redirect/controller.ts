@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { RouteRedirectModel, StaffMemberModel } from "@repo/common";
+import { RouteRedirectModel, StaffMemberModel } from "@repo/common/models";
 
 import { formatRouteRedirect } from "./formatter";
 

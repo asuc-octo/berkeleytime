@@ -1,12 +1,7 @@
 import { connection } from "mongoose";
 
-import {
-  CourseModel,
-  GradeCounts,
-  GradeDistributionModel,
-  getAverageGrade,
-  getDistribution,
-} from "@repo/common";
+import { GradeCounts, getAverageGrade, getDistribution } from "@repo/common";
+import { CourseModel, GradeDistributionModel } from "@repo/common/models";
 
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
 import { Config } from "../shared/config";

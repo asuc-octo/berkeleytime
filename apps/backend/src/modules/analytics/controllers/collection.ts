@@ -1,4 +1,4 @@
-import { CollectionModel, UserModel } from "@repo/common";
+import { CollectionModel, UserModel } from "@repo/common/models";
 
 import { RequestContext } from "../../../types/request-context";
 import { requireStaffAuth } from "../helpers/staff-auth";

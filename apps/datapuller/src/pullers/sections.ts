@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 
-import { SectionModel } from "@repo/common";
+import { SectionModel } from "@repo/common/models";
 
 import { getSections } from "../lib/sections";
 import { Config } from "../shared/config";

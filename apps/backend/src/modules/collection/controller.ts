@@ -1,7 +1,11 @@
 import { GraphQLError } from "graphql";
 import { Types } from "mongoose";
 
-import { ClassModel, CollectionColor, CollectionModel } from "@repo/common";
+import {
+  ClassModel,
+  CollectionColor,
+  CollectionModel,
+} from "@repo/common/models";
 
 import { CollectionModule } from "./generated-types/module-types";
 

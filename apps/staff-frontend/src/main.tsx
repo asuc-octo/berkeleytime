@@ -9,7 +9,9 @@ import "./main.scss";
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: `${BASE}/api/graphql`,
+    uri: import.meta.env.DEV
+      ? `${window.location.origin}/api/graphql`
+      : `${BASE}/api/graphql`,
     credentials: "include",
   }),
   cache: new InMemoryCache(),

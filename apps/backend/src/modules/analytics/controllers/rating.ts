@@ -1,4 +1,4 @@
-import { RatingModel, UserModel } from "@repo/common";
+import { RatingModel, UserModel } from "@repo/common/models";
 
 import { MetricName } from "../../../generated-types/graphql";
 import { RequestContext } from "../../../types/request-context";

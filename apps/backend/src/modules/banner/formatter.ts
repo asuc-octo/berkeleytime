@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { BannerType } from "@repo/common";
+import { BannerType } from "@repo/common/models";
 
 export interface FormattedBanner {
   _id: string;

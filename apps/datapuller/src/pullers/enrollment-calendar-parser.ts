@@ -1,4 +1,4 @@
-import { ITermItem } from "@repo/common";
+import { ITermItem } from "@repo/common/models";
 
 export type Semester = "Spring" | "Fall" | "Summer";
 export type Group =

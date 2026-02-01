@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { BannerModel, StaffMemberModel } from "@repo/common";
+import { BannerModel, StaffMemberModel } from "@repo/common/models";
 
 import { formatBanner } from "./formatter";
 

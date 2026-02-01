@@ -1,6 +1,6 @@
 import { Logger } from "tslog";
 
-import { IEnrollmentSingularItem } from "@repo/common";
+import { IEnrollmentSingularItem } from "@repo/common/models";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";

@@ -5,7 +5,7 @@ import {
   RatingModel,
   ScheduleModel,
   UserModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 export const getStats = async () => {
   // Users stats

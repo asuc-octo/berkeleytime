@@ -1,11 +1,13 @@
 import {
-  GradeDistributionModel,
-  SectionModel,
-  TermModel,
   getAverageGrade,
   getDistribution,
   getPnpPercentage,
 } from "@repo/common";
+import {
+  GradeDistributionModel,
+  SectionModel,
+  TermModel,
+} from "@repo/common/models";
 
 import { buildSubjectQuery } from "../../utils/subject";
 

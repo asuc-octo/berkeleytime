@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { RouteRedirectType } from "@repo/common";
+import { RouteRedirectType } from "@repo/common/models";
 
 export interface FormattedRouteRedirect {
   _id: string;

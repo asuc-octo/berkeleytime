@@ -4,7 +4,7 @@ import {
   IClassItem,
   ICourseItem,
   UserType,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import {
   CreateCuratedClassInput,

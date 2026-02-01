@@ -1,4 +1,4 @@
-import { ISessionItem, ITermItem } from "@repo/common";
+import { ISessionItem, ITermItem } from "@repo/common/models";
 
 import { TermModule } from "./generated-types/module-types";
 

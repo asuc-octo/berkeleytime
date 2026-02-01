@@ -8,7 +8,7 @@ import {
   IClassItem,
   ISectionItem,
   SectionModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
 import { formatClass, formatSection } from "./formatter";

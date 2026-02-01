@@ -1,4 +1,4 @@
-import { ITermItem, TermModel } from "@repo/common";
+import { ITermItem, TermModel } from "@repo/common/models";
 
 export type TermSelector = () => Promise<ITermItem[]>;
 

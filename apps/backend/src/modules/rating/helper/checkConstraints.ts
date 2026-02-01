@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { RatingModel, RatingType } from "@repo/common";
+import { RatingModel, RatingType } from "@repo/common/models";
 import { USER_MAX_ALL_RATINGS, USER_MAX_SEMESTER_RATINGS } from "@repo/shared";
 
 import {

@@ -1,4 +1,4 @@
-import { NewEnrollmentHistoryModel } from "@repo/common";
+import { NewEnrollmentHistoryModel } from "@repo/common/models";
 
 import { Semester } from "../../generated-types/graphql";
 import { buildSubjectQuery } from "../../utils/subject";

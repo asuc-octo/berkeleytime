@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 
-import { ClassModel, TermModel } from "@repo/common";
+import { ClassModel, TermModel } from "@repo/common/models";
 
 import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
