@@ -154,6 +154,39 @@ $breakpoint: 660px;
   font-weight: 700;
 }
 
+.mechanizeContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mechanizeLogoLight,
+.mechanizeLogoDark {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.mechanizeName {
+  font-size: 20px;
+  color: var(--heading-color);
+  font-weight: 500;
+}
+
+.mechanizeLogoDark {
+  display: none;
+
+  @include dark-mode {
+    display: block;
+  }
+}
+
+.mechanizeLogoLight {
+  @include dark-mode {
+    display: none;
+  }
+}
+
 .asucLogoLight,
 .asucLogoDark {
   height: 60px;

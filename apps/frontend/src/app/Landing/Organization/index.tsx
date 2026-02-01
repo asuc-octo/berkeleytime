@@ -74,37 +74,26 @@ export default function Organization() {
             </p>
           </div>
           <div className={styles.sponsorsLogos}>
-            {/* TODO: Uncomment when Mechanize partnership kicks in
             <a
               href="https://mechanize.work/"
               className={styles.sponsorLink}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div
-                style={{
-                  background: "#ffffff",
-                  padding: "0 12px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  height: "60px",
-                }}
-              >
+              <div className={styles.mechanizeContainer}>
                 <img
-                  src="/images/mechanize.png"
+                  src="/images/mechanize-light-mode.png"
                   alt="Mechanize"
-                  style={{ height: "45px", width: "auto", display: "block" }}
+                  className={styles.mechanizeLogoLight}
                 />
-                <span
-                  style={{ color: "#000", fontWeight: 500, fontSize: "18px" }}
-                >
-                  Mechanize, Inc.
-                </span>
+                <img
+                  src="/images/mechanize-dark-mode.png"
+                  alt="Mechanize"
+                  className={styles.mechanizeLogoDark}
+                />
+                <span className={styles.mechanizeName}>Mechanize, Inc.</span>
               </div>
             </a>
-            */}
             <a
               href="https://www.ocf.berkeley.edu/"
               className={styles.sponsorLink}
