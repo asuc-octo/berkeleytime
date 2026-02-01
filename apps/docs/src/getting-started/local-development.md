@@ -73,8 +73,10 @@ The following ports are used by default (`DEV_PORT_PREFIX=30`):
 
 To use a different port prefix, set the `DEV_PORT_PREFIX` environment variable before running `docker compose up`:
 ```sh
-DEV_PORT_PREFIX=31 docker compose up -d
+DEV_PORT_PREFIX=80 docker compose up -d
 ```
+
+> **Note:** Currently only `DEV_PORT_PREFIX=30` (default) and `DEV_PORT_PREFIX=80` are fully supported. Additional port prefixes require updating the Google Cloud OAuth authorized redirect URIs.
 
 ## Seeding Local Database
 
