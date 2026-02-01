@@ -128,18 +128,6 @@ export default function Organization() {
                 />
               </div>
             </a>
-            <a
-              href="https://asuc.org/"
-              className={styles.sponsorLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src="/images/asuc.png"
-                alt="ASUC"
-                className={styles.asucLogo}
-              />
-            </a>
           </div>
         </div>
       </Container>
