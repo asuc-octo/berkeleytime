@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import type { Request } from "express";
+import { Types } from "mongoose";
 import type { RedisClientType } from "redis";
 
 import {
@@ -112,7 +113,7 @@ export const flushClickEvents = async (
       const documents = events.map((eventJson) => {
         const event: ClickEventData = JSON.parse(eventJson);
         return {
-          targetId: event.targetId,
+          targetId: new Types.ObjectId(event.targetId),
           targetType: event.targetType,
           timestamp: new Date(event.timestamp),
           ipHash: event.ipHash,

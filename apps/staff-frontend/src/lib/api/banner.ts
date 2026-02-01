@@ -64,6 +64,10 @@ export const CREATE_BANNER = gql`
       linkText
       persistent
       reappearing
+      clickCount
+      dismissCount
+      viewCount
+      clickEventLogging
       createdAt
       updatedAt
     }
@@ -79,6 +83,10 @@ export const UPDATE_BANNER = gql`
       linkText
       persistent
       reappearing
+      clickCount
+      dismissCount
+      viewCount
+      clickEventLogging
       createdAt
       updatedAt
     }

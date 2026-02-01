@@ -45,6 +45,8 @@ export const CREATE_ROUTE_REDIRECT = gql`
       id
       fromPath
       toPath
+      clickCount
+      clickEventLogging
       createdAt
       updatedAt
     }
@@ -60,6 +62,8 @@ export const UPDATE_ROUTE_REDIRECT = gql`
       id
       fromPath
       toPath
+      clickCount
+      clickEventLogging
       createdAt
       updatedAt
     }
