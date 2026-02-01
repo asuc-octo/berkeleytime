@@ -7,10 +7,11 @@ import { trackIntensiveClick } from "../click-tracking/controller";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Server-side redirect handler for snappy redirects
-  // Catches /go/:path paths and redirects to the configured destination
-  app.get("/go/:path", async (req: Request, res: Response) => {
-    // Extract the path (e.g., /go/donate → /donate)
-    const fromPath = "/" + req.params.path;
+  // Catches /go/* paths and redirects to the configured destination
+  // Uses wildcard (*) to capture multi-segment paths (e.g., /go/donate/campaign)
+  app.get("/go/*", async (req: Request, res: Response) => {
+    // Extract the path (e.g., /go/donate/campaign → /donate/campaign)
+    const fromPath = "/" + req.params[0];
 
     try {
       const redirect = await RouteRedirectModel.findOneAndUpdate(

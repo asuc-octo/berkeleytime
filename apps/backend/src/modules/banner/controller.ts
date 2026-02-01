@@ -270,6 +270,9 @@ export const flushBannerViewCounts = async (
     };
   }> = [];
 
+  // Track the count we read for each key to decrement later
+  const keyCountMap = new Map<string, number>();
+
   for (const key of uniqueKeys) {
     const value = await redis.get(key);
     if (!value) continue;
@@ -280,6 +283,7 @@ export const flushBannerViewCounts = async (
     const bannerId = key.replace("banner-view-counter:", "");
     if (!bannerId) continue;
 
+    keyCountMap.set(key, count);
     operations.push({
       updateOne: {
         filter: { bannerId },
@@ -298,9 +302,13 @@ export const flushBannerViewCounts = async (
       ordered: false,
     });
 
-    // Delete Redis keys only after successful Mongo write
-    for (const key of uniqueKeys) {
-      await redis.del(key);
+    // Decrement only the counts we flushed, preserving any new views added after our read
+    for (const [key, count] of keyCountMap) {
+      const remaining = await redis.decrBy(key, count);
+      // Clean up keys that are now zero or negative
+      if (remaining <= 0) {
+        await redis.del(key);
+      }
     }
 
     return { flushed: result.modifiedCount + result.upsertedCount, errors: 0 };
