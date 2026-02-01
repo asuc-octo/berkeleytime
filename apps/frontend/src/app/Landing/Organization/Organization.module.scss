@@ -1,3 +1,5 @@
+@use "../../../mixins" as *;
+
 $breakpoint: 660px;
 
 .root {
@@ -119,6 +121,27 @@ $breakpoint: 660px;
 
   &:hover {
     opacity: 0.8;
+  }
+}
+
+.asucLogoLight,
+.asucLogoDark {
+  height: 60px;
+  width: auto;
+  display: block;
+}
+
+.asucLogoDark {
+  display: none;
+
+  @include dark-mode {
+    display: block;
+  }
+}
+
+.asucLogoLight {
+  @include dark-mode {
+    display: none;
   }
 }
 
