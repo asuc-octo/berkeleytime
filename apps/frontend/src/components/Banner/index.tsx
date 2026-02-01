@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowUpRight, Xmark } from "iconoir-react";
 
-import { useAllBanners, useIncrementBannerClick } from "@/hooks/api/banner";
+import {
+  useAllBanners,
+  useIncrementBannerDismiss,
+  useTrackBannerView,
+} from "@/hooks/api/banner";
 import {
   isBannerSessionDismissed,
   isBannerViewed,
@@ -16,10 +20,12 @@ import BetaBanner from "./BetaBanner";
 
 export default function Banner() {
   const { data: banners, loading, error } = useAllBanners();
-  const { incrementClick } = useIncrementBannerClick();
+  const { incrementDismiss } = useIncrementBannerDismiss();
+  const { trackView } = useTrackBannerView();
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(
     new Set()
   );
+  const trackedViewsRef = useRef<Set<string>>(new Set());
 
   // Log errors for debugging
   if (error) {
@@ -68,8 +74,20 @@ export default function Banner() {
     return null;
   }, [banners, loading, dismissedBanners]);
 
+  // Track view for all banners (always on now)
+  useEffect(() => {
+    if (!activeBanner) return;
+    if (trackedViewsRef.current.has(activeBanner.id)) return;
+
+    trackedViewsRef.current.add(activeBanner.id);
+    trackView(activeBanner.id);
+  }, [activeBanner, trackView]);
+
   const handleDismiss = () => {
     if (!activeBanner) return;
+
+    // Track dismissal (always on now)
+    incrementDismiss(activeBanner.id);
 
     // Mark as dismissed in this session (in-memory state)
     setDismissedBanners((prev) => new Set(prev).add(activeBanner.id));
@@ -87,36 +105,42 @@ export default function Banner() {
     return <BetaBanner />;
   }
 
+  // Use redirect-based click tracking for reliable 100% tracking
+  const clickUrl = activeBanner.link
+    ? `/banner/click/${activeBanner.id}`
+    : null;
+
   return (
     <div className={styles.root}>
-      <p
-        className={styles.text}
-        dangerouslySetInnerHTML={{ __html: activeBanner.text }}
-      />
-      <div className={styles.actions}>
-        {activeBanner.link && (
-          <a
-            className={styles.link}
-            href={activeBanner.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => incrementClick(activeBanner.id)}
-          >
-            <span>{activeBanner.linkText ?? "Learn more"}</span>
-            <ArrowUpRight height={12} width={12} />
-          </a>
-        )}
-        {!activeBanner.persistent && (
-          <button
-            type="button"
-            className={styles.closeButton}
-            onClick={handleDismiss}
-            aria-label="Close banner"
-          >
-            <Xmark width={16} height={16} />
-          </button>
+      <div className={styles.content}>
+        <p
+          className={styles.text}
+          dangerouslySetInnerHTML={{ __html: activeBanner.text }}
+        />
+        {activeBanner.link && clickUrl && (
+          <div className={styles.actions}>
+            <a
+              className={styles.link}
+              href={clickUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{activeBanner.linkText ?? "Learn more"}</span>
+              <ArrowUpRight height={12} width={12} />
+            </a>
+          </div>
         )}
       </div>
+      {!activeBanner.persistent && (
+        <button
+          type="button"
+          className={styles.closeButton}
+          onClick={handleDismiss}
+          aria-label="Close banner"
+        >
+          <Xmark width={16} height={16} />
+        </button>
+      )}
     </div>
   );
 }

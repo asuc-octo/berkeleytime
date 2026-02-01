@@ -74,6 +74,7 @@ export default function Organization() {
             </p>
           </div>
           <div className={styles.sponsorsLogos}>
+            {/* TODO: Uncomment when Mechanize partnership kicks in
             <a
               href="https://mechanize.work/"
               className={styles.sponsorLink}
@@ -103,6 +104,7 @@ export default function Organization() {
                 </span>
               </div>
             </a>
+            */}
             <a
               href="https://www.ocf.berkeley.edu/"
               className={styles.sponsorLink}

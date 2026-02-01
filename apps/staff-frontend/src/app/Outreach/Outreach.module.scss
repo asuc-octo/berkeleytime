@@ -14,13 +14,6 @@
   margin-bottom: 24px;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--heading-color);
-  margin: 0;
-}
-
 .emptyState {
   padding: 40px;
   text-align: center;
@@ -28,79 +21,88 @@
   font-size: 14px;
 }
 
-.redirectList {
+.list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-.redirectCard {
+.card {
   border: 1px solid var(--border-color);
   background-color: var(--foreground-color);
   border-radius: 8px;
   padding: 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.redirectContent {
-  flex: 1;
-  display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.redirectHeader {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
 }
 
-.redirectPaths {
+.badgeRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
   flex-wrap: wrap;
 }
 
-.fromPath {
+.badge {
+  background-color: var(--border-color);
+  color: var(--paragraph-color);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.bannerText {
   color: var(--heading-color);
   font-size: 14px;
-  font-weight: 500;
-  font-family: monospace;
-  background-color: var(--background-color);
-  padding: 2px 6px;
-  border-radius: 4px;
+  margin: 0;
 }
 
-.arrow {
-  color: var(--paragraph-color);
-  font-size: 14px;
-}
-
-.toPath {
+.linkText {
   color: var(--blue-500);
-  font-size: 14px;
-  font-weight: 500;
-  font-family: monospace;
-  background-color: var(--background-color);
-  padding: 2px 6px;
-  border-radius: 4px;
+  margin-left: 6px;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--blue-400);
+  }
 }
 
-.redirectMeta {
+.fullLink {
+  color: var(--blue-500);
+  font-size: 13px;
+  font-family: monospace;
+  text-decoration: none;
+  word-break: break-all;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--blue-400);
+  }
+}
+
+.cardBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.meta {
   color: var(--paragraph-color);
   font-size: 12px;
 }
 
-.redirectActions {
+.actions {
   display: flex;
   gap: 8px;
-  flex-shrink: 0;
 }
 
 .formField {
@@ -113,6 +115,13 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--heading-color);
+}
+
+.toggleLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--heading-color);
+  cursor: pointer;
 }
 
 .formHint {

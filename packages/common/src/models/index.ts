@@ -16,4 +16,6 @@ export * from "./staff-member";
 export * from "./semester-role";
 export * from "./pod";
 export * from "./banner";
+export * from "./banner-view-count";
 export * from "./route-redirect";
+export * from "./click-event";

@@ -7,10 +7,17 @@
   padding: 12px 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
   color: var(--foreground-color);
-  position: relative;
+
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
 
   .text {
     color: var(--gray-700);
@@ -26,6 +33,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
   }
 
   .link {
@@ -63,8 +71,6 @@
     border-radius: 4px;
     transition: color 100ms ease-in-out;
     flex-shrink: 0;
-    position: absolute;
-    right: 16px;
 
     @include dark-mode {
       color: var(--gray-300);

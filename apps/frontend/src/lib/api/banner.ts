@@ -10,6 +10,8 @@ export const GET_ALL_BANNERS = gql`
       persistent
       reappearing
       clickCount
+      dismissCount
+      viewCount
       createdAt
       updatedAt
     }
@@ -22,5 +24,20 @@ export const INCREMENT_BANNER_CLICK = gql`
       id
       clickCount
     }
+  }
+`;
+
+export const INCREMENT_BANNER_DISMISS = gql`
+  mutation IncrementBannerDismiss($bannerId: ID!) {
+    incrementBannerDismiss(bannerId: $bannerId) {
+      id
+      dismissCount
+    }
+  }
+`;
+
+export const TRACK_BANNER_VIEW = gql`
+  mutation TrackBannerView($bannerId: ID!) {
+    trackBannerView(bannerId: $bannerId)
   }
 `;

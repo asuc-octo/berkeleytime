@@ -1,0 +1,47 @@
+import type { Application, Request, Response } from "express";
+import type { RedisClientType } from "redis";
+
+import { RouteRedirectModel } from "@repo/common/models";
+
+import { trackIntensiveClick } from "../click-tracking/controller";
+
+export default (app: Application, redis?: RedisClientType) => {
+  // Server-side redirect handler for snappy redirects
+  // Catches /go/* paths and redirects to the configured destination
+  // Uses wildcard (*) to capture multi-segment paths (e.g., /go/donate/campaign)
+  app.get("/go/*", async (req: Request, res: Response) => {
+    // Extract the path (e.g., /go/donate/campaign → /donate/campaign)
+    const fromPath = "/" + req.params[0];
+
+    try {
+      const redirect = await RouteRedirectModel.findOneAndUpdate(
+        { fromPath },
+        { $inc: { clickCount: 1 } },
+        { new: true }
+      );
+
+      if (!redirect || !redirect.toPath) {
+        // No matching redirect found, send to home
+        return res.redirect("/");
+      }
+
+      // Track click event if enabled and redis is available
+      if (redirect.clickEventLogging && redis) {
+        trackIntensiveClick(
+          redis,
+          req,
+          redirect._id.toString(),
+          "redirect"
+        ).catch((error) => {
+          console.error("Error tracking redirect click event:", error);
+        });
+      }
+
+      // Immediate redirect to destination
+      return res.redirect(302, redirect.toPath);
+    } catch (error) {
+      console.error("Error processing redirect:", error);
+      return res.redirect("/");
+    }
+  });
+};

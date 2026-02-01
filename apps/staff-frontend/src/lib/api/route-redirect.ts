@@ -6,6 +6,7 @@ export interface RouteRedirect {
   fromPath: string;
   toPath: string;
   clickCount: number;
+  clickEventLogging: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -18,6 +19,7 @@ export const ALL_ROUTE_REDIRECTS = gql`
       fromPath
       toPath
       clickCount
+      clickEventLogging
       createdAt
       updatedAt
     }
@@ -28,11 +30,13 @@ export const ALL_ROUTE_REDIRECTS = gql`
 export interface CreateRouteRedirectInput {
   fromPath: string;
   toPath: string;
+  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateRouteRedirectInput {
   fromPath?: string | null;
   toPath?: string | null;
+  clickEventLogging?: boolean | null;
 }
 
 export const CREATE_ROUTE_REDIRECT = gql`
@@ -41,6 +45,8 @@ export const CREATE_ROUTE_REDIRECT = gql`
       id
       fromPath
       toPath
+      clickCount
+      clickEventLogging
       createdAt
       updatedAt
     }
@@ -56,6 +62,8 @@ export const UPDATE_ROUTE_REDIRECT = gql`
       id
       fromPath
       toPath
+      clickCount
+      clickEventLogging
       createdAt
       updatedAt
     }

@@ -24,11 +24,8 @@ export default function NavigationBar() {
         <NavLink to="/members">
           {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>
-        <NavLink to="/banners">
-          {({ isActive }) => <MenuItem active={isActive}>Banners</MenuItem>}
-        </NavLink>
-        <NavLink to="/redirects">
-          {({ isActive }) => <MenuItem active={isActive}>Redirects</MenuItem>}
+        <NavLink to="/outreach">
+          {({ isActive }) => <MenuItem active={isActive}>Outreach</MenuItem>}
         </NavLink>
       </div>
       {user && (

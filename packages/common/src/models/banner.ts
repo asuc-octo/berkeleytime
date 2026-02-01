@@ -32,6 +32,16 @@ export const bannerSchema = new Schema(
       required: true,
       default: 0,
     },
+    dismissCount: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    clickEventLogging: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: {
