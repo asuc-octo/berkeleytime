@@ -128,6 +128,14 @@ $breakpoint: 660px;
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
 }
 
 .ocfLogo {
@@ -154,10 +162,19 @@ $breakpoint: 660px;
   font-weight: 700;
 }
 
+/* TODO: Uncomment when Mechanize partnership kicks in
 .mechanizeContainer {
   display: flex;
   align-items: center;
   gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
 }
 
 .mechanizeLogoLight,
@@ -186,6 +203,7 @@ $breakpoint: 660px;
     display: none;
   }
 }
+*/
 
 .asucLogoLight,
 .asucLogoDark {
