@@ -81,27 +81,18 @@ export default function Organization() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div
-                style={{
-                  background: "#ffffff",
-                  padding: "0 12px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  height: "60px",
-                }}
-              >
+              <div className={styles.mechanizeContainer}>
                 <img
-                  src="/images/mechanize.png"
+                  src="/images/mechanize-light-mode.png"
                   alt="Mechanize"
-                  style={{ height: "45px", width: "auto", display: "block" }}
+                  className={styles.mechanizeLogoLight}
                 />
-                <span
-                  style={{ color: "#000", fontWeight: 500, fontSize: "18px" }}
-                >
-                  Mechanize, Inc.
-                </span>
+                <img
+                  src="/images/mechanize-dark-mode.png"
+                  alt="Mechanize"
+                  className={styles.mechanizeLogoDark}
+                />
+                <span className={styles.mechanizeName}>Mechanize, Inc.</span>
               </div>
             </a>
             */}
@@ -111,21 +102,16 @@ export default function Organization() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div
-                style={{
-                  background: "#ffffff",
-                  padding: "0 8px",
-                  borderRadius: "6px",
-                  display: "flex",
-                  alignItems: "center",
-                  height: "60px",
-                }}
-              >
+              <div className={styles.ocfContainer}>
                 <img
-                  src="/images/ocf.svg"
+                  src="/images/ocf-logo.png"
                   alt="OCF"
-                  style={{ height: "45px", width: "auto", display: "block" }}
+                  className={styles.ocfLogo}
                 />
+                <div className={styles.ocfText}>
+                  <span className={styles.ocfHostedOn}>hosted by</span>
+                  <span className={styles.ocfName}>OCF</span>
+                </div>
               </div>
             </a>
             <a
@@ -135,9 +121,14 @@ export default function Organization() {
               rel="noopener noreferrer"
             >
               <img
-                src="/images/asuc.png"
+                src="/images/asuc-light-mode.png"
                 alt="ASUC"
-                className={styles.asucLogo}
+                className={styles.asucLogoLight}
+              />
+              <img
+                src="/images/asuc-dark-mode.png"
+                alt="ASUC"
+                className={styles.asucLogoDark}
               />
             </a>
           </div>
