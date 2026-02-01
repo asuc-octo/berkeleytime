@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { PlanModel } from "@repo/common";
+import { PlanModel } from "@repo/common/models";
 
 import { GradTrakAnalyticsDataPoint } from "../../../generated-types/graphql";
 import { RequestContext } from "../../../types/request-context";

@@ -5,7 +5,7 @@ import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import type { RedisClientType } from "redis";
 
-import { UserModel } from "@repo/common";
+import { UserModel } from "@repo/common/models";
 
 import { config } from "../../../../../packages/common/src/utils/config";
 

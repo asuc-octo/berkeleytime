@@ -6,7 +6,7 @@ import {
   PlanTermType,
   PlanType,
   SelectedCourseType,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import {
   CollegeReqs,

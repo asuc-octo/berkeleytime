@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { ScheduleModel, UserModel } from "@repo/common";
+import { ScheduleModel, UserModel } from "@repo/common/models";
 
 import { SchedulerAnalyticsDataPoint } from "../../../generated-types/graphql";
 import { RequestContext } from "../../../types/request-context";

@@ -3,7 +3,7 @@ import {
   ClassGradingBasis,
   IClassItem,
   ISectionItem,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { normalizeSubject } from "../../utils/subject";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";

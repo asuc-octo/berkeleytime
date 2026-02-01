@@ -3,7 +3,7 @@ import type { Request } from "express";
 import { GraphQLError } from "graphql";
 import type { RedisClientType } from "redis";
 
-import { BannerModel, BannerViewCountModel, StaffMemberModel } from "@repo/common";
+import { BannerModel, BannerViewCountModel, StaffMemberModel } from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";

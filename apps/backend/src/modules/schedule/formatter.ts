@@ -1,4 +1,4 @@
-import { ScheduleType } from "@repo/common";
+import { ScheduleType } from "@repo/common/models";
 
 import { ScheduleModule } from "./generated-types/module-types";
 

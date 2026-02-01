@@ -25,8 +25,6 @@ import {
   Select,
 } from "@repo/theme";
 
-import { BASE } from "@/helper";
-
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
   useAllStaffMembers,
@@ -261,11 +259,14 @@ export default function Dashboard() {
               const formData = new FormData();
               formData.append("image", blob, file.name);
 
-              const response = await fetch(`${BASE}/api/uploadStaffImage`, {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-              });
+              const response = await fetch(
+                `${window.location.origin}/api/uploadStaffImage`,
+                {
+                  method: "POST",
+                  credentials: "include",
+                  body: formData,
+                }
+              );
 
               if (!response.ok) {
                 const errorData = await response.json();

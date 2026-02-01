@@ -1,6 +1,6 @@
 import { Logger } from "tslog";
 
-import { ITermItem } from "@repo/common";
+import { ITermItem } from "@repo/common/models";
 import { Term, TermsAPI } from "@repo/sis-api/terms";
 
 const formatTerm = (term: Term) => {

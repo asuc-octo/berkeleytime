@@ -1,4 +1,4 @@
-import { UserModel } from "@repo/common";
+import { UserModel } from "@repo/common/models";
 
 import { RequestContext } from "../../../types/request-context";
 import { requireStaffAuth } from "../helpers/staff-auth";

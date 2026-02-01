@@ -1,6 +1,10 @@
 import { GraphQLError } from "graphql";
 
-import { SemesterRoleModel, StaffMemberModel, UserModel } from "@repo/common";
+import {
+  SemesterRoleModel,
+  StaffMemberModel,
+  UserModel,
+} from "@repo/common/models";
 
 import {
   Semester,

@@ -4,7 +4,7 @@ import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";

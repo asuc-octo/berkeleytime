@@ -1,4 +1,4 @@
-import { UserType } from "@repo/common";
+import { UserType } from "@repo/common/models";
 
 import { UserModule } from "./generated-types/module-types";
 

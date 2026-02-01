@@ -1,4 +1,4 @@
-import { AggregatedMetricsModel, ClassModel } from "@repo/common";
+import { AggregatedMetricsModel, ClassModel } from "@repo/common/models";
 
 import { Config } from "../shared/config";
 

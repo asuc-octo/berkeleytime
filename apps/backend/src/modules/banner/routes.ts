@@ -1,6 +1,6 @@
 import type { Application, Request, Response } from "express";
 
-import { BannerModel } from "@repo/common";
+import { BannerModel } from "@repo/common/models";
 
 export default (app: Application) => {
   // Redirect-based click tracking for highMetrics banners
