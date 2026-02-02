@@ -1,0 +1,196 @@
+.root {
+  flex: 1;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  overflow: auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.emptyState {
+  padding: 40px;
+  text-align: center;
+  color: var(--paragraph-color);
+  font-size: 14px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.targetInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.targetRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.targetLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--paragraph-color);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.targetValue {
+  font-size: 14px;
+  color: var(--heading-color);
+  word-break: break-word;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background-color: var(--blue-500);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tagSecondary {
+  background-color: var(--border-color);
+  color: var(--paragraph-color);
+}
+
+.cardBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.meta {
+  color: var(--paragraph-color);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.formHint {
+  font-size: 12px;
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.tagInput {
+  display: flex;
+  gap: 8px;
+}
+
+.tagInputField {
+  flex: 1;
+}
+
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.editableTag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--blue-500);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.editableTagSecondary {
+  background-color: var(--border-color);
+  color: var(--paragraph-color);
+}
+
+.removeTag {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.rangeRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.rangeField {
+  flex: 1;
+}
+
+.rangeSeparator {
+  padding-bottom: 10px;
+  color: var(--paragraph-color);
+}

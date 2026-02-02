@@ -203,7 +203,6 @@ export interface IClass {
   title: string | null;
   unitsMax: number;
   unitsMin: number;
-  hasAd: boolean;
 }
 
 export interface ReadClassResponse {
@@ -238,7 +237,6 @@ export const READ_CLASS = gql`
       unitsMin
       gradingBasis
       finalExam
-      hasAd
       gradeDistribution {
         average
         distribution {
