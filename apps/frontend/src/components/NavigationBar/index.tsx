@@ -16,7 +16,7 @@ import {
   Xmark,
 } from "iconoir-react";
 import { createPortal } from "react-dom";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 
 import {
   Button,
@@ -110,6 +110,8 @@ export default function NavigationBar({
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const isLandingPage = location.pathname === "/";
 
   useEffect(() => {
     if (menuOpen) {
@@ -173,7 +175,7 @@ export default function NavigationBar({
         gap="3"
         className={classNames(styles.root, {
           [styles.invert]: invert,
-          [styles.noBorder]: noBorder,
+          [styles.noBorder]: noBorder || isLandingPage,
         })}
       >
         <Link className={styles.brand} to="/">

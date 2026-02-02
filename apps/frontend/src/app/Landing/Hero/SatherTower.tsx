@@ -1,17 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useIsDarkMode } from "@repo/theme";
+
 interface SatherTowerProps {
   className?: string;
 }
 
-const COLORS = {
+const COLORS_LIGHT = {
   light: "#B9CEEA",
   moderate: "#3568A5",
   bright: "#FFFFFF",
   dark: "#2C3642",
 };
 
+const COLORS_DARK = {
+  light: "#6B8AA8",
+  moderate: "#1E3A5C",
+  bright: "#C0C0C0",
+  dark: "#0A0D12",
+};
+
 export default function SatherTower({ className }: SatherTowerProps) {
+  const isDarkMode = useIsDarkMode();
+  const COLORS = isDarkMode ? COLORS_DARK : COLORS_LIGHT;
   const [time, setTime] = useState(() => Date.now());
 
   useEffect(() => {
