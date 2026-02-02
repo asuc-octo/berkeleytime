@@ -1,120 +1,88 @@
-.root {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  isolation: isolate;
-  overflow: hidden;
+// Hero accent color - change this to update the gradient
+$hero-accent: var(--blue-500);
+
+@mixin hero-gradient($accent) {
   background: linear-gradient(
-    var(--landing-gradient-angle, to top right),
-    var(--landing-gradient-start),
-    var(--landing-gradient-stop)
+    to bottom,
+    var(--light-background-color) 0%,
+    color-mix(in srgb, var(--light-background-color) 95%, #{$accent}) 5%,
+    color-mix(in srgb, var(--light-background-color) 85%, #{$accent}) 12%,
+    color-mix(in srgb, var(--light-background-color) 70%, #{$accent}) 22%,
+    color-mix(in srgb, var(--light-background-color) 50%, #{$accent}) 35%,
+    color-mix(in srgb, var(--light-background-color) 30%, #{$accent}) 48%,
+    color-mix(in srgb, var(--light-background-color) 15%, #{$accent}) 60%,
+    color-mix(in srgb, var(--light-background-color) 5%, #{$accent}) 72%,
+    #{$accent} 85%,
+    #{$accent} 100%
   );
+}
 
-  .container {
-    position: relative;
-    z-index: 1;
+.root {
+  height: calc(100svh - var(--header-height, 90px) + 16px);
+  display: flex;
+  align-items: flex-end;
+  @include hero-gradient($hero-accent);
+  padding: 48px;
+  position: relative;
+  isolation: isolate;
 
-    .text {
-      margin: 96px 0 120px;
-      position: relative;
-      z-index: 2;
+  // Noise overlay
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("./noise.svg");
+    background-size: 150px 150px;
+    background-repeat: repeat;
+    filter: contrast(300%);
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
 
-      @media (width <= 992px) {
-        margin-top: 64px;
-        margin-bottom: 48px;
-      }
+  @media (width <= 992px) {
+    padding: 24px;
+  }
 
-      @media (width > 992px) {
-        max-width: 592px;
-      }
+  @media (width <= 700px) {
+    height: 40svh;
+    min-height: 220px;
+  }
+}
 
-      .heading {
-        font-size: 48px;
-        margin-bottom: 16px;
-        color: var(--dark-heading-color);
-        font-weight: 660;
-        font-feature-settings:
-          "cv05" on,
-          "cv13" on,
-          "ss07" on,
-          "cv12" on,
-          "cv06" on;
-        line-height: 1.25;
-        position: relative;
+.heading {
+  font-size: 48px;
+  color: white;
+  font-weight: 600;
+  line-height: 1.1;
+  position: relative;
 
-        @media (width <= 768px) {
-          font-size: 32px;
-          line-height: 1.5;
-        }
-      }
+  @media (width <= 700px) {
+    font-size: 32px;
+  }
+}
 
-      .description {
-        font-size: 24px;
-        color: #eee;
-        line-height: 1.5;
-        font-weight: var(--font-medium);
-        margin-bottom: 64px;
-      }
+.tabletBreak {
+  display: none;
 
-      .form {
-        position: relative;
-        max-width: 448px;
-        background-color: white;
-        padding: 0 16px;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
+  @media (width <= 992px) {
+    display: block;
+  }
+}
 
-        .input {
-          font-size: var(--text-16);
-          color: var(--slate-900);
-          height: 56px;
+.tower {
+  position: absolute;
+  right: 100px;
+  bottom: 0;
+  height: 80%;
+  pointer-events: none;
 
-          &::placeholder {
-            color: var(--slate-500);
-          }
-        }
-      }
-    }
+  @media (width <= 992px) {
+    right: 24px;
+  }
 
-    .clock {
-      position: absolute;
-      right: 272px;
-      bottom: 64px;
-      text-align: right;
-      font-size: var(--text-16);
-      line-height: 1.5;
-      color: #eee;
-      z-index: 1;
-
-      @media (width <= 992px) {
-        display: none;
-      }
-
-      p.heading {
-        font-weight: var(--font-medium);
-        color: white;
-        margin-top: 16px;
-      }
-
-      p.description {
-        margin-top: 4px;
-      }
-    }
-
-    img.campanile {
-      position: absolute;
-      z-index: 0;
-      right: 24px;
-      top: 0;
-
-      @media (width <= 992px) {
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0.25;
-      }
-    }
+  @media (width <= 700px) {
+    right: 24px;
+    height: 70%;
   }
 }

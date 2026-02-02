@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 import {
   useAllRouteRedirects,
@@ -47,5 +47,10 @@ export default function RootWrapper() {
     }
   }, [location.pathname, redirects, loading, incrementClick]);
 
-  return <Outlet />;
+  return (
+    <>
+      <ScrollRestoration />
+      <Outlet />
+    </>
+  );
 }
