@@ -15,12 +15,12 @@ import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   getClass,
+  getHasAd,
   getPrimarySection,
   getSecondarySections,
   getSection,
   getViewCount,
   trackClassView,
-  getHasAd,
 } from "./controller";
 import {
   IntermediateClass,

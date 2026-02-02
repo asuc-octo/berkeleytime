@@ -1,6 +1,8 @@
 import { AdTargetType } from "@repo/common/models";
 
-export const formatAdTarget = (adTarget: AdTargetType | Record<string, unknown>) => {
+export const formatAdTarget = (
+  adTarget: AdTargetType | Record<string, unknown>
+) => {
   return {
     id: (adTarget as any)._id?.toString() ?? (adTarget as any).id,
     subjects: (adTarget as any).subjects || [],

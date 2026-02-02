@@ -3,12 +3,12 @@ import type { Request } from "express";
 import type { RedisClientType } from "redis";
 
 import {
+  AdTargetModel,
   ClassModel,
   ClassViewCountModel,
   IClassItem,
   ISectionItem,
   SectionModel,
-  AdTargetModel,
 } from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
@@ -345,13 +345,19 @@ export const getHasAd = async (
     if (specific.includes(classId)) return true;
 
     // If subjects specified and subject not included, skip
-    if (Array.isArray(subjects) && subjects.length > 0 && !subjects.includes(subject)) {
+    if (
+      Array.isArray(subjects) &&
+      subjects.length > 0 &&
+      !subjects.includes(subject)
+    ) {
       continue;
     }
 
     // If min/max specified, compare numeric prefix of course number
-    const min = typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
-    const max = typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
+    const min =
+      typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
+    const max =
+      typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
 
     if (!isNaN(min)) {
       if (isNaN(courseNum) || courseNum < min) continue;

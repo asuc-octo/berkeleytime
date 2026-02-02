@@ -36,7 +36,8 @@ export const adTargetTypeDef = gql`
 
   type Mutation {
     createAdTarget(input: CreateAdTargetInput!): AdTarget! @auth
-    updateAdTarget(adTargetId: ID!, input: UpdateAdTargetInput!): AdTarget! @auth
+    updateAdTarget(adTargetId: ID!, input: UpdateAdTargetInput!): AdTarget!
+      @auth
     deleteAdTarget(adTargetId: ID!): Boolean! @auth
   }
 `;
