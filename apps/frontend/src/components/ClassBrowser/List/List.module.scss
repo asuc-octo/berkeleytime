@@ -63,7 +63,7 @@
     justify-content: center;
     text-align: center;
     padding: 0 24px 12px;
-    margin-top: 72px; // Account for sticky header
+    margin-top: var(--header-height, 72px); // Account for sticky header
     gap: 16px;
     font-size: var(--text-16);
 

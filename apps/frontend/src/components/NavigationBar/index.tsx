@@ -215,13 +215,6 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
-          <NavLink to="/about">
-            {({ isActive }) => (
-              <MenuItem className={styles.item} active={isActive}>
-                About
-              </MenuItem>
-            )}
-          </NavLink>
         </div>
         <IconButton
           className={styles.compactMenuButton}

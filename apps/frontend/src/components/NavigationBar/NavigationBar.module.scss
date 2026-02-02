@@ -15,7 +15,7 @@
 .menuNav {
   display: flex;
   flex-direction: column;
-  padding: 100px 24px 24px;
+  padding: calc(var(--header-height, 100px) + 24px) 24px 24px;
   gap: 8px;
 
   a {
