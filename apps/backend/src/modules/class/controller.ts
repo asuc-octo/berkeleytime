@@ -336,10 +336,10 @@ export const getHasAd = async (
   const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
 
   for (const at of adTargets) {
-    const subjects = (at as any).subjects ?? [];
-    const minStr = (at as any).minCourseNumber;
-    const maxStr = (at as any).maxCourseNumber;
-    const specific = (at as any).specificClassIds ?? [];
+    const subjects = at.subjects ?? [];
+    const minStr = at.minCourseNumber;
+    const maxStr = at.maxCourseNumber;
+    const specific = at.specificClassIds ?? [];
 
     // Specific class IDs take precedence
     if (specific.includes(classId)) return true;
