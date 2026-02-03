@@ -81,6 +81,11 @@ export const bannerSchema = new Schema(
       default: 1,
     },
     versionHistory: [bannerVersionEntrySchema],
+    deletedAt: {
+      type: Date,
+      default: null,
+      index: true, // For efficient query filtering
+    },
   },
   {
     timestamps: {

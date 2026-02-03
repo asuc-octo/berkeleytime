@@ -13,6 +13,7 @@ import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";
 import {
   createInitialVersionEntry,
+  createSnapshot,
   createSnapshotFromInput,
   createVersionEntry,
   detectChangedFields,
@@ -73,7 +74,10 @@ export interface UpdateBannerInput {
  */
 export const getVisibleBanners = async (redis: RedisClientType) => {
   // Only return banners that are explicitly visible (or default to visible)
-  const banners = await BannerModel.find({ visible: { $ne: false } }).sort({
+  const banners = await BannerModel.find({
+    visible: { $ne: false },
+    deletedAt: null,
+  }).sort({
     createdAt: -1,
   });
 
@@ -93,7 +97,9 @@ export const getVisibleBanners = async (redis: RedisClientType) => {
  * Staff members need to see all banners to manage visibility.
  */
 export const getAllBannersForStaff = async (redis: RedisClientType) => {
-  const banners = await BannerModel.find().sort({ createdAt: -1 });
+  const banners = await BannerModel.find({ deletedAt: null }).sort({
+    createdAt: -1,
+  });
 
   // Get view counts for all banners (always tracked now)
   const bannersWithViews = await Promise.all(
@@ -265,7 +271,42 @@ export const deleteBanner = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
-  const result = await BannerModel.findByIdAndDelete(bannerId);
+  // First, fetch the current banner
+  const currentBanner = await BannerModel.findById(bannerId);
+  if (!currentBanner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  // Already deleted? Return true (idempotent)
+  if (currentBanner.deletedAt) {
+    return true;
+  }
+
+  // Create deletion version entry for audit trail
+  const currentVersion = currentBanner.currentVersion ?? 1;
+  const snapshot = createSnapshot(currentBanner);
+  const deletionVersionEntry = createVersionEntry(
+    currentVersion,
+    ["deletedAt"],
+    snapshot,
+    { action: "deleted" }
+  );
+
+  // Soft delete with version tracking
+  const result = await BannerModel.findByIdAndUpdate(
+    bannerId,
+    {
+      $set: {
+        deletedAt: new Date(),
+        currentVersion: currentVersion + 1,
+      },
+      $push: { versionHistory: deletionVersionEntry },
+    },
+    { new: true }
+  );
+
   return result !== null;
 };
 
