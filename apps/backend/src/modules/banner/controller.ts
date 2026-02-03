@@ -11,6 +11,12 @@ import {
 
 import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";
+import {
+  createInitialVersionEntry,
+  createSnapshotFromInput,
+  createVersionEntry,
+  detectChangedFields,
+} from "./version-service";
 
 // Context interface for authenticated requests
 export interface BannerRequestContext {
@@ -80,6 +86,10 @@ export const createBanner = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
+  // Create initial snapshot and version entry for the new banner
+  const snapshot = createSnapshotFromInput(input);
+  const initialVersionEntry = createInitialVersionEntry(snapshot);
+
   const banner = await BannerModel.create({
     text: input.text,
     link: input.link || undefined,
@@ -87,6 +97,8 @@ export const createBanner = async (
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
+    currentVersion: 1,
+    versionHistory: [initialVersionEntry],
   });
 
   return formatBanner(banner, 0);
@@ -99,6 +111,14 @@ export const updateBanner = async (
 ) => {
   // Verify caller is a staff member
   await requireStaffMember(context);
+
+  // First, fetch the current banner to detect changes
+  const currentBanner = await BannerModel.findById(bannerId);
+  if (!currentBanner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
 
   const updateData: Record<string, unknown> = {};
   if (input.text !== null && input.text !== undefined) {
@@ -123,9 +143,62 @@ export const updateBanner = async (
     updateData.clickEventLogging = input.clickEventLogging;
   }
 
-  const banner = await BannerModel.findByIdAndUpdate(bannerId, updateData, {
-    new: true,
-  });
+  // Detect which fields actually changed
+  const changedFields = detectChangedFields(currentBanner, updateData);
+
+  // If any versioned fields changed, create a new version entry
+  if (changedFields.length > 0) {
+    // Apply updates to get the new state for the snapshot
+    const updatedBannerData = {
+      text: (updateData.text as string) ?? currentBanner.text,
+      link: updateData.link !== undefined ? updateData.link : currentBanner.link,
+      linkText:
+        updateData.linkText !== undefined
+          ? updateData.linkText
+          : currentBanner.linkText,
+      persistent:
+        (updateData.persistent as boolean) ?? currentBanner.persistent,
+      reappearing:
+        (updateData.reappearing as boolean) ?? currentBanner.reappearing,
+      clickEventLogging:
+        (updateData.clickEventLogging as boolean) ??
+        currentBanner.clickEventLogging,
+    };
+
+    const snapshot = createSnapshotFromInput(
+      updatedBannerData as {
+        text: string;
+        link?: string | null;
+        linkText?: string | null;
+        persistent: boolean;
+        reappearing: boolean;
+        clickEventLogging?: boolean | null;
+      }
+    );
+    const currentVersion = currentBanner.currentVersion ?? 1;
+    const newVersionEntry = createVersionEntry(
+      currentVersion,
+      changedFields,
+      snapshot
+    );
+
+    // Atomically update the banner with new version entry and incremented version
+    updateData.currentVersion = currentVersion + 1;
+    updateData.$push = { versionHistory: newVersionEntry };
+  }
+
+  // Separate $push from regular fields for MongoDB update
+  const { $push, ...regularUpdateData } = updateData;
+  const updateOperation: Record<string, unknown> = { $set: regularUpdateData };
+  if ($push) {
+    updateOperation.$push = $push;
+  }
+
+  const banner = await BannerModel.findByIdAndUpdate(
+    bannerId,
+    updateOperation,
+    { new: true }
+  );
 
   if (!banner) {
     throw new GraphQLError("Banner not found", {

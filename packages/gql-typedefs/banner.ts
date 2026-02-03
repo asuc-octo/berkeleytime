@@ -15,8 +15,40 @@ export const bannerTypeDef = gql`
     dismissCount: Int!
     viewCount: Int!
     clickEventLogging: Boolean!
+    currentVersion: Int!
     createdAt: String!
     updatedAt: String!
+  }
+
+  """
+  A snapshot of banner content at a specific version.
+  """
+  type BannerSnapshot {
+    text: String
+    link: String
+    linkText: String
+    persistent: Boolean
+    reappearing: Boolean
+    clickEventLogging: Boolean
+  }
+
+  """
+  A version history entry for a banner.
+  """
+  type BannerVersionEntry {
+    version: Int!
+    changedFields: [String!]!
+    timestamp: String!
+    snapshot: BannerSnapshot!
+  }
+
+  """
+  Click statistics for a specific banner version.
+  """
+  type BannerVersionClickStats {
+    version: Int!
+    clickCount: Int!
+    uniqueVisitors: Int!
   }
 
   type Query {
@@ -24,6 +56,20 @@ export const bannerTypeDef = gql`
     Get all banners.
     """
     allBanners: [Banner!]!
+
+    """
+    Get the version history for a banner. Staff only.
+    """
+    bannerVersionHistory(bannerId: ID!): [BannerVersionEntry!]! @auth
+
+    """
+    Get click statistics grouped by banner version. Staff only.
+    """
+    bannerClickStatsByVersion(
+      bannerId: ID!
+      startDate: String
+      endDate: String
+    ): [BannerVersionClickStats!]! @auth
   }
 
   """

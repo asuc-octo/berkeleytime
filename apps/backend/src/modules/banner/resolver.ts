@@ -10,9 +10,14 @@ import {
   getAllBanners,
   incrementBannerClick,
   incrementBannerDismiss,
+  requireStaffMember,
   trackBannerView,
   updateBanner,
 } from "./controller";
+import {
+  getBannerVersionHistory,
+  getClickStatsByVersion,
+} from "./version-service";
 
 interface GraphQLContext extends BannerRequestContext {
   req: Request;
@@ -23,6 +28,45 @@ const resolvers = {
   Query: {
     allBanners: (_: unknown, __: unknown, context: GraphQLContext) =>
       getAllBanners(context.redis),
+
+    bannerVersionHistory: async (
+      _: unknown,
+      { bannerId }: { bannerId: string },
+      context: GraphQLContext
+    ) => {
+      // Verify caller is a staff member
+      await requireStaffMember(context);
+
+      const history = await getBannerVersionHistory(bannerId);
+      // Format timestamps for GraphQL
+      return history.map((entry) => ({
+        version: entry.version,
+        changedFields: entry.changedFields,
+        timestamp:
+          entry.timestamp instanceof Date
+            ? entry.timestamp.toISOString()
+            : entry.timestamp,
+        snapshot: entry.snapshot,
+      }));
+    },
+
+    bannerClickStatsByVersion: async (
+      _: unknown,
+      {
+        bannerId,
+        startDate,
+        endDate,
+      }: { bannerId: string; startDate?: string; endDate?: string },
+      context: GraphQLContext
+    ) => {
+      // Verify caller is a staff member
+      await requireStaffMember(context);
+
+      const parsedStartDate = startDate ? new Date(startDate) : undefined;
+      const parsedEndDate = endDate ? new Date(endDate) : undefined;
+
+      return getClickStatsByVersion(bannerId, parsedStartDate, parsedEndDate);
+    },
   },
 
   Mutation: {
