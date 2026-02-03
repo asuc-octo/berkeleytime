@@ -54,6 +54,7 @@ export interface CreateBannerInput {
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }
 
 export interface UpdateBannerInput {
@@ -63,9 +64,35 @@ export interface UpdateBannerInput {
   persistent?: boolean | null;
   reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }
 
-export const getAllBanners = async (redis: RedisClientType) => {
+/**
+ * Get all visible banners for public display.
+ * Filters out banners where visible !== true.
+ */
+export const getVisibleBanners = async (redis: RedisClientType) => {
+  // Only return banners that are explicitly visible (or default to visible)
+  const banners = await BannerModel.find({ visible: { $ne: false } }).sort({
+    createdAt: -1,
+  });
+
+  // Get view counts for all banners (always tracked now)
+  const bannersWithViews = await Promise.all(
+    banners.map(async (banner) => {
+      const viewCount = await getBannerViewCount(banner._id.toString(), redis);
+      return formatBanner(banner, viewCount);
+    })
+  );
+
+  return bannersWithViews;
+};
+
+/**
+ * Get all banners for staff dashboard (includes hidden banners).
+ * Staff members need to see all banners to manage visibility.
+ */
+export const getAllBannersForStaff = async (redis: RedisClientType) => {
   const banners = await BannerModel.find().sort({ createdAt: -1 });
 
   // Get view counts for all banners (always tracked now)
@@ -97,6 +124,7 @@ export const createBanner = async (
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
+    visible: input.visible ?? true,
     currentVersion: 1,
     versionHistory: [initialVersionEntry],
   });
@@ -124,11 +152,15 @@ export const updateBanner = async (
   if (input.text !== null && input.text !== undefined) {
     updateData.text = input.text;
   }
-  if (input.link !== null && input.link !== undefined) {
-    updateData.link = input.link || undefined;
+  if (input.link !== undefined) {
+    // Use null to signal "clear the field" (empty string → null), preserving version tracking
+    updateData.link =
+      input.link === "" || input.link === null ? null : input.link;
   }
-  if (input.linkText !== null && input.linkText !== undefined) {
-    updateData.linkText = input.linkText || undefined;
+  if (input.linkText !== undefined) {
+    // Use null to signal "clear the field" (empty string → null), preserving version tracking
+    updateData.linkText =
+      input.linkText === "" || input.linkText === null ? null : input.linkText;
   }
   if (input.persistent !== null && input.persistent !== undefined) {
     updateData.persistent = input.persistent;
@@ -142,6 +174,9 @@ export const updateBanner = async (
   ) {
     updateData.clickEventLogging = input.clickEventLogging;
   }
+  if (input.visible !== null && input.visible !== undefined) {
+    updateData.visible = input.visible;
+  }
 
   // Detect which fields actually changed
   const changedFields = detectChangedFields(currentBanner, updateData);
@@ -151,7 +186,8 @@ export const updateBanner = async (
     // Apply updates to get the new state for the snapshot
     const updatedBannerData = {
       text: (updateData.text as string) ?? currentBanner.text,
-      link: updateData.link !== undefined ? updateData.link : currentBanner.link,
+      link:
+        updateData.link !== undefined ? updateData.link : currentBanner.link,
       linkText:
         updateData.linkText !== undefined
           ? updateData.linkText
@@ -163,6 +199,7 @@ export const updateBanner = async (
       clickEventLogging:
         (updateData.clickEventLogging as boolean) ??
         currentBanner.clickEventLogging,
+      visible: (updateData.visible as boolean) ?? currentBanner.visible,
     };
 
     const snapshot = createSnapshotFromInput(

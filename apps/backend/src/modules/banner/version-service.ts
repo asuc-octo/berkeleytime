@@ -16,6 +16,7 @@ const VERSIONED_FIELDS = [
   "persistent",
   "reappearing",
   "clickEventLogging",
+  "visible",
 ] as const;
 
 type VersionedField = (typeof VERSIONED_FIELDS)[number];
@@ -32,6 +33,7 @@ export const createSnapshot = (banner: BannerType): BannerSnapshot => {
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
     clickEventLogging: banner.clickEventLogging ?? false,
+    visible: banner.visible ?? true,
   };
 };
 
@@ -45,6 +47,7 @@ export const createSnapshotFromInput = (input: {
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }): BannerSnapshot => {
   return {
     text: input.text,
@@ -53,6 +56,7 @@ export const createSnapshotFromInput = (input: {
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
+    visible: input.visible ?? true,
   };
 };
 
@@ -67,17 +71,20 @@ export const detectChangedFields = (
   const changedFields: VersionedField[] = [];
 
   for (const field of VERSIONED_FIELDS) {
-    // Skip if field is not in the update input (null/undefined means "don't update")
-    if (updateInput[field] === null || updateInput[field] === undefined) {
+    // Skip if field is not in the update input (undefined means "don't update")
+    // null means "clear the field" - this IS an update we want to track
+    if (updateInput[field] === undefined) {
       continue;
     }
 
     const currentValue = currentBanner[field as keyof BannerType];
     const newValue = updateInput[field];
 
-    // Normalize undefined/null to compare properly
-    const normalizedCurrent = currentValue ?? undefined;
-    const normalizedNew = newValue === "" ? undefined : newValue;
+    // Normalize for comparison:
+    // - null in updateInput means "clear the field"
+    // - current undefined/null should match for comparison purposes
+    const normalizedCurrent = currentValue ?? null;
+    const normalizedNew = newValue ?? null;
 
     if (normalizedCurrent !== normalizedNew) {
       changedFields.push(field);

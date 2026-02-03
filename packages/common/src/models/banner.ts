@@ -10,6 +10,7 @@ const bannerSnapshotSchema = new Schema(
     persistent: Boolean,
     reappearing: Boolean,
     clickEventLogging: Boolean,
+    visible: Boolean,
   },
   { _id: false }
 );
@@ -69,6 +70,11 @@ export const bannerSchema = new Schema(
       required: true,
       default: false,
     },
+    visible: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     // Version control fields - embedded array for atomic updates and automatic cleanup on delete
     currentVersion: {
       type: Number,
@@ -90,4 +96,6 @@ export type BannerType = Document & InferSchemaType<typeof bannerSchema>;
 
 // Export snapshot type for use in version service
 export type BannerSnapshot = InferSchemaType<typeof bannerSnapshotSchema>;
-export type BannerVersionEntry = InferSchemaType<typeof bannerVersionEntrySchema>;
+export type BannerVersionEntry = InferSchemaType<
+  typeof bannerVersionEntrySchema
+>;

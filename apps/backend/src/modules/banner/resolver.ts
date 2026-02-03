@@ -7,7 +7,8 @@ import {
   UpdateBannerInput,
   createBanner,
   deleteBanner,
-  getAllBanners,
+  getAllBannersForStaff,
+  getVisibleBanners,
   incrementBannerClick,
   incrementBannerDismiss,
   requireStaffMember,
@@ -26,8 +27,19 @@ interface GraphQLContext extends BannerRequestContext {
 
 const resolvers = {
   Query: {
+    // Public query - only returns visible banners
     allBanners: (_: unknown, __: unknown, context: GraphQLContext) =>
-      getAllBanners(context.redis),
+      getVisibleBanners(context.redis),
+
+    // Staff query - returns all banners including hidden ones
+    allBannersForStaff: async (
+      _: unknown,
+      __: unknown,
+      context: GraphQLContext
+    ) => {
+      await requireStaffMember(context);
+      return getAllBannersForStaff(context.redis);
+    },
 
     bannerVersionHistory: async (
       _: unknown,

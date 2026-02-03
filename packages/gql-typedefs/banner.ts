@@ -15,6 +15,7 @@ export const bannerTypeDef = gql`
     dismissCount: Int!
     viewCount: Int!
     clickEventLogging: Boolean!
+    visible: Boolean!
     currentVersion: Int!
     createdAt: String!
     updatedAt: String!
@@ -30,6 +31,7 @@ export const bannerTypeDef = gql`
     persistent: Boolean
     reappearing: Boolean
     clickEventLogging: Boolean
+    visible: Boolean
   }
 
   """
@@ -53,9 +55,14 @@ export const bannerTypeDef = gql`
 
   type Query {
     """
-    Get all banners.
+    Get all visible banners. Public.
     """
     allBanners: [Banner!]!
+
+    """
+    Get all banners including hidden ones. Staff only.
+    """
+    allBannersForStaff: [Banner!]! @auth
 
     """
     Get the version history for a banner. Staff only.
@@ -82,6 +89,7 @@ export const bannerTypeDef = gql`
     persistent: Boolean!
     reappearing: Boolean!
     clickEventLogging: Boolean
+    visible: Boolean
   }
 
   """
@@ -94,6 +102,7 @@ export const bannerTypeDef = gql`
     persistent: Boolean
     reappearing: Boolean
     clickEventLogging: Boolean
+    visible: Boolean
   }
 
   type Mutation {
