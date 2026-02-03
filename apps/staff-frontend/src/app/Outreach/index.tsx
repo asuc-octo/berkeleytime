@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Copy, EditPencil, Plus, Trash } from "iconoir-react";
+import Markdown from "react-markdown";
 
 import { Button, Dialog, Flex, Input, PillSwitcher, Switch } from "@repo/theme";
 
@@ -336,7 +337,23 @@ export default function Outreach() {
                     </div>
                   </div>
                   <p className={styles.bannerText}>
-                    <span dangerouslySetInnerHTML={{ __html: banner.text }} />
+                    <Markdown
+                      allowedElements={["p", "em", "strong", "a", "br"]}
+                      unwrapDisallowed
+                      components={{
+                        a: ({ href, children }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >
+                      {banner.text}
+                    </Markdown>
                     {banner.link && (
                       <>
                         {" "}
@@ -514,7 +531,7 @@ export default function Outreach() {
                   }
                 />
                 <p className={styles.formHint}>
-                  You can use HTML tags like &lt;i&gt; for italics
+                  Supports Markdown: *italics*, **bold**, [link text](url)
                 </p>
               </div>
 

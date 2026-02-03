@@ -69,7 +69,7 @@ export interface UpdateBannerInput {
 
 /**
  * Get all visible banners for public display.
- * Filters out banners where visible !== true.
+ * Filters out banners explicitly marked as hidden (visible === false).
  */
 export const getVisibleBanners = async (redis: RedisClientType) => {
   // Only return banners that are explicitly visible (or default to visible)
@@ -119,8 +119,9 @@ export const createBanner = async (
 
   const banner = await BannerModel.create({
     text: input.text,
-    link: input.link || undefined,
-    linkText: input.linkText || undefined,
+    link: input.link === "" || input.link === null ? null : input.link,
+    linkText:
+      input.linkText === "" || input.linkText === null ? null : input.linkText,
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
@@ -231,13 +232,24 @@ export const updateBanner = async (
     updateOperation.$push = $push;
   }
 
-  const banner = await BannerModel.findByIdAndUpdate(
-    bannerId,
+  // Use optimistic locking: include currentVersion in the query filter
+  // to prevent concurrent updates from overwriting each other
+  const expectedVersion = currentBanner.currentVersion ?? 1;
+  const banner = await BannerModel.findOneAndUpdate(
+    { _id: bannerId, currentVersion: expectedVersion },
     updateOperation,
     { new: true }
   );
 
   if (!banner) {
+    // Check if banner exists but version changed (concurrent edit)
+    const exists = await BannerModel.exists({ _id: bannerId });
+    if (exists) {
+      throw new GraphQLError(
+        "Banner was modified by another user. Please refresh and try again.",
+        { extensions: { code: "CONFLICT" } }
+      );
+    }
     throw new GraphQLError("Banner not found", {
       extensions: { code: "NOT_FOUND" },
     });
