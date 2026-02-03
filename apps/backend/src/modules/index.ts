@@ -1,5 +1,6 @@
 import { merge } from "lodash";
 
+import AdTarget from "./ad-target";
 import Analytics from "./analytics";
 import Banner from "./banner";
 import Catalog from "./catalog";
@@ -21,6 +22,7 @@ import Term from "./term";
 import User from "./user";
 
 const modules = [
+  AdTarget,
   Analytics,
   Banner,
   ClickTracking,

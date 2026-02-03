@@ -6,6 +6,7 @@ import {
   AdTargetModel,
   ClassModel,
   ClassViewCountModel,
+  CourseModel,
   IClassItem,
   ISectionItem,
   SectionModel,
@@ -332,8 +333,23 @@ export const getHasAd = async (
 
   const classId = `${subject} ${courseNumber}`;
 
-  const courseNumMatch = courseNumber.match(/^(\d+)/);
+  // Extract the first numeric sequence anywhere in the course number (handles
+  // values like "10B", "H128", "C140").
+  const courseNumMatch = courseNumber.match(/(\d+)/);
   const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
+
+  // If this course number is C-prefixed (cross-listed like "C140"), prefetch
+  // associated course subjects for cross-referencing with ad target subjects.
+  let crossSubjects: string[] | null = null;
+  if (/^C/i.test(courseNumber)) {
+    const stripped = courseNumMatch ? courseNumMatch[1] : null;
+    if (stripped) {
+      const assoc = await CourseModel.find({ number: stripped }).lean();
+      if (assoc && assoc.length > 0) {
+        crossSubjects = assoc.map((c) => c.subject);
+      }
+    }
+  }
 
   for (const at of adTargets) {
     const subjects = at.subjects ?? [];
@@ -345,19 +361,20 @@ export const getHasAd = async (
     if (specific.includes(classId)) return true;
 
     // If subjects specified and subject not included, skip
-    if (
-      Array.isArray(subjects) &&
-      subjects.length > 0 &&
-      !subjects.includes(subject)
-    ) {
-      continue;
+    if (Array.isArray(subjects) && subjects.length > 0) {
+      if (!subjects.includes(subject)) {
+        // If cross-listed subjects exist for C-prefixed numbers, allow a match
+        // when any associated subject is included in the ad target.
+        const matchedViaCross =
+          crossSubjects && crossSubjects.some((s) => subjects.includes(s));
+
+        if (!matchedViaCross) continue;
+      }
     }
 
     // If min/max specified, compare numeric prefix of course number
-    const min =
-      typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
-    const max =
-      typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
+    const min = typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
+    const max = typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
 
     if (!isNaN(min)) {
       if (isNaN(courseNum) || courseNum < min) continue;
