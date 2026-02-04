@@ -330,7 +330,10 @@ export const getHasAd = async (
   const adTargets = await AdTargetModel.find().lean();
   if (!adTargets.length) return false;
 
-  const course = await CourseModel.findOne({ subject, number: courseNumber }).lean();
+  const course = await CourseModel.findOne({
+    subject,
+    number: courseNumber,
+  }).lean();
   if (!course) return false;
 
   const classIds = new Set<string>([
@@ -338,24 +341,18 @@ export const getHasAd = async (
     ...(course.crossListing ?? []),
   ]);
 
-  const courseSubjects = new Set(
-    [...classIds].map((id) => id.split(" ")[0])
-  );
+  const courseSubjects = new Set([...classIds].map((id) => id.split(" ")[0]));
 
   const courseNumMatch = courseNumber.match(/(\d+)/);
   const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
 
   for (const at of adTargets) {
-    if (
-      at.specificClassIds?.some((id: string) => classIds.has(id))
-    ) {
+    if (at.specificClassIds?.some((id: string) => classIds.has(id))) {
       return true;
     }
 
     if (at.subjects?.length) {
-      const matches = [...courseSubjects].some((s) =>
-        at.subjects?.includes(s)
-      );
+      const matches = [...courseSubjects].some((s) => at.subjects?.includes(s));
       if (!matches) continue;
     }
 
@@ -370,4 +367,3 @@ export const getHasAd = async (
 
   return false;
 };
-
