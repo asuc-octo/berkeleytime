@@ -294,20 +294,35 @@ export const deleteBanner = async (
     { action: "deleted" }
   );
 
-  // Soft delete with version tracking
-  const result = await BannerModel.findByIdAndUpdate(
-    bannerId,
+  // Soft delete with version tracking using optimistic locking
+  const expectedVersion = currentBanner.currentVersion ?? 1;
+  const result = await BannerModel.findOneAndUpdate(
+    { _id: bannerId, currentVersion: expectedVersion },
     {
       $set: {
         deletedAt: new Date(),
-        currentVersion: currentVersion + 1,
+        currentVersion: expectedVersion + 1,
       },
       $push: { versionHistory: deletionVersionEntry },
     },
     { new: true }
   );
 
-  return result !== null;
+  if (!result) {
+    // Check if banner exists but version changed (concurrent edit)
+    const exists = await BannerModel.exists({ _id: bannerId });
+    if (exists) {
+      throw new GraphQLError(
+        "Banner was modified by another user. Please refresh and try again.",
+        { extensions: { code: "CONFLICT" } }
+      );
+    }
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return true;
 };
 
 export const incrementBannerClick = async (bannerId: string) => {

@@ -338,7 +338,7 @@ export default function Outreach() {
                   </div>
                   <p className={styles.bannerText}>
                     <Markdown
-                      allowedElements={["p", "em", "strong", "a", "br"]}
+                      allowedElements={["em", "strong", "a", "br"]}
                       unwrapDisallowed
                       components={{
                         a: ({ href, children }) => (
