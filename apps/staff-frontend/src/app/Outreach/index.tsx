@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Copy, EditPencil, Plus, Trash } from "iconoir-react";
+import Markdown from "react-markdown";
 
 import { Button, Dialog, Flex, Input, PillSwitcher, Switch } from "@repo/theme";
 
@@ -166,6 +167,28 @@ export default function Outreach() {
     }
   };
 
+  const handleToggleBannerVisibility = async (
+    bannerId: string,
+    currentVisible: boolean
+  ) => {
+    const action = currentVisible ? "hide" : "show";
+    const confirmed = window.confirm(
+      `Are you sure you want to ${action} this banner? ${
+        currentVisible
+          ? "Users will no longer see it."
+          : "Users will start seeing it immediately."
+      }`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await updateBanner(bannerId, { visible: !currentVisible });
+    } catch (error) {
+      console.error("Error toggling banner visibility:", error);
+    }
+  };
+
   // Redirect handlers
   const handleOpenCreateRedirect = () => {
     setEditingRedirect(null);
@@ -275,26 +298,62 @@ export default function Outreach() {
           ) : (
             <div className={styles.list}>
               {banners.map((banner) => (
-                <div key={banner.id} className={styles.card}>
-                  {(banner.persistent ||
+                <div
+                  key={banner.id}
+                  className={`${styles.card} ${!banner.visible ? styles.hidden : ""}`}
+                >
+                  <div className={styles.cardHeader}>
+                    {banner.persistent ||
                     banner.reappearing ||
-                    banner.clickEventLogging) && (
-                    <div className={styles.badgeRow}>
-                      {banner.persistent && (
-                        <span className={styles.badge}>Persistent</span>
-                      )}
-                      {banner.reappearing && (
-                        <span className={styles.badge}>Reappearing</span>
-                      )}
-                      {banner.clickEventLogging && (
-                        <span className={styles.badge}>
-                          Click Event Logging
-                        </span>
-                      )}
+                    banner.clickEventLogging ? (
+                      <div className={styles.badgeRow}>
+                        {banner.persistent && (
+                          <span className={styles.badge}>Persistent</span>
+                        )}
+                        {banner.reappearing && (
+                          <span className={styles.badge}>Reappearing</span>
+                        )}
+                        {banner.clickEventLogging && (
+                          <span className={styles.badge}>
+                            Click Event Logging
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                    <div className={styles.visibilityToggle}>
+                      <Switch
+                        checked={banner.visible}
+                        onCheckedChange={() =>
+                          handleToggleBannerVisibility(
+                            banner.id,
+                            banner.visible
+                          )
+                        }
+                        disabled={updatingBanner}
+                      />
+                      <span>{banner.visible ? "Visible" : "Hidden"}</span>
                     </div>
-                  )}
+                  </div>
                   <p className={styles.bannerText}>
-                    <span dangerouslySetInnerHTML={{ __html: banner.text }} />
+                    <Markdown
+                      allowedElements={["em", "strong", "a", "br"]}
+                      unwrapDisallowed
+                      components={{
+                        a: ({ href, children }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >
+                      {banner.text}
+                    </Markdown>
                     {banner.link && (
                       <>
                         {" "}
@@ -472,7 +531,7 @@ export default function Outreach() {
                   }
                 />
                 <p className={styles.formHint}>
-                  You can use HTML tags like &lt;i&gt; for italics
+                  Supports Markdown: *italics*, **bold**, [link text](url)
                 </p>
               </div>
 

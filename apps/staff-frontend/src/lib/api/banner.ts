@@ -12,14 +12,15 @@ export interface Banner {
   dismissCount: number;
   viewCount: number;
   clickEventLogging: boolean;
+  visible: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 // Queries
-export const ALL_BANNERS = gql`
-  query AllBanners {
-    allBanners {
+export const ALL_BANNERS_FOR_STAFF = gql`
+  query AllBannersForStaff {
+    allBannersForStaff {
       id
       text
       link
@@ -30,6 +31,7 @@ export const ALL_BANNERS = gql`
       dismissCount
       viewCount
       clickEventLogging
+      visible
       createdAt
       updatedAt
     }
@@ -53,6 +55,7 @@ export interface UpdateBannerInput {
   persistent?: boolean | null;
   reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }
 
 export const CREATE_BANNER = gql`
@@ -68,6 +71,7 @@ export const CREATE_BANNER = gql`
       dismissCount
       viewCount
       clickEventLogging
+      visible
       createdAt
       updatedAt
     }
@@ -87,6 +91,7 @@ export const UPDATE_BANNER = gql`
       dismissCount
       viewCount
       clickEventLogging
+      visible
       createdAt
       updatedAt
     }

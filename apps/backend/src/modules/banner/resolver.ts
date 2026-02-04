@@ -7,12 +7,18 @@ import {
   UpdateBannerInput,
   createBanner,
   deleteBanner,
-  getAllBanners,
+  getAllBannersForStaff,
+  getVisibleBanners,
   incrementBannerClick,
   incrementBannerDismiss,
+  requireStaffMember,
   trackBannerView,
   updateBanner,
 } from "./controller";
+import {
+  getBannerVersionHistory,
+  getClickStatsByVersion,
+} from "./version-service";
 
 interface GraphQLContext extends BannerRequestContext {
   req: Request;
@@ -21,8 +27,58 @@ interface GraphQLContext extends BannerRequestContext {
 
 const resolvers = {
   Query: {
+    // Public query - only returns visible banners
     allBanners: (_: unknown, __: unknown, context: GraphQLContext) =>
-      getAllBanners(context.redis),
+      getVisibleBanners(context.redis),
+
+    // Staff query - returns all banners including hidden ones
+    allBannersForStaff: async (
+      _: unknown,
+      __: unknown,
+      context: GraphQLContext
+    ) => {
+      await requireStaffMember(context);
+      return getAllBannersForStaff(context.redis);
+    },
+
+    bannerVersionHistory: async (
+      _: unknown,
+      { bannerId }: { bannerId: string },
+      context: GraphQLContext
+    ) => {
+      // Verify caller is a staff member
+      await requireStaffMember(context);
+
+      const history = await getBannerVersionHistory(bannerId);
+      // Format timestamps for GraphQL
+      return history.map((entry) => ({
+        version: entry.version,
+        changedFields: entry.changedFields,
+        timestamp:
+          entry.timestamp instanceof Date
+            ? entry.timestamp.toISOString()
+            : entry.timestamp,
+        snapshot: entry.snapshot,
+      }));
+    },
+
+    bannerClickStatsByVersion: async (
+      _: unknown,
+      {
+        bannerId,
+        startDate,
+        endDate,
+      }: { bannerId: string; startDate?: string; endDate?: string },
+      context: GraphQLContext
+    ) => {
+      // Verify caller is a staff member
+      await requireStaffMember(context);
+
+      const parsedStartDate = startDate ? new Date(startDate) : undefined;
+      const parsedEndDate = endDate ? new Date(endDate) : undefined;
+
+      return getClickStatsByVersion(bannerId, parsedStartDate, parsedEndDate);
+    },
   },
 
   Mutation: {

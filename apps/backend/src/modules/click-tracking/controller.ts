@@ -16,6 +16,7 @@ export type TargetType = "banner" | "redirect";
 export interface ClickEventData {
   targetId: string;
   targetType: TargetType;
+  targetVersion?: number; // Banner version at time of click
   timestamp: string;
   ipHash: string;
   userAgent?: string;
@@ -40,18 +41,28 @@ export const generateSessionFingerprint = (
     .digest("hex");
 };
 
-export const extractClickMetadata = (
+export const extractClickMetadata = async (
   req: Request,
   targetId: string,
   targetType: TargetType
-): ClickEventData => {
+): Promise<ClickEventData> => {
   const ip = getClientIP(req);
   const userAgent = (req.get("user-agent") || "").slice(0, 500);
   const referrer = req.get("referer") || req.get("referrer") || undefined;
 
+  // For banners, fetch the current version to record with the click
+  let targetVersion: number | undefined;
+  if (targetType === "banner") {
+    const banner = await BannerModel.findById(targetId)
+      .select("currentVersion")
+      .lean();
+    targetVersion = banner?.currentVersion ?? undefined;
+  }
+
   return {
     targetId,
     targetType,
+    targetVersion,
     timestamp: new Date().toISOString(),
     ipHash: hashIP(ip),
     userAgent: userAgent || undefined,
@@ -74,7 +85,7 @@ export const trackIntensiveClick = async (
   targetId: string,
   targetType: TargetType
 ): Promise<void> => {
-  const eventData = extractClickMetadata(req, targetId, targetType);
+  const eventData = await extractClickMetadata(req, targetId, targetType);
   await bufferClickEvent(redis, eventData);
 };
 
@@ -115,6 +126,7 @@ export const flushClickEvents = async (
         return {
           targetId: new Types.ObjectId(event.targetId),
           targetType: event.targetType,
+          targetVersion: event.targetVersion, // Include version for correlation analysis
           timestamp: new Date(event.timestamp),
           ipHash: event.ipHash,
           userAgent: event.userAgent,
