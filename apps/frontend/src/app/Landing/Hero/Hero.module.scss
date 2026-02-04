@@ -1,17 +1,16 @@
-// Hero accent color - change this to update the gradient
-$hero-accent: var(--blue-500);
+@import "../../../_mixins.scss";
 
-@mixin hero-gradient($accent) {
+@mixin hero-gradient($accent, $background) {
   background: linear-gradient(
     to bottom,
-    var(--light-background-color) 0%,
-    color-mix(in srgb, var(--light-background-color) 95%, #{$accent}) 5%,
-    color-mix(in srgb, var(--light-background-color) 85%, #{$accent}) 12%,
-    color-mix(in srgb, var(--light-background-color) 70%, #{$accent}) 22%,
-    color-mix(in srgb, var(--light-background-color) 50%, #{$accent}) 35%,
-    color-mix(in srgb, var(--light-background-color) 30%, #{$accent}) 48%,
-    color-mix(in srgb, var(--light-background-color) 15%, #{$accent}) 60%,
-    color-mix(in srgb, var(--light-background-color) 5%, #{$accent}) 72%,
+    #{$background} 0%,
+    color-mix(in srgb, #{$background} 100%, #{$accent}) 5%,
+    color-mix(in srgb, #{$background} 85%, #{$accent}) 12%,
+    color-mix(in srgb, #{$background} 70%, #{$accent}) 22%,
+    color-mix(in srgb, #{$background} 50%, #{$accent}) 35%,
+    color-mix(in srgb, #{$background} 30%, #{$accent}) 48%,
+    color-mix(in srgb, #{$background} 15%, #{$accent}) 60%,
+    color-mix(in srgb, #{$background} 5%, #{$accent}) 72%,
     #{$accent} 85%,
     #{$accent} 100%
   );
@@ -21,21 +20,30 @@ $hero-accent: var(--blue-500);
   height: calc(100svh - var(--header-height, 90px) + 16px);
   display: flex;
   align-items: flex-end;
-  @include hero-gradient($hero-accent);
+  @include hero-gradient(var(--blue-500), var(--foreground-color));
   padding: 48px;
   position: relative;
   isolation: isolate;
+
+  @include dark-mode {
+    @include hero-gradient(var(--blue-800), var(--foreground-color));
+  }
 
   // Noise overlay
   &::before {
     content: "";
     position: absolute;
-    inset: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: url("./noise.svg");
     background-size: 150px 150px;
     background-repeat: repeat;
     filter: contrast(300%);
     opacity: 0.4;
+    @include dark-mode {
+      opacity: 0;
+    }
     mix-blend-mode: overlay;
     pointer-events: none;
   }

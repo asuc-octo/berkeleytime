@@ -1,0 +1,25 @@
+{
+  "name": "api-sandbox",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "serve -s dist -p 3009",
+    "type-check": "tsc --noEmit --incremental false"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.1",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "serve": "^14.2.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  }
+}
