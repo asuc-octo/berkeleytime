@@ -359,8 +359,6 @@ export const incrementBannerDismiss = async (bannerId: string) => {
 
 // View tracking constants
 const BANNER_VIEW_DEDUPE_TTL_SECONDS = 30 * 60;
-const BANNER_VIEW_RATE_LIMIT_TTL_SECONDS = 60 * 60;
-const BANNER_VIEW_RATE_LIMIT_MAX = 100;
 
 const getBannerViewCounterKey = (bannerId: string) =>
   `banner-view-counter:${bannerId}`;
@@ -369,19 +367,8 @@ export const trackBannerView = async (
   bannerId: string,
   req: Request,
   redis: RedisClientType
-): Promise<{ success: boolean; rateLimited?: boolean }> => {
+): Promise<{ success: boolean }> => {
   const clientIp = getClientIP(req);
-
-  const rateLimitKey = `banner-view-rate-limit:${clientIp}`;
-  const count = await redis.incr(rateLimitKey);
-  if (count === 1) {
-    await redis.expire(rateLimitKey, BANNER_VIEW_RATE_LIMIT_TTL_SECONDS);
-  }
-
-  if (count > BANNER_VIEW_RATE_LIMIT_MAX) {
-    return { success: false, rateLimited: true };
-  }
-
   const userSessionId = req.sessionID || clientIp;
   const userAgent = req.get("user-agent") || "unknown";
 
