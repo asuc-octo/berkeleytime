@@ -328,66 +328,46 @@ export const getHasAd = async (
   courseNumber: string
 ): Promise<boolean> => {
   const adTargets = await AdTargetModel.find().lean();
+  if (!adTargets.length) return false;
 
-  if (!adTargets || adTargets.length === 0) return false;
+  const course = await CourseModel.findOne({ subject, number: courseNumber }).lean();
+  if (!course) return false;
 
-  const classId = `${subject} ${courseNumber}`;
+  const classIds = new Set<string>([
+    `${subject} ${courseNumber}`,
+    ...(course.crossListing ?? []),
+  ]);
 
-  // Extract the first numeric sequence anywhere in the course number (handles
-  // values like "10B", "H128", "C140").
+  const courseSubjects = new Set(
+    [...classIds].map((id) => id.split(" ")[0])
+  );
+
   const courseNumMatch = courseNumber.match(/(\d+)/);
   const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
 
-  // If this course number is C-prefixed (cross-listed like "C140"), prefetch
-  // associated course subjects for cross-referencing with ad target subjects.
-  let crossSubjects: string[] | null = null;
-  if (/^C/i.test(courseNumber)) {
-    const stripped = courseNumMatch ? courseNumMatch[1] : null;
-    if (stripped) {
-      const assoc = await CourseModel.find({ number: stripped }).lean();
-      if (assoc && assoc.length > 0) {
-        crossSubjects = assoc.map((c) => c.subject);
-      }
-    }
-  }
-
   for (const at of adTargets) {
-    const subjects = at.subjects ?? [];
-    const minStr = at.minCourseNumber;
-    const maxStr = at.maxCourseNumber;
-    const specific = at.specificClassIds ?? [];
-
-    // Specific class IDs take precedence
-    if (specific.includes(classId)) return true;
-
-    // If subjects specified and subject not included, skip
-    if (Array.isArray(subjects) && subjects.length > 0) {
-      if (!subjects.includes(subject)) {
-        // If cross-listed subjects exist for C-prefixed numbers, allow a match
-        // when any associated subject is included in the ad target.
-        const matchedViaCross =
-          crossSubjects && crossSubjects.some((s) => subjects.includes(s));
-
-        if (!matchedViaCross) continue;
-      }
+    if (
+      at.specificClassIds?.some((id: string) => classIds.has(id))
+    ) {
+      return true;
     }
 
-    // If min/max specified, compare numeric prefix of course number
-    const min =
-      typeof minStr === "string" && minStr ? parseInt(minStr, 10) : NaN;
-    const max =
-      typeof maxStr === "string" && maxStr ? parseInt(maxStr, 10) : NaN;
-
-    if (!isNaN(min)) {
-      if (isNaN(courseNum) || courseNum < min) continue;
-    }
-    if (!isNaN(max)) {
-      if (isNaN(courseNum) || courseNum > max) continue;
+    if (at.subjects?.length) {
+      const matches = [...courseSubjects].some((s) =>
+        at.subjects?.includes(s)
+      );
+      if (!matches) continue;
     }
 
-    // Passed all checks for this ad target
+    const min = at.minCourseNumber ? parseInt(at.minCourseNumber, 10) : NaN;
+    const max = at.maxCourseNumber ? parseInt(at.maxCourseNumber, 10) : NaN;
+
+    if (!isNaN(min) && (isNaN(courseNum) || courseNum < min)) continue;
+    if (!isNaN(max) && (isNaN(courseNum) || courseNum > max)) continue;
+
     return true;
   }
 
   return false;
 };
+
