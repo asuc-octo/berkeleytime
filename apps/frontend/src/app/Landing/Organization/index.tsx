@@ -46,7 +46,7 @@ export default function Organization() {
           </div>
           <div className={styles.sponsorsLogos}>
             <a
-              href="https://mechanize.work/"
+              href="https://berkeleytime.com/go/about-mechanize"
               className={styles.sponsorLink}
               target="_blank"
               rel="noopener noreferrer"
