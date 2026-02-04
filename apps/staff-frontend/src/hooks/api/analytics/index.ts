@@ -4,5 +4,6 @@ export { useOptionalResponseAnalyticsData } from "./useOptionalResponseAnalytics
 export { useRatingAnalyticsData } from "./useRatingAnalyticsData";
 export { useRatingMetricsAnalyticsData } from "./useRatingMetricsAnalyticsData";
 export { useUserCreationAnalyticsData } from "./useUserCreationAnalyticsData";
+export { useUserActivityAnalyticsData } from "./useUserActivityAnalyticsData";
 export { useCollectionAnalyticsData } from "./useCollectionAnalyticsData";
 export { useSchedulerAnalyticsData } from "./useSchedulerAnalyticsData";
