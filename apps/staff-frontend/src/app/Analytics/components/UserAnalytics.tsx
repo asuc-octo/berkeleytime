@@ -12,7 +12,6 @@ import {
 } from "recharts";
 
 import { LoadingIndicator } from "@repo/theme";
-
 import { Select } from "@repo/theme";
 
 import {
@@ -462,74 +461,74 @@ export function ActiveUsersBlock() {
       };
     }
 
-      const days = getTimeRangeDays(timeRange);
-      const windowDays = getWindowDays(activeWindow);
-      const now = new Date();
-      const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    const days = getTimeRangeDays(timeRange);
+    const windowDays = getWindowDays(activeWindow);
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-      // Parse user data, filtering out legacy users (lastSeenAt = Unix epoch 1970)
-      const users = rawData
-        .map((u) => ({
-          lastSeenAt: new Date(u.lastSeenAt),
-          createdAt: new Date(u.createdAt),
-        }))
-        .filter((u) => u.lastSeenAt.getFullYear() > 1970);
+    // Parse user data, filtering out legacy users (lastSeenAt = Unix epoch 1970)
+    const users = rawData
+      .map((u) => ({
+        lastSeenAt: new Date(u.lastSeenAt),
+        createdAt: new Date(u.createdAt),
+      }))
+      .filter((u) => u.lastSeenAt.getFullYear() > 1970);
 
-      // Initialize buckets based on granularity
-      const bucketKeys: string[] = [];
-      for (let d = new Date(rangeStart); d <= now; ) {
-        const key = getGranularityKey(d, granularity);
-        bucketKeys.push(key);
-        if (granularity === "hour") {
-          d.setHours(d.getHours() + 1);
-        } else {
-          d.setDate(d.getDate() + 1);
-        }
+    // Initialize buckets based on granularity
+    const bucketKeys: string[] = [];
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketKeys.push(key);
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
       }
+    }
 
-      // For each bucket, count users active within the window ending at that point
-      const chartData: DailyDataPoint[] = bucketKeys.map((key) => {
-        // Parse the bucket date
-        const parts = key.split("-");
-        const bucketDate = new Date(
-          parseInt(parts[0]),
-          parseInt(parts[1]) - 1,
-          parseInt(parts[2]),
-          granularity === "hour" ? parseInt(parts[3]) : 23,
-          granularity === "hour" ? 59 : 59
-        );
+    // For each bucket, count users active within the window ending at that point
+    const chartData: DailyDataPoint[] = bucketKeys.map((key) => {
+      // Parse the bucket date
+      const parts = key.split("-");
+      const bucketDate = new Date(
+        parseInt(parts[0]),
+        parseInt(parts[1]) - 1,
+        parseInt(parts[2]),
+        granularity === "hour" ? parseInt(parts[3]) : 23,
+        granularity === "hour" ? 59 : 59
+      );
 
-        // Count active users in this window
-        const activeCount = users.filter((u) =>
-          isActiveInWindow(u.lastSeenAt, bucketDate, windowDays)
-        ).length;
-
-        return {
-          date: formatDisplayDate(key, granularity),
-          dateKey: key,
-          value: activeCount,
-        };
-      });
-
-      // Current and previous period comparison
-      const currentActiveUsers =
-        chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
-
-      // Get the value from the start of the range for comparison
-      const previousActiveUsers = chartData.length > 0 ? chartData[0].value : 0;
-
-      const percentChange =
-        previousActiveUsers > 0
-          ? ((currentActiveUsers - previousActiveUsers) / previousActiveUsers) *
-            100
-          : 0;
+      // Count active users in this window
+      const activeCount = users.filter((u) =>
+        isActiveInWindow(u.lastSeenAt, bucketDate, windowDays)
+      ).length;
 
       return {
-        chartData,
-        currentActiveUsers,
-        percentChange,
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
+        value: activeCount,
       };
-    }, [rawData, timeRange, granularity, activeWindow]);
+    });
+
+    // Current and previous period comparison
+    const currentActiveUsers =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+
+    // Get the value from the start of the range for comparison
+    const previousActiveUsers = chartData.length > 0 ? chartData[0].value : 0;
+
+    const percentChange =
+      previousActiveUsers > 0
+        ? ((currentActiveUsers - previousActiveUsers) / previousActiveUsers) *
+          100
+        : 0;
+
+    return {
+      chartData,
+      currentActiveUsers,
+      percentChange,
+    };
+  }, [rawData, timeRange, granularity, activeWindow]);
 
   const chartConfig = createChartConfig(["value"], {
     labels: { value: `${activeWindow}` },
