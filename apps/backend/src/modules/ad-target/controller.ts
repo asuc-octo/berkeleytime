@@ -48,6 +48,23 @@ export interface UpdateAdTargetInput {
   maxCourseNumber?: string | null;
 }
 
+const normalizeSubjects = (subjects?: string[] | null) => {
+  if (!subjects) return [];
+
+  const normalized = subjects
+    .flatMap((subject) => subject.split(","))
+    .map((subject) => subject.trim().replace(/\s+/g, " ").toUpperCase())
+    .filter((subject) => subject.length > 0);
+
+  return [...new Set(normalized)];
+};
+
+const normalizeCourseNumberInput = (value?: string | null) => {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 const hasAtLeastOneCriterion = (data: {
   subjects?: string[] | null;
   minCourseNumber?: string | null;
@@ -71,10 +88,17 @@ export const createAdTarget = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
+  const normalizedSubjects = normalizeSubjects(input.subjects);
+  const normalizedMinCourseNumber = normalizeCourseNumberInput(
+    input.minCourseNumber
+  );
+  const normalizedMaxCourseNumber = normalizeCourseNumberInput(
+    input.maxCourseNumber
+  );
   const doc = {
-    subjects: input.subjects || [],
-    minCourseNumber: input.minCourseNumber || undefined,
-    maxCourseNumber: input.maxCourseNumber || undefined,
+    subjects: normalizedSubjects,
+    minCourseNumber: normalizedMinCourseNumber ?? undefined,
+    maxCourseNumber: normalizedMaxCourseNumber ?? undefined,
   };
   if (!hasAtLeastOneCriterion(doc)) {
     throw new GraphQLError("At least one targeting criterion is required", {
@@ -99,13 +123,17 @@ export const updateAdTarget = async (
   const updateData: Record<string, unknown> = {};
   // undefined = not sent (no change); null = clear/set empty
   if (input.subjects !== undefined) {
-    updateData.subjects = input.subjects ?? [];
+    updateData.subjects = normalizeSubjects(input.subjects);
   }
   if (input.minCourseNumber !== undefined) {
-    updateData.minCourseNumber = input.minCourseNumber ?? null;
+    updateData.minCourseNumber = normalizeCourseNumberInput(
+      input.minCourseNumber
+    );
   }
   if (input.maxCourseNumber !== undefined) {
-    updateData.maxCourseNumber = input.maxCourseNumber ?? null;
+    updateData.maxCourseNumber = normalizeCourseNumberInput(
+      input.maxCourseNumber
+    );
   }
 
   const existing = await AdTargetModel.findById(adTargetId).lean();

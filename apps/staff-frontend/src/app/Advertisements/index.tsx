@@ -68,11 +68,18 @@ export default function Advertisements() {
   };
 
   const handleAddSubject = () => {
-    const trimmed = subjectInput.trim().toUpperCase();
-    if (trimmed && !formData.subjects.includes(trimmed)) {
+    const nextSubjects = subjectInput
+      .split(",")
+      .map((value) =>
+        value.trim().replace(/\s+/g, " ").toUpperCase()
+      )
+      .filter((value) => value.length > 0);
+
+    if (nextSubjects.length > 0) {
+      const merged = new Set([...formData.subjects, ...nextSubjects]);
       setFormData({
         ...formData,
-        subjects: [...formData.subjects, trimmed],
+        subjects: Array.from(merged),
       });
     }
     setSubjectInput("");
@@ -269,7 +276,8 @@ export default function Advertisements() {
                   </div>
                 )}
                 <p className={styles.formHint}>
-                  Classes with these subject codes will show ads.
+                  Exact subject code match only (case-insensitive). Separate
+                  with commas.
                 </p>
               </div>
 
@@ -307,8 +315,8 @@ export default function Advertisements() {
                   </div>
                 </div>
                 <p className={styles.formHint}>
-                  Only applies to classes within this course number range (uses
-                  numeric prefix).
+                  Matches if any numeric part of the course number falls within
+                  the range (e.g., C142 becomes 142, 61A becomes 61).
                 </p>
               </div>
 

@@ -331,13 +331,29 @@ type CachedAdTarget = {
 const AD_TARGETS_CACHE_KEY = "ad-targets:all";
 const AD_TARGETS_CACHE_TTL_SECONDS = 60 * 60 * 24;
 
+const normalizeSubjectCode = (subject: string): string => {
+  return subject.trim().replace(/\s+/g, " ").toUpperCase();
+};
+
+const normalizeCourseNumberValue = (value?: string | null) => {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 const normalizeAdTargets = (
   adTargets: CachedAdTarget[]
 ): CachedAdTarget[] => {
   return adTargets.map((adTarget) => ({
-    subjects: adTarget.subjects ?? [],
-    minCourseNumber: adTarget.minCourseNumber ?? null,
-    maxCourseNumber: adTarget.maxCourseNumber ?? null,
+    subjects: [
+      ...new Set(
+        (adTarget.subjects ?? [])
+          .map((subject) => normalizeSubjectCode(subject))
+          .filter((subject) => subject.length > 0)
+      ),
+    ],
+    minCourseNumber: normalizeCourseNumberValue(adTarget.minCourseNumber),
+    maxCourseNumber: normalizeCourseNumberValue(adTarget.maxCourseNumber),
   }));
 };
 
@@ -444,14 +460,10 @@ export const getHasAd = async (
   const variants = await getClassVariants(courseId);
   if (variants.length === 0) return false;
 
-  const allSubjects = new Set(variants.map((v) => v.subject));
-
-  const allCourseNumbers = new Set<number>();
-  for (const v of variants) {
-    for (const num of extractCourseNumbers(v.courseNumber)) {
-      allCourseNumbers.add(num);
-    }
-  }
+  const normalizedVariants = variants.map((variant) => ({
+    subject: normalizeSubjectCode(variant.subject),
+    numbers: extractCourseNumbers(variant.courseNumber),
+  }));
 
   for (const at of adTargets) {
     const hasSubjects = (at.subjects?.length ?? 0) > 0;
@@ -459,21 +471,22 @@ export const getHasAd = async (
     const max = at.maxCourseNumber ? parseInt(at.maxCourseNumber, 10) : null;
     const hasRange = min !== null || max !== null;
 
-    let subjectMatch = true;
-    if (hasSubjects) {
-      subjectMatch = [...allSubjects].some((s) => at.subjects?.includes(s));
-      if (!subjectMatch) continue;
-    }
-
-    if (!hasRange) {
-      if (hasSubjects) {
-        return true;
-      }
+    if (!hasSubjects && !hasRange) {
       continue;
     }
 
-    if (anyNumberInRange([...allCourseNumbers], min, max)) {
-      return true;
+    for (const variant of normalizedVariants) {
+      if (hasSubjects && !at.subjects?.includes(variant.subject)) {
+        continue;
+      }
+
+      if (!hasRange) {
+        return true;
+      }
+
+      if (anyNumberInRange(variant.numbers, min, max)) {
+        return true;
+      }
     }
   }
 
