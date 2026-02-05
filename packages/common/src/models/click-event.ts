@@ -2,8 +2,9 @@ import { Model, Schema, Types, model } from "mongoose";
 
 export interface IClickEvent {
   targetId: Types.ObjectId;
-  targetType: "banner" | "redirect";
+  targetType: "banner" | "redirect" | "targeted-message";
   targetVersion?: number; // Banner version at time of click (for version correlation)
+  additionalInfo?: string; // Optional context (e.g., courseId)
   timestamp: Date;
   ipHash: string;
   userAgent?: string;
@@ -13,8 +14,13 @@ export interface IClickEvent {
 
 const clickEventSchema = new Schema<IClickEvent>({
   targetId: { type: Schema.Types.ObjectId, required: true },
-  targetType: { type: String, enum: ["banner", "redirect"], required: true },
-  targetVersion: { type: Number }, // Banner version at time of click
+  targetType: {
+    type: String,
+    enum: ["banner", "redirect", "targeted-message"],
+    required: true,
+  },
+  targetVersion: { type: Number }, // version at time of click
+  additionalInfo: { type: String },
   timestamp: { type: Date, required: true, default: Date.now },
   ipHash: { type: String, required: true },
   userAgent: { type: String, maxlength: 500 },
@@ -26,6 +32,7 @@ clickEventSchema.index({ targetId: 1, timestamp: -1 });
 clickEventSchema.index({ targetType: 1, timestamp: -1 });
 // Index for version-based analytics queries (clicks by version)
 clickEventSchema.index({ targetId: 1, targetVersion: 1, timestamp: -1 });
+clickEventSchema.index({ additionalInfo: 1, timestamp: -1 });
 
 export const ClickEventModel: Model<IClickEvent> = model<IClickEvent>(
   "clickevents",

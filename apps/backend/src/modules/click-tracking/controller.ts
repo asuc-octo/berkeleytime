@@ -7,16 +7,18 @@ import {
   BannerModel,
   ClickEventModel,
   RouteRedirectModel,
+  TargetedMessageModel,
 } from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
 
-export type TargetType = "banner" | "redirect";
+export type TargetType = "banner" | "redirect" | "targeted-message";
 
 export interface ClickEventData {
   targetId: string;
   targetType: TargetType;
   targetVersion?: number; // Banner version at time of click
+  additionalInfo?: string; // Optional context (e.g., courseId)
   timestamp: string;
   ipHash: string;
   userAgent?: string;
@@ -44,25 +46,32 @@ export const generateSessionFingerprint = (
 export const extractClickMetadata = async (
   req: Request,
   targetId: string,
-  targetType: TargetType
+  targetType: TargetType,
+  options?: { additionalInfo?: string }
 ): Promise<ClickEventData> => {
   const ip = getClientIP(req);
   const userAgent = (req.get("user-agent") || "").slice(0, 500);
   const referrer = req.get("referer") || req.get("referrer") || undefined;
 
-  // For banners, fetch the current version to record with the click
+  // For banners and targeted messages, fetch the current version to record
   let targetVersion: number | undefined;
   if (targetType === "banner") {
     const banner = await BannerModel.findById(targetId)
       .select("currentVersion")
       .lean();
     targetVersion = banner?.currentVersion ?? undefined;
+  } else if (targetType === "targeted-message") {
+    const message = await TargetedMessageModel.findById(targetId)
+      .select("currentVersion")
+      .lean();
+    targetVersion = message?.currentVersion ?? undefined;
   }
 
   return {
     targetId,
     targetType,
     targetVersion,
+    additionalInfo: options?.additionalInfo,
     timestamp: new Date().toISOString(),
     ipHash: hashIP(ip),
     userAgent: userAgent || undefined,
@@ -83,9 +92,15 @@ export const trackIntensiveClick = async (
   redis: RedisClientType,
   req: Request,
   targetId: string,
-  targetType: TargetType
+  targetType: TargetType,
+  options?: { additionalInfo?: string }
 ): Promise<void> => {
-  const eventData = await extractClickMetadata(req, targetId, targetType);
+  const eventData = await extractClickMetadata(
+    req,
+    targetId,
+    targetType,
+    options
+  );
   await bufferClickEvent(redis, eventData);
 };
 
@@ -122,11 +137,12 @@ export const flushClickEvents = async (
 
       // Parse and prepare for bulk insert
       const documents = events.map((eventJson) => {
-        const event: ClickEventData = JSON.parse(eventJson);
+        const event = JSON.parse(eventJson) as ClickEventData;
         return {
           targetId: new Types.ObjectId(event.targetId),
           targetType: event.targetType,
           targetVersion: event.targetVersion, // Include version for correlation analysis
+          additionalInfo: event.additionalInfo,
           timestamp: new Date(event.timestamp),
           ipHash: event.ipHash,
           userAgent: event.userAgent,
@@ -226,8 +242,11 @@ export const checkClickEventLoggingEnabled = async (
   if (targetType === "banner") {
     const banner = await BannerModel.findById(targetId).lean();
     return banner?.clickEventLogging === true;
-  } else {
+  }
+  if (targetType === "redirect") {
     const redirect = await RouteRedirectModel.findById(targetId).lean();
     return redirect?.clickEventLogging === true;
   }
+  const message = await TargetedMessageModel.findById(targetId).lean();
+  return message?.clickEventLogging === true;
 };

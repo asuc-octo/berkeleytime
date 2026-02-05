@@ -1,9 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 
-import {
-  COURSE_LOOKUP,
-  CourseLookupResult,
-} from "../../../lib/api/course";
+import { COURSE_LOOKUP, CourseLookupResult } from "../../../lib/api/course";
 
 interface CourseLookupResponse {
   course: CourseLookupResult | null;

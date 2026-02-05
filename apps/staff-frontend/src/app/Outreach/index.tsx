@@ -144,9 +144,8 @@ export default function Outreach() {
     []
   );
   const [isTargetedModalOpen, setIsTargetedModalOpen] = useState(false);
-  const [editingTargeted, setEditingTargeted] = useState<TargetedMessage | null>(
-    null
-  );
+  const [editingTargeted, setEditingTargeted] =
+    useState<TargetedMessage | null>(null);
   const [targetedFormData, setTargetedFormData] =
     useState<TargetedMessageFormData>(initialTargetedMessageFormData);
   const [courseInput, setCourseInput] = useState("");
@@ -391,14 +390,23 @@ export default function Outreach() {
 
       setTargetedFormData((prev) => ({
         ...prev,
-        targetCourses: [
-          ...prev.targetCourses,
-          {
+        targetCourses: (() => {
+          const nextCourse = {
             subject: course.subject,
             courseNumber: course.number,
             courseId: course.courseId,
-          },
-        ],
+          };
+          const alreadyAddedLatest = prev.targetCourses.some(
+            (existing) =>
+              existing.courseId === nextCourse.courseId ||
+              (existing.subject === nextCourse.subject &&
+                existing.courseNumber === nextCourse.courseNumber)
+          );
+          if (alreadyAddedLatest) {
+            return prev.targetCourses;
+          }
+          return [...prev.targetCourses, nextCourse];
+        })(),
       }));
       setCourseInput("");
     } finally {
@@ -424,11 +432,13 @@ export default function Outreach() {
     }
 
     const resolvedCourses: TargetedMessageCourse[] =
-      targetedFormData.targetCourses.map(({ courseId, subject, courseNumber }) => ({
-        courseId,
-        subject,
-        courseNumber,
-      }));
+      targetedFormData.targetCourses.map(
+        ({ courseId, subject, courseNumber }) => ({
+          courseId,
+          subject,
+          courseNumber,
+        })
+      );
 
     // TODO: Replace with GraphQL mutation when backend is ready
     if (editingTargeted) {
@@ -995,10 +1005,7 @@ export default function Outreach() {
                 {targetedFormData.targetCourses.length > 0 && (
                   <div className={styles.courseTagContainer}>
                     {targetedFormData.targetCourses.map((course, i) => (
-                      <span
-                        key={i}
-                        className={styles.editableCourseTag}
-                      >
+                      <span key={i} className={styles.editableCourseTag}>
                         {course.subject} {course.courseNumber}
                         <button
                           className={styles.removeCourseTag}
