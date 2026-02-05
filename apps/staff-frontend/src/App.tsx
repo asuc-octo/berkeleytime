@@ -6,7 +6,6 @@ import { Button, ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
-import Advertisements from "./app/Advertisements";
 import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
 import Outreach from "./app/Outreach";
@@ -29,10 +28,6 @@ const router = createBrowserRouter([
       {
         path: "outreach",
         element: <Outreach />,
-      },
-      {
-        path: "advertisements",
-        element: <Advertisements />,
       },
     ],
   },

@@ -45,9 +45,8 @@ export default function Organization() {
             </p>
           </div>
           <div className={styles.sponsorsLogos}>
-            {/* TODO: Uncomment when Mechanize partnership kicks in
             <a
-              href="https://mechanize.work/"
+              href="https://berkeleytime.com/go/about-mechanize"
               className={styles.sponsorLink}
               target="_blank"
               rel="noopener noreferrer"
@@ -66,7 +65,6 @@ export default function Organization() {
                 <span className={styles.mechanizeName}>Mechanize, Inc.</span>
               </div>
             </a>
-            */}
             <a
               href="https://www.ocf.berkeley.edu/"
               className={styles.sponsorLink}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowUpRight, Xmark } from "iconoir-react";
+import Markdown from "react-markdown";
 
 import {
   useAllBanners,
@@ -113,10 +114,22 @@ export default function Banner() {
   return (
     <div className={styles.root}>
       <div className={styles.content}>
-        <p
-          className={styles.text}
-          dangerouslySetInnerHTML={{ __html: activeBanner.text }}
-        />
+        <span className={styles.text}>
+          <Markdown
+            allowedElements={["em", "strong", "a", "br"]}
+            unwrapDisallowed
+            components={{
+              // Render links safely with security attributes
+              a: ({ href, children }) => (
+                <a href={href} target="_blank" rel="noopener noreferrer">
+                  {children}
+                </a>
+              ),
+            }}
+          >
+            {activeBanner.text}
+          </Markdown>
+        </span>
         {activeBanner.link && clickUrl && (
           <div className={styles.actions}>
             <a

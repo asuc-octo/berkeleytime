@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import {
-  ALL_BANNERS,
+  ALL_BANNERS_FOR_STAFF,
   Banner,
   CREATE_BANNER,
   CreateBannerInput,
@@ -13,7 +13,7 @@ interface CreateBannerResponse {
 
 export const useCreateBanner = () => {
   const [mutate, result] = useMutation<CreateBannerResponse>(CREATE_BANNER, {
-    refetchQueries: [ALL_BANNERS],
+    refetchQueries: [ALL_BANNERS_FOR_STAFF],
   });
 
   const createBanner = async (input: CreateBannerInput) => {

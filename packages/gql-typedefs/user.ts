@@ -19,6 +19,16 @@ export const userTypeDef = gql`
     createdAt: String!
   }
 
+  """
+  User activity data point for analytics (tracks login activity)
+  """
+  type UserActivityDataPoint @cacheControl(maxAge: 0) {
+    "Timestamp when the user was last seen (logged in)"
+    lastSeenAt: String!
+    "Timestamp when the user was created"
+    createdAt: String!
+  }
+
   type Query {
     user: User @auth
   }

@@ -1,16 +1,16 @@
 import { useQuery } from "@apollo/client";
 
-import { ALL_BANNERS, Banner } from "../../../lib/api/banner";
+import { ALL_BANNERS_FOR_STAFF, Banner } from "../../../lib/api/banner";
 
-interface AllBannersResponse {
-  allBanners: Banner[];
+interface AllBannersForStaffResponse {
+  allBannersForStaff: Banner[];
 }
 
 export const useAllBanners = () => {
-  const query = useQuery<AllBannersResponse>(ALL_BANNERS);
+  const query = useQuery<AllBannersForStaffResponse>(ALL_BANNERS_FOR_STAFF);
 
   return {
     ...query,
-    data: query.data?.allBanners ?? [],
+    data: query.data?.allBannersForStaff ?? [],
   };
 };

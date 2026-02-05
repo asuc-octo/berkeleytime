@@ -4,7 +4,6 @@ import styles from "./Analytics.module.scss";
 import {
   TotalRequestsBlock,
   UniqueVisitorsBlock,
-  VisitorTimeDistributionBlock,
 } from "./components/CloudflareAnalytics";
 import {
   CollectionNamesBlock,
@@ -43,8 +42,9 @@ import {
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";
 import {
+  ActiveUsersBlock,
   SignupDayHistogramBlock,
-  SignupHourHistogramBlock,
+  UserActivityRecencyBlock,
   UserGrowthBlock,
 } from "./components/UserAnalytics";
 
@@ -117,16 +117,16 @@ export default function Analytics() {
               <TotalRequestsBlock />
             </div>
             <div className={styles.cell}>
-              <VisitorTimeDistributionBlock />
-            </div>
-            <div className={styles.cell}>
               <UserGrowthBlock />
             </div>
             <div className={styles.cell}>
               <SignupDayHistogramBlock />
             </div>
             <div className={styles.cell}>
-              <SignupHourHistogramBlock />
+              <ActiveUsersBlock />
+            </div>
+            <div className={styles.cell}>
+              <UserActivityRecencyBlock />
             </div>
           </>
         )}

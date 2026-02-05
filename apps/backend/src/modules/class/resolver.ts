@@ -15,7 +15,6 @@ import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
   getClass,
-  getHasAd,
   getPrimarySection,
   getSecondarySections,
   getSection,
@@ -288,10 +287,6 @@ const resolvers: ClassModule.Resolvers = {
         parent.number,
         context.redis
       );
-    },
-
-    hasAd: async (parent: IntermediateClass | ClassModule.Class, _, context) => {
-      return await getHasAd(parent.courseId, context.redis);
     },
   },
 

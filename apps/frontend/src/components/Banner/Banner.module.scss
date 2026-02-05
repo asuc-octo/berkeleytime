@@ -28,6 +28,25 @@
     @include dark-mode {
       color: var(--gray-300);
     }
+
+    a {
+      color: var(--blue-600);
+      text-decoration: none;
+      transition: color 100ms ease-in-out;
+
+      &:hover {
+        color: var(--blue-700);
+        text-decoration: underline;
+      }
+
+      @include dark-mode {
+        color: var(--blue-400);
+
+        &:hover {
+          color: var(--blue-300);
+        }
+      }
+    }
   }
 
   .actions {

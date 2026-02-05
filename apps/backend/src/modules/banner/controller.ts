@@ -11,6 +11,13 @@ import {
 
 import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";
+import {
+  createInitialVersionEntry,
+  createSnapshot,
+  createSnapshotFromInput,
+  createVersionEntry,
+  detectChangedFields,
+} from "./version-service";
 
 // Context interface for authenticated requests
 export interface BannerRequestContext {
@@ -48,6 +55,7 @@ export interface CreateBannerInput {
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }
 
 export interface UpdateBannerInput {
@@ -57,10 +65,41 @@ export interface UpdateBannerInput {
   persistent?: boolean | null;
   reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
+  visible?: boolean | null;
 }
 
-export const getAllBanners = async (redis: RedisClientType) => {
-  const banners = await BannerModel.find().sort({ createdAt: -1 });
+/**
+ * Get all visible banners for public display.
+ * Filters out banners explicitly marked as hidden (visible === false).
+ */
+export const getVisibleBanners = async (redis: RedisClientType) => {
+  // Only return banners that are explicitly visible (or default to visible)
+  const banners = await BannerModel.find({
+    visible: { $ne: false },
+    deletedAt: null,
+  }).sort({
+    createdAt: -1,
+  });
+
+  // Get view counts for all banners (always tracked now)
+  const bannersWithViews = await Promise.all(
+    banners.map(async (banner) => {
+      const viewCount = await getBannerViewCount(banner._id.toString(), redis);
+      return formatBanner(banner, viewCount);
+    })
+  );
+
+  return bannersWithViews;
+};
+
+/**
+ * Get all banners for staff dashboard (includes hidden banners).
+ * Staff members need to see all banners to manage visibility.
+ */
+export const getAllBannersForStaff = async (redis: RedisClientType) => {
+  const banners = await BannerModel.find({ deletedAt: null }).sort({
+    createdAt: -1,
+  });
 
   // Get view counts for all banners (always tracked now)
   const bannersWithViews = await Promise.all(
@@ -80,13 +119,21 @@ export const createBanner = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
+  // Create initial snapshot and version entry for the new banner
+  const snapshot = createSnapshotFromInput(input);
+  const initialVersionEntry = createInitialVersionEntry(snapshot);
+
   const banner = await BannerModel.create({
     text: input.text,
-    link: input.link || undefined,
-    linkText: input.linkText || undefined,
+    link: input.link === "" || input.link === null ? null : input.link,
+    linkText:
+      input.linkText === "" || input.linkText === null ? null : input.linkText,
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
+    visible: input.visible ?? true,
+    currentVersion: 1,
+    versionHistory: [initialVersionEntry],
   });
 
   return formatBanner(banner, 0);
@@ -100,15 +147,27 @@ export const updateBanner = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
+  // First, fetch the current banner to detect changes
+  const currentBanner = await BannerModel.findById(bannerId);
+  if (!currentBanner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
   const updateData: Record<string, unknown> = {};
   if (input.text !== null && input.text !== undefined) {
     updateData.text = input.text;
   }
-  if (input.link !== null && input.link !== undefined) {
-    updateData.link = input.link || undefined;
+  if (input.link !== undefined) {
+    // Use null to signal "clear the field" (empty string → null), preserving version tracking
+    updateData.link =
+      input.link === "" || input.link === null ? null : input.link;
   }
-  if (input.linkText !== null && input.linkText !== undefined) {
-    updateData.linkText = input.linkText || undefined;
+  if (input.linkText !== undefined) {
+    // Use null to signal "clear the field" (empty string → null), preserving version tracking
+    updateData.linkText =
+      input.linkText === "" || input.linkText === null ? null : input.linkText;
   }
   if (input.persistent !== null && input.persistent !== undefined) {
     updateData.persistent = input.persistent;
@@ -122,12 +181,81 @@ export const updateBanner = async (
   ) {
     updateData.clickEventLogging = input.clickEventLogging;
   }
+  if (input.visible !== null && input.visible !== undefined) {
+    updateData.visible = input.visible;
+  }
 
-  const banner = await BannerModel.findByIdAndUpdate(bannerId, updateData, {
-    new: true,
-  });
+  // Detect which fields actually changed
+  const changedFields = detectChangedFields(currentBanner, updateData);
+
+  // If any versioned fields changed, create a new version entry
+  if (changedFields.length > 0) {
+    // Apply updates to get the new state for the snapshot
+    const updatedBannerData = {
+      text: (updateData.text as string) ?? currentBanner.text,
+      link:
+        updateData.link !== undefined ? updateData.link : currentBanner.link,
+      linkText:
+        updateData.linkText !== undefined
+          ? updateData.linkText
+          : currentBanner.linkText,
+      persistent:
+        (updateData.persistent as boolean) ?? currentBanner.persistent,
+      reappearing:
+        (updateData.reappearing as boolean) ?? currentBanner.reappearing,
+      clickEventLogging:
+        (updateData.clickEventLogging as boolean) ??
+        currentBanner.clickEventLogging,
+      visible: (updateData.visible as boolean) ?? currentBanner.visible,
+    };
+
+    const snapshot = createSnapshotFromInput(
+      updatedBannerData as {
+        text: string;
+        link?: string | null;
+        linkText?: string | null;
+        persistent: boolean;
+        reappearing: boolean;
+        clickEventLogging?: boolean | null;
+      }
+    );
+    const currentVersion = currentBanner.currentVersion ?? 1;
+    const newVersionEntry = createVersionEntry(
+      currentVersion,
+      changedFields,
+      snapshot
+    );
+
+    // Atomically update the banner with new version entry and incremented version
+    updateData.currentVersion = currentVersion + 1;
+    updateData.$push = { versionHistory: newVersionEntry };
+  }
+
+  // Separate $push from regular fields for MongoDB update
+  const { $push, ...regularUpdateData } = updateData;
+  const updateOperation: Record<string, unknown> = { $set: regularUpdateData };
+  if ($push) {
+    updateOperation.$push = $push;
+  }
+
+  // Use optimistic locking: include currentVersion in the query filter
+  // to prevent concurrent updates from overwriting each other
+  const expectedVersion = currentBanner.currentVersion ?? 1;
+  const banner = await BannerModel.findOneAndUpdate(
+    { _id: bannerId, currentVersion: expectedVersion },
+    updateOperation,
+    { new: true }
+  );
 
   if (!banner) {
+    // Check if banner exists but version changed (concurrent edit)
+    const exists = await BannerModel.exists({ _id: bannerId });
+    if (exists) {
+      throw new GraphQLError(
+        "Banner was modified by another user. Please refresh and try again.",
+        { extensions: { code: "CONFLICT" } }
+      );
+    }
     throw new GraphQLError("Banner not found", {
       extensions: { code: "NOT_FOUND" },
     });
@@ -143,8 +271,58 @@ export const deleteBanner = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
-  const result = await BannerModel.findByIdAndDelete(bannerId);
-  return result !== null;
+  // First, fetch the current banner
+  const currentBanner = await BannerModel.findById(bannerId);
+  if (!currentBanner) {
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  // Already deleted? Return true (idempotent)
+  if (currentBanner.deletedAt) {
+    return true;
+  }
+
+  // Create deletion version entry for audit trail
+  const currentVersion = currentBanner.currentVersion ?? 1;
+  const snapshot = createSnapshot(currentBanner);
+  const deletionVersionEntry = createVersionEntry(
+    currentVersion,
+    ["deletedAt"],
+    snapshot,
+    { action: "deleted" }
+  );
+
+  // Soft delete with version tracking using optimistic locking
+  const expectedVersion = currentBanner.currentVersion ?? 1;
+  const result = await BannerModel.findOneAndUpdate(
+    { _id: bannerId, currentVersion: expectedVersion },
+    {
+      $set: {
+        deletedAt: new Date(),
+        currentVersion: expectedVersion + 1,
+      },
+      $push: { versionHistory: deletionVersionEntry },
+    },
+    { new: true }
+  );
+
+  if (!result) {
+    // Check if banner exists but version changed (concurrent edit)
+    const exists = await BannerModel.exists({ _id: bannerId });
+    if (exists) {
+      throw new GraphQLError(
+        "Banner was modified by another user. Please refresh and try again.",
+        { extensions: { code: "CONFLICT" } }
+      );
+    }
+    throw new GraphQLError("Banner not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  return true;
 };
 
 export const incrementBannerClick = async (bannerId: string) => {
@@ -181,8 +359,6 @@ export const incrementBannerDismiss = async (bannerId: string) => {
 
 // View tracking constants
 const BANNER_VIEW_DEDUPE_TTL_SECONDS = 30 * 60;
-const BANNER_VIEW_RATE_LIMIT_TTL_SECONDS = 60 * 60;
-const BANNER_VIEW_RATE_LIMIT_MAX = 100;
 
 const getBannerViewCounterKey = (bannerId: string) =>
   `banner-view-counter:${bannerId}`;
@@ -191,19 +367,8 @@ export const trackBannerView = async (
   bannerId: string,
   req: Request,
   redis: RedisClientType
-): Promise<{ success: boolean; rateLimited?: boolean }> => {
+): Promise<{ success: boolean }> => {
   const clientIp = getClientIP(req);
-
-  const rateLimitKey = `banner-view-rate-limit:${clientIp}`;
-  const count = await redis.incr(rateLimitKey);
-  if (count === 1) {
-    await redis.expire(rateLimitKey, BANNER_VIEW_RATE_LIMIT_TTL_SECONDS);
-  }
-
-  if (count > BANNER_VIEW_RATE_LIMIT_MAX) {
-    return { success: false, rateLimited: true };
-  }
-
   const userSessionId = req.sessionID || clientIp;
   const userAgent = req.get("user-agent") || "unknown";
 
