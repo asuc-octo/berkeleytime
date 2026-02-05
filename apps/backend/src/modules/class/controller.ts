@@ -323,22 +323,45 @@ export const flushViewCounts = async (
   }
 };
 
+// create an in-memory cache for ad targets
+type CachedAdTarget = {
+  specificClassIds?: string[] | null;
+  subjects?: string[] | null;
+  minCourseNumber?: string | null;
+  maxCourseNumber?: string | null;
+};
+let adTargetsCache: CachedAdTarget[] | null = null;
+let adTargetsCacheExpiry = 0;
+const AD_TARGETS_CACHE_TTL_MS = 60_000; // 1 minute
+
+const getCachedAdTargets = async (): Promise<CachedAdTarget[]> => {
+  if (adTargetsCache !== null && Date.now() < adTargetsCacheExpiry) {
+    return adTargetsCache;
+  }
+  adTargetsCache = await AdTargetModel.find().lean();
+  adTargetsCacheExpiry = Date.now() + AD_TARGETS_CACHE_TTL_MS;
+  return adTargetsCache;
+};
+
+export const invalidateAdTargetsCache = () => {
+  adTargetsCache = null;
+};
+
 export const getHasAd = async (
   subject: string,
   courseNumber: string
 ): Promise<boolean> => {
-  const adTargets = await AdTargetModel.find().lean();
+  const adTargets = await getCachedAdTargets();
   if (!adTargets.length) return false;
 
   const course = await CourseModel.findOne({
     subject,
     number: courseNumber,
   }).lean();
-  if (!course) return false;
 
   const classIds = new Set<string>([
     `${subject} ${courseNumber}`,
-    ...(course.crossListing ?? []),
+    ...(course?.crossListing ?? []),
   ]);
 
   const courseSubjects = new Set([...classIds].map((id) => id.split(" ")[0]));

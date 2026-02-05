@@ -10,7 +10,8 @@ import {
 
 const resolvers = {
   Query: {
-    allAdTargets: () => getAllAdTargets(),
+    allAdTargets: (_: unknown, __: unknown, context: AdTargetRequestContext) => 
+      getAllAdTargets(context),
   },
 
   Mutation: {
@@ -29,11 +30,6 @@ const resolvers = {
       { adTargetId }: { adTargetId: string },
       context: AdTargetRequestContext
     ) => deleteAdTarget(context, adTargetId),
-  },
-
-  AdTarget: {
-    id: (parent: { _id?: { toString: () => string }; id?: string }) =>
-      parent._id?.toString() ?? parent.id,
   },
 };
 

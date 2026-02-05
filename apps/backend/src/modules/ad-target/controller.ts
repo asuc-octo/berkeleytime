@@ -2,6 +2,7 @@ import { GraphQLError } from "graphql";
 
 import { AdTargetModel, StaffMemberModel } from "@repo/common/models";
 
+import { invalidateAdTargetsCache } from "../class/controller";
 import { formatAdTarget } from "./formatter";
 
 // Context interface for authenticated requests
@@ -47,9 +48,21 @@ export interface UpdateAdTargetInput {
   specificClassIds?: string[] | null;
 }
 
-export const getAllAdTargets = async () => {
-  const adTargets = await AdTargetModel.find().sort({ createdAt: -1 });
+const hasAtLeastOneCriterion = (data: {
+  subjects?: string[] | null;
+  specificClassIds?: string[] | null;
+  minCourseNumber?: string | null;
+  maxCourseNumber?: string | null;
+}) =>
+  (data.subjects?.length ?? 0) > 0 ||
+  (data.specificClassIds?.length ?? 0) > 0 ||
+  data.minCourseNumber != null ||
+  data.maxCourseNumber != null;
 
+// ensure a user is properly authorized even to get ad requests
+export const getAllAdTargets = async (context: AdTargetRequestContext) => {
+  await requireStaffMember(context);
+  const adTargets = await AdTargetModel.find().sort({ createdAt: -1 });
   return adTargets.map(formatAdTarget);
 };
 
@@ -60,13 +73,21 @@ export const createAdTarget = async (
   // Verify caller is a staff member
   await requireStaffMember(context);
 
-  const adTarget = await AdTargetModel.create({
+  const doc = {
     subjects: input.subjects || [],
     minCourseNumber: input.minCourseNumber || undefined,
     maxCourseNumber: input.maxCourseNumber || undefined,
     specificClassIds: input.specificClassIds || [],
-  });
+  };
+  if (!hasAtLeastOneCriterion(doc)) {
+    throw new GraphQLError("At least one targeting criterion is required", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
 
+  const adTarget = await AdTargetModel.create(doc);
+
+  invalidateAdTargetsCache();
   return formatAdTarget(adTarget);
 };
 
@@ -79,17 +100,31 @@ export const updateAdTarget = async (
   await requireStaffMember(context);
 
   const updateData: Record<string, unknown> = {};
-  if (input.subjects !== null && input.subjects !== undefined) {
-    updateData.subjects = input.subjects || [];
+  // undefined = not sent (no change); null = clear/set empty
+  if (input.subjects !== undefined) {
+    updateData.subjects = input.subjects ?? [];
   }
-  if (input.minCourseNumber !== null && input.minCourseNumber !== undefined) {
-    updateData.minCourseNumber = input.minCourseNumber || undefined;
+  if (input.minCourseNumber !== undefined) {
+    updateData.minCourseNumber = input.minCourseNumber ?? null;
   }
-  if (input.maxCourseNumber !== null && input.maxCourseNumber !== undefined) {
-    updateData.maxCourseNumber = input.maxCourseNumber || undefined;
+  if (input.maxCourseNumber !== undefined) {
+    updateData.maxCourseNumber = input.maxCourseNumber ?? null;
   }
-  if (input.specificClassIds !== null && input.specificClassIds !== undefined) {
-    updateData.specificClassIds = input.specificClassIds || [];
+  if (input.specificClassIds !== undefined) {
+    updateData.specificClassIds = input.specificClassIds ?? [];
+  }
+
+  const existing = await AdTargetModel.findById(adTargetId).lean();
+  if (!existing) {
+    throw new GraphQLError("AdTarget not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+  const merged = { ...existing, ...updateData };
+  if (!hasAtLeastOneCriterion(merged)) {
+    throw new GraphQLError("At least one targeting criterion is required", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
   }
 
   const adTarget = await AdTargetModel.findByIdAndUpdate(
@@ -106,6 +141,7 @@ export const updateAdTarget = async (
     });
   }
 
+  invalidateAdTargetsCache();
   return formatAdTarget(adTarget);
 };
 
@@ -117,5 +153,6 @@ export const deleteAdTarget = async (
   await requireStaffMember(context);
 
   const result = await AdTargetModel.findByIdAndDelete(adTargetId);
+  if (result !== null) invalidateAdTargetsCache();
   return result !== null;
 };

@@ -17,7 +17,7 @@ export const adTargetTypeDef = gql`
     """
     Get all ad targets.
     """
-    allAdTargets: [AdTarget!]!
+    allAdTargets: [AdTarget!]! @auth
   }
 
   input CreateAdTargetInput {
