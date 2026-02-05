@@ -341,6 +341,16 @@ const normalizeCourseNumberValue = (value?: string | null) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const parseCourseNumberBound = (value?: string | null) => {
+  if (value == null) return { value: null, isValid: true };
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return { value: null, isValid: true };
+  if (!/^\d+$/.test(trimmed)) {
+    return { value: null, isValid: false };
+  }
+  return { value: parseInt(trimmed, 10), isValid: true };
+};
+
 const normalizeAdTargets = (
   adTargets: CachedAdTarget[]
 ): CachedAdTarget[] => {
@@ -467,8 +477,13 @@ export const getHasAd = async (
 
   for (const at of adTargets) {
     const hasSubjects = (at.subjects?.length ?? 0) > 0;
-    const min = at.minCourseNumber ? parseInt(at.minCourseNumber, 10) : null;
-    const max = at.maxCourseNumber ? parseInt(at.maxCourseNumber, 10) : null;
+    const minResult = parseCourseNumberBound(at.minCourseNumber);
+    const maxResult = parseCourseNumberBound(at.maxCourseNumber);
+    if (!minResult.isValid || !maxResult.isValid) {
+      continue;
+    }
+    const min = minResult.value;
+    const max = maxResult.value;
     const hasRange = min !== null || max !== null;
 
     if (!hasSubjects && !hasRange) {

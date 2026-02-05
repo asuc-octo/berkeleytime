@@ -81,6 +81,13 @@ const normalizeCourseNumberInput = (value?: string | null) => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const isValidCourseNumberRangeValue = (value?: string | null) => {
+  if (value == null) return true;
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return true;
+  return /^\d+$/.test(trimmed);
+};
+
 const extractCourseNumbers = (courseNumber: string): number[] => {
   const matches = courseNumber.match(/\d+/g);
   return matches ? matches.map(Number) : [];
@@ -129,6 +136,14 @@ export const createAdTarget = async (
   const normalizedMaxCourseNumber = normalizeCourseNumberInput(
     input.maxCourseNumber
   );
+  if (
+    !isValidCourseNumberRangeValue(normalizedMinCourseNumber) ||
+    !isValidCourseNumberRangeValue(normalizedMaxCourseNumber)
+  ) {
+    throw new GraphQLError("Course number range must be numeric", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
   const doc = {
     subjects: normalizedSubjects,
     minCourseNumber: normalizedMinCourseNumber ?? undefined,
@@ -160,14 +175,26 @@ export const updateAdTarget = async (
     updateData.subjects = normalizeSubjects(input.subjects);
   }
   if (input.minCourseNumber !== undefined) {
-    updateData.minCourseNumber = normalizeCourseNumberInput(
+    const normalizedMinCourseNumber = normalizeCourseNumberInput(
       input.minCourseNumber
     );
+    if (!isValidCourseNumberRangeValue(normalizedMinCourseNumber)) {
+      throw new GraphQLError("Course number range must be numeric", {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    }
+    updateData.minCourseNumber = normalizedMinCourseNumber;
   }
   if (input.maxCourseNumber !== undefined) {
-    updateData.maxCourseNumber = normalizeCourseNumberInput(
+    const normalizedMaxCourseNumber = normalizeCourseNumberInput(
       input.maxCourseNumber
     );
+    if (!isValidCourseNumberRangeValue(normalizedMaxCourseNumber)) {
+      throw new GraphQLError("Course number range must be numeric", {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    }
+    updateData.maxCourseNumber = normalizedMaxCourseNumber;
   }
 
   const existing = await AdTargetModel.findById(adTargetId).lean();
@@ -247,6 +274,14 @@ export const getAdTargetPreview = async (
   const normalizedMaxCourseNumber = normalizeCourseNumberInput(
     input.maxCourseNumber
   );
+  if (
+    !isValidCourseNumberRangeValue(normalizedMinCourseNumber) ||
+    !isValidCourseNumberRangeValue(normalizedMaxCourseNumber)
+  ) {
+    throw new GraphQLError("Course number range must be numeric", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
   const hasSubjects = normalizedSubjects.length > 0;
   const min = normalizedMinCourseNumber
     ? parseInt(normalizedMinCourseNumber, 10)
