@@ -9,7 +9,6 @@ export const adTargetTypeDef = gql`
     subjects: [String!]!
     minCourseNumber: String
     maxCourseNumber: String
-    specificClassIds: [String!]!
     createdAt: String!
   }
 
@@ -24,14 +23,12 @@ export const adTargetTypeDef = gql`
     subjects: [String!]
     minCourseNumber: String
     maxCourseNumber: String
-    specificClassIds: [String!]
   }
 
   input UpdateAdTargetInput {
     subjects: [String!]
     minCourseNumber: String
     maxCourseNumber: String
-    specificClassIds: [String!]
   }
 
   type Mutation {

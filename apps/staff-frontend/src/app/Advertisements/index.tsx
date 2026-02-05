@@ -21,14 +21,12 @@ interface AdTargetFormData {
   subjects: string[];
   minCourseNumber: string;
   maxCourseNumber: string;
-  specificClassIds: string[];
 }
 
 const initialFormData: AdTargetFormData = {
   subjects: [],
   minCourseNumber: "",
   maxCourseNumber: "",
-  specificClassIds: [],
 };
 
 export default function Advertisements() {
@@ -43,13 +41,11 @@ export default function Advertisements() {
 
   // Temporary input values for array fields
   const [subjectInput, setSubjectInput] = useState("");
-  const [classIdInput, setClassIdInput] = useState("");
 
   const handleOpenCreate = () => {
     setEditingTarget(null);
     setFormData(initialFormData);
     setSubjectInput("");
-    setClassIdInput("");
     setIsModalOpen(true);
   };
 
@@ -59,10 +55,8 @@ export default function Advertisements() {
       subjects: target.subjects,
       minCourseNumber: target.minCourseNumber ?? "",
       maxCourseNumber: target.maxCourseNumber ?? "",
-      specificClassIds: target.specificClassIds,
     });
     setSubjectInput("");
-    setClassIdInput("");
     setIsModalOpen(true);
   };
 
@@ -71,7 +65,6 @@ export default function Advertisements() {
     setEditingTarget(null);
     setFormData(initialFormData);
     setSubjectInput("");
-    setClassIdInput("");
   };
 
   const handleAddSubject = () => {
@@ -92,31 +85,12 @@ export default function Advertisements() {
     });
   };
 
-  const handleAddClassId = () => {
-    const trimmed = classIdInput.trim().toUpperCase();
-    if (trimmed && !formData.specificClassIds.includes(trimmed)) {
-      setFormData({
-        ...formData,
-        specificClassIds: [...formData.specificClassIds, trimmed],
-      });
-    }
-    setClassIdInput("");
-  };
-
-  const handleRemoveClassId = (classId: string) => {
-    setFormData({
-      ...formData,
-      specificClassIds: formData.specificClassIds.filter((c) => c !== classId),
-    });
-  };
-
   const handleSubmit = async () => {
     // At least one targeting criteria must be specified
     const hasSubjects = formData.subjects.length > 0;
     const hasCourseRange = formData.minCourseNumber || formData.maxCourseNumber;
-    const hasClassIds = formData.specificClassIds.length > 0;
 
-    if (!hasSubjects && !hasCourseRange && !hasClassIds) {
+    if (!hasSubjects && !hasCourseRange) {
       return;
     }
 
@@ -126,10 +100,6 @@ export default function Advertisements() {
           subjects: formData.subjects.length > 0 ? formData.subjects : null,
           minCourseNumber: formData.minCourseNumber || null,
           maxCourseNumber: formData.maxCourseNumber || null,
-          specificClassIds:
-            formData.specificClassIds.length > 0
-              ? formData.specificClassIds
-              : null,
         };
         await updateAdTarget(editingTarget.id, input);
       } else {
@@ -137,10 +107,6 @@ export default function Advertisements() {
           subjects: formData.subjects.length > 0 ? formData.subjects : null,
           minCourseNumber: formData.minCourseNumber || null,
           maxCourseNumber: formData.maxCourseNumber || null,
-          specificClassIds:
-            formData.specificClassIds.length > 0
-              ? formData.specificClassIds
-              : null,
         };
         await createAdTarget(input);
       }
@@ -168,8 +134,7 @@ export default function Advertisements() {
     return (
       formData.subjects.length > 0 ||
       formData.minCourseNumber ||
-      formData.maxCourseNumber ||
-      formData.specificClassIds.length > 0
+      formData.maxCourseNumber
     );
   };
 
@@ -217,23 +182,6 @@ export default function Advertisements() {
                   </div>
                 )}
 
-                {target.specificClassIds.length > 0 && (
-                  <div className={styles.targetRow}>
-                    <span className={styles.targetLabel}>
-                      Specific Classes:
-                    </span>
-                    <div className={styles.tagList}>
-                      {target.specificClassIds.map((classId) => (
-                        <span
-                          key={classId}
-                          className={`${styles.tag} ${styles.tagSecondary}`}
-                        >
-                          {classId}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div className={styles.cardBottom}>
@@ -364,50 +312,6 @@ export default function Advertisements() {
                 </p>
               </div>
 
-              <div className={styles.formField}>
-                <label className={styles.formLabel}>
-                  Specific Class IDs (optional)
-                </label>
-                <div className={styles.tagInput}>
-                  <Input
-                    type="text"
-                    placeholder="e.g., CS 61A, MATH 1A"
-                    value={classIdInput}
-                    onChange={(e) => setClassIdInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddClassId();
-                      }
-                    }}
-                    className={styles.tagInputField}
-                  />
-                  <Button variant="secondary" onClick={handleAddClassId}>
-                    Add
-                  </Button>
-                </div>
-                {formData.specificClassIds.length > 0 && (
-                  <div className={styles.tagContainer}>
-                    {formData.specificClassIds.map((classId) => (
-                      <span
-                        key={classId}
-                        className={`${styles.editableTag} ${styles.editableTagSecondary}`}
-                      >
-                        {classId}
-                        <button
-                          className={styles.removeTag}
-                          onClick={() => handleRemoveClassId(classId)}
-                        >
-                          <Xmark width={12} height={12} />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <p className={styles.formHint}>
-                  Target specific classes by their ID (highest priority).
-                </p>
-              </div>
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>

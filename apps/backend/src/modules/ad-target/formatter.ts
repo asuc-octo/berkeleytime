@@ -8,7 +8,6 @@ export const formatAdTarget = (
     subjects: adTarget.subjects || [],
     minCourseNumber: adTarget.minCourseNumber || null,
     maxCourseNumber: adTarget.maxCourseNumber || null,
-    specificClassIds: adTarget.specificClassIds || [],
     createdAt:
       adTarget.createdAt instanceof Date
         ? adTarget.createdAt.toISOString()

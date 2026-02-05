@@ -6,7 +6,6 @@ export interface AdTarget {
   subjects: string[];
   minCourseNumber: string | null;
   maxCourseNumber: string | null;
-  specificClassIds: string[];
   createdAt: string;
 }
 
@@ -14,14 +13,12 @@ export interface CreateAdTargetInput {
   subjects?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
-  specificClassIds?: string[] | null;
 }
 
 export interface UpdateAdTargetInput {
   subjects?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
-  specificClassIds?: string[] | null;
 }
 
 // Queries
@@ -32,7 +29,6 @@ export const ALL_AD_TARGETS = gql`
       subjects
       minCourseNumber
       maxCourseNumber
-      specificClassIds
       createdAt
     }
   }
@@ -46,7 +42,6 @@ export const CREATE_AD_TARGET = gql`
       subjects
       minCourseNumber
       maxCourseNumber
-      specificClassIds
       createdAt
     }
   }
@@ -59,7 +54,6 @@ export const UPDATE_AD_TARGET = gql`
       subjects
       minCourseNumber
       maxCourseNumber
-      specificClassIds
       createdAt
     }
   }

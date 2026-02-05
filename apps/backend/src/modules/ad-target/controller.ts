@@ -38,24 +38,20 @@ export interface CreateAdTargetInput {
   subjects?: string[];
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
-  specificClassIds?: string[];
 }
 
 export interface UpdateAdTargetInput {
   subjects?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
-  specificClassIds?: string[] | null;
 }
 
 const hasAtLeastOneCriterion = (data: {
   subjects?: string[] | null;
-  specificClassIds?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
 }) =>
   (data.subjects?.length ?? 0) > 0 ||
-  (data.specificClassIds?.length ?? 0) > 0 ||
   data.minCourseNumber != null ||
   data.maxCourseNumber != null;
 
@@ -77,7 +73,6 @@ export const createAdTarget = async (
     subjects: input.subjects || [],
     minCourseNumber: input.minCourseNumber || undefined,
     maxCourseNumber: input.maxCourseNumber || undefined,
-    specificClassIds: input.specificClassIds || [],
   };
   if (!hasAtLeastOneCriterion(doc)) {
     throw new GraphQLError("At least one targeting criterion is required", {
@@ -109,9 +104,6 @@ export const updateAdTarget = async (
   }
   if (input.maxCourseNumber !== undefined) {
     updateData.maxCourseNumber = input.maxCourseNumber ?? null;
-  }
-  if (input.specificClassIds !== undefined) {
-    updateData.specificClassIds = input.specificClassIds ?? [];
   }
 
   const existing = await AdTargetModel.findById(adTargetId).lean();

@@ -291,7 +291,7 @@ const resolvers: ClassModule.Resolvers = {
     },
 
     hasAd: async (parent: IntermediateClass | ClassModule.Class) => {
-      return await getHasAd(parent.subject, parent.courseNumber);
+      return await getHasAd(parent.courseId);
     },
   },
 

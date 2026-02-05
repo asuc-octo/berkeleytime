@@ -17,11 +17,6 @@ export const adTargetSchema = new Schema(
       required: false,
       trim: true,
     },
-    specificClassIds: {
-      type: [String],
-      required: false,
-      default: [],
-    },
   },
   {
     timestamps: {

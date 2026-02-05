@@ -6,7 +6,6 @@ import {
   AdTargetModel,
   ClassModel,
   ClassViewCountModel,
-  CourseModel,
   IClassItem,
   ISectionItem,
   SectionModel,
@@ -325,7 +324,6 @@ export const flushViewCounts = async (
 
 // create an in-memory cache for ad targets
 type CachedAdTarget = {
-  specificClassIds?: string[] | null;
   subjects?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
@@ -347,45 +345,95 @@ export const invalidateAdTargetsCache = () => {
   adTargetsCache = null;
 };
 
-export const getHasAd = async (
-  subject: string,
-  courseNumber: string
-): Promise<boolean> => {
+// e.g., "C142" → [142], "61A" → [61], "61A2" → [61, 2]
+const extractCourseNumbers = (courseNumber: string): number[] => {
+  const matches = courseNumber.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+};
+
+const anyNumberInRange = (
+  numbers: number[],
+  min: number | null,
+  max: number | null
+): boolean => {
+  if (numbers.length === 0) return false;
+  return numbers.some((n) => {
+    if (min !== null && n < min) return false;
+    if (max !== null && n > max) return false;
+    return true;
+  });
+};
+
+type ClassVariant = { subject: string; courseNumber: string };
+const classVariantsCache = new Map<string, ClassVariant[]>();
+const CLASS_VARIANTS_CACHE_TTL_MS = 60_000;
+let classVariantsCacheExpiry = 0;
+
+const getClassVariants = async (courseId: string): Promise<ClassVariant[]> => {
+  if (Date.now() > classVariantsCacheExpiry) {
+    classVariantsCache.clear();
+    classVariantsCacheExpiry = Date.now() + CLASS_VARIANTS_CACHE_TTL_MS;
+  }
+
+  if (classVariantsCache.has(courseId)) {
+    return classVariantsCache.get(courseId)!;
+  }
+
+  const variants = await ClassModel.aggregate<ClassVariant>([
+    { $match: { courseId } },
+    { $group: { _id: { subject: "$subject", courseNumber: "$courseNumber" } } },
+    {
+      $project: {
+        subject: "$_id.subject",
+        courseNumber: "$_id.courseNumber",
+        _id: 0,
+      },
+    },
+  ]);
+
+  classVariantsCache.set(courseId, variants);
+  return variants;
+};
+
+// Cross-listed classes share the same courseId, so we check if ANY variant matches
+export const getHasAd = async (courseId: string): Promise<boolean> => {
   const adTargets = await getCachedAdTargets();
   if (!adTargets.length) return false;
 
-  const course = await CourseModel.findOne({
-    subject,
-    number: courseNumber,
-  }).lean();
+  const variants = await getClassVariants(courseId);
+  if (variants.length === 0) return false;
 
-  const classIds = new Set<string>([
-    `${subject} ${courseNumber}`,
-    ...(course?.crossListing ?? []),
-  ]);
+  const allSubjects = new Set(variants.map((v) => v.subject));
 
-  const courseSubjects = new Set([...classIds].map((id) => id.split(" ")[0]));
-
-  const courseNumMatch = courseNumber.match(/(\d+)/);
-  const courseNum = courseNumMatch ? parseInt(courseNumMatch[1], 10) : NaN;
+  const allCourseNumbers = new Set<number>();
+  for (const v of variants) {
+    for (const num of extractCourseNumbers(v.courseNumber)) {
+      allCourseNumbers.add(num);
+    }
+  }
 
   for (const at of adTargets) {
-    if (at.specificClassIds?.some((id: string) => classIds.has(id))) {
+    const hasSubjects = (at.subjects?.length ?? 0) > 0;
+    const min = at.minCourseNumber ? parseInt(at.minCourseNumber, 10) : null;
+    const max = at.maxCourseNumber ? parseInt(at.maxCourseNumber, 10) : null;
+    const hasRange = min !== null || max !== null;
+
+    let subjectMatch = true;
+    if (hasSubjects) {
+      subjectMatch = [...allSubjects].some((s) => at.subjects?.includes(s));
+      if (!subjectMatch) continue;
+    }
+
+    if (!hasRange) {
+      if (hasSubjects) {
+        return true;
+      }
+      continue;
+    }
+
+    if (anyNumberInRange([...allCourseNumbers], min, max)) {
       return true;
     }
-
-    if (at.subjects?.length) {
-      const matches = [...courseSubjects].some((s) => at.subjects?.includes(s));
-      if (!matches) continue;
-    }
-
-    const min = at.minCourseNumber ? parseInt(at.minCourseNumber, 10) : NaN;
-    const max = at.maxCourseNumber ? parseInt(at.maxCourseNumber, 10) : NaN;
-
-    if (!isNaN(min) && (isNaN(courseNum) || courseNum < min)) continue;
-    if (!isNaN(max) && (isNaN(courseNum) || courseNum > max)) continue;
-
-    return true;
   }
 
   return false;
