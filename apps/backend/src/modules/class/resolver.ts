@@ -290,8 +290,8 @@ const resolvers: ClassModule.Resolvers = {
       );
     },
 
-    hasAd: async (parent: IntermediateClass | ClassModule.Class) => {
-      return await getHasAd(parent.courseId);
+    hasAd: async (parent: IntermediateClass | ClassModule.Class, _, context) => {
+      return await getHasAd(parent.courseId, context.redis);
     },
   },
 

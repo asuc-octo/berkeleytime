@@ -1,4 +1,5 @@
 import { GraphQLError } from "graphql";
+import type { RedisClientType } from "redis";
 
 import { AdTargetModel, StaffMemberModel } from "@repo/common/models";
 
@@ -11,6 +12,7 @@ export interface AdTargetRequestContext {
     _id: string;
     isAuthenticated: boolean;
   };
+  redis: RedisClientType;
 }
 
 // Helper to verify the current user is a staff member
@@ -82,7 +84,7 @@ export const createAdTarget = async (
 
   const adTarget = await AdTargetModel.create(doc);
 
-  invalidateAdTargetsCache();
+  await invalidateAdTargetsCache(context.redis);
   return formatAdTarget(adTarget);
 };
 
@@ -133,7 +135,7 @@ export const updateAdTarget = async (
     });
   }
 
-  invalidateAdTargetsCache();
+  await invalidateAdTargetsCache(context.redis);
   return formatAdTarget(adTarget);
 };
 
@@ -145,6 +147,8 @@ export const deleteAdTarget = async (
   await requireStaffMember(context);
 
   const result = await AdTargetModel.findByIdAndDelete(adTargetId);
-  if (result !== null) invalidateAdTargetsCache();
+  if (result !== null) {
+    await invalidateAdTargetsCache(context.redis);
+  }
   return result !== null;
 };

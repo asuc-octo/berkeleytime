@@ -322,27 +322,65 @@ export const flushViewCounts = async (
   }
 };
 
-// create an in-memory cache for ad targets
 type CachedAdTarget = {
   subjects?: string[] | null;
   minCourseNumber?: string | null;
   maxCourseNumber?: string | null;
 };
-let adTargetsCache: CachedAdTarget[] | null = null;
-let adTargetsCacheExpiry = 0;
-const AD_TARGETS_CACHE_TTL_MS = 60_000; // 1 minute
 
-const getCachedAdTargets = async (): Promise<CachedAdTarget[]> => {
-  if (adTargetsCache !== null && Date.now() < adTargetsCacheExpiry) {
-    return adTargetsCache;
-  }
-  adTargetsCache = await AdTargetModel.find().lean();
-  adTargetsCacheExpiry = Date.now() + AD_TARGETS_CACHE_TTL_MS;
-  return adTargetsCache;
+const AD_TARGETS_CACHE_KEY = "ad-targets:all";
+const AD_TARGETS_CACHE_TTL_SECONDS = 60 * 60 * 24;
+
+const normalizeAdTargets = (
+  adTargets: CachedAdTarget[]
+): CachedAdTarget[] => {
+  return adTargets.map((adTarget) => ({
+    subjects: adTarget.subjects ?? [],
+    minCourseNumber: adTarget.minCourseNumber ?? null,
+    maxCourseNumber: adTarget.maxCourseNumber ?? null,
+  }));
 };
 
-export const invalidateAdTargetsCache = () => {
-  adTargetsCache = null;
+const getCachedAdTargets = async (
+  redis?: RedisClientType
+): Promise<CachedAdTarget[]> => {
+  if (redis) {
+    try {
+      const cached = await redis.get(AD_TARGETS_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) {
+          return normalizeAdTargets(parsed as CachedAdTarget[]);
+        }
+      }
+    } catch {
+      // Fall back to DB fetch on cache read errors
+    }
+  }
+
+  const adTargets = await AdTargetModel.find().lean();
+  const normalized = normalizeAdTargets(adTargets);
+
+  if (redis) {
+    try {
+      await redis.set(AD_TARGETS_CACHE_KEY, JSON.stringify(normalized), {
+        EX: AD_TARGETS_CACHE_TTL_SECONDS,
+      });
+    } catch {
+      // Ignore cache write failures
+    }
+  }
+
+  return normalized;
+};
+
+export const invalidateAdTargetsCache = async (redis?: RedisClientType) => {
+  if (!redis) return;
+  try {
+    await redis.del(AD_TARGETS_CACHE_KEY);
+  } catch {
+    // Ignore cache invalidation failures
+  }
 };
 
 // e.g., "C142" → [142], "61A" → [61], "61A2" → [61, 2]
@@ -396,8 +434,11 @@ const getClassVariants = async (courseId: string): Promise<ClassVariant[]> => {
 };
 
 // Cross-listed classes share the same courseId, so we check if ANY variant matches
-export const getHasAd = async (courseId: string): Promise<boolean> => {
-  const adTargets = await getCachedAdTargets();
+export const getHasAd = async (
+  courseId: string,
+  redis?: RedisClientType
+): Promise<boolean> => {
+  const adTargets = await getCachedAdTargets(redis);
   if (!adTargets.length) return false;
 
   const variants = await getClassVariants(courseId);
