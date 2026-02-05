@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { EditPencil, Plus, Trash, Xmark } from "iconoir-react";
 
 import { Button, Dialog, Flex, Input } from "@repo/theme";
 
 import {
+  useAdTargetPreview,
   useAllAdTargets,
   useCreateAdTarget,
   useDeleteAdTarget,
   useUpdateAdTarget,
 } from "../../hooks/api/ad-target";
+import { useReadTerms } from "../../hooks/api/terms";
 import {
   AdTarget,
   CreateAdTargetInput,
@@ -34,13 +36,44 @@ export default function Advertisements() {
   const { createAdTarget, loading: creating } = useCreateAdTarget();
   const { updateAdTarget, loading: updating } = useUpdateAdTarget();
   const { deleteAdTarget, loading: deleting } = useDeleteAdTarget();
+  const { data: terms } = useReadTerms();
+  const {
+    runPreview,
+    preview,
+    loading: previewLoading,
+    called: previewCalled,
+    resetPreview,
+  } = useAdTargetPreview();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTarget, setEditingTarget] = useState<AdTarget | null>(null);
   const [formData, setFormData] = useState<AdTargetFormData>(initialFormData);
-
   // Temporary input values for array fields
   const [subjectInput, setSubjectInput] = useState("");
+
+  const latestNonSummerTermId = useMemo(() => {
+    if (terms.length === 0) return null;
+
+    const nonSummerTerms = terms.filter((term) => term.semester !== "Summer");
+    const candidates = nonSummerTerms.length > 0 ? nonSummerTerms : terms;
+
+    const sorted = [...candidates].sort(
+      (a, b) =>
+        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+    );
+
+    const latest = sorted[0];
+    return latest ? `${latest.year}-${latest.semester}` : null;
+  }, [terms]);
+
+  const selectedTerm = useMemo(() => {
+    if (!latestNonSummerTermId) return null;
+    return (
+      terms.find(
+        (term) => `${term.year}-${term.semester}` === latestNonSummerTermId
+      ) ?? null
+    );
+  }, [terms, latestNonSummerTermId]);
 
   const handleOpenCreate = () => {
     setEditingTarget(null);
@@ -65,6 +98,7 @@ export default function Advertisements() {
     setEditingTarget(null);
     setFormData(initialFormData);
     setSubjectInput("");
+    resetPreview();
   };
 
   const handleAddSubject = () => {
@@ -121,6 +155,20 @@ export default function Advertisements() {
     } catch (error) {
       console.error("Error saving ad target:", error);
     }
+  };
+
+  const handleRunPreview = () => {
+    if (!selectedTerm || !hasValidFormData()) return;
+
+    runPreview({
+      variables: {
+        year: selectedTerm.year,
+        semester: selectedTerm.semester,
+        subjects: formData.subjects.length > 0 ? formData.subjects : null,
+        minCourseNumber: formData.minCourseNumber || null,
+        maxCourseNumber: formData.maxCourseNumber || null,
+      },
+    });
   };
 
   const handleDelete = async (adTargetId: string) => {
@@ -232,7 +280,16 @@ export default function Advertisements() {
         </div>
       )}
 
-      <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <Dialog.Root
+        open={isModalOpen}
+        onOpenChange={(open) => {
+          if (open) {
+            setIsModalOpen(true);
+            return;
+          }
+          handleCloseModal();
+        }}
+      >
         <Dialog.Card>
           <Dialog.Header
             title={editingTarget ? "Edit Ad Target" : "Create Ad Target"}
@@ -318,6 +375,58 @@ export default function Advertisements() {
                   Matches if any numeric part of the course number falls within
                   the range (e.g., C142 becomes 142, 61A becomes 61).
                 </p>
+              </div>
+
+              <div className={styles.previewSection}>
+                <div className={styles.previewHeader}>
+                  <label className={styles.formLabel}>
+                    {selectedTerm
+                      ? `Preview ${selectedTerm.semester} ${selectedTerm.year} matches`
+                      : "Preview matches"}
+                  </label>
+                  <div className={styles.previewActions}>
+                    <Button
+                      variant="secondary"
+                      onClick={handleRunPreview}
+                      disabled={
+                        !hasValidFormData() || !selectedTerm || previewLoading
+                      }
+                    >
+                      Preview
+                    </Button>
+                  </div>
+                </div>
+                {previewLoading ? (
+                  <div className={styles.previewHint}>
+                    Loading preview...
+                  </div>
+                ) : previewCalled ? (
+                  preview.length === 0 ? (
+                    <div className={styles.previewEmpty}>
+                      No matching classes for this term.
+                    </div>
+                  ) : (
+                    <div className={styles.previewList}>
+                      {preview.map((item) => (
+                        <div
+                          key={`${item.courseId}-${item.subject}-${item.courseNumber}-${item.number}`}
+                          className={styles.previewItem}
+                        >
+                          <span className={styles.previewCode}>
+                            {item.subject} {item.courseNumber} {item.number}
+                          </span>
+                          <span className={styles.previewTitle}>
+                            {item.title || "Untitled course"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                ) : (
+                  <div className={styles.previewHint}>
+                    Run preview to see matching classes.
+                  </div>
+                )}
               </div>
 
             </Flex>

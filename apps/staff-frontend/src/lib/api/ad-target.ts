@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { Semester } from "./terms";
+
 // Types
 export interface AdTarget {
   id: string;
@@ -7,6 +9,17 @@ export interface AdTarget {
   minCourseNumber: string | null;
   maxCourseNumber: string | null;
   createdAt: string;
+}
+
+export interface AdTargetPreviewClass {
+  courseId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  title: string | null;
+  year: number;
+  semester: Semester;
+  sessionId: string;
 }
 
 export interface CreateAdTargetInput {
@@ -30,6 +43,33 @@ export const ALL_AD_TARGETS = gql`
       minCourseNumber
       maxCourseNumber
       createdAt
+    }
+  }
+`;
+
+export const AD_TARGET_PREVIEW = gql`
+  query AdTargetPreview(
+    $year: Int!
+    $semester: Semester!
+    $subjects: [String!]
+    $minCourseNumber: String
+    $maxCourseNumber: String
+  ) {
+    adTargetPreview(
+      year: $year
+      semester: $semester
+      subjects: $subjects
+      minCourseNumber: $minCourseNumber
+      maxCourseNumber: $maxCourseNumber
+    ) {
+      courseId
+      subject
+      courseNumber
+      number
+      title
+      year
+      semester
+      sessionId
     }
   }
 `;

@@ -4,6 +4,7 @@ import {
   UpdateAdTargetInput,
   createAdTarget,
   deleteAdTarget,
+  getAdTargetPreview,
   getAllAdTargets,
   updateAdTarget,
 } from "./controller";
@@ -12,6 +13,11 @@ const resolvers = {
   Query: {
     allAdTargets: (_: unknown, __: unknown, context: AdTargetRequestContext) => 
       getAllAdTargets(context),
+    adTargetPreview: (
+      _: unknown,
+      args: Parameters<typeof getAdTargetPreview>[1],
+      context: AdTargetRequestContext
+    ) => getAdTargetPreview(context, args),
   },
 
   Mutation: {

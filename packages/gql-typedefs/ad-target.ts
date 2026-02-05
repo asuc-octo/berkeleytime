@@ -12,11 +12,33 @@ export const adTargetTypeDef = gql`
     createdAt: String!
   }
 
+  type AdTargetPreviewClass {
+    courseId: String!
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+    title: String
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier!
+  }
+
   type Query {
     """
     Get all ad targets.
     """
     allAdTargets: [AdTarget!]! @auth
+
+    """
+    Preview classes that match ad targeting criteria for a term.
+    """
+    adTargetPreview(
+      year: Int!
+      semester: Semester!
+      subjects: [String!]
+      minCourseNumber: String
+      maxCourseNumber: String
+    ): [AdTargetPreviewClass!]! @auth
   }
 
   input CreateAdTargetInput {

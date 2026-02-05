@@ -1,10 +1,16 @@
 import { GraphQLError } from "graphql";
 import type { RedisClientType } from "redis";
 
-import { AdTargetModel, StaffMemberModel } from "@repo/common/models";
+import {
+  AdTargetModel,
+  ClassModel,
+  CourseModel,
+  StaffMemberModel,
+} from "@repo/common/models";
 
 import { invalidateAdTargetsCache } from "../class/controller";
 import { formatAdTarget } from "./formatter";
+import { Semester } from "../../generated-types/graphql";
 
 // Context interface for authenticated requests
 export interface AdTargetRequestContext {
@@ -59,10 +65,38 @@ const normalizeSubjects = (subjects?: string[] | null) => {
   return [...new Set(normalized)];
 };
 
+const normalizeSubjectCode = (subject: string) => {
+  return subject.trim().replace(/\s+/g, " ").toUpperCase();
+};
+
+const normalizeText = (value?: string | null) => {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 const normalizeCourseNumberInput = (value?: string | null) => {
   if (value == null) return null;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+};
+
+const extractCourseNumbers = (courseNumber: string): number[] => {
+  const matches = courseNumber.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+};
+
+const anyNumberInRange = (
+  numbers: number[],
+  min: number | null,
+  max: number | null
+) => {
+  if (numbers.length === 0) return false;
+  return numbers.some((n) => {
+    if (min !== null && n < min) return false;
+    if (max !== null && n > max) return false;
+    return true;
+  });
 };
 
 const hasAtLeastOneCriterion = (data: {
@@ -179,4 +213,145 @@ export const deleteAdTarget = async (
     await invalidateAdTargetsCache(context.redis);
   }
   return result !== null;
+};
+
+export interface AdTargetPreviewInput {
+  year: number;
+  semester: Semester;
+  subjects?: string[] | null;
+  minCourseNumber?: string | null;
+  maxCourseNumber?: string | null;
+}
+
+export interface AdTargetPreviewClass {
+  courseId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  title?: string | null;
+  year: number;
+  semester: Semester;
+  sessionId: string;
+}
+
+export const getAdTargetPreview = async (
+  context: AdTargetRequestContext,
+  input: AdTargetPreviewInput
+): Promise<AdTargetPreviewClass[]> => {
+  await requireStaffMember(context);
+
+  const normalizedSubjects = normalizeSubjects(input.subjects);
+  const normalizedMinCourseNumber = normalizeCourseNumberInput(
+    input.minCourseNumber
+  );
+  const normalizedMaxCourseNumber = normalizeCourseNumberInput(
+    input.maxCourseNumber
+  );
+  const hasSubjects = normalizedSubjects.length > 0;
+  const min = normalizedMinCourseNumber
+    ? parseInt(normalizedMinCourseNumber, 10)
+    : null;
+  const max = normalizedMaxCourseNumber
+    ? parseInt(normalizedMaxCourseNumber, 10)
+    : null;
+  const hasRange = min !== null || max !== null;
+
+  if (!hasSubjects && !hasRange) {
+    throw new GraphQLError("At least one targeting criterion is required", {
+      extensions: { code: "BAD_USER_INPUT" },
+    });
+  }
+
+  const courseVariants = await ClassModel.aggregate<{
+    _id: string;
+    variants: { subject: string; courseNumber: string }[];
+  }>([
+    { $match: { year: input.year, semester: input.semester } },
+    {
+      $group: {
+        _id: {
+          courseId: "$courseId",
+          subject: "$subject",
+          courseNumber: "$courseNumber",
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.courseId",
+        variants: {
+          $push: { subject: "$_id.subject", courseNumber: "$_id.courseNumber" },
+        },
+      },
+    },
+  ]);
+
+  const matchingCourseIds = new Set<string>();
+  for (const course of courseVariants) {
+    const matchesVariant = course.variants.some((variant) => {
+      const subject = normalizeSubjectCode(variant.subject);
+      if (hasSubjects && !normalizedSubjects.includes(subject)) {
+        return false;
+      }
+
+      if (!hasRange) {
+        return true;
+      }
+
+      return anyNumberInRange(
+        extractCourseNumbers(variant.courseNumber),
+        min,
+        max
+      );
+    });
+
+    if (matchesVariant) {
+      matchingCourseIds.add(course._id);
+    }
+  }
+
+  if (matchingCourseIds.size === 0) {
+    return [];
+  }
+
+  const classes = await ClassModel.find({
+    year: input.year,
+    semester: input.semester,
+    courseId: { $in: [...matchingCourseIds] },
+  })
+    .select({
+      courseId: 1,
+      subject: 1,
+      courseNumber: 1,
+      number: 1,
+      title: 1,
+      year: 1,
+      semester: 1,
+      sessionId: 1,
+    })
+    .sort({ subject: 1, courseNumber: 1, number: 1 })
+    .lean();
+
+  const courseIds = [...new Set(classes.map((entry) => entry.courseId))];
+  const courses = await CourseModel.find({
+    courseId: { $in: courseIds },
+  })
+    .select({ courseId: 1, title: 1 })
+    .lean();
+
+  const courseTitleMap = new Map(
+    courses.map((course) => [course.courseId, normalizeText(course.title)])
+  );
+
+  return classes.map((entry) => ({
+    courseId: entry.courseId,
+    subject: entry.subject,
+    courseNumber: entry.courseNumber,
+    number: entry.number,
+    title:
+      normalizeText(entry.title) ?? courseTitleMap.get(entry.courseId) ?? null,
+    year: entry.year,
+    semester: entry.semester as Semester,
+    sessionId: entry.sessionId,
+  }));
 };
