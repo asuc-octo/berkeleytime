@@ -16,3 +16,18 @@ export const getUserCreationAnalyticsData = async (context: RequestContext) => {
     createdAt: user.createdAt?.toISOString() || new Date().toISOString(),
   }));
 };
+
+export const getUserActivityAnalyticsData = async (context: RequestContext) => {
+  await requireStaffAuth(context);
+
+  // Get all users with their lastSeenAt and createdAt timestamps
+  const users = await UserModel.find({})
+    .select("lastSeenAt createdAt")
+    .sort({ lastSeenAt: -1 })
+    .lean();
+
+  return users.map((user) => ({
+    lastSeenAt: user.lastSeenAt?.toISOString() || new Date(0).toISOString(),
+    createdAt: user.createdAt?.toISOString() || new Date().toISOString(),
+  }));
+};

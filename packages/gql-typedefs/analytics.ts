@@ -23,6 +23,11 @@ export const analyticsTypeDef = gql`
     userCreationAnalyticsData: [UserCreationDataPoint!]! @auth
 
     """
+    Staff-only: User activity data (lastSeenAt timestamps) for analytics
+    """
+    userActivityAnalyticsData: [UserActivityDataPoint!]! @auth
+
+    """
     Staff-only: Scheduler analytics data for visualization
     """
     schedulerAnalyticsData: [SchedulerAnalyticsDataPoint!]! @auth
