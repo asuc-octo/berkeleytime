@@ -1,0 +1,31 @@
+{{- if .Values.grafana.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.grafana.ingress.annotations }}
+    {{- toYaml .Values.grafana.ingress.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.grafana.ingress.className }}
+  ingressClassName: {{ .Values.grafana.ingress.className }}
+  {{- end }}
+  {{- if .Values.grafana.ingress.tls }}
+  tls:
+    {{- toYaml .Values.grafana.ingress.tls | nindent 4 }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.grafana.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+{{- end }}

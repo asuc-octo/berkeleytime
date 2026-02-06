@@ -7,6 +7,7 @@ import {
   useAllRouteRedirects,
   useIncrementRouteRedirectClick,
 } from "@/hooks/api/route-redirect";
+import RouteTracker from "@/components/RouteTracker";
 
 // Module-level tracking to prevent duplicate increments
 let lastIncrementedPath: string | null = null;
@@ -50,6 +51,7 @@ export default function RootWrapper() {
 
   return (
     <>
+      <RouteTracker />
       {import.meta.env.DEV && <DevAuthBanner />}
       <ScrollRestoration />
       <Outlet />
