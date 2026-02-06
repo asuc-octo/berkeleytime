@@ -1,0 +1,91 @@
+# OpenTelemetry Collector configuration
+# Receives telemetry from the backend and frontend, scrapes nginx and MongoDB metrics.
+# Exports traces to Tempo, logs to Loki, and metrics to Prometheus.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+  # Scrapes nginx stub_status page for connection/request metrics
+  nginx:
+    endpoint: "http://nginx:8090/nginx_status"
+    collection_interval: 10s
+
+  # Connects to MongoDB and collects server statistics
+  mongodb:
+    hosts:
+      - endpoint: "mongodb:27017"
+    collection_interval: 10s
+
+connectors:
+  # Derives metrics from spans — produces counters/histograms per span name.
+  # Used to turn frontend page.view spans into page_view counts in Prometheus.
+  spanmetrics:
+    namespace: span
+    metrics_flush_interval: 15s
+    dimensions:
+      - name: page.feature
+      - name: page.route
+    histogram:
+      explicit:
+        buckets: [5, 10, 25, 50, 100, 250, 500, 1000]
+
+processors:
+  # Batching reduces export overhead
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+
+  # Prevents OOM on the collector
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 256
+    spike_limit_mib: 64
+
+  # Add deployment.environment to all telemetry
+  resource:
+    attributes:
+      - action: insert
+        key: deployment.environment
+        value: local
+
+exporters:
+  # Send traces to Tempo via OTLP gRPC
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # Expose metrics for Prometheus scraping
+  prometheus:
+    endpoint: "0.0.0.0:9464"
+    send_timestamps: true
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  # Send logs to Loki via the native loki exporter
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
+  # Debug exporter for troubleshooting (logs to collector stdout)
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [spanmetrics, otlp/tempo, debug]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, batch]
+      exporters: [loki]
+    metrics:
+      receivers: [otlp, spanmetrics, nginx, mongodb]
+      processors: [memory_limiter, resource, batch]
+      exporters: [prometheus]

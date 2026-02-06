@@ -1,0 +1,91 @@
+# Observability stack configuration
+# Deploy with: helm install bt-observability ./infra/observability -n observability --create-namespace
+
+# Global settings
+namespace: observability
+
+# OpenTelemetry Collector
+collector:
+  image: otel/opentelemetry-collector-contrib:0.96.0
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+# Grafana Tempo (distributed tracing)
+tempo:
+  image: grafana/tempo:2.4.1
+  storage:
+    size: 10Gi
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+# Grafana Loki (log aggregation)
+loki:
+  image: grafana/loki:3.0.0
+  storage:
+    size: 10Gi
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+# Prometheus (metrics)
+prometheus:
+  image: prom/prometheus:v2.51.0
+  retention: 15d
+  storage:
+    size: 10Gi
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+
+# Grafana (dashboards)
+grafana:
+  image: grafana/grafana:10.4.0
+  adminUser: admin
+  adminPassword: admin
+  storage:
+    size: 1Gi
+  resources:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+    requests:
+      memory: 128Mi
+      cpu: 100m
+  # Optional ingress for external access
+  ingress:
+    enabled: false
+    # className: nginx
+    host: grafana.berkeleytime.com
+    annotations: {}
+    # tls:
+    #   - secretName: grafana-tls
+    #     hosts:
+    #       - grafana.berkeleytime.com
+
+# Backend service reference (for Prometheus scraping)
+backend:
+  serviceName: bt-prod-backend-svc
+  namespace: bt
+  port: 5001
+
+# MongoDB reference (for collector mongodb receiver)
+mongodb:
+  endpoint: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017

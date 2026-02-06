@@ -1,6 +1,7 @@
 import { type Application, Router } from "express";
 
 import { config } from "../../../../../packages/common/src/utils/config";
+import log from "../../lib/logger";
 import { startBannerViewCountFlushJob } from "../../modules/banner/jobs/flush-view-counts";
 import { startViewCountFlushJob } from "../../modules/class/jobs/flush-view-counts";
 import { startClickEventsFlushJob } from "../../modules/click-tracking/jobs/flush-click-events";
@@ -13,20 +14,16 @@ import redisLoader from "./redis";
 export default async (root: Application): Promise<void> => {
   const app = Router() as Application;
 
-  // connect to mongoose
-  console.log("Booting up mongo...");
+  log.info("Booting up mongo...");
   await mongooseLoader();
 
-  // connect to redis
-  console.log("Booting up redis...");
+  log.info("Booting up redis...");
   const redis = await redisLoader();
 
-  // load apollo server config. must be loaded before express
-  console.log("Loading apollo...");
+  log.info("Loading apollo...");
   const { server, redis: apolloRedis } = await apolloLoader(redis);
 
-  // load everything related to express. depends on apollo
-  console.log("Loading express...");
+  log.info("Loading express...");
   await expressLoader(app, server, apolloRedis, root);
 
   // start background jobs
@@ -40,13 +37,13 @@ export default async (root: Application): Promise<void> => {
 
 // loader for cache warming server
 export async function loadCacheWarmingDependencies() {
-  console.log("[Cache Warmer] Booting up mongo...");
+  log.info("[cache-warmer] Booting up mongo...");
   await mongooseLoader();
 
-  console.log("[Cache Warmer] Booting up redis...");
+  log.info("[cache-warmer] Booting up redis...");
   const redis = await redisLoader();
 
-  console.log("[Cache Warmer] Loading apollo...");
+  log.info("[cache-warmer] Loading apollo...");
   const { server, redis: apolloRedis } = await apolloLoader(redis);
 
   return { server, redis: apolloRedis };

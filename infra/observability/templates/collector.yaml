@@ -1,0 +1,165 @@
+# OpenTelemetry Collector - receives telemetry from backend/frontend, exports to Tempo/Loki/Prometheus
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  labels:
+    {{- include "bt-observability.collectorLabels" . | nindent 4 }}
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+
+      # Connects to MongoDB and collects server statistics
+      mongodb:
+        hosts:
+          - endpoint: {{ .Values.mongodb.endpoint | quote }}
+        collection_interval: 30s
+
+    connectors:
+      # Derives metrics from spans
+      spanmetrics:
+        namespace: span
+        metrics_flush_interval: 15s
+        dimensions:
+          - name: page.feature
+          - name: page.route
+        histogram:
+          explicit:
+            buckets: [5, 10, 25, 50, 100, 250, 500, 1000]
+
+    processors:
+      batch:
+        timeout: 5s
+        send_batch_size: 1024
+
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 400
+        spike_limit_mib: 100
+
+      resource:
+        attributes:
+          - action: insert
+            key: deployment.environment
+            value: {{ .Values.backend.namespace }}
+
+    exporters:
+      otlp/tempo:
+        endpoint: tempo:4317
+        tls:
+          insecure: true
+
+      loki:
+        endpoint: http://loki:3100/loki/api/v1/push
+
+      prometheus:
+        endpoint: "0.0.0.0:9464"
+        send_timestamps: true
+        resource_to_telemetry_conversion:
+          enabled: true
+
+      debug:
+        verbosity: basic
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, batch]
+          exporters: [spanmetrics, otlp/tempo]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, batch]
+          exporters: [loki]
+        metrics:
+          receivers: [otlp, spanmetrics, mongodb]
+          processors: [memory_limiter, resource, batch]
+          exporters: [prometheus]
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  labels:
+    {{- include "bt-observability.collectorLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: otel-collector
+  template:
+    metadata:
+      labels:
+        {{- include "bt-observability.collectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/collector.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: otel-collector
+          image: {{ .Values.collector.image }}
+          args:
+            - "--config=/etc/otelcol/config.yaml"
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+            - name: prometheus
+              containerPort: 9464
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.collector.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otelcol
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 5
+      volumes:
+        - name: config
+          configMap:
+            name: otel-collector-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  labels:
+    {{- include "bt-observability.collectorLabels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: otel-collector
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
+    - name: prometheus
+      port: 9464
+      targetPort: 9464
+      protocol: TCP

@@ -56,6 +56,12 @@ data:
   SIS_COURSE_APP_KEY: "_"
   SIS_TERM_APP_ID: "_"
   SIS_TERM_APP_KEY: "_"
+  {{- if .Values.otel.enabled }}
+  # OpenTelemetry configuration
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.otel.collectorEndpoint | quote }}
+  OTEL_SERVICE_NAME: {{ .Values.otel.serviceName | quote }}
+  OTEL_RESOURCE_ATTRIBUTES: "service.version={{ .Values.backend.image.tag }},deployment.environment={{ .Values.env }}"
+  {{- end }}
 
 ---
 

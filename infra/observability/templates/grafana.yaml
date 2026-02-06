@@ -1,0 +1,149 @@
+# Grafana - dashboards and visualization
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        uid: prometheus
+        url: http://prometheus:9090
+        isDefault: true
+        editable: true
+
+      - name: Tempo
+        type: tempo
+        access: proxy
+        uid: tempo
+        url: http://tempo:3200
+        editable: true
+        jsonData:
+          tracesToMetrics:
+            datasourceUid: prometheus
+          tracesToLogs:
+            datasourceUid: loki
+            filterByTraceID: true
+            filterBySpanID: true
+          nodeGraph:
+            enabled: true
+          serviceMap:
+            datasourceUid: prometheus
+
+      - name: Loki
+        type: loki
+        access: proxy
+        uid: loki
+        url: http://loki:3100
+        editable: true
+        jsonData:
+          derivedFields:
+            - name: TraceID
+              datasourceUid: tempo
+              matcherRegex: '"traceId":"(\\w+)"'
+              url: "${__value.raw}"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.grafana.storage.size }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+  template:
+    metadata:
+      labels:
+        {{- include "bt-observability.grafanaLabels" . | nindent 8 }}
+      annotations:
+        checksum/datasources: {{ include (print $.Template.BasePath "/grafana.yaml") . | sha256sum }}
+    spec:
+      securityContext:
+        fsGroup: 472
+      containers:
+        - name: grafana
+          image: {{ .Values.grafana.image }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: GF_SECURITY_ADMIN_USER
+              value: {{ .Values.grafana.adminUser | quote }}
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: {{ .Values.grafana.adminPassword | quote }}
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+            - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+              value: Viewer
+          resources:
+            {{- toYaml .Values.grafana.resources | nindent 12 }}
+          securityContext:
+            runAsUser: 472
+            runAsGroup: 472
+          volumeMounts:
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/grafana
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+      volumes:
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: data
+          persistentVolumeClaim:
+            claimName: grafana-data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: grafana
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

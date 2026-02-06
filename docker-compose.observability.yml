@@ -1,0 +1,119 @@
+# Observability overlay — use together with the base compose file:
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml up --build
+#
+# Adds: OTel Collector, Tempo, Loki, Prometheus, Grafana
+# Configures the backend and frontend to export traces and metrics via OTLP.
+---
+services:
+  # ── Backend: inject OTel environment variables ─────────────────────────
+  backend:
+    # The base Dockerfile dev entrypoint omits --env-mode=loose, so turbo
+    # strips unknown env vars. Override it here so OTEL_* vars reach Node.
+    entrypoint: ["turbo", "run", "dev", "--filter=backend", "--env-mode=loose"]
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      OTEL_SERVICE_NAME: "backend"
+      OTEL_RESOURCE_ATTRIBUTES: "service.version=0.1.0,deployment.environment=local"
+    depends_on:
+      otel-collector:
+        condition: service_started
+
+  # ── Frontend: inject OTel environment variables ────────────────────────
+  frontend:
+    # Same turbo --env-mode=loose fix so VITE_* vars reach the Vite dev server.
+    entrypoint: ["turbo", "run", "dev", "--filter=frontend", "--env-mode=loose"]
+    environment:
+      VITE_OTEL_ENDPOINT: "/otlp"
+
+  # ── OpenTelemetry Collector ────────────────────────────────────────────
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    ports:
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP HTTP receiver
+      - "9464:9464"    # Prometheus metrics exporter
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_started
+      mongodb:
+        condition: service_healthy
+    networks:
+      - bt
+    restart: unless-stopped
+
+  # ── Grafana Loki (log aggregation) ─────────────────────────────────────
+  loki:
+    image: grafana/loki:3.0.0
+    command: ["-config.file=/etc/loki/config.yaml"]
+    ports:
+      - "${DEV_PORT_PREFIX:-30}11:3100"
+    volumes:
+      - ./observability/loki.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - bt
+    restart: unless-stopped
+
+  # ── Grafana Tempo (distributed tracing backend) ────────────────────────
+  tempo:
+    image: grafana/tempo:2.4.1
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    ports:
+      - "${DEV_PORT_PREFIX:-30}09:3200"    # Tempo HTTP API (query traces)
+    volumes:
+      - ./observability/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/tmp/tempo
+    networks:
+      - bt
+    restart: unless-stopped
+
+  # ── Prometheus ─────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=2h"
+      - "--web.enable-remote-write-receiver"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      otel-collector:
+        condition: service_started
+    networks:
+      - bt
+    restart: unless-stopped
+
+  # ── Grafana (dashboards + datasource exploration) ──────────────────────
+  grafana:
+    image: grafana/grafana:10.4.0
+    ports:
+      - "${DEV_PORT_PREFIX:-30}10:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+    networks:
+      - bt
+    restart: unless-stopped
+
+volumes:
+  loki-data:
+  tempo-data:
+  prometheus-data:
+  grafana-data:

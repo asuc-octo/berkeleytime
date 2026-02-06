@@ -1,4 +1,5 @@
 import { ApolloServer } from "@apollo/server";
+import type { ApolloServerPlugin } from "@apollo/server";
 import responseCachePlugin from "@apollo/server-plugin-response-cache";
 import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheControl";
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
@@ -7,6 +8,17 @@ import {
   KeyValueCacheSetOptions,
 } from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+import {
+  graphqlOperationDuration,
+  graphqlOperationCount,
+  graphqlErrorCount,
+  featureUsageCount,
+  cacheHitCount,
+  cacheMissCount,
+  redisCacheOpDuration,
+} from "../../lib/metrics";
+import log from "../../lib/logger";
 import { createHash } from "crypto";
 import { OperationDefinitionNode } from "graphql";
 import { RedisClientType } from "redis";
@@ -14,6 +26,163 @@ import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
 import { buildSchema } from "../graphql/buildSchema";
+
+/** Map GraphQL operation names → high-level feature names for usage metrics. */
+const OPERATION_FEATURE: Record<string, string> = {
+  // Catalog / course browsing
+  GetCanonicalCatalog: "catalog",
+  GetClass: "catalog",
+  GetClassDetails: "catalog",
+  GetCourse: "catalog",
+  GetCourseTitle: "catalog",
+  GetCourseUnits: "catalog",
+  GetClassOverview: "catalog",
+  GetCourseOverviewById: "catalog",
+  GetCourseNames: "catalog",
+  GetCourses: "catalog",
+  GetAllClassesForCourse: "catalog",
+  TrackClassView: "catalog",
+  // Sections
+  GetClassSections: "catalog",
+  // Enrollment
+  GetClassEnrollment: "enrollment",
+  GetEnrollment: "enrollment",
+  GetEnrollmentTimeframes: "enrollment",
+  ReadEnrollmentTimeframes: "enrollment",
+  // Grades
+  GetClassGrades: "grades",
+  GetCourseGradeDist: "grades",
+  GetGradeDistribution: "grades",
+  // Ratings
+  GetClassRatings: "ratings",
+  GetCourseRatings: "ratings",
+  GetAggregatedRatings: "ratings",
+  GetSemestersWithRatings: "ratings",
+  GetUserRatings: "ratings",
+  GetAllRatingsData: "ratings",
+  GetClassRatingsData: "ratings",
+  CreateRatings: "ratings",
+  DeleteRatings: "ratings",
+  // Schedules
+  ReadSchedule: "schedules",
+  ReadSchedules: "schedules",
+  CreateSchedule: "schedules",
+  UpdateSchedule: "schedules",
+  DeleteSchedule: "schedules",
+  // GradTrak
+  GetPlan: "gradtrak",
+  GetPlans: "gradtrak",
+  CreateNewPlan: "gradtrak",
+  EditPlan: "gradtrak",
+  SetSelectedCourses: "gradtrak",
+  CreateNewPlanTerm: "gradtrak",
+  RemovePlanTermByID: "gradtrak",
+  EditPlanTerm: "gradtrak",
+  // Collections
+  GetCollectionById: "collections",
+  GetAllCollections: "collections",
+  GetAllCollectionsWithPreview: "collections",
+  AddClassToCollection: "collections",
+  RemoveClassFromCollection: "collections",
+  CreateCollection: "collections",
+  UpdateCollection: "collections",
+  DeleteCollection: "collections",
+  // Curated
+  GetCuratedClass: "curated",
+  GetCuratedClasses: "curated",
+  CreateCuratedClass: "curated",
+  UpdateCuratedClass: "curated",
+  DeleteCuratedClass: "curated",
+  // User / profile
+  GetUser: "profile",
+  UpdateUser: "profile",
+  DeleteAccount: "profile",
+  // Banners
+  GetAllBanners: "banners",
+  IncrementBannerClick: "banners",
+  IncrementBannerDismiss: "banners",
+  TrackBannerView: "banners",
+  // Terms
+  GetTerms: "terms",
+  GetTerm: "terms",
+};
+
+/**
+ * Apollo Server plugin that creates a span per GraphQL operation with
+ * operation name and type as span attributes. When OTel is not initialised
+ * the tracer returned by the API is a no-op, so this plugin is always safe
+ * to register.
+ */
+function createOtelPlugin(): ApolloServerPlugin {
+  const tracer = trace.getTracer("berkeleytime-graphql");
+  return {
+    async requestDidStart() {
+      const startTime = performance.now();
+      const span = tracer.startSpan("graphql.operation");
+      let operationName = "anonymous";
+      let operationType = "query";
+
+      return {
+        async didResolveOperation(ctx) {
+          operationName = ctx.request.operationName || "anonymous";
+          operationType = ctx.operation?.operation || "query";
+          span.updateName(`graphql.${operationType} ${operationName}`);
+          span.setAttribute("graphql.operation.name", operationName);
+          span.setAttribute("graphql.operation.type", operationType);
+
+          graphqlOperationCount.add(1, {
+            "graphql.operation.name": operationName,
+            "graphql.operation.type": operationType,
+          });
+
+          const feature = OPERATION_FEATURE[operationName];
+          if (feature) {
+            featureUsageCount.add(1, { feature });
+            span.setAttribute("app.feature", feature);
+          }
+        },
+
+        async didEncounterErrors(ctx) {
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: ctx.errors?.[0]?.message,
+          });
+          for (const err of ctx.errors || []) {
+            const code = (err.extensions?.code as string) || "UNKNOWN";
+            span.addEvent("graphql.error", {
+              "error.message": err.message,
+              "error.code": code,
+            });
+            graphqlErrorCount.add(1, {
+              "graphql.operation.name": operationName,
+              "graphql.operation.type": operationType,
+              "error.code": code,
+            });
+            log.error(
+              {
+                operationName,
+                operationType,
+                errorCode: code,
+                err: err.message,
+              },
+              "GraphQL error"
+            );
+          }
+        },
+
+        async willSendResponse() {
+          const duration = performance.now() - startTime;
+          graphqlOperationDuration.record(duration, {
+            "graphql.operation.name": operationName,
+            "graphql.operation.type": operationType,
+          });
+          span.setAttribute("graphql.duration_ms", Math.round(duration));
+          span.end();
+        },
+      };
+    },
+  };
+}
 
 /**
  * Extracts the first query name from a GraphQL operation.
@@ -41,9 +210,19 @@ class RedisCache implements KeyValueCache {
   }
 
   async get(key: string) {
+    const start = performance.now();
     const value = await this.client.get(this.prefix + key);
+    const duration = performance.now() - start;
+    redisCacheOpDuration.record(duration, { operation: "get" });
 
-    if (!value) return undefined;
+    if (!value) {
+      cacheMissCount.add(1);
+      trace.getActiveSpan()?.addEvent("cache.miss", { "cache.key": key });
+      return undefined;
+    }
+
+    cacheHitCount.add(1);
+    trace.getActiveSpan()?.addEvent("cache.hit", { "cache.key": key });
 
     const buffer = Buffer.from(value, "base64");
     return gunzipSync(buffer).toString("utf-8");
@@ -61,18 +240,26 @@ class RedisCache implements KeyValueCache {
   ) {
     if (!value) return;
 
+    const start = performance.now();
+    const ttl = Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull());
     await this.client.set(
       this.prefix + key,
       gzipSync(value).toString("base64"),
-      {
-        EX: Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull()),
-      }
+      { EX: ttl }
     );
+    const duration = performance.now() - start;
+    redisCacheOpDuration.record(duration, { operation: "set" });
+    trace.getActiveSpan()?.addEvent("cache.set", {
+      "cache.key": key,
+      "cache.ttl": ttl,
+    });
   }
 
   async delete(key: string) {
+    const start = performance.now();
     const success = await this.client.del(this.prefix + key);
-
+    const duration = performance.now() - start;
+    redisCacheOpDuration.record(duration, { operation: "delete" });
     return success === 1;
   }
 }
@@ -95,6 +282,7 @@ export default async (redis: RedisClientType) => {
     validationRules: [...protection.validationRules],
     plugins: [
       ...protection.plugins,
+      createOtelPlugin(),
       // HTTP caching for catalog query (5 min TTL)
       {
         async requestDidStart() {

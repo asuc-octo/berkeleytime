@@ -4,6 +4,15 @@ ttl: 24 # in hours
 host: berkeleytime.com
 port: 80
 
+# OpenTelemetry configuration
+# Set otel.enabled=true to enable tracing, metrics, and log export
+otel:
+  enabled: false
+  # OTel Collector endpoint (use K8s service DNS)
+  collectorEndpoint: "http://otel-collector.observability.svc.cluster.local:4318"
+  # Service name for traces/metrics
+  serviceName: "backend"
+
 mongoUri: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production

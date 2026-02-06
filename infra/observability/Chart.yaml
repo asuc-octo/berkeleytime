@@ -1,0 +1,7 @@
+apiVersion: v2
+name: bt-observability
+description: OpenTelemetry-based observability stack for Berkeleytime (Collector, Tempo, Loki, Prometheus, Grafana)
+
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,161 @@
+# Grafana Tempo - distributed tracing backend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tempo-config
+  labels:
+    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+data:
+  tempo.yaml: |
+    stream_over_http_enabled: true
+
+    server:
+      http_listen_port: 3200
+      grpc_listen_port: 9095
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: "0.0.0.0:4317"
+            http:
+              endpoint: "0.0.0.0:4318"
+
+    ingester:
+      max_block_duration: 5m
+
+    compactor:
+      compaction:
+        block_retention: 72h
+
+    storage:
+      trace:
+        backend: local
+        wal:
+          path: /var/tempo/wal
+        local:
+          path: /var/tempo/blocks
+
+    metrics_generator:
+      registry:
+        external_labels:
+          source: tempo
+          cluster: kubernetes
+      storage:
+        path: /var/tempo/generator/wal
+        remote_write: []
+
+    overrides:
+      defaults:
+        metrics_generator:
+          processors: [service-graphs, span-metrics]
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tempo-data
+  labels:
+    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.tempo.storage.size }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo
+  labels:
+    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tempo
+  template:
+    metadata:
+      labels:
+        {{- include "bt-observability.tempoLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/tempo.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: tempo
+          image: {{ .Values.tempo.image }}
+          args:
+            - "-config.file=/etc/tempo/tempo.yaml"
+          ports:
+            - name: http
+              containerPort: 3200
+              protocol: TCP
+            - name: grpc
+              containerPort: 9095
+              protocol: TCP
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.tempo.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/tempo
+              readOnly: true
+            - name: data
+              mountPath: /var/tempo
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: tempo-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: tempo-data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo
+  labels:
+    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: tempo
+  ports:
+    - name: http
+      port: 3200
+      targetPort: 3200
+      protocol: TCP
+    - name: grpc
+      port: 9095
+      targetPort: 9095
+      protocol: TCP
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
