@@ -12,13 +12,17 @@ import {
 } from "recharts";
 
 import { LoadingIndicator } from "@repo/theme";
+import { Select } from "@repo/theme";
 
 import {
   ChartContainer,
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-import { useUserCreationAnalyticsData } from "@/hooks/api";
+import {
+  useUserActivityAnalyticsData,
+  useUserCreationAnalyticsData,
+} from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
@@ -275,165 +279,6 @@ export function UserGrowthBlock() {
   );
 }
 
-// Signup Hour Histogram Block - count of signups by hour of day (90d)
-export function SignupHourHistogramBlock() {
-  const { data: rawData, loading, error } = useUserCreationAnalyticsData();
-
-  const { hourlyData, peakHour } = useMemo(() => {
-    if (!rawData || rawData.length === 0) {
-      return { hourlyData: [], peakHour: null };
-    }
-
-    const now = new Date();
-    const rangeStart = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-
-    // Filter data to 90 days
-    const filteredData = rawData.filter((point) => {
-      const date = new Date(point.createdAt);
-      return date >= rangeStart && date <= now;
-    });
-
-    // Count signups per hour of day (0-23)
-    const hourCounts = new Array(24).fill(0);
-
-    filteredData.forEach((point) => {
-      const date = new Date(point.createdAt);
-      const hour = date.getHours();
-      hourCounts[hour]++;
-    });
-
-    // Convert to chart data with AM/PM labels and percentages
-    const formatHour = (h: number) => {
-      if (h === 0) return "12 AM";
-      if (h === 12) return "12 PM";
-      return h < 12 ? `${h} AM` : `${h - 12} PM`;
-    };
-
-    const total = filteredData.length;
-    const hourlyData = hourCounts.map((count, hour) => ({
-      hour: `${hour}`,
-      hourLabel: `${formatHour(hour)} - ${formatHour((hour + 1) % 24)}`,
-      value: total > 0 ? (count / total) * 100 : 0,
-      count,
-    }));
-
-    // Find peak hour
-    let maxCount = 0;
-    let peakHour = 0;
-    hourCounts.forEach((count, hour) => {
-      if (count > maxCount) {
-        maxCount = count;
-        peakHour = hour;
-      }
-    });
-
-    const peakPercent = total > 0 ? (maxCount / total) * 100 : 0;
-
-    return {
-      hourlyData,
-      peakHour: {
-        hour: peakHour,
-        count: maxCount,
-        label: formatHour(peakHour),
-        percent: peakPercent,
-      },
-      totalUsers: total,
-    };
-  }, [rawData]);
-
-  const chartConfig = createChartConfig(["value"], {
-    labels: { value: "Signups" },
-    colors: { value: "var(--heading-color)" },
-  });
-
-  if (loading) {
-    return (
-      <AnalyticsCard
-        title="Signup Time Distribution"
-        description="When users create accounts (hour of day)"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          <LoadingIndicator />
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  if (error) {
-    return (
-      <AnalyticsCard
-        title="Signup Time Distribution"
-        description="When users create accounts (hour of day)"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            color: "var(--red-500)",
-          }}
-        >
-          Error loading data
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  return (
-    <AnalyticsCard
-      title="Signup Time Distribution"
-      description="When users create accounts (90d)"
-      currentValueLabel={`${peakHour?.label ?? "12 AM"} peak`}
-      subtitle={`${peakHour?.percent?.toFixed(1) ?? 0}% of signups`}
-    >
-      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={hourlyData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="var(--border-color)"
-              vertical={false}
-            />
-            <XAxis
-              dataKey="hour"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 9 }}
-              interval={0}
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 12 }}
-              width={30}
-            />
-            <ChartTooltip
-              tooltipConfig={{
-                labelFormatter: (_, payload) =>
-                  payload?.[0]?.payload?.hourLabel || "",
-                valueFormatter: (value: number) => `${value.toFixed(2)}%`,
-              }}
-            />
-            <Bar
-              dataKey="value"
-              fill="var(--heading-color)"
-              radius={[2, 2, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartContainer>
-    </AnalyticsCard>
-  );
-}
-
 // Daily Signups Block - signups per calendar day
 export function SignupDayHistogramBlock() {
   const { data: rawData, loading, error } = useUserCreationAnalyticsData();
@@ -572,6 +417,446 @@ export function SignupDayHistogramBlock() {
               dataKey="value"
               fill="var(--heading-color)"
               radius={[2, 2, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+type ActiveWindow = "DAU" | "WAU" | "MAU";
+
+// Helper to check if a user was active in a given window
+function isActiveInWindow(
+  lastSeenDate: Date,
+  referenceDate: Date,
+  windowDays: number
+): boolean {
+  const windowStart = new Date(referenceDate);
+  windowStart.setDate(windowStart.getDate() - windowDays);
+  return lastSeenDate >= windowStart && lastSeenDate <= referenceDate;
+}
+
+// Get window days based on active window type
+function getWindowDays(activeWindow: ActiveWindow): number {
+  if (activeWindow === "DAU") return 1;
+  if (activeWindow === "WAU") return 7;
+  return 30;
+}
+
+// Active Users Over Time Block - shows DAU/WAU/MAU trend
+export function ActiveUsersBlock() {
+  const { data: rawData, loading, error } = useUserActivityAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [granularity, setGranularity] = useState<Granularity>("day");
+  const [activeWindow, setActiveWindow] = useState<ActiveWindow>("DAU");
+
+  const { chartData, currentActiveUsers, percentChange } = useMemo(() => {
+    if (!rawData || rawData.length === 0) {
+      return {
+        chartData: [] as DailyDataPoint[],
+        currentActiveUsers: 0,
+        percentChange: 0,
+      };
+    }
+
+    const days = getTimeRangeDays(timeRange);
+    const windowDays = getWindowDays(activeWindow);
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    // Parse user data, filtering out legacy users (lastSeenAt = Unix epoch 1970)
+    const users = rawData
+      .map((u) => ({
+        lastSeenAt: new Date(u.lastSeenAt),
+        createdAt: new Date(u.createdAt),
+      }))
+      .filter((u) => u.lastSeenAt.getFullYear() > 1970);
+
+    // Initialize buckets based on granularity
+    const bucketKeys: string[] = [];
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketKeys.push(key);
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    // For each bucket, count users active within the window ending at that point
+    const chartData: DailyDataPoint[] = bucketKeys.map((key) => {
+      // Parse the bucket date
+      const parts = key.split("-");
+      const bucketDate = new Date(
+        parseInt(parts[0]),
+        parseInt(parts[1]) - 1,
+        parseInt(parts[2]),
+        granularity === "hour" ? parseInt(parts[3]) : 23,
+        granularity === "hour" ? 59 : 59
+      );
+
+      // Count active users in this window
+      const activeCount = users.filter((u) =>
+        isActiveInWindow(u.lastSeenAt, bucketDate, windowDays)
+      ).length;
+
+      return {
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
+        value: activeCount,
+      };
+    });
+
+    // Current and previous period comparison
+    const currentActiveUsers =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+
+    // Get the value from the start of the range for comparison
+    const previousActiveUsers = chartData.length > 0 ? chartData[0].value : 0;
+
+    const percentChange =
+      previousActiveUsers > 0
+        ? ((currentActiveUsers - previousActiveUsers) / previousActiveUsers) *
+          100
+        : 0;
+
+    return {
+      chartData,
+      currentActiveUsers,
+      percentChange,
+    };
+  }, [rawData, timeRange, granularity, activeWindow]);
+
+  const chartConfig = createChartConfig(["value"], {
+    labels: { value: `${activeWindow}` },
+    colors: { value: "var(--heading-color)" },
+  });
+
+  const activeWindowControl = (
+    <>
+      <span
+        style={{ marginLeft: 8, fontSize: 12, color: "var(--label-color)" }}
+      >
+        Window
+      </span>
+      <Select
+        value={activeWindow}
+        onChange={(val) => setActiveWindow(val as ActiveWindow)}
+        options={[
+          { value: "DAU", label: "Daily" },
+          { value: "WAU", label: "Weekly" },
+          { value: "MAU", label: "Monthly" },
+        ]}
+        style={{
+          width: "fit-content",
+          minHeight: 24,
+          height: 24,
+          padding: "0 8px",
+          fontSize: 12,
+        }}
+      />
+    </>
+  );
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Active Users"
+        description="Users who logged in recently"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Active Users"
+        description="Users who logged in recently"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Active Users"
+      description={`Users who logged in within the last ${activeWindow === "DAU" ? "day" : activeWindow === "WAU" ? "week" : "month"}`}
+      currentValue={currentActiveUsers}
+      currentValueLabel={`${activeWindow}`}
+      percentChange={percentChange}
+      changeTimescale={timeRange}
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(val) => {
+        setTimeRange(val);
+        setGranularity(val === "7d" ? "hour" : "day");
+      }}
+      granularity={granularity}
+      onGranularityChange={setGranularity}
+      customControls={activeWindowControl}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient
+                id="activeUsersGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={[0, "auto"]}
+            />
+            <ChartTooltip />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#activeUsersGradient)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+interface RecencyBucket {
+  label: string;
+  count: number;
+  percent: number;
+}
+
+// User Activity Recency Distribution Block - shows how recently users were active
+export function UserActivityRecencyBlock() {
+  const { data: rawData, loading, error } = useUserActivityAnalyticsData();
+
+  const { buckets, activeIn30dPercent, totalUsers } = useMemo(() => {
+    if (!rawData || rawData.length === 0) {
+      return {
+        buckets: [] as RecencyBucket[],
+        activeIn30dPercent: 0,
+        totalUsers: 0,
+      };
+    }
+
+    const now = new Date();
+    const totalUsers = rawData.length;
+
+    // Define bucket boundaries (in days)
+    const bucketDefs = [
+      { label: "Today", maxDays: 1 },
+      { label: "1-7 days", maxDays: 7 },
+      { label: "8-30 days", maxDays: 30 },
+      { label: "31-90 days", maxDays: 90 },
+      { label: "90+ days", maxDays: Infinity },
+      { label: "Never", maxDays: -1 }, // Special: lastSeenAt = Unix epoch
+    ];
+
+    // Count users in each bucket
+    const bucketCounts = new Map<string, number>();
+    bucketDefs.forEach((b) => bucketCounts.set(b.label, 0));
+
+    rawData.forEach((user) => {
+      const lastSeen = new Date(user.lastSeenAt);
+      const daysSinceLastSeen = Math.floor(
+        (now.getTime() - lastSeen.getTime()) / (24 * 60 * 60 * 1000)
+      );
+
+      // Check for legacy users (lastSeenAt = Unix epoch 1970)
+      if (lastSeen.getFullYear() <= 1970) {
+        bucketCounts.set("Never", (bucketCounts.get("Never") || 0) + 1);
+        return;
+      }
+
+      // Find the appropriate bucket
+      let assigned = false;
+      for (const bucket of bucketDefs) {
+        if (bucket.maxDays === -1) continue; // Skip "Never" bucket
+        if (daysSinceLastSeen < bucket.maxDays) {
+          bucketCounts.set(
+            bucket.label,
+            (bucketCounts.get(bucket.label) || 0) + 1
+          );
+          assigned = true;
+          break;
+        }
+      }
+
+      if (!assigned) {
+        bucketCounts.set("90+ days", (bucketCounts.get("90+ days") || 0) + 1);
+      }
+    });
+
+    // Convert to array with percentages
+    const buckets: RecencyBucket[] = bucketDefs.map((b) => {
+      const count = bucketCounts.get(b.label) || 0;
+      return {
+        label: b.label,
+        count,
+        percent: totalUsers > 0 ? (count / totalUsers) * 100 : 0,
+      };
+    });
+
+    // Calculate active in 30 days (Today + 1-7 days + 8-30 days)
+    const activeIn30d =
+      (bucketCounts.get("Today") || 0) +
+      (bucketCounts.get("1-7 days") || 0) +
+      (bucketCounts.get("8-30 days") || 0);
+    const activeIn30dPercent =
+      totalUsers > 0 ? (activeIn30d / totalUsers) * 100 : 0;
+
+    return { buckets, activeIn30dPercent, totalUsers };
+  }, [rawData]);
+
+  const chartConfig = createChartConfig(["percent"], {
+    labels: { percent: "Users" },
+    colors: { percent: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="User Activity Recency"
+        description="Distribution of user login recency"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="User Activity Recency"
+        description="Distribution of user login recency"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="User Activity Recency"
+      description="When users last logged in"
+      currentValue={totalUsers}
+      currentValueLabel="total users"
+      subtitle={`${activeIn30dPercent.toFixed(1)}% active in 30d`}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={buckets} layout="vertical">
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              horizontal={false}
+            />
+            <XAxis
+              type="number"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              tickFormatter={(v) => `${v.toFixed(0)}%`}
+              domain={[0, "auto"]}
+            />
+            <YAxis
+              type="category"
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 11 }}
+              width={70}
+            />
+            <ChartTooltip
+              tooltipConfig={{
+                labelFormatter: (_, payload) =>
+                  payload?.[0]?.payload?.label || "",
+                valueFormatter: (value: number, _name, item) => {
+                  const count = item?.payload?.count || 0;
+                  return `${value.toFixed(1)}% (${count.toLocaleString()} users)`;
+                },
+              }}
+            />
+            <Bar
+              dataKey="percent"
+              fill="var(--heading-color)"
+              radius={[0, 4, 4, 0]}
             />
           </BarChart>
         </ResponsiveContainer>

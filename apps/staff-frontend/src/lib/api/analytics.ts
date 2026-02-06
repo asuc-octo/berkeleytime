@@ -23,6 +23,11 @@ export interface UserCreationDataPoint {
   createdAt: string;
 }
 
+export interface UserActivityDataPoint {
+  lastSeenAt: string;
+  createdAt: string;
+}
+
 export interface CollectionCreationDataPoint {
   createdAt: string;
   userId: string;
@@ -115,6 +120,15 @@ export const OPTIONAL_RESPONSE_ANALYTICS_DATA = gql`
 export const USER_CREATION_ANALYTICS_DATA = gql`
   query UserCreationAnalyticsData {
     userCreationAnalyticsData {
+      createdAt
+    }
+  }
+`;
+
+export const USER_ACTIVITY_ANALYTICS_DATA = gql`
+  query UserActivityAnalyticsData {
+    userActivityAnalyticsData {
+      lastSeenAt
       createdAt
     }
   }
