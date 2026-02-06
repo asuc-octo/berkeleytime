@@ -1,0 +1,186 @@
+// Container layout — mirrors Catalog.module.scss exactly
+.root {
+  flex: 1 1 0;
+  display: flex;
+  min-height: 0;
+  position: relative;
+
+  .view {
+    overflow: hidden;
+    flex-grow: 1;
+    background-color: var(--foreground-color);
+    position: relative;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+  }
+}
+
+.drawer {
+  width: 370px;
+  background-color: var(--foreground-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--background-color);
+  z-index: 999;
+}
+
+.drawerTrigger {
+  width: 30px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-color);
+  cursor: pointer;
+  background-color: var(--foreground-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--paragraph-color);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-hover-color);
+      transition: background-color 150ms ease-in-out;
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Filter panel internals — mirrors Filters.module.scss
+.filterPanel {
+  width: 370px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  background-color: var(--foreground-color);
+
+  @media (width <= 992px) {
+    width: 100%;
+  }
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 16px;
+}
+
+.filtersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filtersTitle {
+  font-weight: var(--font-medium);
+  font-size: var(--text-18);
+  line-height: 20px;
+  color: var(--heading-color);
+}
+
+.formControl {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
+  line-height: 20px;
+  color: var(--heading-color);
+  margin-bottom: 8px;
+}
+
+.reveal {
+  overflow: hidden;
+}
+
+.addButton {
+  width: 100%;
+}
+
+// Output panel — selected courses column (desktop)
+.outputPanel {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--foreground-color);
+}
+
+.outputList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.outputListHeader {
+  padding: 24px 20px 0;
+  flex-shrink: 0;
+}
+
+.outputListTitle {
+  font-size: var(--text-18);
+  font-weight: var(--font-medium);
+  line-height: 20px;
+  color: var(--heading-color);
+}
+
+.listContainer {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.classList {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  // Cards have flex: 1 1 300px for row layouts; reset in our column layout
+  > * {
+    flex: none;
+  }
+}
+
+.emptyState {
+  padding: 20px;
+  text-align: center;
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+}
+
+// Mobile output list — shown at top of .view
+.mobileOutputList {
+  border-bottom: 1px solid var(--border-color);
+  max-height: 40vh;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  > * {
+    flex: none;
+    min-width: 0;
+    max-width: none;
+  }
+}

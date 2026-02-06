@@ -578,6 +578,7 @@ export function Select<T>({
                       label: tab.label,
                     }))}
                     fullWidth
+                    variant="tabs"
                     onValueChange={handleTabChange}
                   />
                 </div>

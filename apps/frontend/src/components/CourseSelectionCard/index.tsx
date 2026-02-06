@@ -21,11 +21,11 @@ interface CourseSelectionCardProps {
   metadata: string;
   gradeDistribution?: IGradeDistribution;
   loadGradeDistribution?: boolean;
-  onClick: () => void;
-  onClickDelete: () => void;
-  onClickHide: () => void;
-  active: boolean;
-  hidden: boolean;
+  onClick?: () => void;
+  onClickDelete?: () => void;
+  onClickHide?: () => void;
+  active?: boolean;
+  hidden?: boolean;
 }
 
 export default function CourseSelectionCard({
@@ -64,13 +64,11 @@ export default function CourseSelectionCard({
       onClick={(event) => {
         if (hidden) return;
         if (
-          hideRef.current &&
-          !hideRef.current.contains(event.target as Node) &&
-          deleteRef.current &&
-          !deleteRef.current.contains(event.target as Node)
-        ) {
-          onClick();
-        }
+          hideRef.current?.contains(event.target as Node) ||
+          deleteRef.current?.contains(event.target as Node)
+        )
+          return;
+        onClick?.();
       }}
     >
       <div className={styles.content}>
@@ -86,16 +84,20 @@ export default function CourseSelectionCard({
             {displayGradeDistribution && (
               <AverageGrade gradeDistribution={displayGradeDistribution} />
             )}
-            <div onClick={onClickHide} ref={hideRef} className={styles.icon}>
-              {!hidden ? <Eye /> : <EyeClosed />}
-            </div>
-            <div
-              onClick={onClickDelete}
-              ref={deleteRef}
-              className={styles.icon}
-            >
-              <Trash />
-            </div>
+            {onClickHide && (
+              <div onClick={onClickHide} ref={hideRef} className={styles.icon}>
+                {!hidden ? <Eye /> : <EyeClosed />}
+              </div>
+            )}
+            {onClickDelete && (
+              <div
+                onClick={onClickDelete}
+                ref={deleteRef}
+                className={styles.icon}
+              >
+                <Trash />
+              </div>
+            )}
           </div>
         </div>
 
