@@ -16,6 +16,7 @@ import {
 } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
+import GradeBarGraph from "./GradeBarGraph";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -134,17 +135,15 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
 
-  const getInstructorOptions = (
-    semester: string | null = null,
-    shouldSetSelectedInstructor = true
-  ) => {
+  const instructorOptionsData = useMemo(() => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
-    if (!course) return list;
+    if (!course) {
+      return { options: list, autoSelectValue: null };
+    }
 
-    const localSelectedSemester = semester ? semester : selectedSemester;
-    const selectedTerm = parseSemesterValue(localSelectedSemester);
-
+    const selectedTerm = parseSemesterValue(selectedSemester);
     const instructorSet = new Set();
+
     course?.classes.forEach((c) => {
       if (!c.gradeDistribution.average) return;
       if (selectedType === InputType.Term) {
@@ -163,35 +162,36 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         });
       });
     });
+
     const opts = [...instructorSet].map((v) => {
       const [family, given] = (v as string).split(", ");
       const label = given && family ? `${given} ${family}` : (v as string);
       return { value: v as string, label };
     });
+
     if (opts.length === 1 && selectedType === InputType.Term) {
-      if (selectedInstructor !== opts[0].value && shouldSetSelectedInstructor)
-        setSelectedInstructor(opts[0].value);
-      return opts;
+      return { options: opts, autoSelectValue: opts[0].value };
     }
-    return [...list, ...opts];
-  };
 
-  const instructorOptions = useMemo(getInstructorOptions, [
-    course,
-    selectedSemester,
-    selectedType,
-    selectedInstructor,
-  ]);
+    return { options: [...list, ...opts], autoSelectValue: null };
+  }, [course, selectedSemester, selectedType]);
 
-  const getSemesterOptions = (
-    instructor: string | null = null,
-    shouldSetSelectedSemester = true
-  ) => {
+  const instructorOptions = instructorOptionsData.options;
+
+  useEffect(() => {
+    if (!instructorOptionsData.autoSelectValue) return;
+    if (selectedInstructor !== instructorOptionsData.autoSelectValue) {
+      setSelectedInstructor(instructorOptionsData.autoSelectValue);
+    }
+  }, [instructorOptionsData.autoSelectValue, selectedInstructor]);
+
+  const semesterOptionsData = useMemo(() => {
     const list = [DEFAULT_SELECTED_SEMESTER];
-    if (!course) return list;
-    const localSelectedInstructor = instructor
-      ? instructor
-      : selectedInstructor;
+    if (!course) {
+      return { options: list, autoSelectValue: null };
+    }
+
+    const localSelectedInstructor = selectedInstructor;
     const filteredClasses =
       selectedType === InputType.Term
         ? course.classes
@@ -206,6 +206,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
                 )
               )
             );
+
     const seen = new Set<string>();
     const uniqueClasses = filteredClasses
       .filter(({ sessionId }) => !!sessionId)
@@ -217,27 +218,30 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         return true;
       })
       .toSorted(sortByTermDescending);
+
     const filteredOptions = uniqueClasses.map((t) => ({
       value: buildSemesterValue(t.year, t.semester, t.sessionId),
       label: formatSemesterLabel(t.semester, t.year),
     }));
-    if (filteredOptions.length == 1) {
-      if (
-        selectedSemester != filteredOptions[0].value &&
-        shouldSetSelectedSemester
-      )
-        setSelectedSemester(filteredOptions[0].value);
-      return filteredOptions;
-    }
-    return [...list, ...filteredOptions];
-  };
 
-  const semesterOptions = useMemo(getSemesterOptions, [
-    course,
-    selectedInstructor,
-    selectedType,
-    selectedSemester,
-  ]);
+    if (filteredOptions.length === 1) {
+      return {
+        options: filteredOptions,
+        autoSelectValue: filteredOptions[0].value,
+      };
+    }
+
+    return { options: [...list, ...filteredOptions], autoSelectValue: null };
+  }, [course, selectedInstructor, selectedType]);
+
+  const semesterOptions = semesterOptionsData.options;
+
+  useEffect(() => {
+    if (!semesterOptionsData.autoSelectValue) return;
+    if (selectedSemester !== semesterOptionsData.autoSelectValue) {
+      setSelectedSemester(semesterOptionsData.autoSelectValue);
+    }
+  }, [semesterOptionsData.autoSelectValue, selectedSemester]);
 
   const currentInput = useMemo((): Input | null => {
     if (!selectedCourse) return null;
@@ -348,6 +352,9 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     selectedType === InputType.Instructor
       ? !!selectedInstructor
       : !!selectedSemester;
+  const shouldShowAddButton = !!selectedCourse && hasSelection;
+  const isAddButtonDisabled =
+    !selectedCourse || !hasSelection || loading || isFull || isAlreadyAdded;
 
   return (
     <div className={styles.filterPanel}>
@@ -410,30 +417,33 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
             />
           </div>
         )}
-        <AnimatePresence>
-          {selectedCourse && hasSelection && (
-            <motion.div
-              key="add-button"
-              className={styles.reveal}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              <Button
-                onClick={() => add()}
-                disabled={loading || isFull || isAlreadyAdded}
-                className={styles.addButton}
+        <div className={styles.addButtonSlot}>
+          <AnimatePresence initial={false}>
+            {shouldShowAddButton && (
+              <motion.div
+                key="add-course-button"
+                className={styles.addButtonMotion}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ type: "spring", stiffness: 320, damping: 26 }}
               >
-                {isAlreadyAdded
-                  ? "Already added"
-                  : isFull
-                    ? "Remove a course first"
-                    : "Add course"}
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <Button
+                  onClick={() => add()}
+                  disabled={isAddButtonDisabled}
+                  variant={isAlreadyAdded || isFull ? "secondary" : "primary"}
+                  className={styles.addButton}
+                >
+                  {isAlreadyAdded
+                    ? "Already added"
+                    : isFull
+                      ? "Remove a course first"
+                      : "Add course"}
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
@@ -511,6 +521,8 @@ export default function Grades() {
       {isDesktop ? (
         <div className={styles.panel}>
           <FilterPanel outputs={outputs} setOutputs={setOutputs} />
+          <div className={styles.divider} />
+          <OutputList outputs={outputs} remove={remove} />
         </div>
       ) : (
         <>
@@ -545,17 +557,11 @@ export default function Grades() {
         </div>
       )}
 
-      {isDesktop && (
-        <div className={styles.outputPanel}>
-          <OutputList outputs={outputs} remove={remove} />
-        </div>
-      )}
-
       <div className={styles.view}>
         {!isDesktop && (
           <OutputList outputs={outputs} remove={remove} mobile />
         )}
-        {/* Main content area */}
+        <GradeBarGraph />
       </div>
     </div>
   );
