@@ -66,6 +66,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussion = lazy(() => import("./Discussion"));
 
 interface RootProps {
   dialog?: boolean;
@@ -132,6 +133,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
   if (pathname.endsWith("/enrollment")) return "enrollment";
+  if (pathname.endsWith("/discussion")) return "discussion";
   return "overview";
 };
 
@@ -555,7 +557,7 @@ export default function Class({
                 </Flex>
               </Flex>
               {dialog ? (
-                <Tabs.List asChild defaultValue="overview">
+                <Tabs.List asChild>
                   <Flex mx="-3" mb="3">
                     <Tabs.Trigger value="overview" asChild>
                       <MenuItem>Overview</MenuItem>
@@ -577,6 +579,9 @@ export default function Class({
                     )}
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
@@ -611,6 +616,11 @@ export default function Class({
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
+                    )}
+                  </NavLink>
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
@@ -641,6 +651,11 @@ export default function Class({
                 <Tabs.Content value="grades" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="discussion" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Discussion />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 {!ratingsLocked && (
@@ -684,6 +699,20 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Grades />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("discussion") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "discussion"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Discussion />
                     </SuspenseBoundary>
                   </div>
                 )}

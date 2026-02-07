@@ -9,7 +9,11 @@ export const formatComment = (
     courseId: comment.courseId,
     userId: comment.userId.toString(),
     comment: comment.comment,
-    createdAt: comment.createdAt.toISOString(),
-    updatedAt: comment.updatedAt.toISOString(),
+    createdAt: comment.createdAt instanceof Date 
+      ? comment.createdAt 
+      : new Date(comment.createdAt),
+    updatedAt: comment.updatedAt instanceof Date 
+      ? comment.updatedAt 
+      : new Date(comment.updatedAt),
   };
 };

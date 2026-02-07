@@ -30,6 +30,7 @@ const CollectionDetail = lazy(
 );
 
 const Class = {
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
@@ -348,6 +349,14 @@ const router = createBrowserRouter([
                   </SuspenseBoundary>
                 ),
                 path: "grades",
+              },
+              {
+                element: (
+                  <SuspenseBoundary key="discussion">
+                    <Class.Discussion />
+                  </SuspenseBoundary>
+                ),
+                path: "discussion",
               },
               {
                 element: (

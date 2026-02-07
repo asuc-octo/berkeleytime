@@ -1,0 +1,58 @@
+.form {
+  width: 100%;
+}
+
+.label {
+  color: var(--heading-color);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--foreground-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  font-family: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 150ms ease-in-out;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+
+  &::placeholder {
+    color: var(--secondary-color);
+  }
+}
+
+.sectionTitle {
+  color: var(--heading-color);
+}
+
+.commentCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+}
+
+.commentText {
+  color: var(--paragraph-color);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.meta {
+  color: var(--secondary-color);
+}
+
+.loading,
+.empty {
+  color: var(--secondary-color);
+  padding: 16px 0;
+}
+
