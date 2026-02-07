@@ -3,7 +3,7 @@
 }
 
 .label {
-  color: var(--foreground-color);
+  color: var(--heading-color);
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -12,10 +12,10 @@
   width: 100%;
   min-height: 96px;
   border-radius: 8px;
-  border: 1px solid var(--foreground-color);
+  border: 1px solid var(--border-color);
   padding: 10px 12px;
-  background: transparent;
-  color: var(--foreground-color);
+  background: var(--background-color);
+  color: var(--paragraph-color);
   resize: vertical;
 }
 
@@ -24,15 +24,17 @@
 }
 
 .commentCard {
-  border: 1px solid var(--foreground-color);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 12px;
+  background: var(--background-color);
 }
 
 .commentMeta {
-  color: var(--foreground-color);
+  color: var(--label-color);
 }
 
 .commentBody {
+  color: var(--paragraph-color);
   white-space: pre-wrap;
 }

@@ -367,6 +367,14 @@ const router = createBrowserRouter([
                 path: "ratings",
               },
               {
+                element: (
+                  <SuspenseBoundary key="discussion">
+                    <Class.Discussion />
+                  </SuspenseBoundary>
+                ),
+                path: "discussion",
+              },
+              {
                 path: "*",
                 loader: ({
                   params: {
