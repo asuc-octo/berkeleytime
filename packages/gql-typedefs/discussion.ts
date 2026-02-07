@@ -6,13 +6,9 @@ export const discussionTypeDef = gql`
   """
   type CourseDiscussion @cacheControl(maxAge: 1) {
     _id: ID!
-    "When the comment was posted"
     timestamp: ISODate!
-    "User who wrote the comment"
     userId: ID!
-    "Course this comment is about"
     courseId: CourseIdentifier!
-    "Comment text"
     comment: String!
   }
 

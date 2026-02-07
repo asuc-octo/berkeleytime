@@ -2,10 +2,11 @@ import { GraphQLError } from "graphql";
 
 import { CourseDiscussionModel } from "@repo/common/models";
 
+import { formatCourseDiscussion } from "./formatter";
+
 export interface DiscussionRequestContext {
   user: {
     _id: string;
-    isAuthenticated: boolean;
   };
 }
 
@@ -14,7 +15,7 @@ export const getCourseDiscussions = async (courseId: string) => {
     .sort({ timestamp: -1 })
     .lean();
 
-  return discussions;
+  return discussions.map(formatCourseDiscussion);
 };
 
 export const addCourseDiscussion = async (
@@ -34,5 +35,5 @@ export const addCourseDiscussion = async (
     comment,
   });
 
-  return doc;
+  return formatCourseDiscussion(doc);
 };
