@@ -3,9 +3,9 @@ import { useCallback } from "react";
 import { useMutation, useQuery } from "@apollo/client/react";
 
 import {
+  CreateCourseCommentDocument,
   CreateCourseCommentMutation,
   CreateCourseCommentMutationVariables,
-  CreateCourseCommentDocument,
   GetCourseCommentsDocument,
   GetCourseCommentsQuery,
   GetCourseCommentsQueryVariables,
