@@ -3,25 +3,6 @@
   flex-direction: column;
   height: 100%;
   padding: 24px;
-  gap: 16px;
-}
-
-.header {
-  flex-shrink: 0;
-}
-
-.title {
-  font-size: var(--text-18);
-  font-weight: var(--font-medium);
-  line-height: 20px;
-  color: var(--heading-color);
-}
-
-.subtitle {
-  margin-top: 4px;
-  font-size: var(--text-14);
-  color: var(--paragraph-color);
-  line-height: 20px;
 }
 
 .chartWrapper {

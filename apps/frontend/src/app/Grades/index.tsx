@@ -17,6 +17,7 @@ import {
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import GradeBarGraph from "./GradeBarGraph";
+import MiniGradeBarChart from "./MiniGradeBarChart";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -516,6 +517,16 @@ export default function Grades() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const miniChartCount = Math.min(outputs.length, 4);
+  const isTwoRowLayout = miniChartCount >= 3;
+  const miniChartRows = isTwoRowLayout ? 2 : 1;
+  const miniChartCols = isTwoRowLayout ? 2 : Math.max(miniChartCount, 1);
+  const isThreeCardLayout = miniChartCount === 3;
+  const miniChartsStyle = {
+    "--mini-rows": miniChartRows,
+    "--mini-cols": miniChartCols,
+  } as React.CSSProperties;
+
   return (
     <div className={styles.root}>
       {isDesktop ? (
@@ -561,7 +572,58 @@ export default function Grades() {
         {!isDesktop && (
           <OutputList outputs={outputs} remove={remove} mobile />
         )}
-        <GradeBarGraph />
+        <div className={styles.chartsPane}>
+          <div className={styles.mainChartArea}>
+            <GradeBarGraph outputs={outputs} />
+          </div>
+          <div className={styles.chartDivider} />
+          <div className={styles.miniChartsSection} style={miniChartsStyle}>
+            {outputs.slice(0, 4).map((output, index) => {
+              const isFullWidthCard = isThreeCardLayout && index === 2;
+              const row = isThreeCardLayout
+                ? index < 2
+                  ? 0
+                  : 1
+                : Math.floor(index / miniChartCols);
+              const col = isThreeCardLayout
+                ? index < 2
+                  ? index
+                  : 0
+                : index % miniChartCols;
+              const isLastRow = row === miniChartRows - 1;
+              const isLastCol = col === miniChartCols - 1;
+
+              return (
+              <div
+                key={getInputSearchParam(output.input)}
+                className={[
+                  styles.miniChartCard,
+                  isFullWidthCard ? styles.miniChartCardFull : "",
+                  !isFullWidthCard && !isLastCol
+                    ? styles.miniChartCardDividerRight
+                    : "",
+                  !isLastRow ? styles.miniChartCardDividerBottom : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <div className={styles.miniChartTitle}>
+                  <span
+                    className={styles.miniChartSwatch}
+                    style={{ backgroundColor: output.color }}
+                  />
+                  <span className={styles.miniChartLabel}>
+                    {output.input.subject} {output.input.courseNumber} · {getMetadata(output.input)}
+                  </span>
+                </div>
+                <div className={styles.miniChartBar}>
+                  <MiniGradeBarChart gradeDistribution={output.data} />
+                </div>
+              </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

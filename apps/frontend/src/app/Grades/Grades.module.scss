@@ -10,6 +10,9 @@
     flex-grow: 1;
     background-color: var(--foreground-color);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 
   .panel {
@@ -62,6 +65,102 @@
     width: 16px;
     height: 16px;
   }
+}
+
+.chartsPane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.mainChartArea {
+  flex: 1;
+  min-height: 0;
+}
+
+.chartDivider {
+  height: 1px;
+  background-color: var(--border-color);
+  flex-shrink: 0;
+}
+
+.miniChartsSection {
+  --mini-rows: 1;
+  --mini-cols: 1;
+  --mini-gap: 0px;
+  --mini-card-padding: 20px;
+  --mini-card-gap: 10px;
+  --mini-title-height: 18px;
+  --mini-bar-height: 24px;
+  --mini-row-height: calc(
+    (var(--mini-card-padding) * 2) +
+      var(--mini-title-height) +
+      var(--mini-card-gap) +
+      var(--mini-bar-height)
+  );
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--mini-cols), minmax(0, 1fr));
+  grid-auto-rows: minmax(var(--mini-row-height), auto);
+  gap: var(--mini-gap);
+  min-height: calc(
+    (var(--mini-rows) * var(--mini-row-height)) +
+      ((var(--mini-rows) - 1) * var(--mini-gap))
+  );
+  box-sizing: border-box;
+}
+
+.miniChartCard {
+  padding: var(--mini-card-padding) 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--mini-card-gap);
+  min-width: 0;
+  min-height: fit-content;
+  height: auto;
+}
+
+.miniChartCardFull {
+  grid-column: 1 / -1;
+}
+
+.miniChartCardDividerRight {
+  border-right: 1px solid var(--border-color);
+}
+
+.miniChartCardDividerBottom {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.miniChartTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: var(--mini-title-height);
+  min-width: 0;
+}
+
+.miniChartSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.miniChartLabel {
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.miniChartBar {
+  height: var(--mini-bar-height);
+  width: 100%;
 }
 
 // Filter panel internals — mirrors Filters.module.scss
