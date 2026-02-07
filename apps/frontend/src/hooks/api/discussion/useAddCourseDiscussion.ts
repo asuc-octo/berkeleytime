@@ -6,15 +6,18 @@ import {
 } from "@/lib/generated/graphql";
 
 export const useAddCourseDiscussion = (courseId: string) => {
-  const [addCourseDiscussion, result] = useMutation(AddCourseDiscussionDocument, {
-    refetchQueries: [
-      {
-        query: GetCourseDiscussionsDocument,
-        variables: { courseId },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+  const [addCourseDiscussion, result] = useMutation(
+    AddCourseDiscussionDocument,
+    {
+      refetchQueries: [
+        {
+          query: GetCourseDiscussionsDocument,
+          variables: { courseId },
+        },
+      ],
+      awaitRefetchQueries: true,
+    }
+  );
 
   const submitComment = (comment: string) =>
     addCourseDiscussion({

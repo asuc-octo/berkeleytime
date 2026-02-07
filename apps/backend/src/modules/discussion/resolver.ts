@@ -1,5 +1,4 @@
 import { getUserById } from "../user/controller";
-
 import { addCourseDiscussion, getCourseDiscussions } from "./controller";
 
 const resolvers = {
