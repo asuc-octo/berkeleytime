@@ -8,7 +8,9 @@ export interface DiscussionRequestContext {
   };
 }
 
-const normalizeCommentId = <T extends { _id?: unknown | null }>(comment: T) => ({
+const normalizeCommentId = <T extends { _id?: unknown | null }>(
+  comment: T
+) => ({
   ...comment,
   _id: comment._id ?? undefined,
 });

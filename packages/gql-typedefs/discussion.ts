@@ -10,10 +10,8 @@ export const discussionTypeDef = gql`
   }
 
   type Query {
-    courseComments(
-      courseId: CourseIdentifier!
-      userId: String
-    ): [Comment!]! @cacheControl(maxAge: 0)
+    courseComments(courseId: CourseIdentifier!, userId: String): [Comment!]!
+      @cacheControl(maxAge: 0)
   }
 
   type Mutation {
