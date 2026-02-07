@@ -18,7 +18,7 @@ export const getComments = async (courseId: string) => {
       .lean();
 
     return comments;
-  } catch (error) {
+  } catch {
     throw new GraphQLError("Failed to fetch comments", {
       extensions: { code: "INTERNAL_SERVER_ERROR" },
     });
@@ -65,7 +65,7 @@ export const createComment = async (
     });
 
     return true;
-  } catch (error) {
+  } catch {
     throw new GraphQLError("Failed to create comment", {
       extensions: { code: "INTERNAL_SERVER_ERROR" },
     });
