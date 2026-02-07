@@ -1,11 +1,31 @@
 import { gql } from "@apollo/client";
 
 import {
+  GetCourseCommentsQuery,
   GetCourseQuery,
   GetCourseWithInstructorQuery,
 } from "../generated/graphql";
 
 export type ICourse = NonNullable<GetCourseQuery["course"]>;
+
+export type ICourseComment = NonNullable<
+  GetCourseCommentsQuery["courseComments"]
+>[number];
+
+export const GET_COURSE_COMMENTS = gql`
+  query GetCourseComments($courseId: CourseIdentifier!) {
+    courseComments(courseId: $courseId) {
+      _id
+      courseId
+      author {
+        _id
+        name
+      }
+      content
+      createdAt
+    }
+  }
+`;
 
 export const GET_COURSE_TITLE = gql`
   query GetCourseTitle($subject: String!, $number: CourseNumber!) {
