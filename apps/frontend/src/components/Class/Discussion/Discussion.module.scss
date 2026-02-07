@@ -1,0 +1,38 @@
+.container {
+  padding: 12px;
+}
+
+.label {
+  color: var(--foreground-color);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 96px;
+  border-radius: 8px;
+  border: 1px solid var(--foreground-color);
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--foreground-color);
+  resize: vertical;
+}
+
+.textarea:disabled {
+  opacity: 0.6;
+}
+
+.commentCard {
+  border: 1px solid var(--foreground-color);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.commentMeta {
+  color: var(--foreground-color);
+}
+
+.commentBody {
+  white-space: pre-wrap;
+}

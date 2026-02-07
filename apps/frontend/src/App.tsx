@@ -35,6 +35,7 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -288,6 +289,14 @@ const router = createBrowserRouter([
                 ),
                 path: "ratings",
               },
+              {
+                element: (
+                  <SuspenseBoundary key="discussion">
+                    <Class.Discussion />
+                  </SuspenseBoundary>
+                ),
+                path: "discussion",
+              },
             ],
           },
           {
@@ -413,6 +422,15 @@ const client = new ApolloClient({
   }),
   cache: new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          class: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
       PlanTerm: {
         fields: {
           courses: {

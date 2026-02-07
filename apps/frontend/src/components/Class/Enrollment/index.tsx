@@ -234,7 +234,12 @@ export default function Enrollment() {
               config={chartConfig}
               className={styles.chartContainer}
             >
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                minWidth={1}
+                minHeight={1}
+              >
                 <LineChart
                   width={730}
                   height={450}

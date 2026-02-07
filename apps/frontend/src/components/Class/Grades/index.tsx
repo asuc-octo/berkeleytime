@@ -190,7 +190,12 @@ export default function Grades() {
             </Button>
           </div>
           <ChartContainer config={chartConfig} className={styles.chart}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              minWidth={1}
+              minHeight={1}
+            >
               <BarChart width={730} height={450} data={chartData}>
                 <CartesianGrid
                   strokeDasharray="3 3"
