@@ -11,12 +11,6 @@ export interface DiscussionRequestContext {
   };
 }
 
-export interface CreateCourseCommentInput {
-  subject: string;
-  courseNumber: string;
-  comment: string;
-}
-
 const getCourseId = async (
   subject: string,
   courseNumber: string
@@ -29,11 +23,6 @@ const getCourseId = async (
   return course?.courseId ?? null;
 };
 
-const normalizeFilterUser = (createdBy?: string | null) => {
-  const trimmed = createdBy?.trim();
-  return trimmed ? trimmed : null;
-};
-
 export const getCourseComments = async (
   subject: string,
   courseNumber: string,
@@ -44,10 +33,9 @@ export const getCourseComments = async (
     return [];
   }
 
-  const filterUser = normalizeFilterUser(createdBy);
   const query: Record<string, unknown> = { courseId };
-  if (filterUser) {
-    query.createdBy = filterUser;
+  if (createdBy) {
+    query.createdBy = createdBy;
   }
 
   const comments = await DiscussionModel.find(query)
@@ -63,17 +51,15 @@ export const getCourseComments = async (
 
 export const createCourseComment = async (
   context: DiscussionRequestContext,
-  input: CreateCourseCommentInput
+  subject: string,
+  courseNumber: string,
+  commentBody: string
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
       extensions: { code: "UNAUTHENTICATED" },
     });
   }
-
-  const subject = input.subject.trim();
-  const courseNumber = input.courseNumber.trim();
-  const commentBody = input.comment.trim();
 
   if (!subject || !courseNumber) {
     throw new GraphQLError("Course identifier is required", {
