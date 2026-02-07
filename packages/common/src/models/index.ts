@@ -6,6 +6,7 @@ export * from "./term";
 export * from "./course";
 export * from "./section";
 export * from "./rating";
+export * from "./Discussion";
 export * from "./grade-distribution";
 export * from "./plan";
 export * from "./enrollment-history";
