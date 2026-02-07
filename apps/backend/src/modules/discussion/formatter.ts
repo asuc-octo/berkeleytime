@@ -15,5 +15,5 @@ export const formatComment = (comment: CommentSource) => ({
   createdAt:
     comment.createdAt instanceof Date
       ? comment.createdAt.toISOString()
-      : comment.createdAt ?? new Date().toISOString(),
+      : (comment.createdAt ?? new Date().toISOString()),
 });

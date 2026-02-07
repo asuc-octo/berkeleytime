@@ -6,17 +6,13 @@ import {
   getCourseComments,
 } from "./controller";
 import { formatComment } from "./formatter";
-
 import { DiscussionModule } from "./generated-types/module-types";
 
 const resolvers: DiscussionModule.Resolvers = {
   Query: {
     courseComments: async (_, { courseId, userId }) => {
       try {
-        const comments = await getCourseComments(
-          courseId,
-          userId ?? undefined
-        );
+        const comments = await getCourseComments(courseId, userId ?? undefined);
         return comments.map((comment) =>
           formatComment({
             ...comment,

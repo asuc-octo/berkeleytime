@@ -8,10 +8,7 @@ export interface DiscussionRequestContext {
   };
 }
 
-export const getCourseComments = async (
-  courseId: string,
-  userId?: string
-) => {
+export const getCourseComments = async (courseId: string, userId?: string) => {
   const filter = userId ? { courseId, createdBy: userId } : { courseId };
   return DiscussionModel.find(filter).sort({ createdAt: -1 }).lean();
 };
