@@ -11,6 +11,7 @@ import Course from "./course";
 import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
+import NewMemberOnboarding from "./new-member-onboarding";
 import Plan from "./plan";
 import Pod from "./pod";
 import Rating from "./rating";
@@ -30,6 +31,7 @@ const modules = [
   CuratedClasses,
   Collection,
   Common,
+  NewMemberOnboarding,
   Schedule,
   Staff,
   Term,
