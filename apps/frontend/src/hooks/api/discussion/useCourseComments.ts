@@ -17,14 +17,14 @@ type CourseComment = NonNullable<
 >;
 
 export const useCourseComments = ({ courseId }: UseCourseCommentsOptions) => {
-  const query = useQuery<GetCourseCommentsQuery, GetCourseCommentsQueryVariables>(
-    GetCourseCommentsDocument,
-    {
-      variables: { courseId: courseId ?? "" },
-      skip: !courseId,
-      fetchPolicy: "no-cache",
-    }
-  );
+  const query = useQuery<
+    GetCourseCommentsQuery,
+    GetCourseCommentsQueryVariables
+  >(GetCourseCommentsDocument, {
+    variables: { courseId: courseId ?? "" },
+    skip: !courseId,
+    fetchPolicy: "no-cache",
+  });
 
   const comments = useMemo(() => {
     const rawComments = query.data?.courseComments ?? [];

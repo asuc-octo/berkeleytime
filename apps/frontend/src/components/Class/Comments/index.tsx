@@ -25,8 +25,12 @@ export default function Comments() {
   const [commentBody, setCommentBody] = useState("");
 
   const courseId = classInfo.courseId;
-  const { comments, loading, refetch, error: commentsError } =
-    useCourseComments({ courseId });
+  const {
+    comments,
+    loading,
+    refetch,
+    error: commentsError,
+  } = useCourseComments({ courseId });
   const [addCourseComment, { loading: isSubmitting }] = useMutation(
     AddCourseCommentDocument
   );
@@ -62,9 +66,7 @@ export default function Comments() {
         await refetch();
       } catch (error) {
         const message =
-          error instanceof Error
-            ? error.message
-            : "Unable to submit comment.";
+          error instanceof Error ? error.message : "Unable to submit comment.";
         setErrorMessage(message);
       }
     },
@@ -104,14 +106,16 @@ export default function Comments() {
                   Post comment
                 </Button>
               ) : (
-                <Button variant="secondary" type="button" onClick={handleSignIn}>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={handleSignIn}
+                >
                   Sign in to comment
                 </Button>
               )}
             </Flex>
-            {errorMessage && (
-              <p className={styles.errorText}>{errorMessage}</p>
-            )}
+            {errorMessage && <p className={styles.errorText}>{errorMessage}</p>}
           </form>
 
           <div className={styles.list}>
