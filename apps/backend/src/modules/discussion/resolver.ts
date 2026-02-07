@@ -1,5 +1,3 @@
-import { GraphQLError } from "graphql";
-
 import {
   DiscussionRequestContext,
   addCourseComment,
@@ -11,27 +9,8 @@ import { DiscussionModule } from "./generated-types/module-types";
 const resolvers: DiscussionModule.Resolvers = {
   Query: {
     courseComments: async (_, { courseId, userId }) => {
-      try {
-        const comments = await getCourseComments(courseId, userId ?? undefined);
-        return comments.map((comment) =>
-          formatComment({
-            ...comment,
-            _id: comment._id ?? undefined,
-          })
-        );
-      } catch (error: unknown) {
-        if (error instanceof GraphQLError) {
-          throw error;
-        }
-        throw new GraphQLError(
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "An unexpected error occurred",
-          {
-            extensions: { code: "INTERNAL_SERVER_ERROR" },
-          }
-        );
-      }
+      const comments = await getCourseComments(courseId, userId ?? undefined);
+      return comments.map((comment) => formatComment(comment));
     },
   },
   Mutation: {
@@ -40,25 +19,8 @@ const resolvers: DiscussionModule.Resolvers = {
       { courseId, body },
       context: DiscussionRequestContext
     ) => {
-      try {
-        const comment = await addCourseComment(context, courseId, body);
-        return formatComment({
-          ...comment,
-          _id: comment._id ?? undefined,
-        });
-      } catch (error: unknown) {
-        if (error instanceof GraphQLError) {
-          throw error;
-        }
-        throw new GraphQLError(
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "An unexpected error occurred",
-          {
-            extensions: { code: "INTERNAL_SERVER_ERROR" },
-          }
-        );
-      }
+      const comment = await addCourseComment(context, courseId, body);
+      return formatComment(comment);
     },
   },
 };

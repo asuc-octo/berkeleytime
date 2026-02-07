@@ -8,9 +8,31 @@ export interface DiscussionRequestContext {
   };
 }
 
+const normalizeCommentId = <T extends { _id?: unknown | null }>(comment: T) => ({
+  ...comment,
+  _id: comment._id ?? undefined,
+});
+
 export const getCourseComments = async (courseId: string, userId?: string) => {
-  const filter = userId ? { courseId, createdBy: userId } : { courseId };
-  return DiscussionModel.find(filter).sort({ createdAt: -1 }).lean();
+  try {
+    const filter = userId ? { courseId, createdBy: userId } : { courseId };
+    const comments = await DiscussionModel.find(filter)
+      .sort({ createdAt: -1 })
+      .lean();
+    return comments.map((comment) => normalizeCommentId(comment));
+  } catch (error: unknown) {
+    if (error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new GraphQLError(
+      typeof error === "object" && error !== null && "message" in error
+        ? String(error.message)
+        : "An unexpected error occurred",
+      {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      }
+    );
+  }
 };
 
 export const addCourseComment = async (
@@ -18,17 +40,31 @@ export const addCourseComment = async (
   courseId: string,
   body: string
 ) => {
-  if (!context.user?._id) {
-    throw new GraphQLError("Unauthorized", {
-      extensions: { code: "UNAUTHENTICATED" },
+  try {
+    if (!context.user?._id) {
+      throw new GraphQLError("Unauthorized", {
+        extensions: { code: "UNAUTHENTICATED" },
+      });
+    }
+
+    const comment = await DiscussionModel.create({
+      courseId,
+      createdBy: context.user._id,
+      body,
     });
+
+    return normalizeCommentId(comment.toObject());
+  } catch (error: unknown) {
+    if (error instanceof GraphQLError) {
+      throw error;
+    }
+    throw new GraphQLError(
+      typeof error === "object" && error !== null && "message" in error
+        ? String(error.message)
+        : "An unexpected error occurred",
+      {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      }
+    );
   }
-
-  const comment = await DiscussionModel.create({
-    courseId,
-    createdBy: context.user._id,
-    body,
-  });
-
-  return comment.toObject();
 };
