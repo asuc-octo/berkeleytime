@@ -2,10 +2,8 @@ import { addCourseDiscussion, getCourseDiscussions } from "./controller";
 
 const resolvers = {
   Query: {
-    courseDiscussions: async (
-      _: unknown,
-      { courseId }: { courseId: string }
-    ) => getCourseDiscussions(courseId),
+    courseDiscussions: async (_: unknown, { courseId }: { courseId: string }) =>
+      getCourseDiscussions(courseId),
   },
 
   Mutation: {
