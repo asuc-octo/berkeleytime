@@ -1,6 +1,10 @@
 import { GraphQLError } from "graphql";
 
-import { addCourseComment, getCourseComments, RequestContext } from "./controller";
+import {
+  RequestContext,
+  addCourseComment,
+  getCourseComments,
+} from "./controller";
 import { formatCourseComment } from "./formatter";
 import { NewMemberOnboardingModule } from "./generated-types/module-types";
 

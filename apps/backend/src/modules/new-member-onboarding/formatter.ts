@@ -6,10 +6,14 @@ import { DiscussionType } from "@repo/common/models";
  * Format a discussion comment from the database model to GraphQL type
  */
 export const formatCourseComment = (
-  comment: DiscussionType & { _id: Types.ObjectId; createdAt?: Date; updatedAt?: Date }
+  comment: DiscussionType & {
+    _id?: Types.ObjectId | null;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }
 ) => {
   return {
-    id: comment._id.toString(),
+    id: comment._id?.toString() ?? "",
     courseId: comment.courseId,
     subject: comment.subject,
     courseNumber: comment.courseNumber,
