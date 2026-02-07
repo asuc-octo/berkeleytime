@@ -151,6 +151,60 @@ body:not([data-theme]) {
 }
 ```
 
+### Generated Type System
+
+Berkeleytime uses [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) to automatically generate TypeScript types from GraphQL queries. This provides end-to-end type safety from your queries to your components.
+
+#### Workflow
+
+1. **Write queries** in `src/lib/api/*.ts` using the `gql` tag
+2. **Run codegen** with `npm run generate`
+3. **Use the generated Document** in your hooks with `useQuery()`
+
+#### Example
+
+First, define your query in `src/lib/api/courses.ts`:
+
+```typescript
+import { gql } from "@apollo/client";
+
+export const GET_COURSE = gql`
+  query GetCourse($subject: String!, $number: CourseNumber!) {
+    course(subject: $subject, number: $number) {
+      courseId
+      title
+      description
+    }
+  }
+`;
+```
+
+After running `npm run generate`, use the generated `GetCourseDocument` in your hooks:
+
+```typescript
+import { useQuery } from "@apollo/client/react";
+import {
+  GetCourseDocument,
+  GetCourseQuery,
+} from "@/lib/generated/graphql";
+
+// The Document provides full type inference
+const query = useQuery(GetCourseDocument, {
+  variables: { subject: "COMPSCI", number: "61A" },
+});
+
+// query.data is automatically typed as GetCourseQuery
+```
+
+You can also derive reusable types from the generated query types:
+
+```typescript
+import { GetCourseQuery } from "@/lib/generated/graphql";
+
+// Extract the course type from the query response
+export type ICourse = NonNullable<GetCourseQuery["course"]>;
+```
+
 ### Berkeleytime-specific Components
 
 A number of the Radix primitives and other commonly-used components have since also been adapted to specifically fit Berkeleytime's needs by the design team. These components should be used whenever possible. A full list of components can be found in `packages/theme/src/components`.

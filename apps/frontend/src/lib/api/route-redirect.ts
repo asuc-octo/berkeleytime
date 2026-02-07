@@ -6,8 +6,18 @@ export const GET_ALL_ROUTE_REDIRECTS = gql`
       id
       fromPath
       toPath
+      clickCount
       createdAt
       updatedAt
+    }
+  }
+`;
+
+export const INCREMENT_ROUTE_REDIRECT_CLICK = gql`
+  mutation IncrementRouteRedirectClick($redirectId: ID!) {
+    incrementRouteRedirectClick(redirectId: $redirectId) {
+      id
+      clickCount
     }
   }
 `;

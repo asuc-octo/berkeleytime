@@ -7,10 +7,9 @@ import Layout from "@/components/Layout";
 
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
-import Banners from "./app/Banners";
 import Dashboard from "./app/Dashboard";
-import RouteRedirects from "./app/RouteRedirects";
-import { signIn } from "./helper";
+import Outreach from "./app/Outreach";
+import { BASE, signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
 import { useReadUser } from "./hooks/api/users/useReadUser";
 
@@ -20,19 +19,15 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "analytics",
         element: <Analytics />,
       },
       {
-        path: "banners",
-        element: <Banners />,
+        path: "members",
+        element: <Dashboard />,
       },
       {
-        path: "redirects",
-        element: <RouteRedirects />,
+        path: "outreach",
+        element: <Outreach />,
       },
     ],
   },
@@ -103,6 +98,9 @@ export default function App() {
               This account is not registered as a staff member
             </p>
           )}
+          <a href={BASE} className={styles.returnLink}>
+            Return to Bt
+          </a>
         </div>
       </ThemeProvider>
     );

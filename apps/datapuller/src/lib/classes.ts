@@ -1,6 +1,6 @@
 import { Logger } from "tslog";
 
-import { IClassItem } from "@repo/common";
+import { IClassItem } from "@repo/common/models";
 import { Class, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";
@@ -22,7 +22,7 @@ type CombinedClass = Class & {
 };
 
 const filterClass = (input: CombinedClass): boolean => {
-  return input.status?.code === "A";
+  return input.status?.code !== "X";
 };
 
 const formatClass = (input: CombinedClass) => {

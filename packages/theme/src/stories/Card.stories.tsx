@@ -1,17 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
-import {
-  ArrowRight,
-  ArrowSeparateVertical,
-  ArrowUnionVertical,
-  Bookmark,
-  BookmarkSolid,
-  Eye,
-  EyeClosed,
-  Trash,
-} from "iconoir-react";
+import { ArrowRight } from "iconoir-react";
 import { fn } from "storybook/test";
 
-import { Badge, Button, Card, Color, ThemeProvider } from "@repo/theme";
+import { Button, Card, Color, ThemeProvider } from "@repo/theme";
 
 const meta: Meta<typeof Card.Root> = {
   title: "Theme/Card",
@@ -72,7 +63,7 @@ export const WithLeftBorder: StoryObj = {
     <ThemeProvider>
       <div style={{ width: "400px" }}>
         <Card.Root>
-          <Card.LeftBorder color="var(--blue-500)" />
+          <Card.LeftBorder color={Color.Blue} />
           <Card.Body>
             <Card.Heading>Card with Left Border</Card.Heading>
             <Card.Description>

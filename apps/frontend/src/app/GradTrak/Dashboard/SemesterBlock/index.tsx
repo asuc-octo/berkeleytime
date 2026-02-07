@@ -13,6 +13,7 @@ import {
   Trash,
 } from "iconoir-react";
 
+import { FuzzySearch } from "@repo/common";
 import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
@@ -24,7 +25,6 @@ import {
   Status,
   Terms,
 } from "@/lib/generated/graphql";
-import { FuzzySearch } from "@/utils/fuzzy-find";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -231,8 +231,6 @@ function SemesterBlock({
       courseName: cls.courseName || cls.courseID,
       courseTitle: cls.courseTitle || cls.courseName || cls.courseID,
       courseUnits: cls.courseUnits || 0,
-      uniReqs: cls.uniReqs || [],
-      collegeReqs: cls.collegeReqs || [],
       pnp: cls.pnp || false,
       transfer: cls.transfer || false,
       labels: cls.labels || [],

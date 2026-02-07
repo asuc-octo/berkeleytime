@@ -56,7 +56,7 @@ The bulk of the application logic is split into separate modules within the `src
 │       └── user                        # User module (as an example)
 │           └── generated-types         # Generated types from codegen
 │               └── module-types.ts     # Relevant Typescript types of GraphQL type definitions
-│           └── typedefs                # GraphQL type definitions
+│           └── generated-typedefs                # GraphQL type definitions
 │               └── [schema].ts         # A type definition for a schema
 │           ├── controller.ts           # Collection of DB-querying functions
 │           ├── formatter.ts            # (Optional) Formats DB models to GraphQL type
@@ -96,6 +96,42 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 [^3]: The Mongoose abstraction is very similar to the built-in MongoDB query language.
 
 [^4]: Fields not requested are automatically removed.
+
+#### Generated Type System
+
+The backend uses [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) with the `graphql-modules` preset to generate TypeScript types from GraphQL schema definitions. This ensures type safety between your GraphQL resolvers and the schema.
+
+The codegen configuration is defined in `apps/backend/codegen.ts`:
+
+```typescript
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+const config: CodegenConfig = {
+  schema: "./src/modules/**/generated-typedefs/*.ts",
+  generates: {
+    "./src/modules/": {
+      preset: "graphql-modules",
+      presetConfig: {
+        baseTypesPath: "../generated-types/graphql.ts",
+        filename: "generated-types/module-types.ts",
+      },
+      plugins: ["typescript", "typescript-resolvers"],
+    },
+  },
+};
+```
+
+Each module has its types generated into `generated-types/module-types.ts`. These types are used in resolvers to ensure the resolver return types match the GraphQL schema.
+
+To regenerate types after modifying GraphQL type definitions:
+
+```bash
+# From the backend app directory
+npm run generate
+```
+
+> [!TIP]
+> When adding a new field to a GraphQL type definition, always regenerate types before implementing the resolver to get proper TypeScript autocomplete and type checking.
 
 #### Database Models
 

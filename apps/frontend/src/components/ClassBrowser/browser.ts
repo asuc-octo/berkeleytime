@@ -1,3 +1,5 @@
+import { FuzzySearch } from "@repo/common";
+
 import {
   ICatalogClass,
   ISectionAttribute,
@@ -6,7 +8,6 @@ import {
 } from "@/lib/api";
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
-import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -72,6 +73,13 @@ export enum GradingFilter {
   Other = "Other",
 }
 
+export enum EnrollmentFilter {
+  All = "All",
+  Open = "Open Seats",
+  OpenApartFromReserved = "Non-reserved Open Seats",
+  WaitlistOpen = "Open Seats or Open Waitlist",
+}
+
 export const gradingBasisCategoryMap: Record<ClassGradingBasis, GradingFilter> =
   {
     [ClassGradingBasis.Opt]: GradingFilter.Graded,
@@ -119,7 +127,7 @@ export const getAllBreadthRequirements = (
 
   classes.forEach((_class) => {
     const breadths = getBreadthRequirements(
-      _class.primarySection.sectionAttributes ?? []
+      _class.primarySection?.sectionAttributes ?? []
     );
     breadths.forEach((breadth) => allBreadths.add(breadth));
   });
@@ -155,7 +163,7 @@ export const getFilteredClasses = (
   currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
-  currentOpen: boolean,
+  currentEnrollmentFilter: EnrollmentFilter,
   currentOnline: boolean,
   currentBreadths: Breadth[] = [],
   currentUniversityRequirement: UniversityRequirement | null = null,
@@ -165,18 +173,45 @@ export const getFilteredClasses = (
 ) => {
   return classes.reduce(
     (acc, _class) => {
-      // Filter by open
-      if (
-        currentOpen &&
-        _class.primarySection.enrollment?.latest?.status !== "O"
-      ) {
-        acc.excludedClasses.push(_class);
+      // Filter by enrollment status
+      if (currentEnrollmentFilter !== EnrollmentFilter.All) {
+        const enrollment = _class.primarySection?.enrollment?.latest;
+        const isOpen = enrollment?.status === "O";
+        const hasWaitlistSpace =
+          enrollment &&
+          enrollment.maxWaitlist > 0 &&
+          enrollment.waitlistedCount < enrollment.maxWaitlist;
+        const openSeats = enrollment
+          ? enrollment.maxEnroll - enrollment.enrolledCount
+          : 0;
+        const hasUnreservedOpenSeats =
+          isOpen && openSeats > (enrollment?.activeReservedMaxCount ?? 0);
 
-        return acc;
+        if (currentEnrollmentFilter === EnrollmentFilter.Open && !isOpen) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
+
+        if (
+          currentEnrollmentFilter === EnrollmentFilter.OpenApartFromReserved &&
+          !hasUnreservedOpenSeats
+        ) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
+
+        if (
+          currentEnrollmentFilter === EnrollmentFilter.WaitlistOpen &&
+          !isOpen &&
+          !hasWaitlistSpace
+        ) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
       }
 
       // Filter by online
-      if (currentOnline && !_class.primarySection.online) {
+      if (currentOnline && !_class.primarySection?.online) {
         acc.excludedClasses.push(_class);
 
         return acc;
@@ -215,12 +250,30 @@ export const getFilteredClasses = (
       }
 
       // Filter by days
+      // Only show classes whose meeting days are a subset of selected days
+      // e.g., if M is selected, show M-only classes, not M/W classes
+      // Note: DaySelect uses Sunday=1 but data uses Sunday=0
+      // Convert UI index to data index: (uiIndex - 1 + 7) % 7
       if (currentDays.length > 0) {
-        const includesDays = currentDays.some(
-          (day) => _class.primarySection.meetings?.[0]?.days?.[parseInt(day)]
+        const classDays = _class.primarySection?.meetings?.[0]?.days ?? [];
+        const selectedDataIndices = new Set(
+          currentDays.map((day) => (parseInt(day) - 1 + 7) % 7)
         );
 
-        if (!includesDays) {
+        // Exclude classes with no meeting days when day filter is active
+        const hasAnyMeetingDay = classDays.some((meetsOnDay) => meetsOnDay);
+        if (!hasAnyMeetingDay) {
+          acc.excludedClasses.push(_class);
+          return acc;
+        }
+
+        // Check that all days the class meets on are within the selected days
+        const allDaysWithinSelection = classDays.every(
+          (meetsOnDay, dayIndex) =>
+            !meetsOnDay || selectedDataIndices.has(dayIndex)
+        );
+
+        if (!allDaysWithinSelection) {
           acc.excludedClasses.push(_class);
 
           return acc;
@@ -229,7 +282,7 @@ export const getFilteredClasses = (
 
       // Filter by time range
       if (currentTimeRange[0] !== null || currentTimeRange[1] !== null) {
-        const meeting = _class.primarySection.meetings?.[0];
+        const meeting = _class.primarySection?.meetings?.[0];
         const meetingStart = meeting?.startTime;
         const meetingEnd = meeting?.endTime;
 
@@ -262,7 +315,7 @@ export const getFilteredClasses = (
       // Filter by breadth requirements
       if (currentBreadths.length > 0) {
         const classBreadths = getBreadthRequirements(
-          _class.primarySection.sectionAttributes ?? []
+          _class.primarySection?.sectionAttributes ?? []
         );
         const matchesAnyBreadth = currentBreadths.some((breadth) =>
           classBreadths.includes(breadth)

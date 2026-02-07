@@ -1,4 +1,4 @@
-import { ITermItem } from "@repo/common";
+import { ITermItem } from "@repo/common/models";
 
 import { Config } from "../shared/config";
 

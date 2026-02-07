@@ -147,6 +147,7 @@ Use these packages rather than duplicating code across apps.
 4. Use SCSS Modules for styling
 5. Use components from `@repo/theme` when possible
 6. Try to use Apollo GraphQL's caching patterns when possible
+7. Use color CSS variables defined in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss` for consistency with light and dark mode
 
 ## Common Patterns
 

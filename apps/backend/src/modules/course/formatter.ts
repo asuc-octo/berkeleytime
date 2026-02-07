@@ -1,4 +1,4 @@
-import { ICourseItem } from "@repo/common";
+import { ICourseItem } from "@repo/common/models";
 
 import { normalizeSubject } from "../../utils/subject";
 import { CourseModule } from "./generated-types/module-types";

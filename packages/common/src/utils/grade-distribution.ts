@@ -1,4 +1,4 @@
-import { IGradeDistributionItem } from "../models/grade-distribution";
+import type { IGradeDistributionItem } from "../models/grade-distribution";
 
 export enum Letter {
   APlus = "A+",

@@ -1,4 +1,4 @@
-import { TermModel } from "@repo/common";
+import { TermModel } from "@repo/common/models";
 
 import { getAllTerms, getNearbyTerms } from "../lib/terms";
 import { Config } from "../shared/config";

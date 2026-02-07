@@ -8,7 +8,7 @@ import {
   PlanTermModel,
   SelectedCourseModel,
   SelectedPlanRequirementModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import {
   Colleges,

@@ -1,7 +1,46 @@
+@use "../../../mixins" as *;
+
 $breakpoint: 660px;
+$section-spacing: 48px;
 
 .root {
   background-color: var(--foreground-color);
+}
+
+.aboutSection {
+  padding: $section-spacing 40px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.aboutContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.aboutTitle {
+  color: var(--heading-color);
+  font-size: 32px;
+  font-weight: var(--font-medium);
+  line-height: 1.25;
+  margin: 0 0 16px 0;
+}
+
+.aboutText {
+  font-size: var(--text-16);
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 500px;
+}
+
+.aboutButton {
+  margin-top: 20px;
 }
 
 .wrapper {
@@ -15,12 +54,14 @@ $breakpoint: 660px;
   gap: 24px;
   width: 100%;
   font-size: var(--text-18);
-  padding: 40px 0;
+  padding: $section-spacing 0;
   box-sizing: border-box;
 
   @media (max-width: $breakpoint) {
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
+    align-items: center;
+    text-align: center;
   }
 }
 
@@ -55,14 +96,16 @@ $breakpoint: 660px;
 .accordion {
   flex: 1;
   max-width: 680px;
+  text-align: left;
 
   @media (max-width: $breakpoint) {
     max-width: 100%;
+    width: 100%;
   }
 }
 
 .sponsorsSection {
-  padding: 60px 40px;
+  padding: $section-spacing 40px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -99,12 +142,16 @@ $breakpoint: 660px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 48px;
+  gap: 32px;
   flex-wrap: wrap;
+  flex: 1;
+  max-width: 680px;
 
   @media (max-width: $breakpoint) {
-    gap: 32px;
+    max-width: 100%;
+    width: 100%;
+    gap: 20px;
+    justify-content: center;
   }
 }
 
@@ -118,12 +165,103 @@ $breakpoint: 660px;
   }
 }
 
-.sponsorLogo {
-  max-width: 200px;
-  height: auto;
-  display: block;
+.ocfContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 
-  @media (max-width: $breakpoint) {
-    max-width: 150px;
+  &:hover {
+    background-color: var(--background-color);
   }
 }
+
+.ocfLogo {
+  height: 45px;
+  width: auto;
+  display: block;
+}
+
+.ocfText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.ocfHostedOn {
+  font-size: 12px;
+  color: var(--paragraph-color);
+  font-weight: 400;
+}
+
+.ocfName {
+  font-size: 24px;
+  color: var(--heading-color);
+  font-weight: 700;
+}
+
+.mechanizeContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--background-color);
+  }
+}
+
+.mechanizeLogoLight,
+.mechanizeLogoDark {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+.mechanizeName {
+  font-size: 20px;
+  color: var(--heading-color);
+  font-weight: 500;
+}
+
+.mechanizeLogoDark {
+  display: none;
+
+  @include dark-mode {
+    display: block;
+  }
+}
+
+.mechanizeLogoLight {
+  @include dark-mode {
+    display: none;
+  }
+}
+
+.asucLogoLight,
+.asucLogoDark {
+  height: 60px;
+  width: auto;
+  display: block;
+}
+
+.asucLogoDark {
+  display: none;
+
+  @include dark-mode {
+    display: block;
+  }
+}
+
+.asucLogoLight {
+  @include dark-mode {
+    display: none;
+  }
+}
+

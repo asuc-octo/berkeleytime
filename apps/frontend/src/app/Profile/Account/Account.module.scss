@@ -18,3 +18,9 @@
 .infoValue {
   font-size: var(--text-16);
 }
+
+.actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}

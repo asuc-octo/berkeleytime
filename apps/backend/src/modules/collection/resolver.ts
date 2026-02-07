@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { ClassModel, IClassItem } from "@repo/common";
+import { ClassModel, IClassItem } from "@repo/common/models";
 
 import { formatClass } from "../class/formatter";
 import { CollectionDocument, StoredClassEntry } from "./controller";

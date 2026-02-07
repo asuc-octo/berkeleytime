@@ -3,7 +3,7 @@ import {
   ClassGradingBasis,
   IClassItem,
   ISectionItem,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { normalizeSubject } from "../../utils/subject";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
@@ -49,7 +49,6 @@ export const formatClass = (_class: IClassItem) => {
 
     gradingBasis: _class.gradingBasis as ClassGradingBasis,
     finalExam: _class.finalExam as ClassFinalExam,
-    viewCount: _class.viewCount ?? 0,
   };
   return output as unknown as IntermediateClass;
 };

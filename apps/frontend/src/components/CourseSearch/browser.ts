@@ -1,5 +1,6 @@
+import { FuzzySearch } from "@repo/common";
+
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
-import { FuzzySearch } from "@/utils/fuzzy-find";
 
 export const initialize = (
   courses: {

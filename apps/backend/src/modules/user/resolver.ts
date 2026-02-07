@@ -1,4 +1,4 @@
-import { getUser, updateUser } from "./controller";
+import { deleteAccount, getUser, updateUser } from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
@@ -15,6 +15,9 @@ const resolvers: UserModule.Resolvers = {
       const user = await updateUser(context, input);
 
       return user as unknown as UserModule.User;
+    },
+    deleteAccount: async (_, __, context) => {
+      return await deleteAccount(context);
     },
   },
 };

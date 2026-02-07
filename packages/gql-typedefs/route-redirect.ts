@@ -8,6 +8,8 @@ export const routeRedirectTypeDef = gql`
     id: ID!
     fromPath: String!
     toPath: String!
+    clickCount: Int!
+    clickEventLogging: Boolean!
     createdAt: String!
     updatedAt: String!
   }
@@ -25,6 +27,7 @@ export const routeRedirectTypeDef = gql`
   input CreateRouteRedirectInput {
     fromPath: String!
     toPath: String!
+    clickEventLogging: Boolean
   }
 
   """
@@ -33,6 +36,7 @@ export const routeRedirectTypeDef = gql`
   input UpdateRouteRedirectInput {
     fromPath: String
     toPath: String
+    clickEventLogging: Boolean
   }
 
   type Mutation {
@@ -53,5 +57,10 @@ export const routeRedirectTypeDef = gql`
     Delete a route redirect by ID. Staff only.
     """
     deleteRouteRedirect(redirectId: ID!): Boolean! @auth
+
+    """
+    Increment the click count for a route redirect. Public.
+    """
+    incrementRouteRedirectClick(redirectId: ID!): RouteRedirect!
   }
 `;

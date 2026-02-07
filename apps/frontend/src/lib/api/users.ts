@@ -26,6 +26,12 @@ export const UPDATE_USER = gql`
   }
 `;
 
+export const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount {
+    deleteAccount
+  }
+`;
+
 export const signIn = (redirectURI?: string) => {
   redirectURI =
     redirectURI ??

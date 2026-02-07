@@ -14,6 +14,7 @@ import Header from "../Header";
 import {
   Breadth,
   Day,
+  EnrollmentFilter,
   GradingFilter,
   Level,
   SortBy,
@@ -59,8 +60,8 @@ export default function Filters() {
     updateGradingFilters,
     academicOrganization,
     updateAcademicOrganization,
-    open,
-    // updateOpen,
+    enrollmentFilter,
+    updateEnrollmentFilter,
     online,
     // updateOnline,
     sortBy,
@@ -101,7 +102,7 @@ export default function Filters() {
       units,
       [],
       days,
-      open,
+      enrollmentFilter,
       online,
       breadths,
       universityRequirement,
@@ -115,7 +116,7 @@ export default function Filters() {
     levels,
     units,
     days,
-    open,
+    enrollmentFilter,
     online,
     breadths,
     universityRequirement,
@@ -152,7 +153,7 @@ export default function Filters() {
         units,
         levels,
         days,
-        open,
+        enrollmentFilter,
         online,
         breadths,
         universityRequirement,
@@ -165,7 +166,7 @@ export default function Filters() {
       units,
       levels,
       days,
-      open,
+      enrollmentFilter,
       online,
       breadths,
       universityRequirement,
@@ -191,7 +192,7 @@ export default function Filters() {
         units,
         levels,
         days,
-        open,
+        enrollmentFilter,
         online,
         [],
         null,
@@ -204,7 +205,7 @@ export default function Filters() {
       units,
       levels,
       days,
-      open,
+      enrollmentFilter,
       online,
       gradingFilters,
       academicOrganization,
@@ -245,7 +246,7 @@ export default function Filters() {
         units,
         levels,
         days,
-        open,
+        enrollmentFilter,
         online,
         breadths,
         universityRequirement,
@@ -258,7 +259,7 @@ export default function Filters() {
       units,
       levels,
       days,
-      open,
+      enrollmentFilter,
       online,
       breadths,
       universityRequirement,
@@ -529,6 +530,7 @@ export default function Filters() {
     updateDays([]);
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
+    updateEnrollmentFilter(EnrollmentFilter.All);
   };
 
   return (
@@ -727,6 +729,19 @@ export default function Filters() {
               />
             </div>
           </div>
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Enrollment Status</p>
+          <Select
+            value={enrollmentFilter}
+            onChange={(value) =>
+              updateEnrollmentFilter(value as EnrollmentFilter)
+            }
+            options={Object.values(EnrollmentFilter).map((filter) => ({
+              value: filter,
+              label: filter,
+            }))}
+          />
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Grading Option</p>

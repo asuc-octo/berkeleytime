@@ -1,3 +1,5 @@
+import { useMemo, useState } from "react";
+
 import {
   Box,
   Button,
@@ -5,10 +7,13 @@ import {
   Flex,
   Spinner,
   Table,
+  TextField,
   Link as ThemeLink,
 } from "@radix-ui/themes";
-import { Plus } from "iconoir-react";
+import { Plus, Search } from "iconoir-react";
 import { Link } from "react-router-dom";
+
+import { FuzzySearch } from "@repo/common";
 
 import { useReadCuratedClasses } from "@/hooks/api";
 import { ICuratedClass } from "@/lib/api";
@@ -18,11 +23,43 @@ interface ContentProps {
 }
 
 function Content({ curatedClasses }: ContentProps) {
+  const [query, setQuery] = useState("");
+
+  const fuzzySearch = useMemo(() => {
+    const list = curatedClasses.map((c) => ({
+      name: `${c.subject} ${c.number}`,
+      text: c.text,
+      _id: c._id,
+    }));
+    return new FuzzySearch(list, {
+      threshold: 0.3,
+      keys: ["name", "text"],
+    });
+  }, [curatedClasses]);
+
+  const filteredClasses = useMemo(() => {
+    if (!query.trim()) return curatedClasses;
+
+    const results = fuzzySearch.search(query);
+    const matchedIds = new Set(results.map((r) => r.item._id));
+    return curatedClasses.filter((c) => matchedIds.has(c._id));
+  }, [curatedClasses, query, fuzzySearch]);
+
   return (
     <Box p="6">
       <Container>
         <Flex direction="column" gap="5">
-          <Flex justify="between" align="center">
+          <Flex justify="between" align="center" gap="4">
+            <TextField.Root
+              placeholder="Search curated classes..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              style={{ flexGrow: 1, maxWidth: 300 }}
+            >
+              <TextField.Slot>
+                <Search width={16} height={16} />
+              </TextField.Slot>
+            </TextField.Root>
             <Link to="/curated-classes/new">
               <Button>
                 <Plus />
@@ -40,7 +77,7 @@ function Content({ curatedClasses }: ContentProps) {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {curatedClasses.map((curatedClass) => (
+              {filteredClasses.map((curatedClass) => (
                 <Table.Row key={curatedClass._id}>
                   <Table.Cell>
                     <ThemeLink
@@ -48,13 +85,13 @@ function Content({ curatedClasses }: ContentProps) {
                       target="_blank"
                       rel="noreferrer noopener"
                     >
-                      {curatedClass.image}
+                      Link
                     </ThemeLink>
                   </Table.Cell>
                   <Table.RowHeaderCell>
                     <ThemeLink asChild>
                       <Link to={`/curated-classes/${curatedClass._id}`}>
-                        {curatedClass.subject} {curatedClass.number}
+                        {curatedClass.subject} {curatedClass.courseNumber}
                       </Link>
                     </ThemeLink>
                   </Table.RowHeaderCell>
@@ -85,7 +122,10 @@ export default function CuratedClasses() {
   }
 
   if (curatedClasses) {
-    return <Content curatedClasses={curatedClasses} />;
+    const sortedClasses = curatedClasses.toSorted(
+      (a, b) => parseInt(b.createdAt) - parseInt(a.createdAt)
+    );
+    return <Content curatedClasses={sortedClasses} />;
   }
 
   return <div>Error loading data.</div>;

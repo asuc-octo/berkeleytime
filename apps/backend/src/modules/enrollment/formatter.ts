@@ -1,4 +1,4 @@
-import { IEnrollmentHistoryItem } from "@repo/common";
+import { IEnrollmentHistoryItem } from "@repo/common/models";
 
 import { EnrollmentModule } from "./generated-types/module-types";
 

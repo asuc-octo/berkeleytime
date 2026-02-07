@@ -16,6 +16,8 @@ import {
 } from "@radix-ui/themes";
 import { Search, Trash } from "iconoir-react";
 
+import { FuzzySearch } from "@repo/common";
+
 import { useReadTerms } from "@/hooks/api";
 import { GET_CATALOG, ICuratedClassInput, Semester } from "@/lib/api";
 import { GetCatalogResponse } from "@/lib/api/classes";
@@ -77,23 +79,30 @@ export default function CuratedClassEditor({
     [terms]
   );
 
-  const filteredClasses = useMemo(
-    () =>
-      classes?.catalog
-        .filter((cls) => {
-          const search = query.toLowerCase();
+  const fuzzySearch = useMemo(() => {
+    if (!classes?.catalog) return null;
 
-          return (
-            `${cls.course.subject} ${cls.course.number} ${cls.number}`
-              .toLowerCase()
-              .includes(search) ||
-            cls.title?.toLowerCase().includes(search) ||
-            cls.course.title?.toLowerCase().includes(search)
-          );
-        })
-        .slice(0, 5),
-    [classes, query]
-  );
+    const list = classes.catalog.map((cls, index) => ({
+      name: `${cls.course.subject} ${cls.course.number}`,
+      title: cls.title || cls.course.title || "",
+      index,
+    }));
+
+    return new FuzzySearch(list, {
+      threshold: 0.3,
+      keys: ["name", "title"],
+    });
+  }, [classes]);
+
+  const filteredClasses = useMemo(() => {
+    if (!classes?.catalog) return undefined;
+    if (!query.trim()) return classes.catalog.slice(0, 5);
+
+    if (!fuzzySearch) return [];
+
+    const results = fuzzySearch.search(query);
+    return results.slice(0, 5).map((r) => classes.catalog[r.item.index]);
+  }, [classes, query, fuzzySearch]);
 
   const selectedClass = useMemo(
     () =>

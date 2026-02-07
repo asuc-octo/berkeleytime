@@ -80,15 +80,18 @@ export const getRecents = <T extends RecentType>(
 
     let recents = JSON.parse(item) as Recent<T>[];
 
-    if (type === RecentType.CatalogTerm) {
-      const ONE_HOUR = 60 * 60 * 1000;
-      const now = Date.now();
+    // Commenting this out as don't see a case where you wouldn't want
+    // to regularly go to the last term you were looking at?
 
-      recents = recents.filter((recent) => {
-        const catalogTerm = recent as RecentCatalogTerm;
-        return !catalogTerm.timestamp || now - catalogTerm.timestamp < ONE_HOUR;
-      }) as Recent<T>[];
-    }
+    // if (type === RecentType.CatalogTerm) {
+    //   const ONE_HOUR = 60 * 60 * 1000;
+    //   const now = Date.now();
+
+    //   recents = recents.filter((recent) => {
+    //     const catalogTerm = recent as RecentCatalogTerm;
+    //     return !catalogTerm.timestamp || now - catalogTerm.timestamp < ONE_HOUR;
+    //   }) as Recent<T>[];
+    // }
 
     if (type === RecentType.GradesPage || type === RecentType.EnrollmentPage) {
       const ONE_HOUR = 60 * 60 * 1000;

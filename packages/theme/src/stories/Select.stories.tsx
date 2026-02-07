@@ -33,6 +33,7 @@ const meta: Meta<typeof Select> = {
     multi: { control: "boolean" },
     clearable: { control: "boolean" },
     disabled: { control: "boolean" },
+    searchable: { control: "boolean" },
     variant: {
       control: "select",
       options: ["default", "foreground"],
@@ -251,6 +252,134 @@ export const MultiSelectWithClear: StoryObj = {
             multi
             clearable
             placeholder="Select multiple courses"
+          />
+        </div>
+        <div style={{ width: "300px", height: "200px" }}></div>
+      </ThemeProvider>
+    );
+  },
+};
+
+export const Searchable: StoryObj = {
+  render: () => {
+    const [value, setValue] = useState("");
+
+    return (
+      <ThemeProvider>
+        <div style={{ width: "300px" }}>
+          <Select
+            options={courseOptions}
+            value={value}
+            onChange={(n) => {
+              if (n && !Array.isArray(n)) setValue(n);
+            }}
+            searchable
+            placeholder="Search and select a course"
+            searchPlaceholder="Search courses..."
+          />
+        </div>
+        <div style={{ width: "300px", height: "200px" }}></div>
+      </ThemeProvider>
+    );
+  },
+};
+
+export const SearchableWithSelection: StoryObj = {
+  render: () => {
+    const [value, setValue] = useState("cs61a");
+
+    return (
+      <ThemeProvider>
+        <div style={{ width: "300px" }}>
+          <Select
+            options={courseOptions}
+            value={value}
+            onChange={(n) => {
+              if (n && !Array.isArray(n)) setValue(n);
+            }}
+            searchable
+            placeholder="Search and select a course"
+            searchPlaceholder="Search courses..."
+          />
+        </div>
+        <div style={{ width: "300px", height: "200px" }}></div>
+      </ThemeProvider>
+    );
+  },
+};
+
+export const SearchableMultiSelect: StoryObj = {
+  render: () => {
+    const [value, setValue] = useState(["cs61a", "math1a"]);
+
+    return (
+      <ThemeProvider>
+        <div style={{ width: "300px" }}>
+          <Select
+            options={courseOptions}
+            value={value}
+            onChange={(n) => {
+              if (Array.isArray(n)) setValue(n);
+            }}
+            searchable
+            multi
+            placeholder="Search and select courses"
+            searchPlaceholder="Search courses..."
+          />
+        </div>
+        <div style={{ width: "300px", height: "200px" }}></div>
+      </ThemeProvider>
+    );
+  },
+};
+
+export const SearchableLongList: StoryObj = {
+  render: () => {
+    const [value, setValue] = useState("");
+
+    const longOptions = Array.from({ length: 100 }, (_, i) => ({
+      value: `option-${i}`,
+      label: `Option ${i + 1}`,
+      meta: `Description for option ${i + 1}`,
+    }));
+
+    return (
+      <ThemeProvider>
+        <div style={{ width: "300px" }}>
+          <Select
+            options={longOptions}
+            value={value}
+            onChange={(n) => {
+              if (n && !Array.isArray(n)) setValue(n);
+            }}
+            searchable
+            placeholder="Search from 100 options"
+            searchPlaceholder="Type to search..."
+            clearable
+          />
+        </div>
+        <div style={{ width: "300px", height: "200px" }}></div>
+      </ThemeProvider>
+    );
+  },
+};
+
+export const SearchableWithMeta: StoryObj = {
+  render: () => {
+    const [value, setValue] = useState("");
+
+    return (
+      <ThemeProvider>
+        <div style={{ width: "300px" }}>
+          <Select
+            options={courseOptionsWithMeta}
+            value={value}
+            onChange={(n) => {
+              if (n && !Array.isArray(n)) setValue(n);
+            }}
+            searchable
+            placeholder="Search courses with metadata"
+            searchPlaceholder="Search by name or number..."
           />
         </div>
         <div style={{ width: "300px", height: "200px" }}></div>

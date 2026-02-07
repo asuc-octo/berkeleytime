@@ -6,20 +6,21 @@
 
 1. First, list all cronjob instances:
 
-    ```sh
-    k get cronjob
-    ```
+   ```sh
+   k get cronjob
+   ```
 
 2. Then, create a job from the specific cronjob:
 
-    ```sh
-    k create job --from cronjob/[cronjob name] [job name]
-    ```
+   ```sh
+   k create job --from cronjob/[cronjob name] [job name]
+   ```
 
-    For example:
-    ```sh
-    k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
-    ```
+   For example:
+
+   ```sh
+   k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
+   ```
 
 ## Deploying a New Environment Variable with sealed-secrets
 
@@ -28,20 +29,20 @@ Useful when adding new environment variables to `.env`. To ensure our env variab
 1. SSH into `hozer-51`.
 2. Create a new secret manifest with the key-value pairs and save into `my_secret.yaml`:
 
-    ```sh
-    k create secret generic my_secret -n bt --dry-run=client --output=yaml \
-        --from-literal=key1=value1 \
-        --from-literal=key2=value2 > my_secret.yaml
-    ```
+   ```sh
+   k create secret generic my_secret -n bt --dry-run=client --output=yaml \
+       --from-literal=key1=value1 \
+       --from-literal=key2=value2 > my_secret.yaml
+   ```
 
 3. Create a sealed secret from the previously created manifest:
 
-    ```sh
-    kubeseal --controller-name bt-sealed-secrets --controller-namespace bt \
-        --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
-    ```
+   ```sh
+   kubeseal --controller-name bt-sealed-secrets --controller-namespace bt \
+       --secret-file my_secret.yaml --sealed-secret-file my_sealed_secret.yaml
+   ```
 
-    If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
+   If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
 
 4. The newly created sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub.
 
@@ -56,6 +57,7 @@ The `/helm-diff` command can be used in pull request comments to preview Helm ch
 3. Modifying Kubernetes resource configurations
 
 To use it:
+
 1. Comment `/helm-diff` on any pull request
 2. The workflow will generate a diff showing:
    - Changes to both app and base charts
@@ -63,7 +65,6 @@ To use it:
    - Configuration updates
 
 The diff output is formatted as collapsible sections for each resource, with a raw diff available at the bottom for debugging.
-
 
 ## Uninstall ALL development helm releases
 
@@ -81,6 +82,33 @@ helm list --all-namespaces --all | grep 'uninstalling' | awk '{print $1}' | xarg
 
 Sometimes, releases will be stuck in an `uninstalling` state. This command quickly force uninstalls all such stuck helm releases.
 
+## Kubernetes API Server Certificate Renewal
+
+Kubernetes API server's certificates have a default expiration of 1 year. If they are expired and you try to use `kubectl`, this is what you may see:
+
+```sh
+root@hozer-51:~# k get pods
+Unable to connect to the server: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-01-16T00:12:21-08:00 is after 2026-01-16T04:29:31Z
+```
+
+You can check when these certificates expire with this command:
+
+```sh
+kubeadm certs check-expiration
+```
+
+To renew them, run the following commands on the control plane node:
+
+```sh
+sudo kubeadm certs renew all
+
+# Restart the Kubernetes control plane pods to pick up the new certificates
+sudo mv /etc/kubernetes/manifests/*.yaml /tmp/
+# Wait 20-30 seconds.
+sudo mv /tmp/*.yaml /etc/kubernetes/manifests/
+```
+
+Test that this worked by running `k get pods` again. If not, debug using `kubeadm certs check-expiration`.
 
 ## Kubernetes Cluster Initialization
 

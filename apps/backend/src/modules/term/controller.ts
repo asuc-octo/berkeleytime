@@ -1,4 +1,4 @@
-import { TermModel } from "@repo/common";
+import { TermModel } from "@repo/common/models";
 
 import { AcademicCareerCode, Semester } from "../../generated-types/graphql";
 import { formatTerm } from "./formatter";

@@ -9,7 +9,7 @@ import {
   RatingModel,
   RatingType,
   SectionModel,
-} from "@repo/common";
+} from "@repo/common/models";
 import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
 
 import {

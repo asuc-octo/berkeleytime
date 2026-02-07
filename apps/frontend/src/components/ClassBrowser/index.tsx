@@ -13,6 +13,7 @@ import List from "./List";
 import {
   Breadth,
   Day,
+  EnrollmentFilter,
   GradingFilter,
   Level,
   SortBy,
@@ -87,7 +88,8 @@ export default function ClassBrowser({
   >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
-  const [localOpen, setLocalOpen] = useState<boolean>(false);
+  const [localEnrollmentFilter, setLocalEnrollmentFilter] =
+    useState<EnrollmentFilter>(EnrollmentFilter.All);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
   const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
@@ -206,10 +208,19 @@ export default function ClassBrowser({
     setLocalReverse(false);
   }, [sortBy]);
 
-  const open = useMemo(
-    () => (persistent ? searchParams.has("open") : localOpen),
-    [searchParams, localOpen, persistent]
-  );
+  const enrollmentFilter = useMemo(() => {
+    if (persistent) {
+      const param = searchParams.get("enrollmentFilter");
+      if (
+        param &&
+        Object.values(EnrollmentFilter).includes(param as EnrollmentFilter)
+      ) {
+        return param as EnrollmentFilter;
+      }
+      return EnrollmentFilter.All;
+    }
+    return localEnrollmentFilter;
+  }, [searchParams, localEnrollmentFilter, persistent]);
 
   const online = useMemo(
     () => (persistent ? searchParams.has("online") : localOnline),
@@ -223,7 +234,7 @@ export default function ClassBrowser({
         units,
         levels,
         days,
-        open,
+        enrollmentFilter,
         online,
         breadths,
         universityRequirement,
@@ -236,7 +247,7 @@ export default function ClassBrowser({
       units,
       levels,
       days,
-      open,
+      enrollmentFilter,
       online,
       breadths,
       universityRequirement,
@@ -272,7 +283,7 @@ export default function ClassBrowser({
       universityRequirement !== null ||
       gradingFilters.length > 0 ||
       academicOrganization !== null ||
-      open ||
+      enrollmentFilter !== EnrollmentFilter.All ||
       online ||
       sortBy !== SortBy.Relevance
     );
@@ -285,7 +296,7 @@ export default function ClassBrowser({
     universityRequirement,
     gradingFilters,
     academicOrganization,
-    open,
+    enrollmentFilter,
     online,
     sortBy,
   ]);
@@ -421,7 +432,7 @@ export default function ClassBrowser({
         gradingFilters,
         academicOrganization,
         online,
-        open,
+        enrollmentFilter,
         reverse: localReverse,
         effectiveOrder,
         updateQuery,
@@ -448,7 +459,18 @@ export default function ClassBrowser({
           setLocalAcademicOrganization(org);
         },
         updateSortBy,
-        updateOpen: (open) => updateBoolean("open", setLocalOpen, open),
+        updateEnrollmentFilter: (filter) => {
+          if (persistent) {
+            if (filter === EnrollmentFilter.All) {
+              searchParams.delete("enrollmentFilter");
+            } else {
+              searchParams.set("enrollmentFilter", filter);
+            }
+            setSearchParams(searchParams);
+            return;
+          }
+          setLocalEnrollmentFilter(filter);
+        },
         updateOnline: (online) =>
           updateBoolean("online", setLocalOnline, online),
         setExpanded,

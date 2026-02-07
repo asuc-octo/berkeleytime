@@ -6,7 +6,7 @@
   height: 100vh;
   gap: 24px;
   background-color: var(--background-color);
-  color: var(--text-color);
+  color: var(--paragraph-color);
 }
 
 .asciiArt {
@@ -33,4 +33,16 @@
   color: var(--red-500);
   font-size: 14px;
   margin: 0;
+}
+
+.returnLink {
+  color: var(--paragraph-color);
+  font-size: 14px;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
 }

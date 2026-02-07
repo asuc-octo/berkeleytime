@@ -1,4 +1,4 @@
-import { IGradeDistributionItem } from "@repo/common";
+import { IGradeDistributionItem } from "@repo/common/models";
 
 import { QueryExecutor } from "./api/aws-athena";
 

@@ -6,7 +6,7 @@ import {
   PlanType,
   SelectedCourseType,
   SelectedPlanRequirementType,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { Colleges, Status, Terms } from "../../generated-types/graphql";
 import { PlanModule } from "./generated-types/module-types";

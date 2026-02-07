@@ -1,6 +1,12 @@
 import { GraphQLResolveInfo } from "graphql";
 
 import {
+  getAverageGrade,
+  getDistribution,
+  getPnpPercentage,
+  getPnpPercentageFromCounts,
+} from "@repo/common";
+import {
   ClassModel,
   CourseModel,
   GradeDistributionModel,
@@ -11,11 +17,7 @@ import {
   NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
-  getAverageGrade,
-  getDistribution,
-  getPnpPercentage,
-  getPnpPercentageFromCounts,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";

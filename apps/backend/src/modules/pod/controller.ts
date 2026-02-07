@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { PodModel, StaffMemberModel } from "@repo/common";
+import { PodModel, StaffMemberModel } from "@repo/common/models";
 
 import { Semester } from "../../generated-types/graphql";
 

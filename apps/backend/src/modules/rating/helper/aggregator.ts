@@ -4,7 +4,7 @@ import {
   AggregatedMetricsModel,
   RatingModel,
   SectionModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { Semester } from "../../../generated-types/graphql";
 import { RequestContext } from "../../../types/request-context";
