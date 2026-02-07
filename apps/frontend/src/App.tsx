@@ -30,6 +30,7 @@ const CollectionDetail = lazy(
 );
 
 const Class = {
+  Comments: lazy(() => import("@/components/Class/Comments")),
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
   Grades: lazy(() => import("@/components/Class/Grades")),
   Overview: lazy(() => import("@/components/Class/Overview")),
@@ -288,6 +289,14 @@ const router = createBrowserRouter([
                 ),
                 path: "ratings",
               },
+              {
+                element: (
+                  <SuspenseBoundary key="comments">
+                    <Class.Comments />
+                  </SuspenseBoundary>
+                ),
+                path: "comments",
+              },
             ],
           },
           {
@@ -356,6 +365,14 @@ const router = createBrowserRouter([
                   </SuspenseBoundary>
                 ),
                 path: "ratings",
+              },
+              {
+                element: (
+                  <SuspenseBoundary key="comments">
+                    <Class.Comments />
+                  </SuspenseBoundary>
+                ),
+                path: "comments",
               },
               {
                 path: "*",
