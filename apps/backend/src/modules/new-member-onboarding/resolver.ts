@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import { addCourseComment, getCourseComments } from "./controller";
+import { addCourseComment, getCourseComments, RequestContext } from "./controller";
 import { formatCourseComment } from "./formatter";
 import { NewMemberOnboardingModule } from "./generated-types/module-types";
 
@@ -37,7 +37,7 @@ const resolvers: NewMemberOnboardingModule.Resolvers = {
       {
         input,
       }: { input: { subject: string; courseNumber: string; text: string } },
-      context: any
+      context: RequestContext
     ) => {
       try {
         const comment = await addCourseComment(
