@@ -6,6 +6,7 @@ import Catalog from "./catalog";
 import Class from "./class";
 import ClickTracking from "./click-tracking";
 import Collection from "./collection";
+import Discussion from "./discussion";
 import Common from "./common";
 import Course from "./course";
 import CuratedClasses from "./curated-classes";
@@ -29,6 +30,7 @@ const modules = [
   Catalog,
   CuratedClasses,
   Collection,
+  Discussion,
   Common,
   Schedule,
   Staff,
