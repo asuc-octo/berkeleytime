@@ -1,3 +1,5 @@
+import { getUserById } from "../user/controller";
+
 import { addCourseDiscussion, getCourseDiscussions } from "./controller";
 
 const resolvers = {
@@ -12,6 +14,10 @@ const resolvers = {
       { courseId, comment }: { courseId: string; comment: string },
       context: { user: { _id: string; isAuthenticated: boolean } }
     ) => addCourseDiscussion(context, courseId, comment),
+  },
+
+  CourseDiscussion: {
+    user: (parent: { userId: string }) => getUserById(parent.userId),
   },
 };
 

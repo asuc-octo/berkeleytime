@@ -1,0 +1,60 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commentCard {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+}
+
+.commentMeta {
+  font-size: var(--text-12);
+  color: var(--paragraph-color);
+  margin-bottom: 4px;
+}
+
+.commentBody {
+  font-size: var(--text-14);
+  color: var(--heading-color);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+}
+
+.submitButton {
+  flex-shrink: 0;
+}
+
+.error {
+  font-size: var(--text-14);
+  color: var(--red-500);
+}

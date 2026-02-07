@@ -8,6 +8,8 @@ export const discussionTypeDef = gql`
     _id: ID!
     timestamp: ISODate!
     userId: ID!
+    "Author of the comment (null if user was deleted)"
+    user: User
     courseId: CourseIdentifier!
     comment: String!
   }
