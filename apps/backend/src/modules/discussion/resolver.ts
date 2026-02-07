@@ -1,7 +1,7 @@
 import { DiscussionController } from "./controller";
 import { formatComment, formatComments } from "./formatter";
 
-const discussionResolvers = {
+export const discussionResolvers = {
   Query: {
     courseComments: async (
       _: any,
@@ -37,5 +37,7 @@ const discussionResolvers = {
     },
   },
 };
+
+
 
 export default discussionResolvers;
