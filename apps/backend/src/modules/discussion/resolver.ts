@@ -1,7 +1,4 @@
-import {
-  addCourseDiscussion,
-  getCourseDiscussions,
-} from "./controller";
+import { addCourseDiscussion, getCourseDiscussions } from "./controller";
 import { formatCourseDiscussion } from "./formatter";
 
 const resolvers = {

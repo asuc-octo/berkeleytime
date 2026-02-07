@@ -23,8 +23,10 @@ export const discussionTypeDef = gql`
 
   type Mutation {
     "Add a comment to a course. Requires authentication."
-    addCourseDiscussion(courseId: CourseIdentifier!, comment: String!): CourseDiscussion!
-      @auth
+    addCourseDiscussion(
+      courseId: CourseIdentifier!
+      comment: String!
+    ): CourseDiscussion! @auth
     "Delete a discussion entry by ID. Caller must be the author or staff."
     deleteCourseDiscussion(id: ID!): Boolean! @auth
   }
