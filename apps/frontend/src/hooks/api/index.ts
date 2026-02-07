@@ -2,6 +2,7 @@ export * from "./classes";
 export * from "./collections";
 export * from "./courses";
 export * from "./curated-classes";
+export * from "./discussion";
 export * from "./enrollment";
 export * from "./plans";
 export * from "./ratings";
