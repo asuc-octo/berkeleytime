@@ -10,6 +10,14 @@ import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
 import { formatUser } from "./formatter";
 
+export const getUserById = async (userId: string) => {
+  const user = await UserModel.findById(userId);
+
+  if (!user) return null;
+
+  return formatUser(user);
+};
+
 export const getUser = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");
   const userId = context.user._id;
