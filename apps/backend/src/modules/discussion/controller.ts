@@ -5,7 +5,7 @@ import { ClassModel, CommentModel, UserModel } from "@repo/common/models";
 import { Semester } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
 
-const getClassDocument = async (
+const findClassOrThrow = async (
   year: number,
   semester: Semester,
   subject: string,
@@ -23,9 +23,7 @@ const getClassDocument = async (
   if (!classDoc) {
     throw new GraphQLError(
       `Class not found: ${subject} ${courseNumber} ${semester} ${year} #${classNumber}`,
-      {
-        extensions: { code: "NOT_FOUND" },
-      }
+      { extensions: { code: "NOT_FOUND" } }
     );
   }
 
@@ -70,7 +68,7 @@ export const createComment = async (
     });
   }
 
-  const classDoc = await getClassDocument(
+  const classDoc = await findClassOrThrow(
     input.year,
     input.semester,
     input.subject,
