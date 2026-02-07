@@ -66,6 +66,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Comments = lazy(() => import("./Comments"));
 
 interface RootProps {
   dialog?: boolean;
@@ -131,6 +132,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/sections")) return "sections";
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
+  if (pathname.endsWith("/comments")) return "comments";
   if (pathname.endsWith("/enrollment")) return "enrollment";
   return "overview";
 };
@@ -578,6 +580,9 @@ export default function Class({
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
+                    <Tabs.Trigger value="comments" asChild>
+                      <MenuItem>Comments</MenuItem>
+                    </Tabs.Trigger>
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
@@ -611,6 +616,11 @@ export default function Class({
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
+                  <NavLink to={{ ...location, pathname: "comments" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Comments</MenuItem>
+                    )}
+                  </NavLink>
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
@@ -641,6 +651,11 @@ export default function Class({
                 <Tabs.Content value="grades" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="comments" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Comments />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 {!ratingsLocked && (
@@ -684,6 +699,20 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Grades />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("comments") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "comments"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Comments />
                     </SuspenseBoundary>
                   </div>
                 )}

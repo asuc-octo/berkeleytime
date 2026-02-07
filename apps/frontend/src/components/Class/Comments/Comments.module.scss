@@ -1,0 +1,126 @@
+.root {
+  background-color: var(--background-color);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-weight: var(--font-semibold);
+  font-size: var(--text-18);
+  line-height: 24px;
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.subtitle {
+  font-weight: var(--font-normal);
+  font-size: var(--text-14);
+  line-height: 20px;
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.commentForm {
+  padding: 20px;
+  background-color: var(--foreground-color);
+  border: none !important;
+  border-radius: 8px;
+  cursor: default !important;
+
+  &:hover {
+    background-color: var(--foreground-color) !important;
+  }
+}
+
+.form {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  align-items: center;
+}
+
+.input {
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 0;
+  padding: 12px;
+  font-size: var(--text-14);
+  color: var(--heading-color);
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: border-color 0.15s ease-in-out;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.commentCard {
+  padding: 4px;
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  border: none !important;
+  cursor: default !important;
+
+  &:hover {
+    background-color: var(--foreground-color) !important;
+  }
+}
+
+.commentMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.commentUser {
+  font-weight: var(--font-semibold);
+  font-size: var(--text-14);
+  color: var(--heading-color);
+}
+
+.commentDate {
+  font-size: var(--text-12);
+  color: var(--paragraph-color);
+  opacity: 0.8;
+}
+
+.commentText {
+  font-size: var(--text-14);
+  line-height: 1.6;
+  color: var(--paragraph-color);
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.loadingText {
+  text-align: center;
+  padding: 40px;
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+}
