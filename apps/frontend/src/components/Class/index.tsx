@@ -586,6 +586,9 @@ export default function Class({
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
+                    <Tabs.Trigger value="comments" asChild>
+                      <MenuItem>Comments</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -624,6 +627,11 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "comments" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Comments</MenuItem>
                     )}
                   </NavLink>
                 </Flex>
