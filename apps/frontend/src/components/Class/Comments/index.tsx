@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
-import { Box, Button, Container, Flex, TextArea } from "@repo/theme";
-import ClassContext from "@/contexts/ClassContext";
-import styles from "./Comments.module.scss";
+import { useEffect, useState } from "react";
+import { Box, Button, Container, Flex } from "@repo/theme";
+import useClass from "@/hooks/useClass";
+import styles from "./comments.module.scss";
 
 interface Comment {
   id: number;
@@ -11,8 +11,7 @@ interface Comment {
 }
 
 export default function Comments() {
-  const context = useContext(ClassContext);
-  const { class: classData } = context;
+  const { class: classData } = useClass();
 
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -116,7 +115,7 @@ export default function Comments() {
           {/* Comment Input Section */}
           <Box className={styles.commentInput}>
             <Flex direction="column" gap="3">
-              <TextArea
+              <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 onKeyDown={handleKeyPress}
