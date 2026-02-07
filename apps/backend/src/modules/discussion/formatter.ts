@@ -18,7 +18,9 @@ interface CourseCommentInput {
   createdAt?: Date | string;
 }
 
-export function formatCourseComment(comment: CourseCommentInput): IntermediateCourseComment {
+export function formatCourseComment(
+  comment: CourseCommentInput
+): IntermediateCourseComment {
   const createdAt =
     comment.createdAt instanceof Date
       ? comment.createdAt.toISOString()

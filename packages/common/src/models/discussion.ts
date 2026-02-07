@@ -2,6 +2,7 @@ import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
 export const courseCommentSchema = new Schema(
   {
+    _id: { type: Schema.Types.ObjectId, auto: true },
     courseId: {
       type: String,
       trim: true,
@@ -24,6 +25,7 @@ export const courseCommentSchema = new Schema(
     },
   }
 );
+courseCommentSchema.index({ _id: 1 }, { unique: true });
 courseCommentSchema.index({ courseId: 1 });
 
 export const CourseCommentModel = mongoose.model(
