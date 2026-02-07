@@ -2,7 +2,7 @@ import mongoose, { InferSchemaType, Schema } from "mongoose";
 
 const commentSchema = new Schema(
   {
-    _id: { type: Schema.Types.ObjectId, auto: true},
+    _id: { type: Schema.Types.ObjectId, auto: true },
     courseId: {
       type: String,
       required: true,
