@@ -2,13 +2,11 @@ import { useCallback } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 
-import {
-  CREATE_COURSE_COMMENT,
-  GET_COURSE_COMMENTS,
-} from "@/lib/api/discussion";
+import { CREATE_COURSE_COMMENT } from "@/lib/api/discussion";
 import {
   CreateCourseCommentMutation,
   CreateCourseCommentMutationVariables,
+  GetCourseCommentsDocument,
   GetCourseCommentsQuery,
   GetCourseCommentsQueryVariables,
 } from "@/lib/generated/graphql";
@@ -21,7 +19,7 @@ export const useCourseComments = (
   const query = useQuery<
     GetCourseCommentsQuery,
     GetCourseCommentsQueryVariables
-  >(GET_COURSE_COMMENTS, {
+  >(GetCourseCommentsDocument, {
     variables: {
       subject,
       courseNumber,
@@ -49,7 +47,7 @@ export const useCourseComments = (
         },
         refetchQueries: [
           {
-            query: GET_COURSE_COMMENTS,
+            query: GetCourseCommentsDocument,
             variables: {
               subject,
               courseNumber,
