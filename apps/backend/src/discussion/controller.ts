@@ -30,10 +30,9 @@ export const getCourseComments = async (
   const courseId = await getCourseId(subject, courseNumber);
 
   if (!courseId) {
-    throw new GraphQLError(
-      `Course not found: ${subject} ${courseNumber}`,
-      { extensions: { code: "NOT_FOUND" } }
-    );
+    throw new GraphQLError(`Course not found: ${subject} ${courseNumber}`, {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
   const filter: { courseId: string; createdBy?: string } = { courseId };
@@ -69,10 +68,9 @@ export const addCourseComment = async (
   const courseId = await getCourseId(subject, courseNumber);
 
   if (!courseId) {
-    throw new GraphQLError(
-      `Course not found: ${subject} ${courseNumber}`,
-      { extensions: { code: "NOT_FOUND" } }
-    );
+    throw new GraphQLError(`Course not found: ${subject} ${courseNumber}`, {
+      extensions: { code: "NOT_FOUND" },
+    });
   }
 
   const comment = await DiscussionModel.create({

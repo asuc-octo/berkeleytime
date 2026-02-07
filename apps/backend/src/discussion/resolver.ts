@@ -6,7 +6,11 @@ const resolvers = {
   Query: {
     courseComments: async (
       _: unknown,
-      { subject, courseNumber, userId }: { subject: string; courseNumber: string; userId?: string | null }
+      {
+        subject,
+        courseNumber,
+        userId,
+      }: { subject: string; courseNumber: string; userId?: string | null }
     ) => {
       try {
         const comments = await getCourseComments(
@@ -33,7 +37,11 @@ const resolvers = {
   Mutation: {
     addCourseComment: async (
       _: unknown,
-      { subject, courseNumber, content }: { subject: string; courseNumber: string; content: string },
+      {
+        subject,
+        courseNumber,
+        content,
+      }: { subject: string; courseNumber: string; content: string },
       context: { user?: { _id: string } }
     ) => {
       try {

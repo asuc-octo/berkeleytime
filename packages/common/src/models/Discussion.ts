@@ -3,17 +3,20 @@ import mongoose, { InferSchemaType, Schema } from "mongoose";
 const discussionSchema = new Schema(
   {
     _id: { type: Schema.Types.ObjectId, auto: true },
-    createdBy: { // comment author
+    createdBy: {
+      // comment author
       type: String,
       trim: true,
       required: true,
       immutable: true,
     },
-    courseId: { // course identifier
+    courseId: {
+      // course identifier
       type: String,
       required: true,
     },
-    content: { // comment content
+    content: {
+      // comment content
       type: String,
       trim: true,
       required: true,
