@@ -2,10 +2,10 @@ import { useCallback } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
 
-import { CREATE_COURSE_COMMENT } from "@/lib/api/discussion";
 import {
   CreateCourseCommentMutation,
   CreateCourseCommentMutationVariables,
+  CreateCourseCommentDocument,
   GetCourseCommentsDocument,
   GetCourseCommentsQuery,
   GetCourseCommentsQueryVariables,
@@ -32,7 +32,7 @@ export const useCourseComments = (
   const [createComment, createState] = useMutation<
     CreateCourseCommentMutation,
     CreateCourseCommentMutationVariables
-  >(CREATE_COURSE_COMMENT);
+  >(CreateCourseCommentDocument);
 
   const submitComment = useCallback(
     async (comment: string) => {
