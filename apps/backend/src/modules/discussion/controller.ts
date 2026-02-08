@@ -31,14 +31,16 @@ export const getCourseComments = async (
     .sort({ createdAt: -1 })
     .lean();
 
-  return comments.map((doc) =>
-    formatDiscussionComment({
+  return comments.map((doc) => {
+    const _id = doc._id;
+    if (!_id) throw new GraphQLError("Comment missing _id", { extensions: { code: "INTERNAL_SERVER_ERROR" } });
+    return formatDiscussionComment({
       ...doc,
-      _id: doc._id,
+      _id,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
-    })
-  );
+    } as Parameters<typeof formatDiscussionComment>[0]);
+  });
 };
 
 export const addCourseComment = async (
@@ -72,10 +74,12 @@ export const addCourseComment = async (
     body: trimmedBody,
   });
 
+  const _id = doc._id;
+  if (!_id) throw new GraphQLError("Comment missing _id", { extensions: { code: "INTERNAL_SERVER_ERROR" } });
   return formatDiscussionComment({
     ...doc.toObject(),
-    _id: doc._id,
+    _id,
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
-  });
+  } as Parameters<typeof formatDiscussionComment>[0]);
 };
