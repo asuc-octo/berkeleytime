@@ -10,6 +10,12 @@ const config: CodegenConfig = {
         filename: "generated-types/module-types.ts",
       },
       plugins: ["typescript", "typescript-resolvers"],
+      config: {
+        mappers: {
+          CourseComment: "../formatter#IntermediateCourseComment",
+          User: "../../../types/user#FormattedUser",
+        },
+      },
     },
   },
 };

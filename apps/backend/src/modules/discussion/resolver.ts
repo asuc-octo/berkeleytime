@@ -1,43 +1,34 @@
-import {
-  addCourseComment,
-  getCourseComments,
-} from "./controller";
 import { getUserById } from "../user/controller";
-import { DiscussionModule } from "./generated-types/module-types";
+import { addCourseComment, getCourseComments } from "./controller";
 import { IntermediateCourseComment } from "./formatter";
+import { DiscussionModule } from "./generated-types/module-types";
 
 const resolvers: DiscussionModule.Resolvers = {
   Query: {
     courseComments: async (_, { courseId }) => {
-      const comments = await getCourseComments(courseId);
-
-      return comments as unknown as DiscussionModule.CourseComment[];
+      return getCourseComments(courseId);
     },
   },
 
   Mutation: {
     addCourseComment: async (_, { input }, context) => {
-      const comment = await addCourseComment(
+      return addCourseComment(
         context,
         input.courseId,
         input.content
       );
-
-      return comment as unknown as DiscussionModule.CourseComment;
     },
   },
 
   CourseComment: {
-    author: async (parent) => {
-      // Parent is intermediate format from controller (author is user ID string)
-      const authorId = (parent as unknown as IntermediateCourseComment).author;
-      const user = await getUserById(authorId);
+    author: async (parent: IntermediateCourseComment) => {
+      const user = await getUserById(parent.author);
 
       if (!user) {
         throw new Error("Author not found");
       }
 
-      return user as unknown as DiscussionModule.User;
+      return user;
     },
   },
 };
