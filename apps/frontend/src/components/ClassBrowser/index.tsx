@@ -78,8 +78,8 @@ export default function ClassBrowser({
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localTimeRange, setLocalTimeRange] = useState<TimeRange>([null, null]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
-  const [localUniversityRequirement, setLocalUniversityRequirement] =
-    useState<UniversityRequirement | null>(null);
+  const [localUniversityRequirements, setLocalUniversityRequirements] =
+    useState<UniversityRequirement[]>([]);
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
@@ -89,7 +89,7 @@ export default function ClassBrowser({
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
-    useState<EnrollmentFilter>(EnrollmentFilter.All);
+    useState<EnrollmentFilter | null>(null);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
 
   const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
@@ -159,12 +159,15 @@ export default function ClassBrowser({
     [searchParams, localBreadths, persistent]
   );
 
-  const universityRequirement = useMemo(
+  const universityRequirements = useMemo(
     () =>
       persistent
-        ? (searchParams.get("universityRequirement") ?? null)
-        : localUniversityRequirement,
-    [searchParams, localUniversityRequirement, persistent]
+        ? (searchParams
+            .get("universityRequirements")
+            ?.split(",")
+            .filter(Boolean) ?? [])
+        : localUniversityRequirements,
+    [searchParams, localUniversityRequirements, persistent]
   );
 
   const gradingFilters = useMemo(
@@ -217,7 +220,7 @@ export default function ClassBrowser({
       ) {
         return param as EnrollmentFilter;
       }
-      return EnrollmentFilter.All;
+      return null;
     }
     return localEnrollmentFilter;
   }, [searchParams, localEnrollmentFilter, persistent]);
@@ -237,7 +240,7 @@ export default function ClassBrowser({
         enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         academicOrganization,
         timeRange
@@ -250,7 +253,7 @@ export default function ClassBrowser({
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       academicOrganization,
       timeRange,
@@ -280,10 +283,10 @@ export default function ClassBrowser({
       timeRange[0] !== null ||
       timeRange[1] !== null ||
       breadths.length > 0 ||
-      universityRequirement !== null ||
+      universityRequirements.length > 0 ||
       gradingFilters.length > 0 ||
       academicOrganization !== null ||
-      enrollmentFilter !== EnrollmentFilter.All ||
+      enrollmentFilter !== null ||
       online ||
       sortBy !== SortBy.Relevance
     );
@@ -293,7 +296,7 @@ export default function ClassBrowser({
     days,
     timeRange,
     breadths,
-    universityRequirement,
+    universityRequirements,
     gradingFilters,
     academicOrganization,
     enrollmentFilter,
@@ -390,21 +393,6 @@ export default function ClassBrowser({
     setLocalSortBy(value);
   };
 
-  const updateUniversityRequirement = (
-    universityRequirement: UniversityRequirement | null
-  ) => {
-    if (persistent) {
-      if (universityRequirement) {
-        searchParams.set("universityRequirement", universityRequirement);
-      } else {
-        searchParams.delete("universityRequirement");
-      }
-      setSearchParams(searchParams);
-      return;
-    }
-    setLocalUniversityRequirement(universityRequirement);
-  };
-
   const updateQuery = (query: string) => {
     setLocalQuery(query);
   };
@@ -428,7 +416,7 @@ export default function ClassBrowser({
         days,
         timeRange,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         academicOrganization,
         online,
@@ -442,7 +430,12 @@ export default function ClassBrowser({
         updateTimeRange,
         updateBreadths: (breadths) =>
           updateArray("breadths", setLocalBreadths, breadths),
-        updateUniversityRequirement,
+        updateUniversityRequirements: (reqs) =>
+          updateArray(
+            "universityRequirements",
+            setLocalUniversityRequirements,
+            reqs
+          ),
         updateGradingFilters: (filters) =>
           updateArray("gradingBases", setLocalGradingFilters, filters),
         updateAcademicOrganization: (org) => {
@@ -461,7 +454,7 @@ export default function ClassBrowser({
         updateSortBy,
         updateEnrollmentFilter: (filter) => {
           if (persistent) {
-            if (filter === EnrollmentFilter.All) {
+            if (filter === null) {
               searchParams.delete("enrollmentFilter");
             } else {
               searchParams.set("enrollmentFilter", filter);

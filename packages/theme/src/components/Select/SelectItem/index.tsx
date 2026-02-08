@@ -29,21 +29,21 @@ export default function SelectItem({
 }: SelectItemProps) {
   return (
     <Box
-      className={styles.root}
+      className={classNames(styles.root, { [styles.checkbox]: checkboxMulti })}
       data-disabled={disabled}
-      data-selected={selected}
+      data-selected={!checkboxMulti && selected}
     >
       <Flex
         direction="row"
         justify="between"
         align="center"
         width="100%"
-        className={classNames({ [styles.selected]: selected })}
+        className={classNames({
+          [styles.selected]: !checkboxMulti && selected,
+        })}
       >
         <Flex direction="row" align="center" gap="8px">
-          {checkboxMulti && (
-            <Checkbox checked={selected} style={{ marginRight: "10px" }} />
-          )}
+          {checkboxMulti && <Checkbox checked={selected} />}
           {color && !meta ? (
             <Flex direction="row" gap="12px">
               <Badge label={label} color={color} icon={icon} />

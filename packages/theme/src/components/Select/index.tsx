@@ -506,6 +506,7 @@ export function Select<T>({
               selected={selected}
               disabled={opt.disabled}
               color={opt.color}
+              checkboxMulti={multi}
             />
           </Command.Item>
         );
@@ -554,7 +555,7 @@ export function Select<T>({
         {!effectiveDisabled && (
           <Popover.Content
             className={styles.searchableContent}
-            style={{ width: triggerWidth, zIndex: 999 }}
+            style={{ width: triggerWidth, zIndex: 1010 }}
             sideOffset={5}
             align="start"
           >
@@ -616,7 +617,7 @@ export function Select<T>({
       {!effectiveDisabled && (
         <DropdownMenu.Content
           className={styles.content}
-          style={{ width: triggerWidth, zIndex: 999 }}
+          style={{ width: triggerWidth, zIndex: 1010 }}
           sideOffset={5}
         >
           {currentOptions.length === 0 ? (
@@ -660,7 +661,7 @@ export function Select<T>({
                   <SelectItem
                     label={opt.label}
                     meta={opt.meta}
-                    checkboxMulti={checkboxMulti}
+                    checkboxMulti={multi || checkboxMulti}
                     disabled={opt.disabled}
                     selected={
                       Array.isArray(value)

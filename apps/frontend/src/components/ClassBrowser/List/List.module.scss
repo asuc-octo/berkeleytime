@@ -2,6 +2,7 @@
   width: 384px;
   flex-shrink: 0;
   overflow: auto;
+  scrollbar-width: none;
   background-color: var(--foreground-color);
 
   &.loading {
