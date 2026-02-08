@@ -13,19 +13,8 @@ export const formatCourseComment = (
   //converts MongoDB document to GQL shape (input)
   doc: DiscussionType & { _id: unknown; createdAt?: Date; updatedAt?: Date }
 ): CourseCommentOutput => {
-  const createdAt =
-    doc.createdAt instanceof Date
-      ? doc.createdAt.toISOString()
-      : doc.createdAt
-        ? new Date(doc.createdAt).toISOString()
-        : new Date().toISOString();
-
-  const updatedAt =
-    doc.updatedAt instanceof Date
-      ? doc.updatedAt.toISOString()
-      : doc.updatedAt
-        ? new Date(doc.updatedAt).toISOString()
-        : createdAt;
+  const createdAt = new Date(doc.createdAt ?? Date.now()).toISOString();
+  const updatedAt = new Date(doc.updatedAt ?? doc.createdAt ?? Date.now()).toISOString();
 
   return {
     id: String(doc._id),

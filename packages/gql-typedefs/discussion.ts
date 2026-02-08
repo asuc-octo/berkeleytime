@@ -4,7 +4,7 @@ export const discussionTypeDef = gql`
   """
   A comment on a course discussion board
   """
-  type CourseComment {
+  type CourseComment @cacheControl(maxAge: 0) {
     id: ID!
     content: String!
     createdBy: String!
@@ -25,6 +25,6 @@ export const discussionTypeDef = gql`
       subject: String!
       courseNumber: String!
       content: String!
-    ): CourseComment!
+    ): CourseComment! @auth
   }
 `;

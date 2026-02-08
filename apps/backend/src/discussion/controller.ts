@@ -47,16 +47,19 @@ export const getCourseComments = async (
   return comments.map((doc) => formatCourseComment(doc));
 };
 
-// TODO: Re-enable auth before production. Using fallback for unauthenticated testing.
-const ANONYMOUS_USER_ID = "anonymous-test-user";
-
 export const addCourseComment = async (
   context: RequestContext,
   subject: string,
   courseNumber: string,
   content: string
 ) => {
-  const createdBy = context?.user?._id ?? ANONYMOUS_USER_ID;
+  if (!context?.user?._id) {
+    throw new GraphQLError("You must be logged in to post a comment", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const createdBy = context.user._id;
 
   const contentTrimmed = content.trim();
   if (!contentTrimmed) {
