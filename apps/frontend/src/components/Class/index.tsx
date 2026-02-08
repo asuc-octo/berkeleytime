@@ -66,6 +66,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussions = lazy(() => import("./Discussions"));
 
 interface RootProps {
   dialog?: boolean;
@@ -132,6 +133,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
   if (pathname.endsWith("/enrollment")) return "enrollment";
+  if (pathname.endsWith("/discussions")) return "discussions";
   return "overview";
 };
 
@@ -575,6 +577,9 @@ export default function Class({
                         to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
                       />
                     )}
+                    <Tabs.Trigger value="discussions" asChild>
+                      <MenuItem>Discussions</MenuItem>
+                    </Tabs.Trigger>
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
@@ -606,6 +611,11 @@ export default function Class({
                       to={{ ...location, pathname: "ratings" }}
                     />
                   )}
+                  <NavLink to={{ ...location, pathname: "discussions" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussions</MenuItem>
+                    )}
+                  </NavLink>
                   <NavLink to={{ ...location, pathname: "grades" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Grades</MenuItem>
@@ -650,6 +660,14 @@ export default function Class({
                     </SuspenseBoundary>
                   </Tabs.Content>
                 )}
+                <Tabs.Content value="discussions" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Discussions
+                      courseId={_class.courseId}
+                      courseName={classTitle}
+                    />
+                  </SuspenseBoundary>
+                </Tabs.Content>
                 <Tabs.Content value="enrollment" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Enrollment />
@@ -698,6 +716,23 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Ratings />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("discussions") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "discussions"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Discussions
+                        courseId={_class.courseId}
+                        courseName={classTitle}
+                      />
                     </SuspenseBoundary>
                   </div>
                 )}

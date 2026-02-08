@@ -1,0 +1,41 @@
+.body {
+  padding: 16px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--foreground-color);
+  color: var(--paragraph-color);
+  font-family: inherit;
+  font-size: var(--text-14);
+  line-height: 1.5;
+  resize: none;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: var(--paragraph-color);
+    opacity: 0.6;
+  }
+}
+
+.charCount {
+  font-size: var(--text-12);
+  font-weight: var(--font-medium);
+  color: var(--paragraph-color);
+  text-align: right;
+  margin-top: 8px;
+}

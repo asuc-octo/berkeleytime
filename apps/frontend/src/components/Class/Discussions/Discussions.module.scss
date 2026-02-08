@@ -1,0 +1,26 @@
+.root {
+  background-color: var(--background-color);
+  padding: 20px;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+
+  h2 {
+    font-size: var(--text-16);
+    font-weight: var(--font-semibold);
+    color: var(--heading-color);
+    margin: 0;
+  }
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
