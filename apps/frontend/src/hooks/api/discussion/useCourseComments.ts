@@ -8,9 +8,9 @@ import {
   GetCourseCommentsQueryVariables,
 } from "@/lib/generated/graphql";
 
-interface UseCourseCommentsOptions {
-  courseId?: string | null;
-}
+type UseCourseCommentsOptions = {
+  courseId?: GetCourseCommentsQueryVariables["courseId"] | null;
+};
 
 type CourseComment = NonNullable<
   NonNullable<GetCourseCommentsQuery["courseComments"]>[number]

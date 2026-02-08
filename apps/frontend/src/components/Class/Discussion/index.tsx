@@ -11,7 +11,7 @@ import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 import { AddCourseCommentDocument } from "@/lib/generated/graphql";
 
-import styles from "./Comments.module.scss";
+import styles from "./Discussion.module.scss";
 
 const formatTimestamp = (timestamp: string) => {
   const date = new Date(timestamp);
@@ -19,7 +19,7 @@ const formatTimestamp = (timestamp: string) => {
   return date.toLocaleString();
 };
 
-export default function Comments() {
+export default function Discussion() {
   const { class: classInfo } = useClass();
   const { user } = useUser();
   const [commentBody, setCommentBody] = useState("");
@@ -37,9 +37,7 @@ export default function Comments() {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const orderedComments = useMemo(() => {
-    const safeComments = comments.filter(
-      (comment): comment is NonNullable<typeof comment> => Boolean(comment)
-    );
+    const safeComments = comments.filter((comment) => comment);
     return [...safeComments].sort((a, b) => {
       return (
         new Date(b.createdAt ?? 0).getTime() -

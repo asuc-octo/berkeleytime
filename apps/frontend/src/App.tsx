@@ -35,7 +35,7 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
-  Comments: lazy(() => import("@/components/Class/Comments")),
+  Discussion: lazy(() => import("@/components/Class/Discussion")),
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -360,11 +360,11 @@ const router = createBrowserRouter([
               },
               {
                 element: (
-                  <SuspenseBoundary key="comments">
-                    <Class.Comments />
+                  <SuspenseBoundary key="discussion">
+                    <Class.Discussion />
                   </SuspenseBoundary>
                 ),
-                path: "comments",
+                path: "discussion",
               },
               {
                 path: "*",
