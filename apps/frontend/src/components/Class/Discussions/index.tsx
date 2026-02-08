@@ -6,9 +6,9 @@ import { ChatBubble } from "iconoir-react";
 import { Button, Container } from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
+import { useGetComments } from "@/hooks/api/comments/useGetComments";
 import { IComment } from "@/lib/api/comments";
 import { CreateCommentDocument } from "@/lib/generated/graphql";
-import { useGetComments } from "@/hooks/api/comments/useGetComments";
 
 import CommentCard from "./CommentCard";
 import { ErrorDialog, SuccessDialog } from "./CommentDialogs";
@@ -85,7 +85,9 @@ export default function Discussions({
             heading="No Comments Yet"
             paragraph="Be the first to share your thoughts about this course!"
           >
-            <Button onClick={() => setIsModalOpen(true)}>Add First Comment</Button>
+            <Button onClick={() => setIsModalOpen(true)}>
+              Add First Comment
+            </Button>
           </EmptyState>
         ) : (
           <div className={styles.commentList}>
@@ -95,26 +97,26 @@ export default function Discussions({
           </div>
         )}
 
-      <CommentForm
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
-        courseName={courseName}
-      />
+        <CommentForm
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+          courseName={courseName}
+        />
 
-      <SuccessDialog
-        isOpen={isSuccessDialogOpen}
-        onClose={() => setIsSuccessDialogOpen(false)}
-        title="Comment Added!"
-        message="Your comment has been successfully added to the course."
-      />
+        <SuccessDialog
+          isOpen={isSuccessDialogOpen}
+          onClose={() => setIsSuccessDialogOpen(false)}
+          title="Comment Added!"
+          message="Your comment has been successfully added to the course."
+        />
 
-      <ErrorDialog
-        isOpen={isErrorDialogOpen}
-        onClose={() => setIsErrorDialogOpen(false)}
-        title="Error"
-        message={errorMessage || "Failed to add comment. Please try again."}
-      />
+        <ErrorDialog
+          isOpen={isErrorDialogOpen}
+          onClose={() => setIsErrorDialogOpen(false)}
+          title="Error"
+          message={errorMessage || "Failed to add comment. Please try again."}
+        />
       </Container>
     </div>
   );
