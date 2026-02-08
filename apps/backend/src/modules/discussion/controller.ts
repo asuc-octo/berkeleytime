@@ -33,7 +33,10 @@ export const getCourseComments = async (
 
   return comments.map((doc) => {
     const _id = doc._id;
-    if (!_id) throw new GraphQLError("Comment missing _id", { extensions: { code: "INTERNAL_SERVER_ERROR" } });
+    if (!_id)
+      throw new GraphQLError("Comment missing _id", {
+        extensions: { code: "INTERNAL_SERVER_ERROR" },
+      });
     return formatDiscussionComment({
       ...doc,
       _id,
@@ -75,7 +78,10 @@ export const addCourseComment = async (
   });
 
   const _id = doc._id;
-  if (!_id) throw new GraphQLError("Comment missing _id", { extensions: { code: "INTERNAL_SERVER_ERROR" } });
+  if (!_id)
+    throw new GraphQLError("Comment missing _id", {
+      extensions: { code: "INTERNAL_SERVER_ERROR" },
+    });
   return formatDiscussionComment({
     ...doc.toObject(),
     _id,

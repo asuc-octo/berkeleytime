@@ -10,7 +10,11 @@ export interface FormattedDiscussionComment {
 }
 
 export const formatDiscussionComment = (
-  doc: DiscussionType & { _id: { toString(): string }; createdAt?: Date; updatedAt?: Date }
+  doc: DiscussionType & {
+    _id: { toString(): string };
+    createdAt?: Date;
+    updatedAt?: Date;
+  }
 ): FormattedDiscussionComment => {
   return {
     id: doc._id.toString(),

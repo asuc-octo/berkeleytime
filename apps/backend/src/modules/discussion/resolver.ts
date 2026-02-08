@@ -1,17 +1,11 @@
 import { GraphQLError } from "graphql";
 
-import {
-  addCourseComment,
-  getCourseComments,
-} from "./controller";
+import { addCourseComment, getCourseComments } from "./controller";
 import { DiscussionModule } from "./generated-types/module-types";
 
 const resolvers: DiscussionModule.Resolvers = {
   Query: {
-    courseComments: async (
-      _,
-      { courseId, userId }
-    ) => {
+    courseComments: async (_, { courseId, userId }) => {
       try {
         const comments = await getCourseComments(courseId, userId ?? undefined);
         return comments as unknown as DiscussionModule.DiscussionComment[];
