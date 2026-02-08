@@ -27,6 +27,21 @@ export const GET_COURSE_COMMENTS = gql`
   }
 `;
 
+export const CREATE_COMMENT = gql`
+  mutation CreateComment($input: AddCourseCommentInput!) {
+    addCourseComment(input: $input) {
+      _id
+      courseId
+      author {
+        _id
+        name
+      }
+      content
+      createdAt
+    }
+  }
+`;
+
 export const GET_COURSE_TITLE = gql`
   query GetCourseTitle($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
