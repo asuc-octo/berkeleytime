@@ -10,10 +10,7 @@ export const useCourseComments = (
   subject: string,
   courseNumber: string,
   options?: Omit<
-    useQuery.Options<
-      GetCourseCommentsQuery,
-      GetCourseCommentsQueryVariables
-    >,
+    useQuery.Options<GetCourseCommentsQuery, GetCourseCommentsQueryVariables>,
     "variables"
   >
 ) => {

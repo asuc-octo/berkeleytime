@@ -105,7 +105,6 @@ interface UncontrolledProps {
   number: string;
 }
 
-
 type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
 
 const ratingsTabClasses: RatingsTabClasses = {
@@ -184,14 +183,12 @@ export default function Class({
     courseNumber as string,
     number as string,
     {
-      
       skip: !!providedClass,
     }
   );
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
-
 
   const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
     skip: !!providedCourse || !_class?.courseId,
