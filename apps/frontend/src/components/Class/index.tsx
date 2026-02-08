@@ -665,11 +665,11 @@ export default function Class({
                     <Enrollment />
                   </SuspenseBoundary>
                 </Tabs.Content>
-                    <Tabs.Content value="discussion" asChild>
-                      <SuspenseBoundary fallback={<></>}>
-                        <Discussion />
-                      </SuspenseBoundary>
-                    </Tabs.Content>
+                <Tabs.Content value="discussion" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Discussion />
+                  </SuspenseBoundary>
+                </Tabs.Content>
               </>
             ) : (
               <>
