@@ -1,0 +1,92 @@
+.loginPrompt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 4px;
+  background: var(--foreground-color);
+  border: 1px solid var(--border-color);
+}
+
+.loginMessage {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--heading-color);
+  background: var(--foreground-color);
+  font-size: var(--text-14);
+  line-height: 1.5;
+  resize: vertical;
+
+  &::placeholder {
+    color: var(--paragraph-color-50);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.commentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.comment {
+  padding: 12px;
+  border-radius: 4px;
+  background: var(--foreground-color);
+  border: 1px solid var(--border-color);
+}
+
+.commentContent {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.commentMeta {
+  margin: 8px 0 0;
+  font-size: var(--text-12);
+  color: var(--paragraph-color-50);
+}
+
+.metaItem {
+  &:not(:last-child)::after {
+    content: " · ";
+  }
+}
+
+.muted {
+  font-size: var(--text-14);
+  color: var(--paragraph-color-50);
+  margin: 0;
+}
+
+.error {
+  font-size: var(--text-14);
+  color: var(--red-500);
+  margin: 0;
+}

@@ -14,7 +14,9 @@ export const formatCourseComment = (
   doc: DiscussionType & { _id: unknown; createdAt?: Date; updatedAt?: Date }
 ): CourseCommentOutput => {
   const createdAt = new Date(doc.createdAt ?? Date.now()).toISOString();
-  const updatedAt = new Date(doc.updatedAt ?? doc.createdAt ?? Date.now()).toISOString();
+  const updatedAt = new Date(
+    doc.updatedAt ?? doc.createdAt ?? Date.now()
+  ).toISOString();
 
   return {
     id: String(doc._id),

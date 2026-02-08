@@ -61,6 +61,7 @@ import { type RatingsTabClasses, RatingsTabLink } from "./locks";
 
 const VIEW_TRACKING_DELAY_MS = 1000;
 
+const Discussion = lazy(() => import("./Discussion"));
 const Enrollment = lazy(() => import("./Enrollment"));
 const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
@@ -104,7 +105,7 @@ interface UncontrolledProps {
   number: string;
 }
 
-// TODO: Determine whether a controlled input is even necessary
+
 type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
 
 const ratingsTabClasses: RatingsTabClasses = {
@@ -122,7 +123,7 @@ const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
   const num = parseInt(number, 10);
   if (isNaN(num)) return number;
-  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+
   if (num > 99) return num.toString();
   return num.toString().padStart(2, "0");
 };
@@ -132,6 +133,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
   if (pathname.endsWith("/enrollment")) return "enrollment";
+  if (pathname.endsWith("/discussion")) return "discussion";
   return "overview";
 };
 
@@ -182,7 +184,7 @@ export default function Class({
     courseNumber as string,
     number as string,
     {
-      // Allow class to be provided
+      
       skip: !!providedClass,
     }
   );
@@ -190,7 +192,7 @@ export default function Class({
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
 
-  // Use courseId from class data to fetch course info (handles cross-listed courses)
+
   const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
     skip: !!providedCourse || !_class?.courseId,
   });
@@ -578,6 +580,9 @@ export default function Class({
                     <Tabs.Trigger value="grades" asChild>
                       <MenuItem>Grades</MenuItem>
                     </Tabs.Trigger>
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
+                    </Tabs.Trigger>
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
@@ -611,6 +616,11 @@ export default function Class({
                       <MenuItem active={isActive}>Grades</MenuItem>
                     )}
                   </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
+                    )}
+                  </NavLink>
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
@@ -641,6 +651,11 @@ export default function Class({
                 <Tabs.Content value="grades" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Grades />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="discussion" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Discussion />
                   </SuspenseBoundary>
                 </Tabs.Content>
                 {!ratingsLocked && (
@@ -684,6 +699,20 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Grades />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("discussion") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "discussion"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Discussion />
                     </SuspenseBoundary>
                   </div>
                 )}
