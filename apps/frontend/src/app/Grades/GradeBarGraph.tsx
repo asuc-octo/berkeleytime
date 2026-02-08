@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Bar,
@@ -21,6 +21,8 @@ import { LETTER_GRADES } from "@/lib/grades";
 
 import styles from "./GradeBarGraph.module.scss";
 
+const HORIZONTAL_THRESHOLD = 500;
+
 interface GradeBarGraphOutput {
   input: Input;
   color: string;
@@ -32,6 +34,19 @@ interface GradeBarGraphProps {
 }
 
 export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [horizontal, setHorizontal] = useState(false);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      setHorizontal(entry.contentRect.width < HORIZONTAL_THRESHOLD);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   const { chartData, chartConfig, dataKeys } = useMemo(() => {
     if (outputs.length === 0) {
       return { chartData: [], chartConfig: {}, dataKeys: [] };
@@ -83,40 +98,71 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
 
   if (outputs.length === 0) {
     return (
-      <div className={styles.root} />
+      <div className={styles.root} ref={rootRef} />
     );
   }
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} ref={rootRef} style={horizontal ? { minHeight: 480 } : undefined}>
       <div className={styles.chartWrapper}>
         <ChartContainer config={chartConfig} className={styles.chart}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
+            <BarChart data={chartData} layout={horizontal ? "vertical" : "horizontal"}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                vertical={false}
+                vertical={horizontal}
+                horizontal={!horizontal}
                 stroke="var(--border-color)"
               />
-              <XAxis
-                dataKey="letter"
-                tickMargin={8}
-                tickLine={false}
-                axisLine={false}
-                tick={{
-                  fill: "var(--paragraph-color)",
-                  fontSize: "var(--text-12)",
-                }}
-              />
-              <YAxis
-                tickFormatter={(v) => formatters.percent(v, 0)}
-                tick={{
-                  fill: "var(--paragraph-color)",
-                  fontSize: "var(--text-12)",
-                }}
-                axisLine={false}
-                tickLine={false}
-              />
+              {horizontal ? (
+                <>
+                  <YAxis
+                    dataKey="letter"
+                    type="category"
+                    tickMargin={8}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-12)",
+                    }}
+                  />
+                  <XAxis
+                    type="number"
+                    domain={[0, (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5]}
+                    tickFormatter={(v) => formatters.percent(v, 0)}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-12)",
+                    }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                </>
+              ) : (
+                <>
+                  <XAxis
+                    dataKey="letter"
+                    tickMargin={8}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-12)",
+                    }}
+                  />
+                  <YAxis
+                    domain={[0, (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5]}
+                    tickFormatter={(v) => formatters.percent(v, 0)}
+                    tick={{
+                      fill: "var(--paragraph-color)",
+                      fontSize: "var(--text-12)",
+                    }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                </>
+              )}
               <ChartTooltip
                 tooltipConfig={{
                   labelFormatter: (label) => `Grade: ${label}`,
@@ -129,7 +175,7 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                   key={key}
                   dataKey={key}
                   fill={`var(--color-${key})`}
-                  radius={[4, 4, 0, 0]}
+                  radius={horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]}
                 />
               ))}
             </BarChart>

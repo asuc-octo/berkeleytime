@@ -34,6 +34,7 @@
   left: 0;
   bottom: 0;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .overlay {
@@ -86,29 +87,12 @@
 }
 
 .miniChartsSection {
-  --mini-rows: 1;
-  --mini-cols: 1;
-  --mini-gap: 0px;
-  --mini-card-padding: 20px;
-  --mini-card-gap: 10px;
+  --mini-card-padding: 10px;
+  --mini-card-gap: 6px;
   --mini-title-height: 18px;
   --mini-bar-height: 24px;
-  --mini-row-height: calc(
-    (var(--mini-card-padding) * 2) +
-      var(--mini-title-height) +
-      var(--mini-card-gap) +
-      var(--mini-bar-height)
-  );
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(var(--mini-cols), minmax(0, 1fr));
-  grid-auto-rows: minmax(var(--mini-row-height), auto);
-  gap: var(--mini-gap);
-  min-height: calc(
-    (var(--mini-rows) * var(--mini-row-height)) +
-      ((var(--mini-rows) - 1) * var(--mini-gap))
-  );
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .miniChartCard {
@@ -118,20 +102,6 @@
   justify-content: center;
   gap: var(--mini-card-gap);
   min-width: 0;
-  min-height: fit-content;
-  height: auto;
-}
-
-.miniChartCardFull {
-  grid-column: 1 / -1;
-}
-
-.miniChartCardDividerRight {
-  border-right: 1px solid var(--border-color);
-}
-
-.miniChartCardDividerBottom {
-  border-bottom: 1px solid var(--border-color);
 }
 
 .miniChartTitle {
@@ -268,19 +238,3 @@
   font-size: var(--text-14);
 }
 
-// Mobile output list — shown at top of .view
-.mobileOutputList {
-  border-bottom: 1px solid var(--border-color);
-  max-height: 40vh;
-  overflow-y: auto;
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  > * {
-    flex: none;
-    min-width: 0;
-    max-width: none;
-  }
-}

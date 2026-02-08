@@ -131,10 +131,10 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
   );
 
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
-    null
+    "all"
   );
 
-  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
+  const [selectedSemester, setSelectedSemester] = useState<string | null>("all");
 
   const instructorOptionsData = useMemo(() => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
@@ -323,8 +323,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         }))
       );
 
-      setSelectedInstructor(null);
-      setSelectedSemester(null);
+      setSelectedInstructor("all");
+      setSelectedSemester("all");
 
       setLoading(false);
     } catch {
@@ -335,8 +335,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
-    setSelectedInstructor(null);
-    setSelectedSemester(null);
+    setSelectedInstructor("all");
+    setSelectedSemester("all");
     addRecent(RecentType.Course, {
       subject: course.subject,
       number: course.number,
@@ -345,8 +345,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedInstructor(null);
-    setSelectedSemester(null);
+    setSelectedInstructor("all");
+    setSelectedSemester("all");
   };
 
   const hasSelection =
@@ -377,8 +377,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
             items={TYPE_ITEMS}
             value={selectedType}
             onValueChange={(value) => {
-              setSelectedInstructor(null);
-              setSelectedSemester(null);
+              setSelectedInstructor("all");
+              setSelectedSemester("all");
               setSelectedType(value as InputType);
             }}
             fullWidth
@@ -453,10 +453,9 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 interface OutputListProps {
   outputs: Output[];
   remove: (index: number) => void;
-  mobile?: boolean;
 }
 
-function OutputList({ outputs, remove, mobile }: OutputListProps) {
+function OutputList({ outputs, remove }: OutputListProps) {
   const cards = (
     <LayoutGroup>
       <AnimatePresence mode="popLayout">
@@ -482,11 +481,6 @@ function OutputList({ outputs, remove, mobile }: OutputListProps) {
       </AnimatePresence>
     </LayoutGroup>
   );
-
-  if (mobile) {
-    if (outputs.length === 0) return null;
-    return <div className={styles.mobileOutputList}>{cards}</div>;
-  }
 
   return (
     <div className={styles.outputList}>
@@ -517,15 +511,6 @@ export default function Grades() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const miniChartCount = Math.min(outputs.length, 4);
-  const isTwoRowLayout = miniChartCount >= 3;
-  const miniChartRows = isTwoRowLayout ? 2 : 1;
-  const miniChartCols = isTwoRowLayout ? 2 : Math.max(miniChartCount, 1);
-  const isThreeCardLayout = miniChartCount === 3;
-  const miniChartsStyle = {
-    "--mini-rows": miniChartRows,
-    "--mini-cols": miniChartCols,
-  } as React.CSSProperties;
 
   return (
     <div className={styles.root}>
@@ -555,6 +540,8 @@ export default function Grades() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
           >
             <FilterPanel outputs={outputs} setOutputs={setOutputs} />
+            <div className={styles.divider} />
+            <OutputList outputs={outputs} remove={remove} />
           </motion.div>
         </>
       )}
@@ -569,43 +556,16 @@ export default function Grades() {
       )}
 
       <div className={styles.view}>
-        {!isDesktop && (
-          <OutputList outputs={outputs} remove={remove} mobile />
-        )}
         <div className={styles.chartsPane}>
           <div className={styles.mainChartArea}>
             <GradeBarGraph outputs={outputs} />
           </div>
           <div className={styles.chartDivider} />
-          <div className={styles.miniChartsSection} style={miniChartsStyle}>
-            {outputs.slice(0, 4).map((output, index) => {
-              const isFullWidthCard = isThreeCardLayout && index === 2;
-              const row = isThreeCardLayout
-                ? index < 2
-                  ? 0
-                  : 1
-                : Math.floor(index / miniChartCols);
-              const col = isThreeCardLayout
-                ? index < 2
-                  ? index
-                  : 0
-                : index % miniChartCols;
-              const isLastRow = row === miniChartRows - 1;
-              const isLastCol = col === miniChartCols - 1;
-
-              return (
+          <div className={styles.miniChartsSection}>
+            {outputs.slice(0, 4).map((output, index) => (
               <div
                 key={getInputSearchParam(output.input)}
-                className={[
-                  styles.miniChartCard,
-                  isFullWidthCard ? styles.miniChartCardFull : "",
-                  !isFullWidthCard && !isLastCol
-                    ? styles.miniChartCardDividerRight
-                    : "",
-                  !isLastRow ? styles.miniChartCardDividerBottom : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
+                className={styles.miniChartCard}
               >
                 <div className={styles.miniChartTitle}>
                   <span
@@ -620,8 +580,7 @@ export default function Grades() {
                   <MiniGradeBarChart gradeDistribution={output.data} />
                 </div>
               </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       </div>

@@ -12,19 +12,19 @@ interface MiniGradeBarChartProps {
 }
 
 const GRADE_BINS = [
-  { letter: "A+", color: "var(--violet-500)" },
-  { letter: "A", color: "var(--violet-500)" },
-  { letter: "A-", color: "var(--violet-400)" },
-  { letter: "B+", color: "var(--cyan-500)" },
-  { letter: "B", color: "var(--cyan-500)" },
-  { letter: "B-", color: "var(--cyan-400)" },
-  { letter: "C+", color: "var(--slate-500)" },
-  { letter: "C", color: "var(--slate-500)" },
-  { letter: "C-", color: "var(--slate-400)" },
-  { letter: "D+", color: "var(--slate-600)" },
-  { letter: "D", color: "var(--slate-600)" },
-  { letter: "D-", color: "var(--slate-700)" },
-  { letter: "F", color: "var(--slate-700)" },
+  { letter: "A+", color: "var(--orange-950)" },
+  { letter: "A", color: "var(--orange-900)" },
+  { letter: "A-", color: "var(--orange-800)" },
+  { letter: "B+", color: "var(--orange-700)" },
+  { letter: "B", color: "var(--orange-600)" },
+  { letter: "B-", color: "var(--orange-500)" },
+  { letter: "C+", color: "var(--orange-400)" },
+  { letter: "C", color: "var(--orange-300)" },
+  { letter: "C-", color: "var(--orange-200)" },
+  { letter: "D+", color: "var(--orange-100)" },
+  { letter: "D", color: "var(--orange-100)" },
+  { letter: "D-", color: "var(--orange-50)" },
+  { letter: "F", color: "var(--orange-50)" },
 ] as const;
 
 interface Segment {
