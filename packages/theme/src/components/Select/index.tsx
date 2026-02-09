@@ -216,6 +216,7 @@ export interface SelectProps<T> {
   onTabChange?: (value: string) => void;
   selectedLabel?: string;
   style?: React.CSSProperties;
+  maxListHeight?: number;
 }
 
 export function Select<T>({
@@ -242,6 +243,7 @@ export function Select<T>({
   onTabChange,
   selectedLabel,
   style,
+  maxListHeight,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -553,41 +555,53 @@ export function Select<T>({
           </Flex>
         </Popover.Trigger>
         {!effectiveDisabled && (
-          <Popover.Content
-            className={styles.searchableContent}
-            style={{ width: triggerWidth, zIndex: 1010 }}
-            sideOffset={5}
-            align="start"
-          >
-            <Command shouldFilter={false}>
-              <div className={styles.searchInputWrapper}>
-                <Search className={styles.searchIcon} width={16} height={16} />
-                <Command.Input
-                  placeholder={searchPlaceholder}
-                  value={searchValue}
-                  onValueChange={setSearchValue}
-                  className={styles.searchInput}
-                />
-              </div>
-              {tabs?.length ? (
-                <div className={styles.tabsWrapper}>
-                  <PillSwitcher
-                    value={activeTabValue}
-                    defaultValue={defaultTab || tabs[0]?.value}
-                    items={tabs.map((tab) => ({
-                      value: tab.value,
-                      label: tab.label,
-                    }))}
-                    fullWidth
-                    onValueChange={handleTabChange}
+          <Popover.Portal>
+            <Popover.Content
+              className={styles.searchableContent}
+              style={{ width: triggerWidth, zIndex: 1010 }}
+              sideOffset={5}
+              align="start"
+              collisionPadding={8}
+            >
+              <Command shouldFilter={false}>
+                <div className={styles.searchInputWrapper}>
+                  <Search
+                    className={styles.searchIcon}
+                    width={16}
+                    height={16}
+                  />
+                  <Command.Input
+                    placeholder={searchPlaceholder}
+                    value={searchValue}
+                    onValueChange={setSearchValue}
+                    className={styles.searchInput}
                   />
                 </div>
-              ) : null}
-              <Command.List className={styles.commandList}>
-                {renderGroupedOptions()}
-              </Command.List>
-            </Command>
-          </Popover.Content>
+                {tabs?.length ? (
+                  <div className={styles.tabsWrapper}>
+                    <PillSwitcher
+                      value={activeTabValue}
+                      defaultValue={defaultTab || tabs[0]?.value}
+                      items={tabs.map((tab) => ({
+                        value: tab.value,
+                        label: tab.label,
+                      }))}
+                      fullWidth
+                      onValueChange={handleTabChange}
+                    />
+                  </div>
+                ) : null}
+                <Command.List
+                  className={styles.commandList}
+                  style={
+                    maxListHeight ? { maxHeight: maxListHeight } : undefined
+                  }
+                >
+                  {renderGroupedOptions()}
+                </Command.List>
+              </Command>
+            </Popover.Content>
+          </Popover.Portal>
         )}
       </Popover.Root>
     );
@@ -615,81 +629,88 @@ export function Select<T>({
         </Flex>
       </DropdownMenu.Trigger>
       {!effectiveDisabled && (
-        <DropdownMenu.Content
-          className={styles.content}
-          style={{ width: triggerWidth, zIndex: 1010 }}
-          sideOffset={5}
-        >
-          {currentOptions.length === 0 ? (
-            <div className={styles.commandEmpty}>{emptyMessage}</div>
-          ) : (
-            currentOptions.map((opt, i) => {
-              if (!isOptionItem(opt)) {
-                return (
-                  <div key={`label-${i}`} className={styles.sectionLabel}>
-                    {opt.label}
-                  </div>
-                );
-              }
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            className={styles.content}
+            style={{
+              width: triggerWidth,
+              zIndex: 1010,
+              ...(maxListHeight ? { maxHeight: maxListHeight } : {}),
+            }}
+            sideOffset={5}
+            collisionPadding={8}
+          >
+            {currentOptions.length === 0 ? (
+              <div className={styles.commandEmpty}>{emptyMessage}</div>
+            ) : (
+              currentOptions.map((opt, i) => {
+                if (!isOptionItem(opt)) {
+                  return (
+                    <div key={`label-${i}`} className={styles.sectionLabel}>
+                      {opt.label}
+                    </div>
+                  );
+                }
 
-              return (
-                <DropdownMenu.Item
-                  key={`${i}-${opt.label}`}
-                  style={{ outline: "none" }}
-                  disabled={opt.disabled}
-                  onSelect={(e) => {
-                    if (opt.disabled) {
-                      e.preventDefault();
-                      return;
-                    }
-                    if (multi) {
-                      e.preventDefault();
-                      let newValues: T[];
-                      if (Array.isArray(value))
-                        newValues = structuredClone(value);
-                      else newValues = [];
-                      if (!newValues.some((v) => deepEqual(v, opt.value))) {
-                        newValues.push(opt.value);
-                        onChange(newValues);
-                      } else
-                        onChange(
-                          newValues.filter((v) => !deepEqual(v, opt.value))
-                        );
-                    } else onChange(opt.value);
-                  }}
-                >
-                  <SelectItem
-                    label={opt.label}
-                    meta={opt.meta}
-                    checkboxMulti={multi || checkboxMulti}
+                return (
+                  <DropdownMenu.Item
+                    key={`${i}-${opt.label}`}
+                    style={{ outline: "none" }}
                     disabled={opt.disabled}
-                    selected={
-                      Array.isArray(value)
-                        ? value.some((v) => deepEqual(v, opt.value))
-                        : deepEqual(value, opt.value)
-                    }
-                    color={opt.color}
-                  />
-                </DropdownMenu.Item>
-              );
-            })
-          )}
-          {addOption && (
-            <DropdownMenu.Item
-              key="add"
-              onSelect={addOption.onClick}
-              className={styles.addOption}
-            >
-              <Plus
-                style={{
-                  position: "relative",
-                  top: "2px",
-                }}
-              />{" "}
-              {addOption.text}
-            </DropdownMenu.Item>
-          )}
-        </DropdownMenu.Content>
+                    onSelect={(e) => {
+                      if (opt.disabled) {
+                        e.preventDefault();
+                        return;
+                      }
+                      if (multi) {
+                        e.preventDefault();
+                        let newValues: T[];
+                        if (Array.isArray(value))
+                          newValues = structuredClone(value);
+                        else newValues = [];
+                        if (!newValues.some((v) => deepEqual(v, opt.value))) {
+                          newValues.push(opt.value);
+                          onChange(newValues);
+                        } else
+                          onChange(
+                            newValues.filter((v) => !deepEqual(v, opt.value))
+                          );
+                      } else onChange(opt.value);
+                    }}
+                  >
+                    <SelectItem
+                      label={opt.label}
+                      meta={opt.meta}
+                      checkboxMulti={multi || checkboxMulti}
+                      disabled={opt.disabled}
+                      selected={
+                        Array.isArray(value)
+                          ? value.some((v) => deepEqual(v, opt.value))
+                          : deepEqual(value, opt.value)
+                      }
+                      color={opt.color}
+                    />
+                  </DropdownMenu.Item>
+                );
+              })
+            )}
+            {addOption && (
+              <DropdownMenu.Item
+                key="add"
+                onSelect={addOption.onClick}
+                className={styles.addOption}
+              >
+                <Plus
+                  style={{
+                    position: "relative",
+                    top: "2px",
+                  }}
+                />{" "}
+                {addOption.text}
+              </DropdownMenu.Item>
+            )}
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
       )}
     </DropdownMenu.Root>
   );

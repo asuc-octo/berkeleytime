@@ -574,6 +574,7 @@ export default function Filters() {
               }))}
               searchPlaceholder="Search semesters..."
               emptyMessage="No semesters found."
+              maxListHeight={130}
             />
           </div>
         )}

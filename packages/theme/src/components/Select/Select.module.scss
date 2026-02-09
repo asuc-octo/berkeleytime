@@ -45,7 +45,7 @@
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
   border-radius: 4px;
-  max-height: 300px;
+  max-height: min(300px, var(--radix-dropdown-menu-content-available-height, 300px));
   overflow-y: auto;
   padding: 4px;
   display: flex;
@@ -92,6 +92,9 @@
   border-radius: 4px;
   padding: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: var(--radix-popover-content-available-height, 300px);
 }
 
 .searchInputWrapper {
@@ -124,6 +127,7 @@
 .commandList {
   max-height: 300px;
   overflow-y: auto;
+  min-height: 0;
   overflow-x: hidden;
   padding: 4px;
 
