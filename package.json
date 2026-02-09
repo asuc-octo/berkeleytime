@@ -23,6 +23,7 @@
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "patch-package": "8.0.1",
     "prettier": "3.6.2",
+    "react-is": "^19.2.4",
     "turbo": "2.5.8"
   },
   "optionalDependencies": {

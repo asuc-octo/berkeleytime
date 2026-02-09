@@ -1,10 +1,10 @@
 import { UserType } from "@repo/common/models";
 
-import { UserModule } from "./generated-types/module-types";
+import type { FormattedUser } from "../../types/user";
 
-export const formatUser = (user: UserType): UserModule.User => {
+export const formatUser = (user: UserType): FormattedUser => {
   return {
-    _id: user._id as unknown as string,
+    _id: String(user._id),
     email: user.email,
     staff: user.staff,
     name: user.name,

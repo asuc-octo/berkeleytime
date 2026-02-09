@@ -1,0 +1,18 @@
+.root {
+  cursor: default;
+}
+
+.content {
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.timestamp {
+  font-size: var(--text-12);
+  color: var(--label-color);
+  margin-top: 12px;
+  display: block;
+}
