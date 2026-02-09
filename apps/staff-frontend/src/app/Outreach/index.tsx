@@ -21,6 +21,12 @@ import {
   useUpdateRouteRedirect,
 } from "../../hooks/api/route-redirect";
 import {
+  useAllTargetedMessages,
+  useCreateTargetedMessage,
+  useDeleteTargetedMessage,
+  useUpdateTargetedMessage,
+} from "../../hooks/api/targeted-message";
+import {
   Banner,
   CreateBannerInput,
   UpdateBannerInput,
@@ -30,6 +36,12 @@ import {
   RouteRedirect,
   UpdateRouteRedirectInput,
 } from "../../lib/api/route-redirect";
+import type {
+  CreateTargetedMessageInput,
+  TargetedMessage,
+  TargetedMessageCourse,
+  UpdateTargetedMessageInput,
+} from "../../lib/api/targeted-message";
 import styles from "./Outreach.module.scss";
 
 const TABS = [
@@ -38,33 +50,15 @@ const TABS = [
   { value: "targeted", label: "Targeted" },
 ];
 
-interface TargetedMessageCourse {
-  courseId: string;
-  subject: string;
-  courseNumber: string;
-}
-
 interface FormCourse {
   subject: string;
   courseNumber: string;
   courseId: string;
 }
 
-interface TargetedMessage {
-  id: string;
-  text: string;
-  link: string | null;
-  linkText: string | null;
-  visible: boolean;
-  targetCourses: TargetedMessageCourse[];
-  clickCount: number;
-  dismissCount: number;
-  clickEventLogging: boolean;
-  createdAt: string;
-}
-
 interface TargetedMessageFormData {
-  text: string;
+  title: string;
+  description: string;
   link: string;
   linkText: string;
   clickEventLogging: boolean;
@@ -72,7 +66,8 @@ interface TargetedMessageFormData {
 }
 
 const initialTargetedMessageFormData: TargetedMessageFormData = {
-  text: "",
+  title: "",
+  description: "",
   link: "",
   linkText: "",
   clickEventLogging: false,
@@ -139,10 +134,15 @@ export default function Outreach() {
     initialRedirectFormData
   );
 
-  // Targeted message state (local until backend is wired up)
-  const [targetedMessages, setTargetedMessages] = useState<TargetedMessage[]>(
-    []
-  );
+  // Targeted message state
+  const { data: targetedMessages, loading: targetedLoading } =
+    useAllTargetedMessages();
+  const { createTargetedMessage, loading: creatingTargeted } =
+    useCreateTargetedMessage();
+  const { updateTargetedMessage, loading: updatingTargeted } =
+    useUpdateTargetedMessage();
+  const { deleteTargetedMessage, loading: deletingTargeted } =
+    useDeleteTargetedMessage();
   const [isTargetedModalOpen, setIsTargetedModalOpen] = useState(false);
   const [editingTargeted, setEditingTargeted] =
     useState<TargetedMessage | null>(null);
@@ -333,7 +333,8 @@ export default function Outreach() {
   const handleOpenEditTargeted = (message: TargetedMessage) => {
     setEditingTargeted(message);
     setTargetedFormData({
-      text: message.text,
+      title: message.title,
+      description: message.description || "",
       link: message.link || "",
       linkText: message.linkText || "",
       clickEventLogging: message.clickEventLogging,
@@ -425,7 +426,7 @@ export default function Outreach() {
 
   const handleSubmitTargeted = async () => {
     if (
-      !targetedFormData.text.trim() ||
+      !targetedFormData.title.trim() ||
       targetedFormData.targetCourses.length === 0
     ) {
       return;
@@ -440,56 +441,53 @@ export default function Outreach() {
         })
       );
 
-    // TODO: Replace with GraphQL mutation when backend is ready
-    if (editingTargeted) {
-      setTargetedMessages((prev) =>
-        prev.map((m) =>
-          m.id === editingTargeted.id
-            ? {
-                ...m,
-                text: targetedFormData.text.trim(),
-                link: targetedFormData.link.trim() || null,
-                linkText: targetedFormData.linkText.trim() || null,
-                clickEventLogging: targetedFormData.clickEventLogging,
-                targetCourses: resolvedCourses,
-              }
-            : m
-        )
-      );
-    } else {
-      const newMessage: TargetedMessage = {
-        id: crypto.randomUUID(),
-        text: targetedFormData.text.trim(),
-        link: targetedFormData.link.trim() || null,
-        linkText: targetedFormData.linkText.trim() || null,
-        visible: true,
-        targetCourses: resolvedCourses,
-        clickCount: 0,
-        dismissCount: 0,
-        clickEventLogging: targetedFormData.clickEventLogging,
-        createdAt: new Date().toISOString(),
-      };
-      setTargetedMessages((prev) => [newMessage, ...prev]);
+    try {
+      if (editingTargeted) {
+        const input: UpdateTargetedMessageInput = {
+          title: targetedFormData.title.trim(),
+          description: targetedFormData.description.trim() || null,
+          link: targetedFormData.link.trim() || null,
+          linkText: targetedFormData.linkText.trim() || null,
+          clickEventLogging: targetedFormData.clickEventLogging,
+          targetCourses: resolvedCourses,
+        };
+        await updateTargetedMessage(editingTargeted.id, input);
+      } else {
+        const input: CreateTargetedMessageInput = {
+          title: targetedFormData.title.trim(),
+          description: targetedFormData.description.trim() || null,
+          link: targetedFormData.link.trim() || null,
+          linkText: targetedFormData.linkText.trim() || null,
+          clickEventLogging: targetedFormData.clickEventLogging,
+          targetCourses: resolvedCourses,
+        };
+        await createTargetedMessage(input);
+      }
+      handleCloseTargetedModal();
+    } catch (error) {
+      console.error("Error saving targeted message:", error);
     }
-    handleCloseTargetedModal();
   };
 
   const hasValidTargetedForm =
-    targetedFormData.text.trim().length > 0 &&
+    targetedFormData.title.trim().length > 0 &&
     targetedFormData.targetCourses.length > 0;
 
-  const handleDeleteTargeted = (messageId: string) => {
+  const handleDeleteTargeted = async (messageId: string) => {
     if (
       window.confirm(
         "Are you sure you want to delete this targeted message? This action cannot be undone."
       )
     ) {
-      // TODO: Replace with GraphQL mutation when backend is ready
-      setTargetedMessages((prev) => prev.filter((m) => m.id !== messageId));
+      try {
+        await deleteTargetedMessage(messageId);
+      } catch (error) {
+        console.error("Error deleting targeted message:", error);
+      }
     }
   };
 
-  const handleToggleTargetedVisibility = (
+  const handleToggleTargetedVisibility = async (
     messageId: string,
     currentVisible: boolean
   ) => {
@@ -504,12 +502,11 @@ export default function Outreach() {
 
     if (!confirmed) return;
 
-    // TODO: Replace with GraphQL mutation when backend is ready
-    setTargetedMessages((prev) =>
-      prev.map((m) =>
-        m.id === messageId ? { ...m, visible: !currentVisible } : m
-      )
-    );
+    try {
+      await updateTargetedMessage(messageId, { visible: !currentVisible });
+    } catch (error) {
+      console.error("Error toggling targeted message visibility:", error);
+    }
   };
 
   const getCreateButtonLabel = () => {
@@ -775,7 +772,11 @@ export default function Outreach() {
 
       {activeTab === "targeted" && (
         <>
-          {targetedMessages.length === 0 ? (
+          {targetedLoading ? (
+            <div className={styles.emptyState}>
+              Loading targeted messages...
+            </div>
+          ) : targetedMessages.length === 0 ? (
             <div className={styles.emptyState}>
               No targeted messages found. Create one to get started.
             </div>
@@ -805,28 +806,19 @@ export default function Outreach() {
                             message.visible
                           )
                         }
+                        disabled={updatingTargeted}
                       />
                       <span>{message.visible ? "Visible" : "Hidden"}</span>
                     </div>
                   </div>
                   <p className={styles.bannerText}>
-                    <Markdown
-                      allowedElements={["em", "strong", "a", "br"]}
-                      unwrapDisallowed
-                      components={{
-                        a: ({ href, children }) => (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {children}
-                          </a>
-                        ),
-                      }}
-                    >
-                      {message.text}
-                    </Markdown>
+                    <strong>{message.title}</strong>
+                    {message.description && (
+                      <>
+                        {" — "}
+                        {message.description}
+                      </>
+                    )}
                     {message.link && (
                       <>
                         {" "}
@@ -892,6 +884,7 @@ export default function Outreach() {
                         variant="secondary"
                         size="small"
                         onClick={() => handleDeleteTargeted(message.id)}
+                        disabled={deletingTargeted}
                         isDelete
                       >
                         <Trash width={14} height={14} />
@@ -925,20 +918,35 @@ export default function Outreach() {
           <Dialog.Body>
             <Flex direction="column" gap="16px">
               <div className={styles.formField}>
-                <label className={styles.formLabel}>Message Text *</label>
+                <label className={styles.formLabel}>Title *</label>
                 <Input
                   type="text"
-                  placeholder="e.g., Interested in ML research? Apply to our lab!"
-                  value={targetedFormData.text}
+                  placeholder="e.g., Taking this class?"
+                  value={targetedFormData.title}
                   onChange={(e) =>
                     setTargetedFormData({
                       ...targetedFormData,
-                      text: e.target.value,
+                      title: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Description</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Interested in ML research? Apply to our lab!"
+                  value={targetedFormData.description}
+                  onChange={(e) =>
+                    setTargetedFormData({
+                      ...targetedFormData,
+                      description: e.target.value,
                     })
                   }
                 />
                 <p className={styles.formHint}>
-                  Supports Markdown: *italics*, **bold**, [link text](url)
+                  Optional body text shown below the title.
                 </p>
               </div>
 
@@ -1002,6 +1010,13 @@ export default function Outreach() {
                     {addingCourse ? "..." : "Add"}
                   </Button>
                 </div>
+                {courseError && (
+                  <p className={styles.courseErrorHint}>{courseError}</p>
+                )}
+                <p className={styles.formHint}>
+                  Type a course as "SUBJECT NUMBER" (e.g., COMPSCI 162) and
+                  press Enter or click Add.
+                </p>
                 {targetedFormData.targetCourses.length > 0 && (
                   <div className={styles.courseTagContainer}>
                     {targetedFormData.targetCourses.map((course, i) => (
@@ -1017,13 +1032,6 @@ export default function Outreach() {
                     ))}
                   </div>
                 )}
-                {courseError && (
-                  <p className={styles.courseErrorHint}>{courseError}</p>
-                )}
-                <p className={styles.formHint}>
-                  Type a course as "SUBJECT NUMBER" (e.g., COMPSCI 162) and
-                  press Enter or click Add.
-                </p>
               </div>
 
               <div className={styles.formField}>
@@ -1055,7 +1063,9 @@ export default function Outreach() {
             <Button
               variant="primary"
               onClick={handleSubmitTargeted}
-              disabled={!hasValidTargetedForm}
+              disabled={
+                !hasValidTargetedForm || creatingTargeted || updatingTargeted
+              }
             >
               {editingTargeted ? "Save Changes" : "Create Targeted Message"}
             </Button>

@@ -6,7 +6,8 @@ export const targetedMessageTypeDef = gql`
   """
   type TargetedMessage @cacheControl(maxAge: 0) {
     id: ID!
-    text: String!
+    title: String!
+    description: String
     link: String
     linkText: String
     visible: Boolean!
@@ -26,5 +27,42 @@ export const targetedMessageTypeDef = gql`
     courseId: String!
     subject: String!
     courseNumber: String!
+  }
+
+  input TargetedMessageCourseInput {
+    courseId: String!
+    subject: String!
+    courseNumber: String!
+  }
+
+  input CreateTargetedMessageInput {
+    title: String!
+    description: String
+    link: String
+    linkText: String
+    clickEventLogging: Boolean
+    targetCourses: [TargetedMessageCourseInput!]!
+  }
+
+  input UpdateTargetedMessageInput {
+    title: String
+    description: String
+    link: String
+    linkText: String
+    clickEventLogging: Boolean
+    visible: Boolean
+    targetCourses: [TargetedMessageCourseInput!]
+  }
+
+  extend type Query {
+    targetedMessagesForCourse(courseId: String!): [TargetedMessage!]!
+    allTargetedMessagesForStaff: [TargetedMessage!]! @auth
+  }
+
+  extend type Mutation {
+    incrementTargetedMessageDismiss(messageId: ID!): TargetedMessage!
+    createTargetedMessage(input: CreateTargetedMessageInput!): TargetedMessage! @auth
+    updateTargetedMessage(messageId: ID!, input: UpdateTargetedMessageInput!): TargetedMessage! @auth
+    deleteTargetedMessage(messageId: ID!): Boolean! @auth
   }
 `;

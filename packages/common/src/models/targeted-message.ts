@@ -14,7 +14,8 @@ const targetedMessageCourseSchema = new Schema(
 // Used in version history to capture the full state after each edit
 const targetedMessageSnapshotSchema = new Schema(
   {
-    text: String,
+    title: String,
+    description: String,
     link: String,
     linkText: String,
     visible: Boolean,
@@ -40,9 +41,14 @@ const targetedMessageVersionEntrySchema = new Schema(
 export const targetedMessageSchema = new Schema(
   {
     // Content
-    text: {
+    title: {
       type: String,
       required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: false,
       trim: true,
     },
     link: {

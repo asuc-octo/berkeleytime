@@ -1,6 +1,4 @@
-import { useMemo, useState } from "react";
-
-import { ArrowUpRight } from "iconoir-react";
+import { useMemo } from "react";
 
 import { Box, Container, Flex } from "@repo/theme";
 
@@ -9,11 +7,11 @@ import useClass from "@/hooks/useClass";
 import { linkify } from "@/utils/linkify";
 
 import styles from "./Overview.module.scss";
+import TargetedMessageBanner from "./TargetedMessageBanner";
 import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class, course } = useClass();
-  const [dismissed, setDismissed] = useState(false);
 
   const sectionAttributes = useMemo(
     () => _class.primarySection?.sectionAttributes ?? [],
@@ -87,29 +85,7 @@ export default function Overview() {
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="5">
-          {!dismissed && (
-            <div className={styles.messageBox}>
-              <div className={styles.messageHeader}>
-                <p className={styles.messageTitle}>Taking this class?</p>
-                <button
-                  className={styles.dismissButton}
-                  onClick={() => setDismissed(true)}
-                  aria-label="Dismiss message"
-                >
-                  ✕
-                </button>
-              </div>
-              <p className={styles.messageDescription}>
-                Mechanize hand-picked this class to find their next junior SWEs
-                building RL environments for frontier AI labs.
-                <br />
-                $300K base + equity. Based in SF.
-              </p>
-              <button className={styles.applyButton}>
-                Apply <ArrowUpRight width={14} height={14} />
-              </button>
-            </div>
-          )}
+          <TargetedMessageBanner courseId={_class.courseId} />
           {_class.primarySection?.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}
