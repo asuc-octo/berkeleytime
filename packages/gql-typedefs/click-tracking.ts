@@ -8,6 +8,8 @@ export const clickEventTypeDef = gql`
     id: ID!
     targetId: ID!
     targetType: String!
+    targetVersion: Int
+    additionalInfo: String
     timestamp: String!
     ipHash: String!
     userAgent: String

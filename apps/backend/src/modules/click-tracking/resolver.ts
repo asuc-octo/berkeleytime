@@ -54,9 +54,13 @@ const resolvers = {
     ) => {
       await requireStaffMember(context);
 
-      if (targetType !== "banner" && targetType !== "redirect") {
+      if (
+        targetType !== "banner" &&
+        targetType !== "redirect" &&
+        targetType !== "targeted-message"
+      ) {
         throw new GraphQLError(
-          "Invalid targetType. Must be 'banner' or 'redirect'",
+          "Invalid targetType. Must be 'banner', 'redirect', or 'targeted-message'",
           {
             extensions: { code: "BAD_USER_INPUT" },
           }
@@ -77,6 +81,8 @@ const resolvers = {
           id: event._id.toString(),
           targetId: event.targetId.toString(),
           targetType: event.targetType,
+          targetVersion: event.targetVersion ?? null,
+          additionalInfo: event.additionalInfo ?? null,
           timestamp: event.timestamp.toISOString(),
           ipHash: event.ipHash,
           userAgent: event.userAgent,
@@ -105,9 +111,13 @@ const resolvers = {
     ) => {
       await requireStaffMember(context);
 
-      if (targetType !== "banner" && targetType !== "redirect") {
+      if (
+        targetType !== "banner" &&
+        targetType !== "redirect" &&
+        targetType !== "targeted-message"
+      ) {
         throw new GraphQLError(
-          "Invalid targetType. Must be 'banner' or 'redirect'",
+          "Invalid targetType. Must be 'banner', 'redirect', or 'targeted-message'",
           {
             extensions: { code: "BAD_USER_INPUT" },
           }

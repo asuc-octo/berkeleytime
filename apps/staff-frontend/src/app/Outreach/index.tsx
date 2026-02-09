@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Copy, EditPencil, Plus, Trash } from "iconoir-react";
+import { Copy, EditPencil, Plus, Trash, Xmark } from "iconoir-react";
 import Markdown from "react-markdown";
 
 import { Button, Dialog, Flex, Input, PillSwitcher, Switch } from "@repo/theme";
@@ -13,12 +13,19 @@ import {
   useDeleteBanner,
   useUpdateBanner,
 } from "../../hooks/api/banner";
+import { useCourseLookup } from "../../hooks/api/course";
 import {
   useAllRouteRedirects,
   useCreateRouteRedirect,
   useDeleteRouteRedirect,
   useUpdateRouteRedirect,
 } from "../../hooks/api/route-redirect";
+import {
+  useAllTargetedMessages,
+  useCreateTargetedMessage,
+  useDeleteTargetedMessage,
+  useUpdateTargetedMessage,
+} from "../../hooks/api/targeted-message";
 import {
   Banner,
   CreateBannerInput,
@@ -29,12 +36,47 @@ import {
   RouteRedirect,
   UpdateRouteRedirectInput,
 } from "../../lib/api/route-redirect";
+import type {
+  CreateTargetedMessageInput,
+  TargetedMessage,
+  TargetedMessageCourse,
+  UpdateTargetedMessageInput,
+} from "../../lib/api/targeted-message";
 import styles from "./Outreach.module.scss";
 
 const TABS = [
   { value: "banners", label: "Banners" },
   { value: "redirects", label: "Redirects" },
+  { value: "targeted", label: "Targeted" },
 ];
+
+interface FormCourse {
+  subject: string;
+  courseNumber: string;
+  courseId: string;
+}
+
+interface TargetedMessageFormData {
+  title: string;
+  description: string;
+  link: string;
+  linkText: string;
+  persistent: boolean;
+  reappearing: boolean;
+  clickEventLogging: boolean;
+  targetCourses: FormCourse[];
+}
+
+const initialTargetedMessageFormData: TargetedMessageFormData = {
+  title: "",
+  description: "",
+  link: "",
+  linkText: "",
+  persistent: false,
+  reappearing: false,
+  clickEventLogging: false,
+  targetCourses: [],
+};
 
 interface BannerFormData {
   text: string;
@@ -95,6 +137,24 @@ export default function Outreach() {
   const [redirectFormData, setRedirectFormData] = useState<RedirectFormData>(
     initialRedirectFormData
   );
+
+  // Targeted message state
+  const { data: targetedMessages, loading: targetedLoading } =
+    useAllTargetedMessages();
+  const { createTargetedMessage, loading: creatingTargeted } =
+    useCreateTargetedMessage();
+  const { updateTargetedMessage, loading: updatingTargeted } =
+    useUpdateTargetedMessage();
+  const { deleteTargetedMessage, loading: deletingTargeted } =
+    useDeleteTargetedMessage();
+  const [isTargetedModalOpen, setIsTargetedModalOpen] = useState(false);
+  const [editingTargeted, setEditingTargeted] =
+    useState<TargetedMessage | null>(null);
+  const [targetedFormData, setTargetedFormData] =
+    useState<TargetedMessageFormData>(initialTargetedMessageFormData);
+  const [courseInput, setCourseInput] = useState("");
+  const [courseError, setCourseError] = useState<string | null>(null);
+  const { lookupCourse } = useCourseLookup();
 
   // Banner handlers
   const handleOpenCreateBanner = () => {
@@ -266,6 +326,225 @@ export default function Outreach() {
     }
   };
 
+  // Targeted message handlers
+  const handleOpenCreateTargeted = () => {
+    setEditingTargeted(null);
+    setTargetedFormData(initialTargetedMessageFormData);
+    setCourseInput("");
+    setIsTargetedModalOpen(true);
+  };
+
+  const handleOpenEditTargeted = (message: TargetedMessage) => {
+    setEditingTargeted(message);
+    setTargetedFormData({
+      title: message.title,
+      description: message.description || "",
+      link: message.link || "",
+      linkText: message.linkText || "",
+      persistent: message.persistent,
+      reappearing: message.reappearing,
+      clickEventLogging: message.clickEventLogging,
+      targetCourses: message.targetCourses.map((c) => ({
+        ...c,
+      })),
+    });
+    setCourseInput("");
+    setIsTargetedModalOpen(true);
+  };
+
+  const handleCloseTargetedModal = () => {
+    setIsTargetedModalOpen(false);
+    setEditingTargeted(null);
+    setTargetedFormData(initialTargetedMessageFormData);
+    setCourseInput("");
+    setCourseError(null);
+  };
+
+  const [addingCourse, setAddingCourse] = useState(false);
+
+  const handleAddCourse = async () => {
+    const raw = courseInput.trim();
+    if (!raw) return;
+
+    setCourseError(null);
+
+    // Parse "SUBJECT NUMBER" format, e.g. "COMPSCI 162" or "MATH 53"
+    const match = raw.match(/^([A-Za-z\s]+?)\s+(\S+)$/);
+    if (!match) {
+      setCourseError("Enter a course as SUBJECT NUMBER (e.g., COMPSCI 162)");
+      return;
+    }
+
+    const subject = match[1].trim().replace(/\s+/g, " ").toUpperCase();
+    const courseNumber = match[2].toUpperCase();
+
+    // Deduplicate
+    const alreadyAdded = targetedFormData.targetCourses.some(
+      (c) => c.subject === subject && c.courseNumber === courseNumber
+    );
+    if (alreadyAdded) {
+      return;
+    }
+
+    setAddingCourse(true);
+    try {
+      const course = await lookupCourse(subject, courseNumber);
+
+      if (!course) {
+        setCourseError("Course not found. Check subject and number.");
+        return;
+      }
+
+      setTargetedFormData((prev) => ({
+        ...prev,
+        targetCourses: (() => {
+          const nextCourse = {
+            subject: course.subject,
+            courseNumber: course.number,
+            courseId: course.courseId,
+          };
+          const alreadyAddedLatest = prev.targetCourses.some(
+            (existing) =>
+              existing.courseId === nextCourse.courseId ||
+              (existing.subject === nextCourse.subject &&
+                existing.courseNumber === nextCourse.courseNumber)
+          );
+          if (alreadyAddedLatest) {
+            return prev.targetCourses;
+          }
+          return [...prev.targetCourses, nextCourse];
+        })(),
+      }));
+      setCourseInput("");
+    } finally {
+      setAddingCourse(false);
+    }
+  };
+
+  const handleRemoveCourse = (index: number) => {
+    setTargetedFormData({
+      ...targetedFormData,
+      targetCourses: targetedFormData.targetCourses.filter(
+        (_, i) => i !== index
+      ),
+    });
+  };
+
+  const handleSubmitTargeted = async () => {
+    if (
+      !targetedFormData.title.trim() ||
+      targetedFormData.targetCourses.length === 0
+    ) {
+      return;
+    }
+
+    const resolvedCourses: TargetedMessageCourse[] =
+      targetedFormData.targetCourses.map(
+        ({ courseId, subject, courseNumber }) => ({
+          courseId,
+          subject,
+          courseNumber,
+        })
+      );
+
+    try {
+      if (editingTargeted) {
+        const input: UpdateTargetedMessageInput = {
+          title: targetedFormData.title.trim(),
+          description: targetedFormData.description.trim() || null,
+          link: targetedFormData.link.trim() || null,
+          linkText: targetedFormData.linkText.trim() || null,
+          persistent: targetedFormData.persistent,
+          reappearing: targetedFormData.reappearing,
+          clickEventLogging: targetedFormData.clickEventLogging,
+          targetCourses: resolvedCourses,
+        };
+        await updateTargetedMessage(editingTargeted.id, input);
+      } else {
+        const input: CreateTargetedMessageInput = {
+          title: targetedFormData.title.trim(),
+          description: targetedFormData.description.trim() || null,
+          link: targetedFormData.link.trim() || null,
+          linkText: targetedFormData.linkText.trim() || null,
+          persistent: targetedFormData.persistent,
+          reappearing: targetedFormData.reappearing,
+          clickEventLogging: targetedFormData.clickEventLogging,
+          targetCourses: resolvedCourses,
+        };
+        await createTargetedMessage(input);
+      }
+      handleCloseTargetedModal();
+    } catch (error) {
+      console.error("Error saving targeted message:", error);
+    }
+  };
+
+  const hasValidTargetedForm =
+    targetedFormData.title.trim().length > 0 &&
+    targetedFormData.targetCourses.length > 0;
+
+  const handleDeleteTargeted = async (messageId: string) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this targeted message? This action cannot be undone."
+      )
+    ) {
+      try {
+        await deleteTargetedMessage(messageId);
+      } catch (error) {
+        console.error("Error deleting targeted message:", error);
+      }
+    }
+  };
+
+  const handleToggleTargetedVisibility = async (
+    messageId: string,
+    currentVisible: boolean
+  ) => {
+    const action = currentVisible ? "hide" : "show";
+    const confirmed = window.confirm(
+      `Are you sure you want to ${action} this targeted message? ${
+        currentVisible
+          ? "It will no longer appear on targeted course pages."
+          : "It will start appearing on targeted course pages immediately."
+      }`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await updateTargetedMessage(messageId, { visible: !currentVisible });
+    } catch (error) {
+      console.error("Error toggling targeted message visibility:", error);
+    }
+  };
+
+  const getCreateButtonLabel = () => {
+    switch (activeTab) {
+      case "banners":
+        return "Create Banner";
+      case "redirects":
+        return "Create Redirect";
+      case "targeted":
+        return "Create Targeted Message";
+      default:
+        return "Create";
+    }
+  };
+
+  const getCreateButtonHandler = () => {
+    switch (activeTab) {
+      case "banners":
+        return handleOpenCreateBanner;
+      case "redirects":
+        return handleOpenCreateRedirect;
+      case "targeted":
+        return handleOpenCreateTargeted;
+      default:
+        return handleOpenCreateBanner;
+    }
+  };
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
@@ -274,16 +553,9 @@ export default function Outreach() {
           value={activeTab}
           onValueChange={setActiveTab}
         />
-        <Button
-          variant="primary"
-          onClick={
-            activeTab === "banners"
-              ? handleOpenCreateBanner
-              : handleOpenCreateRedirect
-          }
-        >
+        <Button variant="primary" onClick={getCreateButtonHandler()}>
           <Plus width={16} height={16} />
-          {activeTab === "banners" ? "Create Banner" : "Create Redirect"}
+          {getCreateButtonLabel()}
         </Button>
       </div>
 
@@ -507,6 +779,357 @@ export default function Outreach() {
           )}
         </>
       )}
+
+      {activeTab === "targeted" && (
+        <>
+          {targetedLoading ? (
+            <div className={styles.emptyState}>
+              Loading targeted messages...
+            </div>
+          ) : targetedMessages.length === 0 ? (
+            <div className={styles.emptyState}>
+              No targeted messages found. Create one to get started.
+            </div>
+          ) : (
+            <div className={styles.list}>
+              {targetedMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`${styles.card} ${!message.visible ? styles.hidden : ""}`}
+                >
+                  <div className={styles.cardHeader}>
+                    {message.persistent ||
+                    message.reappearing ||
+                    message.clickEventLogging ? (
+                      <div className={styles.badgeRow}>
+                        {message.persistent && (
+                          <span className={styles.badge}>Persistent</span>
+                        )}
+                        {message.reappearing && (
+                          <span className={styles.badge}>Reappearing</span>
+                        )}
+                        {message.clickEventLogging && (
+                          <span className={styles.badge}>
+                            Click Event Logging
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                    <div className={styles.visibilityToggle}>
+                      <Switch
+                        checked={message.visible}
+                        onCheckedChange={() =>
+                          handleToggleTargetedVisibility(
+                            message.id,
+                            message.visible
+                          )
+                        }
+                        disabled={updatingTargeted}
+                      />
+                      <span>{message.visible ? "Visible" : "Hidden"}</span>
+                    </div>
+                  </div>
+                  <p className={styles.bannerText}>
+                    <strong>{message.title}</strong>
+                    {message.description && (
+                      <>
+                        {" — "}
+                        {message.description}
+                      </>
+                    )}
+                    {message.link && (
+                      <>
+                        {" "}
+                        <a
+                          href={message.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.linkText}
+                        >
+                          {message.linkText || "Learn more"} →
+                        </a>
+                      </>
+                    )}
+                  </p>
+                  {message.link && (
+                    <a
+                      href={message.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.fullLink}
+                    >
+                      {message.link}
+                    </a>
+                  )}
+                  <div className={styles.targetCoursesRow}>
+                    <span className={styles.targetLabel}>Courses:</span>
+                    <div className={styles.courseTagList}>
+                      {message.targetCourses.map((course, i) => (
+                        <span key={i} className={styles.courseTag}>
+                          {course.subject} {course.courseNumber}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className={styles.cardBottom}>
+                    <span className={styles.meta}>
+                      {message.clickCount} click
+                      {message.clickCount !== 1 ? "s" : ""} •{" "}
+                      {message.dismissCount} dismissal
+                      {message.dismissCount !== 1 ? "s" : ""} • Created:{" "}
+                      {(() => {
+                        if (!message.createdAt) return "Invalid Date";
+                        const date = new Date(message.createdAt);
+                        return !isNaN(date.getTime())
+                          ? date.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "Invalid Date";
+                      })()}
+                    </span>
+                    <div className={styles.actions}>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => handleOpenEditTargeted(message)}
+                      >
+                        <EditPencil width={14} height={14} />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => handleDeleteTargeted(message.id)}
+                        disabled={deletingTargeted}
+                        isDelete
+                      >
+                        <Trash width={14} height={14} />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Targeted Message Modal */}
+      <Dialog.Root
+        open={isTargetedModalOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseTargetedModal();
+        }}
+      >
+        <Dialog.Card>
+          <Dialog.Header
+            title={
+              editingTargeted
+                ? "Edit Targeted Message"
+                : "Create Targeted Message"
+            }
+            hasCloseButton
+          />
+          <Dialog.Body>
+            <Flex direction="column" gap="16px">
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Title *</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Taking this class?"
+                  value={targetedFormData.title}
+                  onChange={(e) =>
+                    setTargetedFormData({
+                      ...targetedFormData,
+                      title: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Description</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Interested in ML research? Apply to our lab!"
+                  value={targetedFormData.description}
+                  onChange={(e) =>
+                    setTargetedFormData({
+                      ...targetedFormData,
+                      description: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Optional body text shown below the title.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Link URL</label>
+                <Input
+                  type="url"
+                  placeholder="https://example.com"
+                  value={targetedFormData.link}
+                  onChange={(e) =>
+                    setTargetedFormData({
+                      ...targetedFormData,
+                      link: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Link Text</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Apply now"
+                  value={targetedFormData.linkText}
+                  onChange={(e) =>
+                    setTargetedFormData({
+                      ...targetedFormData,
+                      linkText: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Defaults to "Learn more" if left blank.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Target Courses *</label>
+                <div className={styles.courseInputRow}>
+                  <Input
+                    type="text"
+                    placeholder="e.g., COMPSCI 162"
+                    value={courseInput}
+                    onChange={(e) => {
+                      setCourseInput(e.target.value);
+                      if (courseError) setCourseError(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddCourse();
+                      }
+                    }}
+                    className={styles.courseInputField}
+                  />
+                  <Button
+                    variant="secondary"
+                    onClick={handleAddCourse}
+                    disabled={addingCourse || !courseInput.trim()}
+                  >
+                    {addingCourse ? "..." : "Add"}
+                  </Button>
+                </div>
+                {courseError && (
+                  <p className={styles.courseErrorHint}>{courseError}</p>
+                )}
+                <p className={styles.formHint}>
+                  Type a course as "SUBJECT NUMBER" (e.g., COMPSCI 162) and
+                  press Enter or click Add.
+                </p>
+                {targetedFormData.targetCourses.length > 0 && (
+                  <div className={styles.courseTagContainer}>
+                    {targetedFormData.targetCourses.map((course, i) => (
+                      <span key={i} className={styles.editableCourseTag}>
+                        {course.subject} {course.courseNumber}
+                        <button
+                          className={styles.removeCourseTag}
+                          onClick={() => handleRemoveCourse(i)}
+                        >
+                          <Xmark width={12} height={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={targetedFormData.persistent}
+                    onCheckedChange={(checked) =>
+                      setTargetedFormData({
+                        ...targetedFormData,
+                        persistent: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>Persistent</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Persistent messages always show on course pages and cannot be
+                  dismissed.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={targetedFormData.reappearing}
+                    onCheckedChange={(checked) =>
+                      setTargetedFormData({
+                        ...targetedFormData,
+                        reappearing: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>Reappearing</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Reappearing messages will reappear when the user opens a new
+                  tab.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={targetedFormData.clickEventLogging}
+                    onCheckedChange={(checked) =>
+                      setTargetedFormData({
+                        ...targetedFormData,
+                        clickEventLogging: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>
+                    Click Event Logging
+                  </label>
+                </Flex>
+                <p className={styles.formHint}>
+                  When enabled, individual click events are logged with IP hash,
+                  user agent, referrer, and timestamps.
+                </p>
+              </div>
+            </Flex>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button variant="secondary" onClick={handleCloseTargetedModal}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmitTargeted}
+              disabled={
+                !hasValidTargetedForm || creatingTargeted || updatingTargeted
+              }
+            >
+              {editingTargeted ? "Save Changes" : "Create Targeted Message"}
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Card>
+      </Dialog.Root>
 
       {/* Banner Modal */}
       <Dialog.Root open={isBannerModalOpen} onOpenChange={setIsBannerModalOpen}>
