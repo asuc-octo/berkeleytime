@@ -170,7 +170,7 @@ export default function ClassCard({
                 trigger={
                   <span className={styles.reservedSeating}>
                     <InfoCircle className={styles.reservedSeatingIcon} />
-                    Reserved
+                    Rsvd
                   </span>
                 }
                 title="Reserved Seating"

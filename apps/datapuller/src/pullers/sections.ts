@@ -10,7 +10,7 @@ import {
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
 
-const TERMS_PER_API_BATCH = 4;
+const TERMS_PER_API_BATCH = 1;
 const INSERT_BATCH_SIZE = 5000;
 
 const updateSections = async (config: Config, termSelector: TermSelector) => {

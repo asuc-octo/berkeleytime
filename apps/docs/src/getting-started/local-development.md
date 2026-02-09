@@ -70,6 +70,7 @@ The following ports are used by default (`DEV_PORT_PREFIX=30`):
 - **3006**: MinIO API (requires `--profile dev`)
 - **3007**: MinIO Console (requires `--profile dev`)
 - **3008**: MongoDB
+- **3009**: API Sandbox (requires SIS API keys)
 
 To use a different port prefix, set the `DEV_PORT_PREFIX` environment variable before running `docker compose up`:
 ```sh
