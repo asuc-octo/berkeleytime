@@ -40,6 +40,13 @@
   - [@repo/sis-api](./core/packages/sis-api.md)
   - [@repo/eslint-config](./core/packages/eslint-config.md)
   - [@repo/typescript-config](./core/packages/typescript-config.md)
+
+---
+
+# Tips and Tricks
+
+- [LLM Use & Vibecoding](./tips-and-tricks/llm-and-vibecoding.md)
+
 <!--
 ---
 

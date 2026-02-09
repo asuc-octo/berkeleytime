@@ -36,6 +36,18 @@
     }
   }
 
+  &.checkbox {
+    &:hover:not([data-disabled="true"]) {
+      background-color: var(--button-hover-color);
+    }
+
+    &:active,
+    &:focus-visible {
+      background-color: var(--button-hover-color);
+      color: var(--secondary-color);
+    }
+  }
+
   .meta {
     font-size: var(--text-12);
     color: var(--label-color);

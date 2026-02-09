@@ -54,8 +54,8 @@ export default function Filters() {
     updateTimeRange,
     breadths,
     updateBreadths,
-    universityRequirement,
-    updateUniversityRequirement,
+    universityRequirements,
+    updateUniversityRequirements,
     gradingFilters,
     updateGradingFilters,
     academicOrganization,
@@ -105,7 +105,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       academicOrganization,
       timeRange
@@ -119,7 +119,7 @@ export default function Filters() {
     enrollmentFilter,
     online,
     breadths,
-    universityRequirement,
+    universityRequirements,
     gradingFilters,
     academicOrganization,
     timeRange,
@@ -156,7 +156,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         null,
         timeRange
@@ -169,7 +169,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       timeRange,
     ]
@@ -195,7 +195,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         [],
-        null,
+        [],
         gradingFilters,
         academicOrganization,
         timeRange
@@ -249,7 +249,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         [],
         academicOrganization,
         timeRange
@@ -262,7 +262,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       academicOrganization,
       timeRange,
     ]
@@ -332,11 +332,12 @@ export default function Filters() {
       ...breadths.map(
         (breadth) => ({ type: "breadth", value: breadth }) as const
       ),
-      ...(universityRequirement
-        ? [{ type: "university" as const, value: universityRequirement }]
-        : []),
+      ...universityRequirements.map((req) => ({
+        type: "university" as const,
+        value: req,
+      })),
     ],
-    [breadths, universityRequirement]
+    [breadths, universityRequirements]
   );
 
   const gradingOptions = useMemo<Option<GradingFilter>[]>(() => {
@@ -522,7 +523,7 @@ export default function Filters() {
   const handleClearFilters = () => {
     updateLevels([]);
     updateBreadths([]);
-    updateUniversityRequirement(null);
+    updateUniversityRequirements([]);
     updateGradingFilters([]);
     updateAcademicOrganization(null);
     updateUnits([0, 5]);
@@ -530,7 +531,7 @@ export default function Filters() {
     updateDays([]);
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
-    updateEnrollmentFilter(EnrollmentFilter.All);
+    updateEnrollmentFilter(null);
   };
 
   return (
@@ -573,6 +574,7 @@ export default function Filters() {
               }))}
               searchPlaceholder="Search semesters..."
               emptyMessage="No semesters found."
+              maxListHeight={130}
             />
           </div>
         )}
@@ -640,18 +642,19 @@ export default function Filters() {
                   > => option.type === "breadth"
                 )
                 .map((option) => option.value);
-              const nextUniversityRequirement =
-                v.find(
+              const nextUniversityRequirements = v
+                .filter(
                   (
                     option
                   ): option is Extract<
                     RequirementSelection,
                     { type: "university" }
                   > => option.type === "university"
-                )?.value ?? null;
+                )
+                .map((option) => option.value);
 
               updateBreadths(nextBreadths);
-              updateUniversityRequirement(nextUniversityRequirement);
+              updateUniversityRequirements(nextUniversityRequirements);
             }}
             options={requirementOptions}
             searchPlaceholder="Search requirements..."
@@ -686,6 +689,34 @@ export default function Filters() {
             value={units}
             onValueChange={updateUnits}
             labels={["0", "1", "2", "3", "4", "5+"]}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Enrollment Status</p>
+          <Select
+            value={enrollmentFilter}
+            placeholder="Select enrollment status"
+            clearable
+            onChange={(value) =>
+              updateEnrollmentFilter(value as EnrollmentFilter | null)
+            }
+            options={Object.values(EnrollmentFilter).map((filter) => ({
+              value: filter,
+              label: filter,
+            }))}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Grading Option</p>
+          <Select<GradingFilter>
+            multi
+            value={gradingFilters}
+            placeholder="Filter by grading options"
+            disabled={isGradingDisabled}
+            onChange={(v) => {
+              if (Array.isArray(v)) updateGradingFilters(v);
+            }}
+            options={gradingOptions}
           />
         </div>
         <div className={styles.formControl}>
@@ -729,32 +760,6 @@ export default function Filters() {
               />
             </div>
           </div>
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Enrollment Status</p>
-          <Select
-            value={enrollmentFilter}
-            onChange={(value) =>
-              updateEnrollmentFilter(value as EnrollmentFilter)
-            }
-            options={Object.values(EnrollmentFilter).map((filter) => ({
-              value: filter,
-              label: filter,
-            }))}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Grading Option</p>
-          <Select<GradingFilter>
-            multi
-            value={gradingFilters}
-            placeholder="Filter by grading options"
-            disabled={isGradingDisabled}
-            onChange={(v) => {
-              if (Array.isArray(v)) updateGradingFilters(v);
-            }}
-            options={gradingOptions}
-          />
         </div>
       </div>
     </div>

@@ -16,8 +16,6 @@ import {
 } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
-import GradeBarGraph from "./GradeBarGraph";
-import MiniGradeBarChart from "./MiniGradeBarChart";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -27,7 +25,9 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
+import GradeBarGraph from "./GradeBarGraph";
 import styles from "./Grades.module.scss";
+import MiniGradeBarChart from "./MiniGradeBarChart";
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
@@ -64,7 +64,11 @@ const getMetadata = (input: Input): string => {
       : "All instructors";
 
   const semester =
-    input.type && "year" in input && input.year && "semester" in input && input.semester
+    input.type &&
+    "year" in input &&
+    input.year &&
+    "semester" in input &&
+    input.semester
       ? `${input.semester} ${input.year}`
       : "All semesters";
 
@@ -126,15 +130,15 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     }
   );
 
-  const [selectedType, setSelectedType] = useState(
-    DEFAULT_BY_OPTION.value
-  );
+  const [selectedType, setSelectedType] = useState(DEFAULT_BY_OPTION.value);
 
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
     "all"
   );
 
-  const [selectedSemester, setSelectedSemester] = useState<string | null>("all");
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(
+    "all"
+  );
 
   const instructorOptionsData = useMemo(() => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
@@ -249,8 +253,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
     const instructor =
       selectedType === InputType.Instructor ? selectedInstructor : "all";
-    const semester =
-      selectedType === InputType.Term ? selectedSemester : "all";
+    const semester = selectedType === InputType.Term ? selectedSemester : "all";
 
     if (!instructor || !semester) return null;
 
@@ -490,9 +493,7 @@ function OutputList({ outputs, remove }: OutputListProps) {
       <div className={styles.listContainer}>
         <div className={styles.classList}>
           {outputs.length === 0 ? (
-            <div className={styles.emptyState}>
-              Add a course to get started
-            </div>
+            <div className={styles.emptyState}>Add a course to get started</div>
           ) : (
             cards
           )}
@@ -510,7 +511,6 @@ export default function Grades() {
   const remove = (index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   };
-
 
   return (
     <div className={styles.root}>
@@ -562,7 +562,7 @@ export default function Grades() {
           </div>
           <div className={styles.chartDivider} />
           <div className={styles.miniChartsSection}>
-            {outputs.slice(0, 4).map((output, index) => (
+            {outputs.slice(0, 4).map((output) => (
               <div
                 key={getInputSearchParam(output.input)}
                 className={styles.miniChartCard}
@@ -573,7 +573,8 @@ export default function Grades() {
                     style={{ backgroundColor: output.color }}
                   />
                   <span className={styles.miniChartLabel}>
-                    {output.input.subject} {output.input.courseNumber} · {getMetadata(output.input)}
+                    {output.input.subject} {output.input.courseNumber} ·{" "}
+                    {getMetadata(output.input)}
                   </span>
                 </div>
                 <div className={styles.miniChartBar}>

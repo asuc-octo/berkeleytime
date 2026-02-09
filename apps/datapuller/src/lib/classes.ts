@@ -22,7 +22,7 @@ type CombinedClass = Class & {
 };
 
 const filterClass = (input: CombinedClass): boolean => {
-  return input.status?.code === "A";
+  return input.status?.code !== "X";
 };
 
 const formatClass = (input: CombinedClass) => {

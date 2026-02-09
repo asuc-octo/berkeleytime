@@ -4,7 +4,7 @@ import {
   Input,
   InputType,
   isInputEqual,
-} from "../app/GradeDistributions/types";
+} from "../components/CourseAnalytics/types";
 
 interface ParsedTerm {
   year: number;

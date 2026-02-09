@@ -97,17 +97,22 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
   }, [outputs]);
 
   if (outputs.length === 0) {
-    return (
-      <div className={styles.root} ref={rootRef} />
-    );
+    return <div className={styles.root} ref={rootRef} />;
   }
 
   return (
-    <div className={styles.root} ref={rootRef} style={horizontal ? { minHeight: 480 } : undefined}>
+    <div
+      className={styles.root}
+      ref={rootRef}
+      style={horizontal ? { minHeight: 480 } : undefined}
+    >
       <div className={styles.chartWrapper}>
         <ChartContainer config={chartConfig} className={styles.chart}>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData} layout={horizontal ? "vertical" : "horizontal"}>
+            <BarChart
+              data={chartData}
+              layout={horizontal ? "vertical" : "horizontal"}
+            >
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={horizontal}
@@ -129,7 +134,10 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                   />
                   <XAxis
                     type="number"
-                    domain={[0, (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5]}
+                    domain={[
+                      0,
+                      (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5,
+                    ]}
                     tickFormatter={(v) => formatters.percent(v, 0)}
                     tick={{
                       fill: "var(--paragraph-color)",
@@ -152,7 +160,10 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                     }}
                   />
                   <YAxis
-                    domain={[0, (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5]}
+                    domain={[
+                      0,
+                      (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5,
+                    ]}
                     tickFormatter={(v) => formatters.percent(v, 0)}
                     tick={{
                       fill: "var(--paragraph-color)",
