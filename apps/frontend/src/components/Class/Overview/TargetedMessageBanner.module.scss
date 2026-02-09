@@ -1,0 +1,65 @@
+.messageBox {
+  display: block;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: rgba(59, 130, 246, 0.1);
+  text-decoration: none;
+  cursor: pointer;
+
+  .messageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .messageTitle {
+    font-weight: var(--font-medium);
+    font-size: var(--text-14);
+    line-height: 20px;
+    color: var(--blue-500);
+  }
+
+  .dismissButton {
+    background: none;
+    border: none;
+    color: var(--blue-500);
+    cursor: pointer;
+    padding: 0 0 0 8px;
+    font-size: var(--text-14);
+    line-height: 1;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .messageDescription {
+    font-size: var(--text-14);
+    color: var(--blue-500);
+    line-height: 1.5;
+  }
+
+  .applyButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--blue-500);
+    border-radius: 6px;
+    background: var(--blue-500);
+    color: white;
+    font-size: var(--text-12);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    line-height: 1;
+    transition: opacity 150ms ease;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}

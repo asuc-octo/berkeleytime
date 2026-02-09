@@ -10,6 +10,7 @@ export interface IClickEvent {
   userAgent?: string;
   referrer?: string;
   sessionFingerprint: string;
+  userId?: string;
 }
 
 const clickEventSchema = new Schema<IClickEvent>({
@@ -26,6 +27,7 @@ const clickEventSchema = new Schema<IClickEvent>({
   userAgent: { type: String, maxlength: 500 },
   referrer: { type: String },
   sessionFingerprint: { type: String, required: true },
+  userId: { type: String },
 });
 
 clickEventSchema.index({ targetId: 1, timestamp: -1 });
@@ -33,6 +35,7 @@ clickEventSchema.index({ targetType: 1, timestamp: -1 });
 // Index for version-based analytics queries (clicks by version)
 clickEventSchema.index({ targetId: 1, targetVersion: 1, timestamp: -1 });
 clickEventSchema.index({ additionalInfo: 1, timestamp: -1 });
+clickEventSchema.index({ userId: 1, timestamp: -1 }, { sparse: true });
 
 export const ClickEventModel: Model<IClickEvent> = model<IClickEvent>(
   "clickevents",

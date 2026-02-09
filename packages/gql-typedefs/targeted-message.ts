@@ -67,8 +67,12 @@ export const targetedMessageTypeDef = gql`
 
   extend type Mutation {
     incrementTargetedMessageDismiss(messageId: ID!): TargetedMessage!
-    createTargetedMessage(input: CreateTargetedMessageInput!): TargetedMessage! @auth
-    updateTargetedMessage(messageId: ID!, input: UpdateTargetedMessageInput!): TargetedMessage! @auth
+    createTargetedMessage(input: CreateTargetedMessageInput!): TargetedMessage!
+      @auth
+    updateTargetedMessage(
+      messageId: ID!
+      input: UpdateTargetedMessageInput!
+    ): TargetedMessage! @auth
     deleteTargetedMessage(messageId: ID!): Boolean! @auth
   }
 `;

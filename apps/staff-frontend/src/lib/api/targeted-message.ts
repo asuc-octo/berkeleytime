@@ -109,7 +109,10 @@ export const CREATE_TARGETED_MESSAGE = gql`
 `;
 
 export const UPDATE_TARGETED_MESSAGE = gql`
-  mutation UpdateTargetedMessage($messageId: ID!, $input: UpdateTargetedMessageInput!) {
+  mutation UpdateTargetedMessage(
+    $messageId: ID!
+    $input: UpdateTargetedMessageInput!
+  ) {
     updateTargetedMessage(messageId: $messageId, input: $input) {
       id
       title

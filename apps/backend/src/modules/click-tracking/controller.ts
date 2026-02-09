@@ -24,6 +24,7 @@ export interface ClickEventData {
   userAgent?: string;
   referrer?: string;
   sessionFingerprint: string;
+  userId?: string;
 }
 
 const getClickEventsBufferKey = (targetType: TargetType, targetId: string) =>
@@ -77,6 +78,7 @@ export const extractClickMetadata = async (
     userAgent: userAgent || undefined,
     referrer,
     sessionFingerprint: generateSessionFingerprint(ip, userAgent, targetId),
+    userId: (req.user as { _id?: string } | undefined)?._id,
   };
 };
 
@@ -148,6 +150,7 @@ export const flushClickEvents = async (
           userAgent: event.userAgent,
           referrer: event.referrer,
           sessionFingerprint: event.sessionFingerprint,
+          userId: event.userId,
         };
       });
 

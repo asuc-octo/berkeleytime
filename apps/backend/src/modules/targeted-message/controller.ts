@@ -1,9 +1,6 @@
 import { GraphQLError } from "graphql";
 
-import {
-  TargetedMessageModel,
-  StaffMemberModel,
-} from "@repo/common/models";
+import { StaffMemberModel, TargetedMessageModel } from "@repo/common/models";
 
 // Context interface for authenticated requests
 export interface TargetedMessageRequestContext {
@@ -41,13 +38,9 @@ const formatMessage = (msg: Record<string, unknown>) => ({
   ...msg,
   id: (msg._id as { toString: () => string }).toString(),
   createdAt:
-    msg.createdAt instanceof Date
-      ? msg.createdAt.toISOString()
-      : msg.createdAt,
+    msg.createdAt instanceof Date ? msg.createdAt.toISOString() : msg.createdAt,
   updatedAt:
-    msg.updatedAt instanceof Date
-      ? msg.updatedAt.toISOString()
-      : msg.updatedAt,
+    msg.updatedAt instanceof Date ? msg.updatedAt.toISOString() : msg.updatedAt,
 });
 
 /**
@@ -201,7 +194,8 @@ export const updateTargetedMessage = async (
     updateData.description = newDesc;
   }
   if (input.link !== undefined) {
-    const newLink = input.link === "" || input.link === null ? null : input.link;
+    const newLink =
+      input.link === "" || input.link === null ? null : input.link;
     if (newLink !== (currentMessage.link ?? null)) changedFields.push("link");
     updateData.link = newLink;
   }
@@ -212,14 +206,16 @@ export const updateTargetedMessage = async (
       changedFields.push("linkText");
     updateData.linkText = newLinkText;
   }
-  if (input.clickEventLogging !== null && input.clickEventLogging !== undefined) {
+  if (
+    input.clickEventLogging !== null &&
+    input.clickEventLogging !== undefined
+  ) {
     if (input.clickEventLogging !== currentMessage.clickEventLogging)
       changedFields.push("clickEventLogging");
     updateData.clickEventLogging = input.clickEventLogging;
   }
   if (input.visible !== null && input.visible !== undefined) {
-    if (input.visible !== currentMessage.visible)
-      changedFields.push("visible");
+    if (input.visible !== currentMessage.visible) changedFields.push("visible");
     updateData.visible = input.visible;
   }
   if (input.persistent !== null && input.persistent !== undefined) {

@@ -13,7 +13,7 @@ import {
   syncDismissedTargetedMessages,
 } from "@/lib/targeted-message";
 
-import styles from "./Overview.module.scss";
+import styles from "./TargetedMessageBanner.module.scss";
 
 interface TargetedMessageBannerProps {
   courseId: string;
