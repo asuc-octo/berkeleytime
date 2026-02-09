@@ -31,6 +31,8 @@ services:
     volumes:
       - ./apps/frontend:/frontend/apps/frontend
       - ./packages:/frontend/packages
+      - /frontend/node_modules
+      - /frontend/apps/frontend/node_modules
   ag-frontend:
     build:
       context: .
@@ -118,22 +120,22 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
-      
+
   # if using staff photos in dev, use --profile dev
   minio:
-    image: 'minio/minio:latest'
+    image: "minio/minio:latest"
     profiles:
       - dev
     ports:
       - "${DEV_PORT_PREFIX:-30}06:9000"
       - "${DEV_PORT_PREFIX:-30}07:9090"
     environment:
-      MINIO_ROOT_USER: 'root'
-      MINIO_ROOT_PASSWORD: 'password'
+      MINIO_ROOT_USER: "root"
+      MINIO_ROOT_PASSWORD: "password"
     networks:
       - bt
     volumes:
-      - 'minio:/data/minio'
+      - "minio:/data/minio"
     command: minio server /data/minio --console-address ":9090"
   createbuckets:
     image: minio/mc
@@ -151,4 +153,3 @@ services:
 volumes:
   minio:
     driver: local
-

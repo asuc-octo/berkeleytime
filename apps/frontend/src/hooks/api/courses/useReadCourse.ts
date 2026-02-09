@@ -6,6 +6,9 @@ import { GET_CLASS_OVERVIEW } from "@/lib/api/courses";
 import {
   GetClassOverviewQuery,
   GetClassOverviewQueryVariables,
+  GetCourseCommentsDocument,
+  GetCourseCommentsQuery,
+  GetCourseCommentsQueryVariables,
   GetCourseDocument,
   GetCourseGradeDistDocument,
   GetCourseGradeDistQuery,
@@ -93,6 +96,29 @@ export const useGetCourseOverviewById = (
   return {
     ...query,
     data: query.data?.courseById,
+  };
+};
+
+export const useGetCourseComments = (
+  courseId: string,
+  options?: Omit<
+    useQuery.Options<
+      GetCourseCommentsQuery,
+      GetCourseCommentsQueryVariables
+    >,
+    "variables"
+  >
+) => {
+  const query = useQuery(GetCourseCommentsDocument, {
+    ...options,
+    variables: {
+      courseId,
+    },
+  });
+
+  return {
+    ...query,
+    data: query.data?.courseComments,
   };
 };
 
