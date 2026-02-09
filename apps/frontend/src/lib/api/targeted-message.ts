@@ -8,6 +8,8 @@ export const GET_TARGETED_MESSAGES_FOR_COURSE = gql`
       description
       link
       linkText
+      persistent
+      reappearing
     }
   }
 `;

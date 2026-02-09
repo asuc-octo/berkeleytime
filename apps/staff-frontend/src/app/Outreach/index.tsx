@@ -61,6 +61,8 @@ interface TargetedMessageFormData {
   description: string;
   link: string;
   linkText: string;
+  persistent: boolean;
+  reappearing: boolean;
   clickEventLogging: boolean;
   targetCourses: FormCourse[];
 }
@@ -70,6 +72,8 @@ const initialTargetedMessageFormData: TargetedMessageFormData = {
   description: "",
   link: "",
   linkText: "",
+  persistent: false,
+  reappearing: false,
   clickEventLogging: false,
   targetCourses: [],
 };
@@ -337,6 +341,8 @@ export default function Outreach() {
       description: message.description || "",
       link: message.link || "",
       linkText: message.linkText || "",
+      persistent: message.persistent,
+      reappearing: message.reappearing,
       clickEventLogging: message.clickEventLogging,
       targetCourses: message.targetCourses.map((c) => ({
         ...c,
@@ -448,6 +454,8 @@ export default function Outreach() {
           description: targetedFormData.description.trim() || null,
           link: targetedFormData.link.trim() || null,
           linkText: targetedFormData.linkText.trim() || null,
+          persistent: targetedFormData.persistent,
+          reappearing: targetedFormData.reappearing,
           clickEventLogging: targetedFormData.clickEventLogging,
           targetCourses: resolvedCourses,
         };
@@ -458,6 +466,8 @@ export default function Outreach() {
           description: targetedFormData.description.trim() || null,
           link: targetedFormData.link.trim() || null,
           linkText: targetedFormData.linkText.trim() || null,
+          persistent: targetedFormData.persistent,
+          reappearing: targetedFormData.reappearing,
           clickEventLogging: targetedFormData.clickEventLogging,
           targetCourses: resolvedCourses,
         };
@@ -788,11 +798,21 @@ export default function Outreach() {
                   className={`${styles.card} ${!message.visible ? styles.hidden : ""}`}
                 >
                   <div className={styles.cardHeader}>
-                    {message.clickEventLogging ? (
+                    {message.persistent ||
+                    message.reappearing ||
+                    message.clickEventLogging ? (
                       <div className={styles.badgeRow}>
-                        <span className={styles.badge}>
-                          Click Event Logging
-                        </span>
+                        {message.persistent && (
+                          <span className={styles.badge}>Persistent</span>
+                        )}
+                        {message.reappearing && (
+                          <span className={styles.badge}>Reappearing</span>
+                        )}
+                        {message.clickEventLogging && (
+                          <span className={styles.badge}>
+                            Click Event Logging
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div />
@@ -1032,6 +1052,44 @@ export default function Outreach() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={targetedFormData.persistent}
+                    onCheckedChange={(checked) =>
+                      setTargetedFormData({
+                        ...targetedFormData,
+                        persistent: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>Persistent</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Persistent messages always show on course pages and cannot be
+                  dismissed.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={targetedFormData.reappearing}
+                    onCheckedChange={(checked) =>
+                      setTargetedFormData({
+                        ...targetedFormData,
+                        reappearing: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>Reappearing</label>
+                </Flex>
+                <p className={styles.formHint}>
+                  Reappearing messages will reappear when the user opens a new
+                  tab.
+                </p>
               </div>
 
               <div className={styles.formField}>

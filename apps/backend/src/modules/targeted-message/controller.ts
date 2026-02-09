@@ -107,6 +107,8 @@ export interface CreateTargetedMessageInput {
   description?: string | null;
   link?: string | null;
   linkText?: string | null;
+  persistent: boolean;
+  reappearing: boolean;
   clickEventLogging?: boolean | null;
   targetCourses: TargetedMessageCourseInput[];
 }
@@ -116,6 +118,8 @@ export interface UpdateTargetedMessageInput {
   description?: string | null;
   link?: string | null;
   linkText?: string | null;
+  persistent?: boolean | null;
+  reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
   visible?: boolean | null;
   targetCourses?: TargetedMessageCourseInput[] | null;
@@ -136,6 +140,8 @@ export const createTargetedMessage = async (
     link: input.link === "" ? null : (input.link ?? null),
     linkText: input.linkText === "" ? null : (input.linkText ?? null),
     visible: true,
+    persistent: input.persistent,
+    reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
     targetCourses: input.targetCourses,
   };
@@ -153,6 +159,8 @@ export const createTargetedMessage = async (
     link: input.link === "" ? null : (input.link ?? null),
     linkText: input.linkText === "" ? null : (input.linkText ?? null),
     visible: true,
+    persistent: input.persistent,
+    reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
     targetCourses: input.targetCourses,
     currentVersion: 1,
@@ -214,6 +222,16 @@ export const updateTargetedMessage = async (
       changedFields.push("visible");
     updateData.visible = input.visible;
   }
+  if (input.persistent !== null && input.persistent !== undefined) {
+    if (input.persistent !== currentMessage.persistent)
+      changedFields.push("persistent");
+    updateData.persistent = input.persistent;
+  }
+  if (input.reappearing !== null && input.reappearing !== undefined) {
+    if (input.reappearing !== currentMessage.reappearing)
+      changedFields.push("reappearing");
+    updateData.reappearing = input.reappearing;
+  }
   if (input.targetCourses !== null && input.targetCourses !== undefined) {
     changedFields.push("targetCourses");
     updateData.targetCourses = input.targetCourses;
@@ -236,6 +254,10 @@ export const updateTargetedMessage = async (
           ? updateData.linkText
           : currentMessage.linkText,
       visible: (updateData.visible as boolean) ?? currentMessage.visible,
+      persistent:
+        (updateData.persistent as boolean) ?? currentMessage.persistent,
+      reappearing:
+        (updateData.reappearing as boolean) ?? currentMessage.reappearing,
       clickEventLogging:
         (updateData.clickEventLogging as boolean) ??
         currentMessage.clickEventLogging,
@@ -314,6 +336,8 @@ export const deleteTargetedMessage = async (
     link: currentMessage.link ?? null,
     linkText: currentMessage.linkText ?? null,
     visible: currentMessage.visible,
+    persistent: currentMessage.persistent,
+    reappearing: currentMessage.reappearing,
     clickEventLogging: currentMessage.clickEventLogging,
     targetCourses: currentMessage.targetCourses,
   };

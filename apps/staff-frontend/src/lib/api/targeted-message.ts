@@ -14,6 +14,8 @@ export interface TargetedMessage {
   link: string | null;
   linkText: string | null;
   visible: boolean;
+  persistent: boolean;
+  reappearing: boolean;
   clickCount: number;
   dismissCount: number;
   clickEventLogging: boolean;
@@ -33,6 +35,8 @@ export const ALL_TARGETED_MESSAGES_FOR_STAFF = gql`
       link
       linkText
       visible
+      persistent
+      reappearing
       clickCount
       dismissCount
       clickEventLogging
@@ -60,6 +64,8 @@ export interface CreateTargetedMessageInput {
   description?: string | null;
   link?: string | null;
   linkText?: string | null;
+  persistent: boolean;
+  reappearing: boolean;
   clickEventLogging?: boolean | null;
   targetCourses: TargetedMessageCourseInput[];
 }
@@ -69,6 +75,8 @@ export interface UpdateTargetedMessageInput {
   description?: string | null;
   link?: string | null;
   linkText?: string | null;
+  persistent?: boolean | null;
+  reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
   visible?: boolean | null;
   targetCourses?: TargetedMessageCourseInput[] | null;
@@ -83,6 +91,8 @@ export const CREATE_TARGETED_MESSAGE = gql`
       link
       linkText
       visible
+      persistent
+      reappearing
       clickCount
       dismissCount
       clickEventLogging
@@ -107,6 +117,8 @@ export const UPDATE_TARGETED_MESSAGE = gql`
       link
       linkText
       visible
+      persistent
+      reappearing
       clickCount
       dismissCount
       clickEventLogging

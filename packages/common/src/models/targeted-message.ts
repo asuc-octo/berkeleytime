@@ -19,6 +19,8 @@ const targetedMessageSnapshotSchema = new Schema(
     link: String,
     linkText: String,
     visible: Boolean,
+    persistent: Boolean,
+    reappearing: Boolean,
     clickEventLogging: Boolean,
     targetCourses: [targetedMessageCourseSchema],
   },
@@ -67,6 +69,16 @@ export const targetedMessageSchema = new Schema(
       type: Boolean,
       required: true,
       default: true,
+    },
+    persistent: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    reappearing: {
+      type: Boolean,
+      required: true,
+      default: false,
     },
 
     // Targeting

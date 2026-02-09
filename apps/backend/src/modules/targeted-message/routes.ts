@@ -11,6 +11,10 @@ export default (app: Application, redis?: RedisClientType) => {
     const { messageId } = req.params;
     const courseIdParam =
       typeof req.query.courseId === "string" ? req.query.courseId : undefined;
+    const semesterParam =
+      typeof req.query.semester === "string" ? req.query.semester : undefined;
+    const yearParam =
+      typeof req.query.year === "string" ? req.query.year : undefined;
 
     try {
       const message = await TargetedMessageModel.findByIdAndUpdate(
@@ -23,13 +27,21 @@ export default (app: Application, redis?: RedisClientType) => {
         return res.redirect("/");
       }
 
-      const resolvedAdditionalInfo =
-        courseIdParam &&
-        message.targetCourses?.some(
-          (course) => course.courseId === courseIdParam
-        )
-          ? courseIdParam
-          : undefined;
+      const matchedCourse = courseIdParam
+        ? message.targetCourses?.find(
+            (course) => course.courseId === courseIdParam
+          )
+        : undefined;
+
+      const resolvedAdditionalInfo = matchedCourse
+        ? JSON.stringify({
+            courseId: courseIdParam,
+            subject: matchedCourse.subject,
+            courseNumber: matchedCourse.courseNumber,
+            semester: semesterParam,
+            year: yearParam ? Number(yearParam) : undefined,
+          })
+        : undefined;
 
       // Track click event if enabled and redis is available
       if (message.clickEventLogging && redis) {
