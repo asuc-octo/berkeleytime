@@ -6,6 +6,7 @@ export * from "./cloudflare";
 export * from "./common";
 export * from "./course";
 export * from "./curated-classes";
+export * from "./discussion";
 export * from "./collection";
 export * from "./enrollment";
 export * from "./grade-distribution";

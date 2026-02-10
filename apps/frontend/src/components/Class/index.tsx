@@ -66,6 +66,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Discussion = lazy(() => import("./Discussion"));
 
 interface RootProps {
   dialog?: boolean;
@@ -132,6 +133,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
   if (pathname.endsWith("/enrollment")) return "enrollment";
+  if (pathname.endsWith("/discussion")) return "discussion";
   return "overview";
 };
 
@@ -581,6 +583,9 @@ export default function Class({
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
+                    <Tabs.Trigger value="discussion" asChild>
+                      <MenuItem>Discussion</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -614,6 +619,11 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  <NavLink to={{ ...location, pathname: "discussion" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Discussion</MenuItem>
                     )}
                   </NavLink>
                 </Flex>
@@ -653,6 +663,11 @@ export default function Class({
                 <Tabs.Content value="enrollment" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                <Tabs.Content value="discussion" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Discussion />
                   </SuspenseBoundary>
                 </Tabs.Content>
               </>
@@ -712,6 +727,20 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Enrollment />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {visitedTabs.has("discussion") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "discussion"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Discussion />
                     </SuspenseBoundary>
                   </div>
                 )}

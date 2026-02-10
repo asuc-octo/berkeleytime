@@ -1,0 +1,75 @@
+.root {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 10px 12px;
+  color: var(--heading-color);
+  background: transparent;
+  font-size: var(--text-14);
+  line-height: 1.5;
+
+  &:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+}
+
+.helperText {
+  margin: 0;
+  color: var(--paragraph-color);
+  font-size: var(--text-12);
+}
+
+.errorText {
+  margin: 0;
+  color: var(--red-500);
+  font-size: var(--text-12);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commentCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.commentBody {
+  margin: 0 0 6px;
+  color: var(--heading-color);
+  font-size: var(--text-14);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.timestamp {
+  margin: 0;
+  color: var(--paragraph-color);
+  font-size: var(--text-12);
+}
