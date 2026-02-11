@@ -77,6 +77,7 @@ export const planTypeDef = gql`
   type PlanRequirement @cacheControl(maxAge: 0) {
     _id: ID!
     code: String!
+    name: String!
     isUcReq: Boolean!
     college: String
     major: String
@@ -220,25 +221,6 @@ export const planTypeDef = gql`
     Takes in user's email and returns their entire plan
     """
     planByUser: [Plan!]! @auth
-
-    """
-    Get PlanRequirements by majors and minors.
-    Returns all matching PlanRequirement documents for the given majors and minors.
-    """
-    planRequirementsByMajorsAndMinors(
-      majors: [String!]!
-      minors: [String!]!
-    ): [PlanRequirement!]!
-
-    """
-    Get UC requirements (isUcReq = true)
-    """
-    ucRequirements: [PlanRequirement!]!
-
-    """
-    Get college requirements by college name
-    """
-    collegeRequirements(college: String!): [PlanRequirement!]!
   }
 
   type Mutation {

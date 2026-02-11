@@ -70,6 +70,7 @@ services:
     volumes:
       - ./data/mongodb/db:/data/db
       - ./data/mongodb/configdb:/data/configdb
+      - ./migrations:/migrations
   nginx:
     depends_on:
       - backend

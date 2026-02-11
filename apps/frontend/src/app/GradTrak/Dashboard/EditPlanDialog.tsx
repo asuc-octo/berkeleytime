@@ -226,6 +226,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.majors = newList.map((m) => m.value);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error adding major:", error);
       setSelectedMajorList(oldList);
@@ -255,6 +256,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.minors = newList.map((m) => m.value);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error adding minor:", error);
       setSelectedMinorList(oldList);
@@ -274,6 +276,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.majors = newList.map((m) => m.value);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error removing major:", error);
       setSelectedMajorList(oldList);
@@ -292,6 +295,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.minors = newList.map((m) => m.value);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error removing minor:", error);
       setSelectedMinorList(oldList);
@@ -320,6 +324,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.colleges = convertCollegeOptions(newList);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error adding college:", error);
       setSelectedCollegeList(oldList);
@@ -339,6 +344,7 @@ export default function EditPlanDialog({
       const plan: PlanInput = {};
       plan.colleges = convertCollegeOptions(newList);
       await editPlan(plan);
+      onSave?.();
     } catch (error) {
       console.error("Error removing college:", error);
       setSelectedCollegeList(oldList);

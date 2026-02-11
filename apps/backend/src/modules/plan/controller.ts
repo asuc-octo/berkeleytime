@@ -242,6 +242,12 @@ export async function createPlan(
     })
   );
 
+  const selectedPlanRequirements = await buildSelectedPlanRequirementsForPlan(
+    majors,
+    minors,
+    colleges.map((c) => String(c))
+  );
+
   const newPlan = await PlanModel.create({
     userEmail,
     planTerms: planTerms,
@@ -249,8 +255,28 @@ export async function createPlan(
     minors: minors,
     colleges: colleges,
     labels: [],
+    selectedPlanRequirements: selectedPlanRequirements.map(
+      (spr) =>
+        new SelectedPlanRequirementModel({
+          planRequirementId: new Types.ObjectId(spr.planRequirementId),
+          manualOverrides: spr.manualOverrides,
+        })
+    ),
   });
   return formatPlan(newPlan);
+}
+
+/** Build selectedPlanRequirements for given majors, minors, colleges (UC + college + major/minor). Used by createPlan, editPlan sync, and migrations. */
+export async function buildSelectedPlanRequirementsForPlan(
+  majors: string[],
+  minors: string[],
+  colleges: string[]
+): Promise<SelectedPlanRequirementInput[]> {
+  const reqs = await getRequiredPlanRequirements(majors, minors, colleges);
+  return reqs.map((r) => ({
+    planRequirementId: r._id,
+    manualOverrides: [],
+  }));
 }
 
 export async function editPlan(
@@ -263,6 +289,10 @@ export async function editPlan(
   if (!gt) {
     throw new Error("No Plan found for this user");
   }
+
+  const majorsChanged = plan.majors != null;
+  const minorsChanged = plan.minors != null;
+  const collegesChanged = plan.colleges != null;
 
   if (plan.colleges != null) {
     gt.colleges = plan.colleges;
@@ -277,6 +307,30 @@ export async function editPlan(
     gt.labels = plan.labels.map((labelInput) => new LabelModel(labelInput));
   }
 
+  if (majorsChanged || minorsChanged || collegesChanged) {
+    const wantedReqs = await getRequiredPlanRequirements(
+      gt.majors,
+      gt.minors,
+      gt.colleges
+    );
+    const wantedIds = new Set(wantedReqs.map((r) => r._id));
+    const currentIds = new Set(
+      gt.selectedPlanRequirements.map((spr) => spr.planRequirementId.toString())
+    );
+    const kept = gt.selectedPlanRequirements.filter((spr) =>
+      wantedIds.has(spr.planRequirementId.toString())
+    );
+    const newReqs = wantedReqs.filter((r) => !currentIds.has(r._id));
+    const newSprs = newReqs.map(
+      (r) =>
+        new SelectedPlanRequirementModel({
+          planRequirementId: new Types.ObjectId(r._id),
+          manualOverrides: [],
+        })
+    );
+    gt.selectedPlanRequirements = [...kept, ...newSprs];
+  }
+
   await gt.save();
   return formatPlan(gt);
 }
@@ -288,7 +342,27 @@ export async function deletePlan(context: RequestContext): Promise<string> {
   return userEmail;
 }
 
-// Get PlanRequirements by majors and minors
+// Internal: get all PlanRequirement IDs that should be selected for given majors, minors, colleges (UC + college + major/minor). Deduped by _id.
+export async function getRequiredPlanRequirements(
+  majors: string[],
+  minors: string[],
+  colleges: string[]
+): Promise<PlanRequirement[]> {
+  const byId = new Map<string, PlanRequirement>();
+  const add = (req: PlanRequirement) => byId.set(req._id, req);
+
+  const uc = await getUcRequirements();
+  uc.forEach(add);
+  for (const college of colleges) {
+    const coll = await getCollegeRequirements(college);
+    coll.forEach(add);
+  }
+  const mm = await getPlanRequirementsByMajorsAndMinors(majors, minors);
+  mm.forEach(add);
+  return Array.from(byId.values());
+}
+
+// Get PlanRequirements by majors and minors (internal use)
 export async function getPlanRequirementsByMajorsAndMinors(
   majors: string[],
   minors: string[]
@@ -300,6 +374,7 @@ export async function getPlanRequirementsByMajorsAndMinors(
   return requirements.map((req) => ({
     _id: (req._id as Types.ObjectId).toString(),
     code: req.code,
+    name: req.name,
     isUcReq: req.isUcReq,
     college: req.college || null,
     major: req.major || null,
@@ -318,6 +393,7 @@ export async function getUcRequirements(): Promise<PlanRequirement[]> {
   return requirements.map((req) => ({
     _id: (req._id as Types.ObjectId).toString(),
     code: req.code,
+    name: req.name,
     isUcReq: req.isUcReq,
     college: req.college || null,
     major: req.major || null,
@@ -338,6 +414,7 @@ export async function getCollegeRequirements(
   return requirements.map((req) => ({
     _id: (req._id as Types.ObjectId).toString(),
     code: req.code,
+    name: req.name,
     isUcReq: req.isUcReq,
     college: req.college || null,
     major: req.major || null,
@@ -361,6 +438,7 @@ export async function getPlanRequirementById(
   return {
     _id: (requirement._id as Types.ObjectId).toString(),
     code: requirement.code,
+    name: requirement.name,
     isUcReq: requirement.isUcReq,
     college: requirement.college || null,
     major: requirement.major || null,
@@ -405,7 +483,9 @@ export async function updateManualOverride(
       spr.manualOverrides.push(undefined);
     }
   }
-  spr.manualOverrides[input.requirementIndex] = input.manualOverride;
+  // Store null when clearing override so it persists correctly in MongoDB
+  spr.manualOverrides[input.requirementIndex] =
+    input.manualOverride !== undefined ? input.manualOverride : null;
 
   await gt.save();
   return formatPlan(gt);

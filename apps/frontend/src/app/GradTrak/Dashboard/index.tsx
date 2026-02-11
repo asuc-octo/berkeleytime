@@ -38,7 +38,6 @@ import {
   useReadUser,
 } from "@/hooks/api";
 import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
-import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
   GetCourseNamesDocument,
@@ -106,10 +105,6 @@ export default function Dashboard() {
     skip: !user,
     fetchPolicy: "cache-and-network",
   });
-
-  if (!gradTrakLoading && !gradTrak) {
-    navigate("/gradtrak");
-  }
 
   const hasLoadedRef = useRef(false);
   const { data: courses, loading: courseLoading } = useQuery(
@@ -548,8 +543,6 @@ export default function Dashboard() {
             courseName: course.courseName,
             courseTitle: course.courseTitle,
             courseUnits: course.courseUnits,
-            uniReqs: course.uniReqs,
-            collegeReqs: course.collegeReqs,
             pnp: course.pnp,
             transfer: course.transfer,
             labels:
@@ -624,12 +617,6 @@ export default function Dashboard() {
           totalUnits={totalUnits}
           transferUnits={transferUnits}
           pnpTotal={pnpTotal}
-          uniReqsFulfilled={convertStringsToRequirementEnum(
-            gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : []
-          )}
-          collegeReqsFulfilled={convertStringsToRequirementEnum(
-            gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : []
-          )}
           plan={gradTrak}
           planTerms={localPlanTerms}
         />

@@ -2,7 +2,7 @@
  * Script to generate mongosh commands for inserting PlanRequirement documents
  *
  * Usage:
- *   npx ts-node generate-mongosh-commands.ts > seed-requirements.js
+ *   npx tsx generate-mongosh-commands.ts > seed-requirements.js
  *
  * Then run the generated commands in mongosh:
  *   mongosh <connection-string> --file seed-requirements.js
@@ -83,6 +83,7 @@ function generateMongoshCommands(): void {
     console.log(`// ${req.name}`);
     console.log("db.planrequirements.insertOne({");
     console.log(`  code: "${escapeForMongosh(req.code)}",`);
+    console.log(`  name: "${escapeForMongosh(req.name)}",`);
     console.log(`  isUcReq: ${req.isUcReq},`);
     console.log(`  college: ${req.college ? `"${req.college}"` : "null"},`);
     console.log(`  major: ${req.major ? `"${req.major}"` : "null"},`);

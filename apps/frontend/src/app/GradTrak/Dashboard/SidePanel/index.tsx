@@ -3,7 +3,6 @@ import { useState } from "react";
 import { SidebarCollapse, SidebarExpand, WarningCircle } from "iconoir-react";
 
 import { IPlan, IPlanTerm } from "@/lib/api";
-import { RequirementEnum } from "@/lib/course";
 import { Colleges } from "@/lib/generated/graphql";
 import { GetCourseRequirementsQuery } from "@/lib/generated/graphql";
 
@@ -18,8 +17,6 @@ interface SidePanelProps {
   totalUnits: number;
   transferUnits: number;
   pnpTotal: number;
-  uniReqsFulfilled: RequirementEnum[];
-  collegeReqsFulfilled: RequirementEnum[];
   plan?: IPlan;
   planTerms?: (IPlanTerm & {
     courses: (import("@/lib/api").ISelectedCourse & {
@@ -35,10 +32,6 @@ export default function SidePanel({
   totalUnits,
   transferUnits,
   pnpTotal,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  uniReqsFulfilled: _uniReqsFulfilled,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  collegeReqsFulfilled: _collegeReqsFulfilled,
   plan,
   planTerms,
 }: SidePanelProps) {

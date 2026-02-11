@@ -1,10 +1,6 @@
 import { gql } from "@apollo/client";
 
-import {
-  GetCourseRequirementsQuery,
-  GetPlanQuery,
-  GetUcRequirementsQuery,
-} from "../generated/graphql";
+import { GetCourseRequirementsQuery, GetPlanQuery } from "../generated/graphql";
 
 export type ILabel = NonNullable<
   GetPlanQuery["planByUser"][number]["labels"]
@@ -23,8 +19,10 @@ export type ISelectedCourse = NonNullable<
 };
 
 export type IPlanRequirement = NonNullable<
-  GetUcRequirementsQuery["ucRequirements"]
->[number];
+  NonNullable<
+    NonNullable<GetPlanQuery["planByUser"]>[number]["selectedPlanRequirements"]
+  >[number]["planRequirement"]
+>;
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
@@ -109,6 +107,7 @@ export const READ_PLAN = gql`
       selectedPlanRequirements {
         planRequirement {
           _id
+          name
           code
           isUcReq
           college
@@ -133,11 +132,26 @@ export const READ_PLANS = gql`
 export const EDIT_PLAN = gql`
   mutation EditPlan($plan: PlanInput!) {
     editPlan(plan: $plan) {
+      _id
       majors
       minors
+      colleges
       labels {
         name
         color
+      }
+      selectedPlanRequirements {
+        planRequirement {
+          _id
+          name
+          code
+          isUcReq
+          college
+          major
+          minor
+          isOfficial
+        }
+        manualOverrides
       }
     }
   }
@@ -227,51 +241,6 @@ export const GET_COURSE_REQUIREMENTS = gql`
   }
 `;
 
-export const GET_PLAN_REQUIREMENTS_BY_MAJORS_AND_MINORS = gql`
-  query GetPlanRequirementsByMajorsAndMinors(
-    $majors: [String!]!
-    $minors: [String!]!
-  ) {
-    planRequirementsByMajorsAndMinors(majors: $majors, minors: $minors) {
-      _id
-      code
-      isUcReq
-      college
-      major
-      minor
-      isOfficial
-    }
-  }
-`;
-
-export const GET_UC_REQUIREMENTS = gql`
-  query GetUcRequirements {
-    ucRequirements {
-      _id
-      code
-      isUcReq
-      college
-      major
-      minor
-      isOfficial
-    }
-  }
-`;
-
-export const GET_COLLEGE_REQUIREMENTS = gql`
-  query GetCollegeRequirements($college: String!) {
-    collegeRequirements(college: $college) {
-      _id
-      code
-      isUcReq
-      college
-      major
-      minor
-      isOfficial
-    }
-  }
-`;
-
 export const UPDATE_MANUAL_OVERRIDE = gql`
   mutation UpdateManualOverride($input: UpdateManualOverrideInput!) {
     updateManualOverride(input: $input) {
@@ -297,6 +266,7 @@ export const UPDATE_SELECTED_PLAN_REQUIREMENTS = gql`
       selectedPlanRequirements {
         planRequirement {
           _id
+          name
           code
           isUcReq
           college

@@ -13,11 +13,8 @@ import {
   deletePlan,
   editPlan,
   editPlanTerm,
-  getCollegeRequirements,
   getPlanByUser,
   getPlanRequirementById,
-  getPlanRequirementsByMajorsAndMinors,
-  getUcRequirements,
   removePlanTerm,
   setClasses,
   updateManualOverride,
@@ -29,18 +26,6 @@ const resolvers: PlanModule.Resolvers = {
   Query: {
     planByUser(_parent, _args, context) {
       return getPlanByUser(context);
-    },
-    planRequirementsByMajorsAndMinors(
-      _parent,
-      args: { majors: string[]; minors: string[] }
-    ) {
-      return getPlanRequirementsByMajorsAndMinors(args.majors, args.minors);
-    },
-    ucRequirements() {
-      return getUcRequirements();
-    },
-    collegeRequirements(_parent, args: { college: string }) {
-      return getCollegeRequirements(args.college);
     },
   },
   SelectedPlanRequirement: {

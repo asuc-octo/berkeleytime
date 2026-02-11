@@ -25,3 +25,15 @@ mongodb:
   # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
+
+  # Mount migrations ConfigMap at /migrations (same path as Docker Compose).
+  # When installing, set the ConfigMap name to <release-name>-migrations, e.g.:
+  #   helm upgrade bt-prod-mongo ./infra/mongo --set mongodb.extraVolumes[0].configMap.name=bt-prod-mongo-migrations
+  extraVolumes:
+    - name: migrations
+      configMap:
+        name: "RELEASE_NAME-migrations"  # Override with --set mongodb.extraVolumes[0].configMap.name=<release-name>-migrations
+  extraVolumeMounts:
+    - name: migrations
+      mountPath: /migrations
+      readOnly: true

@@ -20,6 +20,10 @@ export const planRequirementSchema = new Schema(
       type: String,
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     isUcReq: {
       type: Boolean,
       required: true,

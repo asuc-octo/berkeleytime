@@ -9,17 +9,10 @@ import { type Data, init } from "@repo/BtLL";
 import { IPlan, IPlanTerm, ISelectedCourse } from "@/lib/api";
 import { IPlanRequirement } from "@/lib/api/plans";
 import {
-  GetCollegeRequirementsDocument,
-  GetCollegeRequirementsQuery,
   GetCourseRequirementsDocument,
   GetCourseRequirementsQuery,
   GetPlanDocument,
-  GetPlanRequirementsByMajorsAndMinorsDocument,
-  GetPlanRequirementsByMajorsAndMinorsQuery,
-  GetUcRequirementsDocument,
-  GetUcRequirementsQuery,
   UpdateManualOverrideDocument,
-  UpdateSelectedPlanRequirementsDocument,
 } from "@/lib/generated/graphql";
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -327,264 +320,75 @@ export default function BtLLGradTrakInterface({
     const fetchAndEvaluateRequirements = async () => {
       setIsLoading(true);
 
-      // Check if selectedPlanRequirements is empty
-      const hasSelectedPlanRequirements =
-        plan.selectedPlanRequirements &&
-        plan.selectedPlanRequirements.length > 0;
-
-      if (hasSelectedPlanRequirements) {
-        // Use existing selectedPlanRequirements
-        const groups: EvaluatedRequirementGroup[] = [];
-        const foundMajors = new Set<string>();
-        const foundMinors = new Set<string>();
-
-        for (const spr of plan.selectedPlanRequirements) {
-          if (!spr.planRequirement) continue;
-
-          const req = spr.planRequirement;
-          let title: string;
-          if (req.isUcReq) {
-            title = "University of California";
-          } else if (req.college) {
-            title = `${req.college} Requirements`;
-          } else if (req.major) {
-            title = `${req.major} Major`;
-            foundMajors.add(req.major);
-          } else if (req.minor) {
-            title = `${req.minor} Minor`;
-            foundMinors.add(req.minor);
-          } else {
-            title = "Requirements";
-          }
-
-          // Re-evaluate the requirements to get the RequirementResult structure
-          const columns = planTerms
-            .filter((pt) => pt.year !== -1)
-            .map(columnAdapter);
-
-          const fetchCourse = async (subject: string, number: string) => {
-            try {
-              const result = await apolloClient.query({
-                query: GetCourseRequirementsDocument,
-                variables: { subject, number },
-              });
-              return {
-                courseName: `${subject} ${number}`,
-                courseUnits: 0,
-                course: result.data?.course ?? undefined,
-              } as ISelectedCourse & {
-                course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-              };
-            } catch (error) {
-              console.error(
-                `Failed to fetch course ${subject} ${number}:`,
-                error
-              );
-              return {
-                courseName: `${subject} ${number}`,
-                courseUnits: 0,
-                course: undefined,
-              } as ISelectedCourse;
-            }
-          };
-
-          const commonVars = new Map<string, Data<unknown>>([
-            ["this", { data: planAdapter(plan, columns), type: "Plan" }],
-            ["columns", { data: columns, type: "List<Column>" }],
-          ]);
-
-          const config = { debug: false, fetchCourse };
-          const evaluated = init(req.code, commonVars, config) as
-            | RequirementResult[]
-            | null;
-
-          if (Array.isArray(evaluated) && evaluated.length > 0) {
-            // Check if manualOverrides length matches evaluated requirements length
-            const currentOverrides = spr.manualOverrides ?? [];
-            if (currentOverrides.length !== evaluated.length) {
-              // Reset manualOverrides to match new requirements length
-              const newOverrides: (boolean | null)[] = new Array(
-                evaluated.length
-              ).fill(false);
-              try {
-                await apolloClient.mutate({
-                  mutation: UpdateSelectedPlanRequirementsDocument,
-                  variables: {
-                    selectedPlanRequirements: [
-                      {
-                        planRequirementId: req._id,
-                        manualOverrides: newOverrides,
-                      },
-                    ],
-                  },
-                  refetchQueries: [{ query: GetPlanDocument }],
-                });
-                // Update local spr reference with new overrides
-                spr.manualOverrides = newOverrides;
-              } catch (error) {
-                console.error(
-                  "Failed to reset manualOverrides for mismatched length:",
-                  error
-                );
-              }
-            }
-
-            groups.push({
-              title,
-              requirements: evaluated,
-              source: req,
-              selectedPlanRequirement: spr,
-            });
-          }
-        }
-
-        setEvaluatedGroups(groups);
-        setSupportedMajors(foundMajors);
-        setSupportedMinors(foundMinors);
-        setIsLoading(false);
-        return;
-      }
-
-      // If selectedPlanRequirements is empty, evaluate and save
-      const columns = planTerms
-        .filter((pt) => pt.year !== -1)
-        .map(columnAdapter);
-
-      const fetchCourse = async (subject: string, number: string) => {
-        try {
-          const result = await apolloClient.query({
-            query: GetCourseRequirementsDocument,
-            variables: { subject, number },
-          });
-          return {
-            courseName: `${subject} ${number}`,
-            courseUnits: 0,
-            course: result.data?.course ?? undefined,
-          } as ISelectedCourse & {
-            course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-          };
-        } catch (error) {
-          console.error(`Failed to fetch course ${subject} ${number}:`, error);
-          return {
-            courseName: `${subject} ${number}`,
-            courseUnits: 0,
-            course: undefined,
-          } as ISelectedCourse;
-        }
-      };
-
-      const commonVars = new Map<string, Data<unknown>>([
-        ["this", { data: planAdapter(plan, columns), type: "Plan" }],
-        ["columns", { data: columns, type: "List<Column>" }],
-      ]);
-
-      const config = { debug: false, fetchCourse };
       const groups: EvaluatedRequirementGroup[] = [];
       const foundMajors = new Set<string>();
       const foundMinors = new Set<string>();
-      const selectedPlanRequirementsToSave: Array<{
-        planRequirementId: string;
-        manualOverrides: (boolean | null)[];
-      }> = [];
 
-      try {
-        // Fetch UC requirements
-        const ucResult = await apolloClient.query({
-          query: GetUcRequirementsDocument,
-        });
-        const ucReqs: IPlanRequirement[] =
-          (ucResult.data as GetUcRequirementsQuery)?.ucRequirements ?? [];
-        for (const req of ucReqs) {
-          const evaluated = init(req.code, commonVars, config) as
-            | RequirementResult[]
-            | null;
-          if (Array.isArray(evaluated) && evaluated.length > 0) {
-            groups.push({
-              title: "University of California",
-              requirements: evaluated,
-              source: req,
-            });
-            selectedPlanRequirementsToSave.push({
-              planRequirementId: req._id,
-              manualOverrides: new Array(evaluated.length).fill(false),
-            });
-          }
-        }
+      for (const spr of plan.selectedPlanRequirements) {
+        if (!spr.planRequirement) continue;
 
-        // Fetch college requirements for each college
-        for (const college of colleges) {
-          const collegeResult = await apolloClient.query({
-            query: GetCollegeRequirementsDocument,
-            variables: { college },
-          });
-          const collegeReqs: IPlanRequirement[] =
-            (collegeResult.data as GetCollegeRequirementsQuery)
-              ?.collegeRequirements ?? [];
-          for (const req of collegeReqs) {
-            const evaluated = init(req.code, commonVars, config) as
-              | RequirementResult[]
-              | null;
-            if (Array.isArray(evaluated) && evaluated.length > 0) {
-              groups.push({
-                title: `${college} Requirements`,
-                requirements: evaluated,
-                source: req,
-              });
-              selectedPlanRequirementsToSave.push({
-                planRequirementId: req._id,
-                manualOverrides: new Array(evaluated.length).fill(false),
-              });
-            }
-          }
-        }
+        const req = spr.planRequirement;
 
-        // Fetch major/minor requirements
-        const majorMinorResult = await apolloClient.query({
-          query: GetPlanRequirementsByMajorsAndMinorsDocument,
-          variables: { majors, minors },
-        });
-        const majorMinorReqs: IPlanRequirement[] =
-          (majorMinorResult.data as GetPlanRequirementsByMajorsAndMinorsQuery)
-            ?.planRequirementsByMajorsAndMinors ?? [];
-        for (const req of majorMinorReqs) {
-          const evaluated = init(req.code, commonVars, config) as
-            | RequirementResult[]
-            | null;
-          if (Array.isArray(evaluated) && evaluated.length > 0) {
-            const title = req.major
-              ? `${req.major} Major`
-              : req.minor
-                ? `${req.minor} Minor`
-                : "Requirements";
-            groups.push({
-              title,
-              requirements: evaluated,
-              source: req,
-            });
-            selectedPlanRequirementsToSave.push({
-              planRequirementId: req._id,
-              manualOverrides: new Array(evaluated.length).fill(false),
-            });
-            if (req.major) foundMajors.add(req.major);
-            if (req.minor) foundMinors.add(req.minor);
-          }
-        }
+        if (req.major) foundMajors.add(req.major);
+        if (req.minor) foundMinors.add(req.minor);
 
-        // Save selectedPlanRequirements
-        if (selectedPlanRequirementsToSave.length > 0) {
+        // Re-evaluate the requirements to get the RequirementResult structure
+        const columns = planTerms
+          .filter((pt) => pt.year !== -1)
+          .map(columnAdapter);
+
+        const fetchCourse = async (subject: string, number: string) => {
           try {
-            await apolloClient.mutate({
-              mutation: UpdateSelectedPlanRequirementsDocument,
-              variables: {
-                selectedPlanRequirements: selectedPlanRequirementsToSave,
-              },
+            const result = await apolloClient.query({
+              query: GetCourseRequirementsDocument,
+              variables: { subject, number },
             });
+            return {
+              courseName: `${subject} ${number}`,
+              courseUnits: 0,
+              course: result.data?.course ?? undefined,
+            } as ISelectedCourse & {
+              course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+            };
           } catch (error) {
-            console.error("Failed to save selectedPlanRequirements:", error);
+            console.error(
+              `Failed to fetch course ${subject} ${number}:`,
+              error
+            );
+            return {
+              courseName: `${subject} ${number}`,
+              courseUnits: 0,
+              course: undefined,
+            } as ISelectedCourse;
           }
+        };
+
+        const commonVars = new Map<string, Data<unknown>>([
+          ["this", { data: planAdapter(plan, columns), type: "Plan" }],
+          ["columns", { data: columns, type: "List<Column>" }],
+        ]);
+
+        const config = { debug: false, fetchCourse };
+        const evaluated = init(req.code, commonVars, config) as
+          | RequirementResult[]
+          | null;
+
+        if (Array.isArray(evaluated) && evaluated.length > 0) {
+          const newSpr = {
+            ...spr,
+            manualOverrides:
+              (spr.manualOverrides ?? []).length !== evaluated.length
+                ? new Array(evaluated.length).fill(false)
+                : spr.manualOverrides,
+          };
+
+          groups.push({
+            title: req.name,
+            requirements: evaluated,
+            source: req,
+            selectedPlanRequirement: newSpr,
+          });
         }
-      } catch (error) {
-        console.error("Failed to fetch requirements:", error);
       }
 
       setEvaluatedGroups(groups);
@@ -745,7 +549,11 @@ function BtLLRequirementsAccordion({
           input: {
             planRequirementId: selectedPlanRequirement.planRequirement._id,
             requirementIndex,
-            manualOverride: newOverride ?? undefined,
+            // Pass null explicitly when clearing so the backend persists "no override"
+            manualOverride:
+              newOverride !== undefined && newOverride !== null
+                ? newOverride
+                : null,
           },
         },
         refetchQueries: [{ query: GetPlanDocument }],
