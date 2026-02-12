@@ -153,6 +153,7 @@ import { Command } from "cmdk";
 import { NavArrowDown, Plus, Search, Xmark } from "iconoir-react";
 import { DropdownMenu, Popover } from "radix-ui";
 
+import { useStack } from "../../hooks/useStack";
 import { Badge } from "../Badge";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
@@ -251,6 +252,8 @@ export function Select<T>({
     tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
 
+  const stack = useStack();
+  const contentZIndex = Math.max(1010, stack + 1);
   const { triggerRef, triggerWidth } = useMatchTriggerWidth<HTMLDivElement>();
 
   // Tabs force searchable mode
@@ -558,7 +561,7 @@ export function Select<T>({
           <Popover.Portal>
             <Popover.Content
               className={styles.searchableContent}
-              style={{ width: triggerWidth, zIndex: 1010 }}
+              style={{ width: triggerWidth, zIndex: contentZIndex }}
               sideOffset={5}
               align="start"
               collisionPadding={8}
@@ -634,7 +637,7 @@ export function Select<T>({
             className={styles.content}
             style={{
               width: triggerWidth,
-              zIndex: 1010,
+              zIndex: contentZIndex,
               ...(maxListHeight ? { maxHeight: maxListHeight } : {}),
             }}
             sideOffset={5}
