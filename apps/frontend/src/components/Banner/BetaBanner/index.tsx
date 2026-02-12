@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ArrowUpRight, MessageText, Xmark } from "iconoir-react";
+import { MessageText, Xmark } from "iconoir-react";
 
 import styles from "./BetaBanner.module.scss";
 
