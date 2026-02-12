@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ArrowUpRight, MessageText, Xmark } from "iconoir-react";
+import { MessageText, Xmark } from "iconoir-react";
 
 import styles from "./BetaBanner.module.scss";
 
@@ -17,13 +17,6 @@ export default function BetaBanner() {
         You are viewing the <i>new</i> release of Berkeleytime.
       </p>
       <div className={styles.actions}>
-        <a
-          className={`${styles.link} ${styles.returnLink}`}
-          href="https://legacy.berkeleytime.com"
-        >
-          <div className={styles.text}>Return to Legacy Berkeleytime</div>
-          <ArrowUpRight height={12} width={12} />
-        </a>
         <a
           className={styles.link}
           href="https://forms.gle/zeAUQAHrMcrRJyhK6"
