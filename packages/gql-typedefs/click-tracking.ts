@@ -1,5 +1,8 @@
 import { gql } from "graphql-tag";
 
+// create a click event to record timestamp and other relavent information
+// to access click counts, staff is required
+
 export const clickEventTypeDef = gql`
   """
   A single click event recorded for intensive tracking.
