@@ -18,13 +18,6 @@ export default function BetaBanner() {
       </p>
       <div className={styles.actions}>
         <a
-          className={`${styles.link} ${styles.returnLink}`}
-          href="https://legacy.berkeleytime.com"
-        >
-          <div className={styles.text}>Return to Legacy Berkeleytime</div>
-          <ArrowUpRight height={12} width={12} />
-        </a>
-        <a
           className={styles.link}
           href="https://forms.gle/zeAUQAHrMcrRJyhK6"
           target="_blank"
