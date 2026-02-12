@@ -1,15 +1,22 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, useMutation } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 
-import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
+import {
+  EditPlanDocument,
+  EditPlanMutation,
+  EditPlanMutationVariables,
+  GetPlanDocument,
+  PlanInput,
+} from "@/lib/generated/graphql";
 
 export const useEditPlan = () => {
-  const mutation = useMutation<EditPlanResponse>(EDIT_PLAN, {
+  const mutation = useMutation(EditPlanDocument, {
+    refetchQueries: [{ query: GetPlanDocument }],
     update(cache, { data }) {
       const plan = data?.editPlan;
 
-      if (!plan) return;
+      if (!plan?._id) return;
 
       cache.modify({
         id: `Plan:${plan._id}`,
@@ -18,8 +25,9 @@ export const useEditPlan = () => {
           minors: () => plan.minors,
           colleges: () => plan.colleges,
           labels: () => plan.labels,
-          uniReqsSatisfied: () => plan.uniReqsSatisfied,
-          collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
+          ...(plan.selectedPlanRequirements && {
+            selectedPlanRequirements: () => plan.selectedPlanRequirements,
+          }),
         },
       });
     },
@@ -28,7 +36,10 @@ export const useEditPlan = () => {
   const updatedPlan = useCallback(
     async (
       plan: PlanInput,
-      options?: Omit<MutationHookOptions<EditPlanResponse>, "variables">
+      options?: Omit<
+        useMutation.Options<EditPlanMutation, EditPlanMutationVariables>,
+        "variables"
+      >
     ) => {
       const mutate = mutation[0];
 

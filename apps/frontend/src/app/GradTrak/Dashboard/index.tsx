@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client/react";
+import { useApolloClient, useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import {
   ArrowDown,
@@ -11,7 +11,6 @@ import {
   NavArrowDown,
   Plus,
   Sort,
-  Xmark,
 } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -22,7 +21,6 @@ import {
   Button,
   Checkbox,
   Color,
-  Dialog,
   DropdownMenu,
   Flex,
   IconButton,
@@ -32,7 +30,6 @@ import {
 } from "@repo/theme";
 
 import { initialize } from "@/components/CourseSearch/browser";
-import MajorSearch from "@/components/MajorSearch";
 import {
   useCreateNewPlanTerm,
   useEditPlan,
@@ -41,23 +38,23 @@ import {
   useReadUser,
 } from "@/hooks/api";
 import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
-import { convertStringsToRequirementEnum } from "@/lib/course";
 import {
   Colleges,
   GetCourseNamesDocument,
+  GetCourseRequirementsDocument,
+  GetCourseRequirementsQuery,
   PlanInput,
   PlanTermInput,
   Status,
 } from "@/lib/generated/graphql";
 
-import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
+import EditPlanDialog from "./EditPlanDialog";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
-import DEGREES from "./degree-programs-types.json";
 import { useGradTrakSettings } from "./settings";
 
 const FILTER_OPTIONS = [
@@ -98,6 +95,7 @@ export interface SelectedCourse extends ISelectedCourse {
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
+  const apolloClient = useApolloClient();
 
   const {
     data: gradTrak,
@@ -107,10 +105,6 @@ export default function Dashboard() {
     skip: !user,
     fetchPolicy: "cache-and-network",
   });
-
-  if (!gradTrakLoading && !gradTrak) {
-    navigate("/gradtrak");
-  }
 
   const hasLoadedRef = useRef(false);
   const { data: courses, loading: courseLoading } = useQuery(
@@ -153,7 +147,13 @@ export default function Dashboard() {
   const [showLabelMenu, setShowLabelMenu] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
-  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
+  const [localPlanTerms, setLocalPlanTerms] = useState<
+    (IPlanTerm & {
+      courses: (ISelectedCourse & {
+        course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+      })[];
+    })[]
+  >([]);
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
@@ -203,11 +203,37 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (gradTrak?.planTerms) {
-      setLocalPlanTerms(gradTrak.planTerms);
+      async function updatePlanTerms(planTerms: IPlanTerm[]) {
+        const updatedPlanTerms = await Promise.all(
+          planTerms.map(async (pt) => {
+            const updatedCourses = await Promise.all(
+              pt.courses.map(async (c) => {
+                const courseReqs = await apolloClient.query({
+                  query: GetCourseRequirementsDocument,
+                  variables: {
+                    number: c.courseName.split(" ")[1],
+                    subject: c.courseName.split(" ")[0],
+                  },
+                });
+                return {
+                  ...c,
+                  course: courseReqs.data?.course ?? undefined,
+                };
+              })
+            );
+            return {
+              ...pt,
+              courses: updatedCourses,
+            };
+          })
+        );
+        setLocalPlanTerms(updatedPlanTerms);
+      }
+      updatePlanTerms(gradTrak.planTerms);
     } else {
       setLocalPlanTerms([]);
     }
-  }, [gradTrak?.planTerms]);
+  }, [gradTrak?.planTerms, apolloClient]);
 
   // Update filter options when labels change
   useEffect(() => {
@@ -404,39 +430,40 @@ export default function Dashboard() {
     [key: string]: ISelectedCourse[];
   }>({});
 
-  const filterSemesters = (allSemesters: {
-    [key: string]: ISelectedCourse[];
-  }) => {
-    // if none of the label filters are selected, return all semesters
-    const hasActiveLabelFilters = Object.keys(filterOptions).some(
-      (key) => key.startsWith("label_") && filterOptions[key]
-    );
+  const filterSemesters = useCallback(
+    (allSemesters: { [key: string]: ISelectedCourse[] }) => {
+      // if none of the label filters are selected, return all semesters
+      const hasActiveLabelFilters = Object.keys(filterOptions).some(
+        (key) => key.startsWith("label_") && filterOptions[key]
+      );
 
-    if (!hasActiveLabelFilters) {
-      setFilteredAllSemesters(allSemesters);
-      return;
-    }
+      if (!hasActiveLabelFilters) {
+        setFilteredAllSemesters(allSemesters);
+        return;
+      }
 
-    // iterate through each semester
-    const filteredSemesters: { [key: string]: ISelectedCourse[] } = {};
-    Object.entries(allSemesters).forEach(([key, value]) => {
-      const filteredClasses = value.filter((course) => {
-        for (const label of course.labels) {
-          if (filterOptions["label_" + label.name]) {
-            return true;
+      // iterate through each semester
+      const filteredSemesters: { [key: string]: ISelectedCourse[] } = {};
+      Object.entries(allSemesters).forEach(([key, value]) => {
+        const filteredClasses = value.filter((course) => {
+          for (const label of course.labels) {
+            if (filterOptions["label_" + label.name]) {
+              return true;
+            }
           }
-        }
-        return false;
+          return false;
+        });
+        filteredSemesters[key] = filteredClasses;
       });
-      filteredSemesters[key] = filteredClasses;
-    });
-    setFilteredAllSemesters(filteredSemesters);
-  };
+      setFilteredAllSemesters(filteredSemesters);
+    },
+    [filterOptions]
+  );
 
   useEffect(() => {
     setActiveFiltersCount(Object.values(filterOptions).filter(Boolean).length);
     filterSemesters(allSemesters);
-  }, [filterOptions]);
+  }, [filterOptions, filterSemesters, allSemesters]);
 
   // Calculate label counts when dropdown is opened
   const calculateLabelCounts = () => {
@@ -499,173 +526,6 @@ export default function Dashboard() {
     []
   );
   const [editOpen, setEditOpen] = useState(false);
-  const [selectedMajor, setSelectedMajor] = useState<DegreeOption | null>(null);
-  const [selectedMinor, setSelectedMinor] = useState<DegreeOption | null>(null);
-  const [selectedMajorList, setSelectedMajorList] = useState<DegreeOption[]>(
-    []
-  );
-  const [selectedMinorList, setSelectedMinorList] = useState<DegreeOption[]>(
-    []
-  );
-
-  const majorOptions = DEGREES.majors;
-  const minorOptions = DEGREES.minors;
-
-  useEffect(() => {
-    if (editOpen && gradTrak) {
-      const majors: DegreeOption[] = [];
-      if (gradTrak.majors) {
-        gradTrak.majors.forEach((majorValue) => {
-          const majorStr = String(majorValue);
-          if (majorOptions.includes(majorStr)) {
-            majors.push({
-              label: majorStr,
-              value: majorStr,
-            });
-          }
-        });
-      }
-
-      const minors: DegreeOption[] = [];
-      if (gradTrak.minors) {
-        gradTrak.minors.forEach((minorValue) => {
-          const minorStr = String(minorValue);
-          if (minorOptions.includes(minorStr)) {
-            minors.push({
-              label: minorStr,
-              value: minorStr,
-            });
-          }
-        });
-      }
-
-      setSelectedMajorList(majors);
-      setSelectedMinorList(minors);
-    }
-  }, [editOpen, gradTrak, majorOptions, minorOptions]);
-
-  const handleMajorSelect = (degree: DegreeOption) => {
-    setSelectedMajor(degree);
-  };
-
-  const handleMinorSelect = (degree: DegreeOption) => {
-    setSelectedMinor(degree);
-  };
-
-  const handleClearMajor = () => {
-    setSelectedMajor(null);
-  };
-
-  const handleClearMinor = () => {
-    setSelectedMinor(null);
-  };
-
-  const handleAddMajor = async () => {
-    if (!selectedMajor) return;
-
-    if (
-      selectedMajorList.some((degree) => degree.value === selectedMajor.value)
-    ) {
-      console.warn("Major already added");
-      setSelectedMajor(null);
-      return;
-    }
-
-    const newList = [...selectedMajorList, selectedMajor];
-    const oldList = [...selectedMajorList];
-    const addedMajor = selectedMajor;
-
-    setSelectedMajorList(newList);
-    setSelectedMajor(null);
-
-    try {
-      const plan: PlanInput = {};
-      plan.majors = newList.map((m) => m.value);
-      await editPlan(plan);
-    } catch (error) {
-      console.error("Error adding major:", error);
-      setSelectedMajorList(oldList);
-      setSelectedMajor(addedMajor);
-    }
-  };
-
-  const handleAddMinor = async () => {
-    if (!selectedMinor) return;
-
-    if (
-      selectedMinorList.some((degree) => degree.value === selectedMinor.value)
-    ) {
-      console.warn("Minor already added");
-      setSelectedMinor(null);
-      return;
-    }
-
-    const newList = [...selectedMinorList, selectedMinor];
-    const oldList = [...selectedMinorList];
-    const addedMinor = selectedMinor;
-
-    setSelectedMinorList(newList);
-    setSelectedMinor(null);
-
-    try {
-      const plan: PlanInput = {};
-      plan.minors = newList.map((m) => m.value);
-      await editPlan(plan);
-    } catch (error) {
-      console.error("Error adding minor:", error);
-      setSelectedMinorList(oldList);
-      setSelectedMinor(addedMinor);
-    }
-  };
-
-  const handleRemoveMajor = async (degreeToRemove: DegreeOption) => {
-    const newList = selectedMajorList.filter(
-      (degree) => degree.value !== degreeToRemove.value
-    );
-    const oldList = [...selectedMajorList];
-
-    setSelectedMajorList(newList);
-
-    try {
-      const plan: PlanInput = {};
-      plan.majors = newList.map((m) => m.value);
-      await editPlan(plan);
-    } catch (error) {
-      console.error("Error removing major:", error);
-      setSelectedMajorList(oldList);
-    }
-  };
-
-  const handleRemoveMinor = async (degreeToRemove: DegreeOption) => {
-    const newList = selectedMinorList.filter(
-      (degree) => degree.value !== degreeToRemove.value
-    );
-    const oldList = [...selectedMinorList];
-
-    setSelectedMinorList(newList);
-
-    try {
-      const plan: PlanInput = {};
-      plan.minors = newList.map((m) => m.value);
-      await editPlan(plan);
-    } catch (error) {
-      console.error("Error removing minor:", error);
-      setSelectedMinorList(oldList);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      const plan: PlanInput = {};
-      plan.majors = selectedMajorList.map((m) => m.value);
-      plan.minors = selectedMinorList.map((m) => m.value);
-      await editPlan(plan);
-      setEditOpen(false);
-      refetchGradTrak();
-    } catch (error) {
-      console.error("Error updating majors/minors:", error);
-    }
-  };
   const convertPlanTermsToSemesters = useCallback(
     (planTerms: IPlanTerm[]): { [key: string]: ISelectedCourse[] } => {
       const semesters: { [key: string]: ISelectedCourse[] } = {};
@@ -683,8 +543,6 @@ export default function Dashboard() {
             courseName: course.courseName,
             courseTitle: course.courseTitle,
             courseUnits: course.courseUnits,
-            uniReqs: course.uniReqs,
-            collegeReqs: course.collegeReqs,
             pnp: course.pnp,
             transfer: course.transfer,
             labels:
@@ -759,12 +617,8 @@ export default function Dashboard() {
           totalUnits={totalUnits}
           transferUnits={transferUnits}
           pnpTotal={pnpTotal}
-          uniReqsFulfilled={convertStringsToRequirementEnum(
-            gradTrak?.uniReqsSatisfied ? gradTrak?.uniReqsSatisfied : []
-          )}
-          collegeReqsFulfilled={convertStringsToRequirementEnum(
-            gradTrak?.collegeReqsSatisfied ? gradTrak?.collegeReqsSatisfied : []
-          )}
+          plan={gradTrak}
+          planTerms={localPlanTerms}
         />
       </div>
 
@@ -1064,120 +918,14 @@ export default function Dashboard() {
               }
             />
 
-            <Dialog.Root open={editOpen} onOpenChange={setEditOpen}>
-              <Dialog.Overlay />
-              <Dialog.Card className={styles.editDialogCard}>
-                <Dialog.Header title="Overview" hasCloseButton />
-                <Dialog.Body className={styles.editDialogBody}>
-                  <form className={styles.editDialogForm}>
-                    <div className={styles.editDialogGrid}>
-                      <div>
-                        <label className={styles.degreeFieldLabel}>
-                          Major(s)
-                        </label>
-                        <Flex gap="8px" className={styles.degreeSearchRow}>
-                          <div className={styles.degreeSearchWrapper}>
-                            <MajorSearch
-                              onSelect={handleMajorSelect}
-                              onClear={handleClearMajor}
-                              selectedDegree={selectedMajor}
-                              degrees={majorOptions}
-                              placeholder="Search for a major..."
-                            />
-                          </div>
-                          <Button
-                            variant="tertiary"
-                            onClick={handleAddMajor}
-                            disabled={!selectedMajor}
-                            className={styles.addButton}
-                          >
-                            Add
-                          </Button>
-                        </Flex>
-                        {selectedMajorList.length > 0 ? (
-                          <div className={styles.degreeList}>
-                            {selectedMajorList.map((degree) => (
-                              <div
-                                key={degree.value}
-                                className={styles.degreeChip}
-                              >
-                                <span>{degree.label}</span>
-                                <span
-                                  onClick={() => handleRemoveMajor(degree)}
-                                  className={styles.removeButton}
-                                >
-                                  <Xmark />
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <Text className={styles.emptyState}>
-                            None Selected
-                          </Text>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className={styles.degreeFieldLabel}>
-                          Minor(s)
-                        </label>
-                        <Flex gap="8px" className={styles.degreeSearchRow}>
-                          <div className={styles.degreeSearchWrapper}>
-                            <MajorSearch
-                              onSelect={handleMinorSelect}
-                              onClear={handleClearMinor}
-                              selectedDegree={selectedMinor}
-                              degrees={minorOptions}
-                              placeholder="Search for a minor..."
-                            />
-                          </div>
-                          <Button
-                            variant="tertiary"
-                            onClick={handleAddMinor}
-                            disabled={!selectedMinor}
-                            className={styles.addButton}
-                          >
-                            Add
-                          </Button>
-                        </Flex>
-                        {selectedMinorList.length > 0 ? (
-                          <div className={styles.degreeList}>
-                            {selectedMinorList.map((degree) => (
-                              <div
-                                key={degree.value}
-                                className={styles.degreeChip}
-                              >
-                                <span>{degree.label}</span>
-                                <span
-                                  onClick={() => handleRemoveMinor(degree)}
-                                  className={styles.removeButton}
-                                >
-                                  <Xmark />
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <Text className={styles.emptyState}>
-                            None Selected
-                          </Text>
-                        )}
-                      </div>
-                    </div>
-                  </form>
-                </Dialog.Body>
-                <Dialog.Footer>
-                  <Button
-                    variant="secondary"
-                    onClick={() => setEditOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button onClick={handleSave}>Save</Button>
-                </Dialog.Footer>
-              </Dialog.Card>
-            </Dialog.Root>
+            <EditPlanDialog
+              open={editOpen}
+              onOpenChange={setEditOpen}
+              initialMajors={gradTrak?.majors}
+              initialMinors={gradTrak?.minors}
+              initialColleges={gradTrak?.colleges as Colleges[]}
+              onSave={() => refetchGradTrak()}
+            />
           </div>
         </div>
         {showDisplayMenu && (
