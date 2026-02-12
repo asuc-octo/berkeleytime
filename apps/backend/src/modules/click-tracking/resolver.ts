@@ -2,7 +2,12 @@ import { GraphQLError } from "graphql";
 
 import { StaffMemberModel } from "@repo/common/models";
 
-import { TargetType, getClickEvents, getClickStats } from "./controller";
+import {
+  TargetType,
+  getClickEvents,
+  getClickEventsTimeSeries,
+  getClickStats,
+} from "./controller";
 
 interface RequestContext {
   user: {
@@ -125,6 +130,44 @@ const resolvers = {
       }
 
       return getClickStats(
+        targetId,
+        targetType as TargetType,
+        startDate ? new Date(startDate) : undefined,
+        endDate ? new Date(endDate) : undefined
+      );
+    },
+
+    clickEventsTimeSeries: async (
+      _: unknown,
+      {
+        targetId,
+        targetType,
+        startDate,
+        endDate,
+      }: {
+        targetId: string;
+        targetType: string;
+        startDate?: string;
+        endDate?: string;
+      },
+      context: RequestContext
+    ) => {
+      await requireStaffMember(context);
+
+      if (
+        targetType !== "banner" &&
+        targetType !== "redirect" &&
+        targetType !== "targeted-message"
+      ) {
+        throw new GraphQLError(
+          "Invalid targetType. Must be 'banner', 'redirect', or 'targeted-message'",
+          {
+            extensions: { code: "BAD_USER_INPUT" },
+          }
+        );
+      }
+
+      return getClickEventsTimeSeries(
         targetId,
         targetType as TargetType,
         startDate ? new Date(startDate) : undefined,

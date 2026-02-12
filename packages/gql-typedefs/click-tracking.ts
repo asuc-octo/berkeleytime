@@ -34,6 +34,14 @@ export const clickEventTypeDef = gql`
     uniqueVisitors: Int!
   }
 
+  """
+  A single point in a click events time series (e.g. one day).
+  """
+  type ClickEventsTimeSeriesPoint {
+    date: String!
+    count: Int!
+  }
+
   type Query {
     """
     Get click events for a specific target. Staff only.
@@ -56,5 +64,15 @@ export const clickEventTypeDef = gql`
       startDate: String
       endDate: String
     ): ClickStats! @auth
+
+    """
+    Get click counts per day for a target. Staff only.
+    """
+    clickEventsTimeSeries(
+      targetId: ID!
+      targetType: String!
+      startDate: String
+      endDate: String
+    ): [ClickEventsTimeSeriesPoint!]! @auth
   }
 `;

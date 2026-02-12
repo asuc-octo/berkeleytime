@@ -41,6 +41,7 @@ import {
   TopSchedulerUsersBlock,
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";
+import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   ActiveUsersBlock,
   SignupDayHistogramBlock,
@@ -54,7 +55,8 @@ type Tab =
   | "ratings"
   | "bookmarks"
   | "gradtrak"
-  | "scheduler";
+  | "scheduler"
+  | "outreach";
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");
@@ -64,6 +66,7 @@ export default function Analytics() {
   const showRatings = activeTab === "all" || activeTab === "ratings";
   const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
+  const showOutreach = activeTab === "all" || activeTab === "outreach";
 
   return (
     <div className={styles.root}>
@@ -104,6 +107,12 @@ export default function Analytics() {
             onClick={() => setActiveTab("bookmarks")}
           >
             Bookmarks
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "outreach" ? styles.active : ""}`}
+            onClick={() => setActiveTab("outreach")}
+          >
+            Outreach
           </button>
         </div>
       </div>
@@ -229,6 +238,11 @@ export default function Analytics() {
               <CollectionNamesBlock />
             </div>
           </>
+        )}
+        {showOutreach && (
+          <div className={styles.cell}>
+            <OutreachPanelBlock />
+          </div>
         )}
       </div>
     </div>
