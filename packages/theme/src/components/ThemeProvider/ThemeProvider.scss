@@ -302,6 +302,18 @@
   --font-semibold: 600;
   --font-bold: 700;
 
+  // Z-index layer tokens (global stack contract)
+  // Policy:
+  // - Use these semantic variables for global layering.
+  // - Keep stack math inside theme primitives/helpers.
+  // - Avoid raw global z-index literals in feature styles.
+  --z-index-stack-base: 1000;
+  --z-index-menu-overlay: 1001;
+  --z-index-sticky-header: 1002;
+  --z-index-header-dropdown: 1003;
+  --z-index-select-floor: 1010;
+  --z-index-top-popover: 9999;
+
   // Semantic text tokens
   --heading-large: var(--font-bold) var(--text-28);
   --heading-medium: var(--font-medium) var(--text-18);

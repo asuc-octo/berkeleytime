@@ -9,6 +9,7 @@ import { Tooltip } from "radix-ui";
 import { ThemeContext, Theme as ThemeType } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
+import { zIndexLayers } from "../../layers";
 import "./ThemeProvider.scss";
 
 export interface ThemeProviderProps {
@@ -71,7 +72,7 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
   const effectiveSetTheme = forcedTheme ? () => {} : setTheme;
 
   return (
-    <StackContext value={1000}>
+    <StackContext value={zIndexLayers.stackBase}>
       <IconoirProvider
         iconProps={{
           strokeWidth: 2,

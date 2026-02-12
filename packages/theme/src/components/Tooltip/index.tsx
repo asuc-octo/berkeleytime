@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { Tooltip as Primitive } from "radix-ui";
 
 import { useStack } from "../../hooks/useStack";
+import { getFloatingLayerZIndex } from "../../layers";
 import styles from "./Tooltip.module.scss";
 
 type TooltipSide = Parameters<typeof Primitive.Content>[0]["side"];
@@ -46,7 +47,7 @@ export function TooltipCard({
     return (
       <div
         className={classNames(styles.card, styles.cardCompact, className)}
-        style={{ zIndex: stack + 1 }}
+        style={{ zIndex: getFloatingLayerZIndex(stack) }}
       >
         {hasArrow && <Primitive.Arrow className={styles.arrow} />}
         <div className={styles.simpleTitle}>{content}</div>
@@ -57,7 +58,7 @@ export function TooltipCard({
   return (
     <div
       className={classNames(styles.card, className)}
-      style={{ zIndex: stack + 1 }}
+      style={{ zIndex: getFloatingLayerZIndex(stack) }}
     >
       {hasArrow && <Primitive.Arrow className={styles.arrow} />}
       {content && <div className={styles.title}>{content}</div>}
@@ -97,7 +98,7 @@ export function Tooltip({
         >
           <div
             className={classNames(styles.card, cardClassName)}
-            style={{ zIndex: stack + 1 }}
+            style={{ zIndex: getFloatingLayerZIndex(stack) }}
           >
             {hasArrow && <Primitive.Arrow className={styles.arrow} />}
             {content ? (

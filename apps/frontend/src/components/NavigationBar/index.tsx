@@ -78,6 +78,7 @@ const ThemeDropdown = ({
         align="end"
         className={styles.themeDropdown}
         forceTheme={forceTheme}
+        layer="headerDropdown"
       >
         <DropdownMenu.Item
           className={styles.themeDropdownItem}
@@ -248,6 +249,7 @@ export default function NavigationBar({
               align="end"
               forceTheme={invert ? "light" : undefined}
               className={styles.profileDropdown}
+              layer="headerDropdown"
             >
               <DropdownMenu.Item asChild>
                 <Link to="/profile">

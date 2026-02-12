@@ -154,6 +154,7 @@ import { NavArrowDown, Plus, Search, Xmark } from "iconoir-react";
 import { DropdownMenu, Popover } from "radix-ui";
 
 import { useStack } from "../../hooks/useStack";
+import { getSelectContentZIndex } from "../../layers";
 import { Badge } from "../Badge";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
@@ -253,7 +254,7 @@ export function Select<T>({
   );
 
   const stack = useStack();
-  const contentZIndex = Math.max(1010, stack + 1);
+  const contentZIndex = getSelectContentZIndex(stack);
   const { triggerRef, triggerWidth } = useMatchTriggerWidth<HTMLDivElement>();
 
   // Tabs force searchable mode

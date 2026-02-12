@@ -5,6 +5,7 @@
     "dev": "turbo run dev",
     "generate": "turbo run generate",
     "lint": "turbo run lint",
+    "lint:z-index": "node ./check-z-index.mjs",
     "type-check": "turbo run type-check",
     "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",

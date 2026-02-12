@@ -31,7 +31,7 @@
 }
 
 .colorDropdown {
-  z-index: 9999;
+  z-index: var(--z-index-top-popover);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;

@@ -9,6 +9,7 @@ import { Button, Flex, IconButton } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
 import { useStack } from "../../hooks/useStack";
+import { getDialogContentStack, getDialogOverlayZIndex } from "../../layers";
 import styles from "./Dialog.module.scss";
 
 function Overlay({ className, style, ...props }: Primitive.DialogOverlayProps) {
@@ -20,7 +21,7 @@ function Overlay({ className, style, ...props }: Primitive.DialogOverlayProps) {
       className={classNames(styles.overlay, className)}
       style={{
         ...style,
-        zIndex: stack + 99,
+        zIndex: getDialogOverlayZIndex(stack),
       }}
     />
   );
@@ -29,7 +30,10 @@ function Overlay({ className, style, ...props }: Primitive.DialogOverlayProps) {
 function Content({ className, style, ...props }: Primitive.DialogContentProps) {
   const previousStack = useStack();
 
-  const stack = useMemo(() => previousStack + 100, [previousStack]);
+  const stack = useMemo(
+    () => getDialogContentStack(previousStack),
+    [previousStack]
+  );
 
   return (
     <StackContext value={stack}>
