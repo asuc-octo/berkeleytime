@@ -483,7 +483,7 @@ export default function Class({
                     />
                   </Flex>
                 </Flex>
-                <Flex gap="3" align="center" mb="5">
+                <Flex gap="3" align="center" mb="5" wrap="wrap">
                   <EnrollmentDisplay
                     enrolledCount={
                       primarySection?.enrollment?.latest?.enrolledCount
