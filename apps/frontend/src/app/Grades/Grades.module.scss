@@ -19,6 +19,7 @@
     display: flex;
     flex-direction: column;
     border-right: 1px solid var(--border-color);
+    overflow-x: hidden;
     overflow-y: auto;
   }
 }
@@ -34,6 +35,7 @@
   left: 0;
   bottom: 0;
   z-index: 1000;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -90,7 +92,7 @@
   --mini-card-padding: 10px;
   --mini-card-gap: 6px;
   --mini-title-height: 18px;
-  --mini-bar-height: 24px;
+  --mini-bar-height: 35px;
   display: flex;
   flex-direction: column;
 }
