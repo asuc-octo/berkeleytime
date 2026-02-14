@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 
-import { ClassModel, ITermItem, TermModel } from "@repo/common";
+import { ClassModel, ITermItem, TermModel } from "@repo/common/models";
 
 import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
@@ -117,7 +117,7 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   ]);
 
   const catalogDataSet = new Set(
-    termsWithClasses.map((t) => `${t._id.year} ${t._id.semester}`)
+    termsWithClasses.map((t: { _id: { year: number; semester: string } }) => `${t._id.year} ${t._id.semester}`)
   );
 
   const bulkOps = allTerms
