@@ -6,7 +6,6 @@ import { Semester } from "@/lib/generated/graphql";
 import {
   Breadth,
   Day,
-  EnrollmentFilter,
   GradingFilter,
   Level,
   SortBy,
@@ -32,27 +31,31 @@ export interface BrowserContextType {
   days: Day[];
   timeRange: TimeRange;
   breadths: Breadth[];
-  universityRequirements: UniversityRequirement[];
+  universityRequirement: UniversityRequirement | null;
   gradingFilters: GradingFilter[];
   academicOrganization: string | null;
   online: boolean;
   sortBy: SortBy;
-  enrollmentFilter: EnrollmentFilter | null;
+  open: boolean;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
+  aiSearchActive: boolean;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
   updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<Breadth[]>;
-  updateUniversityRequirements: Dispatch<UniversityRequirement[]>;
+  updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
   updateAcademicOrganization: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
-  updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
+  updateOpen: Dispatch<boolean>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
+  setAiSearchActive: Dispatch<SetStateAction<boolean>>;
+  handleSemanticSearch: () => Promise<void>;
+  semanticLoading: boolean;
   loading: boolean;
 }
 

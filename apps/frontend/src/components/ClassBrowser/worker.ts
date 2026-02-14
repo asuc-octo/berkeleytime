@@ -1,7 +1,6 @@
-import { FuzzySearch } from "@repo/common";
-
 import { ICatalogClass } from "@/lib/api";
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
+import { FuzzySearch } from "@repo/common";
 
 import { SortBy } from "./browser";
 import { searchAndSortClasses } from "./searchAndSort";

@@ -2,8 +2,8 @@
   width: 384px;
   flex-shrink: 0;
   overflow: auto;
-  scrollbar-width: none;
   background-color: var(--foreground-color);
+  scrollbar-color: var(--label-color) var(--foreground-color);
 
   &.loading {
     overflow: hidden;
@@ -64,7 +64,7 @@
     justify-content: center;
     text-align: center;
     padding: 0 24px 12px;
-    margin-top: var(--header-height, 72px); // Account for sticky header
+    margin-top: 72px; // Account for sticky header
     gap: 16px;
     font-size: var(--text-16);
 
