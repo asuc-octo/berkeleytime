@@ -1,0 +1,85 @@
+.commentInput {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+  }
+  
+  .label {
+    font-weight: var(--font-medium);
+    font-size: var(--text-14);
+    line-height: 20px;
+    color: var(--heading-color);
+  }
+  
+  .textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: var(--text-14);
+    color: var(--foreground-color);
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    transition: border-color 100ms ease-in-out;
+  
+    &:focus {
+      outline: none;
+      border-color: var(--blue-500);
+    }
+  
+    &::placeholder {
+      color: var(--paragraph-color);
+      opacity: 0.6;
+    }
+  }
+  
+  .commentsSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .commentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .commentCard {
+    padding: 16px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: border-color 100ms ease-in-out;
+  
+    &:hover {
+      border-color: var(--foreground-color);
+    }
+  }
+  
+  .commentText {
+    font-weight: var(--font-normal);
+    font-size: var(--text-14);
+    line-height: 1.5;
+    color: var(--paragraph-color);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  
+  .commentEmail {
+    font-weight: var(--font-medium);
+    font-size: var(--text-13);
+    color: var(--heading-color);
+  }
+  
+  .commentTimestamp {
+    font-weight: var(--font-normal);
+    font-size: var(--text-12);
+    color: var(--paragraph-color);
+    opacity: 0.7;
+  }

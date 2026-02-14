@@ -20,6 +20,10 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.1.1",
+    "@graphql-codegen/typescript": "^5.0.7",
+    "@graphql-codegen/typescript-operations": "^5.0.7",
+    "@graphql-codegen/typescript-react-apollo": "^4.4.0",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "patch-package": "8.0.1",
     "prettier": "3.6.2",

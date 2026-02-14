@@ -66,6 +66,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Comments = lazy(() => import("./Comments"));
 
 interface RootProps {
   dialog?: boolean;
@@ -132,6 +133,7 @@ const getCurrentTab = (pathname: string): string => {
   if (pathname.endsWith("/grades")) return "grades";
   if (pathname.endsWith("/ratings")) return "ratings";
   if (pathname.endsWith("/enrollment")) return "enrollment";
+  if (pathname.endsWith("/comments")) return "comments"; // Added comments tab detection
   return "overview";
 };
 
@@ -581,6 +583,10 @@ export default function Class({
                     <Tabs.Trigger value="enrollment" asChild>
                       <MenuItem>Enrollment</MenuItem>
                     </Tabs.Trigger>
+                    {/* Added Comments tab for dialog mode */}
+                    <Tabs.Trigger value="comments" asChild>
+                      <MenuItem>Comments</MenuItem>
+                    </Tabs.Trigger>
                   </Flex>
                 </Tabs.List>
               ) : (
@@ -614,6 +620,12 @@ export default function Class({
                   <NavLink to={{ ...location, pathname: "enrollment" }}>
                     {({ isActive }) => (
                       <MenuItem active={isActive}>Enrollment</MenuItem>
+                    )}
+                  </NavLink>
+                  {/* Added Comments tab for non-dialog mode */}
+                  <NavLink to={{ ...location, pathname: "comments" }}>
+                    {({ isActive }) => (
+                      <MenuItem active={isActive}>Comments</MenuItem>
                     )}
                   </NavLink>
                 </Flex>
@@ -653,6 +665,12 @@ export default function Class({
                 <Tabs.Content value="enrollment" asChild>
                   <SuspenseBoundary fallback={<></>}>
                     <Enrollment />
+                  </SuspenseBoundary>
+                </Tabs.Content>
+                {/* Added Comments tab content for dialog mode */}
+                <Tabs.Content value="comments" asChild>
+                  <SuspenseBoundary fallback={<></>}>
+                    <Comments />
                   </SuspenseBoundary>
                 </Tabs.Content>
               </>
@@ -712,6 +730,21 @@ export default function Class({
                   >
                     <SuspenseBoundary fallback={<></>}>
                       <Enrollment />
+                    </SuspenseBoundary>
+                  </div>
+                )}
+                {/* Added Comments tab for non-dialog mode with lazy mounting */}
+                {visitedTabs.has("comments") && (
+                  <div
+                    style={{
+                      display:
+                        getCurrentTab(location.pathname) === "comments"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <SuspenseBoundary fallback={<></>}>
+                      <Comments />
                     </SuspenseBoundary>
                   </div>
                 )}

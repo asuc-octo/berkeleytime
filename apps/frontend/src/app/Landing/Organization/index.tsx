@@ -21,7 +21,7 @@ export default function Organization() {
         <div className={styles.aboutContent}>
           <h2 className={styles.aboutTitle}>About Us</h2>
           <p className={styles.aboutText}>
-            We're a small group of student volunteers at UC Berkeley, dedicated
+            [bello, testing] We're a small group of student volunteers at UC Berkeley, dedicated
             to simplifying the course discovery experience. We actively build,
             improve and maintain Berkeleytime.
           </p>

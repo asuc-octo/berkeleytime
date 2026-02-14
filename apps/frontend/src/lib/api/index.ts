@@ -1,5 +1,6 @@
 export * from "./classes";
 export * from "./collection";
+export * from "./discussion";
 export * from "./courses";
 export * from "./curated-classes";
 export * from "./enrollment";

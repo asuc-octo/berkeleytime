@@ -19,11 +19,13 @@ import Schedule from "./schedule";
 import Staff from "./staff";
 import Term from "./term";
 import User from "./user";
+import Discussion from "./discussion";
 
 const modules = [
   Analytics,
   Banner,
   ClickTracking,
+  Discussion,
   User,
   GradeDistribution,
   Catalog,
