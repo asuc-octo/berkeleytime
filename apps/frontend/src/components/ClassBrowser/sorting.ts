@@ -232,6 +232,16 @@ const getPercentOpenSeats = ({
   );
 };
 
+const compareViews: Comparator = (a, b, direction) => {
+  const difference = (a.viewCount ?? 0) - (b.viewCount ?? 0);
+
+  if (difference !== 0) {
+    return difference * direction;
+  }
+
+  return compareAlphabetical(a, b, direction);
+};
+
 const comparePercentOpenSeats: Comparator = (a, b, direction) => {
   const difference = getPercentOpenSeats(a) - getPercentOpenSeats(b);
 
@@ -300,6 +310,7 @@ const sorters: Record<SortBy, Sorter> = {
   [SortBy.OpenSeats]: (context) => sortWithRelevance(context, compareOpenSeats),
   [SortBy.PercentOpenSeats]: (context) =>
     sortWithRelevance(context, comparePercentOpenSeats),
+  [SortBy.Views]: (context) => sortWithRelevance(context, compareViews),
 };
 
 export const sortClasses = (
