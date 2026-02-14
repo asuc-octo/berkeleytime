@@ -1,5 +1,8 @@
 import { gql } from "graphql-tag";
 
+// create a click event to record timestamp and other relavent information
+// to access click counts, staff is required
+
 export const clickEventTypeDef = gql`
   """
   A single click event recorded for intensive tracking.
@@ -34,6 +37,14 @@ export const clickEventTypeDef = gql`
     uniqueVisitors: Int!
   }
 
+  """
+  A single point in a click events time series (e.g. one day).
+  """
+  type ClickEventsTimeSeriesPoint {
+    date: String!
+    count: Int!
+  }
+
   type Query {
     """
     Get click events for a specific target. Staff only.
@@ -56,5 +67,15 @@ export const clickEventTypeDef = gql`
       startDate: String
       endDate: String
     ): ClickStats! @auth
+
+    """
+    Get click counts per day for a target. Staff only.
+    """
+    clickEventsTimeSeries(
+      targetId: ID!
+      targetType: String!
+      startDate: String
+      endDate: String
+    ): [ClickEventsTimeSeriesPoint!]! @auth
   }
 `;
