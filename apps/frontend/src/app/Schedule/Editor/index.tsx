@@ -7,6 +7,8 @@ import {
   Edit,
   ShareIos,
   Shuffle,
+  SidebarCollapse,
+  SidebarExpand,
   Upload,
   ViewColumns2,
 } from "iconoir-react";
@@ -51,6 +53,7 @@ export default function Editor() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameValue, setNameValue] = useState(schedule.name);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Update nameValue when schedule.name changes
   useEffect(() => {
@@ -1162,6 +1165,16 @@ export default function Editor() {
               />
             </EditDialog>
           )}
+          <Tooltip
+            trigger={
+              <IconButton
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              >
+                {sidebarCollapsed ? <SidebarExpand /> : <SidebarCollapse />}
+              </IconButton>
+            }
+            title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          />
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -1209,26 +1222,28 @@ export default function Editor() {
         )}
       </div>
       <div className={styles.body}>
-        <SideBar
-          expanded={expanded}
-          onClassSelect={handleClassSelect}
-          onSectionSelect={handleSectionSelect}
-          onExpandedChange={handleExpandedChange}
-          onSectionMouseOver={handleSectionMouseOver}
-          onSectionMouseOut={() => setCurrentSection(null)}
-          onSortEnd={handleSortEnd}
-          onDeleteClass={handleDeleteClass}
-          onDeleteEvent={handleDeleteEvent}
-          onColorChange={handleColorChange}
-          onLockChange={handleLockChange}
-          onHideChange={handleHideChange}
-          onSectionBlockToggle={handleSectionBlockToggle}
-          onComponentBlockToggle={handleComponentBlockToggle}
-          onComponentLockChange={handleComponentLockChange}
-          onEventColorChange={handleEventColorChange}
-          onEventTitleChange={handleEventTitleChange}
-          onEventHideChange={handleEventHideChange}
-        />
+        {!sidebarCollapsed && (
+          <SideBar
+            expanded={expanded}
+            onClassSelect={handleClassSelect}
+            onSectionSelect={handleSectionSelect}
+            onExpandedChange={handleExpandedChange}
+            onSectionMouseOver={handleSectionMouseOver}
+            onSectionMouseOut={() => setCurrentSection(null)}
+            onSortEnd={handleSortEnd}
+            onDeleteClass={handleDeleteClass}
+            onDeleteEvent={handleDeleteEvent}
+            onColorChange={handleColorChange}
+            onLockChange={handleLockChange}
+            onHideChange={handleHideChange}
+            onSectionBlockToggle={handleSectionBlockToggle}
+            onComponentBlockToggle={handleComponentBlockToggle}
+            onComponentLockChange={handleComponentLockChange}
+            onEventColorChange={handleEventColorChange}
+            onEventTitleChange={handleEventTitleChange}
+            onEventHideChange={handleEventHideChange}
+          />
+        )}
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
             <Week

@@ -130,9 +130,6 @@ export default function Grades() {
     if (typeof window !== "undefined") {
       try {
         const url = new URL(window.location.origin);
-        if (url.hostname === "localhost") {
-          url.port = "3000";
-        }
         url.pathname = "/grades";
         url.search = params.toString();
         return url.toString();
@@ -141,7 +138,7 @@ export default function Grades() {
       }
     }
 
-    return `http://localhost:3000/grades?${params.toString()}`;
+    return `/grades?${params.toString()}`;
   }, [subject, courseNumber]);
 
   const subtitle = useMemo(() => {

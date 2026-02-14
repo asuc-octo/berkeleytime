@@ -4,7 +4,7 @@ import {
   ScheduleModel,
   SectionModel,
   TermModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import {
   CreateScheduleInput,

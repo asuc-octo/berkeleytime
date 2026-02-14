@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom";
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  Button,
   Container,
   Flex,
 } from "@repo/theme";
@@ -14,6 +17,92 @@ import styles from "./Organization.module.scss";
 export default function Organization() {
   return (
     <Flex direction="column" className={styles.root} pt="9">
+      <Container className={styles.aboutSection}>
+        <div className={styles.aboutContent}>
+          <h2 className={styles.aboutTitle}>About Us</h2>
+          <p className={styles.aboutText}>
+            We're a small group of student volunteers at UC Berkeley, dedicated
+            to simplifying the course discovery experience. We actively build,
+            improve and maintain Berkeleytime.
+          </p>
+          <Button
+            as={Link}
+            to="/about"
+            variant="secondary"
+            className={styles.aboutButton}
+          >
+            Learn More
+          </Button>
+        </div>
+      </Container>
+      <Container className={styles.wrapper}>
+        <div className={styles.getInvolvedBox}>
+          <div className={styles.getInvolvedTitle}>
+            <h2 className={styles.heading}>Sponsors</h2>
+            <p className={styles.description}>
+              Thank you to the folks that help the Berkeleytime team continue to
+              provide this service free-of-charge to students!
+            </p>
+          </div>
+          <div className={styles.sponsorsLogos}>
+            <a
+              href="https://berkeleytime.com/go/about-mechanize"
+              className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.mechanizeContainer}>
+                <img
+                  src="/images/mechanize-light-mode.png"
+                  alt="Mechanize"
+                  className={styles.mechanizeLogoLight}
+                />
+                <img
+                  src="/images/mechanize-dark-mode.png"
+                  alt="Mechanize"
+                  className={styles.mechanizeLogoDark}
+                />
+                <span className={styles.mechanizeName}>Mechanize, Inc.</span>
+              </div>
+            </a>
+            <a
+              href="https://www.ocf.berkeley.edu/"
+              className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <div className={styles.ocfContainer}>
+                <img
+                  src="/images/ocf-logo.png"
+                  alt="OCF"
+                  className={styles.ocfLogo}
+                />
+                <div className={styles.ocfText}>
+                  <span className={styles.ocfHostedOn}>hosted by</span>
+                  <span className={styles.ocfName}>OCF</span>
+                </div>
+              </div>
+            </a>
+            <a
+              href="https://asuc.org/"
+              className={styles.sponsorLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/images/asuc-light-mode.png"
+                alt="ASUC"
+                className={styles.asucLogoLight}
+              />
+              <img
+                src="/images/asuc-dark-mode.png"
+                alt="ASUC"
+                className={styles.asucLogoDark}
+              />
+            </a>
+          </div>
+        </div>
+      </Container>
       <Container className={styles.wrapper}>
         <div className={styles.getInvolvedBox}>
           <div className={styles.getInvolvedTitle}>
@@ -62,34 +151,6 @@ export default function Organization() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        </div>
-      </Container>
-      <Container className={styles.sponsorsSection}>
-        <div className={styles.sponsorsContent}>
-          <h2 className={styles.sponsorsTitle}>Sponsors</h2>
-          <p className={styles.sponsorsText}>
-            Thank you to the folks that help the Berkeleytime team continue to
-            provide this service free-of-charge to students!
-          </p>
-          <div className={styles.sponsorsLogos}>
-            <a
-              href="https://www.ocf.berkeley.edu/"
-              className={styles.sponsorLink}
-            >
-              <img
-                src="/images/ocf.png"
-                alt="OCF"
-                className={styles.sponsorLogo}
-              />
-            </a>
-            <a href="https://asuc.org/" className={styles.sponsorLink}>
-              <img
-                src="/images/asuc.png"
-                alt="ASUC"
-                className={styles.sponsorLogo}
-              />
-            </a>
-          </div>
         </div>
       </Container>
       <Container className={styles.sponsorsSection}>

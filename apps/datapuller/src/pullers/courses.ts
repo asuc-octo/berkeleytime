@@ -1,4 +1,4 @@
-import { CourseModel } from "@repo/common";
+import { CourseModel } from "@repo/common/models";
 
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";

@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 
-import { ALL_BANNERS, DELETE_BANNER } from "../../../lib/api/banner";
+import { ALL_BANNERS_FOR_STAFF, DELETE_BANNER } from "../../../lib/api/banner";
 
 interface DeleteBannerResponse {
   deleteBanner: boolean;
@@ -8,7 +8,7 @@ interface DeleteBannerResponse {
 
 export const useDeleteBanner = () => {
   const [mutate, result] = useMutation<DeleteBannerResponse>(DELETE_BANNER, {
-    refetchQueries: [ALL_BANNERS],
+    refetchQueries: [ALL_BANNERS_FOR_STAFF],
   });
 
   const deleteBanner = async (bannerId: string) => {

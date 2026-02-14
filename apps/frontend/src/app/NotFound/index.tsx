@@ -1,8 +1,24 @@
+import { useEffect, useState } from "react";
+
 import { Container, Flex } from "@repo/theme";
 
 import styles from "./NotFound.module.scss";
 
 export default function NotFound() {
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowContent(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!showContent) {
+    return null;
+  }
+
   return (
     <Container className={styles.root}>
       <Flex

@@ -52,7 +52,6 @@ data:
   MONGODB_URI: {{ .Values.mongoUri }}
   TZ: America/Los_Angeles # for tslog
   BACKEND_URL: {{ printf "http://%s-svc.bt.svc.cluster.local:%v" (include "bt-app.backendName" .) .Values.backend.cacheWarmingPort }}
-  SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
 
 ---
 

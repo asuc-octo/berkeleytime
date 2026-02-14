@@ -32,3 +32,24 @@ spec:
                 name: {{ include "bt-app.backendName" . }}-svc
                 port:
                   number: {{ .Values.port }}
+          - path: /go
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
+          - path: /banner
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
+          - path: /message
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}

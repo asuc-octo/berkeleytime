@@ -45,6 +45,8 @@
   border-radius: 8px;
   width: 512px;
   max-width: calc(100% - 48px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
 
   &[data-state="open"] {
     animation: jumpIn 150ms ease-in;

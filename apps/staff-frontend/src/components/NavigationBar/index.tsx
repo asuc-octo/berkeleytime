@@ -19,16 +19,13 @@ export default function NavigationBar() {
       </Link>
       <div className={styles.group}>
         <NavLink to="/" end>
-          {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
-        </NavLink>
-        <NavLink to="/analytics">
           {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
         </NavLink>
-        <NavLink to="/banners">
-          {({ isActive }) => <MenuItem active={isActive}>Banners</MenuItem>}
+        <NavLink to="/members">
+          {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>
-        <NavLink to="/redirects">
-          {({ isActive }) => <MenuItem active={isActive}>Redirects</MenuItem>}
+        <NavLink to="/outreach">
+          {({ isActive }) => <MenuItem active={isActive}>Outreach</MenuItem>}
         </NavLink>
       </div>
       {user && (

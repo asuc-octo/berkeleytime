@@ -1,4 +1,4 @@
-import { EnrollmentTimeframeModel } from "@repo/common";
+import { EnrollmentTimeframeModel } from "@repo/common/models";
 
 import { getEnrollment } from "./controller";
 import { EnrollmentModule } from "./generated-types/module-types";

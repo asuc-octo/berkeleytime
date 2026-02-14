@@ -42,6 +42,8 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
             enrolledCount
             maxEnroll
             activeReservedMaxCount
+            waitlistedCount
+            maxWaitlist
           }
         }
         meetings {

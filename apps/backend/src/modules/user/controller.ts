@@ -4,7 +4,7 @@ import {
   RatingModel,
   ScheduleModel,
   UserModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";

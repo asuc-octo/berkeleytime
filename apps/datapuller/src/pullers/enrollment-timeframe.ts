@@ -1,4 +1,8 @@
-import { EnrollmentTimeframeModel, ITermItem, TermModel } from "@repo/common";
+import {
+  EnrollmentTimeframeModel,
+  ITermItem,
+  TermModel,
+} from "@repo/common/models";
 
 import { Config } from "../shared/config";
 import {

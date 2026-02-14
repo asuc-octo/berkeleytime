@@ -1,4 +1,4 @@
-import { FuzzySearch } from "@/utils/fuzzy-find";
+import { FuzzySearch } from "@repo/common";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const initialize = (list: any[], customOptions?: any) => {

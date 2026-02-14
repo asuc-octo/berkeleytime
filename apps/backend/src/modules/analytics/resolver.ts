@@ -11,7 +11,10 @@ import {
 } from "./controllers/rating";
 import { getSchedulerAnalyticsData } from "./controllers/schedule";
 import { getStats } from "./controllers/stats";
-import { getUserCreationAnalyticsData } from "./controllers/user";
+import {
+  getUserActivityAnalyticsData,
+  getUserCreationAnalyticsData,
+} from "./controllers/user";
 
 const resolvers = {
   Query: {
@@ -40,6 +43,26 @@ const resolvers = {
     ) => {
       try {
         return await getUserCreationAnalyticsData(context);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    userActivityAnalyticsData: async (
+      _: unknown,
+      __: unknown,
+      context: RequestContext
+    ) => {
+      try {
+        return await getUserActivityAnalyticsData(context);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

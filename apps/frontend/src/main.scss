@@ -1,3 +1,7 @@
+:root {
+  --header-height: 90px; /* Default, overridden by JS */
+}
+
 html {
   /* Prevent double-tap zoom on mobile while preserving pinch-to-zoom feel */
   touch-action: manipulation;

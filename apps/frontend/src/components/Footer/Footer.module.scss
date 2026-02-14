@@ -5,13 +5,22 @@
 .root {
   padding: 64px 0;
   display: flex;
+  flex-wrap: wrap;
   border-top: 1px solid var(--border-color);
   gap: 64px;
-  line-height: 1;
 
   .columns {
     display: flex;
     gap: 64px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 48px;
+
+    .columns {
+      width: 100%;
+      gap: 48px;
+    }
   }
 
   .column {
@@ -30,15 +39,18 @@
       font-weight: var(--font-normal);
       color: var(--paragraph-color);
       transition: all 100ms ease-in-out;
+      white-space: nowrap;
 
       &:hover {
         color: var(--heading-color);
       }
     }
+
   }
 
   .group {
     flex-grow: 1;
+    min-width: 200px;
 
     .brandGroup {
       display: flex;
@@ -50,6 +62,7 @@
       font-size: var(--text-14);
       font-weight: var(--font-normal);
       color: var(--paragraph-color);
+      white-space: nowrap;
     }
 
     .brand {
@@ -92,6 +105,7 @@
   color: var(--paragraph-color);
   text-decoration: none;
   transition: all 100ms ease-in-out;
+  white-space: nowrap;
 
   &:hover {
     color: var(--heading-color);
@@ -112,4 +126,5 @@
   &[data-status="UNDERMAINTENANCE"] .statusDot {
     background-color: var(--blue-500);
   }
+
 }

@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import {
-  ALL_BANNERS,
+  ALL_BANNERS_FOR_STAFF,
   Banner,
   UPDATE_BANNER,
   UpdateBannerInput,
@@ -13,7 +13,7 @@ interface UpdateBannerResponse {
 
 export const useUpdateBanner = () => {
   const [mutate, result] = useMutation<UpdateBannerResponse>(UPDATE_BANNER, {
-    refetchQueries: [ALL_BANNERS],
+    refetchQueries: [ALL_BANNERS_FOR_STAFF],
   });
 
   const updateBanner = async (bannerId: string, input: UpdateBannerInput) => {

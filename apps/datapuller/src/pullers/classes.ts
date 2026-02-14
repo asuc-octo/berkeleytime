@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 
-import { ClassModel, ITermItem, TermModel } from "@repo/common";
+import { ClassModel, TermModel } from "@repo/common/models";
 
 import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { getClasses } from "../lib/classes";
@@ -10,84 +10,6 @@ import {
   getActiveTerms,
   getLastFiveYearsTerms,
 } from "../shared/term-selectors";
-
-/**
- * Refreshes the semantic search index for a single term.
- * Returns true if successful, false otherwise.
- */
-const refreshSemanticSearchForTerm = async (
-  config: Config,
-  term: Pick<ITermItem, "name">
-): Promise<boolean> => {
-  const { log, SEMANTIC_SEARCH_URL } = config;
-
-  const [yearStr, semester] = term.name.split(" ");
-  const year = parseInt(yearStr);
-
-  if (!year || !semester) {
-    log.warn(`[Semantic Search] Failed to parse term name: ${term.name}`);
-    return false;
-  }
-
-  try {
-    log.info(`[Semantic Search] Refreshing index for ${term.name}...`);
-
-    const response = await fetch(`${SEMANTIC_SEARCH_URL}/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ year, semester }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      log.warn(
-        `[Semantic Search] Failed to refresh ${term.name}: HTTP ${response.status} - ${errorText}`
-      );
-      return false;
-    }
-
-    const result = (await response.json()) as { size?: number };
-    log.info(
-      `[Semantic Search] Refreshed ${term.name}: ${result.size ?? "unknown"} courses indexed`
-    );
-    return true;
-  } catch (error: any) {
-    log.warn(
-      `[Semantic Search] Failed to refresh ${term.name}: ${error.message}`
-    );
-    return false;
-  }
-};
-
-/**
- * Refreshes the semantic search index for the given terms.
- * Processes terms sequentially and continues even if some fail.
- */
-const refreshSemanticSearchForTerms = async (
-  config: Config,
-  terms: Pick<ITermItem, "name">[]
-) => {
-  const { log } = config;
-
-  if (terms.length === 0) {
-    log.info("[Semantic Search] No terms to refresh.");
-    return;
-  }
-
-  log.info(`[Semantic Search] Refreshing index for ${terms.length} term(s)...`);
-
-  let successCount = 0;
-  for (const term of terms) {
-    const success = await refreshSemanticSearchForTerm(config, term);
-    if (success) {
-      successCount++;
-    }
-  }
-
-  log.info(
-    `[Semantic Search] Completed: ${successCount}/${terms.length} succeeded`
-  );
-};
 
 const TERMS_PER_API_BATCH = 4;
 
@@ -256,13 +178,6 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   // Process sequentially to avoid overwhelming the server
   await warmCatalogCacheForTerms(config, termsWithCatalogData);
-
-  // Refresh semantic search index only for current/future terms
-  // Past terms don't change, so no need to rebuild their indexes
-  const nonPastTerms = terms
-    .filter((term) => term.temporalPosition !== "Past")
-    .map((term) => ({ name: term.name }));
-  await refreshSemanticSearchForTerms(config, nonPastTerms);
 };
 
 const activeTerms = async (config: Config) => {

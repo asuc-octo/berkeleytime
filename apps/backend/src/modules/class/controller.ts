@@ -4,10 +4,11 @@ import type { RedisClientType } from "redis";
 
 import {
   ClassModel,
+  ClassViewCountModel,
   IClassItem,
   ISectionItem,
   SectionModel,
-} from "@repo/common";
+} from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
 import { formatClass, formatSection } from "./formatter";
@@ -42,14 +43,46 @@ export const getSecondarySections = async (
   courseNumber: string,
   number: string
 ) => {
+  const primarySection = await SectionModel.findOne({
+    year,
+    semester,
+    sessionId,
+    subject,
+    courseNumber,
+    number,
+    primary: true,
+  }).lean();
+
+  const sectionId = primarySection?.sectionId;
+
+  console.log(primarySection);
+
   const sections = await SectionModel.find({
     year,
     semester,
     sessionId,
     subject,
     courseNumber,
-    number: { $regex: `^(${number[number.length - 1]}|999)` },
+    associatedSectionIds: { $in: [sectionId] },
+    primary: false, // filter out lectures
   }).lean();
+
+  if (sections.length === 0) {
+    // For some reason, Physics 7B encodes relationships in the associatedClass field instead of the associatedSectionIds field
+    // Bio 1B and Chem 3A do it the other way around
+    const sections2 = await SectionModel.find({
+      year,
+      semester,
+      sessionId,
+      subject,
+      courseNumber,
+      associatedClass: parseInt(number),
+      primary: false, // filter out lectures
+    }).lean();
+    if (sections2.length > 0) {
+      sections.push(...sections2);
+    }
+  }
 
   return sections.map((section) => formatSection(section as ISectionItem));
 };
@@ -186,7 +219,7 @@ export const getViewCount = async (
   const redisCount = await redis.get(counterKey);
   const pendingViews = redisCount ? parseInt(redisCount, 10) : 0;
 
-  const _class = await ClassModel.findOne({
+  const viewDoc = await ClassViewCountModel.findOne({
     year,
     semester,
     sessionId: sessionId || "1",
@@ -195,8 +228,7 @@ export const getViewCount = async (
     number,
   }).lean();
 
-  const mongoViews =
-    (_class as IClassItem & { viewCount?: number })?.viewCount ?? 0;
+  const mongoViews = viewDoc?.viewCount ?? 0;
 
   return pendingViews + mongoViews;
 };
@@ -215,7 +247,10 @@ export const flushViewCounts = async (
     keys.push(...result.keys);
   } while (cursor !== "0");
 
-  if (keys.length === 0) {
+  // Deduplicate keys - Redis SCAN may return duplicates during hash table resizing
+  const uniqueKeys = [...new Set(keys)];
+
+  if (uniqueKeys.length === 0) {
     return { flushed: 0, errors: 0 };
   }
 
@@ -230,10 +265,14 @@ export const flushViewCounts = async (
         number: string;
       };
       update: { $inc: { viewCount: number } };
+      upsert: boolean;
     };
   }> = [];
 
-  for (const key of keys) {
+  // Track the count we read for each key to decrement later
+  const keyCountMap = new Map<string, number>();
+
+  for (const key of uniqueKeys) {
     const value = await redis.get(key);
     if (!value) continue;
 
@@ -248,10 +287,12 @@ export const flushViewCounts = async (
 
     if (isNaN(year)) continue;
 
+    keyCountMap.set(key, count);
     operations.push({
       updateOne: {
         filter: { year, semester, sessionId, subject, courseNumber, number },
         update: { $inc: { viewCount: count } },
+        upsert: true,
       },
     });
   }
@@ -261,14 +302,20 @@ export const flushViewCounts = async (
   }
 
   try {
-    const result = await ClassModel.bulkWrite(operations, { ordered: false });
+    const result = await ClassViewCountModel.bulkWrite(operations, {
+      ordered: false,
+    });
 
-    // Delete Redis keys only after successful Mongo write
-    for (const key of keys) {
-      await redis.del(key);
+    // Decrement only the counts we flushed, preserving any new views added after our read
+    for (const [key, count] of keyCountMap) {
+      const remaining = await redis.decrBy(key, count);
+      // Clean up keys that are now zero or negative
+      if (remaining <= 0) {
+        await redis.del(key);
+      }
     }
 
-    return { flushed: result.modifiedCount, errors: 0 };
+    return { flushed: result.modifiedCount + result.upsertedCount, errors: 0 };
   } catch {
     return { flushed: 0, errors: operations.length };
   }

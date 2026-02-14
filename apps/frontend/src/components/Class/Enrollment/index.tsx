@@ -169,9 +169,6 @@ export default function Enrollment() {
     if (typeof window !== "undefined") {
       try {
         const url = new URL(window.location.origin);
-        if (url.hostname === "localhost") {
-          url.port = "3000";
-        }
         url.pathname = "/enrollment";
         url.search = params.toString();
         return url.toString();
@@ -180,7 +177,7 @@ export default function Enrollment() {
       }
     }
 
-    return `http://localhost:3000/enrollment?${params.toString()}`;
+    return `/enrollment?${params.toString()}`;
   }, [
     _class.subject,
     _class.courseNumber,

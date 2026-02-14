@@ -1,6 +1,7 @@
 export * from "./schedule";
 export * from "./user";
 export * from "./class";
+export * from "./class-view-count";
 export * from "./term";
 export * from "./course";
 export * from "./section";
@@ -15,4 +16,7 @@ export * from "./staff-member";
 export * from "./semester-role";
 export * from "./pod";
 export * from "./banner";
+export * from "./banner-view-count";
 export * from "./route-redirect";
+export * from "./click-event";
+export * from "./targeted-message";

@@ -13,6 +13,7 @@ import List from "./List";
 import {
   Breadth,
   Day,
+  EnrollmentFilter,
   GradingFilter,
   Level,
   SortBy,
@@ -77,8 +78,8 @@ export default function ClassBrowser({
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localTimeRange, setLocalTimeRange] = useState<TimeRange>([null, null]);
   const [localBreadths, setLocalBreadths] = useState<Breadth[]>([]);
-  const [localUniversityRequirement, setLocalUniversityRequirement] =
-    useState<UniversityRequirement | null>(null);
+  const [localUniversityRequirements, setLocalUniversityRequirements] =
+    useState<UniversityRequirement[]>([]);
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
@@ -87,13 +88,9 @@ export default function ClassBrowser({
   >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
-  const [localOpen, setLocalOpen] = useState<boolean>(false);
+  const [localEnrollmentFilter, setLocalEnrollmentFilter] =
+    useState<EnrollmentFilter | null>(null);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
-  const [aiSearchActive, setAiSearchActive] = useState<boolean>(false);
-  const [semanticResults, setSemanticResults] = useState<
-    Array<{ subject: string; courseNumber: string; score: number }>
-  >([]);
-  const [semanticLoading, setSemanticLoading] = useState(false);
 
   const { data, loading } = useQuery(GetCanonicalCatalogDocument, {
     variables: {
@@ -162,12 +159,15 @@ export default function ClassBrowser({
     [searchParams, localBreadths, persistent]
   );
 
-  const universityRequirement = useMemo(
+  const universityRequirements = useMemo(
     () =>
       persistent
-        ? (searchParams.get("universityRequirement") ?? null)
-        : localUniversityRequirement,
-    [searchParams, localUniversityRequirement, persistent]
+        ? (searchParams
+            .get("universityRequirements")
+            ?.split(",")
+            .filter(Boolean) ?? [])
+        : localUniversityRequirements,
+    [searchParams, localUniversityRequirements, persistent]
   );
 
   const gradingFilters = useMemo(
@@ -211,10 +211,19 @@ export default function ClassBrowser({
     setLocalReverse(false);
   }, [sortBy]);
 
-  const open = useMemo(
-    () => (persistent ? searchParams.has("open") : localOpen),
-    [searchParams, localOpen, persistent]
-  );
+  const enrollmentFilter = useMemo(() => {
+    if (persistent) {
+      const param = searchParams.get("enrollmentFilter");
+      if (
+        param &&
+        Object.values(EnrollmentFilter).includes(param as EnrollmentFilter)
+      ) {
+        return param as EnrollmentFilter;
+      }
+      return null;
+    }
+    return localEnrollmentFilter;
+  }, [searchParams, localEnrollmentFilter, persistent]);
 
   const online = useMemo(
     () => (persistent ? searchParams.has("online") : localOnline),
@@ -228,10 +237,10 @@ export default function ClassBrowser({
         units,
         levels,
         days,
-        open,
+        enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         academicOrganization,
         timeRange
@@ -241,10 +250,10 @@ export default function ClassBrowser({
       units,
       levels,
       days,
-      open,
+      enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       academicOrganization,
       timeRange,
@@ -253,45 +262,17 @@ export default function ClassBrowser({
 
   const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
-  const filteredClasses = useMemo(() => {
-    // If AI search is active and we have semantic results, filter by those
-    if (aiSearchActive && semanticResults.length > 0) {
-      // Backend already applies threshold filtering and sorting
-      // We need to maintain the order from API response
-      const classMap = new Map(
-        includedClasses.map((cls) => [
-          `${cls.subject}-${cls.courseNumber}`,
-          cls,
-        ])
-      );
-
-      // Map semantic results to actual class objects, preserving order
-      const filtered = semanticResults
-        .map((r) => classMap.get(`${r.subject}-${r.courseNumber}`))
-        .filter((cls) => cls !== undefined);
-
-      return filtered;
-    }
-
-    // Otherwise use normal fuzzy search
-    const result = searchAndSortClasses({
-      classes: includedClasses,
-      index,
-      query,
-      sortBy,
-      order: effectiveOrder,
-    });
-
-    return result;
-  }, [
-    aiSearchActive,
-    semanticResults,
-    includedClasses,
-    index,
-    query,
-    sortBy,
-    effectiveOrder,
-  ]);
+  const filteredClasses = useMemo(
+    () =>
+      searchAndSortClasses({
+        classes: includedClasses,
+        index,
+        query,
+        sortBy,
+        order: effectiveOrder,
+      }),
+    [includedClasses, index, query, sortBy, effectiveOrder]
+  );
 
   const hasActiveFilters = useMemo(() => {
     return (
@@ -302,10 +283,10 @@ export default function ClassBrowser({
       timeRange[0] !== null ||
       timeRange[1] !== null ||
       breadths.length > 0 ||
-      universityRequirement !== null ||
+      universityRequirements.length > 0 ||
       gradingFilters.length > 0 ||
       academicOrganization !== null ||
-      open ||
+      enrollmentFilter !== null ||
       online ||
       sortBy !== SortBy.Relevance
     );
@@ -315,45 +296,13 @@ export default function ClassBrowser({
     days,
     timeRange,
     breadths,
-    universityRequirement,
+    universityRequirements,
     gradingFilters,
     academicOrganization,
-    open,
+    enrollmentFilter,
     online,
     sortBy,
   ]);
-
-  // Semantic search handler
-  const handleSemanticSearch = async () => {
-    if (!query.trim()) {
-      setSemanticResults([]);
-      return;
-    }
-
-    setSemanticLoading(true);
-    try {
-      const params = new URLSearchParams({
-        query: query.trim(),
-        year: String(currentYear),
-        semester: currentSemester,
-        threshold: "0.45",
-      });
-
-      const response = await fetch(`/api/semantic-search/courses?${params}`);
-
-      if (!response.ok) {
-        throw new Error("Semantic search failed");
-      }
-
-      const data = await response.json();
-      setSemanticResults(data.results || []);
-    } catch (error) {
-      console.error("Semantic search error:", error);
-      setSemanticResults([]);
-    } finally {
-      setSemanticLoading(false);
-    }
-  };
 
   const updateArray = <T,>(
     key: string,
@@ -444,21 +393,6 @@ export default function ClassBrowser({
     setLocalSortBy(value);
   };
 
-  const updateUniversityRequirement = (
-    universityRequirement: UniversityRequirement | null
-  ) => {
-    if (persistent) {
-      if (universityRequirement) {
-        searchParams.set("universityRequirement", universityRequirement);
-      } else {
-        searchParams.delete("universityRequirement");
-      }
-      setSearchParams(searchParams);
-      return;
-    }
-    setLocalUniversityRequirement(universityRequirement);
-  };
-
   const updateQuery = (query: string) => {
     setLocalQuery(query);
   };
@@ -482,14 +416,13 @@ export default function ClassBrowser({
         days,
         timeRange,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         academicOrganization,
         online,
-        open,
+        enrollmentFilter,
         reverse: localReverse,
         effectiveOrder,
-        aiSearchActive,
         updateQuery,
         updateUnits: (units) => updateRange("units", setLocalUnits, units),
         updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
@@ -497,7 +430,12 @@ export default function ClassBrowser({
         updateTimeRange,
         updateBreadths: (breadths) =>
           updateArray("breadths", setLocalBreadths, breadths),
-        updateUniversityRequirement,
+        updateUniversityRequirements: (reqs) =>
+          updateArray(
+            "universityRequirements",
+            setLocalUniversityRequirements,
+            reqs
+          ),
         updateGradingFilters: (filters) =>
           updateArray("gradingBases", setLocalGradingFilters, filters),
         updateAcademicOrganization: (org) => {
@@ -514,15 +452,23 @@ export default function ClassBrowser({
           setLocalAcademicOrganization(org);
         },
         updateSortBy,
-        updateOpen: (open) => updateBoolean("open", setLocalOpen, open),
+        updateEnrollmentFilter: (filter) => {
+          if (persistent) {
+            if (filter === null) {
+              searchParams.delete("enrollmentFilter");
+            } else {
+              searchParams.set("enrollmentFilter", filter);
+            }
+            setSearchParams(searchParams);
+            return;
+          }
+          setLocalEnrollmentFilter(filter);
+        },
         updateOnline: (online) =>
           updateBoolean("online", setLocalOnline, online),
         setExpanded,
         loading,
         updateReverse: setLocalReverse,
-        setAiSearchActive,
-        handleSemanticSearch,
-        semanticLoading,
       }}
     >
       <div

@@ -1,6 +1,6 @@
 import { Logger } from "tslog";
 
-import { ICourseItem } from "@repo/common";
+import { ICourseItem } from "@repo/common/models";
 import { Course, CoursesAPI } from "@repo/sis-api/courses";
 
 import { fetchPaginatedData } from "./api/sis-api";

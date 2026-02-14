@@ -133,6 +133,12 @@ export default function Sections() {
                 </th>
                 <th
                   scope="col"
+                  className={`${styles.headerCell} ${styles.number}`}
+                >
+                  Number
+                </th>
+                <th
+                  scope="col"
                   className={`${styles.headerCell} ${styles.time}`}
                 >
                   Time
@@ -192,6 +198,9 @@ export default function Sections() {
                   <tr key={section.sectionId} className={styles.row}>
                     <td className={`${styles.cell} ${styles.ccn}`}>
                       {section.sectionId}
+                    </td>
+                    <td className={`${styles.cell} ${styles.number}`}>
+                      {section.number}
                     </td>
                     <td className={`${styles.cell} ${styles.time}`}>
                       {hasTimeData ? (

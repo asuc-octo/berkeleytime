@@ -1,12 +1,12 @@
 import { Logger } from "tslog";
 
-import { ISectionItem } from "@repo/common";
+import { ISectionItem } from "@repo/common/models";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import { fetchPaginatedData } from "./api/sis-api";
 
 export const filterSection = (input: ClassSection): boolean => {
-  return input.status?.code === "A";
+  return input.status?.code !== "X";
 };
 
 const formatSection = (input: ClassSection) => {
@@ -67,6 +67,10 @@ const formatSection = (input: ClassSection) => {
     addConsentRequired: input.addConsentRequired?.code,
     dropConsentRequired: input.dropConsentRequired?.code,
     primary: input.association?.primary,
+    associatedClass: input.association?.associatedClass,
+    associatedSectionIds: input.association?.primaryAssociatedSectionIds?.map(
+      (id) => id.toString()
+    ),
     type: input.type?.code,
     combinedSections: input.combination?.combinedSections,
     exams: input.exams?.map((exam) => ({

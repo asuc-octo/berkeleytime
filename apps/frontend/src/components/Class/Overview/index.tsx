@@ -7,6 +7,7 @@ import useClass from "@/hooks/useClass";
 import { linkify } from "@/utils/linkify";
 
 import styles from "./Overview.module.scss";
+import TargetedMessageBanner from "./TargetedMessageBanner";
 import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
@@ -84,6 +85,7 @@ export default function Overview() {
     <Box p="5">
       <Container size="3">
         <Flex direction="column" gap="5">
+          <TargetedMessageBanner courseId={_class.courseId} />
           {_class.primarySection?.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}

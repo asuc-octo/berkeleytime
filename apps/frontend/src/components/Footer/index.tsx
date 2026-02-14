@@ -105,6 +105,9 @@ export default function Footer() {
             <Link to="/catalog" className={styles.link}>
               Courses
             </Link>
+            <Link to="/curated" className={styles.link}>
+              Curated Classes
+            </Link>
             <Link to="/scheduler" className={styles.link}>
               Scheduler
             </Link>

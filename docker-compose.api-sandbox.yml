@@ -1,0 +1,26 @@
+---
+networks:
+  bt:
+    name: bt
+services:
+  api-sandbox:
+    build:
+      context: .
+      dockerfile: ./apps/api-sandbox/Dockerfile
+      target: api-sandbox-dev
+    ports:
+      - "${DEV_PORT_PREFIX:-30}09:3009"
+    networks:
+      - bt
+    restart: always
+    volumes:
+      - ./apps/api-sandbox:/api-sandbox/apps/api-sandbox
+      - ./packages:/api-sandbox/packages
+      - ./.env:/api-sandbox/.env:ro
+    environment:
+      - SIS_CLASS_APP_ID=${SIS_CLASS_APP_ID}
+      - SIS_CLASS_APP_KEY=${SIS_CLASS_APP_KEY}
+      - SIS_COURSE_APP_ID=${SIS_COURSE_APP_ID}
+      - SIS_COURSE_APP_KEY=${SIS_COURSE_APP_KEY}
+      - SIS_TERM_APP_ID=${SIS_TERM_APP_ID}
+      - SIS_TERM_APP_KEY=${SIS_TERM_APP_KEY}

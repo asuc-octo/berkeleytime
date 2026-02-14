@@ -2,8 +2,8 @@
   width: 360px;
   flex-shrink: 0;
   overflow-y: auto;
+  scrollbar-width: none;
   background-color: var(--foreground-color);
-  scrollbar-color: var(--label-color) var(--foreground-color);
 
   @media (width <= 992px) {
     width: 384px;
@@ -40,10 +40,6 @@
 
       &:hover {
         color: var(--blue-hover);
-
-        @media (prefers-color-scheme: dark) {
-          color: var(--blue-400);
-        }
       }
     }
 

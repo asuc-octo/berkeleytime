@@ -22,23 +22,28 @@ import styles from "./CuratedClasses.module.scss";
 export default function CuratedClasses() {
   const { data, loading } = useReadCuratedClasses();
 
-  const semesters = useMemo(
-    () =>
-      data?.reduce(
-        (acc, curatedClass) => {
-          const key = `${curatedClass.semester} ${curatedClass.year}`;
+  const semesters = useMemo(() => {
+    if (!data) return undefined;
 
-          const existingSemester = acc[key];
+    // Sort by createdAt descending first
+    const sorted = data.toSorted(
+      (a, b) => parseInt(b.createdAt) - parseInt(a.createdAt)
+    );
 
-          if (existingSemester) existingSemester.push(curatedClass);
-          else acc[key] = [curatedClass];
+    return sorted.reduce(
+      (acc, curatedClass) => {
+        const key = `${curatedClass.semester} ${curatedClass.year}`;
 
-          return acc;
-        },
-        {} as Record<string, ICuratedClass[]>
-      ),
-    [data]
-  );
+        const existingSemester = acc[key];
+
+        if (existingSemester) existingSemester.push(curatedClass);
+        else acc[key] = [curatedClass];
+
+        return acc;
+      },
+      {} as Record<string, ICuratedClass[]>
+    );
+  }, [data]);
 
   if (loading) {
     return (

@@ -10,15 +10,73 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean!
+    reappearing: Boolean!
+    clickCount: Int!
+    dismissCount: Int!
+    viewCount: Int!
+    clickEventLogging: Boolean!
+    visible: Boolean!
+    currentVersion: Int!
     createdAt: String!
     updatedAt: String!
   }
 
+  """
+  A snapshot of banner content at a specific version.
+  """
+  type BannerSnapshot {
+    text: String
+    link: String
+    linkText: String
+    persistent: Boolean
+    reappearing: Boolean
+    clickEventLogging: Boolean
+    visible: Boolean
+  }
+
+  """
+  A version history entry for a banner.
+  """
+  type BannerVersionEntry {
+    version: Int!
+    changedFields: [String!]!
+    timestamp: String!
+    snapshot: BannerSnapshot!
+  }
+
+  """
+  Click statistics for a specific banner version.
+  """
+  type BannerVersionClickStats {
+    version: Int!
+    clickCount: Int!
+    uniqueVisitors: Int!
+  }
+
   type Query {
     """
-    Get all banners.
+    Get all visible banners. Public.
     """
     allBanners: [Banner!]!
+
+    """
+    Get all banners including hidden ones. Staff only.
+    """
+    allBannersForStaff: [Banner!]! @auth
+
+    """
+    Get the version history for a banner. Staff only.
+    """
+    bannerVersionHistory(bannerId: ID!): [BannerVersionEntry!]! @auth
+
+    """
+    Get click statistics grouped by banner version. Staff only.
+    """
+    bannerClickStatsByVersion(
+      bannerId: ID!
+      startDate: String
+      endDate: String
+    ): [BannerVersionClickStats!]! @auth
   }
 
   """
@@ -29,6 +87,9 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean!
+    reappearing: Boolean!
+    clickEventLogging: Boolean
+    visible: Boolean
   }
 
   """
@@ -39,6 +100,9 @@ export const bannerTypeDef = gql`
     link: String
     linkText: String
     persistent: Boolean
+    reappearing: Boolean
+    clickEventLogging: Boolean
+    visible: Boolean
   }
 
   type Mutation {
@@ -56,5 +120,20 @@ export const bannerTypeDef = gql`
     Delete a banner by ID. Staff only.
     """
     deleteBanner(bannerId: ID!): Boolean! @auth
+
+    """
+    Increment the click count for a banner link. Public.
+    """
+    incrementBannerClick(bannerId: ID!): Banner!
+
+    """
+    Increment the dismiss count for a banner. Public.
+    """
+    incrementBannerDismiss(bannerId: ID!): Banner!
+
+    """
+    Track a banner view. Public.
+    """
+    trackBannerView(bannerId: ID!): Boolean!
   }
 `;
