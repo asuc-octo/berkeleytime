@@ -186,7 +186,7 @@ export default function Enrollment() {
     _class.number,
   ]);
 
-  if (loading) {
+  if (loading && !enrollmentData) {
     return <EnrollmentSkeleton />;
   }
 

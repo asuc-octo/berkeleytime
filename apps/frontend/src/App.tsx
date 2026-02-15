@@ -413,6 +413,15 @@ const client = new ApolloClient({
   }),
   cache: new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          class: {
+            merge(existing, incoming) {
+              return { ...existing, ...incoming };
+            },
+          },
+        },
+      },
       PlanTerm: {
         fields: {
           courses: {
