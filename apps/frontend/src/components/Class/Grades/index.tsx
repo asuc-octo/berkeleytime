@@ -147,7 +147,7 @@ export default function Grades() {
     return `From ${courseTotal.toLocaleString()} course ${gradesLabel}`;
   }, [courseTotal]);
 
-  if (loading || !courseGradeDistribution) {
+  if (loading && !data) {
     return <GradesSkeleton />;
   }
 

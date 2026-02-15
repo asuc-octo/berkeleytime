@@ -93,7 +93,7 @@ export default function Sections() {
     }
   }, [tabItems, activeTab]);
 
-  if (loading) {
+  if (loading && !data) {
     return <EmptyState heading="Loading Sections Data" loading />;
   }
 

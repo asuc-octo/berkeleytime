@@ -416,9 +416,7 @@ const client = new ApolloClient({
       Query: {
         fields: {
           class: {
-            merge(existing, incoming) {
-              return { ...existing, ...incoming };
-            },
+            merge: true,
           },
         },
       },
