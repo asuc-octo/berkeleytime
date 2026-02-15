@@ -35,7 +35,7 @@ const Class = {
   Overview: lazy(() => import("@/components/Class/Overview")),
   Sections: lazy(() => import("@/components/Class/Sections")),
   Ratings: lazy(() => import("@/components/Class/Ratings")),
-  Comments: lazy(() => import("@/components/Class/Comments")),
+  Comments: lazy(() => import("@/components/Class/Comments")), // ✅ Capital C
 };
 
 const Catalog = lazy(() => import("@/app/Catalog"));
@@ -63,14 +63,6 @@ const router = createBrowserRouter([
       {
         element: <Layout banner={false} header={false} footer={false} />,
         children: [
-          // {
-          //   element: (
-          //       <SuspenseBoundary key="schedules/:scheduleId">
-          //         <Discover />
-          //       </SuspenseBoundary>
-          // ),
-          //   path: "discover",
-          // },
           {
             element: (
               <SuspenseBoundary key="landing">
@@ -110,14 +102,6 @@ const router = createBrowserRouter([
               },
             ],
           },
-          // {
-          //   element: (
-          //     <SuspenseBoundary key="map">
-          //       <Map />
-          //     </SuspenseBoundary>
-          //   ),
-          //   path: "map",
-          // },
         ],
       },
       {
@@ -226,16 +210,6 @@ const router = createBrowserRouter([
                 ),
                 path: "ratings",
               },
-
-              {
-                element: (
-                  <SuspenseBoundary key="comments">
-                    <Class.Comments />
-                  </SuspenseBoundary>
-                ),
-                path: "comments",
-              },
-
               {
                 element: (
                   <SuspenseBoundary key="bookmarks">
@@ -244,6 +218,7 @@ const router = createBrowserRouter([
                 ),
                 path: "bookmarks",
               },
+              // ❌ REMOVED Comments from profile - it doesn't belong here
             ],
           },
         ],
@@ -298,6 +273,15 @@ const router = createBrowserRouter([
                   </SuspenseBoundary>
                 ),
                 path: "ratings",
+              },
+              // ✅ ADDED Comments to collection routes
+              {
+                element: (
+                  <SuspenseBoundary key="comments">
+                    <Class.Comments />
+                  </SuspenseBoundary>
+                ),
+                path: "comments",
               },
             ],
           },
@@ -367,6 +351,15 @@ const router = createBrowserRouter([
                   </SuspenseBoundary>
                 ),
                 path: "ratings",
+              },
+              // ✅ ADDED Comments to catalog routes
+              {
+                element: (
+                  <SuspenseBoundary key="comments">
+                    <Class.Comments />
+                  </SuspenseBoundary>
+                ),
+                path: "comments",
               },
               {
                 path: "*",

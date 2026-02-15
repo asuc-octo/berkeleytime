@@ -15,7 +15,8 @@ export function useGetComments(
     GetCommentsDocument,
     {
       variables: { subject, courseNumber, userEmail },
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: "network-only",
+      nextFetchPolicy: "network-only", 
     }
   );
 }
