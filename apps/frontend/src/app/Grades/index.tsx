@@ -506,6 +506,7 @@ function OutputList({ outputs, remove }: OutputListProps) {
 export default function Grades() {
   const isDesktop = useIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const [chartHorizontal, setChartHorizontal] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
 
   const remove = (index: number) => {
@@ -558,31 +559,35 @@ export default function Grades() {
       <div className={styles.view}>
         <div className={styles.chartsPane}>
           <div className={styles.mainChartArea}>
-            <GradeBarGraph outputs={outputs} />
+            <GradeBarGraph outputs={outputs} onHorizontalChange={setChartHorizontal} />
           </div>
-          <div className={styles.chartDivider} />
-          <div className={styles.miniChartsSection}>
-            {outputs.slice(0, 4).map((output) => (
-              <div
-                key={getInputSearchParam(output.input)}
-                className={styles.miniChartCard}
-              >
-                <div className={styles.miniChartTitle}>
-                  <span
-                    className={styles.miniChartSwatch}
-                    style={{ backgroundColor: output.color }}
-                  />
-                  <span className={styles.miniChartLabel}>
-                    {output.input.subject} {output.input.courseNumber} ·{" "}
-                    {getMetadata(output.input)}
-                  </span>
-                </div>
-                <div className={styles.miniChartBar}>
-                  <MiniGradeBarChart gradeDistribution={output.data} />
-                </div>
+          {!chartHorizontal && (
+            <>
+              <div className={styles.chartDivider} />
+              <div className={styles.miniChartsSection}>
+                {outputs.slice(0, 4).map((output) => (
+                  <div
+                    key={getInputSearchParam(output.input)}
+                    className={styles.miniChartCard}
+                  >
+                    <div className={styles.miniChartTitle}>
+                      <span
+                        className={styles.miniChartSwatch}
+                        style={{ backgroundColor: output.color }}
+                      />
+                      <span className={styles.miniChartLabel}>
+                        {output.input.subject} {output.input.courseNumber} ·{" "}
+                        {getMetadata(output.input)}
+                      </span>
+                    </div>
+                    <div className={styles.miniChartBar}>
+                      <MiniGradeBarChart gradeDistribution={output.data} />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
