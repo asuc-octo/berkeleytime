@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container, Skeleton } from "@repo/theme";
+import { Box, Button, Container, LoadingIndicator } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -18,7 +18,6 @@ import {
   createChartConfig,
   formatters,
 } from "@/components/Chart";
-import EmptyState from "@/components/Class/EmptyState";
 import { useGetClassGrades } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
@@ -30,20 +29,34 @@ const chartConfig = createChartConfig(["course"], {
   colors: { course: "var(--blue-500)" },
 });
 
-function GradesSkeleton() {
+function GradesLoadingInBox() {
   return (
     <Box p="5" className={styles.root}>
       <Container size="3">
         <div className={styles.wrapper}>
-          <div className={styles.header}>
-            <div className={styles.titleBlock}>
-              <Skeleton className={styles.skeletonTitle} />
-              <Skeleton className={styles.skeletonSubtitle} />
-            </div>
-            <Skeleton className={styles.skeletonButton} />
+          <div className={styles.emptyInBox}>
+            <LoadingIndicator size="lg" />
           </div>
-          <div className={styles.chart}>
-            <Skeleton className={styles.skeletonChart} />
+        </div>
+      </Container>
+    </Box>
+  );
+}
+
+function GradesNoDataInBox() {
+  return (
+    <Box p="5" className={styles.root}>
+      <Container size="3">
+        <div className={styles.wrapper}>
+          <div className={styles.emptyInBox}>
+            <Reports width={32} height={32} className={styles.emptyIcon} />
+            <p className={styles.emptyHeading}>No Grade Data Available</p>
+            <p className={styles.emptyParagraph}>
+              This course doesn&apos;t have any historical grade data yet.
+              <br />
+              Grade distributions will appear here once students complete the
+              course.
+            </p>
           </div>
         </div>
       </Container>
@@ -148,24 +161,11 @@ export default function Grades() {
   }, [courseTotal]);
 
   if (loading && !data) {
-    return <GradesSkeleton />;
+    return <GradesLoadingInBox />;
   }
 
   if (hasNoGradeData) {
-    return (
-      <EmptyState
-        icon={<Reports width={32} height={32} />}
-        heading="No Grade Data Available"
-        paragraph={
-          <>
-            This course doesn't have any historical grade data yet.
-            <br />
-            Grade distributions will appear here once students complete the
-            course.
-          </>
-        }
-      />
-    );
+    return <GradesNoDataInBox />;
   }
 
   return (

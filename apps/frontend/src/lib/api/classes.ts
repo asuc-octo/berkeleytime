@@ -7,7 +7,6 @@ import {
   Component,
   GetCanonicalCatalogQuery,
   GetClassDetailsQuery,
-  GetClassOverviewQuery,
   GetClassQuery,
 } from "../generated/graphql";
 
@@ -244,6 +243,27 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      course {
+        title
+        description
+        requirements
+        ratingsCount
+        aggregatedRatings(metricNames: [Attendance, Recording]) {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+        gradeDistribution {
+          average
+          pnpPercentage
+        }
+      }
       primarySection {
         sectionId
         component
@@ -394,26 +414,6 @@ export const GET_CLASS_ENROLLMENT = gql`
   }
 `;
 
-export const GET_CLASS_RATINGS = gql`
-  query GetClassRatings($subject: String!, $courseNumber: CourseNumber!) {
-    course(subject: $subject, number: $courseNumber) {
-      subject
-      number
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-          categories {
-            value
-            count
-          }
-        }
-      }
-    }
-  }
-`;
-
 export const TRACK_CLASS_VIEW = gql`
   mutation TrackClassView(
     $year: Int!
@@ -437,7 +437,7 @@ export const TRACK_CLASS_VIEW = gql`
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
 export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
-export type IClassCourse = NonNullable<GetClassOverviewQuery["course"]>;
+export type IClassCourse = NonNullable<IClassDetails["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];

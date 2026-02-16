@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container, Skeleton } from "@repo/theme";
+import { Box, Button, Container, LoadingIndicator } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -20,7 +20,6 @@ import {
   createChartConfig,
   formatters,
 } from "@/components/Chart";
-import EmptyState from "@/components/Class/EmptyState";
 import { useReadEnrollmentTimeframes } from "@/hooks/api";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
@@ -40,21 +39,33 @@ const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
   colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
 });
 
-function EnrollmentSkeleton() {
+function EnrollmentLoadingInBox() {
   return (
     <Box p="5" className={styles.root}>
       <Container size="3">
         <div className={styles.wrapper}>
-          <div className={styles.header}>
-            <div className={styles.titleBlock}>
-              <Skeleton className={styles.skeletonTitle} />
-              <Skeleton className={styles.skeletonSubtitle} />
-            </div>
-            <Skeleton className={styles.skeletonButton} />
+          <div className={styles.emptyInBox}>
+            <LoadingIndicator size="lg" />
           </div>
-          <div className={styles.chart}>
-            <Skeleton className={styles.skeletonChart} />
-            <Skeleton className={styles.skeletonAxisLabel} />
+        </div>
+      </Container>
+    </Box>
+  );
+}
+
+function EnrollmentNoDataInBox() {
+  return (
+    <Box p="5" className={styles.root}>
+      <Container size="3">
+        <div className={styles.wrapper}>
+          <div className={styles.emptyInBox}>
+            <GraphUp width={32} height={32} className={styles.emptyIcon} />
+            <p className={styles.emptyHeading}>No Enrollment Data Available</p>
+            <p className={styles.emptyParagraph}>
+              This class doesn&apos;t have enrollment history data yet.
+              <br />
+              Enrollment trends will appear here once data is available.
+            </p>
           </div>
         </div>
       </Container>
@@ -187,23 +198,11 @@ export default function Enrollment() {
   ]);
 
   if (loading && !enrollmentData) {
-    return <EnrollmentSkeleton />;
+    return <EnrollmentLoadingInBox />;
   }
 
   if (data.length === 0) {
-    return (
-      <EmptyState
-        icon={<GraphUp width={32} height={32} />}
-        heading="No Enrollment Data Available"
-        paragraph={
-          <>
-            This class doesn't have enrollment history data yet.
-            <br />
-            Enrollment trends will appear here once data is available.
-          </>
-        }
-      />
-    );
+    return <EnrollmentNoDataInBox />;
   }
 
   return (

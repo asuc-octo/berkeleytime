@@ -383,6 +383,9 @@ export default function BookmarkPopover({
             className={styles.collectionList}
             onClick={() => isCreateFormOpen && resetForm()}
           >
+            <div className={styles.bookmarkNote}>
+              To view all bookmarks, click on profile -&gt; bookmarks
+            </div>
             <div className={styles.collectionRows}>
               <LayoutGroup>
                 {displayCollections.map((collection) => {

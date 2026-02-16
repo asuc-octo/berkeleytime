@@ -2,7 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 
 import { FrameAltEmpty } from "iconoir-react";
 
-import { Box, Container, PillSwitcher } from "@repo/theme";
+import {
+  Boundary,
+  Box,
+  Container,
+  LoadingIndicator,
+  PillSwitcher,
+} from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
 import EmptyState from "@/components/Class/EmptyState";
@@ -94,7 +100,11 @@ export default function Sections() {
   }, [tabItems, activeTab]);
 
   if (loading && !data) {
-    return <EmptyState heading="Loading Sections Data" loading />;
+    return (
+      <Boundary>
+        <LoadingIndicator size="lg" />
+      </Boundary>
+    );
   }
 
   if (sections.length === 0) {
