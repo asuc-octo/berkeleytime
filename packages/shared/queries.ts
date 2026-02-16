@@ -22,6 +22,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       number
       sessionId
       title
+      viewCount
       unitsMax
       unitsMin
       gradingBasis

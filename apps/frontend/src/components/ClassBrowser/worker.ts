@@ -13,6 +13,7 @@ const DEFAULT_SORT_ORDER: Record<SortBy, SortOrder> = {
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",
   [SortBy.PercentOpenSeats]: "desc",
+  [SortBy.ViewCount]: "desc",
 };
 
 const initializeFuse = (classes: ICatalogClass[]) => {
