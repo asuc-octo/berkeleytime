@@ -414,10 +414,10 @@ export const deleteRating = async (
     } finally {
       await session.endSession();
     }
+  }
 
-    if (deletedCourseId) {
-      invalidateRatingsCaches(deletedCourseId);
-    }
+  if (deletedCourseId) {
+    invalidateRatingsCaches(deletedCourseId);
   }
 
   return true;
