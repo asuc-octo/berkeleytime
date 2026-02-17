@@ -468,8 +468,12 @@ class SemanticSearchEngine:
         except Exception:
             return []
 
-    def build_startup_indexes(self) -> None:
-        """Load all available indexes from disk. Only build if not on disk."""
+    def build_startup_indexes(self, max_startup_terms: int = 4) -> None:
+        """Load indexes from disk and queue builds for recent terms only.
+
+        Only the most recent *max_startup_terms* terms are built on startup.
+        Older terms are built on-demand when actually searched.
+        """
         # Fetch available terms
         available_terms = self.fetch_available_terms()
         if not available_terms:
@@ -481,46 +485,79 @@ class SemanticSearchEngine:
         # Sort terms: newest first
         available_terms.sort(key=lambda t: (t[0], SEMESTER_ORDER.get(t[1], 0)), reverse=True)
 
-        # Try to load ALL terms from disk first
+        # Only consider recent terms for startup (older ones build on-demand)
+        startup_terms = available_terms[:max_startup_terms]
+
+        # Load from disk if available, otherwise queue for building
         terms_to_build = []
-        for year, semester in available_terms:
+        for year, semester in startup_terms:
             loaded = self._load_index(year, semester, None)
             if loaded:
                 key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
                 with self._lock:
                     self._indices[key] = loaded
             else:
-                # Not on disk, queue for building
                 terms_to_build.append((year, semester))
 
-        # Queue terms that weren't found on disk
+        # Also load any OTHER indexes already on disk (from previous runs)
+        for year, semester in available_terms[max_startup_terms:]:
+            loaded = self._load_index(year, semester, None)
+            if loaded:
+                key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
+                with self._lock:
+                    self._indices[key] = loaded
+
+        # Queue only recent terms that weren't found on disk
         self._build_queue = terms_to_build
         if terms_to_build:
             logger.info("Need to build %d indexes: %s",
                        len(terms_to_build),
                        ", ".join(f"{s} {y}" for y, s in terms_to_build))
 
-    def process_build_queue(self) -> None:
-        """Process the build queue, building each term in sequence."""
-        while self._build_queue:
-            year, semester = self._build_queue.pop(0)
-            try:
-                # Check if already loaded
-                key = self._key(year, semester, None)
-                with self._lock:
-                    if key in self._indices:
-                        continue
-                self.refresh(year, semester)
-            except RuntimeError as exc:
-                # Skip terms with no courses (e.g., future semesters not yet available)
-                if "did not contain any courses" in str(exc):
-                    logger.info("Skipping %s %s (no courses)", semester, year)
-                else:
+    def process_build_queue(self, max_rounds: int = 10, base_delay: int = 30) -> None:
+        """Process the build queue, building each term in sequence with retries.
+
+        Failed builds (e.g. backend not ready) are re-queued and retried up to
+        *max_rounds* times with increasing delays between rounds.
+        """
+        for round_num in range(max_rounds):
+            if not self._build_queue:
+                break
+
+            failed: List[Tuple[int, str]] = []
+            while self._build_queue:
+                year, semester = self._build_queue.pop(0)
+                try:
+                    # Check if already loaded
+                    key = self._key(year, semester, None)
+                    with self._lock:
+                        if key in self._indices:
+                            continue
+                    self.refresh(year, semester)
+                except RuntimeError as exc:
+                    # Skip terms with no courses (e.g., future semesters not yet available)
+                    if "did not contain any courses" in str(exc):
+                        logger.info("Skipping %s %s (no courses)", semester, year)
+                    else:
+                        self._last_error = f"{semester} {year}: {exc}"
+                        logger.error("Failed to build %s %s: %s", semester, year, exc)
+                        failed.append((year, semester))
+                except Exception as exc:
                     self._last_error = f"{semester} {year}: {exc}"
                     logger.error("Failed to build %s %s: %s", semester, year, exc)
-            except Exception as exc:
-                self._last_error = f"{semester} {year}: {exc}"
-                logger.error("Failed to build %s %s: %s", semester, year, exc)
+                    failed.append((year, semester))
+
+            if not failed:
+                break
+
+            # Re-queue failed items and wait before retrying
+            self._build_queue = failed
+            wait = min(base_delay * (round_num + 1), 120)
+            logger.info(
+                "Retrying %d failed build(s) in %ds (round %d/%d)",
+                len(failed), wait, round_num + 1, max_rounds,
+            )
+            time.sleep(wait)
 
     def get_build_duration_seconds(self) -> Optional[float]:
         """Get current build duration in seconds, or None if not building."""
@@ -567,14 +604,35 @@ def resolve_term(year: Optional[int], semester: Optional[str]) -> Tuple[int, str
 
 @app.on_event("startup")
 def build_index() -> None:
-    """Start background index building for all relevant terms."""
+    """Start background index building for all relevant terms.
+
+    Retries the entire discover → load → build cycle so that the service
+    recovers when the backend starts after the semantic-search pod.
+    """
+    MAX_STARTUP_RETRIES = 10
+
     def startup_build():
-        try:
-            engine.build_startup_indexes()
-            engine.process_build_queue()
-        except Exception as exc:
-            engine._last_error = str(exc)
-            logger.error("Startup build failed: %s", exc)
+        for attempt in range(MAX_STARTUP_RETRIES):
+            try:
+                engine.build_startup_indexes()
+                engine.process_build_queue()
+
+                # Success: at least one index is available
+                if engine.describe_indices():
+                    logger.info("Startup build complete")
+                    return
+            except Exception as exc:
+                engine._last_error = str(exc)
+                logger.error("Startup build attempt %d/%d failed: %s",
+                             attempt + 1, MAX_STARTUP_RETRIES, exc)
+
+            if attempt < MAX_STARTUP_RETRIES - 1:
+                wait = min(60 * (attempt + 1), 300)
+                logger.info("No indexes available yet, retrying in %ds (attempt %d/%d)…",
+                            wait, attempt + 1, MAX_STARTUP_RETRIES)
+                time.sleep(wait)
+
+        logger.error("Startup build exhausted all %d retries", MAX_STARTUP_RETRIES)
 
     thread = threading.Thread(target=startup_build, daemon=True)
     thread.start()

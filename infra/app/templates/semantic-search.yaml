@@ -46,12 +46,9 @@ spec:
               mountPath: /app/indexes
       volumes:
         - name: indexes
-          {{- if eq .Values.env "dev" }}
-          emptyDir: {}
-          {{- else }}
-          persistentVolumeClaim:
-            claimName: {{ include "bt-app.semanticSearchName" . }}-pvc
-          {{- end }}
+          hostPath:
+            path: /data/semantic-search-indexes
+            type: DirectoryOrCreate
 
 ---
 
@@ -91,22 +88,3 @@ spec:
       port: {{ .Values.semanticSearch.port }}
       targetPort: {{ .Values.semanticSearch.port }}
 
-{{- if ne .Values.env "dev" }}
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ include "bt-app.semanticSearchName" . }}-pvc
-  labels:
-    {{- include "bt-app.semanticSearchLabels" . | nindent 4 }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: {{ .Values.semanticSearch.storage }}
-  {{- if .Values.semanticSearch.storageClassName }}
-  storageClassName: {{ .Values.semanticSearch.storageClassName }}
-  {{- end }}
-{{- end }}
