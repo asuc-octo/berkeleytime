@@ -239,6 +239,21 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "collection/:id/:subject?/:courseNumber?/:number?",
+            children: [
+              {
+                path: "*",
+                loader: ({ params: { id, subject, courseNumber, number } }) => {
+                  const parts = [
+                    "/collection",
+                    id,
+                    subject,
+                    courseNumber,
+                    number,
+                  ].filter(Boolean);
+                  return redirect(parts.join("/"));
+                },
+              },
+            ],
           },
           {
             element: (
@@ -266,6 +281,28 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
+            children: [
+              {
+                path: "*",
+                loader: ({
+                  params: {
+                    year,
+                    semester,
+                    subject,
+                    courseNumber,
+                    number,
+                    sessionId,
+                  },
+                }) => {
+                  const basePath = `/catalog/${year}/${semester}/${subject}/${courseNumber}`;
+                  return redirect(
+                    number && sessionId
+                      ? `${basePath}/${number}/${sessionId}`
+                      : basePath
+                  );
+                },
+              },
+            ],
           },
           {
             element: (

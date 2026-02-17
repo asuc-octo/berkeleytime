@@ -108,6 +108,22 @@ const setCachedValue = <T>(
   cache.set(key, { value, expiresAt: Date.now() + ttlMs });
 };
 
+const sweepExpiredEntries = <T>(cache: Map<string, CacheEntry<T>>) => {
+  const now = Date.now();
+  for (const [key, entry] of cache) {
+    if (now > entry.expiresAt) cache.delete(key);
+  }
+};
+
+setInterval(
+  () => {
+    sweepExpiredEntries(courseAggregatedRatingsCache);
+    sweepExpiredEntries(semestersWithRatingsCache);
+    sweepExpiredEntries(instructorAggregatedRatingsCache);
+  },
+  10 * 60 * 1000
+).unref();
+
 const getMetricNamesKey = (metricNames?: InputMaybe<MetricName[]>) => {
   if (!metricNames || metricNames.length === 0) return "all";
   return metricNames
