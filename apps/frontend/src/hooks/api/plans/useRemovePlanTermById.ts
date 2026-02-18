@@ -8,9 +8,33 @@ export const useRemovePlanTermByID = () => {
   const mutation = useMutation(REMOVE_PLAN_TERM_BY_ID, {
     update(cache, _, { variables }) {
       if (!variables) return;
+      const removedId = variables.removePlanTermByIdId;
 
       cache.evict({
-        id: `PlanTerm:${variables.removePlanTermByIdId}`,
+        id: `PlanTerm:${removedId}`,
+      });
+
+      cache.modify({
+        id: "ROOT_QUERY",
+        fields: {
+          planByUser(existingPlanRefs = []) {
+            return existingPlanRefs.map((planRef: { __ref: string }) => {
+              cache.modify({
+                id: planRef.__ref,
+                fields: {
+                  planTerms(existingPlanTermRefs = [], { readField }) {
+                    return existingPlanTermRefs.filter(
+                      (planTermRef: { __ref: string }) =>
+                        readField("_id", planTermRef) !== removedId
+                    );
+                  },
+                },
+              });
+
+              return planRef;
+            });
+          },
+        },
       });
       cache.gc();
     },
