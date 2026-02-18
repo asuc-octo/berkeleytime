@@ -26,7 +26,7 @@ export const useGetClassRatingsData = ({
       courseNumber,
       courseNumberTyped: courseNumber,
     },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
   });
 
   const courseClasses = useMemo(
@@ -40,17 +40,6 @@ export const useGetClassRatingsData = ({
     if (!data?.semestersWithRatings) return [];
     return data.semestersWithRatings.filter((sem) => sem.maxMetricCount > 0);
   }, [data?.semestersWithRatings]);
-
-  const userRatings = useMemo(() => {
-    if (!data?.userRatings?.classes) return null;
-
-    const matchedRating = data.userRatings.classes.find(
-      (classRating) =>
-        classRating.subject === subject &&
-        classRating.courseNumber === courseNumber
-    );
-    return matchedRating ?? null;
-  }, [data?.userRatings?.classes, subject, courseNumber]);
 
   const hasRatings = useMemo(() => {
     const metrics =
@@ -72,8 +61,6 @@ export const useGetClassRatingsData = ({
   }, [data?.course?.instructorAggregatedRatings]);
 
   return {
-    userRatingsData: data?.userRatings ? data.userRatings : undefined,
-    userRatings,
     aggregatedRatings: data?.course?.aggregatedRatings,
     instructorAggregatedRatings,
     semestersWithRatings,

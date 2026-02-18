@@ -38,6 +38,14 @@
   flex-direction: column;
 }
 
+.bookmarkNote {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-12);
+  color: var(--secondary-color);
+  line-height: 1.4;
+}
+
 .collectionRows {
   max-height: 300px;
   overflow-y: auto;

@@ -10,7 +10,7 @@ import {
 import { useMutation, useQuery } from "@apollo/client/react";
 import { OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
@@ -33,7 +33,6 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import {
@@ -44,7 +43,6 @@ import {
 } from "@/lib/api";
 import {
   CreateRatingsDocument,
-  GetCourseOverviewByIdQuery,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
@@ -69,12 +67,18 @@ const Ratings = lazy(() => import("./Ratings"));
 
 interface RootProps {
   dialog?: boolean;
+  activeTab: ClassTab;
+  onTabChange: (tab: ClassTab) => void;
   children: ReactNode;
 }
 
-function Root({ dialog, children }: RootProps) {
+function Root({ dialog, activeTab, onTabChange, children }: RootProps) {
   return dialog ? (
-    <Tabs.Root asChild defaultValue="overview">
+    <Tabs.Root
+      asChild
+      value={activeTab}
+      onValueChange={(tab) => onTabChange(tab as ClassTab)}
+    >
       {children}
     </Tabs.Root>
   ) : (
@@ -84,7 +88,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClassDetails;
-  course?: GetCourseOverviewByIdQuery["courseById"];
+  course?: IClassDetails["course"];
   year?: never;
   semester?: never;
   sessionId?: never;
@@ -117,6 +121,8 @@ const ratingsTabClasses: RatingsTabClasses = {
 };
 
 const METRIC_NAMES = Object.values(MetricName) as MetricName[];
+type ClassTab = "overview" | "sections" | "ratings" | "grades" | "enrollment";
+const DEFAULT_TAB: ClassTab = "overview";
 
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
@@ -125,14 +131,6 @@ const formatClassNumber = (number: string | undefined | null): string => {
   // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
   if (num > 99) return num.toString();
   return num.toString().padStart(2, "0");
-};
-
-const getCurrentTab = (pathname: string): string => {
-  if (pathname.endsWith("/sections")) return "sections";
-  if (pathname.endsWith("/grades")) return "grades";
-  if (pathname.endsWith("/ratings")) return "ratings";
-  if (pathname.endsWith("/enrollment")) return "enrollment";
-  return "overview";
 };
 
 export default function Class({
@@ -147,21 +145,20 @@ export default function Class({
   dialog,
 }: ClassProps) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(() => {
-    return new Set([getCurrentTab(location.pathname)]);
-  });
+  const [activeTab, setActiveTab] = useState<ClassTab>(DEFAULT_TAB);
+  const [visitedTabs, setVisitedTabs] = useState<Set<ClassTab>>(
+    () => new Set([DEFAULT_TAB])
+  );
 
   useEffect(() => {
-    const currentTab = getCurrentTab(location.pathname);
     setVisitedTabs((prev) => {
-      if (prev.has(currentTab)) return prev;
-      return new Set(prev).add(currentTab);
+      if (prev.has(activeTab)) return prev;
+      return new Set(prev).add(activeTab);
     });
-  }, [location.pathname]);
+  }, [activeTab]);
 
   const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
@@ -189,15 +186,27 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
+  const classIdentity = useMemo(() => {
+    if (!_class) return null;
+    return [
+      _class.year,
+      _class.semester,
+      _class.sessionId,
+      _class.subject,
+      _class.courseNumber,
+      _class.number,
+    ].join(":");
+  }, [_class]);
 
-  // Use courseId from class data to fetch course info (handles cross-listed courses)
-  const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
-    skip: !!providedCourse || !_class?.courseId,
-  });
+  useEffect(() => {
+    if (!classIdentity) return;
+    setActiveTab(DEFAULT_TAB);
+    setVisitedTabs(new Set([DEFAULT_TAB]));
+  }, [classIdentity]);
 
   const _course = useMemo(
-    () => providedCourse ?? course,
-    [course, providedCourse]
+    () => providedCourse ?? _class?.course,
+    [_class?.course, providedCourse]
   );
 
   type ClassSectionAttribute = NonNullable<
@@ -304,13 +313,17 @@ export default function Class({
 
   useEffect(() => {
     if (dialog || !ratingsLocked) return;
-    if (!location.pathname.endsWith("/ratings")) return;
+    if (activeTab !== "ratings") return;
+    setActiveTab(DEFAULT_TAB);
+  }, [activeTab, dialog, ratingsLocked]);
 
-    const redirectPath = location.pathname.replace(/\/ratings$/, "");
-    navigate(`${redirectPath}${location.search}${location.hash}`, {
-      replace: true,
-    });
-  }, [dialog, ratingsLocked, location, navigate]);
+  useEffect(() => {
+    if (dialog || ratingsLocked) return;
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("feedbackModal") === "true") {
+      setActiveTab("ratings");
+    }
+  }, [dialog, location.search, ratingsLocked]);
 
   const handleLockedTabClick = useCallback(() => {
     if (!ratingsLocked) return;
@@ -437,7 +450,7 @@ export default function Class({
 
   return (
     <>
-      <Root dialog={dialog}>
+      <Root dialog={dialog} activeTab={activeTab} onTabChange={setActiveTab}>
         <Flex direction="column" flexGrow="1" className={styles.root}>
           <Box className={styles.header} pt="5" px="5">
             <Container size="3">
@@ -555,7 +568,7 @@ export default function Class({
                 </Flex>
               </Flex>
               {dialog ? (
-                <Tabs.List asChild defaultValue="overview">
+                <Tabs.List asChild>
                   <Flex mx="-3" mb="3">
                     <Tabs.Trigger value="overview" asChild>
                       <MenuItem>Overview</MenuItem>
@@ -572,7 +585,8 @@ export default function Class({
                         loginRequired={!user}
                         ratingsNeededValue={ratingsNeeded}
                         ratingsCount={ratingsCount}
-                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                        active={activeTab === "ratings"}
+                        onClick={() => setActiveTab("ratings")}
                       />
                     )}
                     <Tabs.Trigger value="grades" asChild>
@@ -585,16 +599,18 @@ export default function Class({
                 </Tabs.List>
               ) : (
                 <Flex mx="-3" mb="3">
-                  <NavLink to={{ ...location, pathname: "." }} end>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Overview</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "sections" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Sections</MenuItem>
-                    )}
-                  </NavLink>
+                  <MenuItem
+                    active={activeTab === "overview"}
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    Overview
+                  </MenuItem>
+                  <MenuItem
+                    active={activeTab === "sections"}
+                    onClick={() => setActiveTab("sections")}
+                  >
+                    Sections
+                  </MenuItem>
                   {shouldShowRatingsTab && (
                     <RatingsTabLink
                       classes={ratingsTabClasses}
@@ -603,19 +619,22 @@ export default function Class({
                       loginRequired={!user}
                       ratingsNeededValue={ratingsNeeded}
                       ratingsCount={ratingsCount}
-                      to={{ ...location, pathname: "ratings" }}
+                      active={activeTab === "ratings"}
+                      onClick={() => setActiveTab("ratings")}
                     />
                   )}
-                  <NavLink to={{ ...location, pathname: "grades" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Grades</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
+                  <MenuItem
+                    active={activeTab === "grades"}
+                    onClick={() => setActiveTab("grades")}
+                  >
+                    Grades
+                  </MenuItem>
+                  <MenuItem
+                    active={activeTab === "enrollment"}
+                    onClick={() => setActiveTab("enrollment")}
+                  >
+                    Enrollment
+                  </MenuItem>
                 </Flex>
               )}
             </Container>
@@ -662,10 +681,7 @@ export default function Class({
                 {visitedTabs.has("sections") && (
                   <div
                     style={{
-                      display:
-                        getCurrentTab(location.pathname) === "sections"
-                          ? "block"
-                          : "none",
+                      display: activeTab === "sections" ? "block" : "none",
                     }}
                   >
                     <SuspenseBoundary fallback={<></>}>
@@ -676,10 +692,7 @@ export default function Class({
                 {visitedTabs.has("grades") && (
                   <div
                     style={{
-                      display:
-                        getCurrentTab(location.pathname) === "grades"
-                          ? "block"
-                          : "none",
+                      display: activeTab === "grades" ? "block" : "none",
                     }}
                   >
                     <SuspenseBoundary fallback={<></>}>
@@ -690,10 +703,7 @@ export default function Class({
                 {!ratingsLocked && visitedTabs.has("ratings") && (
                   <div
                     style={{
-                      display:
-                        getCurrentTab(location.pathname) === "ratings"
-                          ? "block"
-                          : "none",
+                      display: activeTab === "ratings" ? "block" : "none",
                     }}
                   >
                     <SuspenseBoundary fallback={<></>}>
@@ -704,10 +714,7 @@ export default function Class({
                 {visitedTabs.has("enrollment") && (
                   <div
                     style={{
-                      display:
-                        getCurrentTab(location.pathname) === "enrollment"
-                          ? "block"
-                          : "none",
+                      display: activeTab === "enrollment" ? "block" : "none",
                     }}
                   >
                     <SuspenseBoundary fallback={<></>}>
@@ -718,10 +725,7 @@ export default function Class({
                 {visitedTabs.has("overview") && (
                   <div
                     style={{
-                      display:
-                        getCurrentTab(location.pathname) === "overview"
-                          ? "block"
-                          : "none",
+                      display: activeTab === "overview" ? "block" : "none",
                     }}
                   >
                     <SuspenseBoundary fallback={<></>}>

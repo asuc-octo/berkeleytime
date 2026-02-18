@@ -4,6 +4,8 @@
 }
 
 .wrapper {
+  --content-box-height: 360px;
+
   background-color: var(--foreground-color);
   border-radius: 8px;
   border: 1px solid var(--border-color);
@@ -46,29 +48,35 @@
 }
 
 .chart {
-  height: 360px;
+  height: var(--content-box-height);
 }
 
-.skeletonTitle {
-  width: 240px;
-  height: 24px;
-  border-radius: 4px;
+.emptyInBox {
+  height: var(--content-box-height);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.skeletonSubtitle {
-  width: 160px;
-  height: 16px;
-  border-radius: 4px;
+.emptyIcon {
+  color: var(--label-color);
 }
 
-.skeletonButton {
-  width: 120px;
-  height: 36px;
-  border-radius: 6px;
+.emptyHeading {
+  margin: 24px 0 0;
+  color: var(--heading-color);
+  font-weight: var(--font-medium);
+  font-size: var(--text-16);
 }
 
-.skeletonChart {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
+.emptyParagraph {
+  margin-top: 8px;
+  margin-bottom: 0;
+  max-width: 448px;
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  line-height: 1.5;
 }
