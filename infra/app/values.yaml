@@ -45,8 +45,6 @@ semanticSearch:
     repository: octoberkeleytime/bt-semantic-search
     tag: prod
 
-  storage: 5Gi
-
 datapuller:
   suspend: false
   image:
