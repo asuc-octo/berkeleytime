@@ -27,23 +27,21 @@ export async function searchSemantic(
   allowedSubjects?: string[],
   threshold: number = 0.3
 ): Promise<SemanticSearchResponse> {
-  const params = new URLSearchParams({
+  const url = `${config.semanticSearch.url}/search`;
+  const body = {
     query,
-    threshold: String(threshold),
-    year: String(year),
+    threshold,
+    year,
     semester,
-  });
-
-  if (allowedSubjects && allowedSubjects.length > 0) {
-    allowedSubjects.forEach((subject) => {
-      params.append("allowed_subjects", subject);
-    });
-  }
-
-  const url = `${config.semanticSearch.url}/search?${params}`;
+    allowed_subjects: allowedSubjects ?? null,
+  };
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
     if (!response.ok) {
       throw new Error(`Semantic search failed: ${response.statusText}`);
