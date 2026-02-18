@@ -10,6 +10,7 @@
 import {
   COE_REQ_BTLL,
   EECS_REQ_BTLL,
+  MECHE_REQ_BTLL,
   UC_REQ_BTLL,
 } from "./reference_gradtrak_reqs";
 
@@ -51,6 +52,16 @@ const requirements: PlanRequirementSeed[] = [
     isUcReq: false,
     college: null,
     major: "Electrical Engineering & Computer Sciences (EECS)",
+    minor: null,
+    createdBy: "system",
+    isOfficial: true,
+  },
+  {
+    name: "Mechanical Engineering (MECHE) Major Requirements",
+    code: MECHE_REQ_BTLL,
+    isUcReq: false,
+    college: null,
+    major: "Mechanical Engineering",
     minor: null,
     createdBy: "system",
     isOfficial: true,

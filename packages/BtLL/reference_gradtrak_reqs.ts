@@ -331,3 +331,138 @@ Function<List<Requirement>>() main (){
   List<Requirement> return [math_lower_div, physics_lower_div, cs_lower_div, eecs_lower_div, eecs_upper_div, design, engineering_units, natural_science, ethics]
 }
 `;
+
+export const MECHE_REQ_BTLL = `
+Function<boolean>(Course) meceng_upper_div_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+  boolean is_meceng equal([subject, "MECENG"])
+  boolean is_upper_div or([regex_match(number, "^\\d\\d\\d"), regex_match(number, "^C\\d")])
+  boolean return and([is_meceng, is_upper_div])
+}
+
+Function<boolean>(Course) meche_tech_elective_upper_div_finder (course){
+  // TODO: update from me.berkeley.edu for the full department-approved list
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+  boolean is_upper_div or([regex_match(number, "^\\d\\d\\d"), regex_match(number, "^C\\d")])
+  boolean is_meceng and([equal([subject, "MECENG"]), is_upper_div])
+  boolean is_engin and([equal([subject, "ENGIN"]), is_upper_div])
+  boolean return or([is_meceng, is_engin])
+}
+
+Function<boolean>(Course) meche_tech_elective_lower_div_finder (course){
+  // TODO: update from me.berkeley.edu for the full approved list; lower-div capped at 3 units per policy
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+  boolean is_meceng equal([subject, "MECENG"])
+  boolean is_upper_div or([regex_match(number, "^\\d\\d\\d"), regex_match(number, "^C\\d")])
+  boolean return and([is_meceng, not(is_upper_div)])
+}
+
+Function<number>(number, Course) add_course_units (acc, course){
+  number units get_attr(course, "units")
+  number return add([acc, units])
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Lower Division Mathematics
+  List<Course> math_1a_list [{"MATH 1A"}]
+  List<Course> math_51_list [{"MATH 51"}]
+  List<boolean> math_1a_status common_course_matches(math_1a_list, courses)
+  List<boolean> math_51_status common_course_matches(math_51_list, courses)
+  CourseListRequirement math_1a_req {math_1a_list, math_1a_status, "MATH 1A"}
+  CourseListRequirement math_51_req {math_51_list, math_51_status, "MATH 51"}
+  OrRequirement math_1a {[math_1a_req, math_51_req], "Calculus I (MATH 1A or 51)"}
+
+  List<Course> math_1b_list [{"MATH 1B"}]
+  List<Course> math_52_list [{"MATH 52"}]
+  List<boolean> math_1b_status common_course_matches(math_1b_list, courses)
+  List<boolean> math_52_status common_course_matches(math_52_list, courses)
+  CourseListRequirement math_1b_req {math_1b_list, math_1b_status, "MATH 1B"}
+  CourseListRequirement math_52_req {math_52_list, math_52_status, "MATH 52"}
+  OrRequirement math_1b {[math_1b_req, math_52_req], "Calculus II (MATH 1B or 52)"}
+
+  List<Course> math_53_list [{"MATH 53"}]
+  List<boolean> math_53_status common_course_matches(math_53_list, courses)
+  CourseListRequirement math_53 {math_53_list, math_53_status, "MATH 53"}
+
+  List<Course> math_54_list [{"MATH 54"}]
+  List<boolean> math_54_status common_course_matches(math_54_list, courses)
+  CourseListRequirement math_54 {math_54_list, math_54_status, "MATH 54"}
+
+  AndRequirement math_lower_div {[math_1a, math_1b, math_53, math_54], "Lower Division Mathematics"}
+
+  // Lower Division Physics
+  List<Course> physics_list [{"PHYSICS 7A"}, {"PHYSICS 7B"}]
+  List<boolean> physics_status common_course_matches(physics_list, courses)
+  CourseListRequirement physics_lower_div {physics_list, physics_status, "Lower Division Physics"}
+
+  // Chemistry (CHEM 1A or CHEM 4A)
+  List<Course> chem_1a_list [{"CHEM 1A"}]
+  List<Course> chem_4a_list [{"CHEM 4A"}]
+  List<boolean> chem_1a_status common_course_matches(chem_1a_list, courses)
+  List<boolean> chem_4a_status common_course_matches(chem_4a_list, courses)
+  CourseListRequirement chem_1a_req {chem_1a_list, chem_1a_status, "CHEM 1A"}
+  CourseListRequirement chem_4a_req {chem_4a_list, chem_4a_status, "CHEM 4A"}
+  OrRequirement chem {[chem_1a_req, chem_4a_req], "Chemistry (CHEM 1A or 4A)"}
+
+  // Engineering Core
+  // Note: ENGIN 26 is exempt for junior transfers per worksheet, but included here as required
+  List<Course> engin_core_list [{"ENGIN 7"}, {"ENGIN 26"}, {"ENGIN 29"}, {"MECENG 40"}]
+  List<boolean> engin_core_status common_course_matches(engin_core_list, courses)
+  CourseListRequirement engin_core_courses {engin_core_list, engin_core_status, "Engineering Core Courses"}
+
+  List<Course> meceng_c85_list [{"MECENG C85"}]
+  List<Course> civeng_c30_list [{"CIVENG C30"}]
+  List<boolean> meceng_c85_status common_course_matches(meceng_c85_list, courses)
+  List<boolean> civeng_c30_status common_course_matches(civeng_c30_list, courses)
+  CourseListRequirement meceng_c85_req {meceng_c85_list, meceng_c85_status, "MECENG C85"}
+  CourseListRequirement civeng_c30_req {civeng_c30_list, civeng_c30_status, "CIVENG C30"}
+  OrRequirement meceng_c85_or_civeng_c30 {[meceng_c85_req, civeng_c30_req], "MECENG C85 or CIVENG C30"}
+
+  AndRequirement engin_core {[engin_core_courses, meceng_c85_or_civeng_c30], "Engineering Core"}
+
+  // Upper-Division Required Courses
+  List<Course> upper_div_required_list [{"ENGIN 178"}, {"MECENG 100"}, {"MECENG 102B"}, {"MECENG 103"}, {"MECENG 104"}, {"MECENG 106"}, {"MECENG 108"}, {"MECENG 109"}, {"MECENG 132"}]
+  List<boolean> upper_div_required_status common_course_matches(upper_div_required_list, courses)
+  CourseListRequirement upper_div_required {upper_div_required_list, upper_div_required_status, "Upper-Division Required Courses"}
+
+  // Technical Electives
+  // Upper-div electives: MECENG + ENGIN upper-div (TODO: update from me.berkeley.edu for full approved list)
+  List<Course> upper_div_electives filter(courses, meche_tech_elective_upper_div_finder)
+  number upper_div_elective_units reduce(upper_div_electives, add_course_units, 0)
+  NumberRequirement upper_div_units_req {upper_div_elective_units, 12, "12 Upper-Div Elective Units"}
+
+  // ME-sponsored electives: MECENG upper-div only (must be at least 9 of the 12 upper-div units)
+  List<Course> meceng_upper_div filter(courses, meceng_upper_div_finder)
+  number meceng_upper_div_units reduce(meceng_upper_div, add_course_units, 0)
+  NumberRequirement meceng_units_req {meceng_upper_div_units, 9, "9 ME-Sponsored Upper-Div Units"}
+
+  // Total elective units: upper-div + lower-div (lower-div capped at 3 per policy, not enforced here)
+  List<Course> lower_div_electives filter(courses, meche_tech_elective_lower_div_finder)
+  number lower_div_elective_units reduce(lower_div_electives, add_course_units, 0)
+  number total_elective_units add([upper_div_elective_units, lower_div_elective_units])
+  NumberRequirement total_units_req {total_elective_units, 15, "15 Total Technical Elective Units"}
+
+  // Design technical elective (TODO: update from me.berkeley.edu for full approved list)
+  List<Course> design_elective_list [{"MECENG 135"}, {"MECENG 167"}, {"MECENG 170"}, {"MECENG 171"}, {"MECENG 179"}, {"MECENG 185"}]
+  List<Course> design_elective_matches filter(courses, (c) {
+    boolean return one_common_course([c], design_elective_list)
+  })
+  NCoursesRequirement design_req {design_elective_matches, 1, "Design Technical Elective"}
+
+  // Quantitative science technical elective (TODO: update from me.berkeley.edu for full approved list)
+  List<Course> quant_sci_list [{"MECENG 110"}, {"MECENG 115"}, {"MECENG 120"}, {"MECENG 123"}, {"MECENG 124"}, {"MECENG 125"}, {"MECENG 127"}, {"MECENG 128"}, {"MECENG 129"}, {"MECENG 136"}]
+  List<Course> quant_sci_matches filter(courses, (c) {
+    boolean return one_common_course([c], quant_sci_list)
+  })
+  NCoursesRequirement quant_sci_req {quant_sci_matches, 1, "Quantitative Science Technical Elective"}
+
+  AndRequirement tech_electives {[upper_div_units_req, meceng_units_req, total_units_req, design_req, quant_sci_req], "Technical Electives"}
+
+  List<Requirement> return [math_lower_div, physics_lower_div, chem, engin_core, upper_div_required, tech_electives]
+}
+`;
