@@ -13,23 +13,20 @@ export const useSetSelectedCourses = () => {
   const mutation = useMutation<
     SetSelectedCoursesMutation,
     SetSelectedCoursesMutationVariables
-  >(
-    SetSelectedCoursesDocument,
-    {
-      update(cache, { data }, { variables }) {
-        const selectedCourses = data?.setSelectedCourses;
+  >(SetSelectedCoursesDocument, {
+    update(cache, { data }, { variables }) {
+      const selectedCourses = data?.setSelectedCourses;
 
-        if (!selectedCourses || !variables) return;
+      if (!selectedCourses || !variables) return;
 
-        cache.modify({
-          id: cache.identify({ __typename: "PlanTerm", _id: variables.id }),
-          fields: {
-            courses: () => variables.courses,
-          },
-        });
-      },
-    }
-  );
+      cache.modify({
+        id: cache.identify({ __typename: "PlanTerm", _id: variables.id }),
+        fields: {
+          courses: () => variables.courses,
+        },
+      });
+    },
+  });
 
   const updateSchedule = useCallback(
     async (

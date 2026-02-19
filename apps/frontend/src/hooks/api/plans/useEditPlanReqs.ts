@@ -13,23 +13,23 @@ export const useEditPlan = () => {
   const mutation = useMutation<EditPlanMutation, EditPlanMutationVariables>(
     EditPlanDocument,
     {
-    update(cache, { data }) {
-      const plan = data?.editPlan;
+      update(cache, { data }) {
+        const plan = data?.editPlan;
 
-      if (!plan) return;
+        if (!plan) return;
 
-      cache.modify({
-        id: `Plan:${plan._id}`,
-        fields: {
-          majors: () => plan.majors,
-          minors: () => plan.minors,
-          colleges: () => plan.colleges,
-          labels: () => plan.labels,
-          uniReqsSatisfied: () => plan.uniReqsSatisfied,
-          collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
-        },
-      });
-    },
+        cache.modify({
+          id: `Plan:${plan._id}`,
+          fields: {
+            majors: () => plan.majors,
+            minors: () => plan.minors,
+            colleges: () => plan.colleges,
+            labels: () => plan.labels,
+            uniReqsSatisfied: () => plan.uniReqsSatisfied,
+            collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
+          },
+        });
+      },
     }
   );
 

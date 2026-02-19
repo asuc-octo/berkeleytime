@@ -15,40 +15,37 @@ export const useCreateNewPlanTerm = () => {
   const mutation = useMutation<
     CreateNewPlanTermMutation,
     CreateNewPlanTermMutationVariables
-  >(
-    CreateNewPlanTermDocument,
-    {
-      update(cache, { data }) {
-        const planTerm = data?.createNewPlanTerm;
+  >(CreateNewPlanTermDocument, {
+    update(cache, { data }) {
+      const planTerm = data?.createNewPlanTerm;
 
-        if (!planTerm) return;
+      if (!planTerm) return;
 
-        const planData = cache.readQuery<GetPlanQuery>({
-          query: GetPlanDocument,
-        });
-        if (!planData?.planByUser?.[0]) return;
-        const planCacheId = cache.identify({
-          __typename: "Plan",
-          _id: planData.planByUser[0]._id,
-        });
+      const planData = cache.readQuery<GetPlanQuery>({
+        query: GetPlanDocument,
+      });
+      if (!planData?.planByUser?.[0]) return;
+      const planCacheId = cache.identify({
+        __typename: "Plan",
+        _id: planData.planByUser[0]._id,
+      });
 
-        if (planCacheId) {
-          cache.modify({
-            id: planCacheId,
-            fields: {
-              planTerms: (existingPlanTerms = []) => {
-                const newPlanTermRef = cache.identify({
-                  __typename: "PlanTerm",
-                  _id: planTerm._id,
-                });
-                return [...existingPlanTerms, { __ref: newPlanTermRef }];
-              },
+      if (planCacheId) {
+        cache.modify({
+          id: planCacheId,
+          fields: {
+            planTerms: (existingPlanTerms = []) => {
+              const newPlanTermRef = cache.identify({
+                __typename: "PlanTerm",
+                _id: planTerm._id,
+              });
+              return [...existingPlanTerms, { __ref: newPlanTermRef }];
             },
-          });
-        }
-      },
-    }
-  );
+          },
+        });
+      }
+    },
+  });
 
   const createPlanTerm = useCallback(
     async (planTerm: PlanTermInput) => {
