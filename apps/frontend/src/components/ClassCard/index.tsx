@@ -9,9 +9,14 @@ import {
   Trash,
 } from "iconoir-react";
 
+import { METRIC_ORDER } from "@repo/shared";
 import { Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import {
+  getMetricStatus,
+  getStatusColor,
+} from "@/components/Class/Ratings/metricsUtil";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -55,6 +60,9 @@ type BaseClassFields = Pick<
 
 type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
   ratingsCount?: number | null;
+  aggregatedRatings?: {
+    metrics: Array<{ metricName: string; weightedAverage: number }>;
+  } | null;
 };
 
 type EnrollmentSnapshot = Pick<
@@ -178,10 +186,32 @@ export default function ClassCard({
               />
             )}
             {(_class?.course?.ratingsCount ?? 0) > 0 && (
-              <span className={styles.ratingsCount}>
-                <Star className={styles.ratingsIcon} />
-                {_class?.course?.ratingsCount}
-              </span>
+              <Tooltip
+                trigger={
+                  <span className={styles.ratingsCount}>
+                    <Star className={styles.ratingsIcon} />
+                    {_class?.course?.ratingsCount}
+                  </span>
+                }
+                title="Ratings"
+                description={
+                  <div style={{ display: "grid", gridTemplateColumns: "auto auto auto", gap: "4px 12px", alignItems: "center" }}>
+                    {METRIC_ORDER.map((metricName) => {
+                      const metric = _class?.course?.aggregatedRatings?.metrics?.find(
+                        (m) => m.metricName === metricName
+                      );
+                      if (!metric) return null;
+                      const status = getMetricStatus(metricName, metric.weightedAverage);
+                      const color = getStatusColor(metricName, metric.weightedAverage);
+                      return [
+                        <span key={`${metricName}-name`}>{metricName}:</span>,
+                        <span key={`${metricName}-status`} style={{ color: `var(--${color}-500)` }}>{status}</span>,
+                        <span key={`${metricName}-avg`} style={{ color: "var(--secondary-text-color)" }}>{metric.weightedAverage.toFixed(1)}/5.0</span>,
+                      ];
+                    })}
+                  </div>
+                }
+              />
             )}
             {expandable && onExpandedChange !== undefined && (
               <Card.ActionIcon
