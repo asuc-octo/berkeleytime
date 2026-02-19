@@ -82,33 +82,30 @@ function generateMongoshCommands(): void {
   console.log("// Switch to the correct database (update if needed)");
   console.log('use("bt");');
   console.log("");
-  console.log(
-    "// Clear existing official requirements (optional - uncomment if needed)"
-  );
-  console.log(
-    '// db.planrequirements.deleteMany({ isOfficial: true, createdBy: "system" });'
-  );
-  console.log("");
-
   for (const req of requirements) {
     console.log(`// ${req.name}`);
-    console.log("db.planrequirements.insertOne({");
-    console.log(`  code: "${escapeForMongosh(req.code)}",`);
-    console.log(`  name: "${escapeForMongosh(req.name)}",`);
-    console.log(`  isUcReq: ${req.isUcReq},`);
-    console.log(`  college: ${req.college ? `"${req.college}"` : "null"},`);
-    console.log(`  major: ${req.major ? `"${req.major}"` : "null"},`);
-    console.log(`  minor: ${req.minor ? `"${req.minor}"` : "null"},`);
-    console.log(`  createdBy: "${req.createdBy}",`);
-    console.log(`  isOfficial: ${req.isOfficial},`);
-    console.log("  createdAt: new Date(),");
-    console.log("  updatedAt: new Date()");
-    console.log("});");
+    console.log("db.planrequirements.updateOne(");
+    console.log(
+      `  { name: "${escapeForMongosh(req.name)}", isOfficial: ${req.isOfficial}, createdBy: "${req.createdBy}" },`
+    );
+    console.log("  {");
+    console.log("    $set: {");
+    console.log(`      code: "${escapeForMongosh(req.code)}",`);
+    console.log(`      isUcReq: ${req.isUcReq},`);
+    console.log(`      college: ${req.college ? `"${req.college}"` : "null"},`);
+    console.log(`      major: ${req.major ? `"${req.major}"` : "null"},`);
+    console.log(`      minor: ${req.minor ? `"${req.minor}"` : "null"},`);
+    console.log("      updatedAt: new Date()");
+    console.log("    },");
+    console.log("    $setOnInsert: { createdAt: new Date() }");
+    console.log("  },");
+    console.log("  { upsert: true }");
+    console.log(");");
     console.log("");
   }
 
-  console.log("// Verify insertions");
-  console.log("print('Inserted requirements:');");
+  console.log("// Verify upserts");
+  console.log("print('Current official requirements:');");
   console.log(
     "db.planrequirements.find({ isOfficial: true }).forEach(doc => {"
   );

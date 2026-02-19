@@ -369,31 +369,24 @@ Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
 
   // Lower Division Mathematics
-  List<Course> math_1a_list [{"MATH 1A"}]
-  List<Course> math_51_list [{"MATH 51"}]
-  List<boolean> math_1a_status common_course_matches(math_1a_list, courses)
-  List<boolean> math_51_status common_course_matches(math_51_list, courses)
-  CourseListRequirement math_1a_req {math_1a_list, math_1a_status, "MATH 1A"}
-  CourseListRequirement math_51_req {math_51_list, math_51_status, "MATH 51"}
-  OrRequirement math_1a {[math_1a_req, math_51_req], "Calculus I (MATH 1A or 51)"}
+  List<Course> math_1a_51_list [{"MATH 1A"}, {"MATH 51"}]
+  List<Course> math_1a_51_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_1a_51_list)
+  })
+  NCoursesRequirement math_1a {math_1a_51_matches, 1, "Calculus I (MATH 1A or 51)"}
 
-  List<Course> math_1b_list [{"MATH 1B"}]
-  List<Course> math_52_list [{"MATH 52"}]
-  List<boolean> math_1b_status common_course_matches(math_1b_list, courses)
-  List<boolean> math_52_status common_course_matches(math_52_list, courses)
-  CourseListRequirement math_1b_req {math_1b_list, math_1b_status, "MATH 1B"}
-  CourseListRequirement math_52_req {math_52_list, math_52_status, "MATH 52"}
-  OrRequirement math_1b {[math_1b_req, math_52_req], "Calculus II (MATH 1B or 52)"}
+  List<Course> math_1b_52_list [{"MATH 1B"}, {"MATH 52"}]
+  List<Course> math_1b_52_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_1b_52_list)
+  })
+  NCoursesRequirement math_1b {math_1b_52_matches, 1, "Calculus II (MATH 1B or 52)"}
 
-  List<Course> math_53_list [{"MATH 53"}]
-  List<boolean> math_53_status common_course_matches(math_53_list, courses)
-  CourseListRequirement math_53 {math_53_list, math_53_status, "MATH 53"}
+  List<Course> math_53_54_list [{"MATH 53"}, {"MATH 54"}]
+  List<boolean> math_53_54_status common_course_matches(math_53_54_list, courses)
+  CourseListRequirement math_53_54 {math_53_54_list, math_53_54_status, "MATH 53 and 54"}
 
-  List<Course> math_54_list [{"MATH 54"}]
-  List<boolean> math_54_status common_course_matches(math_54_list, courses)
-  CourseListRequirement math_54 {math_54_list, math_54_status, "MATH 54"}
-
-  AndRequirement math_lower_div {[math_1a, math_1b, math_53, math_54], "Lower Division Mathematics"}
+  // Lower Division Mathematics
+  AndRequirement math_lower_div {[math_1a, math_1b, math_53_54], "Lower Division Mathematics"}
 
   // Lower Division Physics
   List<Course> physics_list [{"PHYSICS 7A"}, {"PHYSICS 7B"}]
@@ -401,29 +394,19 @@ Function<List<Requirement>>() main (){
   CourseListRequirement physics_lower_div {physics_list, physics_status, "Lower Division Physics"}
 
   // Chemistry (CHEM 1A or CHEM 4A)
-  List<Course> chem_1a_list [{"CHEM 1A"}]
-  List<Course> chem_4a_list [{"CHEM 4A"}]
-  List<boolean> chem_1a_status common_course_matches(chem_1a_list, courses)
-  List<boolean> chem_4a_status common_course_matches(chem_4a_list, courses)
-  CourseListRequirement chem_1a_req {chem_1a_list, chem_1a_status, "CHEM 1A"}
-  CourseListRequirement chem_4a_req {chem_4a_list, chem_4a_status, "CHEM 4A"}
-  OrRequirement chem {[chem_1a_req, chem_4a_req], "Chemistry (CHEM 1A or 4A)"}
+  List<Course> chem_list [{"CHEM 1A"}, {"CHEM 4A"}]
+  List<Course> chem_matches filter(courses, (c) {
+    boolean return one_common_course([c], chem_list)
+  })
+  NCoursesRequirement chem {chem_matches, 1, "Chemistry (CHEM 1A or 4A)"}
 
   // Engineering Core
   // Note: ENGIN 26 is exempt for junior transfers per worksheet, but included here as required
-  List<Course> engin_core_list [{"ENGIN 7"}, {"ENGIN 26"}, {"ENGIN 29"}, {"MECENG 40"}]
+  List<Course> engin_core_list [{"ENGIN 7"}, {"ENGIN 26"}, {"ENGIN 29"}, {"MECENG 40"}, {"MECENG C85"}, {"CIVENG C30"}]
   List<boolean> engin_core_status common_course_matches(engin_core_list, courses)
   CourseListRequirement engin_core_courses {engin_core_list, engin_core_status, "Engineering Core Courses"}
 
-  List<Course> meceng_c85_list [{"MECENG C85"}]
-  List<Course> civeng_c30_list [{"CIVENG C30"}]
-  List<boolean> meceng_c85_status common_course_matches(meceng_c85_list, courses)
-  List<boolean> civeng_c30_status common_course_matches(civeng_c30_list, courses)
-  CourseListRequirement meceng_c85_req {meceng_c85_list, meceng_c85_status, "MECENG C85"}
-  CourseListRequirement civeng_c30_req {civeng_c30_list, civeng_c30_status, "CIVENG C30"}
-  OrRequirement meceng_c85_or_civeng_c30 {[meceng_c85_req, civeng_c30_req], "MECENG C85 or CIVENG C30"}
-
-  AndRequirement engin_core {[engin_core_courses, meceng_c85_or_civeng_c30], "Engineering Core"}
+  AndRequirement engin_core {[engin_core_courses], "Engineering Core"}
 
   // Upper-Division Required Courses
   List<Course> upper_div_required_list [{"ENGIN 178"}, {"MECENG 100"}, {"MECENG 102B"}, {"MECENG 103"}, {"MECENG 104"}, {"MECENG 106"}, {"MECENG 108"}, {"MECENG 109"}, {"MECENG 132"}]
