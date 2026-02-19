@@ -195,18 +195,42 @@ export default function ClassCard({
                 }
                 title="Ratings"
                 description={
-                  <div style={{ display: "grid", gridTemplateColumns: "auto auto auto", gap: "4px 12px", alignItems: "center" }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "auto auto auto",
+                      gap: "4px 12px",
+                      alignItems: "center",
+                    }}
+                  >
                     {METRIC_ORDER.map((metricName) => {
-                      const metric = _class?.course?.aggregatedRatings?.metrics?.find(
-                        (m) => m.metricName === metricName
-                      );
+                      const metric =
+                        _class?.course?.aggregatedRatings?.metrics?.find(
+                          (m) => m.metricName === metricName
+                        );
                       if (!metric) return null;
-                      const status = getMetricStatus(metricName, metric.weightedAverage);
-                      const color = getStatusColor(metricName, metric.weightedAverage);
+                      const status = getMetricStatus(
+                        metricName,
+                        metric.weightedAverage
+                      );
+                      const color = getStatusColor(
+                        metricName,
+                        metric.weightedAverage
+                      );
                       return [
                         <span key={`${metricName}-name`}>{metricName}:</span>,
-                        <span key={`${metricName}-status`} style={{ color: `var(--${color}-500)` }}>{status}</span>,
-                        <span key={`${metricName}-avg`} style={{ color: "var(--secondary-text-color)" }}>{metric.weightedAverage.toFixed(1)}/5.0</span>,
+                        <span
+                          key={`${metricName}-status`}
+                          style={{ color: `var(--${color}-500)` }}
+                        >
+                          {status}
+                        </span>,
+                        <span
+                          key={`${metricName}-avg`}
+                          style={{ color: "var(--secondary-text-color)" }}
+                        >
+                          {metric.weightedAverage.toFixed(1)}/5.0
+                        </span>,
                       ];
                     })}
                   </div>
