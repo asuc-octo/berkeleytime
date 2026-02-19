@@ -3,14 +3,18 @@ import { useCallback } from "react";
 import { MutationHookOptions, useMutation } from "@apollo/client/react";
 
 import {
-  SET_SELECTED_COURSES,
   SelectedCourseInput,
-  SetSelectedCoursesResponse,
-} from "@/lib/api";
+  SetSelectedCoursesDocument,
+  SetSelectedCoursesMutation,
+  SetSelectedCoursesMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useSetSelectedCourses = () => {
-  const mutation = useMutation<SetSelectedCoursesResponse>(
-    SET_SELECTED_COURSES,
+  const mutation = useMutation<
+    SetSelectedCoursesMutation,
+    SetSelectedCoursesMutationVariables
+  >(
+    SetSelectedCoursesDocument,
     {
       update(cache, { data }, { variables }) {
         const selectedCourses = data?.setSelectedCourses;
@@ -32,7 +36,10 @@ export const useSetSelectedCourses = () => {
       id: string,
       courses: SelectedCourseInput[],
       options?: Omit<
-        MutationHookOptions<SetSelectedCoursesResponse>,
+        MutationHookOptions<
+          SetSelectedCoursesMutation,
+          SetSelectedCoursesMutationVariables
+        >,
         "variables"
       >
     ) => {

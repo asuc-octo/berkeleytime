@@ -3,24 +3,28 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  CREATE_NEW_PLAN_TERM,
-  CreateNewPlanTermResponse,
+  CreateNewPlanTermDocument,
+  CreateNewPlanTermMutation,
+  CreateNewPlanTermMutationVariables,
+  GetPlanDocument,
+  GetPlanQuery,
   PlanTermInput,
-  READ_PLAN,
-  ReadPlanResponse,
-} from "@/lib/api";
+} from "@/lib/generated/graphql";
 
 export const useCreateNewPlanTerm = () => {
-  const mutation = useMutation<CreateNewPlanTermResponse>(
-    CREATE_NEW_PLAN_TERM,
+  const mutation = useMutation<
+    CreateNewPlanTermMutation,
+    CreateNewPlanTermMutationVariables
+  >(
+    CreateNewPlanTermDocument,
     {
       update(cache, { data }) {
         const planTerm = data?.createNewPlanTerm;
 
         if (!planTerm) return;
 
-        const planData = cache.readQuery<ReadPlanResponse>({
-          query: READ_PLAN,
+        const planData = cache.readQuery<GetPlanQuery>({
+          query: GetPlanDocument,
         });
         if (!planData?.planByUser?.[0]) return;
         const planCacheId = cache.identify({

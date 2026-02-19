@@ -2,10 +2,17 @@ import { useCallback } from "react";
 
 import { useMutation } from "@apollo/client/react";
 
-import { REMOVE_PLAN_TERM_BY_ID } from "@/lib/api";
+import {
+  RemovePlanTermByIdDocument,
+  RemovePlanTermByIdMutation,
+  RemovePlanTermByIdMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useRemovePlanTermByID = () => {
-  const mutation = useMutation(REMOVE_PLAN_TERM_BY_ID, {
+  const mutation = useMutation<
+    RemovePlanTermByIdMutation,
+    RemovePlanTermByIdMutationVariables
+  >(RemovePlanTermByIdDocument, {
     update(cache, _, { variables }) {
       if (!variables) return;
       const removedId = variables.removePlanTermByIdId;
