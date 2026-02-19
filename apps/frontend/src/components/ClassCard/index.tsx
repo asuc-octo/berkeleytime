@@ -221,7 +221,10 @@ export default function ClassCard({
                         <span key={`${metricName}-name`}>{metricName}:</span>,
                         <span
                           key={`${metricName}-status`}
-                          style={{ color: `var(--${color}-500)` }}
+                          style={{
+                            color: `var(--${color}-500)`,
+                            whiteSpace: "nowrap",
+                          }}
                         >
                           {status}
                         </span>,
