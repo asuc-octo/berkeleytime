@@ -73,6 +73,17 @@ const compareAlphabetical = (
   return a.number.localeCompare(b.number) * direction;
 };
 
+const compareViews: Comparator = (a, b, direction) => {
+  const aViews = a.viewCount ?? 0;
+  const bViews = b.viewCount ?? 0;
+
+  if (aViews !== bViews) {
+    return (aViews - bViews) * direction;
+  }
+  
+  return compareAlphabetical(a, b, direction);
+};
+
 const getPassFailPercentage = (
   gradeDistribution: IGradeDistribution | null | undefined
 ) => {
@@ -300,6 +311,7 @@ const sorters: Record<SortBy, Sorter> = {
   [SortBy.OpenSeats]: (context) => sortWithRelevance(context, compareOpenSeats),
   [SortBy.PercentOpenSeats]: (context) =>
     sortWithRelevance(context, comparePercentOpenSeats),
+  [SortBy.Views]: (context) => sortWithRelevance(context, compareViews),
 };
 
 export const sortClasses = (
