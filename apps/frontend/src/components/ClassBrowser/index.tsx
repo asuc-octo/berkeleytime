@@ -32,6 +32,7 @@ const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",
   [SortBy.PercentOpenSeats]: "desc",
+  [SortBy.Views]: "desc",
 };
 
 const getEffectiveOrder = (
