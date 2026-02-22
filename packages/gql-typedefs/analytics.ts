@@ -84,6 +84,7 @@ export const analyticsTypeDef = gql`
     Staff-only: Active users count grouped by time period.
     granularity must be "week" or "month".
     """
-    activeUsersAnalyticsData(granularity: String!): [ActiveUsersDataPoint!]! @auth
+    activeUsersAnalyticsData(granularity: String!): [ActiveUsersDataPoint!]!
+      @auth
   }
 `;

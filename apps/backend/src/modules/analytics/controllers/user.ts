@@ -1,7 +1,7 @@
 import { UserModel } from "@repo/common/models";
 
-import { ACTIVITY_THRESHOLD } from "../../user/jobs/update-activity-scores";
 import { RequestContext } from "../../../types/request-context";
+import { ACTIVITY_THRESHOLD } from "../../user/jobs/update-activity-scores";
 import { requireStaffAuth } from "../helpers/staff-auth";
 
 export const getUserCreationAnalyticsData = async (context: RequestContext) => {
