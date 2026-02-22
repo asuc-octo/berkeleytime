@@ -29,6 +29,16 @@ export const userTypeDef = gql`
     createdAt: String!
   }
 
+  """
+  Active users count for a single time period bucket
+  """
+  type ActiveUsersDataPoint @cacheControl(maxAge: 0) {
+    "Start of the time period (ISO string)"
+    periodStart: String!
+    "Number of active users whose lastSeenAt falls in this period"
+    count: Int!
+  }
+
   type Query {
     user: User @auth
   }
