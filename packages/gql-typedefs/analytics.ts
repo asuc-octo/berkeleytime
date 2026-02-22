@@ -81,5 +81,9 @@ export const analyticsTypeDef = gql`
     Staff-only: Daily activity aggregated across all features (schedules, ratings, GradTrak, bookmarks)
     """
     generalActivityAnalytics(days: Int!): [GeneralActivityDataPoint!]! @auth
+    Staff-only: Active users count grouped by time period.
+    granularity must be "week" or "month".
+    """
+    activeUsersAnalyticsData(granularity: String!): [ActiveUsersDataPoint!]! @auth
   }
 `;

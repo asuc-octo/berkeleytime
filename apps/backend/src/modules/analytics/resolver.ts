@@ -13,6 +13,7 @@ import {
 import { getSchedulerAnalyticsData } from "./controllers/schedule";
 import { getStats } from "./controllers/stats";
 import {
+  getActiveUsersAnalyticsData,
   getUserActivityAnalyticsData,
   getUserCreationAnalyticsData,
 } from "./controllers/user";
@@ -188,6 +189,28 @@ const resolvers = {
     ) => {
       try {
         return await getCollectionAnalyticsData(context);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    // Active users analytics
+    activeUsersAnalyticsData: async (
+      _: unknown,
+      { granularity }: { granularity: string },
+      context: RequestContext
+    ) => {
+      try {
+        const gran = granularity === "month" ? "month" : "week";
+        return await getActiveUsersAnalyticsData(context, gran);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;
