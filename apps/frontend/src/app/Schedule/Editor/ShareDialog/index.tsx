@@ -1,6 +1,6 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
 
-import { ClipboardCheck, PasteClipboard, ShareIos, Xmark } from "iconoir-react";
+import { ClipboardCheck, PasteClipboard, Xmark } from "iconoir-react";
 
 import {
   Button,
@@ -87,23 +87,22 @@ export default function ShareDialog({ children }: ShareDialogProps) {
             </Dialog.Close>
           </Dialog.Header>
           <Dialog.Body gap="3">
-            <Flex gap="3">
+            <Flex gap="3" width="100%">
               <Input
                 readOnly
                 type="url"
                 value={window.location.origin + window.location.pathname}
+                width="100%"
               />
-              {canShare ? (
+              <Button onClick={() => copy()}>
+                {copied ? "Copied" : "Copy link"}
+              </Button>
+              {canShare && (
                 <Button onClick={() => navigator.share(content)}>
                   Share
-                  <ShareIos />
-                </Button>
-              ) : (
-                <Button onClick={() => copy()}>
-                  {copied ? <ClipboardCheck /> : <PasteClipboard />}
-                  {copied ? "Copied" : "Copy link"}
                 </Button>
               )}
+
             </Flex>
             <label>
               <Flex align="center" gap="3">
