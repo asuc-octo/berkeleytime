@@ -25,6 +25,11 @@ import {
   Select,
 } from "@repo/theme";
 
+import { useTriggerDatapuller } from "../../hooks/api/datapuller";
+import {
+  DATAPULLER_JOB_OPTIONS,
+  DatapullerJob,
+} from "../../lib/api/datapuller";
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
   useAllStaffMembers,
@@ -92,6 +97,7 @@ const SEARCH_TABS = [
   { value: "staff", label: "Staff View" },
   { value: "user", label: "Users Lookup" },
   { value: "pods", label: "Pods" },
+  { value: "data", label: "Data" },
 ];
 
 type StaffSearchBy = "name" | "role" | "semester" | "team";
@@ -105,6 +111,14 @@ const STAFF_SEARCH_BY_OPTIONS: OptionItem<StaffSearchBy>[] = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("staff");
+  const [selectedJob, setSelectedJob] = useState<DatapullerJob>("COURSES");
+  const [datapullerDropdownOpen, setDatapullerDropdownOpen] = useState(false);
+  const [datapullerMessage, setDatapullerMessage] = useState<{
+    text: string;
+    isError: boolean;
+  } | null>(null);
+  const { trigger: triggerDatapuller, loading: datapullerLoading } =
+    useTriggerDatapuller();
   const [searchSelectedUser, setSearchSelectedUser] =
     useState<UserSearchResult | null>(null);
   const [viewedUsers, setViewedUsers] = useState<UserSearchResult[]>([]);
@@ -1247,6 +1261,85 @@ export default function Dashboard() {
           </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Root>
+
+      {activeTab === "data" && (
+        <div className={styles.dataTab}>
+          <h2 className={styles.dataTabTitle}>Datapuller</h2>
+          <p className={styles.dataTabDescription}>
+            Manually trigger a datapuller job. A Kubernetes Job will be created
+            and run immediately.
+          </p>
+          <div className={styles.splitButton}>
+            <button
+              className={styles.splitButtonMain}
+              disabled={datapullerLoading}
+              onClick={async () => {
+                setDatapullerMessage(null);
+                try {
+                  const result = await triggerDatapuller(selectedJob);
+                  setDatapullerMessage({
+                    text: result?.message ?? "job successfult",
+                    isError: false,
+                  });
+                } catch (e) {
+                  setDatapullerMessage({
+                    text:
+                      e instanceof Error ? e.message : "error running job",
+                    isError: true,
+                  });
+                }
+                setDatapullerDropdownOpen(false);
+              }}
+            >
+              {datapullerLoading
+                ? "Running..."
+                : `Run ${DATAPULLER_JOB_OPTIONS.find((o) => o.value === selectedJob)?.label ?? selectedJob}`}
+            </button>
+            <button
+              className={styles.splitButtonCaret}
+              disabled={datapullerLoading}
+              onClick={() =>
+                setDatapullerDropdownOpen((prev) => !prev)
+              }
+              aria-label="select datapuller job"
+            >
+              ▾
+            </button>
+            {datapullerDropdownOpen && (
+              <ul className={styles.splitButtonDropdown}>
+                {DATAPULLER_JOB_OPTIONS.map((option) => (
+                  <li
+                    key={option.value}
+                    className={`${styles.splitButtonDropdownItem} ${
+                      option.value === selectedJob
+                        ? styles.splitButtonDropdownItemActive
+                        : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedJob(option.value);
+                      setDatapullerDropdownOpen(false);
+                      setDatapullerMessage(null);
+                    }}
+                  >
+                    {option.label}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {datapullerMessage && (
+            <p
+              className={
+                datapullerMessage.isError
+                  ? styles.datapullerError
+                  : styles.datapullerSuccess
+              }
+            >
+              {datapullerMessage.text}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
