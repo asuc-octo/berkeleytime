@@ -2,6 +2,7 @@ import { merge } from "lodash";
 
 import Analytics from "./analytics";
 import Banner from "./banner";
+import Datapuller from "./datapuller";
 import Catalog from "./catalog";
 import Class from "./class";
 import ClickTracking from "./click-tracking";
@@ -23,6 +24,7 @@ import User from "./user";
 const modules = [
   Analytics,
   Banner,
+  Datapuller,
   ClickTracking,
   User,
   GradeDistribution,
