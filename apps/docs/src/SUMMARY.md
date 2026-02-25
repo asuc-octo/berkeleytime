@@ -13,6 +13,8 @@
 
 # Core Documentation
 
+- [Testing](./core/Testing/README.md)
+
 - [Backend](./core/backend/README.md)
 
 - [Data](./core/data/README.md)
