@@ -24,6 +24,7 @@ mongodb:
       logAppend: true
     net:
       port: 27017
+      bindIp: 0.0.0.0
     processManagement:
       pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
     replication:
