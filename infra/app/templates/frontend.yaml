@@ -20,6 +20,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.port }}
+          resources:
+            requests:
+              ephemeral-storage: "256Mi"
+            limits:
+              ephemeral-storage: "1Gi"
           readinessProbe:
             httpGet:
               path: /
