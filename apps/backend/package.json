@@ -52,7 +52,7 @@
     "@opentelemetry/exporter-trace-otlp-http": "^0.56.0",
     "@opentelemetry/resources": "^1.29.0",
     "@opentelemetry/sdk-logs": "^0.56.0",
-    "@opentelemetry/sdk-metrics": "^1.29.0",
+    "@opentelemetry/sdk-metrics": "1.29.0",
     "@opentelemetry/sdk-node": "^0.56.0",
     "@repo/common": "*",
     "@repo/gql-typedefs": "*",
