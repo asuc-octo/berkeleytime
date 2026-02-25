@@ -80,8 +80,7 @@ export default function Header() {
           onClick={handleAiSearchSubmit}
           disabled={semanticLoading || !query.trim()}
         >
-          <SparksSolid />
-          {semanticLoading ? "Searching..." : "AI Search (Beta) → "}
+          {semanticLoading ? "Searching..." : "Search with AI (Beta)"}
         </Button>
       )}
       <Button
