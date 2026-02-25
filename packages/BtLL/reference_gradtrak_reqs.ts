@@ -112,6 +112,263 @@ Function<List<Requirement>>() main (){
 }
 `;
 
+export const CDSS_REQ_BTLL = `
+Function<List<Requirement>>() main (){
+  // 7 course breadth & essential skills matcher
+  List<Course> courses get_attr(this, "allCourses")
+
+  // 1 Arts & Literature
+  List<Course> arts_and_lit_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Arts & Literature")
+  })
+  NCoursesRequirement arts_and_lit {arts_and_lit_courses, 1, "Minimum 1 Arts & Literature Course"}
+
+  // 1 Biological Sciences
+  List<Course> biological_sciences_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Biological Sciences")
+  })
+  NCoursesRequirement biological_sciences {biological_sciences_courses, 1, "Minimum 1 Biological Sciences Course"}
+
+  // 1 Historical Studies
+  List<Course> historical_studies_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Historical Studies")
+  })
+  NCoursesRequirement historical_studies {historical_studies_courses, 1, "Minimum 1 Historical Studies Course"}
+
+  // 1 International Studies
+  List<Course> international_studies_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "International Studies")
+  })
+  NCoursesRequirement international_studies {international_studies_courses, 1, "Minimum 1 International Studies Course"}
+
+  // 1 Philosophy & Values
+  List<Course> philosophy_and_values_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Philosophy & Values")
+  })
+  NCoursesRequirement philosophy_and_values {philosophy_and_values_courses, 1, "Minimum 1 Philosophy & Values Course"}
+
+  // 1 Physical Sciences
+  List<Course> physical_sciences_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Physical Sciences")
+  })
+  NCoursesRequirement physical_sciences {physical_sciences_courses, 1, "Minimum 1 Physical Sciences Course"}
+
+  // 1 Social & Behavioral Sciences
+  List<Course> social_and_behavioral_sciences_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Social & Behavioral Sciences")
+  })
+  NCoursesRequirement social_and_behavioral_sciences {social_and_behavioral_sciences_courses, 1, "Minimum 1 Social & Behavioral Sciences Course"}
+
+
+  // R&C A
+  List<Course> rca_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Reading and Composition A")
+  })
+  NCoursesRequirement rca {rca_courses, 1, "Reading and Composition A"}
+
+  // R&C B
+  List<Course> computational_reasoning_courses filter(courses, (c) {
+    List<string> breadth_requirements get_attr(c, "breadthRequirements")
+    boolean return contains(breadth_requirements, "Reading and Composition B")
+  })
+  NCoursesRequirement rcb {rcb_courses, 1, "Reading and Composition B"}
+
+
+  // Statistical Reasoning
+  Function<boolean>(Course) statistical_reasoning_finder (c) {
+    string subject get_attr(course, "subject")
+    string number get_attr(course, "number")
+
+    // CompSci/Data/Stat C8
+    boolean is_compsci_c8 and([equal([subject, "COMPSCI"]), equal([number, "C8"])])
+    boolean is_data_c8 and([equal([subject, "DATA"]), equal([number, "C8"])])
+    boolean is_stat_c8 and([equal([subject, "STAT"]), equal([number, "C8"])])
+
+    // Stat 2, 20, 21, W21
+    boolean is_stat_2 and([equal([subject, "STAT"]), equal([number, "2"])])
+    boolean is_stat_20 and([equal([subject, "STAT"]), equal([number, "20"])])
+    boolean is_stat_21 and([equal([subject, "STAT"]), equal([number, "21"])])
+    boolean is_stat_w21 and([equal([subject, "STAT"]), equal([number, "W21"])])
+
+    boolean return or([is_compsci_c8, is_data_c8, is_stat_c8, is_stat_2, is_stat_20, is_stat_21, is_stat_w21])
+  }
+  List<Course> statistical_reasoning_courses filter(courses, statistical_reasoning_finder)
+  NCoursesRequirement statistical_reasoning {statistical_reasoning_courses, 1, "Statistical Reasoning"}
+
+
+  // Computational Reasoning
+  Function<boolean>(Course) computational_reasoning_finder (c) {
+    string subject get_attr(course, "subject")
+    string number get_attr(course, "number")
+
+    // CompSci/Data/Stat C8
+    boolean is_compsci_c8 and([equal([subject, "COMPSCI"]), equal([number, "C8"])])
+    boolean is_data_c8 and([equal([subject, "DATA"]), equal([number, "C8"])])
+    boolean is_stat_c8 and([equal([subject, "STAT"]), equal([number, "C8"])])
+
+    // CompSci 10, W10, 61A, 61B, 61C
+    boolean is_compsci_10 and([equal([subject, "COMPSCI"]), equal([number, "10"])])
+    boolean is_compsci_w10 and([equal([subject, "COMPSCI"]), equal([number, "W10"])])
+    boolean is_compsci_61a and([equal([subject, "COMPSCI"]), equal([number, "61A"])])
+    boolean is_compsci_61b and([equal([subject, "COMPSCI"]), equal([number, "61B"])])
+    boolean is_compsci_61c and([equal([subject, "COMPSCI"]), equal([number, "61C"])])
+
+    boolean return or([is_compsci_c8, is_data_c8, is_stat_c8, is_compsci_10, is_compsci_w10, is_compsci_61a, is_compsci_61b, is_compsci_61c])
+  }
+  List<Course> computational_reasoning_courses filter(courses, computational_reasoning_finder)
+  NCoursesRequirement computational_reasoning {computational_reasoning_courses, 1, "Computational Reasoning"}
+
+
+  // Human and Social Dynamics of Data and Technology (HSDDT)
+  Function<boolean>(Course) hsddt_finder (c) {
+    string subject get_attr(course, "subject")
+    string number get_attr(course, "number")
+
+    // AMERSTD/AFRICAM C134
+    boolean is_amerstd_c134 and([equal([subject, "AMERSTD"]), equal([number, "C134"])])
+    boolean is_africam_c134 and([equal([subject, "AFRICAM"]), equal([number, "C134"])])
+
+    // ANTHRO 168
+    boolean is_anthro_168 and([equal([subject, "ANTHRO"]), equal([number, "168"])])
+
+    // BIO ENG 100
+    boolean is_bioeng_100 and([equal([subject, "BIO ENG"]), equal([number, "100"])])
+
+    // CDSS 60 (fka CDSS 94)
+    boolean is_cdss_60 and([equal([subject, "CDSS"]), equal([number, "60"])])
+    boolean is_cdss_94 and([equal([subject, "CDSS"]), equal([number, "94"])])
+
+    // CYPLAN 101
+    boolean is_cyplan_101 and([equal([subject, "CYPLAN"]), equal([number, "101"])])
+
+    // DATA 94, C4AC
+    boolean is_data_94 and([equal([subject, "DATA"]), equal([number, "94"])])
+    boolean is_data_c4ac and([equal([subject, "DATA"]), equal([number, "C4AC"])])
+
+    // DATA C104/HISTORY C184D/ STS C104
+    boolean is_data_c104 and([equal([subject, "DATA"]), equal([number, "C104"])])
+    boolean is_history_c184d and([equal([subject, "HISTORY"]), equal([number, "C184D"])])
+    boolean is_sts_c104 and([equal([subject, "STS"]), equal([number, "C104"])])
+
+    // DIGHUM 100
+    boolean is_dighum_c100 and([equal([subject, "DIGHUM"]), equal([number, "100"])])
+    
+    // ESPM C167/PBHLTH C160
+    boolean is_espm_c167 and([equal([subject, "ESPM"]), equal([number, "C167"])])
+    boolean is_pbhlth_c160 and([equal([subject, "PBHLTH"]), equal([number, "C160"])])
+
+    // HISTORY 30, 133D, 183B
+    boolean is_history_30 and([equal([subject, "HISTORY"]), equal([number, "30"])])
+    boolean is_history_133d and([equal([subject, "HISTORY"]), equal([number, "133D"])])
+    boolean is_history_183b and([equal([subject, "HISTORY"]), equal([number, "183B"])])
+
+    // INFO 101, 103, 134, 188
+    boolean is_info_101 and([equal([subject, "INFO"]), equal([number, "101"])])
+    boolean is_info_103 and([equal([subject, "INFO"]), equal([number, "103"])])
+    boolean is_info_134 and([equal([subject, "INFO"]), equal([number, "134"])])
+    boolean is_info_188 and([equal([subject, "INFO"]), equal([number, "188"])])
+
+    // ISF 60, 100D, 100J
+    boolean is_isf_60 and([equal([subject, "ISF"]), equal([number, "60"])])
+    boolean is_isf_100d and([equal([subject, "ISF"]), equal([number, "100D"])])
+    boolean is_isf_100j and([equal([subject, "ISF"]), equal([number, "100J"])])
+
+    // LEGALST 190 
+    boolean is_legalst_190 and([equal([subject, "LEGALST"]), equal([number, "190"])])
+
+    // LS 22, 25
+    boolean is_ls_22 and([equal([subject, "LS"]), equal([number, "22"])])
+    boolean is_ls_25 and([equal([subject, "LS"]), equal([number, "25"])])
+
+    // NWMEDIA 133, 151AC
+    boolean is_nwmedia_133 and([equal([subject, "NWMEDIA"]), equal([number, "133"])])
+    boolean is_nwmedia_151ac and([equal([subject, "NWMEDIA"]), equal([number, "151AC"])])
+
+    // PHILOS 5, 121
+    boolean is_philos_5 and([equal([subject, "PHILOS"]), equal([number, "5"])])
+    boolean is_philos_121 and([equal([subject, "PHILOS"]), equal([number, "121"])])
+
+    // POLECON 156
+    boolean is_polecon_156 and([equal([subject, "POLECON"]), equal([number, "156"])])
+
+    // POLSCI 132C
+    boolean is_polsci_132c and([equal([subject, "POLSCI"]), equal([number, "132C"])])
+
+    // PUBPOL 138A (Coming soon), 145 (Coming soon), 147, C151
+    boolean is_pubpol_138a and([equal([subject, "PUBPOL"]), equal([number, "138A"])])
+    boolean is_pubpol_145 and([equal([subject, "PUBPOL"]), equal([number, "145"])])
+    boolean is_pubpol_147 and([equal([subject, "PUBPOL"]), equal([number, "147"])])
+    boolean is_pubpol_c151 and([equal([subject, "PUBPOL"]), equal([number, "C151"])])
+
+    // RHETOR 173 
+    boolean is_rhetor_173 and([equal([subject, "RHETOR"]), equal([number, "173"])])
+
+    // STS C100 / HISTORY C182C / ISF C100G
+    boolean is_sts_c100 and([equal([subject, "STS"]), equal([number, "C100"])])
+    boolean is_history_c182c and([equal([subject, "HISTORY"]), equal([number, "C184C"])])
+    boolean is_isf_c100g and([equal([subject, "ISF"]), equal([number, "C100G"])])    
+
+    boolean return or(
+      [is_amerstd_c134,
+      is_africam_c134,
+      is_anthro_168,
+      is_bioeng_100,
+      is_cdss_60,
+      is_cdss_94,
+      is_cyplan_101,
+      is_data_94,
+      is_data_c4ac,
+      is_data_c104,
+      is_history_c184d,
+      is_sts_c104,
+      is_dighum_c100,
+      is_espm_c167,
+      is_pbhlth_c160,
+      is_history_30,
+      is_history_133d,
+      is_history_183b,
+      is_info_101,
+      is_info_103,
+      is_info_134,
+      is_info_188,
+      is_isf_60,
+      is_isf_100d,
+      is_isf_100j,
+      is_legalst_190,
+      is_ls_22,
+      is_ls_25,
+      is_nwmedia_133,
+      is_nwmedia_151ac,
+      is_philos_5,
+      is_philos_121,
+      is_polecon_156,
+      is_polsci_132c,
+      is_pubpol_138a,
+      is_pubpol_145,
+      is_pubpol_147,
+      is_pubpol_c151,
+      is_rhetor_173,
+      is_sts_c100,
+      is_history_c182c,
+      is_isf_c100g]
+    )
+  }
+  List<Course> hsddt_courses filter(courses, hsddt_finder)
+  NCoursesRequirement hsddt {hsddt_courses, 1, "Human and Social Dynamics of Data and Technology"}
+
+
+  List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences, rca, rcb, computational_reasoning, statistical_reasoning, hsddt]
+}
+`;
+
 export const EECS_REQ_BTLL = `
 Function<boolean>(Course) eecs_upper_div_finder (course){
   string subject get_attr(course, "subject")

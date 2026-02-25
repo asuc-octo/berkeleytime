@@ -9,6 +9,7 @@
  */
 import {
   COE_REQ_BTLL,
+  CDSS_REQ_BTLL,
   EECS_REQ_BTLL,
   MECHE_REQ_BTLL,
   UC_REQ_BTLL,
@@ -41,6 +42,16 @@ const requirements: PlanRequirementSeed[] = [
     code: COE_REQ_BTLL,
     isUcReq: false,
     college: "CoE",
+    major: null,
+    minor: null,
+    createdBy: "system",
+    isOfficial: true,
+  },
+  {
+    name: "College of Computing, Data Science, and Society Requirements",
+    code: CDSS_REQ_BTLL,
+    isUcReq: false,
+    college: "CDSS",
     major: null,
     minor: null,
     createdBy: "system",
