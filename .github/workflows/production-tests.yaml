@@ -5,6 +5,9 @@ on:
     # Run once daily at 02:00 UTC
     - cron: "0 2 * * *"
   workflow_dispatch:
+  push:
+    branches:
+      - testing
 
 jobs:
   test:
