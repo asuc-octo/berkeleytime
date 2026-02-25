@@ -24,6 +24,11 @@ spec:
           {{- end }}
           ports:
             - containerPort: {{ .Values.semanticSearch.port }}
+          resources:
+            requests:
+              ephemeral-storage: "1Gi"
+            limits:
+              ephemeral-storage: "4Gi"
           envFrom:
             - configMapRef:
                 name: {{ include "bt-app.semanticSearchName" . }}-env

@@ -26,6 +26,11 @@ spec:
                 name: {{ include "bt-app.backendName" . }}-env
             - secretRef:
                 name: {{ include "bt-app.backendName" . }}-secret
+          resources:
+            requests:
+              ephemeral-storage: "500Mi"
+            limits:
+              ephemeral-storage: "2Gi"
           readinessProbe:
             httpGet:
               path: /healthz
