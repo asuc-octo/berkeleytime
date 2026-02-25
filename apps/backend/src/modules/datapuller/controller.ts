@@ -28,11 +28,12 @@ const JOB_SUFFIX: Record<DatapullerJob, string> = {
   ENROLLMENT_TIMEFRAME: "enrollment-timeframe",
 };
 
-const TTL_SECONDS = 300; // 5 minutes — change as needed
+const TTL_SECONDS = 300; // 5 minutes
 
 function getBatchApi() {
   const kc = new KubeConfig();
-  kc.loadFromCluster();
+  // loadFromDefault uses in-cluster service account when deployed to k8s
+  kc.loadFromDefault();
   return kc.makeApiClient(BatchV1Api);
 }
 
@@ -49,7 +50,7 @@ function getNamespace(): string {
 export async function triggerDatapuller(
   job: DatapullerJob
 ): Promise<{ jobName: string; success: boolean; message: string }> {
-  // Local dev bypass: set SKIP_K8S=true in .env to skip the real k8s call
+  // set SKIP_K8S=true in .env to skip the real k8s call
   if (process.env.SKIP_K8S === "true") {
     const mockJobName = `${getCronJobName(job)}-manual-${Math.floor(Date.now() / 1000)}`;
     return {
@@ -64,7 +65,7 @@ export async function triggerDatapuller(
   const cronJobName = getCronJobName(job);
   const jobName = `${cronJobName}-manual-${Math.floor(Date.now() / 1000)}`;
 
-  // Check if a job for this puller is already active
+  // check for existing job
   const existingJobs = await batchApi.listNamespacedJob({ namespace });
   const alreadyRunning = existingJobs.items.some(
     (j) =>
@@ -81,7 +82,7 @@ export async function triggerDatapuller(
     );
   }
 
-  // Read the CronJob to get its job template
+  // get job spec + job name from original cronjob
   const cronJob = await batchApi.readNamespacedCronJob({
     name: cronJobName,
     namespace,
@@ -117,4 +118,34 @@ export async function triggerDatapuller(
     success: true,
     message: `Job ${jobName} created successfully.`,
   };
+}
+
+export async function getDatapullerJobStatus(
+  jobName: string
+): Promise<{ jobName: string; phase: string; message: string | null }> {
+  if (process.env.SKIP_K8S === "true") {
+    return { jobName, phase: "Succeeded", message: "[MOCK] Job completed." };
+  }
+
+  const batchApi = getBatchApi();
+  const namespace = getNamespace();
+
+  try {
+    const job = await batchApi.readNamespacedJob({ name: jobName, namespace });
+    const status = job.status ?? {};
+
+    let phase = "Pending";
+    if ((status.active ?? 0) > 0) phase = "Running";
+    else if ((status.succeeded ?? 0) > 0) phase = "Succeeded";
+    else if ((status.failed ?? 0) > 0) phase = "Failed";
+
+    return { jobName, phase, message: null };
+  } catch (e: unknown) {
+    const status = (e as { response?: { statusCode?: number } })?.response
+      ?.statusCode;
+    if (status === 404) {
+      return { jobName, phase: "NotFound", message: "Job not found or already cleaned up." };
+    }
+    throw e;
+  }
 }

@@ -25,7 +25,10 @@ import {
   Select,
 } from "@repo/theme";
 
-import { useTriggerDatapuller } from "../../hooks/api/datapuller";
+import {
+  useTriggerDatapuller,
+  useDatapullerJobStatus,
+} from "../../hooks/api/datapuller";
 import {
   DATAPULLER_JOB_OPTIONS,
   DatapullerJob,
@@ -117,8 +120,10 @@ export default function Dashboard() {
     text: string;
     isError: boolean;
   } | null>(null);
+  const [activeJobName, setActiveJobName] = useState<string | null>(null);
   const { trigger: triggerDatapuller, loading: datapullerLoading } =
     useTriggerDatapuller();
+  const { status: jobStatus } = useDatapullerJobStatus(activeJobName);
   const [searchSelectedUser, setSearchSelectedUser] =
     useState<UserSearchResult | null>(null);
   const [viewedUsers, setViewedUsers] = useState<UserSearchResult[]>([]);
@@ -1272,19 +1277,21 @@ export default function Dashboard() {
           <div className={styles.splitButton}>
             <button
               className={styles.splitButtonMain}
-              disabled={datapullerLoading}
+              disabled={datapullerLoading || (jobStatus?.phase === "Pending" || jobStatus?.phase === "Running")}
               onClick={async () => {
                 setDatapullerMessage(null);
+                setActiveJobName(null);
                 try {
                   const result = await triggerDatapuller(selectedJob);
+                  if (result?.jobName) setActiveJobName(result.jobName);
                   setDatapullerMessage({
-                    text: result?.message ?? "job successfult",
+                    text: result?.message ?? "Job created successfully.",
                     isError: false,
                   });
                 } catch (e) {
                   setDatapullerMessage({
                     text:
-                      e instanceof Error ? e.message : "error running job",
+                      e instanceof Error ? e.message : "Error running job",
                     isError: true,
                   });
                 }
@@ -1292,7 +1299,7 @@ export default function Dashboard() {
               }}
             >
               {datapullerLoading
-                ? "Running..."
+                ? "Starting..."
                 : `Run ${DATAPULLER_JOB_OPTIONS.find((o) => o.value === selectedJob)?.label ?? selectedJob}`}
             </button>
             <button
@@ -1336,6 +1343,25 @@ export default function Dashboard() {
               }
             >
               {datapullerMessage.text}
+            </p>
+          )}
+          {jobStatus && (
+            <p
+              className={
+                jobStatus.phase === "Succeeded"
+                  ? styles.datapullerSuccess
+                  : jobStatus.phase === "Failed"
+                  ? styles.datapullerError
+                  : styles.datapullerStatus
+              }
+            >
+              Job status:{" "}
+              {jobStatus.phase === "Pending" && "⏳ Pending"}
+              {jobStatus.phase === "Running" && "🔄 Running..."}
+              {jobStatus.phase === "Succeeded" && "✅ Succeeded"}
+              {jobStatus.phase === "Failed" && "❌ Failed"}
+              {jobStatus.phase === "NotFound" && "Job cleaned up"}
+              {jobStatus.message ? ` — ${jobStatus.message}` : ""}
             </p>
           )}
         </div>

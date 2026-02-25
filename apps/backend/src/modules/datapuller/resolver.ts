@@ -1,8 +1,22 @@
 import { requireStaffAuth } from "../analytics/helpers/staff-auth";
 import { RequestContext } from "../../types/request-context";
-import { DatapullerJob, triggerDatapuller } from "./controller";
+import {
+  DatapullerJob,
+  triggerDatapuller,
+  getDatapullerJobStatus,
+} from "./controller";
 
 const resolver = {
+  Query: {
+    datapullerJobStatus: async (
+      _: unknown,
+      { jobName }: { jobName: string },
+      context: RequestContext
+    ) => {
+      await requireStaffAuth(context);
+      return getDatapullerJobStatus(jobName);
+    },
+  },
   Mutation: {
     triggerDatapuller: async (
       _: unknown,

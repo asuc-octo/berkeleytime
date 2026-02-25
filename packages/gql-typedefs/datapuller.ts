@@ -21,10 +21,23 @@ export const datapullerTypeDef = gql`
     message: String
   }
 
+  type DatapullerJobStatus {
+    jobName: String!
+    phase: String!
+    message: String
+  }
+
+  extend type Query {
+    """
+    get the current status of a manually triggered datapuller job
+    """
+    datapullerJobStatus(jobName: String!): DatapullerJobStatus! @auth
+  }
+
   extend type Mutation {
     """
-    Manually trigger a datapuller job by creating a Kubernetes Job from the
-    corresponding CronJob. Staff-only.
+    manually trigger a datapuller job by creating a Kubernetes Job from the
+    corresponding CronJob
     """
     triggerDatapuller(job: DatapullerJob!): TriggerDatapullerResult! @auth
   }

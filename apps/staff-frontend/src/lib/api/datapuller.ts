@@ -47,3 +47,26 @@ export const TRIGGER_DATAPULLER = gql`
     }
   }
 `;
+
+export type DatapullerJobPhase =
+  | "Pending"
+  | "Running"
+  | "Succeeded"
+  | "Failed"
+  | "NotFound";
+
+export interface DatapullerJobStatus {
+  jobName: string;
+  phase: DatapullerJobPhase;
+  message: string | null;
+}
+
+export const DATAPULLER_JOB_STATUS = gql`
+  query DatapullerJobStatus($jobName: String!) {
+    datapullerJobStatus(jobName: $jobName) {
+      jobName
+      phase
+      message
+    }
+  }
+`;
