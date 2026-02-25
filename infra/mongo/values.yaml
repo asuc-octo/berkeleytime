@@ -2,6 +2,12 @@
 hostPath: /data/prod/db
 
 mongodb:
+  # Use bitnamilegacy registry (Bitnami moved older image tags there)
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/mongodb
+    tag: 7.0.5-debian-11-r5
+
   commonLabels:
     env: prod
 
@@ -22,3 +28,7 @@ mongodb:
   # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: "11"
