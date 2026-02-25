@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 import { useQuery } from "@apollo/client";
 
 import {
@@ -11,7 +12,11 @@ interface DatapullerJobStatusResponse {
   datapullerJobStatus: DatapullerJobStatus;
 }
 
-const TERMINAL_PHASES: DatapullerJobPhase[] = ["Succeeded", "Failed", "NotFound"];
+const TERMINAL_PHASES: DatapullerJobPhase[] = [
+  "Succeeded",
+  "Failed",
+  "NotFound",
+];
 
 export const useDatapullerJobStatus = (jobName: string | null) => {
   const { data, stopPolling, ...rest } = useQuery<DatapullerJobStatusResponse>(
@@ -24,7 +29,9 @@ export const useDatapullerJobStatus = (jobName: string | null) => {
   );
 
   useEffect(() => {
-    const phase = data?.datapullerJobStatus?.phase as DatapullerJobPhase | undefined;
+    const phase = data?.datapullerJobStatus?.phase as
+      | DatapullerJobPhase
+      | undefined;
     if (phase && TERMINAL_PHASES.includes(phase)) {
       stopPolling();
     }

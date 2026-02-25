@@ -26,13 +26,9 @@ import {
 } from "@repo/theme";
 
 import {
-  useTriggerDatapuller,
   useDatapullerJobStatus,
+  useTriggerDatapuller,
 } from "../../hooks/api/datapuller";
-import {
-  DATAPULLER_JOB_OPTIONS,
-  DatapullerJob,
-} from "../../lib/api/datapuller";
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
   useAllStaffMembers,
@@ -44,6 +40,10 @@ import {
   useUpsertSemesterRole,
 } from "../../hooks/api/staff";
 import { useReadUser } from "../../hooks/api/users";
+import {
+  DATAPULLER_JOB_OPTIONS,
+  DatapullerJob,
+} from "../../lib/api/datapuller";
 import { CreatePodInput, Semester } from "../../lib/api/pod";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Dashboard.module.scss";
@@ -1277,7 +1277,11 @@ export default function Dashboard() {
           <div className={styles.splitButton}>
             <button
               className={styles.splitButtonMain}
-              disabled={datapullerLoading || (jobStatus?.phase === "Pending" || jobStatus?.phase === "Running")}
+              disabled={
+                datapullerLoading ||
+                jobStatus?.phase === "Pending" ||
+                jobStatus?.phase === "Running"
+              }
               onClick={async () => {
                 setDatapullerMessage(null);
                 setActiveJobName(null);
@@ -1290,8 +1294,7 @@ export default function Dashboard() {
                   });
                 } catch (e) {
                   setDatapullerMessage({
-                    text:
-                      e instanceof Error ? e.message : "Error running job",
+                    text: e instanceof Error ? e.message : "Error running job",
                     isError: true,
                   });
                 }
@@ -1305,9 +1308,7 @@ export default function Dashboard() {
             <button
               className={styles.splitButtonCaret}
               disabled={datapullerLoading}
-              onClick={() =>
-                setDatapullerDropdownOpen((prev) => !prev)
-              }
+              onClick={() => setDatapullerDropdownOpen((prev) => !prev)}
               aria-label="select datapuller job"
             >
               ▾
@@ -1351,12 +1352,11 @@ export default function Dashboard() {
                 jobStatus.phase === "Succeeded"
                   ? styles.datapullerSuccess
                   : jobStatus.phase === "Failed"
-                  ? styles.datapullerError
-                  : styles.datapullerStatus
+                    ? styles.datapullerError
+                    : styles.datapullerStatus
               }
             >
-              Job status:{" "}
-              {jobStatus.phase === "Pending" && "⏳ Pending"}
+              Job status: {jobStatus.phase === "Pending" && "⏳ Pending"}
               {jobStatus.phase === "Running" && "🔄 Running..."}
               {jobStatus.phase === "Succeeded" && "✅ Succeeded"}
               {jobStatus.phase === "Failed" && "❌ Failed"}
