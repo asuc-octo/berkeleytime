@@ -6,13 +6,13 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Line,
   ResponsiveContainer,
   XAxis,
   YAxis,
 } from "recharts";
 
 import { LoadingIndicator } from "@repo/theme";
-import { Select } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -20,6 +20,7 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 import {
+  useGeneralActivityAnalyticsData,
   useUserActivityAnalyticsData,
   useUserCreationAnalyticsData,
 } from "@/hooks/api";
@@ -425,258 +426,6 @@ export function SignupDayHistogramBlock() {
   );
 }
 
-type ActiveWindow = "DAU" | "WAU" | "MAU";
-
-// Helper to check if a user was active in a given window
-function isActiveInWindow(
-  lastSeenDate: Date,
-  referenceDate: Date,
-  windowDays: number
-): boolean {
-  const windowStart = new Date(referenceDate);
-  windowStart.setDate(windowStart.getDate() - windowDays);
-  return lastSeenDate >= windowStart && lastSeenDate <= referenceDate;
-}
-
-// Get window days based on active window type
-function getWindowDays(activeWindow: ActiveWindow): number {
-  if (activeWindow === "DAU") return 1;
-  if (activeWindow === "WAU") return 7;
-  return 30;
-}
-
-// Active Users Over Time Block - shows DAU/WAU/MAU trend
-export function ActiveUsersBlock() {
-  const { data: rawData, loading, error } = useUserActivityAnalyticsData();
-  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
-  const [granularity, setGranularity] = useState<Granularity>("day");
-  const [activeWindow, setActiveWindow] = useState<ActiveWindow>("DAU");
-
-  const { chartData, currentActiveUsers, percentChange } = useMemo(() => {
-    if (!rawData || rawData.length === 0) {
-      return {
-        chartData: [] as DailyDataPoint[],
-        currentActiveUsers: 0,
-        percentChange: 0,
-      };
-    }
-
-    const days = getTimeRangeDays(timeRange);
-    const windowDays = getWindowDays(activeWindow);
-    const now = new Date();
-    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-
-    // Parse user data, filtering out legacy users (lastSeenAt = Unix epoch 1970)
-    const users = rawData
-      .map((u) => ({
-        lastSeenAt: new Date(u.lastSeenAt),
-        createdAt: new Date(u.createdAt),
-      }))
-      .filter((u) => u.lastSeenAt.getFullYear() > 1970);
-
-    // Initialize buckets based on granularity
-    const bucketKeys: string[] = [];
-    for (let d = new Date(rangeStart); d <= now; ) {
-      const key = getGranularityKey(d, granularity);
-      bucketKeys.push(key);
-      if (granularity === "hour") {
-        d.setHours(d.getHours() + 1);
-      } else {
-        d.setDate(d.getDate() + 1);
-      }
-    }
-
-    // For each bucket, count users active within the window ending at that point
-    const chartData: DailyDataPoint[] = bucketKeys.map((key) => {
-      // Parse the bucket date
-      const parts = key.split("-");
-      const bucketDate = new Date(
-        parseInt(parts[0]),
-        parseInt(parts[1]) - 1,
-        parseInt(parts[2]),
-        granularity === "hour" ? parseInt(parts[3]) : 23,
-        granularity === "hour" ? 59 : 59
-      );
-
-      // Count active users in this window
-      const activeCount = users.filter((u) =>
-        isActiveInWindow(u.lastSeenAt, bucketDate, windowDays)
-      ).length;
-
-      return {
-        date: formatDisplayDate(key, granularity),
-        dateKey: key,
-        value: activeCount,
-      };
-    });
-
-    // Current and previous period comparison
-    const currentActiveUsers =
-      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
-
-    // Get the value from the start of the range for comparison
-    const previousActiveUsers = chartData.length > 0 ? chartData[0].value : 0;
-
-    const percentChange =
-      previousActiveUsers > 0
-        ? ((currentActiveUsers - previousActiveUsers) / previousActiveUsers) *
-          100
-        : 0;
-
-    return {
-      chartData,
-      currentActiveUsers,
-      percentChange,
-    };
-  }, [rawData, timeRange, granularity, activeWindow]);
-
-  const chartConfig = createChartConfig(["value"], {
-    labels: { value: `${activeWindow}` },
-    colors: { value: "var(--heading-color)" },
-  });
-
-  const activeWindowControl = (
-    <>
-      <span
-        style={{ marginLeft: 8, fontSize: 12, color: "var(--label-color)" }}
-      >
-        Window
-      </span>
-      <Select
-        value={activeWindow}
-        onChange={(val) => setActiveWindow(val as ActiveWindow)}
-        options={[
-          { value: "DAU", label: "Daily" },
-          { value: "WAU", label: "Weekly" },
-          { value: "MAU", label: "Monthly" },
-        ]}
-        style={{
-          width: "fit-content",
-          minHeight: 24,
-          height: 24,
-          padding: "0 8px",
-          fontSize: 12,
-        }}
-      />
-    </>
-  );
-
-  if (loading) {
-    return (
-      <AnalyticsCard
-        title="Active Users"
-        description="Users who logged in recently"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          <LoadingIndicator />
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  if (error) {
-    return (
-      <AnalyticsCard
-        title="Active Users"
-        description="Users who logged in recently"
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            color: "var(--red-500)",
-          }}
-        >
-          Error loading data
-        </div>
-      </AnalyticsCard>
-    );
-  }
-
-  return (
-    <AnalyticsCard
-      title="Active Users"
-      description={`Users who logged in within the last ${activeWindow === "DAU" ? "day" : activeWindow === "WAU" ? "week" : "month"}`}
-      currentValue={currentActiveUsers}
-      currentValueLabel={`${activeWindow}`}
-      percentChange={percentChange}
-      changeTimescale={timeRange}
-      showTimeRangeSelector
-      timeRange={timeRange}
-      onTimeRangeChange={(val) => {
-        setTimeRange(val);
-        setGranularity(val === "7d" ? "hour" : "day");
-      }}
-      granularity={granularity}
-      onGranularityChange={setGranularity}
-      customControls={activeWindowControl}
-    >
-      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient
-                id="activeUsersGradient"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop
-                  offset="5%"
-                  stopColor="var(--heading-color)"
-                  stopOpacity={0.3}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--heading-color)"
-                  stopOpacity={0}
-                />
-              </linearGradient>
-            </defs>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="var(--border-color)"
-              vertical={false}
-            />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 10 }}
-              interval="preserveStartEnd"
-            />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "var(--label-color)", fontSize: 12 }}
-              width={40}
-              domain={[0, "auto"]}
-            />
-            <ChartTooltip />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="var(--heading-color)"
-              strokeWidth={2}
-              fill="url(#activeUsersGradient)"
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </ChartContainer>
-    </AnalyticsCard>
-  );
-}
-
 interface RecencyBucket {
   label: string;
   count: number;
@@ -857,6 +606,186 @@ export function UserActivityRecencyBlock() {
               dataKey="percent"
               fill="var(--heading-color)"
               radius={[0, 4, 4, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+function formatActivityDisplayDate(dateStr: string): string {
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const [, month, day] = dateStr.split("-");
+  return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+}
+
+/** 7-day centered moving average for trend curve */
+function movingAverage(values: number[], window = 7): number[] {
+  const half = Math.floor(window / 2);
+  return values.map((_, i) => {
+    const start = Math.max(0, i - half);
+    const end = Math.min(values.length, i + half + 1);
+    const slice = values.slice(start, end);
+    return slice.reduce((a, b) => a + b, 0) / slice.length;
+  });
+}
+
+// Daily Activity Block - aggregated feature usage per day (schedules, ratings, GradTrak, bookmarks)
+export function DailyActivityBlock() {
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const days = getTimeRangeDays(timeRange);
+  const { data, loading, error } = useGeneralActivityAnalyticsData(days);
+
+  const { chartData, totalActivity } = useMemo(() => {
+    if (!data || data.length === 0) {
+      return { chartData: [], totalActivity: 0 };
+    }
+    const totals = data.map((d) => d.totalActivity);
+    const trend = movingAverage(totals);
+    const chartData = data.map((d, i) => ({
+      ...d,
+      displayDate: formatActivityDisplayDate(d.date),
+      trend: Math.round(trend[i] * 10) / 10,
+    }));
+    const totalActivity = chartData.reduce((sum, d) => sum + d.totalActivity, 0);
+    return { chartData, totalActivity };
+  }, [data]);
+
+  const chartConfig = createChartConfig(
+    [
+      "schedulesCreated",
+      "ratingsSubmitted",
+      "gradTraksCreated",
+      "bookmarksAdded",
+      "trend",
+    ],
+    {
+      labels: {
+        schedulesCreated: "Schedules",
+        ratingsSubmitted: "Ratings",
+        gradTraksCreated: "GradTrak",
+        bookmarksAdded: "Bookmarks",
+        trend: "Trend (7d avg)",
+      },
+      colors: {
+        schedulesCreated: "var(--blue-500)",
+        ratingsSubmitted: "var(--green-500)",
+        gradTraksCreated: "var(--amber-500)",
+        bookmarksAdded: "var(--purple-500)",
+        trend: "var(--heading-color)",
+      },
+    }
+  );
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Daily Activity"
+        description="Feature usage across schedules, ratings, GradTrak, bookmarks"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Daily Activity"
+        description="Feature usage across schedules, ratings, GradTrak, bookmarks"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Daily Activity"
+      description="Schedules created, ratings submitted, GradTraks created, bookmarks added"
+      currentValue={totalActivity}
+      currentValueLabel="total actions"
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={setTimeRange}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="displayDate"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={[0, "auto"]}
+            />
+            <ChartTooltip />
+            <Bar
+              dataKey="schedulesCreated"
+              stackId="activity"
+              fill="var(--blue-500)"
+              radius={[0, 0, 0, 0]}
+            />
+            <Bar
+              dataKey="ratingsSubmitted"
+              stackId="activity"
+              fill="var(--green-500)"
+              radius={[0, 0, 0, 0]}
+            />
+            <Bar
+              dataKey="gradTraksCreated"
+              stackId="activity"
+              fill="var(--amber-500)"
+              radius={[0, 0, 0, 0]}
+            />
+            <Bar
+              dataKey="bookmarksAdded"
+              stackId="activity"
+              fill="var(--purple-500)"
+              radius={[0, 0, 0, 0]}
+            />
+            <Line
+              type="monotone"
+              dataKey="trend"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              dot={false}
+              name="Trend (7d avg)"
             />
           </BarChart>
         </ResponsiveContainer>
