@@ -9,7 +9,6 @@ import { RedisClientType } from "redis";
 import { config } from "../../../../../packages/common/src/utils/config";
 import bannerRoutes from "../../modules/banner/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
-import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import staffRoutes from "../../modules/staff/routes";
 import targetedMessageRoutes from "../../modules/targeted-message/routes";
 import passportLoader from "./passport";
@@ -78,9 +77,6 @@ export default async (
     routeRedirectRoutes(root, redis);
     targetedMessageRoutes(root, redis);
   }
-
-  // load semantic search routes
-  app.use("/semantic-search", semanticSearchRoutes);
 
   // load staff routes
   staffRoutes(app);
