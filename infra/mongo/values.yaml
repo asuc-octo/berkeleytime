@@ -2,11 +2,9 @@
 hostPath: /data/prod/db
 
 mongodb:
+
   commonLabels:
     env: prod
-
-  image:
-    tag: 7.0.5
 
   architecture: replicaset
   arbiter:
