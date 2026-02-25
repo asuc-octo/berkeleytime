@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.frontend.replicas }}
   selector:
     matchLabels:
-      {{- include "bt-staff.frontendLabels" . | nindent 6 }}
+      {{- include "bt-staff.frontendSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
@@ -31,7 +31,7 @@ metadata:
     {{- include "bt-staff.frontendLabels" . | nindent 4 }}
 spec:
   selector:
-    {{- include "bt-staff.frontendLabels" . | nindent 4 }}
+    {{- include "bt-staff.frontendSelectorLabels" . | nindent 4 }}
   ports:
     - protocol: TCP
       port: {{ .Values.port }}
