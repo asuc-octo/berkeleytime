@@ -6,7 +6,7 @@ mongodb:
   image:
     registry: docker.io
     repository: bitnamilegacy/mongodb
-    tag: 7.0.5-debian-11-r5
+    tag: 8.0.0-debian-12-r0
 
   commonLabels:
     env: prod
