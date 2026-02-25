@@ -69,6 +69,9 @@ jobs:
               # Check if staff helm chart exists
               helm status bt-staff &>/dev/null && staff_status=true || staff_status=false
 
+              # Delete deployment if selector labels changed (immutable field)
+              kubectl delete deployment bt-staff-frontend -n bt --ignore-not-found=true
+
               # Upgrade staff helm chart, or install if not exists
               helm upgrade bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
                 --install \
