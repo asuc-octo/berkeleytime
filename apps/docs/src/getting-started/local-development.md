@@ -90,7 +90,7 @@ A seeded database is required for some pages on the frontend.
 docker compose up -d
 
 # Download the data
-curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/daily/prod_backup-$(date -v -6H +%Y%m%d).gz"
+curl.exe -f -o "prod-backup.gz" "https://backups.berkeleytime.com/daily/prod_backup-$((Get-Date).AddHours(-6).ToString('yyyyMMdd')).gz"
 
 # Copy the data and restore
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
