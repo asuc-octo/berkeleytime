@@ -43,7 +43,7 @@ import {
 } from "./components/SchedulerAnalytics";
 import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
-  ActiveUsersBlock,
+  DailyActivityBlock,
   SignupDayHistogramBlock,
   UserActivityRecencyBlock,
   UserGrowthBlock,
@@ -132,10 +132,10 @@ export default function Analytics() {
               <SignupDayHistogramBlock />
             </div>
             <div className={styles.cell}>
-              <ActiveUsersBlock />
+              <UserActivityRecencyBlock />
             </div>
             <div className={styles.cell}>
-              <UserActivityRecencyBlock />
+              <DailyActivityBlock />
             </div>
           </>
         )}
