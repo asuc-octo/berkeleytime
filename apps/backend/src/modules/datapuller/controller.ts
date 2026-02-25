@@ -38,8 +38,7 @@ function getBatchApi() {
 }
 
 function getCronJobName(job: DatapullerJob): string {
-  const prefix =
-    process.env.DATAPULLER_CRONJOB_PREFIX ?? "bt-prod-datapuller";
+  const prefix = process.env.DATAPULLER_CRONJOB_PREFIX ?? "bt-prod-datapuller";
   return `${prefix}-${JOB_SUFFIX[job]}`;
 }
 
@@ -144,7 +143,11 @@ export async function getDatapullerJobStatus(
     const status = (e as { response?: { statusCode?: number } })?.response
       ?.statusCode;
     if (status === 404) {
-      return { jobName, phase: "NotFound", message: "Job not found or already cleaned up." };
+      return {
+        jobName,
+        phase: "NotFound",
+        message: "Job not found or already cleaned up.",
+      };
     }
     throw e;
   }

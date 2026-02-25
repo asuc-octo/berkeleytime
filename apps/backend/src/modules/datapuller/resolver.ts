@@ -1,9 +1,9 @@
-import { requireStaffAuth } from "../analytics/helpers/staff-auth";
 import { RequestContext } from "../../types/request-context";
+import { requireStaffAuth } from "../analytics/helpers/staff-auth";
 import {
   DatapullerJob,
-  triggerDatapuller,
   getDatapullerJobStatus,
+  triggerDatapuller,
 } from "./controller";
 
 const resolver = {
