@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
+
 import { Input, Text } from "@repo/theme";
 
 import { GetWaitlistProbabilityDocument } from "@/lib/generated/graphql";
@@ -106,9 +107,7 @@ export function WaitlistProbability({
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <Text size="2">
             P(get in) ={" "}
-            <strong>
-              {(result.probability * 100).toFixed(1)}%
-            </strong>
+            <strong>{(result.probability * 100).toFixed(1)}%</strong>
           </Text>
         </div>
       )}

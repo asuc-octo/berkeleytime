@@ -10,7 +10,7 @@ const WAITLIST_ZERO_CUTOFF_DAYS = 10;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 //Semester order for "most recent first": Fall > Spring > Summer within a year.
-//TODO i think there's a universal semester order somewhere? 
+//TODO i think there's a universal semester order somewhere?
 const SEMESTER_ORDER: Record<string, number> = {
   Fall: 3,
   Spring: 2,
@@ -63,9 +63,7 @@ type HistoryEntry = {
  * WAITLIST_ZERO_CUTOFF_DAYS, we stop (waitlist phase ended). Returns the last
  * index to include (inclusive), or sorted.length - 1 if no such cutoff.
  */
-function truncateAtWaitlistZeroCutoff(
-  sorted: HistoryEntry[]
-): number {
+function truncateAtWaitlistZeroCutoff(sorted: HistoryEntry[]): number {
   let runStart: number | null = null;
 
   for (let i = 0; i < sorted.length; i++) {
@@ -91,14 +89,14 @@ function truncateAtWaitlistZeroCutoff(
  * Stops counting once waitlist has been at 0 for WAITLIST_ZERO_CUTOFF_DAYS
  * (waitlist phase ended).
  */
-function waitlistDecreasesAndDaysFromHistory(
-  history: HistoryEntry[]
-): { waitlistDecreases: number; days: number } {
+function waitlistDecreasesAndDaysFromHistory(history: HistoryEntry[]): {
+  waitlistDecreases: number;
+  days: number;
+} {
   if (history.length === 0) return { waitlistDecreases: 0, days: 0 };
 
   const sorted = [...history].sort(
-    (a, b) =>
-      new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
 
   const lastIdx = truncateAtWaitlistZeroCutoff(sorted);
