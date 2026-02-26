@@ -11,6 +11,18 @@ import { gql } from "graphql-tag";
  * All queries require staff authentication.
  */
 export const analyticsTypeDef = gql`
+  """
+  Daily aggregated activity across features (schedules, ratings, GradTrak, bookmarks)
+  """
+  type GeneralActivityDataPoint {
+    date: String!
+    schedulesCreated: Int!
+    ratingsSubmitted: Int!
+    gradTraksCreated: Int!
+    bookmarksAdded: Int!
+    totalActivity: Int!
+  }
+
   extend type Query {
     """
     Dashboard statistics aggregation
@@ -64,5 +76,10 @@ export const analyticsTypeDef = gql`
       days: Int!
       granularity: String
     ): CloudflareAnalyticsData @auth
+
+    """
+    Staff-only: Daily activity aggregated across all features (schedules, ratings, GradTrak, bookmarks)
+    """
+    generalActivityAnalytics(days: Int!): [GeneralActivityDataPoint!]! @auth
   }
 `;

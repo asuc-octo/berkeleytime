@@ -41,8 +41,9 @@ import {
   TopSchedulerUsersBlock,
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";
+import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
-  ActiveUsersBlock,
+  DailyActivityBlock,
   SignupDayHistogramBlock,
   UserActivityRecencyBlock,
   UserGrowthBlock,
@@ -54,7 +55,8 @@ type Tab =
   | "ratings"
   | "bookmarks"
   | "gradtrak"
-  | "scheduler";
+  | "scheduler"
+  | "outreach";
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");
@@ -64,6 +66,7 @@ export default function Analytics() {
   const showRatings = activeTab === "all" || activeTab === "ratings";
   const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
+  const showOutreach = activeTab === "all" || activeTab === "outreach";
 
   return (
     <div className={styles.root}>
@@ -105,6 +108,12 @@ export default function Analytics() {
           >
             Bookmarks
           </button>
+          <button
+            className={`${styles.tab} ${activeTab === "outreach" ? styles.active : ""}`}
+            onClick={() => setActiveTab("outreach")}
+          >
+            Outreach
+          </button>
         </div>
       </div>
       <div className={styles.grid}>
@@ -123,10 +132,10 @@ export default function Analytics() {
               <SignupDayHistogramBlock />
             </div>
             <div className={styles.cell}>
-              <ActiveUsersBlock />
+              <UserActivityRecencyBlock />
             </div>
             <div className={styles.cell}>
-              <UserActivityRecencyBlock />
+              <DailyActivityBlock />
             </div>
           </>
         )}
@@ -229,6 +238,11 @@ export default function Analytics() {
               <CollectionNamesBlock />
             </div>
           </>
+        )}
+        {showOutreach && (
+          <div className={styles.cell}>
+            <OutreachPanelBlock />
+          </div>
         )}
       </div>
     </div>

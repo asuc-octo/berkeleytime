@@ -238,6 +238,45 @@ export const getClickStats = async (
   };
 };
 
+export interface ClickEventsTimeSeriesPoint {
+  date: string;
+  count: number;
+}
+
+export const getClickEventsTimeSeries = async (
+  targetId: string,
+  targetType: TargetType,
+  startDate?: Date,
+  endDate?: Date
+): Promise<ClickEventsTimeSeriesPoint[]> => {
+  const match: Record<string, unknown> = {
+    targetId: new Types.ObjectId(targetId) as unknown,
+    targetType,
+  };
+  if (startDate || endDate) {
+    match.timestamp = {};
+    if (startDate) {
+      (match.timestamp as Record<string, Date>).$gte = startDate;
+    }
+    if (endDate) {
+      (match.timestamp as Record<string, Date>).$lte = endDate;
+    }
+  }
+
+  const results = await ClickEventModel.aggregate<{ _id: string; count: number }>([
+    { $match: match },
+    {
+      $group: {
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { _id: 1 } },
+  ]);
+
+  return results.map((r) => ({ date: r._id, count: r.count }));
+};
+
 export const checkClickEventLoggingEnabled = async (
   targetId: string,
   targetType: TargetType

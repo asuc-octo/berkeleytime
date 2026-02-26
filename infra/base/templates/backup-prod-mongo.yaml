@@ -23,6 +23,12 @@ spec:
                 - |
                   set -e # Exit immediately if a command fails
 
+                  # Cleanup on exit (success or failure)
+                  cleanup() {
+                    rm -f /tmp/prod_backup.gz
+                  }
+                  trap cleanup EXIT
+
                   # Find production MongoDB pod
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
@@ -50,8 +56,6 @@ spec:
                       --checksum-algorithm CRC32
                   fi
 
-                  # Cleanup local files
-                  rm /tmp/prod_backup.gz
                   echo "MongoDB backup completed successfully!"
               env:
                 - name: ENDPOINT_URL
@@ -61,4 +65,16 @@ spec:
               envFrom:
                 - secretRef:
                     name: cloudflare-prod-mongo-secret
+              resources:
+                requests:
+                  ephemeral-storage: "256Mi"
+                limits:
+                  ephemeral-storage: "1Gi"
+              volumeMounts:
+                - name: tmp-storage
+                  mountPath: /tmp
+          volumes:
+            - name: tmp-storage
+              emptyDir:
+                sizeLimit: 5Gi
           restartPolicy: Never
