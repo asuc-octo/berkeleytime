@@ -775,6 +775,8 @@ export default function Enrollment() {
                 hoveredDuration={hoveredDuration}
                 semester={output.input.semester}
                 year={output.input.year}
+                sectionNumber={output.input.sectionNumber}
+                sessionId={output.input.sessionId}
               />
             ))
           ) : (

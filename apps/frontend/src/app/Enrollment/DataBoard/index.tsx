@@ -8,6 +8,8 @@ import { useReadCourseTitle } from "@/hooks/api";
 import { IEnrollment } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
 
+import { WaitlistProbability } from "./WaitlistProbability";
+
 interface DataBoardProps {
   color: string;
   subject: string;
@@ -17,6 +19,8 @@ interface DataBoardProps {
   year?: number;
   instructors?: string[];
   hoveredDuration: moment.Duration | null;
+  sectionNumber?: string;
+  sessionId?: string;
 }
 
 const DisplayCount = (count: number, capacity: number) => {
@@ -36,6 +40,8 @@ export default function DataBoard({
   year,
   instructors,
   hoveredDuration,
+  sectionNumber,
+  sessionId,
 }: DataBoardProps) {
   const { data: courseTitleData } = useReadCourseTitle(subject, courseNumber);
 
@@ -111,23 +117,43 @@ export default function DataBoard({
     ];
   }, [hoverData]);
 
+  const showWaitlistProbability =
+    enrollmentHistory &&
+    year != null &&
+    semester &&
+    sectionNumber &&
+    subject &&
+    courseNumber;
+
   return (
-    <CourseSideMetrics
-      color={color}
-      courseTitle={`${subject} ${courseNumber}`}
-      classTitle={courseTitleData?.title ?? undefined}
-      metadata={
-        enrollmentHistory
-          ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
-              instructors && instructors.length
-                ? instructors.join(", ")
-                : enrollmentHistory.sectionNumber
-                  ? `LEC ${enrollmentHistory.sectionNumber}`
-                  : "All Instructors"
-            }`
-          : "No Semester or Instructor Data"
-      }
-      metrics={metrics}
-    />
+    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+      <CourseSideMetrics
+        color={color}
+        courseTitle={`${subject} ${courseNumber}`}
+        classTitle={courseTitleData?.title ?? undefined}
+        metadata={
+          enrollmentHistory
+            ? `${semester && year ? `${semester} ${year}` : "All Semesters"} • ${
+                instructors && instructors.length
+                  ? instructors.join(", ")
+                  : enrollmentHistory.sectionNumber
+                    ? `LEC ${enrollmentHistory.sectionNumber}`
+                    : "All Instructors"
+              }`
+            : "No Semester or Instructor Data"
+        }
+        metrics={metrics}
+      />
+      {showWaitlistProbability && (
+        <WaitlistProbability
+          year={year}
+          semester={semester}
+          sessionId={sessionId ?? null}
+          subject={subject}
+          courseNumber={courseNumber}
+          sectionNumber={sectionNumber}
+        />
+      )}
+    </div>
   );
 }
