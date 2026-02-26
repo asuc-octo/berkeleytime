@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-backup-prod-mongo
   namespace: bt
 spec:
-  schedule: "0 5 * * *" # Daily at 5 AM
+  schedule: "0 * * * *" # Hourly
   timeZone: America/Los_Angeles
   concurrencyPolicy: Forbid
   suspend: false
@@ -43,13 +43,18 @@ spec:
 
                   # Upload production MongoDB backup
                   echo "Uploading backup to s3 bucket..."
-                  backup_date=$(date +%Y%m%d)
-                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/daily/prod_backup-$backup_date.gz \
+                  now=$(date +%Y%m%d%H)
+                  backup_timestamp=$now
+                  backup_date=${now%??}
+                  date_day=${now#??????}
+                  date_day=${date_day%??}
+                  date_hour=${now#????????}
+
+                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/daily/prod_backup-$backup_timestamp.gz \
                     --endpoint-url=$ENDPOINT_URL \
                     --checksum-algorithm CRC32
 
-                  date_day=$(date +%d)
-                  if [ "$date_day" = "01" ]; then
+                  if [ "$date_day" = "01" ] && [ "$date_hour" = "05" ]; then
                     echo "Also uploading to persistent storage"
                     aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/persistent/prod_backup-$backup_date.gz \
                       --endpoint-url=$ENDPOINT_URL \

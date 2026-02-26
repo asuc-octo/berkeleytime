@@ -1,0 +1,88 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-backup-prod-mongo-public
+  namespace: bt
+spec:
+  schedule: "0 * * * *" # Hourly
+  timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  suspend: false
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 180
+      template:
+        spec:
+          serviceAccountName: bt-k8s-role
+          containers:
+            - name: backup-prod-mongo-public
+              image: alpine/k8s:1.29.11
+              command:
+                - sh
+                - -c
+                - |
+                  set -e # Exit immediately if a command fails
+
+                  # Cleanup on exit (success or failure)
+                  cleanup() {
+                    rm -f /tmp/prod_public_backup-*.gz
+                  }
+                  trap cleanup EXIT
+
+                  # Find production MongoDB pod
+                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
+
+                  # Timestamp for hourly backup filename (YYYYMMDDHH)
+                  backup_timestamp=$(date +%Y%m%d%H)
+
+                  echo "Dumping public MongoDB collections..."
+                  kubectl exec --namespace=bt \
+                    "$prod_pod" -- mongodump \
+                    --db bt \
+                    --collection courses \
+                    --collection classes \
+                    --collection sections \
+                    --collection terms \
+                    --collection gradeDistributions \
+                    --collection enrollmentHistories \
+                    --collection enrollmenttimeframes \
+                    --archive=/tmp/prod_public_backup.gz \
+                    --gzip
+
+                  # Copy archive out of Mongo pod
+                  kubectl cp --namespace=bt \
+                    "$prod_pod:/tmp/prod_public_backup.gz" "/tmp/prod_public_backup-$backup_timestamp.gz"
+
+                  # Remove archive from Mongo pod
+                  kubectl exec --namespace=bt \
+                    "$prod_pod" -- rm /tmp/prod_public_backup.gz
+
+                  # Upload sanitized backup to public S3/R2 bucket
+                  echo "Uploading public backup to s3 bucket..."
+                  aws s3 cp "/tmp/prod_public_backup-$backup_timestamp.gz" "s3://$BUCKET_NAME_PUBLIC/public-hourly/prod_public_backup-$backup_timestamp.gz" \
+                    --endpoint-url="$ENDPOINT_URL_PUBLIC" \
+                    --checksum-algorithm CRC32
+
+                  echo "Public MongoDB backup completed successfully!"
+              env:
+                - name: ENDPOINT_URL_PUBLIC
+                  value: https://ff660bd2dac18c00551ed509d24ef4d7.r2.cloudflarestorage.com
+                - name: BUCKET_NAME_PUBLIC
+                  value: prod-mongo-public-backups
+              envFrom:
+                - secretRef:
+                    name: cloudflare-prod-mongo-secret
+              resources:
+                requests:
+                  ephemeral-storage: "256Mi"
+                limits:
+                  ephemeral-storage: "1Gi"
+              volumeMounts:
+                - name: tmp-storage
+                  mountPath: /tmp
+          volumes:
+            - name: tmp-storage
+              emptyDir:
+                sizeLimit: 5Gi
+          restartPolicy: Never
+
