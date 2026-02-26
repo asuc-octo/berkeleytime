@@ -80,7 +80,7 @@ export default function Header() {
           onClick={handleAiSearchSubmit}
           disabled={semanticLoading || !query.trim()}
         >
-          {semanticLoading ? "Searching..." : "Search with AI (Beta)"}
+          {semanticLoading ? "Searching..." : "Search with AI (Beta)  →"}
         </Button>
       )}
       <Button
