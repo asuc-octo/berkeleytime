@@ -32,6 +32,7 @@ services:
     volumes:
       - ./apps/semantic-search/app:/app/app
       - ./data/semantic-search/indexes:/app/indexes
+      - ./data/semantic-search/model-cache:/root/.cache/huggingface
     environment:
       - SEMANTIC_SEARCH_YEAR=2026
       - SEMANTIC_SEARCH_SEMESTER=Spring

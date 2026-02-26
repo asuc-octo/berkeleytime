@@ -44,10 +44,16 @@ spec:
           volumeMounts:
             - name: indexes
               mountPath: /app/indexes
+            - name: model-cache
+              mountPath: /root/.cache/huggingface
       volumes:
         - name: indexes
           hostPath:
             path: /data/semantic-search-indexes
+            type: DirectoryOrCreate
+        - name: model-cache
+          hostPath:
+            path: /data/semantic-search-model-cache
             type: DirectoryOrCreate
 
 ---
