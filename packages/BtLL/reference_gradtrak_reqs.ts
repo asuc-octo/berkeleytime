@@ -181,187 +181,96 @@ Function<List<Requirement>>() main (){
   })
   NCoursesRequirement rcb {rcb_courses, 1, "Reading and Composition B"}
 
+  // the below essential skills were manually pulled from https://cdss.berkeley.edu/academics/college-degree-requirements-and-policies#section-el-degree-requirements-1:~:text=see%20approved%20courses
 
   // Statistical Reasoning
-  Function<boolean>(Course) statistical_reasoning_finder (c) {
-    string subject get_attr(course, "subject")
-    string number get_attr(course, "number")
-
-    // CompSci/Data/Stat C8
-    boolean is_compsci_c8 and([equal([subject, "COMPSCI"]), equal([number, "C8"])])
-    boolean is_data_c8 and([equal([subject, "DATA"]), equal([number, "C8"])])
-    boolean is_stat_c8 and([equal([subject, "STAT"]), equal([number, "C8"])])
-
-    // Stat 2, 20, 21, W21
-    boolean is_stat_2 and([equal([subject, "STAT"]), equal([number, "2"])])
-    boolean is_stat_20 and([equal([subject, "STAT"]), equal([number, "20"])])
-    boolean is_stat_21 and([equal([subject, "STAT"]), equal([number, "21"])])
-    boolean is_stat_w21 and([equal([subject, "STAT"]), equal([number, "W21"])])
-
-    boolean return or([is_compsci_c8, is_data_c8, is_stat_c8, is_stat_2, is_stat_20, is_stat_21, is_stat_w21])
-  }
-  List<Course> statistical_reasoning_courses filter(courses, statistical_reasoning_finder)
+  List<Course> statistical_reasoning_courses filter(courses, (c) {
+    List<Course> statistical_req [
+      {"COMPSCI C8"},
+      {"DATA C8"},
+      {"STAT C8"},
+      {"STAT 2"},
+      {"STAT 20"},
+      {"STAT 21"},
+      {"STAT W21"}
+    ]
+    boolean return one_common_course([c], statistical_req)
+  })
   NCoursesRequirement statistical_reasoning {statistical_reasoning_courses, 1, "Statistical Reasoning"}
 
 
   // Computational Reasoning
-  Function<boolean>(Course) computational_reasoning_finder (c) {
-    string subject get_attr(course, "subject")
-    string number get_attr(course, "number")
-
-    // CompSci/Data/Stat C8
-    boolean is_compsci_c8 and([equal([subject, "COMPSCI"]), equal([number, "C8"])])
-    boolean is_data_c8 and([equal([subject, "DATA"]), equal([number, "C8"])])
-    boolean is_stat_c8 and([equal([subject, "STAT"]), equal([number, "C8"])])
-
-    // CompSci 10, W10, 61A, 61B, 61C
-    boolean is_compsci_10 and([equal([subject, "COMPSCI"]), equal([number, "10"])])
-    boolean is_compsci_w10 and([equal([subject, "COMPSCI"]), equal([number, "W10"])])
-    boolean is_compsci_61a and([equal([subject, "COMPSCI"]), equal([number, "61A"])])
-    boolean is_compsci_61b and([equal([subject, "COMPSCI"]), equal([number, "61B"])])
-    boolean is_compsci_61c and([equal([subject, "COMPSCI"]), equal([number, "61C"])])
-
-    boolean return or([is_compsci_c8, is_data_c8, is_stat_c8, is_compsci_10, is_compsci_w10, is_compsci_61a, is_compsci_61b, is_compsci_61c])
-  }
-  List<Course> computational_reasoning_courses filter(courses, computational_reasoning_finder)
+  List<Course> computational_reasoning_courses filter(courses, (c) {
+    List<Course> computational_req [
+      {"COMPSCI C8"},
+      {"DATA C8"},
+      {"STAT C8"},
+      {"COMPSCI 10"},
+      {"COMPSCI W10"},
+      {"COMPSCI 61A"},
+      {"COMPSCI 61B"},
+      {"COMPSCI 61C"}
+    ]
+    boolean return one_common_course([c], computational_req)
+  })
   NCoursesRequirement computational_reasoning {computational_reasoning_courses, 1, "Computational Reasoning"}
 
 
-  // Human and Social Dynamics of Data and Technology (HSDDT)
-  Function<boolean>(Course) hsddt_finder (c) {
-    string subject get_attr(course, "subject")
-    string number get_attr(course, "number")
-
-    // AMERSTD/AFRICAM C134
-    boolean is_amerstd_c134 and([equal([subject, "AMERSTD"]), equal([number, "C134"])])
-    boolean is_africam_c134 and([equal([subject, "AFRICAM"]), equal([number, "C134"])])
-
-    // ANTHRO 168
-    boolean is_anthro_168 and([equal([subject, "ANTHRO"]), equal([number, "168"])])
-
-    // BIO ENG 100
-    boolean is_bioeng_100 and([equal([subject, "BIO ENG"]), equal([number, "100"])])
-
-    // CDSS 60 (fka CDSS 94)
-    boolean is_cdss_60 and([equal([subject, "CDSS"]), equal([number, "60"])])
-    boolean is_cdss_94 and([equal([subject, "CDSS"]), equal([number, "94"])])
-
-    // CYPLAN 101
-    boolean is_cyplan_101 and([equal([subject, "CYPLAN"]), equal([number, "101"])])
-
-    // DATA 94, C4AC
-    boolean is_data_94 and([equal([subject, "DATA"]), equal([number, "94"])])
-    boolean is_data_c4ac and([equal([subject, "DATA"]), equal([number, "C4AC"])])
-
-    // DATA C104/HISTORY C184D/ STS C104
-    boolean is_data_c104 and([equal([subject, "DATA"]), equal([number, "C104"])])
-    boolean is_history_c184d and([equal([subject, "HISTORY"]), equal([number, "C184D"])])
-    boolean is_sts_c104 and([equal([subject, "STS"]), equal([number, "C104"])])
-
-    // DIGHUM 100
-    boolean is_dighum_c100 and([equal([subject, "DIGHUM"]), equal([number, "100"])])
-    
-    // ESPM C167/PBHLTH C160
-    boolean is_espm_c167 and([equal([subject, "ESPM"]), equal([number, "C167"])])
-    boolean is_pbhlth_c160 and([equal([subject, "PBHLTH"]), equal([number, "C160"])])
-
-    // HISTORY 30, 133D, 183B
-    boolean is_history_30 and([equal([subject, "HISTORY"]), equal([number, "30"])])
-    boolean is_history_133d and([equal([subject, "HISTORY"]), equal([number, "133D"])])
-    boolean is_history_183b and([equal([subject, "HISTORY"]), equal([number, "183B"])])
-
-    // INFO 101, 103, 134, 188
-    boolean is_info_101 and([equal([subject, "INFO"]), equal([number, "101"])])
-    boolean is_info_103 and([equal([subject, "INFO"]), equal([number, "103"])])
-    boolean is_info_134 and([equal([subject, "INFO"]), equal([number, "134"])])
-    boolean is_info_188 and([equal([subject, "INFO"]), equal([number, "188"])])
-
-    // ISF 60, 100D, 100J
-    boolean is_isf_60 and([equal([subject, "ISF"]), equal([number, "60"])])
-    boolean is_isf_100d and([equal([subject, "ISF"]), equal([number, "100D"])])
-    boolean is_isf_100j and([equal([subject, "ISF"]), equal([number, "100J"])])
-
-    // LEGALST 190 
-    boolean is_legalst_190 and([equal([subject, "LEGALST"]), equal([number, "190"])])
-
-    // LS 22, 25
-    boolean is_ls_22 and([equal([subject, "LS"]), equal([number, "22"])])
-    boolean is_ls_25 and([equal([subject, "LS"]), equal([number, "25"])])
-
-    // NWMEDIA 133, 151AC
-    boolean is_nwmedia_133 and([equal([subject, "NWMEDIA"]), equal([number, "133"])])
-    boolean is_nwmedia_151ac and([equal([subject, "NWMEDIA"]), equal([number, "151AC"])])
-
-    // PHILOS 5, 121
-    boolean is_philos_5 and([equal([subject, "PHILOS"]), equal([number, "5"])])
-    boolean is_philos_121 and([equal([subject, "PHILOS"]), equal([number, "121"])])
-
-    // POLECON 156
-    boolean is_polecon_156 and([equal([subject, "POLECON"]), equal([number, "156"])])
-
-    // POLSCI 132C
-    boolean is_polsci_132c and([equal([subject, "POLSCI"]), equal([number, "132C"])])
-
-    // PUBPOL 138A (Coming soon), 145 (Coming soon), 147, C151
-    boolean is_pubpol_138a and([equal([subject, "PUBPOL"]), equal([number, "138A"])])
-    boolean is_pubpol_145 and([equal([subject, "PUBPOL"]), equal([number, "145"])])
-    boolean is_pubpol_147 and([equal([subject, "PUBPOL"]), equal([number, "147"])])
-    boolean is_pubpol_c151 and([equal([subject, "PUBPOL"]), equal([number, "C151"])])
-
-    // RHETOR 173 
-    boolean is_rhetor_173 and([equal([subject, "RHETOR"]), equal([number, "173"])])
-
-    // STS C100 / HISTORY C182C / ISF C100G
-    boolean is_sts_c100 and([equal([subject, "STS"]), equal([number, "C100"])])
-    boolean is_history_c182c and([equal([subject, "HISTORY"]), equal([number, "C184C"])])
-    boolean is_isf_c100g and([equal([subject, "ISF"]), equal([number, "C100G"])])    
-
-    boolean return or(
-      [is_amerstd_c134,
-      is_africam_c134,
-      is_anthro_168,
-      is_bioeng_100,
-      is_cdss_60,
-      is_cdss_94,
-      is_cyplan_101,
-      is_data_94,
-      is_data_c4ac,
-      is_data_c104,
-      is_history_c184d,
-      is_sts_c104,
-      is_dighum_c100,
-      is_espm_c167,
-      is_pbhlth_c160,
-      is_history_30,
-      is_history_133d,
-      is_history_183b,
-      is_info_101,
-      is_info_103,
-      is_info_134,
-      is_info_188,
-      is_isf_60,
-      is_isf_100d,
-      is_isf_100j,
-      is_legalst_190,
-      is_ls_22,
-      is_ls_25,
-      is_nwmedia_133,
-      is_nwmedia_151ac,
-      is_philos_5,
-      is_philos_121,
-      is_polecon_156,
-      is_polsci_132c,
-      is_pubpol_138a,
-      is_pubpol_145,
-      is_pubpol_147,
-      is_pubpol_c151,
-      is_rhetor_173,
-      is_sts_c100,
-      is_history_c182c,
-      is_isf_c100g]
-    )
-  }
-  List<Course> hsddt_courses filter(courses, hsddt_finder)
+  List<Course> hsddt_courses filter(courses, (c) {
+    List<Course> hsddt_req [
+      {"AMERSTD C134"},
+      {"AFRICAM C134"},
+      {"ANTHRO 168"},
+      {"BIO ENG 100"},
+      {"CDSS 60"},
+      {"CDSS 94"},
+      {"CYPLAN 101"},
+      {"DATA 94"},
+      {"DATA C4AC"},
+      {"DATA C104"},
+      {"HISTORY C184D"},
+      {"STS C104"},
+      {"DIGHUM 100"},
+      {"ESPM C167"},
+      {"PBHLTH C160"},
+      {"HISTORY 30"},
+      {"HISTORY 133D"},
+      {"HISTORY 183B"},
+      {"INFO 101"},
+      {"INFO 103"},
+      {"INFO 134"},
+      {"INFO 188"},
+      {"ISF 60"},
+      {"ISF 100D"},
+      {"ISF 100J"},
+      {"LEGALST 190"},
+      {"LS 22"},
+      {"LS 25"},
+      {"NWMEDIA 133"},
+      {"NWMEDIA 151AC"},
+      {"PHILOS 5"},
+      {"PHILOS 121"},
+      {"POLECON 156"},
+      {"POLSCI 132C"},
+      {"PUBPOL 138A"},
+      {"PUBPOL 145"},
+      {"PUBPOL 147"},
+      {"PUBPOL C151"},
+      {"RHETOR 173"},
+      {"STS C100"},
+      {"HISTORY C182C"},
+      {"ISF C100G"},
+      {"COMPSCI C8"},
+      {"DATA C8"},
+      {"STAT C8"},
+      {"COMPSCI 10"},
+      {"COMPSCI W10"},
+      {"COMPSCI 61A"},
+      {"COMPSCI 61B"},
+      {"COMPSCI 61C"}
+    ]
+    boolean return one_common_course([c], hsddt_req)
+  })
   NCoursesRequirement hsddt {hsddt_courses, 1, "Human and Social Dynamics of Data and Technology"}
 
 
@@ -704,5 +613,343 @@ Function<List<Requirement>>() main (){
   AndRequirement tech_electives {[upper_div_units_req, meceng_units_req, total_units_req, design_req, quant_sci_req], "Technical Electives"}
 
   List<Requirement> return [math_lower_div, physics_lower_div, chem, engin_core, upper_div_required, tech_electives]
+}
+`;
+
+export const COMPSCI_REQ_BTLL = `
+
+Function<boolean>(Course) design_upper_div_finder (course) {
+  string subject = get_attr(course, "subject")
+  string number = get_attr(course, "number")
+
+  boolean is_cs = and([equal([subject, "COMPSCI"]), or([equal([number, "160"]), equal([number, "161"]), equal([number, "162"]), equal([number, "164"]), equal([number, "168"]), equal([number, "169"]), equal([number, "169A"]), equal([number, "169L"]), equal([number, "180"]), equal([number, "182"]), equal([number, "W182"]), equal([number, "184"]), equal([number, "186"]), equal([number, "W186"])])])
+  boolean is_ee = and([equal([subject, "ELENG"]), or([equal([number, "C128"]), equal([number, "130"]), equal([number, "140"]), equal([number, "143"]), equal([number, "192"])])])
+  boolean is_eecs = and([equal([subject, "EECS"]), or([equal([number, "C106A"]), equal([number, "C106B"]), equal([number, "149"]), equal([number, "151"])])])
+
+  return or([cs_match, ee_match, eecs_match])
+}
+
+Function<boolean>(Course) eecs_upper_div_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  // EECS courses numbered 100-C191B
+  boolean is_eecs_valid and([equal([subject, "EECS"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-1]"), equal([number, "C191B"])])])
+
+  // ELENG courses numbered 100-194
+  boolean is_eleng_valid and([equal([subject, "ELENG"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-4]")])])
+
+  // COMPSCI courses numbered 100-194
+  boolean is_compsci_valid and([equal([subject, "COMPSCI"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-4]")])])
+
+  // Math 156, Math 221, Info 159, Data 101, Data 188, and STAT/DATA/CS C100
+  boolean is_math_156 and([equal([subject, "MATH"]), equal([number, "156"])])
+  boolean is_math_221 and([equal([subject, "MATH"]), equal([number, "221"])])
+  boolean is_info_159 and([equal([subject, "INFO"]), equal([number, "159"])])
+  boolean is_data_101 and([equal([subject, "DATA"]), equal([number, "101"])])
+  boolean is_data_188 and([equal([subject, "DATA"]), equal([number, "188"])])
+  boolean is_data_c100 and([equal([subject, "DATA"]), equal([number, "C100"])])
+  boolean is_stat_c100 and([equal([subject, "STAT"]), equal([number, "C100"])])
+  boolean is_compsci_c100 and([equal([subject, "COMPSCI"]), equal([number, "C100"])])
+  boolean non_eecs or([is_math_156, is_math_221, is_info_159, is_data_101, is_data_188, is_data_c100, is_stat_c100, is_compsci_c100])
+
+  boolean return or([is_eecs_valid, is_eleng_validm is_compsci_valid, non_eecs])
+}
+
+Function<boolean>(Course) cs_upper_div_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  // COMPSCI courses numbered 100-194
+  boolean is_compsci_valid and([equal([subject, "COMPSCI"]), or([regex_match(number, "^1[0-8][0-9]"), regex_match(number, "^19[0-4]")])])
+
+  // Math 156, Math 221, Info 159, Data 101, Data 188, and STAT/DATA/CS C100
+  boolean is_math_156 and([equal([subject, "MATH"]), equal([number, "156"])])
+  boolean is_math_221 and([equal([subject, "MATH"]), equal([number, "221"])])
+  boolean is_info_159 and([equal([subject, "INFO"]), equal([number, "159"])])
+  boolean is_data_101 and([equal([subject, "DATA"]), equal([number, "101"])])
+  boolean is_data_188 and([equal([subject, "DATA"]), equal([number, "188"])])
+  boolean is_data_c100 and([equal([subject, "DATA"]), equal([number, "C100"])])
+  boolean is_stat_c100 and([equal([subject, "STAT"]), equal([number, "C100"])])
+  boolean is_compsci_c100 and([equal([subject, "COMPSCI"]), equal([number, "C100"])])
+  boolean non_eecs or([is_math_156, is_math_221, is_info_159, is_data_101, is_data_188, is_data_c100, is_stat_c100, is_compsci_c100])
+
+  boolean return or([is_compsci_valid, non_eecs])
+}
+
+Function<boolean>(Course) cs_lower_div_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_compsci and([equal([subject, "COMPSCI"]), or([equal([number, "61A"]), equal([number, "61B"]), equal([number, "61BL"]), equal([number, "61C"])])])
+  boolean return is_compsci
+}
+
+Function<boolean>(Course) technical_elective_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+  number units get_attr(course, "units")
+
+  // Must be upper division (100+) or C### and NOT 195–199
+  boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9][0-9]"), regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]")])
+  boolean is_excluded_seminar regex_match(number, "^19[5-9]")
+  boolean is_valid_number and([is_upper_div, not(is_excluded_seminar)])
+
+  // 4+ unit check (for departments requiring it)
+  boolean has_4_units or([greater_than(units, 3), equal([units, 4])])
+
+  // TODO: some courses only count for specific sections, but checks are currently only implemented for the course number level
+  // ANTHRO
+  boolean is_anthro_107 and([equal([subject, "ANTHRO"]), equal([number, "107"])])
+
+  // ARCH
+  boolean is_arch and([equal([subject, "ARCH"]), or([equal([number, "122"]), equal([number, "129"]), equal([number, "222"]), equal([number, "229"])])])
+
+  // ART
+  boolean is_art and([equal([subject, "ART"]), or([equal([number, "172"]), equal([number, "173"]), equal([number, "175"]), equal([number, "178"])])])
+
+  // ASTRON
+  boolean is_astron and([equal([subject, "ASTRON"]), equal([number, "C162"])])
+
+  // BIOENG (except 100, C181, 190, 192, 196)
+  boolean is_bioeng_excluded or([equal([number, "100"]), equal([number, "C181"]), equal([number, "190"]), equal([number, "192"]), equal([number, "196"])])
+  boolean is_bioeng and([equal([subject, "BIOENG"]), is_valid_number, not(is_bioeng_excluded)])
+
+  // CHEM (all technical UD and Grad)
+  boolean is_chem and([equal([subject, "CHEM"]), is_valid_number])
+
+  // CHMENG (except 180, 185)
+  boolean is_chmeng_excluded or([equal([number, "180"]), equal([number, "185"])])
+  boolean is_chmeng and([equal([subject, "CHMENG"]), is_valid_number, not(is_chmeng_excluded)])
+
+  // CIVENG (except 167, 192, 252L, 290R)
+  boolean is_civeng_excluded or([equal([number, "167"]), equal([number, "192"]), equal([number, "252L"]), equal([number, "290R"])])
+  boolean is_civeng and([equal([subject, "CIVENG"]), is_valid_number, not(is_civeng_excluded)])
+
+  // COG SCI
+  boolean is_cogsci and([equal([subject, "COG SCI"]), or([equal([number, "N100"]), equal([number, "C100"]), equal([number, "C101"]), equal([number, "C110"]), equal([number, "C126"]), equal([number, "C127"]), equal([number, "131"]), equal([number, "C131"]), equal([number, "C133"]), equal([number, "190"])])])
+
+  // COMLIT
+  boolean is_comlit_170 and([equal([subject, "COMLIT"]), equal([number, "170"])])
+
+  // COMP BIO
+  boolean is_compbio_175 and([equal([subject, "COMP BIO"]), equal([number, "175"])])
+
+  // CYPLAN
+  boolean is_cyplan_101 and([equal([subject, "CYPLAN"]), equal([number, "101"])])
+
+  // DATA
+  boolean is_data and([equal([subject, "DATA"]), or([equal([number, "C100"]), equal([number, "101"]), equal([number, "C102"]), equal([number, "C104"]), equal([number, "140"]), equal([number, "144"]), equal([number, "145"]), equal([number, "188"])])])
+  
+  // STS C104 / HIST C184D
+  boolean is_hist_c184d and([equal([subject, "HIST"]), equal([number, "C184D"])])
+  boolean is_sts_c104 and([equal([subject, "STS"]), equal([number, "C104"])])
+
+  // DEMOG
+  boolean is_demog and([equal([subject, "DEMOG"]), or([equal([number, "C175"]), equal([number, "180"])])])
+
+  // DES INV
+  boolean is_desinv and([equal([subject, "DESINV"]), or([equal([number, "190"]), equal([number, "190E"])])])
+  boolean is_meceng_292c and([equal([subject, "MECENG"]), equal([number, "292C"])])
+
+  // DEV ENG
+  boolean is_deveng_290 and([equal([subject, "DEVENG"]), equal([number, "290"])])
+
+  // DIGHUM
+  boolean is_dighum_101 and([equal([subject, "DIGHUM"]), equal([number, "101"])])
+
+  // ECON
+  boolean is_econ and([equal([subject, "ECON"]), or([equal([number, "100A"]), equal([number, "100B"]), equal([number, "101A"]), equal([number, "101B"]), equal([number, "C103"]), equal([number, "C110"]), equal([number, "136"]), equal([number, "139"]), equal([number, "140"]), equal([number, "141"]), equal([number, "148"]), equal([number, "C175"])])])
+
+  // EDUC
+  boolean is_educ and([equal([subject, "EDUC"]), or([equal([number, "161"]), equal([number, "W161"]), equal([number, "C260F"]), equal([number, "290A"])])])
+
+  // EECS / ELENG (all UD and approved Grad)
+  boolean is_eecs and([or([equal([subject, "EECS"]), equal([subject, "ELENG"])]), is_valid_number])
+
+  // ENERES
+  boolean is_eneres and([equal([subject, "ENERES"]), or([equal([number, "C100"]), equal([number, "W100"]), equal([number, "C176"])])])
+
+  // ENGIN (except 102, 125, 157AC; 183 sections need manual review)
+  boolean is_engin_excluded or([equal([number, "102"]), equal([number, "125"]), equal([number, "157AC"])])
+  boolean is_engin and([equal([subject, "ENGIN"]), is_valid_number, not(is_engin_excluded)])
+
+  // ENVECON
+  boolean is_envecon and([equal([subject, "ENVECON"]), or([equal([number, "100"]), equal([number, "C118"])])])
+
+  // EPS
+  boolean is_eps and([equal([subject, "EPS"]), or([equal([number, "104"]), equal([number, "109"]), equal([number, "122"]), equal([number, "C162"])])])
+
+  // ESPM
+  boolean is_espm and([equal([subject, "ESPM"]), or([equal([number, "136"]), equal([number, "137"]), equal([number, "169"])])])
+
+  // GEOG
+  boolean is_geog and([equal([subject, "GEOG"]), or([equal([number, "142"]), equal([number, "143"]), equal([number, "183"]), equal([number, "185"]), equal([number, "187"]), equal([number, "C188"])])])
+
+  // IND ENG (except 171, select 185, 186, 190 series, 191; 185 needs manual review)
+  boolean is_indeng_excluded or([equal([number, "171"]), equal([number, "186"]), equal([number, "191"])])
+  boolean is_indeng_190_series regex_match(number, "^190")
+  boolean is_indeng and([equal([subject, "INDENG"]), is_valid_number, not(is_indeng_excluded), not(is_indeng_190_series)])
+
+  // INFO
+  boolean is_info and([equal([subject, "INFO"]), or([equal([number, "103"]), equal([number, "159"]), equal([number, "213"]), equal([number, "251"]), equal([number, "C262"])])])
+
+  // INTEGBI (all technical 4-unit UD and Grad)
+  boolean is_integbi and([equal([subject, "INTEGBI"]), is_valid_number, has_4_units])
+
+  // LD ARCH
+  boolean is_ldarch and([equal([subject, "LDARCH"]), or([equal([number, "C177"]), equal([number, "C188"])])])
+
+  // LEGALST
+  boolean is_legalst_123 and([equal([subject, "LEGALST"]), equal([number, "123"])])
+
+  // LING
+  boolean is_ling and([equal([subject, "LING"]), or([equal([number, "100"]), equal([number, "C105"]), equal([number, "C160"]), equal([number, "120"]), equal([number, "C189"])])])
+
+  // MATH (all technical UD and Grad)
+  boolean is_math and([equal([subject, "MATH"]), is_valid_number])
+
+  // MECH ENG (except 191K)
+  boolean is_me and([equal([subject, "MECENG"]), is_valid_number, not(equal([number, "191K"]))])
+
+  // MCELLBI (all technical 4-unit UD and Grad)
+  boolean is_mcellbi and([equal([subject, "MCELLBI"]), is_valid_number, has_4_units])
+
+  // MUSIC
+  boolean is_music and([equal([subject, "MUSIC"]), or([equal([number, "108"]), equal([number, "158A"]), equal([number, "159"]), equal([number, "209"])])])
+
+  // NEUROSC (all technical UD and Grad, minimum 4 units)
+  boolean is_neurosc and([equal([subject, "NEUROSC"]), is_valid_number, has_4_units])
+
+  // NEW MEDIA
+  boolean is_newmedia and([equal([subject, "NWMEDIA"]), or([equal([number, "190"]), equal([number, "C203"]), equal([number, "C262"])])])
+
+  // NUC ENG (all technical 4-unit UD and Grad)
+  boolean is_nuceng and([equal([subject, "NUCENG"]), is_valid_number, has_4_units])
+
+  // NUSCTX
+  boolean is_nusctx_103 and([equal([subject, "NUSCTX"]), equal([number, "103"])])
+
+  // PHILOS
+  boolean is_philos and([equal([subject, "PHILOS"]), or([equal([number, "140A"]), equal([number, "140B"]), equal([number, "143"])])])
+
+  // PHYSICS (all technical 4-unit UD and Grad)
+  boolean is_physics and([equal([subject, "PHYSICS"]), is_valid_number, has_4_units])
+
+  // POL SCI
+  boolean is_polsci and([equal([subject, "POLSCI"]), or([equal([number, "C135"]), equal([number, "W135"]), equal([number, "132B"])])])
+
+  // PSYCH
+  boolean is_psych_c123 and([equal([subject, "PSYCH"]), equal([number, "C123"])])
+
+  // PUBLIC HEALTH
+  boolean is_pubhlth and([equal([subject, "PBHLTH"]), or([equal([number, "142"]), equal([number, "150A"]), equal([number, "162A"]), equal([number, "252D"])])])
+
+  // PUB POL (290 section 002 only)
+  boolean is_pubpol and([equal([subject, "PUBPOL"]), or([equal([number, "290"]), equal([number, "C184"]), equal([number, "W184"])])])
+
+  // SOCIOL
+  boolean is_sociol_166 and([equal([subject, "SOCIOL"]), equal([number, "166"])])
+
+  // SPANISH
+  boolean is_spanish_100 and([equal([subject, "SPANISH"]), equal([number, "100"])])
+
+  // STAT (all technical 4-unit UD and Grad)
+  boolean is_stat and([equal([subject, "STAT"]), is_valid_number, has_4_units])
+
+  // THEATER
+  boolean is_theater_177 and([equal([subject, "THEATER"]), equal([number, "177"])])
+
+  // UGBA
+  boolean is_ugba and([equal([subject, "UGBA"]), or([equal([number, "103"]), equal([number, "120AA"]), equal([number, "120AB"]), equal([number, "122"])])])
+
+  boolean return or([is_anthro_107, is_arch, is_art, is_astron, is_bioeng, is_chem, is_chmeng, is_civeng, is_cogsci, is_comlit_170, is_compbio_175, is_cyplan_101, is_data, is_hist_c184d, is_sts_c104, is_demog, is_desinv, is_meceng_292c, is_deveng_290, is_dighum_101, is_econ, is_educ, is_eecs, is_eneres, is_engin, is_envecon, is_eps, is_espm, is_geog, is_indeng, is_info, is_integbi, is_ldarch, is_legalst_123, is_ling, is_math, is_mcellbi, is_me, is_music, is_neurosc, is_newmedia, is_nuceng, is_nusctx_103, is_philos, is_physics, is_polsci, is_psych_c123, is_pubhlth, is_pubpol, is_sociol_166, is_spanish_100, is_stat, is_theater_177, is_ugba])
+}
+
+Function<number>(number, Course) add_course_units (acc, course){
+  number units get_attr(course, "units")
+  number return add([acc, units])
+}
+
+Function<List<Course>>(List<Course> available, number target) take_units {
+  List<Course> consumed []
+  number current_total 0
+  
+  foreach(course in available) {
+    if(less_than(current_total, target)) {
+      add_to_list(consumed, course)
+      current_total = add_course_units(current_total, course)
+    }
+  }
+  return consumed
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  List<Course> math_1a_51_list [{"MATH 1A"}, {"MATH 51"}]
+  List<Course> math_1a_51_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_1a_51_list)
+  })
+  NCoursesRequirement math_1a {math_1a_51_matches, 1, "Calculus I (MATH 1A or 51)"}
+
+  List<Course> math_1b_52_list [{"MATH 1B"}, {"MATH 52"}]
+  List<Course> math_1b_52_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_1b_52_list)
+  })
+  NCoursesRequirement math_1b {math_1b_52_matches, 1, "Calculus II (MATH 1B or 52)"}
+
+  List<Course> math_53_54_list [{"MATH 53"}, {"MATH 54"}]
+  List<boolean> math_53_54_status common_course_matches(math_53_54_list, courses)
+  CourseListRequirement math_53_54 {math_53_54_list, math_53_54_status, "MATH 53 and 54"}
+
+  // TODO: change this to only accept MATH 55 for Math/CS double majors
+  List<Course> math_55_compsci_70_list [{"MATH 55"}, {"COMPSCI 70"}]
+  List<Course> math_55_compsci_70_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_55_compsci_70_list)
+  })
+  NCoursesRequirement compsci_70 {math_55_compsci_70_matches, 1, "Calculus II (MATH 1B or 52)"}
+
+  // Lower Division Mathematics: MATH 51, 52, 53, 54, COMPSCI 70
+  AndRequirement math_lower_div {[math_1a, math_1b, math_53_54, compsci_70], "Lower Division Mathematics"}
+
+  // Lower Division Computer Science: COMPSCI 61A, (61B OR 61BL), 61C
+  List<Course> cs61b [{"COMPSCI 61A"}, {"COMPSCI 61B"}, {"COMPSCI 61C"}]
+  List<Course> cs61bl [{"COMPSCI 61A"}, {"COMPSCI 61BL"}, {"COMPSCI 61C"}]
+  List<boolean> cs61b_status common_course_matches(cs61b, courses)
+  List<boolean> cs61bl_status common_course_matches(cs61bl, courses)
+  CourseListRequirement cs61b_req {cs61b, cs61b_status, "COMPSCI 61A, 61B, 61C"}
+  CourseListRequirement cs61bl_req {cs61bl, cs61bl_status, "COMPSCI 61A, 61BL, 61C"}
+  OrRequirement cs_lower_div {[cs61b_req, cs61bl_req], "Lower Division Computer Science"}
+
+  // TODO: add special topics and graduate courses from https://eecs.berkeley.edu/academics/courses/approved-cs-graduate-and-special-topics-courses/
+
+  // Upper Division 
+  // Design: 4 units
+  List<Course> design_pool filter(courses, design_upper_div_finder)
+  List<Course> design_consumed take_units(design_pool, 4)
+  number design_units reduce(design_consumed, add_course_units, 0)
+  NumberRequirement design_upper_div {design_units, 4, "Upper Division Design"}
+  
+  // CS: 8 units
+  List<Course> cs__pool filter(difference(courses, design_consumed), cs_upper_div_finder)
+  List<Course> cs_consumed take_units(cs_only_pool, 8)
+  number cs_units reduce(cs_consumed, add_course_units, 0)
+  NumberRequirement cs_upper_div {cs_units, 8, "Upper Division CS"}
+
+  // CS/EE/EECS: 8 units
+  List<Course> used_so_far union(design_consumed, cs_consumed)
+  List<Course> eecs_pool filter(difference(courses, used_so_far), eecs_upper_div_finder)
+  List<Course> eecs_consumed take_units(eecs_pool, 8)
+  number eecs_units reduce(eecs_consumed, add_course_units, 0)
+  NumberRequirement eecs_upper_div {eecs_units, 8, "Upper Division CS/EE/EECS"}
+
+  // Technical elective: one 4-unit course
+  technical_elective_finder
+  List<Course> used_so_far union(used_so_far, eecs_consumed)
+  List<Course> tech_elec_pool filter(difference(courses, used_so_far), technical_elective_finder)
+  NCoursesRequirement tech_elec_upper_div {tech_elec_pool, 1, "Upper Division Technical Elective"}
+
+  List<Requirement> return [math_lower_div, cs_lower_div, cs_upper_div, eecs_upper_div, design_upper_div, tech_elec_upper_div]
 }
 `;
