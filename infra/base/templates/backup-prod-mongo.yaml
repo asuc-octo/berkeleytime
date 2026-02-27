@@ -63,6 +63,8 @@ spec:
 
                   echo "MongoDB backup completed successfully!"
               env:
+                - name: TZ
+                  value: America/Los_Angeles
                 - name: ENDPOINT_URL
                   value: https://ff660bd2dac18c00551ed509d24ef4d7.r2.cloudflarestorage.com
                 - name: BUCKET_NAME
