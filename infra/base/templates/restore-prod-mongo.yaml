@@ -35,8 +35,23 @@ spec:
                   # Download production MongoDB backup
                   echo "Downloading backup from s3 bucket..."
                   restore_date=${RESTORE_DATE}
-                  aws s3 cp s3://$BUCKET_NAME/daily/prod_backup-$restore_date.gz /tmp/prod_backup.gz \
-                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+
+                  if [ ${#restore_date} -eq 10 ]; then
+                    backup_key="daily/prod_backup-${restore_date}.gz"
+                  elif [ ${#restore_date} -eq 8 ]; then
+                    date_prefix="${restore_date}"
+                    latest_obj=$(
+                      aws s3 ls s3://$BUCKET_NAME/daily/ \
+                        --endpoint-url="https://$ACCOUNT_ID.r2.cloudflarestorage.com" | \
+                        awk '{print $4}' | \
+                        grep "^prod_backup-${date_prefix}" | \
+                        sort | \
+                        tail -n 1
+                    )
+                    backup_key="daily/${latest_obj}"
+
+                  aws s3 cp "s3://$BUCKET_NAME/${backup_key}" /tmp/prod_backup.gz \
+                    --endpoint-url="https://$ACCOUNT_ID.r2.cloudflarestorage.com"
 
                   # Restore dump into production MongoDB
                   echo "Restoring production MongoDB from backup..."
