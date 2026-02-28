@@ -51,7 +51,7 @@ const NotFound = lazy(() => import("@/app/NotFound"));
 function ThemedToaster() {
   const { theme } = useTheme();
   return (
-    <Toaster position="bottom-right" theme={theme ?? "system"} offset={8}/>
+    <Toaster position="bottom-right" theme={theme ?? "system"} offset={8} />
   );
 }
 
