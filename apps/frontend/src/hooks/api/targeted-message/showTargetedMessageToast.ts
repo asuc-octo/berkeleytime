@@ -1,6 +1,5 @@
-import { toast } from "sonner";
-
 import type { ApolloClient } from "@apollo/client";
+import { toast } from "sonner";
 
 import "@/lib/api/targeted-message";
 import {
@@ -37,7 +36,8 @@ export const showTargetedMessageToast = async (
   syncDismissedTargetedMessages(messages.map((m) => m.id));
 
   const message = messages.find((m) => {
-    if (!m.persistent && !m.reappearing) return !isTargetedMessageDismissed(m.id);
+    if (!m.persistent && !m.reappearing)
+      return !isTargetedMessageDismissed(m.id);
     if (m.reappearing) return !isTargetedMessageSessionDismissed(m.id);
     return true; // persistent always shows
   });
