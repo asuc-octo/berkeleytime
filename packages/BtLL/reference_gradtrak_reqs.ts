@@ -953,3 +953,310 @@ Function<List<Requirement>>() main (){
   List<Requirement> return [math_lower_div, cs_lower_div, cs_upper_div, eecs_upper_div, design_upper_div, tech_elec_upper_div]
 }
 `;
+
+export const DATASCI_REQ_BTLL = `
+Function<boolean>(Course) data_c100_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_data_100 and([equal([subject, "DATA"]), equal([number, "100"])])
+  boolean return is_data_100
+}
+
+Function<boolean>(Course) probability_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_data_stat_c140 and([or([equal([subject, "DATA"]), equal([subject, "STAT"])]), equal([number, "C140"])])
+  boolean is_eecs_126 and([equal([subject, "EECS"]), equal([number, "126"])])
+  boolean is_indeng_172 and([equal([subject, "IND ENG"]), equal([number, "172"])])
+  boolean is_math_106 and([equal([subject, "MATH"]), equal([number, "106"])])
+  boolean is_stat_134 and([equal([subject, "STAT"]), equal([number, "134"])])
+
+  boolean return or([is_data_stat_c140, is_eecs_126, is_indeng_172, is_math_106, is_stat_134])
+}
+
+Function<boolean>(Course) modeling_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_data_compsci_182 and([or([equal([subject, "DATA"]), equal([subject, "COMPSCI"])]), or([equal([number, "182"]), equal([number, "C182"]), equal([number, "L182"]), equal([number, "W182"])])])
+  boolean is_compsci_189 and([equal([subject, "COMPSCI"]), equal([number, "189"])])
+  boolean is_data_stat_c102 and([or([equal([subject, "DATA"]), equal([subject, "STAT"])]), equal([number, "C102"])])
+  boolean is_indeng_142a and([equal([subject, "INDENG"]), equal([number, "142A"])])
+  boolean is_stat_154 and([equal([subject, "STAT"]), equal([number, "154"])])
+  // DATA 188 only counts in Spring 2026 
+  boolean is_data_188 and([equal([subject, "DATA"]), equal([number, "188"])])
+
+  boolean return or([is_data_compsci_182, is_compsci_189, is_data_stat_c102, is_indeng_142a, is_stat_154, is_data_188])
+}
+
+Function<boolean>(Course) human_contexts_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_anthro_168 and([equal([subject, "ANTHRO"]), equal([number, "168"])])
+  boolean is_cyplan_101 and([equal([subject, "CYPLAN"]), equal([number, "101"])])
+  boolean is_data_c104 and([or([equal([subject, "DATA"]), equal([subject, "HISTORY"]), equal([subject, "STS"])]), equal([number, "C104"])])
+  boolean is_dighum_100 and([equal([subject, "DIGHUM"]), equal([number, "100"])])
+  boolean is_espm_c167 and([equal([subject, "ESPM"]), equal([number, "C167"])])
+  boolean is_pubhlth_c160 and([equal([subject, "PBHLTH"]), equal([number, "C160"])])
+  boolean is_info_101 and([equal([subject, "INFO"]), equal([number, "101"])])
+  boolean is_info_188 and([equal([subject, "INFO"]), equal([number, "188"])])
+  boolean is_isf_100j and([equal([subject, "ISF"]), equal([number, "100J"])])
+  boolean is_nwmedia_151ac and([equal([subject, "NWMEDIA"]), equal([number, "151AC"])])
+  boolean is_philos_121 and([equal([subject, "PHILOS"]), equal([number, "121"])])
+  boolean is_polecon_159 and([equal([subject, "POLECON"]), equal([number, "159"])])
+  // BIOENG 100 only counts prior to Fall 2025
+  boolean is_bioeng_100 and([equal([subject, "BIOENG"]), equal([number, "100"])])
+
+  boolean return or([is_anthro_168, is_cyplan_101, is_data_c104, is_dighum_100, is_espm_c167, is_pubhlth_c160, is_info_101, is_info_188, is_isf_100j, is_nwmedia_151ac, is_philos_121, is_polecon_159, is_bioeng_100])
+}
+
+Function<boolean>(Course) computational_inferential_depth_finder (course){
+  string subject get_attr(course, "subject")
+  string number get_attr(course, "number")
+
+  boolean is_astron_128 and([equal([subject, "ASTRON"]), equal([number, "128"])])
+  boolean is_bioeng_chem_c142 and([or([equal([subject, "BIOENG"]), equal([subject, "CHEM"])]), equal([number, "C142"])])
+  boolean is_chem_compsci_physics_c191 and([or([equal([subject, "CHEM"]), equal([subject, "COMPSCI"]), equal([subject, "PHYSICS"])]), equal([number, "C191"])])
+  boolean is_compsci_161 and([equal([subject, "COMPSCI"]), equal([number, "161"])])
+  boolean is_compsci_162 and([equal([subject, "COMPSCI"]), equal([number, "162"])])
+  boolean is_compsci_164 and([equal([subject, "COMPSCI"]), equal([number, "164"])])
+  boolean is_compsci_168 and([equal([subject, "COMPSCI"]), equal([number, "168"])])
+  boolean is_compsci_169 and([equal([subject, "COMPSCI"]), or([equal([number, "169"]), equal([number, "169A"]), equal([number, "W169"]), equal([number, "W169A"])])])
+  // 169L (2 units) may only combine with 169A/W169A, not 169; enforced in main()
+  boolean is_compsci_169l and([equal([subject, "COMPSCI"]), equal([number, "169L"])])
+  boolean is_compsci_170 and([equal([subject, "COMPSCI"]), equal([number, "170"])])
+  boolean is_compsci_186 and([equal([subject, "COMPSCI"]), or([equal([number, "186"]), equal([number, "W186"])])])
+  boolean is_compsci_188 and([equal([subject, "COMPSCI"]), equal([number, "188"])])
+  boolean is_cph_data_c146 and([or([equal([subject, "CPH"]), equal([subject, "DATA"])]), equal([number, "C146"])])
+  boolean is_data_c101 and([equal([subject, "DATA"]), equal([number, "C101"])])
+  boolean is_data_144 and([equal([subject, "DATA"]), equal([number, "144"])])
+  boolean is_data_145 and([equal([subject, "DATA"]), equal([number, "145"])])
+  boolean is_econ_140 and([equal([subject, "ECON"]), equal([number, "140"])])
+  boolean is_econ_141 and([equal([subject, "ECON"]), equal([number, "141"])])
+  boolean is_eecs_127 and([equal([subject, "EECS"]), equal([number, "127"])])
+  boolean is_eleng_120 and([equal([subject, "ELENG"]), equal([number, "120"])])
+  boolean is_eleng_122 and([equal([subject, "ELENG"]), equal([number, "122"])])
+  boolean is_eleng_123 and([equal([subject, "ELENG"]), equal([number, "123"])])
+  boolean is_envecon_c118 and([or([equal([subject, "ENVECON"]), equal([subject, "IAS"])]), equal([number, "C118"])])
+  boolean is_espm_174 and([equal([subject, "ESPM"]), equal([number, "174"])])
+  boolean is_indeng_115 and([equal([subject, "IND ENG"]), equal([number, "115"])])
+  boolean is_indeng_135 and([equal([subject, "IND ENG"]), equal([number, "135"])])
+  boolean is_indeng_142b and([equal([subject, "IND ENG"]), equal([number, "142B"])])
+  boolean is_indeng_160 and([equal([subject, "IND ENG"]), equal([number, "160"])])
+  boolean is_indeng_162 and([equal([subject, "IND ENG"]), equal([number, "162"])])
+  boolean is_indeng_164 and([equal([subject, "IND ENG"]), equal([number, "164"])])
+  boolean is_indeng_165 and([equal([subject, "IND ENG"]), equal([number, "165"])])
+  boolean is_indeng_166 and([equal([subject, "IND ENG"]), equal([number, "166"])])
+  // IND ENG 173 and STAT 150 share a mutual exclusion with EECS 126 (probability); enforced in main()
+  boolean is_indeng_173 and([equal([subject, "IND ENG"]), equal([number, "173"])])
+  boolean is_indeng_174 and([equal([subject, "IND ENG"]), equal([number, "174"])])
+  boolean is_info_159 and([equal([subject, "INFO"]), equal([number, "159"])])
+  // INFO 190-1 only counts when offered with the Data Visualization topic
+  boolean is_info_190_1 and([equal([subject, "INFO"]), equal([number, "190-1"])])
+  boolean is_math_156 and([equal([subject, "MATH"]), equal([number, "156"])])
+  boolean is_nuceng_175 and([equal([subject, "NUC ENG"]), equal([number, "175"])])
+  boolean is_physics_188 and([equal([subject, "PHYSICS"]), equal([number, "188"])])
+  boolean is_stat_135 and([equal([subject, "STAT"]), equal([number, "135"])])
+  boolean is_stat_150 and([equal([subject, "STAT"]), equal([number, "150"])])
+  boolean is_stat_151a and([equal([subject, "STAT"]), equal([number, "151A"])])
+  boolean is_stat_152 and([equal([subject, "STAT"]), equal([number, "152"])])
+  boolean is_stat_153 and([equal([subject, "STAT"]), equal([number, "153"])])
+  boolean is_stat_158 and([equal([subject, "STAT"]), equal([number, "158"])])
+  boolean is_stat_159 and([equal([subject, "STAT"]), equal([number, "159"])])
+  boolean is_stat_165 and([equal([subject, "STAT"]), equal([number, "165"])])
+  boolean is_ugba_142 and([equal([subject, "UGBA"]), equal([number, "142"])])
+
+  boolean return or([is_astron_128, is_bioeng_chem_c142, is_chem_compsci_physics_c191, is_compsci_161, is_compsci_162, is_compsci_164, is_compsci_168, is_compsci_169, is_compsci_169l, is_compsci_170, is_compsci_186, is_compsci_188, is_cph_data_c146, is_data_c101, is_data_144, is_data_145, is_econ_140, is_econ_141, is_eecs_127, is_eleng_120, is_eleng_122, is_eleng_123, is_envecon_c118, is_espm_174, is_indeng_115, is_indeng_135, is_indeng_142b, is_indeng_160, is_indeng_162, is_indeng_164, is_indeng_165, is_indeng_166, is_indeng_173, is_indeng_174, is_info_159, is_info_190_1, is_math_156, is_nuceng_175, is_physics_188, is_stat_135, is_stat_150, is_stat_151a, is_stat_152, is_stat_153, is_stat_158, is_stat_159, is_stat_165, is_ugba_142])
+}
+
+Function<number>(number, Course) add_course_units (acc, course){
+  number units get_attr(course, "units")
+  number return add([acc, units])
+}
+
+Function<List<Course>>(List<Course> available, number target) take_units {
+  List<Course> consumed []
+  number current_total 0
+  
+  foreach(course in available) {
+    if(less_than(current_total, target)) {
+      add_to_list(consumed, course)
+      current_total = add_course_units(current_total, course)
+    }
+  }
+  return consumed
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Foundations of Data Science: Data C8 or Stat 20
+  List<Course> foundations_list [{"DATA C8"}, {"STAT C8"}, {"COMPSCI C8"}, {"STAT 20"}]
+  List<Course> foundations_matches filter(courses, (c) {
+    boolean return one_common_course([c], foundations_list)
+  })
+  NCoursesRequirement foundations {foundations_matches, 1, "Foundations of Data Science"}
+
+  // Calculus I: Math 51, 1A, N1A, 10A, or 16A 
+  List<Course> calc1_list [{"MATH 51"}, {"MATH 1A"}, {"MATH N1A"}, {"MATH 10A"}, {"MATH 16A"}]
+  List<Course> calc1_matches filter(courses, (c) {
+    boolean return one_common_course([c], calc1_list)
+  })
+  NCoursesRequirement calc1 {calc1_matches, 1, "Calculus I"}
+
+  // Calculus II: Data 89, Math 52, 1B, or N1B
+  List<Course> calc2_list [{"DATA 89"}, {"MATH 52"}, {"MATH 1B"}, {"MATH N1B"}]
+  List<Course> calc2_matches filter(courses, (c) {
+    boolean return one_common_course([c], calc2_list)
+  })
+  NCoursesRequirement calc2 {calc2_matches, 1, "Calculus II"}
+
+  // Linear Algebra: Math 54/N54/W54, Math 56, Physics 89, Stat 89A, or EE/EECS 16A+16B (both required)
+  // Check solo-qualifying courses first; only fall back to 16A+16B pair if none found
+  List<Course> linalg_solo_list [{"MATH 54"}, {"MATH N54"}, {"MATH W54"}, {"MATH 56"}, {"PHYSICS 89"}, {"STAT 89A"}]
+  List<Course> linalg_solo_matches filter(courses, (c) {
+    boolean return one_common_course([c], linalg_solo_list)
+  })
+  boolean has_solo_linalg greater_than(length(linalg_solo_matches), 0)
+
+  List<Course> linalg_16a_list [{"EECS 16A"}]
+  List<Course> linalg_16b_list [{"EECS 16B"}]
+  List<Course> linalg_16a_matches filter(courses, (c) {
+    boolean return one_common_course([c], linalg_16a_list)
+  })
+  List<Course> linalg_16b_matches filter(courses, (c) {
+    boolean return one_common_course([c], linalg_16b_list)
+  })
+  boolean has_16a greater_than(length(linalg_16a_matches), 0)
+  boolean has_16b greater_than(length(linalg_16b_matches), 0)
+  boolean has_16ab and([has_16a, has_16b])
+
+  boolean linalg_satisfied or([has_solo_linalg, has_16ab])
+  BooleanRequirement linalg {linalg_satisfied, "Linear Algebra"}
+
+  // Program Structures: CS 61A, CS/Data C88C, or Engin 7
+  List<Course> prog_structures_list [{"COMPSCI 61A"}, {"COMPSCI C88C"}, {"DATA C88C"}, {"ENGIN 7"}]
+  List<Course> prog_structures_matches filter(courses, (c) {
+    boolean return one_common_course([c], prog_structures_list)
+  })
+  NCoursesRequirement prog_structures {prog_structures_matches, 1, "Program Structures"}
+
+  // Data Structures: CS 61B or 61BL
+  List<Course> data_structures_list [{"COMPSCI 61B"}, {"COMPSCI 61BL"}]
+  List<Course> data_structures_matches filter(courses, (c) {
+    boolean return one_common_course([c], data_structures_list)
+  })
+  NCoursesRequirement data_structures {data_structures_matches, 1, "Data Structures"}
+
+  
+  // can't have Stat 20 fulfilling foundations AND Engin 7 fulfilling Program Structures
+  List<Course> engin_7_list [{"ENGIN 7"}]
+  List<Course> engin_7_matches filter(courses, (c) {
+    boolean return one_common_course([c], engin_7_list)
+  })
+  boolean used_engin_7 greater_than(length(engin_7_matches), 0)
+
+  List<Course> stat_20_list [{"STAT 20"}]
+  List<Course> stat_20_matches filter(courses, (c) {
+    boolean return one_common_course([c], stat_20_list)
+  })
+  boolean used_stat_20 greater_than(length(stat_20_matches), 0)
+
+  List<Course> data_c8_list [{"DATA C8"}, {"STAT C8"}, {"COMPSCI C8"}]
+  List<Course> data_c8_matches filter(courses, (c) {
+    boolean return one_common_course([c], data_c8_list)
+  })
+  boolean has_data_c8 greater_than(length(data_c8_matches), 0)
+
+  // Stat 20 is only being relied on for foundations if Data C8 is absent
+  boolean stat_20_used_for_foundations and([used_stat_20, not(has_data_c8)])
+
+  // Conflict only triggers if Stat 20 is filling foundations AND Engin 7 is filling Program Structures
+  boolean stat_20_substitution_invalid and([stat_20_used_for_foundations, used_engin_7])
+  BooleanRequirement stat_20_engin_7_conflict {not(stat_20_substitution_invalid), "Stat 20 may not substitute for Data C8 when Engin 7 is used for Program Structures"}
+
+  // TODO: add upper div checks
+
+  // Data C100
+  List<Course> data_c100_matches filter(courses, data_c100_finder)
+  NCoursesRequirement data_c100 {data_c100_matches, 1, "Data C100: Principles and Techniques of Data Science"}
+
+  // Probability
+  List<Course> probability_matches filter(courses, probability_finder)
+  NCoursesRequirement probability {probability_matches, 1, "Probability"}
+
+  // Modeling, Learning, and Decision-Making
+  List<Course> modeling_matches filter(courses, modeling_finder)
+  NCoursesRequirement modeling {modeling_matches, 1, "Modeling, Learning, and Decision-Making"}
+
+  // Human Contexts and Ethics
+  List<Course> human_contexts_matches filter(courses, human_contexts_finder)
+  NCoursesRequirement human_contexts {human_contexts_matches, 1, "Human Contexts and Ethics"}
+
+  // Computational & Inferential Depth: 2 courses totaling 7+ units
+  // EECS 126 may not double-count here if used for Probability
+  // IND ENG 173 / STAT 150 share a mutual exclusion with EECS 126; enforced below
+  List<Course> cid_pool filter(difference(courses, probability_matches), computational_inferential_depth_finder)
+  List<Course> cid_consumed take_units(cid_pool, 7)
+  number cid_units reduce(cid_consumed, add_course_units, 0)
+  number cid_course_count length(cid_consumed)
+  BooleanRequirement cid_min_courses {greater_than_or_equal(cid_course_count, 2), "Computational & Inferential Depth: minimum 2 courses"}
+  BooleanRequirement cid_min_units {greater_than_or_equal(cid_units, 7), "Computational & Inferential Depth: minimum 7 units"}
+
+  // EECS 126 / IND ENG 173 / STAT 150 mutual exclusion: at most one may count across Probability + C&ID
+  List<Course> mutex_list [{"EECS 126"}, {"INDENG 173"}, {"STAT 150"}]
+  List<Course> mutex_in_probability filter(probability_matches, (c) {
+    boolean return one_common_course([c], mutex_list)
+  })
+  List<Course> mutex_in_cid filter(cid_consumed, (c) {
+    boolean return one_common_course([c], mutex_list)
+  })
+  List<Course> mutex_consumed union(mutex_in_probability, mutex_in_cid)
+  BooleanRequirement mutex_check {less_than_or_equal(length(mutex_consumed), 1), "only one of EECS 126,IND ENG 173, STAT 150 can count toward the major"}
+
+  // COMPSCI 169L may only count toward C&ID if paired with 169A/W169A, not with 169
+  // Only matters if 169L actually ends up in the consumed C&ID courses
+  List<Course> cs_169a_list [{"COMPSCI 169A"}, {"COMPSCI W169A"}]
+  List<Course> cs_169l_list [{"COMPSCI 169L"}]
+  List<Course> cs_169_list [{"COMPSCI 169"}, {"COMPSCI W169"}]
+  List<Course> cs_169a_matches filter(cid_consumed, (c) {
+    boolean return one_common_course([c], cs_169a_list)
+  })
+  List<Course> cs_169l_matches filter(cid_consumed, (c) {
+    boolean return one_common_course([c], cs_169l_list)
+  })
+  List<Course> cs_169_matches filter(cid_consumed, (c) {
+    boolean return one_common_course([c], cs_169_list)
+  })
+  boolean cid_has_169l greater_than(length(cs_169l_matches), 0)
+  boolean cid_has_169a greater_than(length(cs_169a_matches), 0)
+  boolean cid_has_169 greater_than(length(cs_169_matches), 0)
+  // 169L is invalid only if it's being used in C&ID, paired with 169 rather than 169A
+  boolean cs_169l_invalid and([cid_has_169l, cid_has_169, not(cid_has_169a)])
+  BooleanRequirement cs_169l_check {not(cs_169l_invalid), "C&ID: COMPSCI 169L must be paired with COMPSCI 169A/W169A"}
+
+  // ECON 140 and 141 are mutually exclusive toward C&ID; only one may count
+  List<Course> econ_140_list [{"ECON 140"}]
+  List<Course> econ_141_list [{"ECON 141"}]
+  List<Course> econ_140_consumed filter(cid_consumed, (c) {
+    boolean return one_common_course([c], econ_140_list)
+  })
+  List<Course> econ_141_consumed filter(cid_consumed, (c) {
+    boolean return one_common_course([c], econ_141_list)
+  })
+  boolean cid_has_econ_140 greater_than(length(econ_140_consumed), 0)
+  boolean cid_has_econ_141 greater_than(length(econ_141_consumed), 0)
+  BooleanRequirement econ_140_141_check {not(and([cid_has_econ_140, cid_has_econ_141])), "C&ID: ECON 140 and ECON 141 cannot both be used"}
+
+  // Minimum upper-division totals: 8 courses, 28 units
+  List<Course> upper_div_all union([data_c100_matches, probability_matches, modeling_matches, human_contexts_matches, cid_consumed])
+  number upper_div_units reduce(upper_div_all, add_course_units, 0)
+  BooleanRequirement upper_div_min_courses {greater_than_or_equal(length(upper_div_all), 8), "Minimum 8 upper-division courses"}
+  BooleanRequirement upper_div_min_units {greater_than_or_equal(upper_div_units, 28), "Minimum 28 upper-division units"}
+
+  List<Requirement> return [foundations, calc1, calc2, linalg, prog_structures, data_structures, stat_20_engin_7_conflict, data_c100, probability, modeling, human_contexts, cid_min_courses, cid_min_units, mutex_check, cs_169l_check, econ_140_141_check, upper_div_min_courses, upper_div_min_units]
+}
+`;
