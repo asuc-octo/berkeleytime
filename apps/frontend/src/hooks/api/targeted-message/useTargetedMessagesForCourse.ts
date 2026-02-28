@@ -6,12 +6,16 @@ import {
   GetTargetedMessagesForCourseQuery,
 } from "@/lib/generated/graphql";
 
-export const useTargetedMessagesForCourse = (courseId: string) => {
+export const useTargetedMessagesForCourse = (
+  courseId: string,
+  options?: { skip?: boolean }
+) => {
   const query = useQuery<GetTargetedMessagesForCourseQuery>(
     GetTargetedMessagesForCourseDocument,
     {
       variables: { courseId },
       fetchPolicy: "cache-first",
+      skip: options?.skip,
     }
   );
 
