@@ -1,0 +1,9 @@
+[data-sonner-toaster] {
+  --normal-bg: var(--background-color);
+  --normal-border: var(--border-color);
+  --normal-text: var(--heading-color);
+}
+
+[data-sonner-toaster] [data-description] {
+  color: var(--paragraph-color) !important;
+}

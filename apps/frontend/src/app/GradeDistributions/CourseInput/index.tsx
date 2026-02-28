@@ -16,6 +16,7 @@ import {
 } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import { showTargetedMessageToast } from "@/hooks/api/targeted-message";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
@@ -362,6 +363,8 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
       return;
     }
+
+    showTargetedMessageToast(client, selectedCourse.courseId);
   };
 
   const disabled = useMemo(

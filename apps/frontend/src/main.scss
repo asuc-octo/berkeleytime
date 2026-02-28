@@ -1,3 +1,5 @@
+@use "./_sonner.scss";
+
 :root {
   --header-height: 90px; /* Default, overridden by JS */
 }
@@ -59,3 +61,4 @@ a {
 body {
   scrollbar-color: var(--label-color) transparent;
 }
+
