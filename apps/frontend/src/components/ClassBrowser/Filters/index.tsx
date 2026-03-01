@@ -153,6 +153,72 @@ export default function Filters() {
     );
   }, [classesForLevelCounts]);
 
+  const classesWithoutEnrollment = useMemo(
+    () =>
+      getFilteredClasses(
+        allClasses,
+        units,
+        levels,
+        days,
+        null,
+        online,
+        breadths,
+        universityRequirements,
+        gradingFilters,
+        academicOrganization,
+        timeRange
+      ).includedClasses,
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      online,
+      breadths,
+      universityRequirements,
+      gradingFilters,
+      academicOrganization,
+      timeRange,
+    ]
+  );
+
+  const enrollmentCounts = useMemo<Record<EnrollmentFilter, number>>(() => {
+    return classesWithoutEnrollment.reduce<Record<EnrollmentFilter, number>>(
+      (acc, _class) => {
+        const enrollment = _class.primarySection?.enrollment?.latest;
+        const isOpen = enrollment?.status === "O";
+        const hasWaitlistSpace =
+          enrollment &&
+          enrollment.maxWaitlist > 0 &&
+          enrollment.waitlistedCount < enrollment.maxWaitlist;
+        const openSeats = enrollment
+          ? enrollment.maxEnroll - enrollment.enrolledCount
+          : 0;
+        const hasUnreservedOpenSeats =
+          isOpen && openSeats > (enrollment?.activeReservedMaxCount ?? 0);
+
+        if (isOpen) {
+          acc[EnrollmentFilter.Open] += 1;
+        }
+
+        if (hasUnreservedOpenSeats) {
+          acc[EnrollmentFilter.OpenApartFromReserved] += 1;
+        }
+
+        if (isOpen || hasWaitlistSpace) {
+          acc[EnrollmentFilter.WaitlistOpen] += 1;
+        }
+
+        return acc;
+      },
+      {
+        [EnrollmentFilter.Open]: 0,
+        [EnrollmentFilter.OpenApartFromReserved]: 0,
+        [EnrollmentFilter.WaitlistOpen]: 0,
+      }
+    );
+  }, [classesWithoutEnrollment]);
+
   const classesWithoutAcademicOrganization = useMemo(
     () =>
       getFilteredClasses(
@@ -748,6 +814,7 @@ export default function Filters() {
             options={Object.values(EnrollmentFilter).map((filter) => ({
               value: filter,
               label: filter,
+              meta: enrollmentCounts[filter].toString(),
             }))}
           />
         </div>
