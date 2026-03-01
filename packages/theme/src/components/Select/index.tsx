@@ -223,6 +223,8 @@ export interface SelectProps<T> {
   selectedLabel?: string;
   style?: React.CSSProperties;
   maxListHeight?: number;
+  contentClassName?: string;
+  tabsWrapperClassName?: string;
 }
 
 const hasVerticalOverflow = (element: HTMLElement | null): boolean => {
@@ -255,6 +257,8 @@ export function Select<T>({
   selectedLabel,
   style,
   maxListHeight,
+  contentClassName,
+  tabsWrapperClassName,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -572,7 +576,10 @@ export function Select<T>({
         {!effectiveDisabled && (
           <Popover.Portal>
             <Popover.Content
-              className={styles.searchableContent}
+              className={classNames(
+                styles.searchableContent,
+                contentClassName
+              )}
               style={{ width: triggerWidth, zIndex: contentZIndex }}
               sideOffset={5}
               align="start"
@@ -593,7 +600,12 @@ export function Select<T>({
                   />
                 </div>
                 {tabs?.length ? (
-                  <div className={styles.tabsWrapper}>
+                  <div
+                    className={classNames(
+                      styles.tabsWrapper,
+                      tabsWrapperClassName
+                    )}
+                  >
                     <PillSwitcher
                       value={activeTabValue}
                       defaultValue={defaultTab || tabs[0]?.value}
@@ -652,7 +664,7 @@ export function Select<T>({
             ref={contentRef}
             className={classNames(styles.content, {
               [styles.showDivider]: showContentDivider,
-            })}
+            }, contentClassName)}
             style={{
               width: triggerWidth,
               zIndex: contentZIndex,

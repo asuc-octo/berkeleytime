@@ -569,6 +569,8 @@ export function RatingsContainer() {
                           options: termSelectOptions,
                         },
                       ]}
+                      contentClassName={styles.ratingsSelectContent}
+                      tabsWrapperClassName={styles.ratingsSelectTabs}
                       value={selectedValue}
                       defaultTab={RATING_TABS.Instructor}
                       onTabChange={(tabValue) => {
