@@ -381,17 +381,13 @@ export function Select<T>({
   const triggerContent = (
     <>
       <div className={styles.triggerLabel}>
-        {hasSelection ? (
-          Array.isArray(activeElem) ? (
-            getMultiSelectionText(activeElem)
-          ) : activeElem ? (
-            (activeElem as OptionItem<T>).label
-          ) : (
-            selectedLabel
-          )
-        ) : (
-          effectivePlaceholder
-        )}
+        {hasSelection
+          ? Array.isArray(activeElem)
+            ? getMultiSelectionText(activeElem)
+            : activeElem
+              ? (activeElem as OptionItem<T>).label
+              : selectedLabel
+          : effectivePlaceholder}
       </div>
       <Flex
         direction="row"

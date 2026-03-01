@@ -176,12 +176,17 @@ export default function ClassCard({
                 enrolledCount={
                   _class?.primarySection?.enrollment?.latest?.enrolledCount
                 }
-                maxEnroll={_class?.primarySection?.enrollment?.latest?.maxEnroll}
+                maxEnroll={
+                  _class?.primarySection?.enrollment?.latest?.maxEnroll
+                }
                 time={_class?.primarySection?.enrollment?.latest?.endTime}
               />
               {_class?.unitsMin !== undefined &&
                 _class.unitsMax !== undefined && (
-                  <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
+                  <Units
+                    unitsMin={_class.unitsMin}
+                    unitsMax={_class.unitsMax}
+                  />
                 )}
               {(_class?.primarySection?.enrollment?.latest
                 ?.activeReservedMaxCount ?? 0) > 0 && (
@@ -211,7 +216,11 @@ export default function ClassCard({
                     onExpandedChange(!expanded);
                   }}
                 >
-                  {expanded ? <ArrowUnionVertical /> : <ArrowSeparateVertical />}
+                  {expanded ? (
+                    <ArrowUnionVertical />
+                  ) : (
+                    <ArrowSeparateVertical />
+                  )}
                 </Card.ActionIcon>
               )}
             </Card.Footer>
