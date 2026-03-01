@@ -1,3 +1,5 @@
+$grades-panel-width: 248px;
+
 // Container layout — mirrors Catalog.module.scss exactly
 .root {
   flex: 1 1 0;
@@ -26,7 +28,7 @@
 }
 
 .drawer {
-  width: 370px;
+  width: $grades-panel-width;
   background-color: var(--foreground-color);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -73,7 +75,7 @@
 
 // Filter panel internals — mirrors Filters.module.scss
 .filterPanel {
-  width: 370px;
+  width: $grades-panel-width;
   flex-shrink: 0;
   background-color: var(--foreground-color);
 
