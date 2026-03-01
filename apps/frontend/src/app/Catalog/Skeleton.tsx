@@ -7,6 +7,7 @@ import {
   IconButton,
   Input,
   Select,
+  Skeleton,
   Slider,
 } from "@repo/theme";
 
@@ -241,12 +242,26 @@ function ListSkeleton() {
           </Button>
         </div>
 
-        <div className={listStyles.recentlyViewedSection} />
+        <div className={listStyles.recentlyViewedSection}>
+          <div className={listStyles.recentlyViewed}>
+            <div className={listStyles.recentlyViewedList}>
+              {[...Array(3)].map((_, i) => (
+                <span
+                  key={`recent-skeleton-${i}`}
+                  className={listStyles.recentlyViewedTagButton}
+                  style={{ cursor: "default" }}
+                >
+                  <Skeleton style={{ width: 61, borderRadius: 4 }} />
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
         <div className={listStyles.skeletonContainer}>
-          {[...Array(12)].map((_, i) => (
+          {[...Array(10)].map((_, i) => (
             <ClassCardSkeleton key={`skeleton-${i}`} />
           ))}
         </div>

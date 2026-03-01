@@ -528,6 +528,11 @@ export default function Catalog() {
     navigate("/profile/bookmarks");
   }, [navigate]);
 
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const handleCatalogLoadingChange = useCallback((loading: boolean) => {
+    setCatalogLoading(loading);
+  }, []);
+
   if (termsLoading) {
     return <CatalogSkeleton />;
   }
@@ -537,9 +542,13 @@ export default function Catalog() {
     return <></>;
   }
 
-  // TODO: Class error state, class loading state
   return (
     <div className={styles.root}>
+      {catalogLoading && (
+        <div style={{ position: "absolute", inset: 0, zIndex: 10 }}>
+          <CatalogSkeleton />
+        </div>
+      )}
       {isDesktop ? (
         // Desktop: Static panel
         <div className={styles.panel}>
@@ -548,6 +557,7 @@ export default function Catalog() {
             onCatalogClassAvailabilityChange={
               handleCatalogClassAvailabilityChange
             }
+            onLoadingChange={handleCatalogLoadingChange}
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -579,6 +589,7 @@ export default function Catalog() {
               onCatalogClassAvailabilityChange={
                 handleCatalogClassAvailabilityChange
               }
+              onLoadingChange={handleCatalogLoadingChange}
               semester={term.semester}
               year={term.year}
               terms={terms}

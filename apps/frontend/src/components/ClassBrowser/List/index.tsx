@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FrameAltEmpty } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
-import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
@@ -183,8 +182,6 @@ export default function List({ onSelect }: ListProps) {
     );
   };
 
-  const isLoading = loading && classes.length === 0;
-
   return (
     <div className={styles.root}>
       <div
@@ -262,18 +259,8 @@ export default function List({ onSelect }: ListProps) {
           )}
         </div>
       </div>
-      <div
-        ref={catalogScrollRef}
-        className={styles.catalogScroll}
-        style={isLoading ? { overflow: "hidden" } : undefined}
-      >
-        {loading && classes.length === 0 ? (
-          <div className={styles.skeletonContainer}>
-            {[...Array(8)].map((_, i) => (
-              <ClassCardSkeleton key={`skeleton-${i}`} />
-            ))}
-          </div>
-        ) : classes.length === 0 ? (
+      <div ref={catalogScrollRef} className={styles.catalogScroll}>
+        {classes.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <p className={styles.heading}>No courses found</p>
