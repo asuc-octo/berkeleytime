@@ -1,5 +1,6 @@
 import { Card, Skeleton } from "@repo/theme";
 
+// eslint-disable-next-line css-modules/no-unused-class
 import cardStyles from "./ClassCard.module.scss";
 import styles from "./Skeleton.module.scss";
 
