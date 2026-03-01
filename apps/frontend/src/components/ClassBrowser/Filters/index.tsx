@@ -14,6 +14,7 @@ import Header from "../Header";
 import {
   Breadth,
   Day,
+  EMPTY_DAYS,
   EnrollmentFilter,
   GradingFilter,
   Level,
@@ -38,7 +39,6 @@ type RequirementSelection =
   | { type: "breadth"; value: Breadth }
   | { type: "university"; value: UniversityRequirement };
 
-const EMPTY_DAYS: boolean[] = [false, false, false, false, false, false, false];
 const REQUIREMENT_TABS = {
   LS: "ls",
   UNIVERSITY: "university",
