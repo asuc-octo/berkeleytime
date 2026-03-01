@@ -55,7 +55,13 @@ export enum Day {
 }
 
 export const EMPTY_DAYS: boolean[] = [
-  false, false, false, false, false, false, false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
 ];
 
 export type Breadth = string;
