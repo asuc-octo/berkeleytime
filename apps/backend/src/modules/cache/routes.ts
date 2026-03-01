@@ -5,6 +5,8 @@ import { RedisClientType } from "redis";
 import { flushViewCounts } from "../class/controller";
 import { warmCatalogCache } from "./controller";
 
+const VALID_SEMESTERS = new Set(["fall", "spring", "summer", "winter"]);
+
 export default (
   app: Application,
   server: ApolloServer,
@@ -29,8 +31,8 @@ export default (
    * }
    *
    * Process:
-   * 1. Apollo executes GetCanonicalCatalog with __warmStaging context
-   * 2. Response cached to :staging key
+   * 1. Acquires per-term lock to avoid concurrent warm collisions
+   * 2. Apollo executes GetCanonicalCatalog with run-scoped staging suffix
    * 3. RENAME staging → production (atomic, zero downtime)
    * 4. Users immediately see fresh data
    */
@@ -41,15 +43,31 @@ export default (
         const { year, semester } = req.body;
 
         // Validate input
-        if (typeof year !== "number" || typeof semester !== "string") {
+        if (
+          typeof year !== "number" ||
+          !Number.isInteger(year) ||
+          typeof semester !== "string"
+        ) {
           res.status(400).json({
-            error: "year (number) and semester (string) are required",
+            error: "year (integer) and semester (string) are required",
+          });
+          return;
+        }
+        const normalizedSemester = semester.toLowerCase();
+        if (!VALID_SEMESTERS.has(normalizedSemester)) {
+          res.status(400).json({
+            error: "semester must be one of: fall, spring, summer, winter",
           });
           return;
         }
 
         // Warm cache
-        const result = await warmCatalogCache(server, redis, year, semester);
+        const result = await warmCatalogCache(
+          server,
+          redis,
+          year,
+          normalizedSemester
+        );
 
         res.status(200).json(result);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -32,6 +32,8 @@ function getOperationName(
 }
 
 const SESSION_COOKIE_NAME = "bt.sid";
+const CATALOG_CACHE_KEY_PREFIX = "fqc:catalog:";
+const CATALOG_TTL_FLOOR_SECONDS = 12 * 60 * 60;
 
 function getSessionCacheIdFromCookie(
   cookieHeader: string | null
@@ -79,11 +81,20 @@ class RedisCache implements KeyValueCache {
   ) {
     if (!value) return;
 
+    const baseTtlSeconds = Math.min(
+      options?.ttl ?? 24 * 60 * 60,
+      timeToNextPull()
+    );
+    // Keep canonical catalog keys available through datapuller jitter/outages.
+    const ttlSeconds = key.startsWith(CATALOG_CACHE_KEY_PREFIX)
+      ? Math.max(baseTtlSeconds, CATALOG_TTL_FLOOR_SECONDS)
+      : baseTtlSeconds;
+
     await this.client.set(
       this.prefix + key,
       gzipSync(value).toString("base64"),
       {
-        EX: Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull()),
+        EX: Math.max(ttlSeconds, 1),
       }
     );
   }
@@ -147,11 +158,11 @@ export default async (redis: RedisClientType) => {
          *
          * GetCanonicalCatalog query uses deterministic keys:
          *   Production: catalog:{year}-{semester} (e.g., "catalog:2024-fall")
-         *   Staging: catalog:{year}-{semester}:staging (for pre-warming)
+         *   Staging: catalog:{year}-{semester}:staging:{runId} (for pre-warming)
          *
          * When warming cache:
-         *   1. executeOperation() with { __warmStaging: true } context
-         *   2. Writes to staging key
+         *   1. executeOperation() with { __warmSuffix: runId } context
+         *   2. Writes to run-scoped staging key
          *   3. RENAME staging → production (atomic swap, zero downtime)
          *
          * All other queries use Apollo's default cache key.
@@ -169,9 +180,24 @@ export default async (redis: RedisClientType) => {
             variables?.semester
           ) {
             const semester = String(variables.semester).toLowerCase();
-            const isWarmingStaging =
-              requestContext.contextValue?.__warmStaging === true;
-            const suffix = isWarmingStaging ? ":staging" : "";
+            const warmSuffixFromContext =
+              requestContext.contextValue?.__warmSuffix;
+            let suffix = "";
+            if (
+              typeof warmSuffixFromContext === "string" &&
+              warmSuffixFromContext.trim().length > 0
+            ) {
+              const normalizedWarmSuffix = warmSuffixFromContext
+                .trim()
+                .replace(/[^a-zA-Z0-9_-]/g, "");
+              suffix = normalizedWarmSuffix
+                ? `:staging:${normalizedWarmSuffix}`
+                : "";
+            } else {
+              const isWarmingStaging =
+                requestContext.contextValue?.__warmStaging === true;
+              suffix = isWarmingStaging ? ":staging" : "";
+            }
 
             return `catalog:${variables.year}-${semester}${suffix}`;
           }
