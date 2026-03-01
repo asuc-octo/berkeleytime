@@ -113,12 +113,6 @@
   }
 
   @media (width > 1400px) {
-    &:not(.splitResponsive) > :first-child {
-      display: none;
-    }
-  }
-
-  @media (width > 1640px) {
     > :first-child {
       display: none;
     }
@@ -142,16 +136,4 @@
     }
   }
 
-  @media (1400px < width <= 1640px) {
-    &.responsive.splitResponsive {
-      width: 384px;
-
-      .body {
-        padding-top: 12px;
-      }
-    }
-  }
-}
-
-.splitResponsive {
 }
