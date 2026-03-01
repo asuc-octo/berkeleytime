@@ -24,7 +24,8 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, includedClasses, excludedClasses, loading, year, semester } = useBrowser();
+  const { classes, includedClasses, excludedClasses, loading, year, semester } =
+    useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
