@@ -135,9 +135,7 @@ export const addRecent = <T extends RecentType>(
 
   if (type === RecentType.Class) {
     const classRecent = recent as Recent<RecentType.Class>;
-    recents = (
-      recents as Recent<RecentType.Class>[]
-    ).filter(
+    recents = (recents as Recent<RecentType.Class>[]).filter(
       (existingRecent) =>
         !(
           existingRecent.subject === classRecent.subject &&

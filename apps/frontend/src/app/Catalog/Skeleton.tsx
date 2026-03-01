@@ -96,34 +96,36 @@ function FilterSkeleton() {
 
 function ListSkeleton() {
   return (
-    <div className={`${listStyles.root} ${listStyles.loading}`}>
-      {/* Header skeleton */}
-      <div className={headerStyles.root}>
-        <div className={headerStyles.group}>
-          <label className={headerStyles.icon}>
-            <Search />
-          </label>
-          <input
-            className={headerStyles.input}
-            type="text"
-            disabled
-            placeholder="Search classes..."
-          />
+    <div className={listStyles.root}>
+      <div className={listStyles.topSection}>
+        {/* Header skeleton */}
+        <div className={headerStyles.root}>
+          <div className={headerStyles.group}>
+            <label className={headerStyles.icon}>
+              <Search />
+            </label>
+            <input
+              className={headerStyles.input}
+              type="text"
+              disabled
+              placeholder="Search classes..."
+            />
+          </div>
+          <Button className={headerStyles.filterButton} disabled>
+            <Filter />
+            <span>Open Filters</span>
+          </Button>
         </div>
-        <Button className={headerStyles.filterButton} disabled>
-          <Filter />
-          <span>Open Filters</span>
-        </Button>
+
+        <div className={listStyles.recentlyViewedSection} />
       </div>
 
-      {/* Catalog title and skeleton cards */}
-      <div className={listStyles.recentlyViewedSection}>
-        <p className={listStyles.catalogTitle}>CATALOG</p>
-      </div>
-      <div className={listStyles.skeletonContainer}>
-        {[...Array(8)].map((_, i) => (
-          <ClassCardSkeleton key={`skeleton-${i}`} />
-        ))}
+      <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
+        <div className={listStyles.skeletonContainer}>
+          {[...Array(8)].map((_, i) => (
+            <ClassCardSkeleton key={`skeleton-${i}`} />
+          ))}
+        </div>
       </div>
     </div>
   );

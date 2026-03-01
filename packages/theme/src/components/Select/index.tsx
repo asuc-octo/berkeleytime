@@ -576,10 +576,7 @@ export function Select<T>({
         {!effectiveDisabled && (
           <Popover.Portal>
             <Popover.Content
-              className={classNames(
-                styles.searchableContent,
-                contentClassName
-              )}
+              className={classNames(styles.searchableContent, contentClassName)}
               style={{ width: triggerWidth, zIndex: contentZIndex }}
               sideOffset={5}
               align="start"
@@ -662,9 +659,13 @@ export function Select<T>({
         <DropdownMenu.Portal>
           <DropdownMenu.Content
             ref={contentRef}
-            className={classNames(styles.content, {
-              [styles.showDivider]: showContentDivider,
-            }, contentClassName)}
+            className={classNames(
+              styles.content,
+              {
+                [styles.showDivider]: showContentDivider,
+              },
+              contentClassName
+            )}
             style={{
               width: triggerWidth,
               zIndex: contentZIndex,

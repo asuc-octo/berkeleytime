@@ -408,10 +408,7 @@ export default function Filters() {
     }
 
     return tabs;
-  }, [
-    breadthRequirementOptions,
-    universityRequirementOptions,
-  ]);
+  }, [breadthRequirementOptions, universityRequirementOptions]);
   const requirementSelectTabs =
     requirementTabs.length > 0 ? requirementTabs : undefined;
 

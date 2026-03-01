@@ -27,9 +27,8 @@ export default function List({ onSelect }: ListProps) {
   const { classes, loading, year, semester, query } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
-  const [visibleRecentCount, setVisibleRecentCount] = useState(
-    MAX_RECENTLY_VIEWED
-  );
+  const [visibleRecentCount, setVisibleRecentCount] =
+    useState(MAX_RECENTLY_VIEWED);
   const [showTopFade, setShowTopFade] = useState(false);
 
   const catalogScrollRef = useRef<HTMLDivElement>(null);
@@ -102,9 +101,7 @@ export default function List({ onSelect }: ListProps) {
 
     const updateVisibleRecentCount = () => {
       const containerWidth = listElement.clientWidth;
-      const measureItems = Array.from(
-        measureElement.children
-      ) as HTMLElement[];
+      const measureItems = Array.from(measureElement.children) as HTMLElement[];
 
       if (containerWidth <= 0 || measureItems.length === 0) {
         setVisibleRecentCount(0);
@@ -191,7 +188,10 @@ export default function List({ onSelect }: ListProps) {
         <div className={styles.recentlyViewedSection}>
           {showRecentlyViewed && (
             <div className={styles.recentlyViewed}>
-              <div ref={recentlyViewedListRef} className={styles.recentlyViewedList}>
+              <div
+                ref={recentlyViewedListRef}
+                className={styles.recentlyViewedList}
+              >
                 <AnimatePresence initial={false} mode="popLayout">
                   {visibleRecentlyViewedClasses.map((_class) => (
                     <motion.button
