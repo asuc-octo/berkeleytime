@@ -315,7 +315,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
       const usedColors = new Set(outputs.map((output) => output.color));
       const availableColor =
-        BAR_CHART_COLORS.find((color) => !usedColors.has(color)) ?? BAR_CHART_COLORS[0];
+        BAR_CHART_COLORS.find((color) => !usedColors.has(color)) ??
+        BAR_CHART_COLORS[0];
 
       const output: Output = {
         hidden: false,
