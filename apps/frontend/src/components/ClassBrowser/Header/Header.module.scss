@@ -73,12 +73,6 @@
   }
 
   @media (width > 1400px) {
-    &:not(.splitResponsive) .filterButton {
-      display: none;
-    }
-  }
-
-  @media (width > 1640px) {
     .filterButton {
       display: none;
     }
@@ -86,7 +80,4 @@
 }
 
 .responsive {
-}
-
-.splitResponsive {
 }

@@ -31,7 +31,6 @@ const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Units]: "asc",
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",
-  [SortBy.PercentOpenSeats]: "desc",
 };
 
 const getEffectiveOrder = (
@@ -61,7 +60,6 @@ interface ClassBrowserProps {
     }[]
   ) => void;
   responsive?: boolean;
-  splitResponsive?: boolean;
   semester: Semester;
   year: number;
   terms?: ITerm[];
@@ -72,7 +70,6 @@ export default function ClassBrowser({
   onSelect,
   onCatalogClassAvailabilityChange,
   responsive = true,
-  splitResponsive = false,
   semester: currentSemester,
   year: currentYear,
   terms,
@@ -427,7 +424,6 @@ export default function ClassBrowser({
       value={{
         expanded,
         responsive,
-        splitResponsive,
         sortBy,
         classes: filteredClasses,
         includedClasses,
@@ -500,7 +496,6 @@ export default function ClassBrowser({
       <div
         className={classNames(styles.root, {
           [styles.responsive]: responsive,
-          [styles.splitResponsive]: splitResponsive,
           [styles.expanded]: expanded,
         })}
       >

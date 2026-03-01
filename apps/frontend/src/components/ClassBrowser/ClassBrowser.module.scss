@@ -22,17 +22,4 @@
       display: none;
     }
   }
-
-  @media (1400px < width <= 1640px) {
-    &:not(.expanded).responsive.splitResponsive > :first-child {
-      display: none;
-    }
-
-    &.expanded.responsive.splitResponsive > :last-child {
-      display: none;
-    }
-  }
-}
-
-.splitResponsive {
 }

@@ -242,27 +242,6 @@ const compareOpenSeats: Comparator = (a, b, direction) => {
   return compareAlphabetical(a, b, direction);
 };
 
-const getPercentOpenSeats = ({
-  primarySection: { enrollment },
-}: ICatalogClass) => {
-  if (!enrollment?.latest?.maxEnroll) return 0;
-
-  return (
-    (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-    enrollment.latest.maxEnroll
-  );
-};
-
-const comparePercentOpenSeats: Comparator = (a, b, direction) => {
-  const difference = getPercentOpenSeats(a) - getPercentOpenSeats(b);
-
-  if (difference !== 0) {
-    return difference * direction;
-  }
-
-  return compareAlphabetical(a, b, direction);
-};
-
 const sortWithRelevance = (
   { classes, order, relevanceScores }: SorterContext,
   comparator: Comparator
@@ -314,8 +293,6 @@ const sorters: Record<SortBy, Sorter> = {
   [SortBy.AverageGrade]: (context) =>
     sortWithRelevance(context, compareAverageGrade),
   [SortBy.OpenSeats]: (context) => sortWithRelevance(context, compareOpenSeats),
-  [SortBy.PercentOpenSeats]: (context) =>
-    sortWithRelevance(context, comparePercentOpenSeats),
 };
 
 export const sortClasses = (

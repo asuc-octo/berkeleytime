@@ -17,7 +17,6 @@ export default function Header() {
     semester,
     year,
     responsive,
-    splitResponsive,
     hasActiveFilters,
   } = useBrowser();
 
@@ -25,7 +24,6 @@ export default function Header() {
     <div
       className={classNames(styles.root, {
         [styles.responsive]: responsive,
-        [styles.splitResponsive]: splitResponsive,
       })}
     >
       <div className={styles.group}>
