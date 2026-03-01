@@ -327,18 +327,20 @@ export default function Filters() {
     breadthCounts,
     universityRequirementCounts,
   ]);
-  const selectedRequirements = useMemo<RequirementSelection[]>(
-    () => [
-      ...breadths.map(
-        (breadth) => ({ type: "breadth", value: breadth }) as const
-      ),
-      ...universityRequirements.map((req) => ({
-        type: "university" as const,
-        value: req,
-      })),
-    ],
-    [breadths, universityRequirements]
-  );
+  const selectedRequirement = useMemo<RequirementSelection | null>(() => {
+    if (breadths.length > 0) {
+      return { type: "breadth", value: breadths[0] };
+    }
+
+    if (universityRequirements.length > 0) {
+      return {
+        type: "university",
+        value: universityRequirements[0],
+      };
+    }
+
+    return null;
+  }, [breadths, universityRequirements]);
 
   const gradingOptions = useMemo<Option<GradingFilter>[]>(() => {
     return Object.values(GradingFilter).map((category) => ({
@@ -604,64 +606,6 @@ export default function Filters() {
           </div>
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Department</p>
-          <Select<string>
-            searchable
-            value={academicOrganization}
-            placeholder="Select a department"
-            clearable
-            disabled={isAcademicOrganizationDisabled}
-            onChange={(value) => {
-              if (typeof value === "string" || value === null) {
-                updateAcademicOrganization(value);
-              }
-            }}
-            options={academicOrganizationOptions}
-            searchPlaceholder="Search departments..."
-            emptyMessage="No departments found."
-            customSearch={departmentSearchFunction}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Requirements</p>
-          <Select<RequirementSelection>
-            searchable
-            multi
-            value={selectedRequirements}
-            placeholder="Filter by requirements"
-            disabled={false}
-            onChange={(v) => {
-              if (!Array.isArray(v)) return;
-              const nextBreadths = v
-                .filter(
-                  (
-                    option
-                  ): option is Extract<
-                    RequirementSelection,
-                    { type: "breadth" }
-                  > => option.type === "breadth"
-                )
-                .map((option) => option.value);
-              const nextUniversityRequirements = v
-                .filter(
-                  (
-                    option
-                  ): option is Extract<
-                    RequirementSelection,
-                    { type: "university" }
-                  > => option.type === "university"
-                )
-                .map((option) => option.value);
-
-              updateBreadths(nextBreadths);
-              updateUniversityRequirements(nextUniversityRequirements);
-            }}
-            options={requirementOptions}
-            searchPlaceholder="Search requirements..."
-            emptyMessage="No requirements found."
-          />
-        </div>
-        <div className={styles.formControl}>
           <p className={styles.label}>Class level</p>
           <Select
             multi
@@ -678,6 +622,55 @@ export default function Filters() {
                 meta: filteredLevels[level].toString(),
               };
             })}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Requirements</p>
+          <Select<RequirementSelection>
+            searchable
+            clearable
+            value={selectedRequirement}
+            placeholder="Filter by requirements"
+            onChange={(value) => {
+              if (value === null) {
+                updateBreadths([]);
+                updateUniversityRequirements([]);
+                return;
+              }
+
+              if (Array.isArray(value)) return;
+
+              if (value.type === "breadth") {
+                updateBreadths([value.value]);
+                updateUniversityRequirements([]);
+                return;
+              }
+
+              updateUniversityRequirements([value.value]);
+              updateBreadths([]);
+            }}
+            options={requirementOptions}
+            searchPlaceholder="Search requirements..."
+            emptyMessage="No requirements found."
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Department</p>
+          <Select<string>
+            searchable
+            value={academicOrganization}
+            placeholder="Select a department"
+            clearable
+            disabled={isAcademicOrganizationDisabled}
+            onChange={(value) => {
+              if (typeof value === "string" || value === null) {
+                updateAcademicOrganization(value);
+              }
+            }}
+            options={academicOrganizationOptions}
+            searchPlaceholder="Search departments..."
+            emptyMessage="No departments found."
+            customSearch={departmentSearchFunction}
           />
         </div>
         <div className={styles.formControl}>

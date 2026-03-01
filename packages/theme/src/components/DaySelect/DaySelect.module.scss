@@ -24,6 +24,8 @@
     color: var(--paragraph-color);
     font-weight: var(--font-medium);
     transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   label span:hover {
@@ -31,8 +33,13 @@
   }
 
   input[type="checkbox"]:checked + span {
-    background-color: var(--button-active-color);
-    color: var(--heading-color);
+    background-color: var(--blue-500-20);
+    border-color: var(--blue-500);
+    color: var(--blue-500);
+  }
+
+  input[type="checkbox"]:checked + span:hover {
+    background-color: var(--blue-500-20);
   }
 
   &[data-size="sm"] {

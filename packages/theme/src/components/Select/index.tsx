@@ -154,7 +154,6 @@ import { NavArrowDown, Plus, Search, Xmark } from "iconoir-react";
 import { DropdownMenu, Popover } from "radix-ui";
 
 import { useStack } from "../../hooks/useStack";
-import { Badge } from "../Badge";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
@@ -332,6 +331,16 @@ export function Select<T>({
     [optionUniverse]
   );
 
+  const getMultiSelectionText = (selectedOptions: OptionItem<T>[]): string => {
+    if (selectedOptions.length === 0) return effectivePlaceholder;
+    if (selectedOptions.length === 1) return selectedOptions[0].label;
+    if (selectedOptions.length === 2) {
+      return `${selectedOptions[0].label} and ${selectedOptions[1].label}`;
+    }
+
+    return `${selectedOptions[0].label} + ${selectedOptions.length - 1} others`;
+  };
+
   // Keep select usable even when no options match; only disable when explicitly disabled or loading
   const effectiveDisabled = disabled || loading;
   const effectivePlaceholder = loading ? "Loading content" : placeholder;
@@ -368,36 +377,13 @@ export function Select<T>({
     }
   };
 
-  const handleRemoveBadge = (optValue: T) => {
-    if (!Array.isArray(value)) return;
-    onChange(value.filter((v) => !deepEqual(v, optValue)));
-  };
-
   // Trigger content (shared between searchable and non-searchable)
   const triggerContent = (
     <>
       <div className={styles.triggerLabel}>
         {hasSelection ? (
           Array.isArray(activeElem) ? (
-            <Flex className={styles.badgeContainer}>
-              {activeElem.map((el) => (
-                <Badge
-                  key={el.label}
-                  label={el.label}
-                  color={el.color ? el.color : Color.Blue}
-                  icon={
-                    <Xmark
-                      style={{ zIndex: 100 }}
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        handleRemoveBadge(el.value);
-                        e.preventDefault();
-                      }}
-                    />
-                  }
-                />
-              ))}
-            </Flex>
+            getMultiSelectionText(activeElem)
           ) : activeElem ? (
             (activeElem as OptionItem<T>).label
           ) : (
