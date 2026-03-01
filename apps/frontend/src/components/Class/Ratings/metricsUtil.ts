@@ -163,9 +163,13 @@ export function formatInstructorText(
     return "(No instructor)";
   }
 
-  // Show all instructors (now that we filter to professors only)
-  const names = allInstructors
-    .map((i) => `${i.givenName} ${i.familyName}`)
-    .join(", ");
+  // Deduplicate and show all unique instructors (trim to handle API whitespace)
+  const names = [
+    ...new Set(
+      allInstructors.map(
+        (i) => `${i.givenName.trim()} ${i.familyName.trim()}`
+      )
+    ),
+  ].join(", ");
   return `(${names})`;
 }
