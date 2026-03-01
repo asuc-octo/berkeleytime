@@ -463,10 +463,19 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 interface OutputListProps {
   outputs: Output[];
   remove: (index: number) => void;
+  hoveredIndex: number | null;
+  setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-function OutputList({ outputs, remove }: OutputListProps) {
+function OutputList({
+  outputs,
+  remove,
+  hoveredIndex,
+  setHoveredIndex,
+}: OutputListProps) {
   if (outputs.length === 0) return null;
+
+  const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
 
   return (
     <div className={styles.outputList}>
@@ -477,6 +486,8 @@ function OutputList({ outputs, remove }: OutputListProps) {
               <motion.div
                 key={getInputSearchParam(output.input)}
                 layout
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -488,6 +499,7 @@ function OutputList({ outputs, remove }: OutputListProps) {
                   number={output.input.courseNumber}
                   metadata={getMetadata(output.input)}
                   gradeDistribution={output.data}
+                  dimmed={shouldDimOthers && hoveredIndex !== index}
                   onClickDelete={() => remove(index)}
                 />
               </motion.div>
@@ -503,6 +515,7 @@ export default function Grades() {
   const isDesktop = useIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const remove = (index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
@@ -548,8 +561,15 @@ export default function Grades() {
       )}
 
       <div className={styles.view}>
-        <OutputList outputs={outputs} remove={remove} />
-        <GradeBarGraph outputs={outputs} />
+        <div className={styles.viewContent}>
+          <OutputList
+            outputs={outputs}
+            remove={remove}
+            hoveredIndex={hoveredIndex}
+            setHoveredIndex={setHoveredIndex}
+          />
+          <GradeBarGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+        </div>
       </div>
     </div>
   );

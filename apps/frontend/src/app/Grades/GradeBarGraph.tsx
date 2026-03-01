@@ -20,12 +20,16 @@ import {
 } from "@/components/Chart";
 import tooltipStyles from "@/components/Chart/Chart.module.scss";
 import type { Input } from "@/components/CourseAnalytics/types";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IGradeDistribution } from "@/lib/api";
 import { LETTER_GRADES } from "@/lib/grades";
 
 import styles from "./GradeBarGraph.module.scss";
 
-const HORIZONTAL_THRESHOLD = 500;
+const CHART_HEIGHT_RATIO = 0.6;
+const HORIZONTAL_ENTER_WIDTH = 600;
+const HORIZONTAL_EXIT_WIDTH = 640;
+const RANGE_UPDATE_THROTTLE_MS = 60;
 
 const ordinal = (n: number): string => {
   const s = ["th", "st", "nd", "rd"];
@@ -44,6 +48,11 @@ const isGradeInRange = (
   return topLo < sliderR && topHi > sliderL;
 };
 
+const isSameRange = (
+  a: readonly [number, number],
+  b: readonly [number, number]
+) => a[0] === b[0] && a[1] === b[1];
+
 interface GradeBarGraphOutput {
   input: Input;
   color: string;
@@ -52,26 +61,48 @@ interface GradeBarGraphOutput {
 
 interface GradeBarGraphProps {
   outputs: GradeBarGraphOutput[];
+  hoveredIndex?: number | null;
 }
 
-export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
+export default function GradeBarGraph({
+  outputs,
+  hoveredIndex = null,
+}: GradeBarGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const { height: viewportHeight } = useWindowDimensions();
   const [horizontal, setHorizontal] = useState(false);
   const [sliderRange, setSliderRange] = useState<[number, number]>([0, 100]);
   const [liveRange, setLiveRange] = useState<[number, number]>([0, 100]);
-  const sliderRangeRef = useRef(sliderRange);
+  const throttleTimeoutRef = useRef<number | null>(null);
+  const pendingRangeRef = useRef<[number, number] | null>(null);
+  const lastRangeCommitAtRef = useRef(0);
 
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
 
     const observer = new ResizeObserver(([entry]) => {
-      const isHorizontal = entry.contentRect.width < HORIZONTAL_THRESHOLD;
-      setHorizontal(isHorizontal);
+      const width = entry.contentRect.width;
+      setHorizontal((prev) => {
+        // Hysteresis prevents flip-flopping near the breakpoint.
+        if (prev) {
+          return width < HORIZONTAL_EXIT_WIDTH;
+        }
+        return width < HORIZONTAL_ENTER_WIDTH;
+      });
     });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (throttleTimeoutRef.current !== null) {
+        window.clearTimeout(throttleTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const { chartData, chartConfig, dataKeys } = useMemo(() => {
     if (outputs.length === 0) {
       return { chartData: [], chartConfig: {}, dataKeys: [] };
@@ -141,40 +172,81 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
     return { chartData, chartConfig, dataKeys };
   }, [outputs]);
 
-  const handleSliderChange = useCallback(
+  const commitSliderRange = useCallback((next: [number, number]) => {
+    lastRangeCommitAtRef.current = Date.now();
+    setSliderRange((prevRange) =>
+      isSameRange(prevRange, next) ? prevRange : next
+    );
+  }, []);
+
+  const scheduleSliderRangeUpdate = useCallback(
     (next: [number, number]) => {
-      setLiveRange(next);
-      const prev = sliderRangeRef.current;
-      const changed = chartData.some((row) =>
-        dataKeys.some((key) => {
-          const pctlLo = row[`${key}_pctlLo`] as number;
-          const pctlHi = row[`${key}_pctlHi`] as number;
-          return (
-            isGradeInRange(pctlLo, pctlHi, prev[0], prev[1]) !==
-            isGradeInRange(pctlLo, pctlHi, next[0], next[1])
-          );
-        })
-      );
-      if (changed) {
-        sliderRangeRef.current = next;
-        setSliderRange(next);
+      pendingRangeRef.current = next;
+
+      const flushPendingRange = () => {
+        const pending = pendingRangeRef.current;
+        pendingRangeRef.current = null;
+        throttleTimeoutRef.current = null;
+        if (!pending) return;
+        commitSliderRange(pending);
+      };
+
+      const now = Date.now();
+      const elapsedSinceLastCommit = now - lastRangeCommitAtRef.current;
+
+      if (
+        throttleTimeoutRef.current === null &&
+        elapsedSinceLastCommit >= RANGE_UPDATE_THROTTLE_MS
+      ) {
+        flushPendingRange();
+        return;
       }
+
+      if (throttleTimeoutRef.current !== null) return;
+
+      throttleTimeoutRef.current = window.setTimeout(
+        flushPendingRange,
+        Math.max(RANGE_UPDATE_THROTTLE_MS - elapsedSinceLastCommit, 0)
+      );
     },
-    [chartData, dataKeys]
+    [commitSliderRange]
   );
+
+  const handleSliderLiveChange = useCallback((next: [number, number]) => {
+    setLiveRange((prevRange) =>
+      isSameRange(prevRange, next) ? prevRange : next
+    );
+    scheduleSliderRangeUpdate(next);
+  }, [scheduleSliderRangeUpdate]);
+
+  const handleSliderCommit = useCallback((next: [number, number]) => {
+    if (throttleTimeoutRef.current !== null) {
+      window.clearTimeout(throttleTimeoutRef.current);
+      throttleTimeoutRef.current = null;
+    }
+    pendingRangeRef.current = null;
+    setLiveRange((prevRange) =>
+      isSameRange(prevRange, next) ? prevRange : next
+    );
+    commitSliderRange(next);
+  }, [commitSliderRange]);
 
   if (outputs.length === 0) {
     return <div className={styles.root} ref={rootRef} />;
   }
 
+  const chartHeight = Math.max(360, Math.round(viewportHeight * CHART_HEIGHT_RATIO));
+
   return (
     <div className={styles.root} ref={rootRef} style={undefined}>
       <div className={styles.chartArea}>
         <ChartContainer config={chartConfig} className={styles.chart}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart
               data={chartData}
               layout={horizontal ? "vertical" : "horizontal"}
+              accessibilityLayer={false}
+              tabIndex={-1}
             >
               <CartesianGrid
                 vertical={horizontal}
@@ -286,7 +358,7 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                   );
                 }}
               />
-              {dataKeys.map((key) => (
+              {dataKeys.map((key, keyIndex) => (
                 <Bar key={key} dataKey={key} radius={4}>
                   {chartData.map((row, i) => {
                     const pctlLo = row[`${key}_pctlLo`] as number;
@@ -297,11 +369,15 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                       sliderRange[0],
                       sliderRange[1]
                     );
+                    const isHoveredCourse =
+                      hoveredIndex === null ||
+                      outputs.length <= 1 ||
+                      hoveredIndex === keyIndex;
                     return (
                       <Cell
                         key={i}
                         fill={
-                          inRange
+                          isHoveredCourse && inRange
                             ? `var(--color-${key})`
                             : "var(--border-color)"
                         }
@@ -324,8 +400,9 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
             min={0}
             max={100}
             step={1}
-            value={liveRange}
-            onValueChange={handleSliderChange}
+            defaultValue={sliderRange}
+            onValueChange={handleSliderLiveChange}
+            onValueCommit={handleSliderCommit}
           />
           <div className={styles.thumbLabels}>
             {liveRange[1] - liveRange[0] < 15 ? (

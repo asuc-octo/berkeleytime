@@ -1,10 +1,7 @@
-import { useRef } from "react";
-
 import { Eye, EyeClosed, Trash } from "iconoir-react";
+import classNames from "classnames";
 
-import { Card, ColoredSquare } from "@repo/theme";
-
-import { AverageGrade } from "@/components/AverageGrade";
+import ClassCard from "@/components/ClassCard";
 import {
   useReadCourseGradeDist,
   useReadCourseTitle,
@@ -26,6 +23,7 @@ interface CourseSelectionCardProps {
   onClickHide?: () => void;
   active?: boolean;
   hidden?: boolean;
+  dimmed?: boolean;
 }
 
 export default function CourseSelectionCard({
@@ -41,10 +39,8 @@ export default function CourseSelectionCard({
   onClickHide,
   active,
   hidden,
+  dimmed,
 }: CourseSelectionCardProps) {
-  const hideRef = useRef<HTMLDivElement>(null);
-  const deleteRef = useRef<HTMLDivElement>(null);
-
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
   });
@@ -55,57 +51,65 @@ export default function CourseSelectionCard({
   const displayTitle = title ?? titleData?.title ?? "N/A";
   const displayGradeDistribution =
     gradeDistribution ?? courseGradeData?.gradeDistribution;
+  const topRightContent =
+    onClickHide || onClickDelete ? (
+      <>
+        {onClickHide && (
+          <button
+            type="button"
+            aria-label={hidden ? "Show course" : "Hide course"}
+            className={styles.iconButton}
+            onClick={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+              onClickHide();
+            }}
+          >
+            {!hidden ? <Eye /> : <EyeClosed />}
+          </button>
+        )}
+        {onClickDelete && (
+          <button
+            type="button"
+            aria-label="Delete course"
+            className={styles.deleteIconButton}
+            onClick={(event) => {
+              event.stopPropagation();
+              event.preventDefault();
+              onClickDelete();
+            }}
+          >
+            <Trash />
+          </button>
+        )}
+      </>
+    ) : undefined;
 
   return (
-    <Card.Root
-      className={styles.card}
+    <ClassCard
+      className={classNames(styles.card, { [styles.dimmed]: dimmed })}
+      class={{
+        subject,
+        courseNumber: number,
+        title: displayTitle,
+        gradeDistribution: displayGradeDistribution,
+      }}
+      headingPrefix={
+        <span
+          className={styles.colorBlock}
+          style={{ backgroundColor: color }}
+          aria-hidden
+        />
+      }
       active={active}
       disabled={hidden}
-      onClick={(event) => {
+      replaceInfoContent
+      infoContent={<span className={styles.metadata}>{metadata}</span>}
+      topRightContent={topRightContent}
+      onClick={() => {
         if (hidden) return;
-        if (
-          hideRef.current?.contains(event.target as Node) ||
-          deleteRef.current?.contains(event.target as Node)
-        )
-          return;
         onClick?.();
       }}
-    >
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.headerTitle}>
-            <ColoredSquare color={color} size="lg" />
-            <span className={styles.courseCode}>
-              {subject} {number}
-            </span>
-          </div>
-
-          <div className={styles.headerActions}>
-            {displayGradeDistribution && (
-              <AverageGrade gradeDistribution={displayGradeDistribution} />
-            )}
-            {onClickHide && (
-              <div onClick={onClickHide} ref={hideRef} className={styles.icon}>
-                {!hidden ? <Eye /> : <EyeClosed />}
-              </div>
-            )}
-            {onClickDelete && (
-              <div
-                onClick={onClickDelete}
-                ref={deleteRef}
-                className={styles.icon}
-              >
-                <Trash />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className={styles.body}>
-          <div className={styles.title}>{displayTitle}</div>
-          <div className={styles.metadata}>{metadata}</div>
-        </div>
-      </div>
-    </Card.Root>
+    />
   );
 }

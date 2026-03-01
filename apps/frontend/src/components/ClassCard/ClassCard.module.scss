@@ -2,6 +2,20 @@
   color: var(--paragraph-color);
 }
 
+.headingWithPrefix {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.headingPrefix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -21,6 +35,9 @@
 
 .gradeContainer {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .infoRow {

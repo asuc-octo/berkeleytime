@@ -2,13 +2,11 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0;
-  padding: 12px 24px 24px 24px;
+  min-height: 360px;
+  gap: 16px;
 }
 
 .chartArea {
-  flex: 1;
-  min-height: 0;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 16px;
@@ -16,12 +14,22 @@
 
 .chart {
   width: 100%;
-  height: 100%;
+
+  :global(.recharts-wrapper:focus),
+  :global(.recharts-wrapper:focus-visible),
+  :global(.recharts-surface:focus),
+  :global(.recharts-surface:focus-visible),
+  :global([tabindex]:focus),
+  :global([tabindex]:focus-visible),
+  :global(svg:focus),
+  :global(svg:focus-visible) {
+    outline: none;
+  }
 }
 
 .sliderArea {
   flex-shrink: 0;
-  padding: 24px 0 16px 0;
+  padding: 0;
 }
 
 .sliderTitle {
@@ -37,7 +45,7 @@
   font-size: var(--text-14);
   line-height: 20px;
   color: var(--paragraph-color);
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
 }
 
 .sliderWrapper {

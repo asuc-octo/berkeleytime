@@ -8,14 +8,21 @@ $grades-panel-width: 248px;
   position: relative;
 
   .view {
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     flex-grow: 1;
     background-color: var(--foreground-color);
     position: relative;
-    display: flex;
-    flex-direction: column;
     min-height: 0;
     max-width: 1920px;
+  }
+
+  .viewContent {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px 20px;
   }
 
   .panel {
@@ -87,8 +94,8 @@ $grades-panel-width: 248px;
 .body {
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  gap: 16px;
+  padding: 16px;
+  gap: 14px;
 }
 
 .filtersHeader {
@@ -132,26 +139,13 @@ $grades-panel-width: 248px;
   width: 100%;
 }
 
-.divider {
-  height: 1px;
-  background-color: var(--border-color);
-  flex-shrink: 0;
-}
-
 .outputList {
   flex-shrink: 0;
 }
 
 .classList {
-  padding: 12px 16px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-}
-
-.emptyState {
-  padding: 12px 16px;
-  color: var(--paragraph-color);
-  font-size: var(--text-14);
+  gap: 12px;
 }
 
