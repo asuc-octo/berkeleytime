@@ -1,4 +1,10 @@
-import { type CSSProperties, useCallback, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -397,7 +403,9 @@ export default function BookmarkPopover({
                   const isNew = !initialCollectionIds.current.has(
                     collection.id
                   );
-                  const collectionFolderColor = getColorCSSVar(collection.color);
+                  const collectionFolderColor = getColorCSSVar(
+                    collection.color
+                  );
                   const collectionFolderStyle = collectionFolderColor
                     ? ({ color: collectionFolderColor } as CSSProperties)
                     : undefined;
@@ -419,8 +427,9 @@ export default function BookmarkPopover({
                           width={16}
                           height={16}
                           className={classNames(styles.collectionFolderIcon, {
-                            [styles.collectionFolderIconColored]:
-                              Boolean(collectionFolderColor),
+                            [styles.collectionFolderIconColored]: Boolean(
+                              collectionFolderColor
+                            ),
                           })}
                           style={collectionFolderStyle}
                         />

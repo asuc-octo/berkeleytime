@@ -65,14 +65,20 @@ const compareAlphabetical = (
     return subjectComparison * direction;
   }
 
-  const courseNumberComparison = a.courseNumber.localeCompare(b.courseNumber, undefined, {
-    numeric: true,
-  });
+  const courseNumberComparison = a.courseNumber.localeCompare(
+    b.courseNumber,
+    undefined,
+    {
+      numeric: true,
+    }
+  );
   if (courseNumberComparison !== 0) {
     return courseNumberComparison * direction;
   }
 
-  return a.number.localeCompare(b.number, undefined, { numeric: true }) * direction;
+  return (
+    a.number.localeCompare(b.number, undefined, { numeric: true }) * direction
+  );
 };
 
 const getViewCount = (_class: ICatalogClass) =>

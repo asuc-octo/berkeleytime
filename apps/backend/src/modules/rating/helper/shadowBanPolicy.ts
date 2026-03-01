@@ -12,8 +12,9 @@ const DEFAULT_RATINGS_SHADOW_BANNED_SUBJECTS = ["AEROENG"];
 const SHADOW_BANNED_COURSE_IDS_TTL_MS = 10 * 60 * 1000;
 
 const ratingsShadowBannedSubjects = (() => {
-  const configuredSubjects = process.env.RATINGS_SHADOW_BANNED_SUBJECTS
-    ?.split(",")
+  const configuredSubjects = process.env.RATINGS_SHADOW_BANNED_SUBJECTS?.split(
+    ","
+  )
     .map((subject) => normalizeSubject(subject.trim()))
     .filter((subject) => subject.length > 0);
 
@@ -62,7 +63,10 @@ export const getShadowBannedCourseIds = async (): Promise<Set<string>> => {
   }
 
   const now = Date.now();
-  if (shadowBannedCourseIdsCache && now <= shadowBannedCourseIdsCache.expiresAt) {
+  if (
+    shadowBannedCourseIdsCache &&
+    now <= shadowBannedCourseIdsCache.expiresAt
+  ) {
     return shadowBannedCourseIdsCache.value;
   }
 
@@ -96,7 +100,10 @@ interface ShouldShadowBanRatingsParams {
   subject: string;
   courseNumber: string;
   courseId?: string | null;
-  resolveCourseId: (subject: string, courseNumber: string) => Promise<string | null>;
+  resolveCourseId: (
+    subject: string,
+    courseNumber: string
+  ) => Promise<string | null>;
 }
 
 export const shouldShadowBanRatings = async ({
@@ -113,7 +120,8 @@ export const shouldShadowBanRatings = async ({
     return false;
   }
 
-  const resolvedCourseId = courseId ?? (await resolveCourseId(subject, courseNumber));
+  const resolvedCourseId =
+    courseId ?? (await resolveCourseId(subject, courseNumber));
   if (!resolvedCourseId) {
     return false;
   }
