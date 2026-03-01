@@ -117,7 +117,6 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
               layout={horizontal ? "vertical" : "horizontal"}
             >
               <CartesianGrid
-                strokeDasharray="3 3"
                 vertical={horizontal}
                 horizontal={!horizontal}
                 stroke="var(--border-color)"
@@ -127,7 +126,8 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                   <YAxis
                     dataKey="letter"
                     type="category"
-                    tickMargin={8}
+                    width={28}
+                    tickMargin={10}
                     tickLine={false}
                     axisLine={false}
                     tick={{
@@ -154,7 +154,7 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                 <>
                   <XAxis
                     dataKey="letter"
-                    tickMargin={8}
+                    tickMargin={10}
                     tickLine={false}
                     axisLine={false}
                     tick={{
@@ -163,6 +163,7 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                     }}
                   />
                   <YAxis
+                    width={36}
                     domain={[
                       0,
                       (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5,
@@ -178,6 +179,7 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                 </>
               )}
               <ChartTooltip
+                cursor={false}
                 tooltipConfig={{
                   labelFormatter: (label) => `Grade: ${label}`,
                   valueFormatter: (value) => formatters.percent(value, 1),
@@ -189,7 +191,7 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                   key={key}
                   dataKey={key}
                   fill={`var(--color-${key})`}
-                  radius={horizontal ? [0, 4, 4, 0] : [4, 4, 0, 0]}
+                  radius={8}
                 />
               ))}
             </BarChart>

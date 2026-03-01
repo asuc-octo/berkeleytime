@@ -10,7 +10,6 @@ import {
   type CourseOutput,
   type Input,
   InputType,
-  LIGHT_COLORS,
   getInputSearchParam,
   isInputEqual,
 } from "@/components/CourseAnalytics/types";
@@ -28,6 +27,14 @@ import { RecentType, addRecent } from "@/lib/recent";
 import GradeBarGraph from "./GradeBarGraph";
 import styles from "./Grades.module.scss";
 import MiniGradeBarChart from "./MiniGradeBarChart";
+
+// Ranked color palette for the bar chart (max 3 classes).
+// When a slot opens up, the highest-priority unused color is assigned.
+const BAR_CHART_COLORS = [
+  "var(--blue-500)", // 1st pick — primary blue
+  "var(--blue-300)", // 2nd pick — lighter
+  "var(--blue-800)", // 3rd pick — darker
+] as const;
 
 const useIsDesktop = () => {
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
@@ -287,7 +294,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     };
   }, [selectedCourse, selectedType, selectedInstructor, selectedSemester]);
 
-  const isFull = outputs.length >= 4;
+  const isFull = outputs.length >= BAR_CHART_COLORS.length;
   const isAlreadyAdded =
     currentInput !== null &&
     outputs.some((o) => isInputEqual(o.input, currentInput));
@@ -309,7 +316,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 
       const usedColors = new Set(outputs.map((output) => output.color));
       const availableColor =
-        LIGHT_COLORS.find((color) => !usedColors.has(color)) || LIGHT_COLORS[0];
+        BAR_CHART_COLORS.find((color) => !usedColors.has(color)) ?? BAR_CHART_COLORS[0];
 
       const output: Output = {
         hidden: false,
@@ -565,7 +572,7 @@ export default function Grades() {
             <>
               <div className={styles.chartDivider} />
               <div className={styles.miniChartsSection}>
-                {outputs.slice(0, 4).map((output) => (
+                {outputs.map((output) => (
                   <div
                     key={getInputSearchParam(output.input)}
                     className={styles.miniChartCard}
