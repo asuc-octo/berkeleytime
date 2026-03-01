@@ -26,7 +26,6 @@ import { RecentType, addRecent } from "@/lib/recent";
 
 import GradeBarGraph from "./GradeBarGraph";
 import styles from "./Grades.module.scss";
-import MiniGradeBarChart from "./MiniGradeBarChart";
 
 // Ranked color palette for the bar chart (max 3 classes).
 // When a slot opens up, the highest-priority unused color is assigned.
@@ -513,7 +512,6 @@ function OutputList({ outputs, remove }: OutputListProps) {
 export default function Grades() {
   const isDesktop = useIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const [chartHorizontal, setChartHorizontal] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
 
   const remove = (index: number) => {
@@ -564,38 +562,7 @@ export default function Grades() {
       )}
 
       <div className={styles.view}>
-        <div className={styles.chartsPane}>
-          <div className={styles.mainChartArea}>
-            <GradeBarGraph outputs={outputs} onHorizontalChange={setChartHorizontal} />
-          </div>
-          {!chartHorizontal && (
-            <>
-              <div className={styles.chartDivider} />
-              <div className={styles.miniChartsSection}>
-                {outputs.map((output) => (
-                  <div
-                    key={getInputSearchParam(output.input)}
-                    className={styles.miniChartCard}
-                  >
-                    <div className={styles.miniChartTitle}>
-                      <span
-                        className={styles.miniChartSwatch}
-                        style={{ backgroundColor: output.color }}
-                      />
-                      <span className={styles.miniChartLabel}>
-                        {output.input.subject} {output.input.courseNumber} ·{" "}
-                        {getMetadata(output.input)}
-                      </span>
-                    </div>
-                    <div className={styles.miniChartBar}>
-                      <MiniGradeBarChart gradeDistribution={output.data} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+        <GradeBarGraph outputs={outputs} />
       </div>
     </div>
   );

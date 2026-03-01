@@ -31,10 +31,9 @@ interface GradeBarGraphOutput {
 
 interface GradeBarGraphProps {
   outputs: GradeBarGraphOutput[];
-  onHorizontalChange?: (horizontal: boolean) => void;
 }
 
-export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarGraphProps) {
+export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [horizontal, setHorizontal] = useState(false);
 
@@ -45,11 +44,10 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
     const observer = new ResizeObserver(([entry]) => {
       const isHorizontal = entry.contentRect.width < HORIZONTAL_THRESHOLD;
       setHorizontal(isHorizontal);
-      onHorizontalChange?.(isHorizontal);
     });
     observer.observe(el);
     return () => observer.disconnect();
-  }, [onHorizontalChange]);
+  }, []);
   const { chartData, chartConfig, dataKeys } = useMemo(() => {
     if (outputs.length === 0) {
       return { chartData: [], chartConfig: {}, dataKeys: [] };
