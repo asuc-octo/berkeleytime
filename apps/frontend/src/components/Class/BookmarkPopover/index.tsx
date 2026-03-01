@@ -5,7 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { Button, Color, IconButton } from "@repo/theme";
+import { Button, Color, IconButton, Tooltip } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -298,6 +298,7 @@ export default function BookmarkPopover({
 
   const isAnyClassSaved = savedCollectionIds.size > 0;
   const allSavedCollection = collections.find((c) => c.isSystem);
+  const bookmarkButtonLabel = "Bookmark class";
 
   const handleQuickAdd = useCallback(() => {
     if (!classInfo || !allSavedCollection) return;
@@ -351,27 +352,33 @@ export default function BookmarkPopover({
         setIsPopoverOpen(open);
       }}
     >
-      <Popover.Trigger asChild>
-        <IconButton
-          className={classNames(styles.bookmark, {
-            [styles.active]: isAnyClassSaved,
-          })}
-          disabled={disabled || !classInfo || collectionsLoading}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-            if (!user) {
-              e.preventDefault();
-              signIn();
-              return;
-            }
-            if (!isAnyClassSaved && classInfo) {
-              e.preventDefault();
-              handleQuickAdd();
-            }
-          }}
-        >
-          {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
-        </IconButton>
-      </Popover.Trigger>
+      <Tooltip
+        title={bookmarkButtonLabel}
+        trigger={
+          <Popover.Trigger asChild>
+            <IconButton
+              className={classNames(styles.bookmark, {
+                [styles.active]: isAnyClassSaved,
+              })}
+              aria-label={bookmarkButtonLabel}
+              disabled={disabled || !classInfo || collectionsLoading}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                if (!user) {
+                  e.preventDefault();
+                  signIn();
+                  return;
+                }
+                if (!isAnyClassSaved && classInfo) {
+                  e.preventDefault();
+                  handleQuickAdd();
+                }
+              }}
+            >
+              {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
+            </IconButton>
+          </Popover.Trigger>
+        }
+      />
       <Popover.Portal>
         <Popover.Content
           side="bottom"
@@ -383,9 +390,6 @@ export default function BookmarkPopover({
             className={styles.collectionList}
             onClick={() => isCreateFormOpen && resetForm()}
           >
-            <div className={styles.bookmarkNote}>
-              To view all bookmarks, click on profile -&gt; bookmarks
-            </div>
             <div className={styles.collectionRows}>
               <LayoutGroup>
                 {displayCollections.map((collection) => {
@@ -436,11 +440,7 @@ export default function BookmarkPopover({
                           handleToggleCollection(collection.id, isSaved)
                         }
                       >
-                        {isSaved ? (
-                          <BookmarkSolid width={16} height={16} />
-                        ) : (
-                          <Bookmark width={16} height={16} />
-                        )}
+                        <Plus width={16} height={16} />
                       </IconButton>
                     </motion.div>
                   );
