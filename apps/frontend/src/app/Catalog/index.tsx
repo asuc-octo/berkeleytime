@@ -9,7 +9,7 @@ import {
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowRight } from "iconoir-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
 
@@ -260,6 +260,7 @@ export default function Catalog() {
   } = useParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
 
   const isDesktop = useMinWidth(DESKTOP_BREAKPOINT);
@@ -506,20 +507,22 @@ export default function Catalog() {
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
-      navigate(
-        `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`
-      );
+      navigate({
+        ...location,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
+      });
     },
-    [navigate, term]
+    [location, navigate, term]
   );
 
   const handleSavedClassSelect = useCallback(
     (savedClass: SavedClassItem) => {
-      navigate(
-        `/catalog/${savedClass.year}/${savedClass.semester}/${savedClass.subject}/${savedClass.courseNumber}/${savedClass.number}/${savedClass.sessionId}`
-      );
+      navigate({
+        ...location,
+        pathname: `/catalog/${savedClass.year}/${savedClass.semester}/${savedClass.subject}/${savedClass.courseNumber}/${savedClass.number}/${savedClass.sessionId}`,
+      });
     },
-    [navigate]
+    [location, navigate]
   );
   const handleGoToCollectionsPage = useCallback(() => {
     navigate("/profile/bookmarks");
