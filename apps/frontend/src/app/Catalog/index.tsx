@@ -529,9 +529,6 @@ export default function Catalog() {
   }, [navigate]);
 
   const [catalogLoading, setCatalogLoading] = useState(true);
-  const handleCatalogLoadingChange = useCallback((loading: boolean) => {
-    setCatalogLoading(loading);
-  }, []);
 
   if (termsLoading) {
     return <CatalogSkeleton />;
@@ -545,7 +542,7 @@ export default function Catalog() {
   return (
     <div className={styles.root}>
       {catalogLoading && (
-        <div style={{ position: "absolute", inset: 0, zIndex: 10 }}>
+        <div className={styles.skeletonOverlay}>
           <CatalogSkeleton />
         </div>
       )}
@@ -557,7 +554,7 @@ export default function Catalog() {
             onCatalogClassAvailabilityChange={
               handleCatalogClassAvailabilityChange
             }
-            onLoadingChange={handleCatalogLoadingChange}
+            onLoadingChange={setCatalogLoading}
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -589,7 +586,7 @@ export default function Catalog() {
               onCatalogClassAvailabilityChange={
                 handleCatalogClassAvailabilityChange
               }
-              onLoadingChange={handleCatalogLoadingChange}
+              onLoadingChange={setCatalogLoading}
               semester={term.semester}
               year={term.year}
               terms={terms}

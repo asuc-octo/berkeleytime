@@ -54,6 +54,10 @@ export enum Day {
   Saturday = "6",
 }
 
+export const EMPTY_DAYS: boolean[] = [
+  false, false, false, false, false, false, false,
+];
+
 export type Breadth = string;
 export type UniversityRequirement = string;
 export enum GradingBasis {

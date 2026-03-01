@@ -431,6 +431,7 @@ export default function ClassBrowser({
         expanded,
         responsive,
         sortBy,
+        allClasses: classes,
         classes: filteredClasses,
         includedClasses,
         excludedClasses,

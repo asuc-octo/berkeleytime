@@ -23,8 +23,7 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, includedClasses, excludedClasses, loading, year, semester } =
-    useBrowser();
+  const { classes, allClasses, loading, year, semester } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -49,11 +48,6 @@ export default function List({ onSelect }: ListProps) {
       })
       .slice(0, MAX_RECENTLY_VIEWED);
   }, [year, semester, recentlyViewedVersion]);
-
-  const allClasses = useMemo(
-    () => [...includedClasses, ...excludedClasses],
-    [includedClasses, excludedClasses]
-  );
 
   const recentlyViewedClasses = useMemo(() => {
     return recentlyViewed
@@ -260,7 +254,7 @@ export default function List({ onSelect }: ListProps) {
         </div>
       </div>
       <div ref={catalogScrollRef} className={styles.catalogScroll}>
-        {classes.length === 0 ? (
+        {!loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <p className={styles.heading}>No courses found</p>

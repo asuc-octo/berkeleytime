@@ -12,6 +12,7 @@ import {
 } from "@repo/theme";
 
 import {
+  EMPTY_DAYS,
   EnrollmentFilter,
   GradingFilter,
   Level,
@@ -29,8 +30,6 @@ import headerStyles from "../../components/ClassBrowser/Header/Header.module.scs
 import listStyles from "../../components/ClassBrowser/List/List.module.scss";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Catalog.module.scss";
-
-const EMPTY_DAYS = [false, false, false, false, false, false, false];
 
 function FilterSkeleton() {
   return (
