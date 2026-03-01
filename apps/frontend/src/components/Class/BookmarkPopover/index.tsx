@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
+import { Bookmark, BookmarkSolid, Folder, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
 import { Button, Color, IconButton, Tooltip } from "@repo/theme";
@@ -16,7 +16,7 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
-import { getColorStyle } from "@/lib/colors";
+import { getColorCSSVar } from "@/lib/colors";
 import { CollectionColor, Semester } from "@/lib/generated/graphql";
 import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
@@ -397,6 +397,10 @@ export default function BookmarkPopover({
                   const isNew = !initialCollectionIds.current.has(
                     collection.id
                   );
+                  const collectionFolderColor = getColorCSSVar(collection.color);
+                  const collectionFolderStyle = collectionFolderColor
+                    ? ({ color: collectionFolderColor } as CSSProperties)
+                    : undefined;
                   return (
                     <motion.div
                       key={collection.id}
@@ -411,12 +415,15 @@ export default function BookmarkPopover({
                       className={styles.collectionRow}
                     >
                       <span className={styles.collectionName}>
-                        {collection.color && (
-                          <span
-                            className={styles.colorIndicator}
-                            style={getColorStyle(collection.color)}
-                          />
-                        )}
+                        <Folder
+                          width={16}
+                          height={16}
+                          className={classNames(styles.collectionFolderIcon, {
+                            [styles.collectionFolderIconColored]:
+                              Boolean(collectionFolderColor),
+                          })}
+                          style={collectionFolderStyle}
+                        />
                         <span>
                           {collection.name}{" "}
                           <span className={styles.collectionCount}>

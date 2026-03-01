@@ -145,7 +145,13 @@
  * - Colors are applied to both badges and dropdown items
  * - Options can include meta text for additional information (e.g., counts)
  */
-import { useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Flex } from "@radix-ui/themes";
 import classNames from "classnames";

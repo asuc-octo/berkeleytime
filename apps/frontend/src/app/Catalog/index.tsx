@@ -1,4 +1,11 @@
-import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowRight } from "iconoir-react";
@@ -8,11 +15,14 @@ import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
-import { useGetAllCollections, useGetCollectionById } from "@/hooks/api/collections";
 import { useReadTerms } from "@/hooks/api";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import {
+  useGetAllCollections,
+  useGetCollectionById,
+} from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { getColorCSSVar } from "@/lib/colors";
-import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
@@ -78,12 +88,17 @@ function SavedCollectionSection({
   collection: CollectionSummaryItem;
   index: number;
   onSelect: (savedClass: SavedClassItem) => void;
-  resolveCurrentTermClass: (savedClass: SavedClassItem) => SavedClassItem | null;
+  resolveCurrentTermClass: (
+    savedClass: SavedClassItem
+  ) => SavedClassItem | null;
 }) {
   const [open, setOpen] = useState(false);
-  const { data: collectionData, loading } = useGetCollectionById(collection.id, {
-    skip: !open,
-  });
+  const { data: collectionData, loading } = useGetCollectionById(
+    collection.id,
+    {
+      skip: !open,
+    }
+  );
 
   const savedClasses = useMemo<SavedClassItem[]>(() => {
     if (!collectionData?.classes) return [];
@@ -141,7 +156,9 @@ function SavedCollectionSection({
 
   const sortedSavedClassEntries = useMemo(() => {
     const available = savedClassEntries.filter((entry) => !entry.isUnavailable);
-    const unavailable = savedClassEntries.filter((entry) => entry.isUnavailable);
+    const unavailable = savedClassEntries.filter(
+      (entry) => entry.isUnavailable
+    );
     return [...available, ...unavailable];
   }, [savedClassEntries]);
 
@@ -160,7 +177,12 @@ function SavedCollectionSection({
         layout: { type: "spring", stiffness: 420, damping: 34 },
         opacity: { duration: 0.2, delay: index * 0.02 },
         y: { type: "spring", stiffness: 420, damping: 34, delay: index * 0.02 },
-        scale: { type: "spring", stiffness: 420, damping: 34, delay: index * 0.02 },
+        scale: {
+          type: "spring",
+          stiffness: 420,
+          damping: 34,
+          delay: index * 0.02,
+        },
       }}
     >
       <DropdownMenu.Root modal={false} open={open} onOpenChange={setOpen}>
@@ -186,7 +208,6 @@ function SavedCollectionSection({
           ) : sortedSavedClassEntries.length > 0 ? (
             sortedSavedClassEntries.map(
               ({ savedClass, currentTermClass, isUnavailable }) => {
-
                 return (
                   <DropdownMenu.Item
                     key={`${collection.id}-${savedClass.year}-${savedClass.semester}-${savedClass.subject}-${savedClass.courseNumber}-${savedClass.number}-${savedClass.sessionId}`}
@@ -247,9 +268,10 @@ export default function Catalog() {
   );
 
   const { data: terms, loading: termsLoading } = useReadTerms();
-  const { data: collections, loading: collectionsLoading } = useGetAllCollections({
-    skip: !user,
-  });
+  const { data: collections, loading: collectionsLoading } =
+    useGetAllCollections({
+      skip: !user,
+    });
   const [catalogAvailabilityClasses, setCatalogAvailabilityClasses] = useState<
     CatalogAvailabilityClass[]
   >([]);
@@ -366,8 +388,12 @@ export default function Catalog() {
     [orderedNonEmptyCollections]
   );
   const foldersViewportRef = useRef<HTMLDivElement | null>(null);
-  const measureButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [visibleCollectionIds, setVisibleCollectionIds] = useState<string[]>([]);
+  const measureButtonRefs = useRef<Record<string, HTMLButtonElement | null>>(
+    {}
+  );
+  const [visibleCollectionIds, setVisibleCollectionIds] = useState<string[]>(
+    []
+  );
 
   const recomputeVisibleCollections = useCallback(() => {
     const viewportWidth = foldersViewportRef.current?.clientWidth ?? 0;
@@ -450,8 +476,9 @@ export default function Catalog() {
       if (!candidates?.length) return null;
 
       const exactNumberMatch =
-        candidates.find((candidate) => candidate.number === savedClass.number) ??
-        null;
+        candidates.find(
+          (candidate) => candidate.number === savedClass.number
+        ) ?? null;
       const matchedClass = exactNumberMatch ?? candidates[0];
 
       return {
@@ -515,7 +542,9 @@ export default function Catalog() {
         <div className={styles.panel}>
           <ClassBrowser
             onSelect={handleSelect}
-            onCatalogClassAvailabilityChange={handleCatalogClassAvailabilityChange}
+            onCatalogClassAvailabilityChange={
+              handleCatalogClassAvailabilityChange
+            }
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -544,7 +573,9 @@ export default function Catalog() {
           >
             <ClassBrowser
               onSelect={handleSelect}
-              onCatalogClassAvailabilityChange={handleCatalogClassAvailabilityChange}
+              onCatalogClassAvailabilityChange={
+                handleCatalogClassAvailabilityChange
+              }
               semester={term.semester}
               year={term.year}
               terms={terms}
@@ -566,9 +597,14 @@ export default function Catalog() {
       <Flex direction="column" flexGrow="1" className={styles.view}>
         {user && (
           <div className={styles.bookmarkBanner}>
-            <div className={styles.bookmarkFoldersViewport} ref={foldersViewportRef}>
+            <div
+              className={styles.bookmarkFoldersViewport}
+              ref={foldersViewportRef}
+            >
               {collectionsLoading ? (
-                <span className={styles.bookmarkEmptyState}>Loading collections...</span>
+                <span className={styles.bookmarkEmptyState}>
+                  Loading collections...
+                </span>
               ) : cappedOrderedCollections.length > 0 ? (
                 <>
                   <div className={styles.bookmarkFolders}>
@@ -588,7 +624,9 @@ export default function Catalog() {
                     {cappedOrderedCollections.map((collection) => {
                       const folderColor = getColorCSSVar(collection.color);
                       const folderIconStyle = folderColor
-                        ? ({ "--bookmark-folder-color": folderColor } as CSSProperties)
+                        ? ({
+                            "--bookmark-folder-color": folderColor,
+                          } as CSSProperties)
                         : undefined;
 
                       return (
@@ -604,7 +642,11 @@ export default function Catalog() {
                           <Folder
                             width={16}
                             height={16}
-                            className={folderColor ? styles.bookmarkFolderIcon : undefined}
+                            className={
+                              folderColor
+                                ? styles.bookmarkFolderIcon
+                                : undefined
+                            }
                             style={folderIconStyle}
                           />
                           <span className={styles.bookmarkButtonText}>
@@ -616,7 +658,9 @@ export default function Catalog() {
                   </div>
                 </>
               ) : (
-                <span className={styles.bookmarkEmptyState}>No saved classes yet.</span>
+                <span className={styles.bookmarkEmptyState}>
+                  No saved classes yet.
+                </span>
               )}
             </div>
             <Tooltip
