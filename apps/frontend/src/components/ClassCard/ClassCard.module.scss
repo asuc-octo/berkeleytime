@@ -2,6 +2,37 @@
   color: var(--paragraph-color);
 }
 
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.titleDescription {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.gradeContainer {
+  flex: 0 0 auto;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  row-gap: 8px;
+}
+
 .reservedSeating {
   font-size: var(--text-14);
   color: var(--paragraph-color);
