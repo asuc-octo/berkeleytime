@@ -1,0 +1,149 @@
+:root {
+  --light-popular-heading-color: var(--slate-900);
+  --dark-popular-heading-color: var(--slate-100);
+}
+
+@mixin light-theme {
+  --popular-heading-color: var(--light-popular-heading-color);
+}
+
+@mixin dark-theme {
+  --popular-heading-color: var(--dark-popular-heading-color);
+}
+
+.heroTitle {
+  font-size: 1.75rem;
+  font-weight: var(--font-bold);
+  margin: 0;
+  color: var(--heading-color);
+
+  :global(body[data-theme="dark"]) & {
+    color: var(--slate-100);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      color: var(--slate-100);
+    }
+  }
+}
+
+.heading {
+  font-weight: var(--font-bold);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--heading-color);
+
+  :global(body[data-theme="dark"]) & {
+    color: var(--slate-100);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      color: var(--slate-100);
+    }
+  }
+}
+.heroBanner {
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.heroImageContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroLabel {
+  font-size: var(--text-12);
+  font-weight: var(--font-bold);
+  color: var(--blue-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.heroLabel {
+  font-size: var(--text-12);
+  font-weight: var(--font-bold);
+  color: var(--blue-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.heroDescription {
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.activeTab {
+  border-radius: 999px !important;
+  background-color: var(--button-active-color) !important;
+  color: var(--heading-color) !important;
+  border: 1px solid var(--button-active-color) !important;
+}
+
+.inactiveTab {
+  border-radius: 999px;
+}
+.courseGridWrapper {
+  position: relative;
+}
+
+.fadeOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(transparent, var(--background-color));
+  pointer-events: none;
+}
+
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.signInBanner {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.signInTitle {
+  font-size: 1.5rem;
+  font-weight: var(--font-bold);
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.signInDescription {
+  color: var(--paragraph-color);
+  margin: 0;
+}
