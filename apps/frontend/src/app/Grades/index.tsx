@@ -465,45 +465,34 @@ interface OutputListProps {
 }
 
 function OutputList({ outputs, remove }: OutputListProps) {
-  const cards = (
-    <LayoutGroup>
-      <AnimatePresence mode="popLayout">
-        {outputs.map((output, index) => (
-          <motion.div
-            key={getInputSearchParam(output.input)}
-            layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          >
-            <CourseSelectionCard
-              color={output.color}
-              subject={output.input.subject}
-              number={output.input.courseNumber}
-              metadata={getMetadata(output.input)}
-              gradeDistribution={output.data}
-              onClickDelete={() => remove(index)}
-            />
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </LayoutGroup>
-  );
+  if (outputs.length === 0) return null;
 
   return (
     <div className={styles.outputList}>
-      <div className={styles.outputListHeader}>
-        <p className={styles.outputListTitle}>Selected Courses</p>
-      </div>
-      <div className={styles.listContainer}>
-        <div className={styles.classList}>
-          {outputs.length === 0 ? (
-            <div className={styles.emptyState}>Add a course to get started</div>
-          ) : (
-            cards
-          )}
-        </div>
+      <div className={styles.classList}>
+        <LayoutGroup>
+          <AnimatePresence mode="popLayout">
+            {outputs.map((output, index) => (
+              <motion.div
+                key={getInputSearchParam(output.input)}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <CourseSelectionCard
+                  color={output.color}
+                  subject={output.input.subject}
+                  number={output.input.courseNumber}
+                  metadata={getMetadata(output.input)}
+                  gradeDistribution={output.data}
+                  onClickDelete={() => remove(index)}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </LayoutGroup>
       </div>
     </div>
   );
@@ -523,8 +512,6 @@ export default function Grades() {
       {isDesktop ? (
         <div className={styles.panel}>
           <FilterPanel outputs={outputs} setOutputs={setOutputs} />
-          <div className={styles.divider} />
-          <OutputList outputs={outputs} remove={remove} />
         </div>
       ) : (
         <>
@@ -546,8 +533,6 @@ export default function Grades() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
           >
             <FilterPanel outputs={outputs} setOutputs={setOutputs} />
-            <div className={styles.divider} />
-            <OutputList outputs={outputs} remove={remove} />
           </motion.div>
         </>
       )}
@@ -562,6 +547,7 @@ export default function Grades() {
       )}
 
       <div className={styles.view}>
+        <OutputList outputs={outputs} remove={remove} />
         <GradeBarGraph outputs={outputs} />
       </div>
     </div>

@@ -1,11 +1,12 @@
 .root {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   padding: 24px;
 }
 
-.chartWrapper {
+.chartArea {
   flex: 1;
   min-height: 0;
 }
@@ -13,4 +14,65 @@
 .chart {
   width: 100%;
   height: 100%;
+}
+
+.sliderArea {
+  flex-shrink: 0;
+  padding: 0 36px 0 36px;
+}
+
+.sliderDivider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0 0 12px 0;
+}
+
+.sliderTitle {
+  font-weight: var(--font-medium);
+  font-size: var(--text-18);
+  line-height: 20px;
+  color: var(--heading-color);
+  margin: 0 0 4px 0;
+}
+
+.sliderDescription {
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
+  line-height: 20px;
+  color: var(--paragraph-color);
+  margin: 0 0 12px 0;
+}
+
+.sliderWrapper {
+  position: relative;
+}
+
+.thumbLabels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 8px;
+}
+
+.thumbTooltip {
+  position: absolute;
+  transform: translateX(-50%);
+  bottom: 0;
+  white-space: nowrap;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+  animation: fadeIn 100ms ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

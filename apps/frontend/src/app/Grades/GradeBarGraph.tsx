@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ColoredSquare, Slider } from "@repo/theme";
 import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 
 import {
   ChartContainer,
-  ChartTooltip,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
+import tooltipStyles from "@/components/Chart/Chart.module.scss";
 import type { Input } from "@/components/CourseAnalytics/types";
 import type { IGradeDistribution } from "@/lib/api";
 import { LETTER_GRADES } from "@/lib/grades";
@@ -22,6 +25,23 @@ import { LETTER_GRADES } from "@/lib/grades";
 import styles from "./GradeBarGraph.module.scss";
 
 const HORIZONTAL_THRESHOLD = 500;
+
+const ordinal = (n: number): string => {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+};
+
+const isGradeInRange = (
+  pctlLo: number,
+  pctlHi: number,
+  sliderL: number,
+  sliderR: number
+): boolean => {
+  const topLo = 100 - pctlHi;
+  const topHi = 100 - pctlLo;
+  return topLo < sliderR && topHi > sliderL;
+};
 
 interface GradeBarGraphOutput {
   input: Input;
@@ -36,6 +56,8 @@ interface GradeBarGraphProps {
 export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [horizontal, setHorizontal] = useState(false);
+  const [sliderRange, setSliderRange] = useState<[number, number]>([0, 100]);
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -76,21 +98,41 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
       }, 0);
     });
 
-    // Build one row per letter grade, computing percentages from counts
-    const chartData = LETTER_GRADES.map((letter) => {
-      const row: Record<string, number | string> = { letter };
-
+    // Build percentage for each letter grade per course
+    const percentages = LETTER_GRADES.map((letter) => {
+      const row: Record<string, number> = {};
       outputs.forEach((output, i) => {
         const dist = output.data?.distribution;
         if (!dist || totals[i] === 0) {
           row[dataKeys[i]] = 0;
           return;
         }
-
         const grade = dist.find((g) => g.letter === letter);
         row[dataKeys[i]] = ((grade?.count ?? 0) / totals[i]) * 100;
       });
+      return row;
+    });
 
+    // Pre-compute cumulative percentiles (from F upward)
+    const cumulative: Record<string, number>[] = Array.from(
+      { length: LETTER_GRADES.length },
+      () => ({})
+    );
+    dataKeys.forEach((key) => {
+      let cum = 0;
+      for (let i = LETTER_GRADES.length - 1; i >= 0; i--) {
+        cumulative[i][key] = cum;
+        cum += percentages[i][key];
+      }
+    });
+
+    const chartData = LETTER_GRADES.map((letter, i) => {
+      const row: Record<string, number | string> = { letter };
+      dataKeys.forEach((key) => {
+        row[key] = percentages[i][key];
+        row[`${key}_pctlLo`] = cumulative[i][key];
+        row[`${key}_pctlHi`] = cumulative[i][key] + percentages[i][key];
+      });
       return row;
     });
 
@@ -107,7 +149,7 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
       ref={rootRef}
       style={undefined}
     >
-      <div className={styles.chartWrapper}>
+      <div className={styles.chartArea}>
         <ChartContainer config={chartConfig} className={styles.chart}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -137,7 +179,7 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                     type="number"
                     domain={[
                       0,
-                      (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5,
+                      (dataMax: number) => Math.ceil(dataMax / 5) * 5,
                     ]}
                     tickFormatter={(v) => formatters.percent(v, 0)}
                     tick={{
@@ -164,7 +206,7 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                     width={36}
                     domain={[
                       0,
-                      (dataMax: number) => Math.ceil(dataMax / 5) * 5 + 5,
+                      (dataMax: number) => Math.ceil(dataMax / 5) * 5,
                     ]}
                     tickFormatter={(v) => formatters.percent(v, 0)}
                     tick={{
@@ -176,25 +218,116 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
                   />
                 </>
               )}
-              <ChartTooltip
+              <Tooltip
                 cursor={false}
-                tooltipConfig={{
-                  labelFormatter: (label) => `Grade: ${label}`,
-                  valueFormatter: (value) => formatters.percent(value, 1),
-                  indicator: "square",
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  return (
+                    <div className={tooltipStyles.tooltipCard}>
+                      <div className={tooltipStyles.tooltipLabel}>
+                        Grade: {label}
+                      </div>
+                      <div className={tooltipStyles.tooltipItems}>
+                        {payload.map((item) => {
+                          const key = item.dataKey as string;
+                          const row = item.payload;
+                          const pctlLo = row[`${key}_pctlLo`] as number;
+                          const pctlHi = row[`${key}_pctlHi`] as number;
+                          return (
+                            <div
+                              key={key}
+                              className={tooltipStyles.tooltipItem}
+                            >
+                              <span className={tooltipStyles.tooltipItemLabel}>
+                                <ColoredSquare
+                                  size="sm"
+                                  color={chartConfig[key]?.color || item.fill || item.color}
+                                  variant="square"
+                                  className={tooltipStyles.tooltipIndicator}
+                                />
+                                {chartConfig[key]?.label ?? item.name}
+                              </span>
+                              <span className={tooltipStyles.tooltipItemValue}>
+                                {formatters.percent(item.value, 1)}
+                              </span>
+                              <span className={tooltipStyles.tooltipItemValue}>
+                                {ordinal(Math.round(pctlLo))}–{ordinal(Math.round(pctlHi))} pctile
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
                 }}
               />
               {dataKeys.map((key) => (
                 <Bar
                   key={key}
                   dataKey={key}
-                  fill={`var(--color-${key})`}
                   radius={4}
-                />
+                >
+                  {chartData.map((row, i) => {
+                    const pctlLo = row[`${key}_pctlLo`] as number;
+                    const pctlHi = row[`${key}_pctlHi`] as number;
+                    const inRange = isGradeInRange(
+                      pctlLo,
+                      pctlHi,
+                      sliderRange[0],
+                      sliderRange[1]
+                    );
+                    return (
+                      <Cell
+                        key={i}
+                        fill={inRange ? `var(--color-${key})` : "var(--border-color)"}
+                      />
+                    );
+                  })}
+                </Bar>
               ))}
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
+      </div>
+      <div className={styles.sliderArea}>
+        <hr className={styles.sliderDivider} />
+        <p className={styles.sliderTitle}>Filter by percentile</p>
+        <p className={styles.sliderDescription}>
+          Drag the slider to highlight grades within a percentile range.
+        </p>
+        <div
+          className={styles.sliderWrapper}
+          onPointerDown={() => setDragging(true)}
+          onPointerUp={() => setDragging(false)}
+          onPointerLeave={() => setDragging(false)}
+        >
+          {dragging && (
+            <div className={styles.thumbLabels}>
+              {sliderRange.map((val, i) => {
+                const percent = val;
+                const offsetPx = 11 - (percent / 100) * 22;
+                return (
+                  <div
+                    key={i}
+                    className={styles.thumbTooltip}
+                    style={{
+                      left: `calc(${percent}% + ${offsetPx}px)`,
+                    }}
+                  >
+                    Top {val}%
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <Slider
+            min={0}
+            max={100}
+            step={1}
+            value={sliderRange}
+            onValueChange={setSliderRange}
+          />
+        </div>
       </div>
     </div>
   );
