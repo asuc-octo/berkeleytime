@@ -38,10 +38,6 @@
   text-decoration: none;
   white-space: nowrap;
 
-  &:hover {
-    color: var(--orange-600);
-  }
-
   &:focus,
   &:focus-visible {
     outline: none;

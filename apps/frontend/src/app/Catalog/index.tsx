@@ -684,7 +684,7 @@ export default function Catalog() {
         )}
         {displayedClass && !classError && (
           <div className={styles.classContainer}>
-            <Class class={displayedClass} />
+            <Class class={displayedClass} scrollWithinContent />
           </div>
         )}
       </Flex>

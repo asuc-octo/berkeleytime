@@ -6,13 +6,7 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
 import { METRIC_ORDER } from "@repo/shared";
-import {
-  Boundary,
-  Color,
-  Container,
-  LoadingIndicator,
-  Select,
-} from "@repo/theme";
+import { Color, Container, Select } from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
 import {
@@ -475,11 +469,7 @@ export function RatingsContainer() {
       selectedValue !== "all" &&
       selectedSemesterLoading)
   ) {
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
+    return <EmptyState loading />;
   }
 
   return (
