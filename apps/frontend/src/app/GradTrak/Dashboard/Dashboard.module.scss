@@ -4,15 +4,31 @@
   min-height: 0;
   color: var(--heading-color);
 
+  .viewWrapper {
+    flex: 1 1 0;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .viewWrapper:not(.bookmarksOpen) .view {
+    /* When bookmarks sidebar is closed, view fills all space (no white space) */
+    max-width: none;
+  }
+
+  .viewWrapper.bookmarksOpen .view {
+    max-width: 78%;
+  }
+
   .view {
     position: relative;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1 1 0;
+    min-width: 0;
     overflow: hidden;
     scrollbar-color: var(--paragraph-color)
       var(--border-color, rgba(0, 0, 0, 0.1));
-    max-width: 78%;
 
     .header {
       display: flex;

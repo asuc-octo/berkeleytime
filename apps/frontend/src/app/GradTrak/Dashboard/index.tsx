@@ -5,6 +5,7 @@ import classNames from "classnames";
 import {
   ArrowDown,
   ArrowUp,
+  Bookmark,
   Edit,
   Filter,
   Minus,
@@ -52,6 +53,7 @@ import {
 
 import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
+import BookmarksSidebar from "./BookmarksSidebar";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import LabelMenu from "./LabelMenu";
@@ -153,6 +155,7 @@ export default function Dashboard() {
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
   const [showAddBlockMenu, setShowAddBlockMenu] = useState(false);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
+  const [bookmarksSidebarOpen, setBookmarksSidebarOpen] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
   const labels = gradTrak?.labels ?? EMPTY_LABELS;
   const planTerms = gradTrak?.planTerms ?? EMPTY_PLAN_TERMS;
@@ -710,11 +713,16 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className={styles.view}>
-        <div className={styles.header}>
-          <h1>Semesters</h1>
+      <div
+        className={classNames(styles.viewWrapper, {
+          [styles.bookmarksOpen]: bookmarksSidebarOpen,
+        })}
+      >
+        <div className={styles.view}>
+          <div className={styles.header}>
+            <h1>Semesters</h1>
 
-          <div className={styles.buttonsGroup}>
+            <div className={styles.buttonsGroup}>
             <DropdownMenu.Root
               open={filterMenuOpen}
               onOpenChange={setFilterMenuOpen}
@@ -996,6 +1004,21 @@ export default function Dashboard() {
               }
             />
 
+            {!bookmarksSidebarOpen && (
+              <Tooltip
+                content="Bookmarks"
+                trigger={
+                  <Button
+                    variant="secondary"
+                    onClick={() => setBookmarksSidebarOpen(true)}
+                  >
+                    <Bookmark />
+                    Bookmarks
+                  </Button>
+                }
+              />
+            )}
+
             <Tooltip
               content="Edit Major"
               trigger={
@@ -1233,6 +1256,10 @@ export default function Dashboard() {
               ))}
           </div>
         </div>
+      </div>
+        {bookmarksSidebarOpen && (
+          <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />
+        )}
       </div>
     </div>
   );
