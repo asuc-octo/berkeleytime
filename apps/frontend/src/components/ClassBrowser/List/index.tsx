@@ -24,7 +24,7 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query } = useBrowser();
+  const { classes, includedClasses, excludedClasses, loading, year, semester } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -50,10 +50,15 @@ export default function List({ onSelect }: ListProps) {
       .slice(0, MAX_RECENTLY_VIEWED);
   }, [year, semester, recentlyViewedVersion]);
 
+  const allClasses = useMemo(
+    () => [...includedClasses, ...excludedClasses],
+    [includedClasses, excludedClasses]
+  );
+
   const recentlyViewedClasses = useMemo(() => {
     return recentlyViewed
       .map((recent) => {
-        return classes.find(
+        return allClasses.find(
           (c) =>
             c.subject === recent.subject &&
             c.courseNumber === recent.courseNumber &&
@@ -61,9 +66,9 @@ export default function List({ onSelect }: ListProps) {
         );
       })
       .filter((c) => c !== undefined);
-  }, [recentlyViewed, classes]);
+  }, [recentlyViewed, allClasses]);
 
-  const showRecentlyViewed = !query && recentlyViewedClasses.length > 0;
+  const showRecentlyViewed = recentlyViewedClasses.length > 0;
   const visibleRecentlyViewedClasses = useMemo(
     () => recentlyViewedClasses.slice(0, visibleRecentCount),
     [recentlyViewedClasses, visibleRecentCount]
