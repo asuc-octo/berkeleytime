@@ -87,17 +87,13 @@ const serializeSplitClass = ({
 }: CatalogAvailabilityClass): string =>
   [subject, courseNumber, number, sessionId].join(";");
 
-const parseSplitClass = (value: string | null): CatalogAvailabilityClass | null => {
+const parseSplitClass = (
+  value: string | null
+): CatalogAvailabilityClass | null => {
   if (!value) return null;
 
   const [subject, courseNumber, number, sessionId, ...rest] = value.split(";");
-  if (
-    rest.length > 0 ||
-    !subject ||
-    !courseNumber ||
-    !number ||
-    !sessionId
-  ) {
+  if (rest.length > 0 || !subject || !courseNumber || !number || !sessionId) {
     return null;
   }
 
@@ -605,14 +601,14 @@ export default function Catalog() {
   );
 
   const handleSplitViewEnable = useCallback(() => {
-      if (!isWideDesktop) return;
+    if (!isWideDesktop) return;
 
-      const nextSearchParams = new URLSearchParams(searchParams);
-      nextSearchParams.set(SPLIT_MODE_PARAM, "1");
-      // Always initialize split mode with an empty left pane.
-      nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
-      setSearchParams(nextSearchParams);
-    }, [isWideDesktop, searchParams, setSearchParams]);
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(SPLIT_MODE_PARAM, "1");
+    // Always initialize split mode with an empty left pane.
+    nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+    setSearchParams(nextSearchParams);
+  }, [isWideDesktop, searchParams, setSearchParams]);
 
   const handleExpandFromSplit = useCallback(
     (splitSourceClass: CatalogAvailabilityClass) => {
@@ -686,7 +682,13 @@ export default function Catalog() {
         pathname: `/catalog/${savedClass.year}/${savedClass.semester}/${savedClass.subject}/${savedClass.courseNumber}/${savedClass.number}/${savedClass.sessionId}`,
       });
     },
-    [handleSplitClassSelection, location, navigate, splitRightSelection, splitViewActive]
+    [
+      handleSplitClassSelection,
+      location,
+      navigate,
+      splitRightSelection,
+      splitViewActive,
+    ]
   );
   const handleGoToCollectionsPage = useCallback(() => {
     navigate("/profile/bookmarks");

@@ -293,7 +293,9 @@ export default function Class({
     typeof onSplitAreaClick === "function" &&
     (splitAreaActionMode === "close" || splitAreaAvailable);
   const splitAreaButtonLabel =
-    splitAreaActionMode === "close" ? "Expand this class" : "Open in split view";
+    splitAreaActionMode === "close"
+      ? "Expand this class"
+      : "Open in split view";
 
   useEffect(() => {
     if (!_class) return;
