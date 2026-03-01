@@ -191,7 +191,7 @@ export default function GradeBarGraph({ outputs, onHorizontalChange }: GradeBarG
                   key={key}
                   dataKey={key}
                   fill={`var(--color-${key})`}
-                  radius={8}
+                  radius={4}
                 />
               ))}
             </BarChart>
