@@ -3,12 +3,15 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  padding: 24px;
+  padding: 12px 24px 24px 24px;
 }
 
 .chartArea {
   flex: 1;
   min-height: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
 }
 
 .chart {
@@ -18,13 +21,7 @@
 
 .sliderArea {
   flex-shrink: 0;
-  padding: 0 36px 0 36px;
-}
-
-.sliderDivider {
-  border: none;
-  border-top: 1px solid var(--border-color);
-  margin: 0 0 12px 0;
+  padding: 24px 0 16px 0;
 }
 
 .sliderTitle {
@@ -45,6 +42,7 @@
 
 .sliderWrapper {
   position: relative;
+  padding: 0 16px;
 }
 
 .thumbLabels {

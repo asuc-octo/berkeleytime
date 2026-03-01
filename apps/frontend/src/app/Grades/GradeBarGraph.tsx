@@ -290,7 +290,6 @@ export default function GradeBarGraph({ outputs }: GradeBarGraphProps) {
         </ChartContainer>
       </div>
       <div className={styles.sliderArea}>
-        <hr className={styles.sliderDivider} />
         <p className={styles.sliderTitle}>Filter by percentile</p>
         <p className={styles.sliderDescription}>
           Drag the slider to highlight grades within a percentile range.
