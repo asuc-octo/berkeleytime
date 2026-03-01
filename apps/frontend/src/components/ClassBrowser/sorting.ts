@@ -65,12 +65,27 @@ const compareAlphabetical = (
     return subjectComparison * direction;
   }
 
-  const courseNumberComparison = a.number.localeCompare(b.number);
+  const courseNumberComparison = a.courseNumber.localeCompare(b.courseNumber, undefined, {
+    numeric: true,
+  });
   if (courseNumberComparison !== 0) {
     return courseNumberComparison * direction;
   }
 
-  return a.number.localeCompare(b.number) * direction;
+  return a.number.localeCompare(b.number, undefined, { numeric: true }) * direction;
+};
+
+const getViewCount = (_class: ICatalogClass) =>
+  typeof _class.viewCount === "number" ? _class.viewCount : 0;
+
+const compareViewCount: Comparator = (a, b, direction) => {
+  const difference = getViewCount(a) - getViewCount(b);
+
+  if (difference !== 0) {
+    return difference * direction;
+  }
+
+  return compareAlphabetical(a, b, 1);
 };
 
 const getPassFailPercentage = (
@@ -272,13 +287,8 @@ const sortWithRelevance = (
 
 const sortByRelevance: Sorter = ({ classes, order, relevanceScores }) => {
   if (!relevanceScores || relevanceScores.size === 0) {
-    const result = [...classes];
-
-    if (order === "desc") {
-      result.reverse();
-    }
-
-    return result;
+    const viewDirection = order === "asc" ? -1 : 1;
+    return [...classes].sort((a, b) => compareViewCount(a, b, viewDirection));
   }
 
   return [...classes].sort((a, b) => {
