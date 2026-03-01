@@ -14,7 +14,6 @@ export enum SortBy {
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
