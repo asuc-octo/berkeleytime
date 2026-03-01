@@ -17,6 +17,7 @@ import {
 
 export interface BrowserContextType {
   responsive: boolean;
+  splitResponsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   classes: ICatalogClass[];

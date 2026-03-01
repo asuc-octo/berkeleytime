@@ -147,6 +147,7 @@ export function RatingsContainer() {
       return true;
     });
   }, [userRatingsData]);
+  const showUserOnlyRatings = Boolean(userRatings) && !hasRatings;
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
@@ -483,7 +484,22 @@ export function RatingsContainer() {
 
   return (
     <>
-      {!hasRatings ? (
+      {showUserOnlyRatings ? (
+        <div className={styles.root}>
+          <Container size="3">
+            {userRatings && (
+              <UserRatingSummary
+                userRatings={userRatings}
+                onOpenModal={handleModalStateChange}
+                ratingDelete={() => setIsDeleteModalOpen(true)}
+              />
+            )}
+            <p className={styles.userOnlyMessage}>
+              Only your rating is shown for this course.
+            </p>
+          </Container>
+        </div>
+      ) : !hasRatings ? (
         <EmptyState
           icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
           heading="No Course Ratings"

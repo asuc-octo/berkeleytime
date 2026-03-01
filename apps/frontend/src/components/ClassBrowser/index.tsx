@@ -52,7 +52,16 @@ interface ClassBrowserProps {
     number: string,
     sessionId: string
   ) => void;
+  onCatalogClassAvailabilityChange?: (
+    classes: {
+      subject: string;
+      courseNumber: string;
+      number: string;
+      sessionId: string;
+    }[]
+  ) => void;
   responsive?: boolean;
+  splitResponsive?: boolean;
   semester: Semester;
   year: number;
   terms?: ITerm[];
@@ -61,7 +70,9 @@ interface ClassBrowserProps {
 
 export default function ClassBrowser({
   onSelect,
+  onCatalogClassAvailabilityChange,
   responsive = true,
+  splitResponsive = false,
   semester: currentSemester,
   year: currentYear,
   terms,
@@ -102,6 +113,20 @@ export default function ClassBrowser({
   });
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
+  const catalogAvailabilityClasses = useMemo(
+    () =>
+      classes.map((_class) => ({
+        subject: _class.subject,
+        courseNumber: _class.courseNumber,
+        number: _class.number,
+        sessionId: _class.sessionId,
+      })),
+    [classes]
+  );
+
+  useEffect(() => {
+    onCatalogClassAvailabilityChange?.(catalogAvailabilityClasses);
+  }, [onCatalogClassAvailabilityChange, catalogAvailabilityClasses]);
 
   const query = localQuery;
 
@@ -402,6 +427,7 @@ export default function ClassBrowser({
       value={{
         expanded,
         responsive,
+        splitResponsive,
         sortBy,
         classes: filteredClasses,
         includedClasses,
@@ -474,6 +500,7 @@ export default function ClassBrowser({
       <div
         className={classNames(styles.root, {
           [styles.responsive]: responsive,
+          [styles.splitResponsive]: splitResponsive,
           [styles.expanded]: expanded,
         })}
       >

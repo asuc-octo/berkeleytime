@@ -145,7 +145,13 @@
  * - Colors are applied to both badges and dropdown items
  * - Options can include meta text for additional information (e.g., counts)
  */
-import { useEffect, useImperativeHandle, useMemo, useState } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Flex } from "@radix-ui/themes";
 import classNames from "classnames";
@@ -154,7 +160,6 @@ import { NavArrowDown, Plus, Search, Xmark } from "iconoir-react";
 import { DropdownMenu, Popover } from "radix-ui";
 
 import { useStack } from "../../hooks/useStack";
-import { Badge } from "../Badge";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
@@ -220,6 +225,11 @@ export interface SelectProps<T> {
   maxListHeight?: number;
 }
 
+const hasVerticalOverflow = (element: HTMLElement | null): boolean => {
+  if (!element) return false;
+  return element.scrollHeight > element.clientHeight + 1;
+};
+
 export function Select<T>({
   options = [],
   value,
@@ -248,9 +258,13 @@ export function Select<T>({
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [showContentDivider, setShowContentDivider] = useState(false);
+  const [showCommandListDivider, setShowCommandListDivider] = useState(false);
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
     tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const commandListRef = useRef<HTMLDivElement | null>(null);
 
   const stack = useStack();
   const contentZIndex = Math.max(1010, stack + 1);
@@ -322,6 +336,21 @@ export function Select<T>({
     [options, tabs, activeTabValue]
   );
 
+  useEffect(() => {
+    if (!open) {
+      setShowContentDivider(false);
+      setShowCommandListDivider(false);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      setShowContentDivider(hasVerticalOverflow(contentRef.current));
+      setShowCommandListDivider(hasVerticalOverflow(commandListRef.current));
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, currentOptions, searchValue, maxListHeight, activeTabValue]);
+
   const optionUniverse = useMemo(
     () => (tabs?.length ? tabs.flatMap((tab) => tab.options) : options),
     [tabs, options]
@@ -331,6 +360,16 @@ export function Select<T>({
     () => optionUniverse.filter(isOptionItem),
     [optionUniverse]
   );
+
+  const getMultiSelectionText = (selectedOptions: OptionItem<T>[]): string => {
+    if (selectedOptions.length === 0) return effectivePlaceholder;
+    if (selectedOptions.length === 1) return selectedOptions[0].label;
+    if (selectedOptions.length === 2) {
+      return `${selectedOptions[0].label} and ${selectedOptions[1].label}`;
+    }
+
+    return `${selectedOptions[0].label} + ${selectedOptions.length - 1} others`;
+  };
 
   // Keep select usable even when no options match; only disable when explicitly disabled or loading
   const effectiveDisabled = disabled || loading;
@@ -368,44 +407,17 @@ export function Select<T>({
     }
   };
 
-  const handleRemoveBadge = (optValue: T) => {
-    if (!Array.isArray(value)) return;
-    onChange(value.filter((v) => !deepEqual(v, optValue)));
-  };
-
   // Trigger content (shared between searchable and non-searchable)
   const triggerContent = (
     <>
       <div className={styles.triggerLabel}>
-        {hasSelection ? (
-          Array.isArray(activeElem) ? (
-            <Flex className={styles.badgeContainer}>
-              {activeElem.map((el) => (
-                <Badge
-                  key={el.label}
-                  label={el.label}
-                  color={el.color ? el.color : Color.Blue}
-                  icon={
-                    <Xmark
-                      style={{ zIndex: 100 }}
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        handleRemoveBadge(el.value);
-                        e.preventDefault();
-                      }}
-                    />
-                  }
-                />
-              ))}
-            </Flex>
-          ) : activeElem ? (
-            (activeElem as OptionItem<T>).label
-          ) : (
-            selectedLabel
-          )
-        ) : (
-          effectivePlaceholder
-        )}
+        {hasSelection
+          ? Array.isArray(activeElem)
+            ? getMultiSelectionText(activeElem)
+            : activeElem
+              ? (activeElem as OptionItem<T>).label
+              : selectedLabel
+          : effectivePlaceholder}
       </div>
       <Flex
         direction="row"
@@ -595,7 +607,10 @@ export function Select<T>({
                   </div>
                 ) : null}
                 <Command.List
-                  className={styles.commandList}
+                  ref={commandListRef}
+                  className={classNames(styles.commandList, {
+                    [styles.showDivider]: showCommandListDivider,
+                  })}
                   style={
                     maxListHeight ? { maxHeight: maxListHeight } : undefined
                   }
@@ -634,7 +649,10 @@ export function Select<T>({
       {!effectiveDisabled && (
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className={styles.content}
+            ref={contentRef}
+            className={classNames(styles.content, {
+              [styles.showDivider]: showContentDivider,
+            })}
             style={{
               width: triggerWidth,
               zIndex: contentZIndex,

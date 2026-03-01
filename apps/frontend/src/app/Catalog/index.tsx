@@ -1,33 +1,58 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { NavArrowRight } from "iconoir-react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Book, Folder, NavArrowRight } from "iconoir-react";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
-import { Flex } from "@repo/theme";
+import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import { useReadTerms } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import {
+  useGetAllCollections,
+  useGetCollectionById,
+} from "@/hooks/api/collections";
+import useUser from "@/hooks/useUser";
+import { getColorCSSVar } from "@/lib/colors";
 import { Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
+import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
 import CatalogSkeleton from "./Skeleton";
 
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
+const DESKTOP_BREAKPOINT = 992;
+const WIDE_DESKTOP_BREAKPOINT = 1400;
+const SPLIT_MODE_PARAM = "split";
+const SPLIT_LEFT_CLASS_PARAM = "splitLeft";
+
+const useMinWidth = (breakpoint: number) => {
+  const [matches, setMatches] = useState(() => window.innerWidth > breakpoint);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(width > 992px)");
-    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    const mediaQuery = window.matchMedia(`(width > ${breakpoint}px)`);
+    const handleChange = (e: MediaQueryListEvent) => setMatches(e.matches);
 
+    setMatches(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  }, [breakpoint]);
 
-  return isDesktop;
+  return matches;
 };
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
@@ -37,6 +62,235 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Fall]: 2,
   [Semester.Winter]: 3,
 };
+
+type SavedClassItem = {
+  year: number;
+  semester: Semester;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId: string;
+};
+
+type CatalogAvailabilityClass = {
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId: string;
+};
+
+const serializeSplitClass = ({
+  subject,
+  courseNumber,
+  number,
+  sessionId,
+}: CatalogAvailabilityClass): string =>
+  [subject, courseNumber, number, sessionId].join(";");
+
+const parseSplitClass = (
+  value: string | null
+): CatalogAvailabilityClass | null => {
+  if (!value) return null;
+
+  const [subject, courseNumber, number, sessionId, ...rest] = value.split(";");
+  if (rest.length > 0 || !subject || !courseNumber || !number || !sessionId) {
+    return null;
+  }
+
+  return {
+    subject,
+    courseNumber,
+    number,
+    sessionId,
+  };
+};
+
+const isSameClass = (
+  left: CatalogAvailabilityClass,
+  right: CatalogAvailabilityClass
+) =>
+  left.subject === right.subject &&
+  left.courseNumber === right.courseNumber &&
+  left.number === right.number &&
+  left.sessionId === right.sessionId;
+
+type CollectionSummaryItem = {
+  id: string;
+  name: string;
+  classCount: number;
+  color: Color | null;
+  isSystem: boolean;
+  isPinned: boolean;
+  pinnedAt: number | null;
+  lastAdd: number;
+};
+
+function SavedCollectionSection({
+  collection,
+  index,
+  onSelect,
+  resolveCurrentTermClass,
+}: {
+  collection: CollectionSummaryItem;
+  index: number;
+  onSelect: (savedClass: SavedClassItem) => void;
+  resolveCurrentTermClass: (
+    savedClass: SavedClassItem
+  ) => SavedClassItem | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const { data: collectionData, loading } = useGetCollectionById(
+    collection.id,
+    {
+      skip: !open,
+    }
+  );
+
+  const savedClasses = useMemo<SavedClassItem[]>(() => {
+    if (!collectionData?.classes) return [];
+
+    return collectionData.classes
+      .map((entry): SavedClassItem | null => {
+        const savedClass = entry.class;
+        if (
+          !savedClass ||
+          typeof savedClass.year !== "number" ||
+          !savedClass.semester ||
+          !savedClass.sessionId ||
+          !savedClass.subject ||
+          !savedClass.courseNumber ||
+          !savedClass.number
+        ) {
+          return null;
+        }
+
+        return {
+          year: savedClass.year,
+          semester: savedClass.semester as Semester,
+          subject: savedClass.subject,
+          courseNumber: savedClass.courseNumber,
+          number: savedClass.number,
+          sessionId: savedClass.sessionId,
+        };
+      })
+      .filter((savedClass): savedClass is SavedClassItem => savedClass !== null)
+      .sort((a, b) => {
+        return (
+          b.year - a.year ||
+          SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester] ||
+          a.subject.localeCompare(b.subject) ||
+          a.courseNumber.localeCompare(b.courseNumber, undefined, {
+            numeric: true,
+          }) ||
+          a.number.localeCompare(b.number, undefined, { numeric: true })
+        );
+      });
+  }, [collectionData]);
+
+  const savedClassEntries = useMemo(
+    () =>
+      savedClasses.map((savedClass) => {
+        const currentTermClass = resolveCurrentTermClass(savedClass);
+        return {
+          savedClass,
+          currentTermClass,
+          isUnavailable: !currentTermClass,
+        };
+      }),
+    [savedClasses, resolveCurrentTermClass]
+  );
+
+  const sortedSavedClassEntries = useMemo(() => {
+    const available = savedClassEntries.filter((entry) => !entry.isUnavailable);
+    const unavailable = savedClassEntries.filter(
+      (entry) => entry.isUnavailable
+    );
+    return [...available, ...unavailable];
+  }, [savedClassEntries]);
+
+  const folderColor = getColorCSSVar(collection.color);
+  const folderIconStyle = folderColor
+    ? ({ "--bookmark-folder-color": folderColor } as CSSProperties)
+    : undefined;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6, scale: 0.98 }}
+      transition={{
+        layout: { type: "spring", stiffness: 420, damping: 34 },
+        opacity: { duration: 0.2, delay: index * 0.02 },
+        y: { type: "spring", stiffness: 420, damping: 34, delay: index * 0.02 },
+        scale: {
+          type: "spring",
+          stiffness: 420,
+          damping: 34,
+          delay: index * 0.02,
+        },
+      }}
+    >
+      <DropdownMenu.Root modal={false} open={open} onOpenChange={setOpen}>
+        <DropdownMenu.Trigger asChild>
+          <button type="button" className={styles.bookmarkButton}>
+            <Folder
+              width={16}
+              height={16}
+              className={folderColor ? styles.bookmarkFolderIcon : undefined}
+              style={folderIconStyle}
+            />
+            <span className={styles.bookmarkButtonText}>{collection.name}</span>
+          </button>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content
+          align="start"
+          side="bottom"
+          sideOffset={6}
+          className={styles.bookmarkDropdown}
+        >
+          {loading ? (
+            <DropdownMenu.Item disabled>Loading classes...</DropdownMenu.Item>
+          ) : sortedSavedClassEntries.length > 0 ? (
+            sortedSavedClassEntries.map(
+              ({ savedClass, currentTermClass, isUnavailable }) => {
+                return (
+                  <DropdownMenu.Item
+                    key={`${collection.id}-${savedClass.year}-${savedClass.semester}-${savedClass.subject}-${savedClass.courseNumber}-${savedClass.number}-${savedClass.sessionId}`}
+                    disabled={isUnavailable}
+                    className={
+                      isUnavailable ? styles.bookmarkUnavailableItem : undefined
+                    }
+                    onSelect={() => {
+                      if (!currentTermClass) return;
+                      onSelect(currentTermClass);
+                    }}
+                    title={`${savedClass.subject} ${savedClass.courseNumber}`}
+                  >
+                    <span className={styles.bookmarkClassOption}>
+                      <span>
+                        {savedClass.subject} {savedClass.courseNumber}
+                      </span>
+                      {isUnavailable && (
+                        <span className={styles.bookmarkUnavailableHint}>
+                          Unavailable for term
+                        </span>
+                      )}
+                    </span>
+                  </DropdownMenu.Item>
+                );
+              }
+            )
+          ) : (
+            <DropdownMenu.Item disabled>
+              No classes in this collection.
+            </DropdownMenu.Item>
+          )}
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    </motion.div>
+  );
+}
 
 export default function Catalog() {
   const {
@@ -50,15 +304,37 @@ export default function Catalog() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { user } = useUser();
 
-  const isDesktop = useIsDesktop();
+  const isDesktop = useMinWidth(DESKTOP_BREAKPOINT);
+  const isWideDesktop = useMinWidth(WIDE_DESKTOP_BREAKPOINT);
   const hasClassSelected = Boolean(providedSubject && courseNumber && number);
+  const splitRequested = searchParams.get(SPLIT_MODE_PARAM) === "1";
+  const splitLeftSelection = useMemo(
+    () => parseSplitClass(searchParams.get(SPLIT_LEFT_CLASS_PARAM)),
+    [searchParams]
+  );
+  const splitEnabled = isWideDesktop && splitRequested;
 
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
     () => !isDesktop && !hasClassSelected
   );
 
   const { data: terms, loading: termsLoading } = useReadTerms();
+  const { data: collections, loading: collectionsLoading } =
+    useGetAllCollections({
+      skip: !user,
+    });
+  const [catalogAvailabilityClasses, setCatalogAvailabilityClasses] = useState<
+    CatalogAvailabilityClass[]
+  >([]);
+  const handleCatalogClassAvailabilityChange = useCallback(
+    (classes: CatalogAvailabilityClass[]) => {
+      setCatalogAvailabilityClasses(classes);
+    },
+    []
+  );
 
   const semester = useMemo(() => {
     if (!providedSemester) return null;
@@ -104,10 +380,22 @@ export default function Catalog() {
     return selectedTerm;
   }, [terms, year, semester]);
 
+  useEffect(() => {
+    setCatalogAvailabilityClasses([]);
+  }, [term?.year, term?.semester]);
+
   const subject = useMemo(
     () => providedSubject?.toUpperCase(),
     [providedSubject]
   );
+
+  useEffect(() => {
+    if (isWideDesktop || !searchParams.has(SPLIT_LEFT_CLASS_PARAM)) return;
+
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+    setSearchParams(nextSearchParams, { replace: true });
+  }, [isWideDesktop, searchParams, setSearchParams]);
 
   // Auto-expand drawer on mobile when no class is selected
   useEffect(() => {
@@ -134,6 +422,217 @@ export default function Catalog() {
     lastClassRef.current = _class;
   }
   const displayedClass = _class ?? lastClassRef.current;
+  const splitRightSelection = useMemo(() => {
+    if (!displayedClass) return null;
+    return {
+      subject: displayedClass.subject,
+      courseNumber: displayedClass.courseNumber,
+      number: displayedClass.number,
+      sessionId: displayedClass.sessionId,
+    } as CatalogAvailabilityClass;
+  }, [displayedClass]);
+  const splitViewActive = splitEnabled && Boolean(displayedClass);
+  const hasSplitLeftSelection = splitViewActive && Boolean(splitLeftSelection);
+
+  const { data: splitLeftClassData } = useGetClass(
+    term?.year as number,
+    term?.semester as Semester,
+    splitLeftSelection?.sessionId as string,
+    splitLeftSelection?.subject as string,
+    splitLeftSelection?.courseNumber as string,
+    splitLeftSelection?.number as string,
+    {
+      skip: !hasSplitLeftSelection || !term,
+    }
+  );
+  const displayedSplitLeftClass = hasSplitLeftSelection
+    ? splitLeftClassData
+    : null;
+
+  const orderedNonEmptyCollections = useMemo<CollectionSummaryItem[]>(() => {
+    if (!collections) return [];
+
+    return collections
+      .filter((collection) => {
+        return Boolean(collection._id && collection.name);
+      })
+      .map((collection) => ({
+        id: collection._id,
+        name: collection.name,
+        classCount: collection.classes?.length ?? 0,
+        color: (collection.color ?? null) as Color | null,
+        isSystem: collection.isSystem,
+        isPinned: !!collection.pinnedAt,
+        pinnedAt: collection.pinnedAt
+          ? new Date(collection.pinnedAt).getTime()
+          : null,
+        lastAdd: new Date(collection.lastAdd).getTime(),
+      }))
+      .filter((collection) => collection.classCount > 0)
+      .sort(compareCollectionsByBookmarksOrder);
+  }, [collections]);
+  const cappedOrderedCollections = useMemo(
+    () => orderedNonEmptyCollections.slice(0, 5),
+    [orderedNonEmptyCollections]
+  );
+  const foldersViewportRef = useRef<HTMLDivElement | null>(null);
+  const measureButtonRefs = useRef<Record<string, HTMLButtonElement | null>>(
+    {}
+  );
+  const [visibleCollectionIds, setVisibleCollectionIds] = useState<string[]>(
+    []
+  );
+
+  const recomputeVisibleCollections = useCallback(() => {
+    const viewportWidth = foldersViewportRef.current?.clientWidth ?? 0;
+    if (viewportWidth <= 0) {
+      setVisibleCollectionIds([]);
+      return;
+    }
+
+    const gapPx = 8;
+    let usedWidth = 0;
+    const nextVisibleIds: string[] = [];
+
+    for (const collection of cappedOrderedCollections) {
+      const buttonEl = measureButtonRefs.current[collection.id];
+      const buttonWidth = buttonEl?.offsetWidth ?? 0;
+      if (buttonWidth <= 0) continue;
+
+      const requiredWidth = nextVisibleIds.length
+        ? buttonWidth + gapPx
+        : buttonWidth;
+      if (usedWidth + requiredWidth > viewportWidth + 0.5) break;
+
+      nextVisibleIds.push(collection.id);
+      usedWidth += requiredWidth;
+    }
+
+    setVisibleCollectionIds(nextVisibleIds);
+  }, [cappedOrderedCollections]);
+
+  useEffect(() => {
+    recomputeVisibleCollections();
+  }, [recomputeVisibleCollections]);
+
+  useEffect(() => {
+    const viewportEl = foldersViewportRef.current;
+    if (!viewportEl) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      recomputeVisibleCollections();
+    });
+    resizeObserver.observe(viewportEl);
+    Object.values(measureButtonRefs.current).forEach((buttonEl) => {
+      if (buttonEl) resizeObserver.observe(buttonEl);
+    });
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [cappedOrderedCollections, recomputeVisibleCollections]);
+
+  const visibleCollections = useMemo(() => {
+    const visibleIds = new Set(visibleCollectionIds);
+    return cappedOrderedCollections.filter((collection) =>
+      visibleIds.has(collection.id)
+    );
+  }, [cappedOrderedCollections, visibleCollectionIds]);
+
+  const catalogAvailabilityByCourse = useMemo(() => {
+    const map = new Map<string, CatalogAvailabilityClass[]>();
+
+    catalogAvailabilityClasses.forEach((_class) => {
+      const key = `${_class.subject.toUpperCase()}|${_class.courseNumber.toUpperCase()}`;
+      const existing = map.get(key);
+      if (existing) {
+        existing.push(_class);
+      } else {
+        map.set(key, [_class]);
+      }
+    });
+
+    return map;
+  }, [catalogAvailabilityClasses]);
+
+  const resolveCurrentTermClass = useCallback(
+    (savedClass: SavedClassItem): SavedClassItem | null => {
+      if (!term) return null;
+
+      const key = `${savedClass.subject.toUpperCase()}|${savedClass.courseNumber.toUpperCase()}`;
+      const candidates = catalogAvailabilityByCourse.get(key);
+      if (!candidates?.length) return null;
+
+      const exactNumberMatch =
+        candidates.find(
+          (candidate) => candidate.number === savedClass.number
+        ) ?? null;
+      const matchedClass = exactNumberMatch ?? candidates[0];
+
+      return {
+        year: term.year,
+        semester: term.semester,
+        subject: matchedClass.subject,
+        courseNumber: matchedClass.courseNumber,
+        number: matchedClass.number,
+        sessionId: matchedClass.sessionId,
+      };
+    },
+    [catalogAvailabilityByCourse, term]
+  );
+
+  const handleSplitClassSelection = useCallback(
+    (nextClass: CatalogAvailabilityClass) => {
+      if (!isWideDesktop || !splitRightSelection) return;
+
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.set(SPLIT_MODE_PARAM, "1");
+      if (isSameClass(nextClass, splitRightSelection)) {
+        nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+      } else {
+        nextSearchParams.set(
+          SPLIT_LEFT_CLASS_PARAM,
+          serializeSplitClass(nextClass)
+        );
+      }
+      setSearchParams(nextSearchParams);
+    },
+    [isWideDesktop, searchParams, setSearchParams, splitRightSelection]
+  );
+
+  const handleSplitViewEnable = useCallback(() => {
+    if (!isWideDesktop) return;
+
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.set(SPLIT_MODE_PARAM, "1");
+    // Always initialize split mode with an empty left pane.
+    nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+    setSearchParams(nextSearchParams);
+  }, [isWideDesktop, searchParams, setSearchParams]);
+
+  const handleExpandFromSplit = useCallback(
+    (splitSourceClass: CatalogAvailabilityClass) => {
+      if (!term) return;
+
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete(SPLIT_MODE_PARAM);
+      nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+      const nextSearch = nextSearchParams.toString();
+      const nextPathname = `/catalog/${term.year}/${term.semester}/${splitSourceClass.subject}/${splitSourceClass.courseNumber}/${splitSourceClass.number}/${splitSourceClass.sessionId}`;
+
+      if (location.pathname === nextPathname) {
+        setSearchParams(nextSearchParams);
+        return;
+      }
+
+      navigate({
+        ...location,
+        pathname: nextPathname,
+        search: nextSearch ? `?${nextSearch}` : "",
+      });
+    },
+    [location, navigate, searchParams, setSearchParams, term]
+  );
 
   const handleSelect = useCallback(
     (
@@ -144,6 +643,16 @@ export default function Catalog() {
     ) => {
       if (!term) return;
 
+      if (splitViewActive && splitRightSelection) {
+        handleSplitClassSelection({
+          subject,
+          courseNumber,
+          number,
+          sessionId,
+        });
+        return;
+      }
+
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
@@ -151,8 +660,39 @@ export default function Catalog() {
         pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [navigate, location, term]
+    [
+      handleSplitClassSelection,
+      location,
+      navigate,
+      splitRightSelection,
+      splitViewActive,
+      term,
+    ]
   );
+
+  const handleSavedClassSelect = useCallback(
+    (savedClass: SavedClassItem) => {
+      if (splitViewActive && splitRightSelection) {
+        handleSplitClassSelection(savedClass);
+        return;
+      }
+
+      navigate({
+        ...location,
+        pathname: `/catalog/${savedClass.year}/${savedClass.semester}/${savedClass.subject}/${savedClass.courseNumber}/${savedClass.number}/${savedClass.sessionId}`,
+      });
+    },
+    [
+      handleSplitClassSelection,
+      location,
+      navigate,
+      splitRightSelection,
+      splitViewActive,
+    ]
+  );
+  const handleGoToCollectionsPage = useCallback(() => {
+    navigate("/profile/bookmarks");
+  }, [navigate]);
 
   if (termsLoading) {
     return <CatalogSkeleton />;
@@ -171,6 +711,10 @@ export default function Catalog() {
         <div className={styles.panel}>
           <ClassBrowser
             onSelect={handleSelect}
+            onCatalogClassAvailabilityChange={
+              handleCatalogClassAvailabilityChange
+            }
+            splitResponsive={splitViewActive}
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -199,6 +743,10 @@ export default function Catalog() {
           >
             <ClassBrowser
               onSelect={handleSelect}
+              onCatalogClassAvailabilityChange={
+                handleCatalogClassAvailabilityChange
+              }
+              splitResponsive={splitViewActive}
               semester={term.semester}
               year={term.year}
               terms={terms}
@@ -218,10 +766,126 @@ export default function Catalog() {
       )}
 
       <Flex direction="column" flexGrow="1" className={styles.view}>
-        {displayedClass && !classError && (
-          <div className={styles.classContainer}>
-            <Class class={displayedClass} />
+        {user && (
+          <div className={styles.bookmarkBanner}>
+            <div
+              className={styles.bookmarkFoldersViewport}
+              ref={foldersViewportRef}
+            >
+              {collectionsLoading ? (
+                <span className={styles.bookmarkEmptyState}>
+                  Loading collections...
+                </span>
+              ) : cappedOrderedCollections.length > 0 ? (
+                <>
+                  <div className={styles.bookmarkFolders}>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {visibleCollections.map((collection, index) => (
+                        <SavedCollectionSection
+                          key={collection.id}
+                          collection={collection}
+                          index={index}
+                          onSelect={handleSavedClassSelect}
+                          resolveCurrentTermClass={resolveCurrentTermClass}
+                        />
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <div className={styles.bookmarkMeasureRow} aria-hidden="true">
+                    {cappedOrderedCollections.map((collection) => {
+                      const folderColor = getColorCSSVar(collection.color);
+                      const folderIconStyle = folderColor
+                        ? ({
+                            "--bookmark-folder-color": folderColor,
+                          } as CSSProperties)
+                        : undefined;
+
+                      return (
+                        <button
+                          key={`measure-${collection.id}`}
+                          type="button"
+                          className={styles.bookmarkButton}
+                          tabIndex={-1}
+                          ref={(el) => {
+                            measureButtonRefs.current[collection.id] = el;
+                          }}
+                        >
+                          <Folder
+                            width={16}
+                            height={16}
+                            className={
+                              folderColor
+                                ? styles.bookmarkFolderIcon
+                                : undefined
+                            }
+                            style={folderIconStyle}
+                          />
+                          <span className={styles.bookmarkButtonText}>
+                            {collection.name}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <span className={styles.bookmarkEmptyState}>
+                  No saved classes yet.
+                </span>
+              )}
+            </div>
+            <Tooltip
+              title="Collections page"
+              side="bottom"
+              trigger={
+                <button
+                  type="button"
+                  className={styles.bookmarkCollectionsButton}
+                  onClick={handleGoToCollectionsPage}
+                  aria-label="Go to collections page"
+                >
+                  <Book width={16} height={16} />
+                </button>
+              }
+            />
           </div>
+        )}
+        {displayedClass && !classError && (
+          <>
+            {splitViewActive ? (
+              <div className={styles.classSplitContainer}>
+                <div className={styles.classSplitPane}>
+                  {displayedSplitLeftClass ? (
+                    <Class
+                      class={displayedSplitLeftClass}
+                      splitAreaActionMode="close"
+                      onSplitAreaClick={handleExpandFromSplit}
+                    />
+                  ) : (
+                    <div className={styles.classSplitEmptyState}>
+                      Select another class from the catalog to open it in the
+                      left pane.
+                    </div>
+                  )}
+                </div>
+                <div className={styles.classSplitPane}>
+                  <Class
+                    class={displayedClass}
+                    splitAreaActionMode="close"
+                    onSplitAreaClick={handleExpandFromSplit}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className={styles.classContainer}>
+                <Class
+                  class={displayedClass}
+                  splitAreaAvailable={isWideDesktop}
+                  onSplitAreaClick={handleSplitViewEnable}
+                />
+              </div>
+            )}
+          </>
         )}
       </Flex>
     </div>

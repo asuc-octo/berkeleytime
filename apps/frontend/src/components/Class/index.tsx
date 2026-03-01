@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import { OpenNewWindow } from "iconoir-react";
+import { Expand, OpenNewWindow, SplitSquareDashed } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import { Link, useLocation } from "react-router-dom";
 
@@ -108,8 +108,24 @@ interface UncontrolledProps {
   number: string;
 }
 
+interface SplitAreaClassInfo {
+  year: number;
+  semester: Semester;
+  sessionId: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}
+
+type SplitAreaActionMode = "open" | "close";
+
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
+type ClassProps = {
+  dialog?: boolean;
+  splitAreaAvailable?: boolean;
+  splitAreaActionMode?: SplitAreaActionMode;
+  onSplitAreaClick?: (classInfo: SplitAreaClassInfo) => void;
+} & (ControlledProps | UncontrolledProps);
 
 const ratingsTabClasses: RatingsTabClasses = {
   badge: styles.badge,
@@ -143,6 +159,9 @@ export default function Class({
   class: providedClass,
   course: providedCourse,
   dialog,
+  splitAreaAvailable = false,
+  splitAreaActionMode = "open",
+  onSplitAreaClick,
 }: ClassProps) {
   const location = useLocation();
 
@@ -270,6 +289,13 @@ export default function Class({
   }, [_class]);
 
   const [trackView] = useMutation(TRACK_CLASS_VIEW);
+  const canShowSplitAreaAction =
+    typeof onSplitAreaClick === "function" &&
+    (splitAreaActionMode === "close" || splitAreaAvailable);
+  const splitAreaButtonLabel =
+    splitAreaActionMode === "close"
+      ? "Expand this class"
+      : "Open in split view";
 
   useEffect(() => {
     if (!_class) return;
@@ -466,6 +492,34 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
+                    {canShowSplitAreaAction && _class && (
+                      <ThemeTooltip
+                        content={splitAreaButtonLabel}
+                        trigger={
+                          <IconButton
+                            aria-label={splitAreaButtonLabel}
+                            onClick={() =>
+                              onSplitAreaClick({
+                                year: _class.year,
+                                semester: _class.semester,
+                                sessionId: _class.sessionId,
+                                subject: _class.subject,
+                                courseNumber: _class.courseNumber,
+                                number: _class.number,
+                              })
+                            }
+                          >
+                            {splitAreaActionMode === "close" ? (
+                              <Expand />
+                            ) : (
+                              <SplitSquareDashed
+                                style={{ transform: "rotate(-90deg)" }}
+                              />
+                            )}
+                          </IconButton>
+                        }
+                      />
+                    )}
                     <BookmarkPopover
                       disabled={userLoading}
                       classInfo={

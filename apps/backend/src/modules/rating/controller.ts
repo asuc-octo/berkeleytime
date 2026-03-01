@@ -37,6 +37,13 @@ import {
   checkUserMaxRatingsConstraint,
   checkValueConstraint,
 } from "./helper/checkConstraints";
+import {
+  buildEmptyAggregatedRatings,
+  getShadowBannedCourseIds,
+  isShadowBanCrossListedEnabled,
+  isSubjectShadowBanned,
+  shouldShadowBanRatings,
+} from "./helper/shadowBanPolicy";
 
 export interface RequestContext {
   user: {
@@ -514,6 +521,20 @@ export const getClassAggregatedRatings = async (
   classNumber?: InputMaybe<string>,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return buildEmptyAggregatedRatings(subject, courseNumber, {
+      semester,
+      year,
+      classNumber: classNumber ?? null,
+    });
+  }
+
   const aggregated = classNumber
     ? await ratingAggregator({
         subject,
@@ -523,15 +544,13 @@ export const getClassAggregatedRatings = async (
         year,
       })
     : await termRatingsAggregator(subject, courseNumber, semester, year);
-  if (!aggregated || !aggregated[0])
-    return {
-      subject,
-      courseNumber,
+  if (!aggregated || !aggregated[0]) {
+    return buildEmptyAggregatedRatings(subject, courseNumber, {
       semester,
       year,
-      classNumber,
-      metrics: [],
-    };
+      classNumber: classNumber ?? null,
+    });
+  }
 
   return filterAggregatedMetrics(
     formatAggregatedRatings(aggregated[0]),
@@ -544,16 +563,24 @@ export const getCourseAggregatedRatings = async (
   courseNumber: string,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
-    return {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
+  }
+
+  if (
+    await shouldShadowBanRatings({
       subject,
       courseNumber,
-      semester: null,
-      year: null,
-      classNumber: null,
-      metrics: [],
-    };
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
   }
 
   const cacheKey = `${courseId}:${getMetricNamesKey(metricNames)}`;
@@ -566,14 +593,7 @@ export const getCourseAggregatedRatings = async (
 
   const result =
     !aggregated || !aggregated[0]
-      ? {
-          subject,
-          courseNumber,
-          semester: null,
-          year: null,
-          classNumber: null,
-          metrics: [],
-        }
+      ? buildEmptyAggregatedRatings(subject, courseNumber)
       : filterAggregatedMetrics(
           formatAggregatedRatings(aggregated[0]),
           metricNames
@@ -592,8 +612,23 @@ export const getSemestersWithRatings = async (
   subject: string,
   courseNumber: string
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return [];
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
+    return [];
+  }
+
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
     return [];
   }
 
@@ -630,8 +665,23 @@ export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return [];
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
+    return [];
+  }
+
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
     return [];
   }
 
@@ -1084,8 +1134,26 @@ const anonymizeUserId = (userId: string): string => {
 
 export const getAllRatings = async () => {
   const ratings = await RatingModel.find({}).lean();
+  const shadowBannedCourseIds = await getShadowBannedCourseIds();
+  const crossListedShadowBanEnabled = isShadowBanCrossListedEnabled();
 
-  return ratings.map((rating) => ({
+  const visibleRatings = ratings.filter((rating) => {
+    if (isSubjectShadowBanned(rating.subject)) {
+      return false;
+    }
+
+    if (
+      crossListedShadowBanEnabled &&
+      typeof rating.courseId === "string" &&
+      shadowBannedCourseIds.has(rating.courseId)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return visibleRatings.map((rating) => ({
     anonymousUserId: anonymizeUserId(rating.createdBy),
     subject: rating.subject,
     courseNumber: rating.courseNumber,
