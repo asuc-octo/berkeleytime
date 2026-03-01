@@ -69,6 +69,7 @@ export default function Filters() {
     effectiveOrder,
     updateSortBy,
     responsive,
+    splitResponsive,
     updateReverse,
     year,
     semester,
@@ -540,6 +541,7 @@ export default function Filters() {
     <div
       className={classNames(styles.root, {
         [styles.responsive]: responsive,
+        [styles.splitResponsive]: splitResponsive,
       })}
     >
       <Header />

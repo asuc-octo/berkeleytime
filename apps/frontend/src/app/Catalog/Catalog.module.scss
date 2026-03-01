@@ -101,6 +101,40 @@
     overflow: auto;
   }
 
+  .classSplitContainer {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    overflow: hidden;
+    background-color: var(--background-color);
+  }
+
+  .classSplitPane {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--foreground-color);
+  }
+
+  .classSplitEmptyState {
+    width: 100%;
+    min-height: 220px;
+    height: 100%;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--label-color);
+    font-size: var(--text-14);
+  }
+
   .panel {
     display: flex;
     flex-direction: column;

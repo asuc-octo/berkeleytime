@@ -9,7 +9,12 @@ import {
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowRight } from "iconoir-react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
 
@@ -30,18 +35,24 @@ import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 import styles from "./Catalog.module.scss";
 import CatalogSkeleton from "./Skeleton";
 
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
+const DESKTOP_BREAKPOINT = 992;
+const WIDE_DESKTOP_BREAKPOINT = 1400;
+const SPLIT_MODE_PARAM = "split";
+const SPLIT_LEFT_CLASS_PARAM = "splitLeft";
+
+const useMinWidth = (breakpoint: number) => {
+  const [matches, setMatches] = useState(() => window.innerWidth > breakpoint);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(width > 992px)");
-    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    const mediaQuery = window.matchMedia(`(width > ${breakpoint}px)`);
+    const handleChange = (e: MediaQueryListEvent) => setMatches(e.matches);
 
+    setMatches(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  }, [breakpoint]);
 
-  return isDesktop;
+  return matches;
 };
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
@@ -67,6 +78,45 @@ type CatalogAvailabilityClass = {
   number: string;
   sessionId: string;
 };
+
+const serializeSplitClass = ({
+  subject,
+  courseNumber,
+  number,
+  sessionId,
+}: CatalogAvailabilityClass): string =>
+  [subject, courseNumber, number, sessionId].join(";");
+
+const parseSplitClass = (value: string | null): CatalogAvailabilityClass | null => {
+  if (!value) return null;
+
+  const [subject, courseNumber, number, sessionId, ...rest] = value.split(";");
+  if (
+    rest.length > 0 ||
+    !subject ||
+    !courseNumber ||
+    !number ||
+    !sessionId
+  ) {
+    return null;
+  }
+
+  return {
+    subject,
+    courseNumber,
+    number,
+    sessionId,
+  };
+};
+
+const isSameClass = (
+  left: CatalogAvailabilityClass,
+  right: CatalogAvailabilityClass
+) =>
+  left.subject === right.subject &&
+  left.courseNumber === right.courseNumber &&
+  left.number === right.number &&
+  left.sessionId === right.sessionId;
 
 type CollectionSummaryItem = {
   id: string;
@@ -258,10 +308,18 @@ export default function Catalog() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
 
-  const isDesktop = useIsDesktop();
+  const isDesktop = useMinWidth(DESKTOP_BREAKPOINT);
+  const isWideDesktop = useMinWidth(WIDE_DESKTOP_BREAKPOINT);
   const hasClassSelected = Boolean(providedSubject && courseNumber && number);
+  const splitRequested = searchParams.get(SPLIT_MODE_PARAM) === "1";
+  const splitLeftSelection = useMemo(
+    () => parseSplitClass(searchParams.get(SPLIT_LEFT_CLASS_PARAM)),
+    [searchParams]
+  );
+  const splitEnabled = isWideDesktop && splitRequested;
 
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
     () => !isDesktop && !hasClassSelected
@@ -335,6 +393,14 @@ export default function Catalog() {
     [providedSubject]
   );
 
+  useEffect(() => {
+    if (isWideDesktop || !searchParams.has(SPLIT_LEFT_CLASS_PARAM)) return;
+
+    const nextSearchParams = new URLSearchParams(searchParams);
+    nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+    setSearchParams(nextSearchParams, { replace: true });
+  }, [isWideDesktop, searchParams, setSearchParams]);
+
   // Auto-expand drawer on mobile when no class is selected
   useEffect(() => {
     if (!isDesktop && !hasClassSelected) {
@@ -360,6 +426,32 @@ export default function Catalog() {
     lastClassRef.current = _class;
   }
   const displayedClass = _class ?? lastClassRef.current;
+  const splitRightSelection = useMemo(() => {
+    if (!displayedClass) return null;
+    return {
+      subject: displayedClass.subject,
+      courseNumber: displayedClass.courseNumber,
+      number: displayedClass.number,
+      sessionId: displayedClass.sessionId,
+    } as CatalogAvailabilityClass;
+  }, [displayedClass]);
+  const splitViewActive = splitEnabled && Boolean(displayedClass);
+  const hasSplitLeftSelection = splitViewActive && Boolean(splitLeftSelection);
+
+  const { data: splitLeftClassData } = useGetClass(
+    term?.year as number,
+    term?.semester as Semester,
+    splitLeftSelection?.sessionId as string,
+    splitLeftSelection?.subject as string,
+    splitLeftSelection?.courseNumber as string,
+    splitLeftSelection?.number as string,
+    {
+      skip: !hasSplitLeftSelection || !term,
+    }
+  );
+  const displayedSplitLeftClass = hasSplitLeftSelection
+    ? splitLeftClassData
+    : null;
 
   const orderedNonEmptyCollections = useMemo<CollectionSummaryItem[]>(() => {
     if (!collections) return [];
@@ -493,6 +585,59 @@ export default function Catalog() {
     [catalogAvailabilityByCourse, term]
   );
 
+  const handleSplitClassSelection = useCallback(
+    (nextClass: CatalogAvailabilityClass) => {
+      if (!isWideDesktop || !splitRightSelection) return;
+
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.set(SPLIT_MODE_PARAM, "1");
+      if (isSameClass(nextClass, splitRightSelection)) {
+        nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+      } else {
+        nextSearchParams.set(
+          SPLIT_LEFT_CLASS_PARAM,
+          serializeSplitClass(nextClass)
+        );
+      }
+      setSearchParams(nextSearchParams);
+    },
+    [isWideDesktop, searchParams, setSearchParams, splitRightSelection]
+  );
+
+  const handleSplitViewEnable = useCallback(() => {
+      if (!isWideDesktop) return;
+
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.set(SPLIT_MODE_PARAM, "1");
+      // Always initialize split mode with an empty left pane.
+      nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+      setSearchParams(nextSearchParams);
+    }, [isWideDesktop, searchParams, setSearchParams]);
+
+  const handleExpandFromSplit = useCallback(
+    (splitSourceClass: CatalogAvailabilityClass) => {
+      if (!term) return;
+
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete(SPLIT_MODE_PARAM);
+      nextSearchParams.delete(SPLIT_LEFT_CLASS_PARAM);
+      const nextSearch = nextSearchParams.toString();
+      const nextPathname = `/catalog/${term.year}/${term.semester}/${splitSourceClass.subject}/${splitSourceClass.courseNumber}/${splitSourceClass.number}/${splitSourceClass.sessionId}`;
+
+      if (location.pathname === nextPathname) {
+        setSearchParams(nextSearchParams);
+        return;
+      }
+
+      navigate({
+        ...location,
+        pathname: nextPathname,
+        search: nextSearch ? `?${nextSearch}` : "",
+      });
+    },
+    [location, navigate, searchParams, setSearchParams, term]
+  );
+
   const handleSelect = useCallback(
     (
       subject: string,
@@ -502,6 +647,16 @@ export default function Catalog() {
     ) => {
       if (!term) return;
 
+      if (splitViewActive && splitRightSelection) {
+        handleSplitClassSelection({
+          subject,
+          courseNumber,
+          number,
+          sessionId,
+        });
+        return;
+      }
+
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({
@@ -509,17 +664,29 @@ export default function Catalog() {
         pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [navigate, location, term]
+    [
+      handleSplitClassSelection,
+      location,
+      navigate,
+      splitRightSelection,
+      splitViewActive,
+      term,
+    ]
   );
 
   const handleSavedClassSelect = useCallback(
     (savedClass: SavedClassItem) => {
+      if (splitViewActive && splitRightSelection) {
+        handleSplitClassSelection(savedClass);
+        return;
+      }
+
       navigate({
         ...location,
         pathname: `/catalog/${savedClass.year}/${savedClass.semester}/${savedClass.subject}/${savedClass.courseNumber}/${savedClass.number}/${savedClass.sessionId}`,
       });
     },
-    [navigate, location]
+    [handleSplitClassSelection, location, navigate, splitRightSelection, splitViewActive]
   );
   const handleGoToCollectionsPage = useCallback(() => {
     navigate("/profile/bookmarks");
@@ -545,6 +712,7 @@ export default function Catalog() {
             onCatalogClassAvailabilityChange={
               handleCatalogClassAvailabilityChange
             }
+            splitResponsive={splitViewActive}
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -576,6 +744,7 @@ export default function Catalog() {
               onCatalogClassAvailabilityChange={
                 handleCatalogClassAvailabilityChange
               }
+              splitResponsive={splitViewActive}
               semester={term.semester}
               year={term.year}
               terms={terms}
@@ -680,9 +849,41 @@ export default function Catalog() {
           </div>
         )}
         {displayedClass && !classError && (
-          <div className={styles.classContainer}>
-            <Class class={displayedClass} />
-          </div>
+          <>
+            {splitViewActive ? (
+              <div className={styles.classSplitContainer}>
+                <div className={styles.classSplitPane}>
+                  {displayedSplitLeftClass ? (
+                    <Class
+                      class={displayedSplitLeftClass}
+                      splitAreaActionMode="close"
+                      onSplitAreaClick={handleExpandFromSplit}
+                    />
+                  ) : (
+                    <div className={styles.classSplitEmptyState}>
+                      Select another class from the catalog to open it in the
+                      left pane.
+                    </div>
+                  )}
+                </div>
+                <div className={styles.classSplitPane}>
+                  <Class
+                    class={displayedClass}
+                    splitAreaActionMode="close"
+                    onSplitAreaClick={handleExpandFromSplit}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className={styles.classContainer}>
+                <Class
+                  class={displayedClass}
+                  splitAreaAvailable={isWideDesktop}
+                  onSplitAreaClick={handleSplitViewEnable}
+                />
+              </div>
+            )}
+          </>
         )}
       </Flex>
     </div>
