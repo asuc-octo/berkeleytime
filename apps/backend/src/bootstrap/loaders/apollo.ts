@@ -31,6 +31,24 @@ function getOperationName(
   return null;
 }
 
+const SESSION_COOKIE_NAME = "bt.sid";
+
+function getSessionCacheIdFromCookie(
+  cookieHeader: string | null
+): string | null {
+  if (!cookieHeader) return null;
+
+  const encodedSessionId = cookieHeader
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${SESSION_COOKIE_NAME}=`))
+    ?.slice(SESSION_COOKIE_NAME.length + 1);
+
+  if (!encodedSessionId) return null;
+
+  return createHash("sha256").update(encodedSessionId).digest("hex");
+}
+
 class RedisCache implements KeyValueCache {
   client: RedisClientType;
 
@@ -116,8 +134,13 @@ export default async (redis: RedisClientType) => {
         defaultMaxAge: 24 * 60 * 60, // 24 hours
       }),
       responseCachePlugin({
-        sessionId: async (req) =>
-          req.request.http?.headers.get("sessionId") || null,
+        sessionId: async (req) => {
+          const explicitSessionId = req.request.http?.headers.get("sessionId");
+          if (explicitSessionId) return explicitSessionId;
+
+          const cookieHeader = req.request.http?.headers.get("cookie") ?? null;
+          return getSessionCacheIdFromCookie(cookieHeader);
+        },
 
         /**
          * Custom cache key generator for the canonical catalog query only.

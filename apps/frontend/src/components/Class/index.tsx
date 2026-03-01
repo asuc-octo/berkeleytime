@@ -3,14 +3,17 @@ import {
   lazy,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
+import { motion } from "framer-motion";
 import { OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
@@ -33,7 +36,6 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
-import { useGetCourseOverviewById } from "@/hooks/api";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
 import {
@@ -44,7 +46,6 @@ import {
 } from "@/lib/api";
 import {
   CreateRatingsDocument,
-  GetCourseOverviewByIdQuery,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
@@ -55,6 +56,7 @@ import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 import SuspenseBoundary from "../SuspenseBoundary";
 import BookmarkPopover from "./BookmarkPopover";
 import styles from "./Class.module.scss";
+import EmptyState from "./EmptyState";
 import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
@@ -69,12 +71,18 @@ const Ratings = lazy(() => import("./Ratings"));
 
 interface RootProps {
   dialog?: boolean;
+  activeTab: ClassTab;
+  onTabChange: (tab: ClassTab) => void;
   children: ReactNode;
 }
 
-function Root({ dialog, children }: RootProps) {
+function Root({ dialog, activeTab, onTabChange, children }: RootProps) {
   return dialog ? (
-    <Tabs.Root asChild defaultValue="overview">
+    <Tabs.Root
+      asChild
+      value={activeTab}
+      onValueChange={(tab) => onTabChange(tab as ClassTab)}
+    >
       {children}
     </Tabs.Root>
   ) : (
@@ -84,7 +92,7 @@ function Root({ dialog, children }: RootProps) {
 
 interface ControlledProps {
   class: IClassDetails;
-  course?: GetCourseOverviewByIdQuery["courseById"];
+  course?: IClassDetails["course"];
   year?: never;
   semester?: never;
   sessionId?: never;
@@ -105,9 +113,15 @@ interface UncontrolledProps {
 }
 
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
+type ClassProps = {
+  dialog?: boolean;
+  scrollWithinContent?: boolean;
+} & (ControlledProps | UncontrolledProps);
 
 const ratingsTabClasses: RatingsTabClasses = {
+  menuItem: `${styles.classTabMenuItem} ${styles.ratingsMenuItem}`,
+  tabContent: styles.ratingsTabContent,
+  lockIcon: styles.ratingsLockIcon,
   badge: styles.badge,
   dot: styles.dot,
   tooltipArrow: styles.tooltipArrow,
@@ -117,6 +131,8 @@ const ratingsTabClasses: RatingsTabClasses = {
 };
 
 const METRIC_NAMES = Object.values(MetricName) as MetricName[];
+type ClassTab = "overview" | "sections" | "ratings" | "grades" | "enrollment";
+const DEFAULT_TAB: ClassTab = "overview";
 
 const formatClassNumber = (number: string | undefined | null): string => {
   if (!number) return "";
@@ -125,14 +141,6 @@ const formatClassNumber = (number: string | undefined | null): string => {
   // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
   if (num > 99) return num.toString();
   return num.toString().padStart(2, "0");
-};
-
-const getCurrentTab = (pathname: string): string => {
-  if (pathname.endsWith("/sections")) return "sections";
-  if (pathname.endsWith("/grades")) return "grades";
-  if (pathname.endsWith("/ratings")) return "ratings";
-  if (pathname.endsWith("/enrollment")) return "enrollment";
-  return "overview";
 };
 
 export default function Class({
@@ -145,23 +153,52 @@ export default function Class({
   class: providedClass,
   course: providedCourse,
   dialog,
+  scrollWithinContent = false,
 }: ClassProps) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const { user, loading: userLoading } = useUser();
 
-  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(() => {
-    return new Set([getCurrentTab(location.pathname)]);
-  });
+  const [activeTab, setActiveTab] = useState<ClassTab>(DEFAULT_TAB);
+  const [visitedTabs, setVisitedTabs] = useState<Set<ClassTab>>(
+    () => new Set([DEFAULT_TAB])
+  );
+  const [tabIndicator, setTabIndicator] = useState<{
+    x: number;
+    width: number;
+  } | null>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const currentTab = getCurrentTab(location.pathname);
     setVisitedTabs((prev) => {
-      if (prev.has(currentTab)) return prev;
-      return new Set(prev).add(currentTab);
+      if (prev.has(activeTab)) return prev;
+      return new Set(prev).add(activeTab);
     });
-  }, [location.pathname]);
+  }, [activeTab]);
+
+  const updateTabIndicator = useCallback(() => {
+    const tabListElement = tabListRef.current;
+    if (!tabListElement) return;
+
+    const activeTabElement = tabListElement.querySelector<HTMLElement>(
+      `[data-class-tab="${activeTab}"]`
+    );
+    if (!activeTabElement) {
+      setTabIndicator(null);
+      return;
+    }
+
+    const listRect = tabListElement.getBoundingClientRect();
+    const tabRect = activeTabElement.getBoundingClientRect();
+    const horizontalInset = 12;
+    const nextX = tabRect.left - listRect.left + horizontalInset;
+    const nextWidth = Math.max(tabRect.width - horizontalInset * 2, 0);
+
+    setTabIndicator((prev) => {
+      if (prev && prev.x === nextX && prev.width === nextWidth) return prev;
+      return { x: nextX, width: nextWidth };
+    });
+  }, [activeTab]);
 
   const { data: userRatingsData } = useQuery(GetUserRatingsDocument, {
     skip: !user,
@@ -189,15 +226,27 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
   const primarySection = _class?.primarySection ?? null;
+  const classIdentity = useMemo(() => {
+    if (!_class) return null;
+    return [
+      _class.year,
+      _class.semester,
+      _class.sessionId,
+      _class.subject,
+      _class.courseNumber,
+      _class.number,
+    ].join(":");
+  }, [_class]);
 
-  // Use courseId from class data to fetch course info (handles cross-listed courses)
-  const { data: course } = useGetCourseOverviewById(_class?.courseId ?? "", {
-    skip: !!providedCourse || !_class?.courseId,
-  });
+  useEffect(() => {
+    if (!classIdentity) return;
+    setActiveTab(DEFAULT_TAB);
+    setVisitedTabs(new Set([DEFAULT_TAB]));
+  }, [classIdentity]);
 
   const _course = useMemo(
-    () => providedCourse ?? course,
-    [course, providedCourse]
+    () => providedCourse ?? _class?.course,
+    [_class?.course, providedCourse]
   );
 
   type ClassSectionAttribute = NonNullable<
@@ -302,15 +351,38 @@ export default function Class({
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
   const ratingsNeeded = RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
 
+  useLayoutEffect(() => {
+    updateTabIndicator();
+  }, [updateTabIndicator, dialog, shouldShowRatingsTab, ratingsCount]);
+
+  useEffect(() => {
+    const tabListElement = tabListRef.current;
+    if (!tabListElement) return;
+
+    const observer = new ResizeObserver(updateTabIndicator);
+    observer.observe(tabListElement);
+
+    const activeTabElement = tabListElement.querySelector<HTMLElement>(
+      `[data-class-tab="${activeTab}"]`
+    );
+    if (activeTabElement) observer.observe(activeTabElement);
+
+    return () => observer.disconnect();
+  }, [activeTab, updateTabIndicator]);
+
   useEffect(() => {
     if (dialog || !ratingsLocked) return;
-    if (!location.pathname.endsWith("/ratings")) return;
+    if (activeTab !== "ratings") return;
+    setActiveTab(DEFAULT_TAB);
+  }, [activeTab, dialog, ratingsLocked]);
 
-    const redirectPath = location.pathname.replace(/\/ratings$/, "");
-    navigate(`${redirectPath}${location.search}${location.hash}`, {
-      replace: true,
-    });
-  }, [dialog, ratingsLocked, location, navigate]);
+  useEffect(() => {
+    if (dialog || ratingsLocked) return;
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get("feedbackModal") === "true") {
+      setActiveTab("ratings");
+    }
+  }, [dialog, location.search, ratingsLocked]);
 
   const handleLockedTabClick = useCallback(() => {
     if (!ratingsLocked) return;
@@ -437,8 +509,12 @@ export default function Class({
 
   return (
     <>
-      <Root dialog={dialog}>
-        <Flex direction="column" flexGrow="1" className={styles.root}>
+      <Root dialog={dialog} activeTab={activeTab} onTabChange={setActiveTab}>
+        <Flex
+          direction="column"
+          flexGrow="1"
+          className={`${styles.root}${scrollWithinContent ? ` ${styles.catalogScrollable}` : ""}`}
+        >
           <Box className={styles.header} pt="5" px="5">
             <Container size="3">
               <Flex direction="column" gap="4">
@@ -555,13 +631,28 @@ export default function Class({
                 </Flex>
               </Flex>
               {dialog ? (
-                <Tabs.List asChild defaultValue="overview">
-                  <Flex mx="-3" mb="3">
+                <Tabs.List asChild>
+                  <Flex
+                    className={styles.tabList}
+                    mx="-3"
+                    mb="3"
+                    ref={tabListRef}
+                  >
                     <Tabs.Trigger value="overview" asChild>
-                      <MenuItem>Overview</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="overview"
+                      >
+                        Overview
+                      </MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="sections" asChild>
-                      <MenuItem>Sections</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="sections"
+                      >
+                        Sections
+                      </MenuItem>
                     </Tabs.Trigger>
                     {shouldShowRatingsTab && (
                       <RatingsTabLink
@@ -572,29 +663,68 @@ export default function Class({
                         loginRequired={!user}
                         ratingsNeededValue={ratingsNeeded}
                         ratingsCount={ratingsCount}
-                        to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}/ratings`}
+                        active={activeTab === "ratings"}
+                        onClick={() => setActiveTab("ratings")}
                       />
                     )}
                     <Tabs.Trigger value="grades" asChild>
-                      <MenuItem>Grades</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="grades"
+                      >
+                        Grades
+                      </MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="enrollment"
+                      >
+                        Enrollment
+                      </MenuItem>
                     </Tabs.Trigger>
+                    {tabIndicator && (
+                      <motion.span
+                        aria-hidden
+                        className={styles.tabIndicator}
+                        initial={false}
+                        animate={{
+                          x: tabIndicator.x,
+                          width: tabIndicator.width,
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 480,
+                          damping: 36,
+                          mass: 0.75,
+                        }}
+                      />
+                    )}
                   </Flex>
                 </Tabs.List>
               ) : (
-                <Flex mx="-3" mb="3">
-                  <NavLink to={{ ...location, pathname: "." }} end>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Overview</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "sections" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Sections</MenuItem>
-                    )}
-                  </NavLink>
+                <Flex
+                  className={styles.tabList}
+                  mx="-3"
+                  mb="3"
+                  ref={tabListRef}
+                >
+                  <MenuItem
+                    active={activeTab === "overview"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="overview"
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    Overview
+                  </MenuItem>
+                  <MenuItem
+                    active={activeTab === "sections"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="sections"
+                    onClick={() => setActiveTab("sections")}
+                  >
+                    Sections
+                  </MenuItem>
                   {shouldShowRatingsTab && (
                     <RatingsTabLink
                       classes={ratingsTabClasses}
@@ -603,135 +733,147 @@ export default function Class({
                       loginRequired={!user}
                       ratingsNeededValue={ratingsNeeded}
                       ratingsCount={ratingsCount}
-                      to={{ ...location, pathname: "ratings" }}
+                      active={activeTab === "ratings"}
+                      onClick={() => setActiveTab("ratings")}
                     />
                   )}
-                  <NavLink to={{ ...location, pathname: "grades" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Grades</MenuItem>
-                    )}
-                  </NavLink>
-                  <NavLink to={{ ...location, pathname: "enrollment" }}>
-                    {({ isActive }) => (
-                      <MenuItem active={isActive}>Enrollment</MenuItem>
-                    )}
-                  </NavLink>
+                  <MenuItem
+                    active={activeTab === "grades"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="grades"
+                    onClick={() => setActiveTab("grades")}
+                  >
+                    Grades
+                  </MenuItem>
+                  <MenuItem
+                    active={activeTab === "enrollment"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="enrollment"
+                    onClick={() => setActiveTab("enrollment")}
+                  >
+                    Enrollment
+                  </MenuItem>
+                  {tabIndicator && (
+                    <motion.span
+                      aria-hidden
+                      className={styles.tabIndicator}
+                      initial={false}
+                      animate={{ x: tabIndicator.x, width: tabIndicator.width }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 480,
+                        damping: 36,
+                        mass: 0.75,
+                      }}
+                    />
+                  )}
                 </Flex>
               )}
             </Container>
           </Box>
-          <ClassContext
-            value={{
-              class: _class as IClassDetails,
-              course: _course as IClassCourse,
-            }}
+          <div
+            className={`${styles.contentScroll} ${
+              activeTab === "sections" ? styles.disableOverscrollY : ""
+            }`}
           >
-            {dialog ? (
-              <>
-                <Tabs.Content value="overview" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Overview />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="sections" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Sections />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="grades" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Grades />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                {!ratingsLocked && (
-                  <Tabs.Content value="ratings" asChild>
-                    <SuspenseBoundary fallback={<></>}>
-                      <Ratings />
-                    </SuspenseBoundary>
-                  </Tabs.Content>
-                )}
-                <Tabs.Content value="enrollment" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Enrollment />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-              </>
-            ) : (
-              <>
-                {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
-                {visitedTabs.has("sections") && (
-                  <div
-                    style={{
-                      display:
-                        getCurrentTab(location.pathname) === "sections"
-                          ? "block"
-                          : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Sections />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("grades") && (
-                  <div
-                    style={{
-                      display:
-                        getCurrentTab(location.pathname) === "grades"
-                          ? "block"
-                          : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Grades />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {!ratingsLocked && visitedTabs.has("ratings") && (
-                  <div
-                    style={{
-                      display:
-                        getCurrentTab(location.pathname) === "ratings"
-                          ? "block"
-                          : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Ratings />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("enrollment") && (
-                  <div
-                    style={{
-                      display:
-                        getCurrentTab(location.pathname) === "enrollment"
-                          ? "block"
-                          : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Enrollment />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("overview") && (
-                  <div
-                    style={{
-                      display:
-                        getCurrentTab(location.pathname) === "overview"
-                          ? "block"
-                          : "none",
-                    }}
-                  >
+            <ClassContext
+              value={{
+                class: _class as IClassDetails,
+                course: _course as IClassCourse,
+              }}
+            >
+              {dialog ? (
+                <>
+                  <Tabs.Content value="overview" asChild>
                     <SuspenseBoundary fallback={<></>}>
                       <Overview />
                     </SuspenseBoundary>
-                  </div>
-                )}
-              </>
-            )}
-          </ClassContext>
+                  </Tabs.Content>
+                  <Tabs.Content value="sections" asChild>
+                    <SuspenseBoundary fallback={<EmptyState loading />}>
+                      <Sections />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  <Tabs.Content value="grades" asChild>
+                    <SuspenseBoundary fallback={<></>}>
+                      <Grades />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  {!ratingsLocked && (
+                    <Tabs.Content value="ratings" asChild>
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Ratings />
+                      </SuspenseBoundary>
+                    </Tabs.Content>
+                  )}
+                  <Tabs.Content value="enrollment" asChild>
+                    <SuspenseBoundary fallback={<></>}>
+                      <Enrollment />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                </>
+              ) : (
+                <>
+                  {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
+                  {visitedTabs.has("sections") && (
+                    <div
+                      style={{
+                        display: activeTab === "sections" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Sections />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("grades") && (
+                    <div
+                      style={{
+                        display: activeTab === "grades" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Grades />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {!ratingsLocked && visitedTabs.has("ratings") && (
+                    <div
+                      style={{
+                        display: activeTab === "ratings" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Ratings />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("enrollment") && (
+                    <div
+                      style={{
+                        display: activeTab === "enrollment" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Enrollment />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("overview") && (
+                    <div
+                      style={{
+                        display: activeTab === "overview" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Overview />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                </>
+              )}
+            </ClassContext>
+          </div>
         </Flex>
       </Root>
       {shouldShowUnlockModal && (

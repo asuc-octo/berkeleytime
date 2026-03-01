@@ -37,6 +37,13 @@ import {
   checkUserMaxRatingsConstraint,
   checkValueConstraint,
 } from "./helper/checkConstraints";
+import {
+  buildEmptyAggregatedRatings,
+  getShadowBannedCourseIds,
+  isShadowBanCrossListedEnabled,
+  isSubjectShadowBanned,
+  shouldShadowBanRatings,
+} from "./helper/shadowBanPolicy";
 
 export interface RequestContext {
   user: {
@@ -55,6 +62,93 @@ interface RatingData {
   metricName: MetricName;
   value: number;
 }
+
+type FormattedAggregatedRatings = ReturnType<typeof formatAggregatedRatings>;
+type FormattedSemesterRatings = ReturnType<typeof formatSemesterRatings>;
+type InstructorAggregatedRatingsResult = Array<{
+  instructor: {
+    givenName: string;
+    familyName: string;
+  };
+  aggregatedRatings: FormattedAggregatedRatings;
+  classesTaught: { semester: Semester; year: number; classNumber: string }[];
+}>;
+
+interface CacheEntry<T> {
+  value: T;
+  expiresAt: number;
+}
+
+const COURSE_AGGREGATED_RATINGS_TTL_MS = 2 * 60 * 1000;
+const SEMESTER_RATINGS_TTL_MS = 5 * 60 * 1000;
+const INSTRUCTOR_RATINGS_TTL_MS = 5 * 60 * 1000;
+
+const courseAggregatedRatingsCache = new Map<
+  string,
+  CacheEntry<FormattedAggregatedRatings>
+>();
+const semestersWithRatingsCache = new Map<
+  string,
+  CacheEntry<FormattedSemesterRatings>
+>();
+const instructorAggregatedRatingsCache = new Map<
+  string,
+  CacheEntry<InstructorAggregatedRatingsResult>
+>();
+
+const getCachedValue = <T>(cache: Map<string, CacheEntry<T>>, key: string) => {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.value;
+};
+
+const setCachedValue = <T>(
+  cache: Map<string, CacheEntry<T>>,
+  key: string,
+  value: T,
+  ttlMs: number
+) => {
+  cache.set(key, { value, expiresAt: Date.now() + ttlMs });
+};
+
+const sweepExpiredEntries = <T>(cache: Map<string, CacheEntry<T>>) => {
+  const now = Date.now();
+  for (const [key, entry] of cache) {
+    if (now > entry.expiresAt) cache.delete(key);
+  }
+};
+
+setInterval(
+  () => {
+    sweepExpiredEntries(courseAggregatedRatingsCache);
+    sweepExpiredEntries(semestersWithRatingsCache);
+    sweepExpiredEntries(instructorAggregatedRatingsCache);
+  },
+  10 * 60 * 1000
+).unref();
+
+const getMetricNamesKey = (metricNames?: InputMaybe<MetricName[]>) => {
+  if (!metricNames || metricNames.length === 0) return "all";
+  return metricNames
+    .map((metric) => String(metric))
+    .sort((a, b) => a.localeCompare(b))
+    .join(",");
+};
+
+const invalidateRatingsCaches = (courseId: string) => {
+  const courseKeyPrefix = `${courseId}:`;
+  for (const cacheKey of courseAggregatedRatingsCache.keys()) {
+    if (cacheKey.startsWith(courseKeyPrefix)) {
+      courseAggregatedRatingsCache.delete(cacheKey);
+    }
+  }
+  semestersWithRatingsCache.delete(courseId);
+  instructorAggregatedRatingsCache.delete(courseId);
+};
 
 const getClassDocument = async (
   year: number,
@@ -237,6 +331,7 @@ export const createRating = async (
     await session.endSession();
   }
 
+  invalidateRatingsCaches(courseId);
   return true;
 };
 
@@ -307,9 +402,11 @@ export const deleteRating = async (
     });
   }
 
+  let deletedCourseId: string | null = null;
+
   if (existingSession) {
     // Just run the operations without starting a new transaction
-    await deleteRatingOperations(
+    const deletedRating = await deleteRatingOperations(
       context,
       year,
       semester,
@@ -319,12 +416,13 @@ export const deleteRating = async (
       metricName,
       existingSession
     );
+    deletedCourseId = deletedRating.courseId;
   } else {
     // Start a new transaction only if we don't have an existing session
     const session = await connection.startSession();
     try {
       await session.withTransaction(async () => {
-        await deleteRatingOperations(
+        const deletedRating = await deleteRatingOperations(
           context,
           year,
           semester,
@@ -334,10 +432,15 @@ export const deleteRating = async (
           metricName,
           session
         );
+        deletedCourseId = deletedRating.courseId;
       });
     } finally {
       await session.endSession();
     }
+  }
+
+  if (deletedCourseId) {
+    invalidateRatingsCaches(deletedCourseId);
   }
 
   return true;
@@ -418,6 +521,20 @@ export const getClassAggregatedRatings = async (
   classNumber?: InputMaybe<string>,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return buildEmptyAggregatedRatings(subject, courseNumber, {
+      semester,
+      year,
+      classNumber: classNumber ?? null,
+    });
+  }
+
   const aggregated = classNumber
     ? await ratingAggregator({
         subject,
@@ -427,15 +544,13 @@ export const getClassAggregatedRatings = async (
         year,
       })
     : await termRatingsAggregator(subject, courseNumber, semester, year);
-  if (!aggregated || !aggregated[0])
-    return {
-      subject,
-      courseNumber,
+  if (!aggregated || !aggregated[0]) {
+    return buildEmptyAggregatedRatings(subject, courseNumber, {
       semester,
       year,
-      classNumber,
-      metrics: [],
-    };
+      classNumber: classNumber ?? null,
+    });
+  }
 
   return filterAggregatedMetrics(
     formatAggregatedRatings(aggregated[0]),
@@ -448,65 +563,96 @@ export const getCourseAggregatedRatings = async (
   courseNumber: string,
   metricNames?: InputMaybe<MetricName[]>
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
-    return {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
+  }
+
+  if (
+    await shouldShadowBanRatings({
       subject,
       courseNumber,
-      semester: null,
-      year: null,
-      classNumber: null,
-      metrics: [],
-    };
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return buildEmptyAggregatedRatings(subject, courseNumber);
+  }
+
+  const cacheKey = `${courseId}:${getMetricNamesKey(metricNames)}`;
+  const cached = getCachedValue(courseAggregatedRatingsCache, cacheKey);
+  if (cached) {
+    return cached;
   }
 
   const aggregated = await courseRatingAggregator(courseId);
 
-  if (!aggregated || !aggregated[0]) {
-    return {
-      subject,
-      courseNumber,
-      semester: null,
-      year: null,
-      classNumber: null,
-      metrics: [],
-    };
-  }
+  const result =
+    !aggregated || !aggregated[0]
+      ? buildEmptyAggregatedRatings(subject, courseNumber)
+      : filterAggregatedMetrics(
+          formatAggregatedRatings(aggregated[0]),
+          metricNames
+        );
 
-  const formattedResult = formatAggregatedRatings(aggregated[0]);
-  return filterAggregatedMetrics(formattedResult, metricNames);
+  setCachedValue(
+    courseAggregatedRatingsCache,
+    cacheKey,
+    result,
+    COURSE_AGGREGATED_RATINGS_TTL_MS
+  );
+  return result;
 };
 
 export const getSemestersWithRatings = async (
   subject: string,
   courseNumber: string
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return [];
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
     return [];
   }
 
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return [];
+  }
+
+  const cached = getCachedValue(semestersWithRatingsCache, courseId);
+  if (cached) {
+    return cached;
+  }
+
   const semesters = await semestersWithRatingsAggregator(courseId);
-  return formatSemesterRatings(semesters);
+  const result = formatSemesterRatings(semesters);
+  setCachedValue(
+    semestersWithRatingsCache,
+    courseId,
+    result,
+    SEMESTER_RATINGS_TTL_MS
+  );
+  return result;
 };
 
 export const getCourseRatingsCount = async (
   subject: string,
   courseNumber: string
 ): Promise<number> => {
-  const courseId = await getCourseId(subject, courseNumber);
-
-  if (!courseId) {
-    return 0;
-  }
-
-  const aggregated = await courseRatingAggregator(courseId);
-
-  if (!aggregated || !aggregated[0]) {
-    return 0;
-  }
-
-  const formatted = formatAggregatedRatings(aggregated[0]);
+  const formatted = await getCourseAggregatedRatings(subject, courseNumber);
   // Return the max count across all metrics (they should be roughly equal)
   const maxCount = Math.max(
     0,
@@ -519,9 +665,29 @@ export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string
 ) => {
+  if (isSubjectShadowBanned(subject)) {
+    return [];
+  }
+
   const courseId = await getCourseId(subject, courseNumber);
   if (!courseId) {
     return [];
+  }
+
+  if (
+    await shouldShadowBanRatings({
+      subject,
+      courseNumber,
+      courseId,
+      resolveCourseId: getCourseId,
+    })
+  ) {
+    return [];
+  }
+
+  const cached = getCachedValue(instructorAggregatedRatingsCache, courseId);
+  if (cached) {
+    return cached;
   }
 
   const sections = await SectionModel.find({ courseId }).select(
@@ -606,6 +772,12 @@ export const getInstructorAggregatedRatings = async (
     return hasRatings;
   });
 
+  setCachedValue(
+    instructorAggregatedRatingsCache,
+    courseId,
+    instructorsWithRatings,
+    INSTRUCTOR_RATINGS_TTL_MS
+  );
   return instructorsWithRatings;
 };
 
@@ -892,6 +1064,7 @@ export const createRatings = async (
     await session.endSession();
   }
 
+  invalidateRatingsCaches(courseId);
   return true;
 };
 
@@ -912,6 +1085,11 @@ export const deleteRatings = async (
     subject,
     courseNumber,
   });
+  const affectedCourseIds = new Set(
+    existingRatings
+      .map((rating) => rating.courseId)
+      .filter((courseId): courseId is string => Boolean(courseId))
+  );
 
   if (existingRatings.length === 0) {
     return true; // Nothing to delete
@@ -944,6 +1122,9 @@ export const deleteRatings = async (
     await session.endSession();
   }
 
+  affectedCourseIds.forEach((courseId) => {
+    invalidateRatingsCaches(courseId);
+  });
   return true;
 };
 
@@ -953,8 +1134,26 @@ const anonymizeUserId = (userId: string): string => {
 
 export const getAllRatings = async () => {
   const ratings = await RatingModel.find({}).lean();
+  const shadowBannedCourseIds = await getShadowBannedCourseIds();
+  const crossListedShadowBanEnabled = isShadowBanCrossListedEnabled();
 
-  return ratings.map((rating) => ({
+  const visibleRatings = ratings.filter((rating) => {
+    if (isSubjectShadowBanned(rating.subject)) {
+      return false;
+    }
+
+    if (
+      crossListedShadowBanEnabled &&
+      typeof rating.courseId === "string" &&
+      shadowBannedCourseIds.has(rating.courseId)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return visibleRatings.map((rating) => ({
     anonymousUserId: anonymizeUserId(rating.createdBy),
     subject: rating.subject,
     courseNumber: rating.courseNumber,

@@ -1,5 +1,33 @@
 .root {
   background-color: var(--background-color);
+  min-height: 0;
+
+  .contentScroll {
+    min-height: 0;
+  }
+}
+
+.catalogScrollable {
+  height: 100%;
+  overflow: hidden;
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .contentScroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  .disableOverscrollY {
+    overscroll-behavior-y: none;
+  }
 }
 
 .header {
@@ -32,26 +60,60 @@
     white-space: nowrap;
   }
 
-  .badge {
+  .tabList {
     position: relative;
-    display: inline;
+  }
+
+  .classTabMenuItem {
+    &::before {
+      display: none;
+    }
+  }
+
+  .tabIndicator {
+    position: absolute;
+    left: 0;
+    bottom: -12px;
+    height: 2px;
+    border-radius: 999px;
+    background-color: var(--blue-500);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .ratingsMenuItem {
+    padding: 0 12px;
+  }
+
+  .ratingsTabContent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .ratingsLockIcon {
+    flex-shrink: 0;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
     padding: 2px 6px;
-    border-radius: 10px;
+    border-radius: 6px;
     background-color: var(--blue-500);
     color: white;
     font-size: 11px;
     line-height: 1.5;
-    right: -5px;
-    z-index: 999;
   }
+
   .dot {
-    position: relative;
     display: inline-block;
     width: 6px;
     height: 6px;
     border-radius: 6px;
-    right: -6px;
-    top: 1px;
     background-color: var(--blue-500);
   }
 }
