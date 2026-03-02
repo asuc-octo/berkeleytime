@@ -24,6 +24,9 @@ interface CourseSelectionCardProps {
   active?: boolean;
   hidden?: boolean;
   dimmed?: boolean;
+  fluid?: boolean;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export default function CourseSelectionCard({
@@ -40,6 +43,9 @@ export default function CourseSelectionCard({
   active,
   hidden,
   dimmed,
+  fluid = false,
+  onMouseEnter,
+  onMouseLeave,
 }: CourseSelectionCardProps) {
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
@@ -87,7 +93,10 @@ export default function CourseSelectionCard({
 
   return (
     <ClassCard
-      className={classNames(styles.card, { [styles.dimmed]: dimmed })}
+      className={classNames(styles.card, {
+        [styles.dimmed]: dimmed,
+        [styles.fluid]: fluid,
+      })}
       class={{
         subject,
         courseNumber: number,
@@ -106,6 +115,8 @@ export default function CourseSelectionCard({
       replaceInfoContent
       infoContent={<span className={styles.metadata}>{metadata}</span>}
       topRightContent={topRightContent}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       onClick={() => {
         if (hidden) return;
         onClick?.();

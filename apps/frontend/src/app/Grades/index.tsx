@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { NavArrowRight } from "iconoir-react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button, PillSwitcher, Select } from "@repo/theme";
 
@@ -22,7 +23,13 @@ import {
   GetGradeDistributionDocument,
   Semester,
 } from "@/lib/generated/graphql";
-import { RecentType, addRecent } from "@/lib/recent";
+import {
+  RecentType,
+  addRecent,
+  getPageUrl,
+  savePageUrl,
+} from "@/lib/recent";
+import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import GradeBarGraph from "./GradeBarGraph";
 import styles from "./Grades.module.scss";
@@ -50,6 +57,50 @@ const useIsDesktop = () => {
 };
 
 type Output = CourseOutput<Input, IGradeDistribution>;
+
+const loadOutputsFromInputs = async (
+  client: ReturnType<typeof useApolloClient>,
+  inputs: Input[]
+): Promise<Output[]> => {
+  const dedupedInputs = inputs
+    .filter(
+      (input, index, arr) =>
+        arr.findIndex((candidate) => isInputEqual(candidate, input)) === index
+    )
+    .slice(0, BAR_CHART_COLORS.length);
+
+  const results = await Promise.all(
+    dedupedInputs.map(async (input) => {
+      try {
+        const response = await client.query({
+          query: GetGradeDistributionDocument,
+          variables: input,
+        });
+
+        if (!response.data?.grade) return null;
+
+        return {
+          data: response.data.grade,
+          input,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return results
+    .filter((result): result is { data: IGradeDistribution; input: Input } =>
+      Boolean(result)
+    )
+    .map((result, index) => ({
+      hidden: false,
+      active: false,
+      color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
+      data: result.data,
+      input: result.input,
+    }));
+};
 
 const DEFAULT_SELECTED_INSTRUCTOR = { value: "all", label: "All Instructors" };
 const DEFAULT_SELECTED_SEMESTER = { value: "all", label: "All Semesters" };
@@ -486,8 +537,6 @@ function OutputList({
               <motion.div
                 key={getInputSearchParam(output.input)}
                 layout
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
@@ -500,6 +549,9 @@ function OutputList({
                   metadata={getMetadata(output.input)}
                   gradeDistribution={output.data}
                   dimmed={shouldDimOthers && hoveredIndex !== index}
+                  fluid
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   onClickDelete={() => remove(index)}
                 />
               </motion.div>
@@ -512,10 +564,116 @@ function OutputList({
 }
 
 export default function Grades() {
+  const client = useApolloClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchParamsString = searchParams.toString();
   const isDesktop = useIsDesktop();
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
+  const skipNextUrlHydrationRef = useRef(false);
+  const initialRestoreCompleteRef = useRef(false);
+  const initialDrawerStateAppliedRef = useRef(false);
+
+  useEffect(() => {
+    if (searchParamsString.length > 0) return;
+
+    const savedUrl = getPageUrl(RecentType.GradesPage);
+    if (!savedUrl) {
+      initialRestoreCompleteRef.current = true;
+      return;
+    }
+
+    navigate({ ...location, search: savedUrl }, { replace: true });
+  }, []);
+
+  useEffect(() => {
+    if (
+      !initialRestoreCompleteRef.current &&
+      searchParamsString.length > 0
+    ) {
+      initialRestoreCompleteRef.current = true;
+    }
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    if (!initialRestoreCompleteRef.current && location.search.length === 0) {
+      return;
+    }
+
+    savePageUrl(RecentType.GradesPage, location.search);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (skipNextUrlHydrationRef.current) {
+      skipNextUrlHydrationRef.current = false;
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    let cancelled = false;
+    const parsedInputs = parseInputsFromUrl(
+      new URLSearchParams(searchParamsString)
+    ).slice(0, BAR_CHART_COLORS.length);
+
+    if (parsedInputs.length === 0) {
+      setOutputs((prev) => (prev.length === 0 ? prev : []));
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    setIsHydratingFromUrl(true);
+
+    void loadOutputsFromInputs(client, parsedInputs).then((hydratedOutputs) => {
+      if (cancelled) return;
+      setOutputs(hydratedOutputs);
+      setIsHydratingFromUrl(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, searchParamsString]);
+
+  useEffect(() => {
+    if (isHydratingFromUrl) return;
+
+    const nextParams = new URLSearchParams();
+    outputs.forEach((output) => {
+      nextParams.append("input", getInputSearchParam(output.input));
+    });
+
+    const nextSearch = nextParams.toString();
+    const currentSearch = searchParamsString;
+    if (nextSearch === currentSearch) return;
+
+    skipNextUrlHydrationRef.current = true;
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch.length > 0 ? `?${nextSearch}` : "",
+      },
+      { replace: true }
+    );
+  }, [
+    isHydratingFromUrl,
+    location.pathname,
+    navigate,
+    outputs,
+    searchParamsString,
+  ]);
+
+  useEffect(() => {
+    if (isDesktop) return;
+    if (isHydratingFromUrl) return;
+    if (initialDrawerStateAppliedRef.current) return;
+
+    setDrawerOpen(outputs.length === 0);
+    initialDrawerStateAppliedRef.current = true;
+  }, [isDesktop, isHydratingFromUrl, outputs.length]);
 
   const remove = (index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));

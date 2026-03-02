@@ -27,6 +27,7 @@ import { LETTER_GRADES } from "@/lib/grades";
 import styles from "./GradeBarGraph.module.scss";
 
 const CHART_HEIGHT_RATIO = 0.6;
+const HORIZONTAL_CHART_HEIGHT_RATIO = 0.72;
 const HORIZONTAL_ENTER_WIDTH = 600;
 const HORIZONTAL_EXIT_WIDTH = 640;
 const RANGE_UPDATE_THROTTLE_MS = 60;
@@ -235,7 +236,10 @@ export default function GradeBarGraph({
     return <div className={styles.root} ref={rootRef} />;
   }
 
-  const chartHeight = Math.max(360, Math.round(viewportHeight * CHART_HEIGHT_RATIO));
+  const chartHeightRatio = horizontal
+    ? HORIZONTAL_CHART_HEIGHT_RATIO
+    : CHART_HEIGHT_RATIO;
+  const chartHeight = Math.max(360, Math.round(viewportHeight * chartHeightRatio));
 
   return (
     <div className={styles.root} ref={rootRef} style={undefined}>

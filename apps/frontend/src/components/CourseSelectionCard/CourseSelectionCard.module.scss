@@ -7,6 +7,13 @@
     opacity 140ms ease;
 }
 
+.fluid {
+  min-width: 0;
+  max-width: none;
+  width: 100%;
+  flex: 1 1 auto;
+}
+
 .dimmed {
   filter: grayscale(100%);
   opacity: 0.55;
