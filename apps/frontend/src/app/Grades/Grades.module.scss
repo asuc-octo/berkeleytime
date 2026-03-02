@@ -17,8 +17,16 @@
   flex-shrink: 0;
 }
 
+.outputCardItem {
+  width: min(100%, 600px);
+  justify-self: start;
+}
+
 .emptyCard {
-  min-height: 84px;
+  height: 99px;
+  width: min(100%, 600px);
+  box-sizing: border-box;
+  justify-self: start;
   border-radius: 8px;
   border: 1px dashed var(--border-color);
   color: var(--paragraph-color);

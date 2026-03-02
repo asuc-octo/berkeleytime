@@ -577,15 +577,14 @@ function OutputList({
     <div className={styles.outputList}>
       <CourseAnalyticsCardGrid>
         {outputs.length === 0 ? (
-          <div className={styles.emptyCard}>
-            Add a class to start comparing grade distributions.
-          </div>
+          <div className={styles.emptyCard} />
         ) : (
           <LayoutGroup>
             <AnimatePresence mode="popLayout">
               {outputs.map((output, index) => (
                 <motion.div
                   key={getInputSearchParam(output.input)}
+                  className={styles.outputCardItem}
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}

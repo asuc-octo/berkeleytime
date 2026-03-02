@@ -438,7 +438,6 @@ export default function GradeBarGraph({
             max={100}
             step={1}
             defaultValue={sliderRange}
-            disabled={!hasOutputs}
             onValueChange={handleSliderLiveChange}
             onValueCommit={handleSliderCommit}
           />
