@@ -27,6 +27,10 @@ on:
         description: "Deploy staff dashboard (prod only)"
         type: boolean
         default: false
+      staff_image_tag:
+        description: "Image tag for staff frontend (defaults to prod)"
+        type: string
+        default: prod
 
 jobs:
   deploy:
@@ -76,7 +80,8 @@ jobs:
               helm upgrade bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
                 --install \
                 --version=${{ inputs.version }} \
-                --namespace=bt
+                --namespace=bt \
+                --set frontend.image.tag=${{ inputs.staff_image_tag }}
 
               # Restart deployment if helm chart existed
               if [ $staff_status = true ]; then

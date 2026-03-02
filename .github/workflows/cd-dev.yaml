@@ -84,6 +84,7 @@ jobs:
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
       version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
       deploy_staff: true
+      staff_image_tag: ${{ needs.compute-sha.outputs.sha_short }}
       values: |
         env: dev
         ttl: ${{ inputs.ttl }}
