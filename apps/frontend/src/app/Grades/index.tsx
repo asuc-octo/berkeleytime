@@ -507,40 +507,44 @@ function OutputList({
   hoveredIndex,
   setHoveredIndex,
 }: OutputListProps) {
-  if (outputs.length === 0) return null;
-
   const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
 
   return (
     <div className={styles.outputList}>
       <CourseAnalyticsCardGrid>
-        <LayoutGroup>
-          <AnimatePresence mode="popLayout">
-            {outputs.map((output, index) => (
-              <motion.div
-                key={getInputSearchParam(output.input)}
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              >
-                <CourseSelectionCard
-                  color={output.color}
-                  subject={output.input.subject}
-                  number={output.input.courseNumber}
-                  metadata={getMetadata(output.input)}
-                  gradeDistribution={output.data}
-                  dimmed={shouldDimOthers && hoveredIndex !== index}
-                  fluid
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  onClickDelete={() => remove(index)}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </LayoutGroup>
+        {outputs.length === 0 ? (
+          <div className={styles.emptyCard}>
+            Add a class to start comparing grade distributions.
+          </div>
+        ) : (
+          <LayoutGroup>
+            <AnimatePresence mode="popLayout">
+              {outputs.map((output, index) => (
+                <motion.div
+                  key={getInputSearchParam(output.input)}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <CourseSelectionCard
+                    color={output.color}
+                    subject={output.input.subject}
+                    number={output.input.courseNumber}
+                    metadata={getMetadata(output.input)}
+                    gradeDistribution={output.data}
+                    dimmed={shouldDimOthers && hoveredIndex !== index}
+                    fluid
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onClickDelete={() => remove(index)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </LayoutGroup>
+        )}
       </CourseAnalyticsCardGrid>
     </div>
   );

@@ -5,7 +5,6 @@ import CourseSelectionCard from "@/components/CourseSelectionCard";
 import {
   CourseAnalyticsCardGrid,
   CourseAnalyticsField,
-  CourseAnalyticsGraphBox,
   CourseAnalyticsLayout,
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
@@ -79,9 +78,7 @@ export default function Enrollment() {
         </CourseAnalyticsCardGrid>
       </div>
 
-      <CourseAnalyticsGraphBox>
-        <div className={styles.graphPlaceholder}>Enrollment graph placeholder</div>
-      </CourseAnalyticsGraphBox>
+      <div className={styles.graphPlaceholder}>Enrollment graph placeholder</div>
     </CourseAnalyticsLayout>
   );
 }

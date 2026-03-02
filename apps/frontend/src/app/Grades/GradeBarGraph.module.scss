@@ -61,6 +61,19 @@
   white-space: nowrap;
 }
 
+.emptyGraphPrompt {
+  min-height: 360px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+}
+
 .tooltipCard {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);

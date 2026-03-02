@@ -231,166 +231,176 @@ export default function GradeBarGraph({
     );
     commitSliderRange(next);
   }, [commitSliderRange]);
+  const hasOutputs = outputs.length > 0;
 
-  if (outputs.length === 0) {
-    return <div className={styles.root} ref={rootRef} />;
-  }
+  useEffect(() => {
+    if (hasOutputs) return;
+    setSliderRange([0, 100]);
+    setLiveRange([0, 100]);
+  }, [hasOutputs]);
 
   const chartHeightRatio = horizontal
     ? HORIZONTAL_CHART_HEIGHT_RATIO
     : CHART_HEIGHT_RATIO;
   const chartHeight = Math.max(360, Math.round(viewportHeight * chartHeightRatio));
+  const emptyGraphHeight = chartHeight + 32;
 
   return (
     <div className={styles.root} ref={rootRef} style={undefined}>
-      <CourseAnalyticsGraphBox>
-        <ChartContainer config={chartConfig} className={styles.chart}>
-          <ResponsiveContainer width="100%" height={chartHeight}>
-            <BarChart
-              data={chartData}
-              layout={horizontal ? "vertical" : "horizontal"}
-              accessibilityLayer={false}
-              tabIndex={-1}
-            >
-              <CartesianGrid
-                vertical={horizontal}
-                horizontal={!horizontal}
-                stroke="var(--border-color)"
-              />
-              {horizontal ? (
-                <>
-                  <YAxis
-                    dataKey="letter"
-                    type="category"
-                    width={28}
-                    tickMargin={10}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-12)",
-                    }}
-                  />
-                  <XAxis
-                    type="number"
-                    domain={[
-                      0,
-                      (dataMax: number) => Math.ceil(dataMax / 5) * 5,
-                    ]}
-                    tickFormatter={(v) => formatters.percent(v, 0)}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-12)",
-                    }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                </>
-              ) : (
-                <>
-                  <XAxis
-                    dataKey="letter"
-                    tickMargin={10}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-12)",
-                    }}
-                  />
-                  <YAxis
-                    width={36}
-                    domain={[
-                      0,
-                      (dataMax: number) => Math.ceil(dataMax / 5) * 5,
-                    ]}
-                    tickFormatter={(v) => formatters.percent(v, 0)}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-12)",
-                    }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                </>
-              )}
-              <Tooltip
-                cursor={false}
-                content={({ active, payload, label }) => {
-                  if (!active || !payload?.length) return null;
-                  return (
-                    <div className={styles.tooltipCard}>
-                      <div className={styles.tooltipLabel}>
-                        Grade: {label}
-                      </div>
-                      <div className={styles.tooltipItems}>
-                        {payload.map((item) => {
-                          const key = item.dataKey as string;
-                          const row = item.payload;
-                          const pctlLo = row[`${key}_pctlLo`] as number;
-                          const pctlHi = row[`${key}_pctlHi`] as number;
-                          return (
-                            <div key={key} className={styles.tooltipItem}>
-                              <span className={styles.tooltipItemLabel}>
-                                <ColoredSquare
-                                  size="sm"
-                                  color={
-                                    chartConfig[key]?.color ||
-                                    item.fill ||
-                                    item.color
-                                  }
-                                  variant="square"
-                                  className={styles.tooltipIndicator}
-                                />
-                                {chartConfig[key]?.label ?? item.name}
-                              </span>
-                              <span className={styles.tooltipItemValue}>
-                                {formatters.percent(item.value, 1)}
-                              </span>
-                              <span className={styles.tooltipItemValue}>
-                                {ordinal(Math.round(pctlLo))}–
-                                {ordinal(Math.round(pctlHi))} pctile
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                }}
-              />
-              {dataKeys.map((key, keyIndex) => (
-                <Bar key={key} dataKey={key} radius={4}>
-                  {chartData.map((row, i) => {
-                    const pctlLo = row[`${key}_pctlLo`] as number;
-                    const pctlHi = row[`${key}_pctlHi`] as number;
-                    const inRange = isGradeInRange(
-                      pctlLo,
-                      pctlHi,
-                      sliderRange[0],
-                      sliderRange[1]
-                    );
-                    const isHoveredCourse =
-                      hoveredIndex === null ||
-                      outputs.length <= 1 ||
-                      hoveredIndex === keyIndex;
+      {hasOutputs ? (
+        <CourseAnalyticsGraphBox>
+          <ChartContainer config={chartConfig} className={styles.chart}>
+            <ResponsiveContainer width="100%" height={chartHeight}>
+              <BarChart
+                data={chartData}
+                layout={horizontal ? "vertical" : "horizontal"}
+                accessibilityLayer={false}
+                tabIndex={-1}
+              >
+                <CartesianGrid
+                  vertical={horizontal}
+                  horizontal={!horizontal}
+                  stroke="var(--border-color)"
+                />
+                {horizontal ? (
+                  <>
+                    <YAxis
+                      dataKey="letter"
+                      type="category"
+                      width={28}
+                      tickMargin={10}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{
+                        fill: "var(--paragraph-color)",
+                        fontSize: "var(--text-12)",
+                      }}
+                    />
+                    <XAxis
+                      type="number"
+                      domain={[
+                        0,
+                        (dataMax: number) => Math.ceil(dataMax / 5) * 5,
+                      ]}
+                      tickFormatter={(v) => formatters.percent(v, 0)}
+                      tick={{
+                        fill: "var(--paragraph-color)",
+                        fontSize: "var(--text-12)",
+                      }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <XAxis
+                      dataKey="letter"
+                      tickMargin={10}
+                      tickLine={false}
+                      axisLine={false}
+                      tick={{
+                        fill: "var(--paragraph-color)",
+                        fontSize: "var(--text-12)",
+                      }}
+                    />
+                    <YAxis
+                      width={36}
+                      domain={[
+                        0,
+                        (dataMax: number) => Math.ceil(dataMax / 5) * 5,
+                      ]}
+                      tickFormatter={(v) => formatters.percent(v, 0)}
+                      tick={{
+                        fill: "var(--paragraph-color)",
+                        fontSize: "var(--text-12)",
+                      }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                  </>
+                )}
+                <Tooltip
+                  cursor={false}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null;
                     return (
-                      <Cell
-                        key={i}
-                        fill={
-                          isHoveredCourse && inRange
-                            ? `var(--color-${key})`
-                            : "var(--border-color)"
-                        }
-                      />
+                      <div className={styles.tooltipCard}>
+                        <div className={styles.tooltipLabel}>
+                          Grade: {label}
+                        </div>
+                        <div className={styles.tooltipItems}>
+                          {payload.map((item) => {
+                            const key = item.dataKey as string;
+                            const row = item.payload;
+                            const pctlLo = row[`${key}_pctlLo`] as number;
+                            const pctlHi = row[`${key}_pctlHi`] as number;
+                            return (
+                              <div key={key} className={styles.tooltipItem}>
+                                <span className={styles.tooltipItemLabel}>
+                                  <ColoredSquare
+                                    size="sm"
+                                    color={
+                                      chartConfig[key]?.color ||
+                                      item.fill ||
+                                      item.color
+                                    }
+                                    variant="square"
+                                    className={styles.tooltipIndicator}
+                                  />
+                                  {chartConfig[key]?.label ?? item.name}
+                                </span>
+                                <span className={styles.tooltipItemValue}>
+                                  {formatters.percent(item.value, 1)}
+                                </span>
+                                <span className={styles.tooltipItemValue}>
+                                  {ordinal(Math.round(pctlLo))}–
+                                  {ordinal(Math.round(pctlHi))} pctile
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
                     );
-                  })}
-                </Bar>
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
-      </CourseAnalyticsGraphBox>
+                  }}
+                />
+                {dataKeys.map((key, keyIndex) => (
+                  <Bar key={key} dataKey={key} radius={4}>
+                    {chartData.map((row, i) => {
+                      const pctlLo = row[`${key}_pctlLo`] as number;
+                      const pctlHi = row[`${key}_pctlHi`] as number;
+                      const inRange = isGradeInRange(
+                        pctlLo,
+                        pctlHi,
+                        sliderRange[0],
+                        sliderRange[1]
+                      );
+                      const isHoveredCourse =
+                        hoveredIndex === null ||
+                        outputs.length <= 1 ||
+                        hoveredIndex === keyIndex;
+                      return (
+                        <Cell
+                          key={i}
+                          fill={
+                            isHoveredCourse && inRange
+                              ? `var(--color-${key})`
+                              : "var(--border-color)"
+                          }
+                        />
+                      );
+                    })}
+                  </Bar>
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </CourseAnalyticsGraphBox>
+      ) : (
+        <div className={styles.emptyGraphPrompt} style={{ height: emptyGraphHeight }}>
+          Add a class from the sidebar to view the graph.
+        </div>
+      )}
       <div className={styles.sliderArea}>
         <p className={styles.sliderTitle}>Filter by percentile</p>
         <p className={styles.sliderDescription}>
@@ -402,6 +412,7 @@ export default function GradeBarGraph({
             max={100}
             step={1}
             defaultValue={sliderRange}
+            disabled={!hasOutputs}
             onValueChange={handleSliderLiveChange}
             onValueCommit={handleSliderCommit}
           />
