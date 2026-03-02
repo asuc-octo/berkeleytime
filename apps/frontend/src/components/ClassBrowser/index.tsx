@@ -59,6 +59,7 @@ interface ClassBrowserProps {
       sessionId: string;
     }[]
   ) => void;
+  onLoadingChange?: (loading: boolean) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -69,6 +70,7 @@ interface ClassBrowserProps {
 export default function ClassBrowser({
   onSelect,
   onCatalogClassAvailabilityChange,
+  onLoadingChange,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
@@ -113,6 +115,10 @@ export default function ClassBrowser({
     fetchPolicy: "no-cache",
     nextFetchPolicy: "no-cache",
   });
+
+  useEffect(() => {
+    onLoadingChange?.(loading);
+  }, [loading, onLoadingChange]);
 
   const classes = useMemo(() => data?.catalog ?? [], [data]);
   const catalogAvailabilityClasses = useMemo(
@@ -488,6 +494,7 @@ export default function ClassBrowser({
         expanded,
         responsive,
         sortBy,
+        allClasses: classes,
         classes: filteredClasses,
         includedClasses,
         excludedClasses,

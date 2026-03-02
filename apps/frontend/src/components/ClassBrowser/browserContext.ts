@@ -19,6 +19,7 @@ export interface BrowserContextType {
   responsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
+  allClasses: ICatalogClass[];
   classes: ICatalogClass[];
   includedClasses: ICatalogClass[];
   excludedClasses: ICatalogClass[];

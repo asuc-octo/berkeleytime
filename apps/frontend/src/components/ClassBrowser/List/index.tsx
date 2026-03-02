@@ -5,11 +5,11 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FrameAltEmpty } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
-import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import useBrowser from "../useBrowser";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
 interface ListProps {
@@ -24,7 +24,7 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, loading, year, semester, query, aiSearchActive } = useBrowser();
+  const { classes, allClasses, loading, year, semester, query, aiSearchActive } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -53,7 +53,7 @@ export default function List({ onSelect }: ListProps) {
   const recentlyViewedClasses = useMemo(() => {
     return recentlyViewed
       .map((recent) => {
-        return classes.find(
+        return allClasses.find(
           (c) =>
             c.subject === recent.subject &&
             c.courseNumber === recent.courseNumber &&
@@ -61,9 +61,9 @@ export default function List({ onSelect }: ListProps) {
         );
       })
       .filter((c) => c !== undefined);
-  }, [recentlyViewed, classes]);
+  }, [recentlyViewed, allClasses]);
 
-  const showRecentlyViewed = !query && recentlyViewedClasses.length > 0;
+  const showRecentlyViewed = recentlyViewedClasses.length > 0;
   const visibleRecentlyViewedClasses = useMemo(
     () => recentlyViewedClasses.slice(0, visibleRecentCount),
     [recentlyViewedClasses, visibleRecentCount]
@@ -177,8 +177,6 @@ export default function List({ onSelect }: ListProps) {
     );
   };
 
-  const isLoading = loading && classes.length === 0;
-
   return (
     <div className={styles.root}>
       <div
@@ -256,18 +254,8 @@ export default function List({ onSelect }: ListProps) {
           )}
         </div>
       </div>
-      <div
-        ref={catalogScrollRef}
-        className={styles.catalogScroll}
-        style={isLoading ? { overflow: "hidden" } : undefined}
-      >
-        {loading && classes.length === 0 ? (
-          <div className={styles.skeletonContainer}>
-            {[...Array(8)].map((_, i) => (
-              <ClassCardSkeleton key={`skeleton-${i}`} />
-            ))}
-          </div>
-        ) : classes.length === 0 ? (
+      <div ref={catalogScrollRef} className={styles.catalogScroll}>
+        {!loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <p className={styles.heading}>No courses found</p>
