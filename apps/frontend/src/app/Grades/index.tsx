@@ -29,6 +29,7 @@ import {
   GetGradeDistributionDocument,
   Semester,
 } from "@/lib/generated/graphql";
+import { LETTER_GRADES } from "@/lib/grades";
 import {
   RecentType,
   addRecent,
@@ -105,6 +106,7 @@ const TYPE_ITEMS = [
   { value: InputType.Instructor, label: "Instructor" },
   { value: InputType.Term, label: "Semester" },
 ];
+const LETTER_GRADE_SET = new Set<string>(LETTER_GRADES);
 
 const getMetadata = (input: Input): string => {
   const instructor =
@@ -188,6 +190,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
   const [selectedSemester, setSelectedSemester] = useState<string | null>(
     "all"
   );
+  const [hasLetterGrades, setHasLetterGrades] = useState<boolean | null>(null);
+  const [isCheckingLetterGrades, setIsCheckingLetterGrades] = useState(false);
 
   const instructorOptionsData = useMemo(() => {
     const list = [DEFAULT_SELECTED_INSTRUCTOR];
@@ -336,13 +340,56 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     };
   }, [selectedCourse, selectedType, selectedInstructor, selectedSemester]);
 
+  useEffect(() => {
+    if (!currentInput) {
+      setHasLetterGrades(null);
+      setIsCheckingLetterGrades(false);
+      return;
+    }
+
+    let cancelled = false;
+    setHasLetterGrades(null);
+    setIsCheckingLetterGrades(true);
+
+    void client
+      .query({
+        query: GetGradeDistributionDocument,
+        variables: currentInput,
+      })
+      .then((response) => {
+        if (cancelled) return;
+
+        const distribution = response.data?.grade?.distribution ?? [];
+        const hasLetterDistribution = distribution.some(
+          (grade) =>
+            LETTER_GRADE_SET.has(grade.letter) && (grade.count ?? 0) > 0
+        );
+
+        setHasLetterGrades(hasLetterDistribution);
+        setIsCheckingLetterGrades(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHasLetterGrades(null);
+        setIsCheckingLetterGrades(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, currentInput]);
+
   const isFull = outputs.length >= BAR_CHART_COLORS.length;
   const isAlreadyAdded =
     currentInput !== null &&
     outputs.some((o) => isInputEqual(o.input, currentInput));
+  const lacksLetterGrades = hasLetterGrades === false;
+  const waitingForLetterGradeCheck =
+    currentInput !== null && (isCheckingLetterGrades || hasLetterGrades === null);
 
   const add = async () => {
-    if (!currentInput || isFull || isAlreadyAdded) return;
+    if (!currentInput || isFull || isAlreadyAdded || hasLetterGrades !== true)
+      return;
 
     setLoading(true);
 
@@ -376,6 +423,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         }))
       );
 
+      setSelectedCourse(null);
       setSelectedInstructor("all");
       setSelectedSemester("all");
 
@@ -408,7 +456,12 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
       : !!selectedSemester;
   const shouldShowAddButton = !!selectedCourse && hasSelection;
   const isAddButtonDisabled =
-    !selectedCourse || !hasSelection || loading || isFull || isAlreadyAdded;
+    !selectedCourse ||
+    !hasSelection ||
+    loading ||
+    isFull ||
+    isAlreadyAdded ||
+    hasLetterGrades !== true;
 
   return (
     <CourseAnalyticsSidebar title="Grades">
@@ -477,14 +530,25 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
               <Button
                 onClick={() => add()}
                 disabled={isAddButtonDisabled}
-                variant={isAlreadyAdded || isFull ? "secondary" : "primary"}
+                variant={
+                  lacksLetterGrades ||
+                  isAlreadyAdded ||
+                  isFull ||
+                  waitingForLetterGradeCheck
+                    ? "secondary"
+                    : "primary"
+                }
                 className={styles.addButton}
               >
-                {isAlreadyAdded
-                  ? "Already added"
-                  : isFull
-                    ? "Remove a course first"
-                    : "Add course"}
+                {lacksLetterGrades
+                  ? "No letter grades available"
+                  : isAlreadyAdded
+                    ? "Already added"
+                    : isFull
+                      ? "Remove a course first"
+                      : waitingForLetterGradeCheck
+                        ? "Checking grades..."
+                        : "Add course"}
               </Button>
             </motion.div>
           )}

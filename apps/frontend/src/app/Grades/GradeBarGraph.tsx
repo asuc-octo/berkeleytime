@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { ColoredSquare, Slider } from "@repo/theme";
+import { ColoredSquare, Slider, Switch } from "@repo/theme";
 
 import {
   ChartContainer,
@@ -22,7 +22,7 @@ import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnal
 import type { Input } from "@/components/CourseAnalytics/types";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IGradeDistribution } from "@/lib/api";
-import { LETTER_GRADES } from "@/lib/grades";
+import { LETTER_GRADES, PASS_FAIL } from "@/lib/grades";
 
 import styles from "./GradeBarGraph.module.scss";
 
@@ -74,6 +74,7 @@ export default function GradeBarGraph({
   const [horizontal, setHorizontal] = useState(false);
   const [sliderRange, setSliderRange] = useState<[number, number]>([0, 100]);
   const [liveRange, setLiveRange] = useState<[number, number]>([0, 100]);
+  const [showPassNoPass, setShowPassNoPass] = useState(false);
   const throttleTimeoutRef = useRef<number | null>(null);
   const pendingRangeRef = useRef<[number, number] | null>(null);
   const lastRangeCommitAtRef = useRef(0);
@@ -104,6 +105,15 @@ export default function GradeBarGraph({
     };
   }, []);
 
+  const isFilterActive = liveRange[0] !== 0 || liveRange[1] !== 100;
+  const displayedGrades = useMemo(
+    () =>
+      showPassNoPass && !isFilterActive
+        ? [...LETTER_GRADES, ...PASS_FAIL]
+        : LETTER_GRADES,
+    [showPassNoPass, isFilterActive]
+  );
+
   const { chartData, chartConfig, dataKeys } = useMemo(() => {
     if (outputs.length === 0) {
       return { chartData: [], chartConfig: {}, dataKeys: [] };
@@ -126,14 +136,14 @@ export default function GradeBarGraph({
     const totals = outputs.map((output) => {
       const dist = output.data?.distribution;
       if (!dist) return 0;
-      return LETTER_GRADES.reduce((acc, letter) => {
+      return displayedGrades.reduce((acc, letter) => {
         const grade = dist.find((g) => g.letter === letter);
         return acc + (grade?.count ?? 0);
       }, 0);
     });
 
     // Build percentage for each letter grade per course
-    const percentages = LETTER_GRADES.map((letter) => {
+    const percentages = displayedGrades.map((letter) => {
       const row: Record<string, number> = {};
       outputs.forEach((output, i) => {
         const dist = output.data?.distribution;
@@ -149,18 +159,18 @@ export default function GradeBarGraph({
 
     // Pre-compute cumulative percentiles (from F upward)
     const cumulative: Record<string, number>[] = Array.from(
-      { length: LETTER_GRADES.length },
+      { length: displayedGrades.length },
       () => ({})
     );
     dataKeys.forEach((key) => {
       let cum = 0;
-      for (let i = LETTER_GRADES.length - 1; i >= 0; i--) {
+      for (let i = displayedGrades.length - 1; i >= 0; i--) {
         cumulative[i][key] = cum;
         cum += percentages[i][key];
       }
     });
 
-    const chartData = LETTER_GRADES.map((letter, i) => {
+    const chartData = displayedGrades.map((letter, i) => {
       const row: Record<string, number | string> = { letter };
       dataKeys.forEach((key) => {
         row[key] = percentages[i][key];
@@ -171,7 +181,7 @@ export default function GradeBarGraph({
     });
 
     return { chartData, chartConfig, dataKeys };
-  }, [outputs]);
+  }, [outputs, displayedGrades]);
 
   const commitSliderRange = useCallback((next: [number, number]) => {
     lastRangeCommitAtRef.current = Date.now();
@@ -244,11 +254,24 @@ export default function GradeBarGraph({
     : CHART_HEIGHT_RATIO;
   const chartHeight = Math.max(360, Math.round(viewportHeight * chartHeightRatio));
   const emptyGraphHeight = chartHeight + 32;
+  const graphControls = (
+    <div className={styles.graphHeader}>
+      <label className={styles.switchRow}>
+        <span className={styles.switchLabel}>Show P/NP</span>
+        <Switch
+          checked={showPassNoPass}
+          onCheckedChange={setShowPassNoPass}
+          aria-label="Show P/NP columns"
+        />
+      </label>
+    </div>
+  );
 
   return (
     <div className={styles.root} ref={rootRef} style={undefined}>
       {hasOutputs ? (
         <CourseAnalyticsGraphBox>
+          {graphControls}
           <ChartContainer config={chartConfig} className={styles.chart}>
             <ResponsiveContainer width="100%" height={chartHeight}>
               <BarChart
@@ -398,7 +421,10 @@ export default function GradeBarGraph({
         </CourseAnalyticsGraphBox>
       ) : (
         <div className={styles.emptyGraphPrompt} style={{ height: emptyGraphHeight }}>
-          Add a class from the sidebar to view the graph.
+          {graphControls}
+          <div className={styles.emptyGraphMessage}>
+            Add a class from the sidebar to view the graph.
+          </div>
         </div>
       )}
       <div className={styles.sliderArea}>
