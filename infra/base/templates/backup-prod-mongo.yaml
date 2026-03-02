@@ -46,11 +46,10 @@ spec:
                   now=$(date +%Y%m%d%H)
                   backup_timestamp=$now
                   backup_date=${now%??}
-                  date_day=${now#??????}
-                  date_day=${date_day%??}
+                  date_day=${backup_date#??????}
                   date_hour=${now#????????}
 
-                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/daily/prod_backup-$backup_timestamp.gz \
+                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/hourly/prod_backup-$backup_timestamp.gz \
                     --endpoint-url=$ENDPOINT_URL \
                     --checksum-algorithm CRC32
 

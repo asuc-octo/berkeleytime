@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-backup-prod-mongo-public
   namespace: bt
 spec:
-  schedule: "0 * * * *" # Hourly
+  schedule: "0 5 * * *" # Daily
   timeZone: America/Los_Angeles
   concurrencyPolicy: Forbid
   suspend: false
@@ -32,8 +32,8 @@ spec:
                   # Find production MongoDB pod
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
-                  # Timestamp for hourly backup filename (YYYYMMDDHH)
-                  backup_timestamp=$(date +%Y%m%d%H)
+                  # Date for daily public backup filename (YYYYMMDD)
+                  backup_date=$(date +%Y%m%d)
 
                   echo "Dumping public MongoDB collections..."
                   kubectl exec --namespace=bt \
@@ -51,7 +51,7 @@ spec:
 
                   # Copy archive out of Mongo pod
                   kubectl cp --namespace=bt \
-                    "$prod_pod:/tmp/prod_public_backup.gz" "/tmp/prod_public_backup-$backup_timestamp.gz"
+                    "$prod_pod:/tmp/prod_public_backup.gz" "/tmp/prod_public_backup-$backup_date.gz"
 
                   # Remove archive from Mongo pod
                   kubectl exec --namespace=bt \
@@ -59,12 +59,14 @@ spec:
 
                   # Upload sanitized backup to public S3/R2 bucket
                   echo "Uploading public backup to s3 bucket..."
-                  aws s3 cp "/tmp/prod_public_backup-$backup_timestamp.gz" "s3://$BUCKET_NAME_PUBLIC/public-hourly/prod_public_backup-$backup_timestamp.gz" \
+                  aws s3 cp "/tmp/prod_public_backup-$backup_date.gz" "s3://$BUCKET_NAME_PUBLIC/daily/prod_public_backup-$backup_date.gz" \
                     --endpoint-url="$ENDPOINT_URL_PUBLIC" \
                     --checksum-algorithm CRC32
 
                   echo "Public MongoDB backup completed successfully!"
               env:
+                - name: TZ
+                  value: America/Los_Angeles
                 - name: ENDPOINT_URL_PUBLIC
                   value: https://ff660bd2dac18c00551ed509d24ef4d7.r2.cloudflarestorage.com
                 - name: BUCKET_NAME_PUBLIC
