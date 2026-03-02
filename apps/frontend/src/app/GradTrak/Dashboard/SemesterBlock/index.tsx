@@ -437,7 +437,11 @@ function SemesterBlock({
       onDragLeave={filtersActive ? undefined : handleDragLeave}
       onDrop={filtersActive ? undefined : handleDrop}
     >
-      <div className={styles.body} data-layout={settings.layout} data-open={open}>
+      <div
+        className={styles.body}
+        data-layout={settings.layout}
+        data-open={open}
+      >
         <Flex direction="row" justify="between" width="100%">
           <div className={styles.semesterCounter}>
             {planTerm.pinned && (
