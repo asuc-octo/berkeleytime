@@ -7,14 +7,100 @@
   .view {
     overflow: hidden;
     flex-grow: 1;
+    min-width: 0;
     background-color: var(--foreground-color);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bookmarkBanner {
+    min-height: 36px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+  .bookmarkButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--paragraph-color);
+    font-size: var(--text-14);
+    font-weight: var(--font-medium);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+    white-space: nowrap;
+    flex: 0 0 auto;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: var(--button-hover-color);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      background-color: var(--button-hover-color);
+    }
+  }
+
+  .bookmarkButtonText {
+    white-space: nowrap;
+  }
+
+.bookmarkFolderIcon {
+  path {
+    stroke: var(--bookmark-folder-color, var(--paragraph-color));
+    fill: var(--bookmark-folder-color, var(--paragraph-color));
+  }
+}
+
+  .bookmarkFoldersViewport {
     position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .bookmarkCollectionsButton {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--paragraph-color);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 100ms ease-in-out;
+
+    &:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    &:focus-visible {
+      outline: none;
+      background-color: var(--button-hover-color);
+    }
   }
 
   .classContainer {
-    position: absolute;
-    inset: 0;
-    overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   .panel {
@@ -22,6 +108,57 @@
     flex-direction: column;
     border-right: 1px solid var(--border-color);
   }
+}
+
+.bookmarkDropdown {
+  width: max-content;
+  min-width: 220px;
+  max-width: min(420px, 90vw);
+}
+
+.bookmarkClassOption {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bookmarkUnavailableItem {
+  opacity: 0.6;
+}
+
+.bookmarkUnavailableHint {
+  font-size: var(--text-12);
+  color: var(--label-color);
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+.bookmarkFolders {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  width: max-content;
+}
+
+.bookmarkMeasureRow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  gap: 8px;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: nowrap;
+  height: 0;
+  overflow: hidden;
+}
+
+.bookmarkEmptyState {
+  font-size: var(--text-14);
+  color: var(--label-color);
 }
 
 .catalogDrawer {

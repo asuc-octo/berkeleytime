@@ -65,12 +65,33 @@ const compareAlphabetical = (
     return subjectComparison * direction;
   }
 
-  const courseNumberComparison = a.number.localeCompare(b.number);
+  const courseNumberComparison = a.courseNumber.localeCompare(
+    b.courseNumber,
+    undefined,
+    {
+      numeric: true,
+    }
+  );
   if (courseNumberComparison !== 0) {
     return courseNumberComparison * direction;
   }
 
-  return a.number.localeCompare(b.number) * direction;
+  return (
+    a.number.localeCompare(b.number, undefined, { numeric: true }) * direction
+  );
+};
+
+const getViewCount = (_class: ICatalogClass) =>
+  typeof _class.viewCount === "number" ? _class.viewCount : 0;
+
+const compareViewCount: Comparator = (a, b, direction) => {
+  const difference = getViewCount(a) - getViewCount(b);
+
+  if (difference !== 0) {
+    return difference * direction;
+  }
+
+  return compareAlphabetical(a, b, 1);
 };
 
 const getPassFailPercentage = (
@@ -221,27 +242,6 @@ const compareOpenSeats: Comparator = (a, b, direction) => {
   return compareAlphabetical(a, b, direction);
 };
 
-const getPercentOpenSeats = ({
-  primarySection: { enrollment },
-}: ICatalogClass) => {
-  if (!enrollment?.latest?.maxEnroll) return 0;
-
-  return (
-    (enrollment.latest.maxEnroll - enrollment.latest.enrolledCount) /
-    enrollment.latest.maxEnroll
-  );
-};
-
-const comparePercentOpenSeats: Comparator = (a, b, direction) => {
-  const difference = getPercentOpenSeats(a) - getPercentOpenSeats(b);
-
-  if (difference !== 0) {
-    return difference * direction;
-  }
-
-  return compareAlphabetical(a, b, direction);
-};
-
 const sortWithRelevance = (
   { classes, order, relevanceScores }: SorterContext,
   comparator: Comparator
@@ -272,13 +272,8 @@ const sortWithRelevance = (
 
 const sortByRelevance: Sorter = ({ classes, order, relevanceScores }) => {
   if (!relevanceScores || relevanceScores.size === 0) {
-    const result = [...classes];
-
-    if (order === "desc") {
-      result.reverse();
-    }
-
-    return result;
+    const viewDirection = order === "asc" ? -1 : 1;
+    return [...classes].sort((a, b) => compareViewCount(a, b, viewDirection));
   }
 
   return [...classes].sort((a, b) => {
@@ -298,8 +293,6 @@ const sorters: Record<SortBy, Sorter> = {
   [SortBy.AverageGrade]: (context) =>
     sortWithRelevance(context, compareAverageGrade),
   [SortBy.OpenSeats]: (context) => sortWithRelevance(context, compareOpenSeats),
-  [SortBy.PercentOpenSeats]: (context) =>
-    sortWithRelevance(context, comparePercentOpenSeats),
 };
 
 export const sortClasses = (

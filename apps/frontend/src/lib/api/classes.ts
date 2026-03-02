@@ -336,6 +336,10 @@ export const GET_CLASS_SECTIONS = gql`
           location
           endTime
           startTime
+          instructors {
+            familyName
+            givenName
+          }
         }
         enrollment {
           latest {
