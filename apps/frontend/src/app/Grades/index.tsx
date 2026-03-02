@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button, PillSwitcher, Select } from "@repo/theme";
@@ -16,6 +15,13 @@ import {
 } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
+import {
+  CourseAnalyticsCardGrid,
+  CourseAnalyticsField,
+  CourseAnalyticsLayout,
+  CourseAnalyticsSidebar,
+} from "@/components/CourseAnalytics/CourseAnalyticsLayout";
+import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -41,20 +47,6 @@ const BAR_CHART_COLORS = [
   "var(--blue-300)", // 2nd pick — lighter
   "var(--blue-800)", // 3rd pick — darker
 ] as const;
-
-const useIsDesktop = () => {
-  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > 992);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(width > 992px)");
-    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  return isDesktop;
-};
 
 type Output = CourseOutput<Input, IGradeDistribution>;
 
@@ -419,95 +411,86 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     !selectedCourse || !hasSelection || loading || isFull || isAlreadyAdded;
 
   return (
-    <div className={styles.filterPanel}>
-      <div className={styles.body}>
-        <div className={styles.filtersHeader}>
-          <p className={styles.filtersTitle}>Grades</p>
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Class</p>
-          <CourseSelect
-            onSelect={handleCourseSelect}
-            onClear={handleCourseClear}
-            selectedCourse={selectedCourse}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Search by</p>
-          <PillSwitcher
-            items={TYPE_ITEMS}
-            value={selectedType}
-            onValueChange={(value) => {
-              setSelectedInstructor("all");
-              setSelectedSemester("all");
-              setSelectedType(value as InputType);
+    <CourseAnalyticsSidebar title="Grades">
+      <CourseAnalyticsField label="Class">
+        <CourseSelect
+          onSelect={handleCourseSelect}
+          onClear={handleCourseClear}
+          selectedCourse={selectedCourse}
+        />
+      </CourseAnalyticsField>
+      <CourseAnalyticsField label="Search by">
+        <PillSwitcher
+          items={TYPE_ITEMS}
+          value={selectedType}
+          onValueChange={(value) => {
+            setSelectedInstructor("all");
+            setSelectedSemester("all");
+            setSelectedType(value as InputType);
+          }}
+          fullWidth
+        />
+      </CourseAnalyticsField>
+      {selectedType === InputType.Instructor && (
+        <CourseAnalyticsField label="Instructor">
+          <Select
+            options={instructorOptions}
+            disabled={loading}
+            searchable
+            searchPlaceholder="Search instructors..."
+            placeholder="Select instructor"
+            value={selectedInstructor}
+            onChange={(s) => {
+              if (Array.isArray(s) || !s) return;
+              setSelectedInstructor(s);
             }}
-            fullWidth
           />
-        </div>
-        {selectedType === InputType.Instructor && (
-          <div className={styles.formControl}>
-            <p className={styles.label}>Instructor</p>
-            <Select
-              options={instructorOptions}
-              disabled={loading}
-              searchable
-              searchPlaceholder="Search instructors..."
-              placeholder="Select instructor"
-              value={selectedInstructor}
-              onChange={(s) => {
-                if (Array.isArray(s) || !s) return;
-                setSelectedInstructor(s);
-              }}
-            />
-          </div>
-        )}
-        {selectedType === InputType.Term && (
-          <div className={styles.formControl}>
-            <p className={styles.label}>Semester</p>
-            <Select
-              options={semesterOptions}
-              disabled={loading}
-              searchable
-              searchPlaceholder="Search semesters..."
-              placeholder="Select semester"
-              value={selectedSemester}
-              onChange={(s) => {
-                if (Array.isArray(s)) return;
-                setSelectedSemester(s);
-              }}
-            />
-          </div>
-        )}
-        <div className={styles.addButtonSlot}>
-          <AnimatePresence initial={false}>
-            {shouldShowAddButton && (
-              <motion.div
-                key="add-course-button"
-                className={styles.addButtonMotion}
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ type: "spring", stiffness: 320, damping: 26 }}
+        </CourseAnalyticsField>
+      )}
+      {selectedType === InputType.Term && (
+        <CourseAnalyticsField label="Semester">
+          <Select
+            options={semesterOptions}
+            disabled={loading}
+            searchable
+            searchPlaceholder="Search semesters..."
+            placeholder="Select semester"
+            value={selectedSemester}
+            onChange={(s) => {
+              if (Array.isArray(s)) return;
+              setSelectedSemester(s);
+            }}
+          />
+        </CourseAnalyticsField>
+      )}
+      <div className={styles.addButtonSlot}>
+        <AnimatePresence initial={false}>
+          {shouldShowAddButton && (
+            <motion.div
+              key="add-course-button"
+              className={styles.addButtonMotion}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ type: "spring", stiffness: 320, damping: 26 }}
+            >
+              <Button
+                onClick={() => add()}
+                disabled={isAddButtonDisabled}
+                variant={isAlreadyAdded || isFull ? "secondary" : "primary"}
+                className={styles.addButton}
               >
-                <Button
-                  onClick={() => add()}
-                  disabled={isAddButtonDisabled}
-                  variant={isAlreadyAdded || isFull ? "secondary" : "primary"}
-                  className={styles.addButton}
-                >
-                  {isAlreadyAdded
-                    ? "Already added"
-                    : isFull
-                      ? "Remove a course first"
-                      : "Add course"}
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+                {isAlreadyAdded
+                  ? "Already added"
+                  : isFull
+                    ? "Remove a course first"
+                    : "Add course"}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </div>
+    </CourseAnalyticsSidebar>
   );
 }
 
@@ -530,7 +513,7 @@ function OutputList({
 
   return (
     <div className={styles.outputList}>
-      <div className={styles.classList}>
+      <CourseAnalyticsCardGrid>
         <LayoutGroup>
           <AnimatePresence mode="popLayout">
             {outputs.map((output, index) => (
@@ -558,7 +541,7 @@ function OutputList({
             ))}
           </AnimatePresence>
         </LayoutGroup>
-      </div>
+      </CourseAnalyticsCardGrid>
     </div>
   );
 }
@@ -569,7 +552,7 @@ export default function Grades() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchParamsString = searchParams.toString();
-  const isDesktop = useIsDesktop();
+  const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -680,55 +663,19 @@ export default function Grades() {
   };
 
   return (
-    <div className={styles.root}>
-      {isDesktop ? (
-        <div className={styles.panel}>
-          <FilterPanel outputs={outputs} setOutputs={setOutputs} />
-        </div>
-      ) : (
-        <>
-          <AnimatePresence>
-            {drawerOpen && (
-              <motion.div
-                className={styles.overlay}
-                onClick={() => setDrawerOpen(false)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              />
-            )}
-          </AnimatePresence>
-          <motion.div
-            className={styles.drawer}
-            animate={{ x: drawerOpen ? 0 : "-100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          >
-            <FilterPanel outputs={outputs} setOutputs={setOutputs} />
-          </motion.div>
-        </>
-      )}
-
-      {!isDesktop && (
-        <div
-          className={styles.drawerTrigger}
-          onClick={() => setDrawerOpen(true)}
-        >
-          {!drawerOpen && <NavArrowRight />}
-        </div>
-      )}
-
-      <div className={styles.view}>
-        <div className={styles.viewContent}>
-          <OutputList
-            outputs={outputs}
-            remove={remove}
-            hoveredIndex={hoveredIndex}
-            setHoveredIndex={setHoveredIndex}
-          />
-          <GradeBarGraph outputs={outputs} hoveredIndex={hoveredIndex} />
-        </div>
-      </div>
-    </div>
+    <CourseAnalyticsLayout
+      isDesktop={isDesktop}
+      drawerOpen={drawerOpen}
+      onDrawerOpenChange={setDrawerOpen}
+      sidebar={<FilterPanel outputs={outputs} setOutputs={setOutputs} />}
+    >
+      <OutputList
+        outputs={outputs}
+        remove={remove}
+        hoveredIndex={hoveredIndex}
+        setHoveredIndex={setHoveredIndex}
+      />
+      <GradeBarGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+    </CourseAnalyticsLayout>
   );
 }

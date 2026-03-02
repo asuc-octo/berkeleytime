@@ -18,7 +18,7 @@ import {
   createChartConfig,
   formatters,
 } from "@/components/Chart";
-import tooltipStyles from "@/components/Chart/Chart.module.scss";
+import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import type { Input } from "@/components/CourseAnalytics/types";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IGradeDistribution } from "@/lib/api";
@@ -30,7 +30,7 @@ const CHART_HEIGHT_RATIO = 0.6;
 const HORIZONTAL_CHART_HEIGHT_RATIO = 0.72;
 const HORIZONTAL_ENTER_WIDTH = 600;
 const HORIZONTAL_EXIT_WIDTH = 640;
-const RANGE_UPDATE_THROTTLE_MS = 60;
+const RANGE_UPDATE_THROTTLE_MS = 100;
 
 const ordinal = (n: number): string => {
   const s = ["th", "st", "nd", "rd"];
@@ -243,7 +243,7 @@ export default function GradeBarGraph({
 
   return (
     <div className={styles.root} ref={rootRef} style={undefined}>
-      <div className={styles.chartArea}>
+      <CourseAnalyticsGraphBox>
         <ChartContainer config={chartConfig} className={styles.chart}>
           <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart
@@ -319,22 +319,19 @@ export default function GradeBarGraph({
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;
                   return (
-                    <div className={tooltipStyles.tooltipCard}>
-                      <div className={tooltipStyles.tooltipLabel}>
+                    <div className={styles.tooltipCard}>
+                      <div className={styles.tooltipLabel}>
                         Grade: {label}
                       </div>
-                      <div className={tooltipStyles.tooltipItems}>
+                      <div className={styles.tooltipItems}>
                         {payload.map((item) => {
                           const key = item.dataKey as string;
                           const row = item.payload;
                           const pctlLo = row[`${key}_pctlLo`] as number;
                           const pctlHi = row[`${key}_pctlHi`] as number;
                           return (
-                            <div
-                              key={key}
-                              className={tooltipStyles.tooltipItem}
-                            >
-                              <span className={tooltipStyles.tooltipItemLabel}>
+                            <div key={key} className={styles.tooltipItem}>
+                              <span className={styles.tooltipItemLabel}>
                                 <ColoredSquare
                                   size="sm"
                                   color={
@@ -343,14 +340,14 @@ export default function GradeBarGraph({
                                     item.color
                                   }
                                   variant="square"
-                                  className={tooltipStyles.tooltipIndicator}
+                                  className={styles.tooltipIndicator}
                                 />
                                 {chartConfig[key]?.label ?? item.name}
                               </span>
-                              <span className={tooltipStyles.tooltipItemValue}>
+                              <span className={styles.tooltipItemValue}>
                                 {formatters.percent(item.value, 1)}
                               </span>
-                              <span className={tooltipStyles.tooltipItemValue}>
+                              <span className={styles.tooltipItemValue}>
                                 {ordinal(Math.round(pctlLo))}–
                                 {ordinal(Math.round(pctlHi))} pctile
                               </span>
@@ -393,7 +390,7 @@ export default function GradeBarGraph({
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
-      </div>
+      </CourseAnalyticsGraphBox>
       <div className={styles.sliderArea}>
         <p className={styles.sliderTitle}>Filter by percentile</p>
         <p className={styles.sliderDescription}>

@@ -1,0 +1,27 @@
+.outputList {
+  flex-shrink: 0;
+}
+
+.emptyState {
+  min-height: 84px;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+}
+
+.graphPlaceholder {
+  min-height: 360px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
