@@ -175,7 +175,7 @@ parse_args() {
   while [[ $# -gt 0 ]]; do
     case "$1" in
       --no-seed-db) SEED_DB=false; shift ;;
-      --no-docker) NO_DOCKER=true; shift ;;
+      --no-docker) NO_DOCKER=true; SEED_DB=false; shift ;;
       -h|--help) usage; exit 0 ;;
       *)
         die "Unknown argument: $1 (run --help)"
@@ -206,9 +206,6 @@ main() {
   fi
 
   if [[ "$SEED_DB" == "true" ]]; then
-    if [[ "$NO_DOCKER" == "true" ]]; then
-      die "--seed-db requires Docker services (remove --no-docker)."
-    fi
     seed_database
   fi
 
