@@ -1,5 +1,26 @@
 # Local Development
 
+## Quickstart
+
+After cloning the repo, run bootstrap script from the repo root:
+
+```sh
+# ./berkeleytime
+./apps/docs/src/getting-started/bootstrap-local.sh
+```
+
+Optional flags:
+
+```sh
+# Skip database seeding 
+./apps/docs/src/getting-started/bootstrap-local.sh --no-seed-db
+
+# Don't start Docker services
+./apps/docs/src/getting-started/bootstrap-local.sh --no-docker
+```
+
+> **Note:** The script is for **macOS and Linux/WSL**.
+
 ## Starting up the Application
 
 Local development has a few local dependencies:
