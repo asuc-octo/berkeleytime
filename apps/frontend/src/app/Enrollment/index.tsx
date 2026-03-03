@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { Button, Select } from "@repo/theme";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
@@ -19,7 +19,8 @@ import { RecentType, addRecent } from "@/lib/recent";
 import styles from "./Enrollment.module.scss";
 
 interface EnrollmentSidebarProps {
-  onAddPreview: (preview: EnrollmentPreview) => void;
+  outputs: EnrollmentOutput[];
+  onAddCourse: (draft: EnrollmentDraft) => void;
 }
 
 interface SemesterSelection {
@@ -27,10 +28,21 @@ interface SemesterSelection {
   semester: string;
 }
 
-interface EnrollmentPreview {
+interface EnrollmentDraft {
+  id: string;
   course: CourseOption;
   metadata: string;
 }
+
+interface EnrollmentOutput extends EnrollmentDraft {
+  color: string;
+}
+
+const BAR_CHART_COLORS = [
+  "var(--blue-500)",
+  "var(--blue-300)",
+  "var(--blue-800)",
+] as const;
 
 const DEFAULT_INSTRUCTOR_LABEL = "All instructors";
 
@@ -54,7 +66,7 @@ const parseSemesterValue = (value: string | null): SemesterSelection | null => {
   }
 };
 
-function EnrollmentSidebar({ onAddPreview }: EnrollmentSidebarProps) {
+function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(null);
   const [selectedSemesterValue, setSelectedSemesterValue] = useState<
     string | null
@@ -146,10 +158,7 @@ function EnrollmentSidebar({ onAddPreview }: EnrollmentSidebarProps) {
     !!selectedSemester && instructorOptions.length > 1;
   const shouldShowSemesterSelect = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
-  const canAdd =
-    shouldShowAddButton &&
-    (!shouldShowInstructorSelect || Boolean(selectedInstructor));
-
+  const isFull = outputs.length >= BAR_CHART_COLORS.length;
   const selectedSemesterLabel =
     semesterOptions.find((option) => option.value === selectedSemesterValue)
       ?.label ?? "All semesters";
@@ -157,12 +166,23 @@ function EnrollmentSidebar({ onAddPreview }: EnrollmentSidebarProps) {
   const selectedInstructorLabel =
     instructorOptions.find((option) => option.value === selectedInstructor)?.label ??
     DEFAULT_INSTRUCTOR_LABEL;
+  const selectionId =
+    selectedCourse && selectedSemester
+      ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedSemesterLabel}-${selectedInstructorLabel}`
+      : null;
+  const isAlreadyAdded =
+    selectionId !== null && outputs.some((output) => output.id === selectionId);
+  const canAdd =
+    shouldShowAddButton &&
+    (!shouldShowInstructorSelect || Boolean(selectedInstructor)) &&
+    !isFull &&
+    !isAlreadyAdded;
 
   const handleAdd = () => {
-    if (!selectedCourse || !selectedSemester) return;
-    if (shouldShowInstructorSelect && !selectedInstructor) return;
+    if (!selectedCourse || !selectedSemester || !selectionId || !canAdd) return;
 
-    onAddPreview({
+    onAddCourse({
+      id: selectionId,
       course: selectedCourse,
       metadata: `${selectedSemesterLabel} • ${selectedInstructorLabel}`,
     });
@@ -265,7 +285,13 @@ function EnrollmentSidebar({ onAddPreview }: EnrollmentSidebarProps) {
                 variant={canAdd ? "primary" : "secondary"}
                 className={styles.addButton}
               >
-                {canAdd ? "Add course" : "Select instructor"}
+                {isAlreadyAdded
+                  ? "Already added"
+                  : isFull
+                    ? "Remove a course first"
+                    : canAdd
+                      ? "Add course"
+                      : "Select instructor"}
               </Button>
             </motion.div>
           )}
@@ -278,39 +304,69 @@ function EnrollmentSidebar({ onAddPreview }: EnrollmentSidebarProps) {
 export default function Enrollment() {
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [preview, setPreview] = useState<EnrollmentPreview | null>(null);
+  const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
 
   useEffect(() => {
-    if (isDesktop || preview) return;
+    if (isDesktop || outputs.length > 0) return;
     setDrawerOpen(true);
-  }, [isDesktop, preview]);
+  }, [isDesktop, outputs.length]);
 
-  const graphMessage = preview
+  const graphMessage = outputs.length > 0
     ? "Enrollment graph coming soon."
     : "Add a class from the sidebar to view enrollment trends.";
+
+  const addOutput = (draft: EnrollmentDraft) => {
+    setOutputs((prev) => {
+      if (prev.some((output) => output.id === draft.id)) return prev;
+      const usedColors = new Set(prev.map((output) => output.color));
+      const color =
+        BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
+        BAR_CHART_COLORS[0];
+
+      return [{ ...draft, color }, ...prev];
+    });
+  };
+
+  const remove = (index: number) => {
+    setOutputs((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <CourseAnalyticsLayout
       isDesktop={isDesktop}
       drawerOpen={drawerOpen}
       onDrawerOpenChange={setDrawerOpen}
-      sidebar={<EnrollmentSidebar onAddPreview={setPreview} />}
+      sidebar={<EnrollmentSidebar outputs={outputs} onAddCourse={addOutput} />}
     >
       <div className={styles.outputList}>
         <CourseAnalyticsCardGrid>
-          {preview ? (
-            <div className={styles.outputCardItem}>
-              <CourseSelectionCard
-                color="var(--blue-500)"
-                subject={preview.course.subject}
-                number={preview.course.number}
-                metadata={preview.metadata}
-                loadGradeDistribution={false}
-                fluid
-              />
-            </div>
-          ) : (
+          {outputs.length === 0 ? (
             <div className={styles.emptyCard} />
+          ) : (
+            <LayoutGroup>
+              <AnimatePresence mode="popLayout">
+                {outputs.map((output, index) => (
+                  <motion.div
+                    key={output.id}
+                    className={styles.outputCardItem}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  >
+                    <CourseSelectionCard
+                      color={output.color}
+                      subject={output.course.subject}
+                      number={output.course.number}
+                      metadata={output.metadata}
+                      fluid
+                      onClickDelete={() => remove(index)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </LayoutGroup>
           )}
         </CourseAnalyticsCardGrid>
       </div>
