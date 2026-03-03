@@ -205,12 +205,12 @@ export default function Dashboard() {
     setIsRoleModalOpen(true);
   };
 
-  const handlePhotoUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
+  const [draggingOver, setDraggingOver] = useState<"photo" | "altPhoto" | null>(null);
+
+  const processPhotoFile = async (
+    file: File,
     type: "photo" | "altPhoto"
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
     try {
       const img = new Image();
@@ -307,6 +307,24 @@ export default function Dashboard() {
       console.error("Error processing image:", error);
       alert("Failed to process image");
     }
+  };
+
+  const handlePhotoUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    type: "photo" | "altPhoto"
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) processPhotoFile(file, type);
+  };
+
+  const handlePhotoDrop = (
+    e: React.DragEvent<HTMLLabelElement>,
+    type: "photo" | "altPhoto"
+  ) => {
+    e.preventDefault();
+    setDraggingOver(null);
+    const file = e.dataTransfer.files?.[0];
+    if (file) processPhotoFile(file, type);
   };
 
   const handleRemovePhoto = (type: "photo" | "altPhoto") => {
@@ -1012,7 +1030,11 @@ export default function Dashboard() {
                     )}
                   </div>
                   <label
-                    className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""}`}
+                    className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""} ${draggingOver === "photo" ? styles.draggingOver : ""}`}
+                    onDragOver={(e) => { e.preventDefault(); setDraggingOver("photo"); }}
+                    onDragEnter={(e) => { e.preventDefault(); setDraggingOver("photo"); }}
+                    onDragLeave={() => setDraggingOver(null)}
+                    onDrop={(e) => handlePhotoDrop(e, "photo")}
                   >
                     <input
                       type="file"
@@ -1048,7 +1070,11 @@ export default function Dashboard() {
                     )}
                   </div>
                   <label
-                    className={`${styles.photoUpload} ${roleForm.altPhoto ? styles.hasPhoto : ""}`}
+                    className={`${styles.photoUpload} ${roleForm.altPhoto ? styles.hasPhoto : ""} ${draggingOver === "altPhoto" ? styles.draggingOver : ""}`}
+                    onDragOver={(e) => { e.preventDefault(); setDraggingOver("altPhoto"); }}
+                    onDragEnter={(e) => { e.preventDefault(); setDraggingOver("altPhoto"); }}
+                    onDragLeave={() => setDraggingOver(null)}
+                    onDrop={(e) => handlePhotoDrop(e, "altPhoto")}
                   >
                     <input
                       type="file"
