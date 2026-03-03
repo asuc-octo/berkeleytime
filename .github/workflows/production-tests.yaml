@@ -30,5 +30,18 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install
 
+      - name: Debug production GraphQL response (from GitHub IP)
+        run: |
+          echo "=== Request to https://berkeleytime.com/api/graphql ==="
+          STATUS=$(curl -s -o /tmp/graphql-response.txt -w "%{http_code}" \
+            -X POST https://berkeleytime.com/api/graphql \
+            -H "Content-Type: application/json" \
+            -d '{"query":"{ __typename }"}')
+          echo "HTTP status: $STATUS"
+          echo "Response body (first 500 chars):"
+          head -c 500 /tmp/graphql-response.txt
+          echo ""
+          echo "=== end response ==="
+
       - name: Run production tests
         run: TEST_ENV=production npx playwright test
