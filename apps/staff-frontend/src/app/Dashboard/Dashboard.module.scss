@@ -457,6 +457,11 @@
   &.hasPhoto {
     border: none;
   }
+
+  &.draggingOver {
+    border-color: var(--blue-500);
+    background-color: var(--button-hover-color);
+  }
 }
 
 .photoInput {
