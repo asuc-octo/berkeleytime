@@ -5,6 +5,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -15,14 +16,20 @@ import { ColoredSquare, Switch } from "@repo/theme";
 
 import { formatters } from "@/components/Chart";
 import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
+import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IEnrollment } from "@/lib/api/enrollment";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./EnrollmentGraph.module.scss";
 
 interface EnrollmentGraphOutput {
   id: string;
   color: string;
+  input: {
+    year: number;
+    semester: Semester;
+  };
   course: {
     subject: string;
     number: string;
@@ -55,6 +62,14 @@ const ROTATED_CHART_HEIGHT_RATIO = 0.72;
 const ROTATE_ENTER_WIDTH = 600;
 const ROTATE_EXIT_WIDTH = 640;
 const SERIES_ANIMATION_DURATION_MS = 320;
+const GROUP_LABELS: Record<string, string> = {
+  continuing: "Continuing Students",
+  new_transfer: "New Transfer Students",
+  new_freshman: "New Freshman Students",
+  new_graduate: "New Graduate Students",
+  new_student: "New Students",
+  all: "All Students",
+};
 
 const getValidDenominator = (values: number[]) => {
   const maxSeen = Math.max(...values, 0);
@@ -74,12 +89,18 @@ interface EnrollmentGraphDatum {
   [key: string]: number | null;
 }
 
+interface PhaseLine {
+  timeDelta: number;
+  label: string;
+  key: string;
+}
+
 export default function EnrollmentGraph({
   outputs,
   hoveredIndex = null,
 }: EnrollmentGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [showRawNumbers, setShowRawNumbers] = useState(true);
+  const [showRawNumbers, setShowRawNumbers] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const { height: viewportHeight } = useWindowDimensions();
 
@@ -185,6 +206,69 @@ export default function EnrollmentGraph({
   }, [chartData, showRawNumbers]);
 
   const hasOutputs = outputs.length > 0;
+  const phaseLinesConfig = useMemo(() => {
+    if (!hasOutputs) return null;
+
+    const firstOutput = outputs[0];
+    const allSameSemester = outputs.every(
+      (output) =>
+        output.input.year === firstOutput.input.year &&
+        output.input.semester === firstOutput.input.semester
+    );
+
+    if (!allSameSemester) return null;
+
+    return {
+      year: firstOutput.input.year,
+      semester: firstOutput.input.semester,
+    };
+  }, [hasOutputs, outputs]);
+
+  const { data: enrollmentTimeframes } = useReadEnrollmentTimeframes(
+    phaseLinesConfig?.year,
+    phaseLinesConfig?.semester
+  );
+
+  const phaseLines = useMemo((): PhaseLine[] => {
+    if (!phaseLinesConfig || !enrollmentTimeframes.length || !chartData.length) {
+      return [];
+    }
+
+    const matchingOutput = outputs.find(
+      (output) =>
+        output.input.year === phaseLinesConfig.year &&
+        output.input.semester === phaseLinesConfig.semester
+    );
+    if (!matchingOutput || matchingOutput.data.history.length === 0) return [];
+
+    const firstTime = moment(matchingOutput.data.history[0].startTime);
+    const lastTimeDelta = chartData[chartData.length - 1]?.timeDelta ?? 0;
+    if (lastTimeDelta <= 0) return [];
+
+    return enrollmentTimeframes
+      .filter((timeframe) => timeframe.group === "continuing" || timeframe.group === "all")
+      .map((timeframe) => {
+        const phaseStart = moment(timeframe.startDate);
+        const timeDelta = moment.duration(phaseStart.diff(firstTime)).asMinutes();
+
+        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
+
+        const phaseLabel = timeframe.isAdjustment
+          ? "Adjustment"
+          : timeframe.phase
+            ? `Phase ${timeframe.phase}`
+            : "Phase";
+        const groupLabel = GROUP_LABELS[timeframe.group] ?? timeframe.group;
+
+        return {
+          timeDelta,
+          label: `${phaseLabel} - ${groupLabel}`,
+          key: `${timeframe.phase ?? "adjustment"}-${timeframe.group}-${timeframe.startDate}`,
+        };
+      })
+      .filter((line): line is PhaseLine => line !== null);
+  }, [chartData, enrollmentTimeframes, outputs, phaseLinesConfig]);
+
   const chartHeightRatio = isRotated
     ? ROTATED_CHART_HEIGHT_RATIO
     : CHART_HEIGHT_RATIO;
@@ -400,6 +484,36 @@ export default function EnrollmentGraph({
                       );
                     }}
                   />
+                  {phaseLines.map((phaseLine) => (
+                    <ReferenceLine
+                      key={phaseLine.key}
+                      x={isRotated ? undefined : phaseLine.timeDelta}
+                      y={isRotated ? phaseLine.timeDelta : undefined}
+                      stroke="var(--border-color)"
+                      strokeDasharray="6 4"
+                      strokeOpacity={1}
+                      strokeWidth={1}
+                      label={
+                        isRotated
+                          ? {
+                              value: phaseLine.label,
+                              position: "insideLeft",
+                              fill: "var(--paragraph-color)",
+                              fontSize: 10,
+                              dx: 8,
+                            }
+                          : {
+                              value: phaseLine.label,
+                              position: "insideBottomLeft",
+                              fill: "var(--paragraph-color)",
+                              fontSize: 10,
+                              angle: -90,
+                              dx: 12,
+                              dy: -8,
+                            }
+                      }
+                    />
+                  ))}
                   {outputs.map((output, outputIndex) => {
                     const isDimmed =
                       hoveredIndex !== null &&
