@@ -4,10 +4,10 @@ import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
-} from "@repo/common/models";
+} from "@repo/common";
 
-import { warmCatalogCacheForTerms } from "../lib/cache-warming";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
+import { checkEnrollmentThresholds } from "../lib/enrollment-notifications";
 import { Config } from "../shared/config";
 
 // duration of time in seconds that can pass before being considered a data gap
@@ -64,38 +64,12 @@ const enrollmentSingularsEqual = (
   return true;
 };
 
-const seatReservationTypesEqual = (
-  a: NonNullable<IEnrollmentSingularItem["seatReservationTypes"]>,
-  b: NonNullable<IEnrollmentSingularItem["seatReservationTypes"]>
-) => {
-  if (a.length !== b.length) return false;
-
-  const byNumber = (arr: typeof a) =>
-    arr
-      .map((item) => ({
-        number: item.number,
-        code: item.requirementGroup?.code ?? null,
-        description: item.requirementGroup?.description ?? null,
-      }))
-      .sort((x, y) => (x.number ?? 0) - (y.number ?? 0));
-
-  const aSorted = byNumber(a);
-  const bSorted = byNumber(b);
-
-  return aSorted.every(
-    (item, idx) =>
-      item.number === bSorted[idx].number &&
-      item.code === bSorted[idx].code &&
-      item.description === bSorted[idx].description
-  );
-};
-
 const updateEnrollmentHistories = async (config: Config) => {
   const {
     log,
     sis: { CLASS_APP_ID, CLASS_APP_KEY },
+    backend: { url: BACKEND_URL },
   } = config;
-
   log.trace(`Fetching terms...`);
 
   const now = DateTime.now();
@@ -121,7 +95,6 @@ const updateEnrollmentHistories = async (config: Config) => {
   let totalEnrollmentSingulars = 0;
   let totalInserted = 0;
   let totalUpdated = 0;
-  const requirementGroupStats = { present: 0, missing: 0 };
 
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
@@ -135,8 +108,7 @@ const updateEnrollmentHistories = async (config: Config) => {
       log,
       CLASS_APP_ID,
       CLASS_APP_KEY,
-      termsBatchIds,
-      requirementGroupStats
+      termsBatchIds
     );
 
     log.info(
@@ -205,7 +177,7 @@ const updateEnrollmentHistories = async (config: Config) => {
           if (existingDoc.history.length === 0) {
             bulkOps.push({
               updateOne: {
-                filter: { _id: existingDoc._id },
+                filter: identifier,
                 update: {
                   $push: { history: enrollmentSingular.data },
                 },
@@ -219,7 +191,7 @@ const updateEnrollmentHistories = async (config: Config) => {
                  2. Latest enrollment entry's granularity matches incoming granularity
                  3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
 
-              Then: Extend the last entry's endTime using $set.
+              Then: Extend the last entry's endTime using atomic $set.
 
               Else: Append a new entry with incoming startTime and endTime using $push.
             */
@@ -238,7 +210,7 @@ const updateEnrollmentHistories = async (config: Config) => {
               lastEntry.granularitySeconds ===
               enrollmentSingular.data.granularitySeconds;
 
-            // true if duration from last entry's end time to current time is less than DATAGAP_THRESHOLD
+            // true if duration from last entry's end time to current time exceeds DATAGAP_THRESHOLD
             const incomingEndTime = DateTime.fromJSDate(
               enrollmentSingular.data.endTime
             );
@@ -248,10 +220,10 @@ const updateEnrollmentHistories = async (config: Config) => {
               DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              // Extend the endTime of the last entry using update
+              // Extend the endTime of the last entry using atomic update
               bulkOps.push({
                 updateOne: {
-                  filter: { _id: existingDoc._id },
+                  filter: identifier,
                   update: {
                     $set: { [`history.${lastIndex}.endTime`]: now.toJSDate() },
                   },
@@ -261,7 +233,7 @@ const updateEnrollmentHistories = async (config: Config) => {
               // Append a new entry
               bulkOps.push({
                 updateOne: {
-                  filter: { _id: existingDoc._id },
+                  filter: identifier,
                   update: {
                     $push: { history: enrollmentSingular.data },
                   },
@@ -269,35 +241,6 @@ const updateEnrollmentHistories = async (config: Config) => {
               });
             }
             totalUpdated += 1;
-          }
-        }
-
-        // Keep seatReservationTypes fresh if new data differs from stored
-        if (
-          existingDoc &&
-          enrollmentSingular.seatReservationTypes &&
-          enrollmentSingular.seatReservationTypes.length > 0
-        ) {
-          const existingTypes = existingDoc.seatReservationTypes ?? [];
-          const incomingTypes = enrollmentSingular.seatReservationTypes ?? [];
-          const hasUnknown = existingTypes.some(
-            (t) =>
-              !t.requirementGroup?.description ||
-              t.requirementGroup.description === "Unknown"
-          );
-
-          const needsUpdate =
-            hasUnknown ||
-            existingTypes.length === 0 ||
-            !seatReservationTypesEqual(existingTypes, incomingTypes);
-
-          if (needsUpdate) {
-            bulkOps.push({
-              updateOne: {
-                filter: { _id: existingDoc._id },
-                update: { $set: { seatReservationTypes: incomingTypes } },
-              },
-            });
           }
         }
       }
@@ -312,15 +255,46 @@ const updateEnrollmentHistories = async (config: Config) => {
   }
 
   log.info(
-    `Seat reservation groups: ${requirementGroupStats.present.toLocaleString()} with descriptions, ${requirementGroupStats.missing.toLocaleString()} missing.`
-  );
-
-  log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
 
   // Warm catalog cache for all terms we just updated
-  await warmCatalogCacheForTerms(config, terms);
+  log.info("Warming catalog cache for updated terms...");
+  for (const term of terms) {
+    const [yearStr, semester] = term.name.split(" ");
+    const year = parseInt(yearStr);
+
+    if (!year || !semester) {
+      log.warn(`Failed to parse term name: ${term.name}`);
+      continue;
+    }
+
+    try {
+      log.trace(`Warming cache for ${term.name}...`);
+
+      const response = await fetch(`${BACKEND_URL}/cache/warm-catalog`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year, semester }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        log.warn(
+          `Failed to warm cache for ${term.name}: HTTP ${response.status} - ${errorText}`
+        );
+      } else {
+        const result = await response.json();
+        log.info(`Warmed cache for ${term.name}: ${result.key}`);
+      }
+    } catch (error: any) {
+      log.warn(`Failed to warm cache for ${term.name}: ${error.message}`);
+    }
+  }
+  log.info("Completed catalog cache warming.");
+
+  // Check enrollment thresholds and send notifications
+  await checkEnrollmentThresholds(config);
 };
 
 export default { updateEnrollmentHistories };

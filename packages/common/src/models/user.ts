@@ -35,6 +35,15 @@ export const userSchema = new Schema(
       trim: true,
       required: false,
     },
+    notificationsOn: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    lastNotified: {
+      type: Date,
+      required: false,
+    },
     lastSeenAt: {
       type: Date,
       required: true,

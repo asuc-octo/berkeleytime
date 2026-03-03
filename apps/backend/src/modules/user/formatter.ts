@@ -1,8 +1,6 @@
 import { UserType } from "@repo/common/models";
 
-import { UserModule } from "./generated-types/module-types";
-
-export const formatUser = (user: UserType): UserModule.User => {
+export const formatUser = (user: UserType) => {
   return {
     _id: user._id as unknown as string,
     email: user.email,
@@ -11,5 +9,7 @@ export const formatUser = (user: UserType): UserModule.User => {
     student: user.email.endsWith("@berkeley.edu"),
     majors: user.majors ? user.majors : [],
     minors: user.minors ? user.minors : [],
+    notificationsOn: user.notificationsOn ?? false,
+    monitoredClasses: [] as { class: object; thresholds: number[] }[],
   };
 };

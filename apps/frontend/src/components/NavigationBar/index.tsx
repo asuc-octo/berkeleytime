@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Bell,
   Bookmark,
   ChatBubbleQuestion,
   HalfMoon,
@@ -273,6 +274,11 @@ export default function NavigationBar({
               <DropdownMenu.Item asChild>
                 <Link to="/profile/bookmarks">
                   <Bookmark width={18} height={18} /> Bookmarks
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link to="/profile/notifications">
+                  <Bell width={18} height={18} /> Notifications
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild>

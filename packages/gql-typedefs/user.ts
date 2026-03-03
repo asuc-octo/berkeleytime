@@ -1,6 +1,11 @@
 import { gql } from "graphql-tag";
 
 export const userTypeDef = gql`
+  type MonitoredClass {
+    class: Class!
+    thresholds: [Float]!
+  }
+
   type User @cacheControl(scope: PRIVATE) {
     _id: ID!
     email: String!
@@ -9,6 +14,8 @@ export const userTypeDef = gql`
     student: Boolean!
     majors: [String!]!
     minors: [String!]!
+    monitoredClasses: [MonitoredClass!]!
+    notificationsOn: Boolean!
   }
 
   """
@@ -33,9 +40,25 @@ export const userTypeDef = gql`
     user: User @auth
   }
 
+  input MonitoredClassRefInput {
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+  }
+
+  input MonitoredClassInput {
+    class: MonitoredClassRefInput!
+    thresholds: [Float!]!
+  }
+
   input UpdateUserInput {
     majors: [String!]
     minors: [String!]
+    monitoredClasses: [MonitoredClassInput!]
+    notificationsOn: Boolean
   }
 
   type Mutation {

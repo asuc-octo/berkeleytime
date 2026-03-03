@@ -3,6 +3,7 @@ import { parseArgs } from "node:util";
 import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
+import enrollmentChecksPuller from "./pullers/enrollment-checks";
 import enrollmentTimeframePuller from "./pullers/enrollment-timeframe";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
 import migrationsPuller from "./pullers/migrations";
@@ -28,6 +29,7 @@ const pullerMap: {
   "grades-recent": gradeDistributionsPuller.recentPastTerms,
   "grades-last-five-years": gradeDistributionsPuller.lastFiveYearsTerms,
   enrollments: enrollmentHistoriesPuller.updateEnrollmentHistories,
+  "enrollment-checks": enrollmentChecksPuller.checkEnrollmentThresholds,
   "enrollment-timeframe": enrollmentTimeframePuller.syncEnrollmentTimeframe,
   "terms-all": termsPuller.allTerms,
   "terms-nearby": termsPuller.nearbyTerms,

@@ -20,6 +20,7 @@
     "@aws-sdk/client-s3": "^3.901.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
+    "@sendgrid/mail": "^8.1.4",
     "luxon": "^3.7.2",
     "papaparse": "^5.5.3",
     "tslog": "^4.10.2"

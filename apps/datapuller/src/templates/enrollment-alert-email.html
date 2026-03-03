@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #0066cc; margin-bottom: 10px;">BerkeleTime Enrollment Alert</h1>
+      <p style="color: #666; margin: 0;">Your monitored classes have reached enrollment thresholds</p>
+    </div>
+    
+    <div style="margin-bottom: 30px;">
+      <p>Hello {{userName}},</p>
+      <p>The following classes you're monitoring have crossed their enrollment thresholds:</p>
+    </div>
+
+    {{alertsList}}
+
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 14px;">
+      <p>You're receiving this email because you've set up enrollment notifications on BerkeleTime.</p>
+      <p>To manage your notification settings, please visit your <a href="https://berkeleytime.com/profile" style="color: #0066cc;">profile page</a>.</p>
+    </div>
+  </body>
+</html>
+
