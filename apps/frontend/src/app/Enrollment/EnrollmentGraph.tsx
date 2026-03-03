@@ -21,6 +21,10 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IEnrollment } from "@/lib/api/enrollment";
 import { Semester } from "@/lib/generated/graphql";
 
+import {
+  estimateSeriesValueAtTime,
+  type SeriesPoint,
+} from "./EnrollmentGraph.utils";
 import styles from "./EnrollmentGraph.module.scss";
 
 interface EnrollmentGraphOutput {
@@ -177,6 +181,24 @@ export default function EnrollmentGraph({
       });
   }, [outputs, showRawNumbers]);
 
+  const seriesPointsByOutput = useMemo(
+    () =>
+      outputs.map((_, outputIndex) => {
+        const seriesKey = getSeriesKey(outputIndex);
+        return chartData.reduce<SeriesPoint[]>((points, datum) => {
+          const value = datum[seriesKey];
+          if (typeof value === "number") {
+            points.push({
+              timeDelta: datum.timeDelta,
+              value,
+            });
+          }
+          return points;
+        }, []);
+      }),
+    [chartData, outputs]
+  );
+
   const hasSeriesData = useMemo(
     () =>
       chartData.some((datum) =>
@@ -246,7 +268,14 @@ export default function EnrollmentGraph({
     if (lastTimeDelta <= 0) return [];
 
     return enrollmentTimeframes
-      .filter((timeframe) => timeframe.group === "continuing" || timeframe.group === "all")
+      .filter(
+        (timeframe) =>
+          timeframe.group === "continuing" ||
+          timeframe.group === "all" ||
+          (timeframe.group === "new_freshman" &&
+            timeframe.phase === 1 &&
+            !timeframe.isAdjustment)
+      )
       .map((timeframe) => {
         const phaseStart = moment(timeframe.startDate);
         const timeDelta = moment.duration(phaseStart.diff(firstTime)).asMinutes();
@@ -266,7 +295,8 @@ export default function EnrollmentGraph({
           key: `${timeframe.phase ?? "adjustment"}-${timeframe.group}-${timeframe.startDate}`,
         };
       })
-      .filter((line): line is PhaseLine => line !== null);
+      .filter((line): line is PhaseLine => line !== null)
+      .toSorted((a, b) => a.timeDelta - b.timeDelta);
   }, [chartData, enrollmentTimeframes, outputs, phaseLinesConfig]);
 
   const chartHeightRatio = isRotated
@@ -426,19 +456,35 @@ export default function EnrollmentGraph({
                         moment.utc(0).add(duration).toDate()
                       );
 
-                      const rows = payload
-                        .map((entry) => {
-                          if (typeof entry.value !== "number") return null;
+                      const payloadValuesBySeriesKey = new Map<string, number>();
+                      payload.forEach((entry) => {
+                        if (
+                          typeof entry.dataKey === "string" &&
+                          typeof entry.value === "number"
+                        ) {
+                          payloadValuesBySeriesKey.set(entry.dataKey, entry.value);
+                        }
+                      });
 
-                          const [, rawIndex] = String(entry.dataKey).split("_");
-                          const outputIndex = Number(rawIndex);
-                          const output = outputs[outputIndex];
-                          if (!output) return null;
+                      const rows = outputs
+                        .map((output, outputIndex) => {
+                          const seriesKey = getSeriesKey(outputIndex);
+                          const exactValue =
+                            payloadValuesBySeriesKey.get(seriesKey);
+                          const interpolatedValue =
+                            typeof exactValue === "number"
+                              ? exactValue
+                              : estimateSeriesValueAtTime(
+                                  seriesPointsByOutput[outputIndex] ?? [],
+                                  labelMinutes
+                                );
+
+                          if (typeof interpolatedValue !== "number") return null;
 
                           return {
-                            key: `${entry.dataKey}-${output.id}`,
+                            key: `${seriesKey}-${output.id}`,
                             label: getDisplayLabel(output),
-                            value: entry.value,
+                            value: interpolatedValue,
                             color: output.color,
                           };
                         })
@@ -489,9 +535,9 @@ export default function EnrollmentGraph({
                       key={phaseLine.key}
                       x={isRotated ? undefined : phaseLine.timeDelta}
                       y={isRotated ? phaseLine.timeDelta : undefined}
-                      stroke="var(--border-color)"
+                      stroke="var(--paragraph-color)"
                       strokeDasharray="6 4"
-                      strokeOpacity={1}
+                      strokeOpacity={0.8}
                       strokeWidth={1}
                       label={
                         isRotated
