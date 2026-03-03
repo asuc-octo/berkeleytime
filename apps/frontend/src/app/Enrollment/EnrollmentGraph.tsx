@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { ColoredSquare, Switch } from "@repo/theme";
+import { ColoredSquare, Switch, Tooltip as ThemeTooltip } from "@repo/theme";
 
 import { formatters } from "@/components/Chart";
 import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
@@ -22,6 +22,7 @@ import type { IEnrollment } from "@/lib/api/enrollment";
 import { Semester } from "@/lib/generated/graphql";
 
 import {
+  areOutputsFromSameSemester,
   estimateSeriesValueAtTime,
   getCapacityChangeTimeDeltas,
   type SeriesPoint,
@@ -69,6 +70,8 @@ const ROTATE_EXIT_WIDTH = 640;
 const SERIES_ANIMATION_DURATION_MS = 320;
 const CAPACITY_CHANGE_MARKER_SIZE = 5;
 const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
+const CAPACITY_CHANGE_MARKER_HIT_RADIUS = 8;
+const CAPACITY_CHANGE_MARKER_HOVER_SCALE = 1.12;
 const EMPTY_CAPACITY_CHANGE_KEYS = new Set<string>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
@@ -78,6 +81,8 @@ const GROUP_LABELS: Record<string, string> = {
   new_student: "New Students",
   all: "All Students",
 };
+const MULTI_SEMESTER_STUDENT_COUNT_TOOLTIP =
+  "Student count is unavailable when comparing multiple semesters.";
 
 const getTimeDeltaKey = (timeDelta: number) => timeDelta.toFixed(4);
 
@@ -111,7 +116,11 @@ export default function EnrollmentGraph({
 }: EnrollmentGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
+  const [showPhases, setShowPhases] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
+  const [hoveredCapacityMarkerKey, setHoveredCapacityMarkerKey] = useState<
+    string | null
+  >(null);
   const { height: viewportHeight } = useWindowDimensions();
 
   useEffect(() => {
@@ -246,27 +255,31 @@ export default function EnrollmentGraph({
   }, [chartData, showRawNumbers]);
 
   const hasOutputs = outputs.length > 0;
+  const allOutputsSameSemester = useMemo(
+    () => areOutputsFromSameSemester(outputs),
+    [outputs]
+  );
+
+  useEffect(() => {
+    if (allOutputsSameSemester || !showRawNumbers) return;
+    setShowRawNumbers(false);
+  }, [allOutputsSameSemester, showRawNumbers]);
+
   const phaseLinesConfig = useMemo(() => {
-    if (!hasOutputs) return null;
+    if (!hasOutputs || !showPhases || !allOutputsSameSemester) return null;
 
     const firstOutput = outputs[0];
-    const allSameSemester = outputs.every(
-      (output) =>
-        output.input.year === firstOutput.input.year &&
-        output.input.semester === firstOutput.input.semester
-    );
-
-    if (!allSameSemester) return null;
 
     return {
       year: firstOutput.input.year,
       semester: firstOutput.input.semester,
     };
-  }, [hasOutputs, outputs]);
+  }, [allOutputsSameSemester, hasOutputs, outputs, showPhases]);
 
   const { data: enrollmentTimeframes } = useReadEnrollmentTimeframes(
     phaseLinesConfig?.year,
-    phaseLinesConfig?.semester
+    phaseLinesConfig?.semester,
+    { skip: !phaseLinesConfig }
   );
 
   const phaseLines = useMemo((): PhaseLine[] => {
@@ -325,16 +338,44 @@ export default function EnrollmentGraph({
     Math.round(viewportHeight * chartHeightRatio)
   );
   const emptyGraphHeight = chartHeight + 32;
+  const isStudentCountDisabled = !allOutputsSameSemester;
+  const studentCountToggle = (
+    <label
+      className={`${styles.toggleRow} ${
+        isStudentCountDisabled ? styles.toggleRowDisabled : ""
+      }`}
+    >
+      <span className={styles.toggleLabel}>Show as student count</span>
+      <Switch
+        checked={showRawNumbers}
+        onCheckedChange={setShowRawNumbers}
+        aria-label="Show as student count"
+        disabled={isStudentCountDisabled}
+      />
+    </label>
+  );
   const graphControls = (
     <div className={styles.graphHeader}>
       <label className={styles.toggleRow}>
-        <span className={styles.toggleLabel}>Show as student count</span>
+        <span className={styles.toggleLabel}>Show phases</span>
         <Switch
-          checked={showRawNumbers}
-          onCheckedChange={setShowRawNumbers}
-          aria-label="Show as student count"
+          checked={showPhases}
+          onCheckedChange={setShowPhases}
+          aria-label="Show phases"
         />
       </label>
+      {isStudentCountDisabled ? (
+        <ThemeTooltip
+          title={MULTI_SEMESTER_STUDENT_COUNT_TOOLTIP}
+          trigger={
+            <span className={styles.toggleTooltipTrigger}>
+              {studentCountToggle}
+            </span>
+          }
+        />
+      ) : (
+        studentCountToggle
+      )}
     </div>
   );
 
@@ -350,6 +391,7 @@ export default function EnrollmentGraph({
                   data={chartData}
                   margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
                   layout={isRotated ? "vertical" : "horizontal"}
+                  onMouseLeave={() => setHoveredCapacityMarkerKey(null)}
                 >
                   <defs>
                     {outputs.map((output) => {
@@ -473,6 +515,19 @@ export default function EnrollmentGraph({
                       const timeLabel = TOOLTIP_TIME_FORMATTER.format(
                         moment.utc(0).add(duration).toDate()
                       );
+                      const labelTimeDeltaKey = getTimeDeltaKey(labelMinutes);
+                      const capacityChangeLabels = outputs.reduce<string[]>(
+                        (labels, output, outputIndex) => {
+                          const markerKeys =
+                            capacityChangeTimeDeltaKeysByOutput[outputIndex] ??
+                            EMPTY_CAPACITY_CHANGE_KEYS;
+                          if (markerKeys.has(labelTimeDeltaKey)) {
+                            labels.push(getDisplayLabel(output));
+                          }
+                          return labels;
+                        },
+                        []
+                      );
 
                       const payloadValuesBySeriesKey = new Map<string, number>();
                       payload.forEach((entry) => {
@@ -517,7 +572,8 @@ export default function EnrollmentGraph({
                           } => row !== null
                         );
 
-                      if (rows.length === 0) return null;
+                      const hasCapacityChange = capacityChangeLabels.length > 0;
+                      if (rows.length === 0 && !hasCapacityChange) return null;
 
                       return (
                         <div className={styles.tooltipCard}>
@@ -544,6 +600,17 @@ export default function EnrollmentGraph({
                               </div>
                             ))}
                           </div>
+                          {hasCapacityChange ? (
+                            <div className={styles.tooltipMeta}>
+                              <span className={styles.tooltipMetaIcon}>▲</span>
+                              <span className={styles.tooltipMetaText}>
+                                Seating capacity changed
+                                {capacityChangeLabels.length === 1
+                                  ? ` for ${capacityChangeLabels[0]}`
+                                  : ""}
+                              </span>
+                            </div>
+                          ) : null}
                         </div>
                       );
                     }}
@@ -611,13 +678,54 @@ export default function EnrollmentGraph({
                               return null;
                             }
 
+                            const markerTimeDeltaKey = getTimeDeltaKey(
+                              dotProps.payload.timeDelta
+                            );
+                            const markerKey = `${output.id}-${markerTimeDeltaKey}`;
+                            const markerTipY =
+                              dotProps.cy + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET;
+                            const markerBaseY =
+                              dotProps.cy +
+                              CAPACITY_CHANGE_MARKER_SIZE * 1.6 +
+                              CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET;
+                            const isMarkerHovered =
+                              hoveredCapacityMarkerKey === markerKey;
+                            const markerScale = isMarkerHovered
+                              ? CAPACITY_CHANGE_MARKER_HOVER_SCALE
+                              : 1;
+                            const markerTransform =
+                              markerScale === 1
+                                ? undefined
+                                : `translate(${dotProps.cx} ${markerTipY}) scale(${markerScale}) translate(${-dotProps.cx} ${-markerTipY})`;
+
                             return (
-                              <path
-                                d={`M ${dotProps.cx} ${dotProps.cy + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} L ${dotProps.cx - CAPACITY_CHANGE_MARKER_SIZE} ${dotProps.cy + CAPACITY_CHANGE_MARKER_SIZE * 1.6 + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} L ${dotProps.cx + CAPACITY_CHANGE_MARKER_SIZE} ${dotProps.cy + CAPACITY_CHANGE_MARKER_SIZE * 1.6 + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} Z`}
-                                fill="var(--heading-color)"
-                                stroke="var(--heading-color)"
-                                strokeWidth={1}
-                              />
+                              <g
+                                style={{ cursor: "pointer" }}
+                                onMouseEnter={() =>
+                                  setHoveredCapacityMarkerKey(markerKey)
+                                }
+                                onMouseLeave={() =>
+                                  setHoveredCapacityMarkerKey((current) =>
+                                    current === markerKey ? null : current
+                                  )
+                                }
+                              >
+                                <circle
+                                  cx={dotProps.cx}
+                                  cy={(markerTipY + markerBaseY) / 2}
+                                  r={CAPACITY_CHANGE_MARKER_HIT_RADIUS}
+                                  fill="transparent"
+                                />
+                                <path
+                                  d={`M ${dotProps.cx} ${markerTipY} L ${dotProps.cx - CAPACITY_CHANGE_MARKER_SIZE} ${markerBaseY} L ${dotProps.cx + CAPACITY_CHANGE_MARKER_SIZE} ${markerBaseY} Z`}
+                                  fill="var(--heading-color)"
+                                  stroke="var(--heading-color)"
+                                  fillOpacity={isMarkerHovered ? 1 : 0.88}
+                                  strokeWidth={isMarkerHovered ? 1.4 : 1}
+                                  transform={markerTransform}
+                                />
+                                <title>Seating capacity changed</title>
+                              </g>
                             );
                           }}
                           activeDot={{

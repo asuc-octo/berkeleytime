@@ -8,8 +8,29 @@ export interface CapacityHistoryPoint {
   maxEnroll: number | null;
 }
 
+export interface EnrollmentOutputSemesterInfo {
+  input: {
+    year: number;
+    semester: string;
+  };
+}
+
 const TIME_DELTA_EPSILON = 1e-6;
 const MINUTE_MS = 60_000;
+
+export const areOutputsFromSameSemester = (
+  outputs: EnrollmentOutputSemesterInfo[]
+): boolean => {
+  if (outputs.length <= 1) return true;
+
+  const firstOutput = outputs[0];
+
+  return outputs.every(
+    (output) =>
+      output.input.year === firstOutput.input.year &&
+      output.input.semester === firstOutput.input.semester
+  );
+};
 
 const getMinuteStartMs = (isoDate: string): number | null => {
   const timestampMs = new Date(isoDate).getTime();

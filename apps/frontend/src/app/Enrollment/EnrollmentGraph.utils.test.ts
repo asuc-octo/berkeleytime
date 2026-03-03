@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  areOutputsFromSameSemester,
   estimateSeriesValueAtTime,
   getCapacityChangeTimeDeltas,
 } from "./EnrollmentGraph.utils";
@@ -65,5 +66,81 @@ describe("estimateSeriesValueAtTime", () => {
 
   it("returns null for an empty point set", () => {
     expect(estimateSeriesValueAtTime([], 10)).toBeNull();
+  });
+});
+
+describe("areOutputsFromSameSemester", () => {
+  it("returns true when there are no outputs", () => {
+    expect(areOutputsFromSameSemester([])).toBe(true);
+  });
+
+  it("returns true for a single output", () => {
+    expect(
+      areOutputsFromSameSemester([
+        {
+          input: {
+            year: 2026,
+            semester: "Spring",
+          },
+        },
+      ])
+    ).toBe(true);
+  });
+
+  it("returns true when all outputs share year and semester", () => {
+    expect(
+      areOutputsFromSameSemester([
+        {
+          input: {
+            year: 2026,
+            semester: "Spring",
+          },
+        },
+        {
+          input: {
+            year: 2026,
+            semester: "Spring",
+          },
+        },
+      ])
+    ).toBe(true);
+  });
+
+  it("returns false when any output has a different year", () => {
+    expect(
+      areOutputsFromSameSemester([
+        {
+          input: {
+            year: 2026,
+            semester: "Spring",
+          },
+        },
+        {
+          input: {
+            year: 2025,
+            semester: "Spring",
+          },
+        },
+      ])
+    ).toBe(false);
+  });
+
+  it("returns false when any output has a different semester", () => {
+    expect(
+      areOutputsFromSameSemester([
+        {
+          input: {
+            year: 2026,
+            semester: "Spring",
+          },
+        },
+        {
+          input: {
+            year: 2026,
+            semester: "Fall",
+          },
+        },
+      ])
+    ).toBe(false);
   });
 });

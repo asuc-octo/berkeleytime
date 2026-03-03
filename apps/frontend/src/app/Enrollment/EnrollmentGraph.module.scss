@@ -35,6 +35,14 @@
   gap: 8px;
 }
 
+.toggleRowDisabled {
+  opacity: 0.65;
+}
+
+.toggleTooltipTrigger {
+  display: inline-flex;
+}
+
 .toggleLabel {
   color: var(--paragraph-color);
   font-size: var(--text-14);
@@ -83,6 +91,27 @@
   flex-direction: column;
   gap: 10px;
   padding: 12px;
+}
+
+.tooltipMeta {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px 10px;
+  border-top: 1px solid var(--border-color);
+}
+
+.tooltipMetaIcon {
+  color: var(--heading-color);
+  font-size: var(--text-12);
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.tooltipMetaText {
+  color: var(--paragraph-color);
+  font-size: var(--text-12);
+  line-height: 1.35;
 }
 
 .tooltipItem {
