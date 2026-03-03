@@ -24,7 +24,8 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 12px;
+  column-gap: 16px;
+  row-gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 8px;
 }
@@ -77,6 +78,12 @@
   min-width: 220px;
 }
 
+.capacityTooltipCard {
+  min-width: 0;
+  width: fit-content;
+  max-width: 280px;
+}
+
 .tooltipLabel {
   padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
@@ -86,11 +93,19 @@
   line-height: 1.2;
 }
 
+.capacityTooltipLabel {
+  padding-inline: 10px;
+}
+
 .tooltipItems {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 12px;
+}
+
+.capacityTooltipItems {
+  padding: 10px;
 }
 
 .tooltipMeta {
@@ -112,6 +127,26 @@
   color: var(--paragraph-color);
   font-size: var(--text-12);
   line-height: 1.35;
+}
+
+.capacityChangeTooltipDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+.capacityChangeTooltipDeltaIncrease {
+  color: var(--green-500);
+}
+
+.capacityChangeTooltipDeltaDecrease {
+  color: var(--red-500);
+}
+
+.capacityChangeTooltipIcon {
+  color: currentColor;
+  flex-shrink: 0;
 }
 
 .tooltipItem {

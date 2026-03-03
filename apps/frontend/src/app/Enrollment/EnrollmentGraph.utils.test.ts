@@ -3,8 +3,51 @@ import { describe, expect, it } from "vitest";
 import {
   areOutputsFromSameSemester,
   estimateSeriesValueAtTime,
+  getCapacityChangeEvents,
   getCapacityChangeTimeDeltas,
 } from "./EnrollmentGraph.utils";
+
+describe("getCapacityChangeEvents", () => {
+  it("returns events with direction and percent change", () => {
+    const history = [
+      { startTime: "2024-08-20T08:00:12.000Z", maxEnroll: 100 },
+      { startTime: "2024-08-20T08:30:30.000Z", maxEnroll: 100 },
+      { startTime: "2024-08-20T09:00:09.000Z", maxEnroll: 120 },
+      { startTime: "2024-08-20T10:00:00.000Z", maxEnroll: 80 },
+    ];
+
+    const events = getCapacityChangeEvents(history);
+
+    expect(events).toHaveLength(2);
+    expect(events[0]).toMatchObject({
+      timeDelta: 60,
+      previousMaxEnroll: 100,
+      currentMaxEnroll: 120,
+      direction: "increase",
+    });
+    expect(events[0]?.percentChange).toBeCloseTo(20, 5);
+
+    expect(events[1]).toMatchObject({
+      timeDelta: 120,
+      previousMaxEnroll: 120,
+      currentMaxEnroll: 80,
+      direction: "decrease",
+    });
+    expect(events[1]?.percentChange).toBeCloseTo(33.3333333333, 5);
+  });
+
+  it("handles changes from zero capacity", () => {
+    const history = [
+      { startTime: "2024-08-20T08:00:00.000Z", maxEnroll: 0 },
+      { startTime: "2024-08-20T08:20:00.000Z", maxEnroll: 10 },
+    ];
+
+    expect(getCapacityChangeEvents(history)[0]).toMatchObject({
+      direction: "increase",
+      percentChange: 100,
+    });
+  });
+});
 
 describe("getCapacityChangeTimeDeltas", () => {
   it("returns change time deltas when max enrollment shifts", () => {

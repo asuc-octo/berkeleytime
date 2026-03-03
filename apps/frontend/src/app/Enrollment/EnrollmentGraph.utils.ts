@@ -8,6 +8,14 @@ export interface CapacityHistoryPoint {
   maxEnroll: number | null;
 }
 
+export interface CapacityChangeEvent {
+  timeDelta: number;
+  previousMaxEnroll: number;
+  currentMaxEnroll: number;
+  percentChange: number;
+  direction: "increase" | "decrease";
+}
+
 export interface EnrollmentOutputSemesterInfo {
   input: {
     year: number;
@@ -38,15 +46,28 @@ const getMinuteStartMs = (isoDate: string): number | null => {
   return Math.floor(timestampMs / MINUTE_MS) * MINUTE_MS;
 };
 
-export const getCapacityChangeTimeDeltas = (
+const getCapacityPercentChange = (
+  previousMaxEnroll: number,
+  currentMaxEnroll: number
+) => {
+  if (previousMaxEnroll <= 0) {
+    return currentMaxEnroll > 0 ? 100 : 0;
+  }
+
+  return (
+    (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100
+  );
+};
+
+export const getCapacityChangeEvents = (
   history: CapacityHistoryPoint[]
-): number[] => {
+): CapacityChangeEvent[] => {
   if (history.length < 2) return [];
 
   const firstTimeMs = getMinuteStartMs(history[0].startTime);
   if (firstTimeMs === null) return [];
 
-  const changeDeltas: number[] = [];
+  const eventsByTimeDeltaKey = new Map<string, CapacityChangeEvent>();
   let previousMaxEnroll = history[0].maxEnroll ?? 0;
 
   for (let index = 1; index < history.length; index += 1) {
@@ -55,14 +76,31 @@ export const getCapacityChangeTimeDeltas = (
     const startTimeMs = getMinuteStartMs(entry.startTime);
 
     if (currentMaxEnroll !== previousMaxEnroll && startTimeMs !== null) {
-      changeDeltas.push((startTimeMs - firstTimeMs) / MINUTE_MS);
+      const timeDelta = (startTimeMs - firstTimeMs) / MINUTE_MS;
+      eventsByTimeDeltaKey.set(timeDelta.toFixed(4), {
+        timeDelta,
+        previousMaxEnroll,
+        currentMaxEnroll,
+        percentChange: getCapacityPercentChange(
+          previousMaxEnroll,
+          currentMaxEnroll
+        ),
+        direction: currentMaxEnroll > previousMaxEnroll ? "increase" : "decrease",
+      });
     }
 
     previousMaxEnroll = currentMaxEnroll;
   }
 
-  return Array.from(new Set(changeDeltas));
+  return Array.from(eventsByTimeDeltaKey.values()).toSorted(
+    (a, b) => a.timeDelta - b.timeDelta
+  );
 };
+
+export const getCapacityChangeTimeDeltas = (
+  history: CapacityHistoryPoint[]
+): number[] =>
+  getCapacityChangeEvents(history).map((event) => event.timeDelta);
 
 /**
  * Estimate a value at a given timestamp by linearly interpolating between the

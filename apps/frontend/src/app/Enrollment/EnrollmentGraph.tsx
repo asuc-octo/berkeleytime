@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
+import { StatDown, StatUp } from "iconoir-react";
 import moment from "moment";
 import {
   CartesianGrid,
@@ -24,7 +25,8 @@ import { Semester } from "@/lib/generated/graphql";
 import {
   areOutputsFromSameSemester,
   estimateSeriesValueAtTime,
-  getCapacityChangeTimeDeltas,
+  getCapacityChangeEvents,
+  type CapacityChangeEvent,
   type SeriesPoint,
 } from "./EnrollmentGraph.utils";
 import styles from "./EnrollmentGraph.module.scss";
@@ -65,6 +67,7 @@ const getDisplayLabel = (output: EnrollmentGraphOutput) =>
 
 const CHART_HEIGHT_RATIO = 0.6;
 const ROTATED_CHART_HEIGHT_RATIO = 0.72;
+const PERCENT_AXIS_HEADROOM_MULTIPLIER = 1.05;
 const ROTATE_ENTER_WIDTH = 600;
 const ROTATE_EXIT_WIDTH = 640;
 const SERIES_ANIMATION_DURATION_MS = 320;
@@ -72,7 +75,8 @@ const CAPACITY_CHANGE_MARKER_SIZE = 5;
 const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
 const CAPACITY_CHANGE_MARKER_HIT_RADIUS = 8;
 const CAPACITY_CHANGE_MARKER_HOVER_SCALE = 1.12;
-const EMPTY_CAPACITY_CHANGE_KEYS = new Set<string>();
+const CAPACITY_GUIDE_LABEL_FONT_SIZE = 13;
+const EMPTY_CAPACITY_CHANGE_EVENTS = new Map<string, CapacityChangeEvent>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
   new_transfer: "New Transfer Students",
@@ -108,6 +112,18 @@ interface PhaseLine {
   timeDelta: number;
   label: string;
   key: string;
+}
+
+interface HoveredCapacityGuide {
+  timeDelta: number;
+  previousValue: number;
+  currentValue: number;
+  previousLabel: string;
+  currentLabel: string;
+  currentColor: string;
+  percentChange: number;
+  isIncrease: boolean;
+  seatDelta: number;
 }
 
 export default function EnrollmentGraph({
@@ -214,17 +230,101 @@ export default function EnrollmentGraph({
     [chartData, outputs]
   );
 
-  const capacityChangeTimeDeltaKeysByOutput = useMemo(
+  const capacityChangeEventsByOutput = useMemo(
     () =>
       outputs.map((output) => {
-        const keys = new Set<string>();
-        getCapacityChangeTimeDeltas(output.data.history).forEach((timeDelta) => {
-          keys.add(getTimeDeltaKey(timeDelta));
+        const events = new Map<string, CapacityChangeEvent>();
+        getCapacityChangeEvents(output.data.history).forEach((event) => {
+          events.set(getTimeDeltaKey(event.timeDelta), event);
         });
-        return keys;
+        return events;
       }),
     [outputs]
   );
+
+  const capacityDenominatorByOutput = useMemo(
+    () =>
+      outputs.map((output) =>
+        getValidDenominator(output.data.history.map((entry) => entry.maxEnroll ?? 0))
+      ),
+    [outputs]
+  );
+
+  const capacityGuideByMarkerKey = useMemo(() => {
+    const guides = new Map<string, HoveredCapacityGuide>();
+
+    outputs.forEach((output, outputIndex) => {
+      const events =
+        capacityChangeEventsByOutput[outputIndex] ?? EMPTY_CAPACITY_CHANGE_EVENTS;
+      const denominator = capacityDenominatorByOutput[outputIndex] ?? 0;
+
+      events.forEach((event, timeDeltaKey) => {
+        const previousValue = showRawNumbers
+          ? event.previousMaxEnroll
+          : denominator > 0
+            ? (event.previousMaxEnroll / denominator) * 100
+            : null;
+        const currentValue = showRawNumbers
+          ? event.currentMaxEnroll
+          : denominator > 0
+            ? (event.currentMaxEnroll / denominator) * 100
+            : null;
+
+        if (previousValue === null || currentValue === null) return;
+
+        guides.set(`${output.id}-${timeDeltaKey}`, {
+          timeDelta: event.timeDelta,
+          previousValue,
+          currentValue,
+          previousLabel: showRawNumbers
+            ? `prev: ${formatters.number(Math.round(event.previousMaxEnroll))}`
+            : `prev: ${formatters.percent(previousValue, 1)}`,
+          currentLabel: showRawNumbers
+            ? `new: ${formatters.number(Math.round(event.currentMaxEnroll))}`
+            : `new: ${formatters.percent(currentValue, 1)}`,
+          currentColor:
+            event.direction === "increase" ? "var(--green-500)" : "var(--red-500)",
+          percentChange: event.percentChange,
+          isIncrease: event.direction === "increase",
+          seatDelta: event.currentMaxEnroll - event.previousMaxEnroll,
+        });
+      });
+    });
+
+    return guides;
+  }, [
+    capacityChangeEventsByOutput,
+    capacityDenominatorByOutput,
+    outputs,
+    showRawNumbers,
+  ]);
+
+  const hoveredCapacityGuide = useMemo(
+    () =>
+      hoveredCapacityMarkerKey
+        ? capacityGuideByMarkerKey.get(hoveredCapacityMarkerKey) ?? null
+        : null,
+    [capacityGuideByMarkerKey, hoveredCapacityMarkerKey]
+  );
+
+  const hoveredCapacityGuideTimeWindow = useMemo(() => {
+    if (!hoveredCapacityGuide || chartData.length === 0) return null;
+
+    const minTimeDelta = chartData[0]?.timeDelta ?? hoveredCapacityGuide.timeDelta;
+    const maxTimeDelta =
+      chartData[chartData.length - 1]?.timeDelta ?? hoveredCapacityGuide.timeDelta;
+    const clampedChangeTimeDelta = Math.min(
+      maxTimeDelta,
+      Math.max(minTimeDelta, hoveredCapacityGuide.timeDelta)
+    );
+
+    return {
+      previousStartTimeDelta: minTimeDelta,
+      previousEndTimeDelta: clampedChangeTimeDelta,
+      currentStartTimeDelta: clampedChangeTimeDelta,
+      currentEndTimeDelta: maxTimeDelta,
+    };
+  }, [chartData, hoveredCapacityGuide]);
 
   const hasSeriesData = useMemo(
     () =>
@@ -251,7 +351,8 @@ export default function EnrollmentGraph({
       return Math.max(step, Math.ceil(paddedMax / step) * step);
     }
 
-    return Math.max(100, Math.ceil(maxValue / 10) * 10);
+    const paddedPercentMax = maxValue * PERCENT_AXIS_HEADROOM_MULTIPLIER;
+    return Math.max(100, Math.ceil(paddedPercentMax / 10) * 10);
   }, [chartData, showRawNumbers]);
 
   const hasOutputs = outputs.length > 0;
@@ -495,16 +596,16 @@ export default function EnrollmentGraph({
                   <Tooltip
                     cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
                     content={({ active, payload, label }) => {
-                      if (!active || !payload?.length) {
+                      if (!active && !hoveredCapacityGuide) {
                         return null;
                       }
 
                       const labelMinutes =
                         typeof label === "number"
                           ? label
-                          : typeof payload[0]?.payload?.timeDelta === "number"
+                          : typeof payload?.[0]?.payload?.timeDelta === "number"
                             ? payload[0].payload.timeDelta
-                            : null;
+                            : hoveredCapacityGuide?.timeDelta ?? null;
 
                       if (labelMinutes === null) {
                         return null;
@@ -515,13 +616,74 @@ export default function EnrollmentGraph({
                       const timeLabel = TOOLTIP_TIME_FORMATTER.format(
                         moment.utc(0).add(duration).toDate()
                       );
+
+                      if (hoveredCapacityGuide) {
+                        const formattedSeatDelta = `${
+                          hoveredCapacityGuide.seatDelta > 0 ? "+" : ""
+                        }${formatters.number(hoveredCapacityGuide.seatDelta)}`;
+                        const seatWord =
+                          Math.abs(hoveredCapacityGuide.seatDelta) === 1
+                            ? "seat"
+                            : "seats";
+                        const percentDirectionLabel = hoveredCapacityGuide.isIncrease
+                          ? "increase"
+                          : "decrease";
+
+                        return (
+                          <div
+                            className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
+                          >
+                            <div
+                              className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
+                            >
+                              Seating capacity changed
+                            </div>
+                            <div
+                              className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
+                            >
+                              <span
+                                className={`${styles.capacityChangeTooltipDelta} ${
+                                  hoveredCapacityGuide.isIncrease
+                                    ? styles.capacityChangeTooltipDeltaIncrease
+                                    : styles.capacityChangeTooltipDeltaDecrease
+                                }`}
+                              >
+                                {hoveredCapacityGuide.isIncrease ? (
+                                  <StatUp
+                                    className={styles.capacityChangeTooltipIcon}
+                                    width={14}
+                                    height={14}
+                                  />
+                                ) : (
+                                  <StatDown
+                                    className={styles.capacityChangeTooltipIcon}
+                                    width={14}
+                                    height={14}
+                                  />
+                                )}
+                                <span>
+                                  {formatters.percent(
+                                    hoveredCapacityGuide.percentChange,
+                                    0
+                                  )}{" "}
+                                  {percentDirectionLabel}{" "}
+                                  ({formattedSeatDelta} {seatWord})
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      if (!payload?.length) return null;
+
                       const labelTimeDeltaKey = getTimeDeltaKey(labelMinutes);
                       const capacityChangeLabels = outputs.reduce<string[]>(
                         (labels, output, outputIndex) => {
-                          const markerKeys =
-                            capacityChangeTimeDeltaKeysByOutput[outputIndex] ??
-                            EMPTY_CAPACITY_CHANGE_KEYS;
-                          if (markerKeys.has(labelTimeDeltaKey)) {
+                          const markerEvents =
+                            capacityChangeEventsByOutput[outputIndex] ??
+                            EMPTY_CAPACITY_CHANGE_EVENTS;
+                          if (markerEvents.has(labelTimeDeltaKey)) {
                             labels.push(getDisplayLabel(output));
                           }
                           return labels;
@@ -650,9 +812,9 @@ export default function EnrollmentGraph({
                       hoveredIndex !== null &&
                       outputs.length > 1 &&
                       hoveredIndex !== outputIndex;
-                    const capacityChangeTimeDeltaKeys =
-                      capacityChangeTimeDeltaKeysByOutput[outputIndex] ??
-                      EMPTY_CAPACITY_CHANGE_KEYS;
+                    const capacityChangeEventsByTimeDelta =
+                      capacityChangeEventsByOutput[outputIndex] ??
+                      EMPTY_CAPACITY_CHANGE_EVENTS;
                     const lineStroke = isDimmed
                       ? "var(--border-color)"
                       : `url(#${getGradientId(output.id)})`;
@@ -670,10 +832,7 @@ export default function EnrollmentGraph({
                             if (
                               typeof dotProps.cx !== "number" ||
                               typeof dotProps.cy !== "number" ||
-                              typeof dotProps.payload?.timeDelta !== "number" ||
-                              !capacityChangeTimeDeltaKeys.has(
-                                getTimeDeltaKey(dotProps.payload.timeDelta)
-                              )
+                              typeof dotProps.payload?.timeDelta !== "number"
                             ) {
                               return null;
                             }
@@ -681,6 +840,11 @@ export default function EnrollmentGraph({
                             const markerTimeDeltaKey = getTimeDeltaKey(
                               dotProps.payload.timeDelta
                             );
+                            const capacityChangeEvent =
+                              capacityChangeEventsByTimeDelta.get(
+                                markerTimeDeltaKey
+                              );
+                            if (!capacityChangeEvent) return null;
                             const markerKey = `${output.id}-${markerTimeDeltaKey}`;
                             const markerTipY =
                               dotProps.cy + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET;
@@ -724,7 +888,6 @@ export default function EnrollmentGraph({
                                   strokeWidth={isMarkerHovered ? 1.4 : 1}
                                   transform={markerTransform}
                                 />
-                                <title>Seating capacity changed</title>
                               </g>
                             );
                           }}
@@ -744,6 +907,118 @@ export default function EnrollmentGraph({
                       </Fragment>
                     );
                   })}
+                  {hoveredCapacityGuide && hoveredCapacityGuideTimeWindow ? (
+                    <>
+                      <ReferenceLine
+                        key="hovered-capacity-previous"
+                        segment={
+                          isRotated
+                            ? [
+                                {
+                                  x: hoveredCapacityGuide.previousValue,
+                                  y: hoveredCapacityGuideTimeWindow.previousStartTimeDelta,
+                                },
+                                {
+                                  x: hoveredCapacityGuide.previousValue,
+                                  y: hoveredCapacityGuideTimeWindow.previousEndTimeDelta,
+                                },
+                              ]
+                            : [
+                                {
+                                  x: hoveredCapacityGuideTimeWindow.previousStartTimeDelta,
+                                  y: hoveredCapacityGuide.previousValue,
+                                },
+                                {
+                                  x: hoveredCapacityGuideTimeWindow.previousEndTimeDelta,
+                                  y: hoveredCapacityGuide.previousValue,
+                                },
+                              ]
+                        }
+                        stroke="var(--paragraph-color)"
+                        strokeOpacity={0.9}
+                        strokeWidth={1.3}
+                        label={
+                          isRotated
+                            ? {
+                                value: hoveredCapacityGuide.previousLabel,
+                                position: "top",
+                                fill: "var(--paragraph-color)",
+                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
+                                dy: -8,
+                                stroke: "var(--foreground-color)",
+                                strokeWidth: 4,
+                                paintOrder: "stroke",
+                              }
+                            : {
+                                value: hoveredCapacityGuide.previousLabel,
+                                position: "right",
+                                textAnchor: "end",
+                                fill: "var(--paragraph-color)",
+                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
+                                dx: -4,
+                                dy: -10,
+                                stroke: "var(--foreground-color)",
+                                strokeWidth: 4,
+                                paintOrder: "stroke",
+                              }
+                        }
+                      />
+                      <ReferenceLine
+                        key="hovered-capacity-current"
+                        segment={
+                          isRotated
+                            ? [
+                                {
+                                  x: hoveredCapacityGuide.currentValue,
+                                  y: hoveredCapacityGuideTimeWindow.currentStartTimeDelta,
+                                },
+                                {
+                                  x: hoveredCapacityGuide.currentValue,
+                                  y: hoveredCapacityGuideTimeWindow.currentEndTimeDelta,
+                                },
+                              ]
+                            : [
+                                {
+                                  x: hoveredCapacityGuideTimeWindow.currentStartTimeDelta,
+                                  y: hoveredCapacityGuide.currentValue,
+                                },
+                                {
+                                  x: hoveredCapacityGuideTimeWindow.currentEndTimeDelta,
+                                  y: hoveredCapacityGuide.currentValue,
+                                },
+                              ]
+                        }
+                        stroke={hoveredCapacityGuide.currentColor}
+                        strokeOpacity={0.95}
+                        strokeWidth={1.6}
+                        label={
+                          isRotated
+                            ? {
+                                value: hoveredCapacityGuide.currentLabel,
+                                position: "bottom",
+                                fill: hoveredCapacityGuide.currentColor,
+                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
+                                dy: 6,
+                                stroke: "var(--foreground-color)",
+                                strokeWidth: 4,
+                                paintOrder: "stroke",
+                              }
+                            : {
+                                value: hoveredCapacityGuide.currentLabel,
+                                position: "left",
+                                textAnchor: "start",
+                                fill: hoveredCapacityGuide.currentColor,
+                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
+                                dx: 4,
+                                dy: -10,
+                                stroke: "var(--foreground-color)",
+                                strokeWidth: 4,
+                                paintOrder: "stroke",
+                              }
+                        }
+                      />
+                    </>
+                  ) : null}
                 </LineChart>
               </ResponsiveContainer>
             </div>
