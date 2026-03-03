@@ -17,16 +17,17 @@ tests/
 
 ### Prerequisites
 
-1. Ensure you have docker-compose running with all services:
-   ```bash
-   docker compose up
-   ```
-
-2. Install Playwright browsers (first time only):
+1. Install Playwright browsers (first time only):
    ```bash
    npx playwright install
    ```
 
+Note: after the initial installation, you may have to run `docker compose down` and restart your docker containers.
+
+2. Ensure you have docker-compose running with all services:
+   ```bash
+   docker compose up --build -d
+   ```
 ### Run All Tests
 
 ```bash

@@ -44,4 +44,4 @@ jobs:
           echo "=== end response ==="
 
       - name: Run production tests
-        run: TEST_ENV=production npx playwright test
+        run: TEST_ENV=production npx playwright test --project=sanity --project=api --project=e2e-chromium --project=e2e-firefox
