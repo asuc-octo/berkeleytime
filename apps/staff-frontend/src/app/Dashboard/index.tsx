@@ -205,107 +205,125 @@ export default function Dashboard() {
     setIsRoleModalOpen(true);
   };
 
-  const [draggingOver, setDraggingOver] = useState<"photo" | "altPhoto" | null>(null);
+  const [draggingOver, setDraggingOver] = useState<"photo" | "altPhoto" | null>(
+    null
+  );
 
-  const processPhotoFile = async (
-    file: File,
-    type: "photo" | "altPhoto"
-  ) => {
+  const processPhotoFile = async (file: File, type: "photo" | "altPhoto") => {
+    if (!file.type.startsWith("image/")) {
+      alert(`Invalid file type "${file.type}". Please upload an image file.`);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
 
     try {
-      const img = new Image();
-      img.onload = async () => {
-        // Crop to square from center
-        const cropSize = Math.min(img.width, img.height);
-        const x = (img.width - cropSize) / 2;
-        const y = (img.height - cropSize) / 2;
+      await new Promise<void>((resolve, reject) => {
+        const img = new Image();
 
-        // Scale down to max 250x250
-        const maxSize = 500;
-        const finalSize = Math.min(cropSize, maxSize);
+        img.onerror = () => {
+          reject(new Error("Failed to load image. The file may be corrupt."));
+        };
 
-        const canvas = document.createElement("canvas");
-        canvas.width = finalSize;
-        canvas.height = finalSize;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+        img.onload = async () => {
+          try {
+            // Crop to square from center
+            const cropSize = Math.min(img.width, img.height);
+            const x = (img.width - cropSize) / 2;
+            const y = (img.height - cropSize) / 2;
 
-        ctx.drawImage(
-          img,
-          x,
-          y,
-          cropSize,
-          cropSize,
-          0,
-          0,
-          finalSize,
-          finalSize
-        );
+            // Scale down to max 500x500
+            const maxSize = 500;
+            const finalSize = Math.min(cropSize, maxSize);
 
-        // Show preview immediately using data URL
-        const previewDataUrl = canvas.toDataURL("image/jpeg", 0.9);
-        setRoleForm({
-          ...roleForm,
-          [type]: previewDataUrl,
-        });
-
-        // Convert canvas to blob and upload
-        canvas.toBlob(
-          async (blob) => {
-            if (!blob) return;
-
-            try {
-              // Create FormData and upload to endpoint
-              const formData = new FormData();
-              formData.append("image", blob, file.name);
-
-              const response = await fetch(
-                `${window.location.origin}/api/uploadStaffImage`,
-                {
-                  method: "POST",
-                  credentials: "include",
-                  body: formData,
-                }
-              );
-
-              if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Failed to upload image:", errorData);
-                alert(
-                  `Failed to upload image: ${errorData.error || "Unknown error"}`
-                );
-                // Revert to null on error
-                setRoleForm({
-                  ...roleForm,
-                  [type]: null,
-                });
-                return;
-              }
-
-              const data = await response.json();
-              // Store the URL returned from the upload (full URL to the image)
-              setRoleForm({
-                ...roleForm,
-                [type]: data.url,
-              });
-            } catch (uploadError) {
-              console.error("Error uploading image:", uploadError);
-              alert("Failed to upload image");
-              // Revert to null on error
-              setRoleForm({
-                ...roleForm,
-                [type]: null,
-              });
+            const canvas = document.createElement("canvas");
+            canvas.width = finalSize;
+            canvas.height = finalSize;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) {
+              reject(new Error("Could not get canvas context."));
+              return;
             }
-          },
-          "image/jpeg",
-          0.9
-        );
-      };
-      img.src = URL.createObjectURL(file);
+
+            ctx.drawImage(
+              img,
+              x,
+              y,
+              cropSize,
+              cropSize,
+              0,
+              0,
+              finalSize,
+              finalSize
+            );
+
+            // Show preview immediately using data URL
+            const previewDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            setRoleForm({
+              ...roleForm,
+              [type]: previewDataUrl,
+            });
+
+            // Convert canvas to blob and upload
+            canvas.toBlob(
+              async (blob) => {
+                if (!blob) {
+                  reject(new Error("Failed to encode image."));
+                  return;
+                }
+
+                try {
+                  const formData = new FormData();
+                  formData.append("image", blob, file.name);
+
+                  const response = await fetch(
+                    `${window.location.origin}/api/uploadStaffImage`,
+                    {
+                      method: "POST",
+                      credentials: "include",
+                      body: formData,
+                    }
+                  );
+
+                  if (!response.ok) {
+                    const errorData = await response.json();
+                    reject(
+                      new Error(errorData.error || "Upload request failed.")
+                    );
+                    return;
+                  }
+
+                  const data = await response.json();
+                  setRoleForm({
+                    ...roleForm,
+                    [type]: data.url,
+                  });
+                  resolve();
+                } catch (uploadError) {
+                  reject(uploadError);
+                }
+              },
+              "image/jpeg",
+              0.9
+            );
+          } catch (err) {
+            reject(err);
+          }
+        };
+
+        img.src = objectUrl;
+      });
     } catch (error) {
       console.error("Error processing image:", error);
-      alert("Failed to process image");
+      alert(
+        `Failed to upload photo: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+      setRoleForm({
+        ...roleForm,
+        [type]: null,
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
     }
   };
 
@@ -1031,8 +1049,14 @@ export default function Dashboard() {
                   </div>
                   <label
                     className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""} ${draggingOver === "photo" ? styles.draggingOver : ""}`}
-                    onDragOver={(e) => { e.preventDefault(); setDraggingOver("photo"); }}
-                    onDragEnter={(e) => { e.preventDefault(); setDraggingOver("photo"); }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDraggingOver("photo");
+                    }}
+                    onDragEnter={(e) => {
+                      e.preventDefault();
+                      setDraggingOver("photo");
+                    }}
                     onDragLeave={() => setDraggingOver(null)}
                     onDrop={(e) => handlePhotoDrop(e, "photo")}
                   >
@@ -1071,8 +1095,14 @@ export default function Dashboard() {
                   </div>
                   <label
                     className={`${styles.photoUpload} ${roleForm.altPhoto ? styles.hasPhoto : ""} ${draggingOver === "altPhoto" ? styles.draggingOver : ""}`}
-                    onDragOver={(e) => { e.preventDefault(); setDraggingOver("altPhoto"); }}
-                    onDragEnter={(e) => { e.preventDefault(); setDraggingOver("altPhoto"); }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDraggingOver("altPhoto");
+                    }}
+                    onDragEnter={(e) => {
+                      e.preventDefault();
+                      setDraggingOver("altPhoto");
+                    }}
                     onDragLeave={() => setDraggingOver(null)}
                     onDrop={(e) => handlePhotoDrop(e, "altPhoto")}
                   >
