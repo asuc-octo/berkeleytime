@@ -18,34 +18,16 @@
 }
 
 .outputCardItem {
-  width: min(100%, 300px);
+  width: min(100%, 600px);
   justify-self: start;
 }
 
 .emptyCard {
   height: 99px;
-  width: min(100%, 300px);
+  width: min(100%, 600px);
   box-sizing: border-box;
   justify-self: start;
   border-radius: 8px;
   border: 1px dashed var(--border-color);
 }
 
-.graphPlaceholder {
-  height: 392px;
-  border-radius: 6px;
-  border: 1px dashed var(--border-color);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-}
-
-.graphMessage {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: var(--paragraph-color);
-  font-size: var(--text-14);
-}

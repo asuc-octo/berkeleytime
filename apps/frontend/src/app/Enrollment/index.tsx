@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { Button, Select } from "@repo/theme";
@@ -14,29 +15,45 @@ import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/Course
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import type { ICourseWithInstructorClass } from "@/lib/api/courses";
+import type { IEnrollment } from "@/lib/api/enrollment";
 import { sortByTermDescending } from "@/lib/classes";
+import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
+import EnrollmentGraph from "./EnrollmentGraph";
 import styles from "./Enrollment.module.scss";
-
-interface EnrollmentSidebarProps {
-  outputs: EnrollmentOutput[];
-  onAddCourse: (draft: EnrollmentDraft) => void;
-}
 
 interface SemesterSelection {
   year: number;
-  semester: string;
+  semester: Semester;
+}
+
+interface EnrollmentInput {
+  year: number;
+  semester: Semester;
+  sessionId?: string;
+  subject: string;
+  courseNumber: string;
+  sectionNumber: string;
 }
 
 interface EnrollmentDraft {
   id: string;
   course: CourseOption;
   metadata: string;
+  input: EnrollmentInput;
 }
 
-interface EnrollmentOutput extends EnrollmentDraft {
+export interface EnrollmentOutput extends EnrollmentDraft {
   color: string;
+  data: IEnrollment;
+}
+
+interface EnrollmentSidebarProps {
+  outputs: EnrollmentOutput[];
+  onAddCourse: (draft: EnrollmentDraft) => Promise<boolean>;
+  isAdding: boolean;
 }
 
 const BAR_CHART_COLORS = [
@@ -47,10 +64,10 @@ const BAR_CHART_COLORS = [
 
 const DEFAULT_INSTRUCTOR_LABEL = "All instructors";
 
-const formatSemesterLabel = (semester: string, year: number) =>
+const formatSemesterLabel = (semester: Semester, year: number) =>
   `${semester} ${year}`;
 
-const toSemesterValue = (semester: string, year: number) =>
+const toSemesterValue = (semester: Semester, year: number) =>
   JSON.stringify({ semester, year });
 
 const parseSemesterValue = (value: string | null): SemesterSelection | null => {
@@ -62,7 +79,10 @@ const parseSemesterValue = (value: string | null): SemesterSelection | null => {
       typeof parsed.year === "number" &&
       typeof parsed.semester === "string"
     ) {
-      return parsed;
+      return {
+        year: parsed.year,
+        semester: parsed.semester as Semester,
+      };
     }
     return null;
   } catch {
@@ -70,7 +90,38 @@ const parseSemesterValue = (value: string | null): SemesterSelection | null => {
   }
 };
 
-function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
+const getInstructorNames = (courseClass: ICourseWithInstructorClass) => {
+  const names = new Set<string>();
+
+  courseClass.primarySection?.meetings.forEach((meeting) => {
+    meeting.instructors.forEach((instructor) => {
+      const name = `${instructor.givenName} ${instructor.familyName}`.trim();
+      if (name) names.add(name);
+    });
+  });
+
+  return Array.from(names);
+};
+
+const hasEnrollmentData = (courseClass: ICourseWithInstructorClass) =>
+  Boolean(
+    courseClass.primarySection?.number &&
+      courseClass.primarySection?.enrollment?.latest
+  );
+
+const classMatchesInstructor = (
+  courseClass: ICourseWithInstructorClass,
+  selectedInstructor: string | null
+) => {
+  if (!selectedInstructor || selectedInstructor === "all") return true;
+  return getInstructorNames(courseClass).includes(selectedInstructor);
+};
+
+function EnrollmentSidebar({
+  outputs,
+  onAddCourse,
+  isAdding,
+}: EnrollmentSidebarProps) {
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
     null
   );
@@ -87,10 +138,15 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
     { skip: !selectedCourse }
   );
 
-  const semesterOptions = useMemo(() => {
-    if (!courseData) return [];
+  const classesWithEnrollment = useMemo(
+    () => courseData?.classes.filter(hasEnrollmentData) ?? [],
+    [courseData]
+  );
 
-    return courseData.classes
+  const semesterOptions = useMemo(() => {
+    if (classesWithEnrollment.length === 0) return [];
+
+    return classesWithEnrollment
       .filter(
         (courseClass, index, classes) =>
           classes.findIndex(
@@ -104,7 +160,7 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
         value: toSemesterValue(courseClass.semester, courseClass.year),
         label: formatSemesterLabel(courseClass.semester, courseClass.year),
       }));
-  }, [courseData]);
+  }, [classesWithEnrollment]);
 
   const selectedSemester = useMemo(
     () => parseSemesterValue(selectedSemesterValue),
@@ -112,10 +168,11 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
   );
 
   const instructorOptions = useMemo(() => {
-    if (!courseData || !selectedSemester) return [];
+    if (!selectedSemester) return [];
 
     const instructors = new Set<string>();
-    courseData.classes.forEach((courseClass) => {
+
+    classesWithEnrollment.forEach((courseClass) => {
       if (
         courseClass.year !== selectedSemester.year ||
         courseClass.semester !== selectedSemester.semester
@@ -123,12 +180,8 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
         return;
       }
 
-      courseClass.primarySection?.meetings.forEach((meeting) => {
-        meeting.instructors.forEach((instructor) => {
-          const name =
-            `${instructor.givenName} ${instructor.familyName}`.trim();
-          if (name) instructors.add(name);
-        });
+      getInstructorNames(courseClass).forEach((instructorName) => {
+        instructors.add(instructorName);
       });
     });
 
@@ -142,7 +195,30 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
     }
 
     return options;
-  }, [courseData, selectedSemester]);
+  }, [classesWithEnrollment, selectedSemester]);
+
+  const availableClasses = useMemo(() => {
+    if (!selectedSemester) return [];
+
+    return classesWithEnrollment
+      .filter(
+        (courseClass) =>
+          courseClass.year === selectedSemester.year &&
+          courseClass.semester === selectedSemester.semester
+      )
+      .filter((courseClass) =>
+        classMatchesInstructor(courseClass, selectedInstructor)
+      )
+      .toSorted((a, b) =>
+        (a.primarySection?.number ?? "").localeCompare(
+          b.primarySection?.number ?? "",
+          undefined,
+          { numeric: true }
+        )
+      );
+  }, [classesWithEnrollment, selectedInstructor, selectedSemester]);
+
+  const selectedClass = availableClasses[0] ?? null;
 
   useEffect(() => {
     if (!selectedSemester) {
@@ -167,6 +243,7 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
     !!selectedSemester && instructorOptions.length > 1;
   const shouldShowSemesterSelect = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
+  const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
   const isFull = outputs.length >= BAR_CHART_COLORS.length;
   const selectedSemesterLabel =
     semesterOptions.find((option) => option.value === selectedSemesterValue)
@@ -176,25 +253,47 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
     instructorOptions.find((option) => option.value === selectedInstructor)
       ?.label ?? DEFAULT_INSTRUCTOR_LABEL;
   const selectionId =
-    selectedCourse && selectedSemester
-      ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedSemesterLabel}-${selectedInstructorLabel}`
+    selectedCourse && selectedClass && selectedClass.primarySection?.number
+      ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedClass.year}-${selectedClass.semester}-${selectedClass.sessionId ?? "1"}-${selectedClass.primarySection.number}`
       : null;
   const isAlreadyAdded =
     selectionId !== null && outputs.some((output) => output.id === selectionId);
-  const canAdd =
+  const canAddWithoutLoading =
     shouldShowAddButton &&
+    hasSelectableClass &&
     (!shouldShowInstructorSelect || Boolean(selectedInstructor)) &&
     !isFull &&
     !isAlreadyAdded;
+  const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
 
-  const handleAdd = () => {
-    if (!selectedCourse || !selectedSemester || !selectionId || !canAdd) return;
+  const handleAdd = async () => {
+    if (
+      !selectedCourse ||
+      !selectedSemester ||
+      !selectedClass ||
+      !selectedClass.primarySection?.number ||
+      !selectionId ||
+      !canAddWithoutLoading ||
+      isAdding
+    ) {
+      return;
+    }
 
-    onAddCourse({
+    const didAdd = await onAddCourse({
       id: selectionId,
       course: selectedCourse,
       metadata: `${selectedSemesterLabel} • ${selectedInstructorLabel}`,
+      input: {
+        year: selectedSemester.year,
+        semester: selectedSemester.semester,
+        sessionId: selectedClass.sessionId ?? undefined,
+        subject: selectedCourse.subject,
+        courseNumber: selectedCourse.number,
+        sectionNumber: selectedClass.primarySection.number,
+      },
     });
+
+    if (!didAdd) return;
 
     setSelectedCourse(null);
     setSelectedSemesterValue(null);
@@ -289,18 +388,20 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
               transition={{ type: "spring", stiffness: 320, damping: 26 }}
             >
               <Button
-                onClick={handleAdd}
-                disabled={!canAdd}
-                variant={canAdd ? "primary" : "secondary"}
+                onClick={() => void handleAdd()}
+                disabled={isAddButtonDisabled}
+                variant={canAddWithoutLoading ? "primary" : "secondary"}
                 className={styles.addButton}
               >
                 {isAlreadyAdded
-                  ? "Already added"
-                  : isFull
-                    ? "Remove a course first"
-                    : canAdd
-                      ? "Add course"
-                      : "Select instructor"}
+                    ? "Already added"
+                    : isFull
+                      ? "Remove a course first"
+                      : !hasSelectableClass
+                        ? "No enrollment data"
+                        : canAddWithoutLoading
+                          ? "Add course"
+                          : "Select instructor"}
               </Button>
             </motion.div>
           )}
@@ -311,42 +412,83 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
 }
 
 export default function Enrollment() {
+  const client = useApolloClient();
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (isDesktop || outputs.length > 0) return;
     setDrawerOpen(true);
   }, [isDesktop, outputs.length]);
 
-  const graphMessage =
-    outputs.length > 0
-      ? "Enrollment graph coming soon."
-      : "Add a class from the sidebar to view enrollment trends.";
+  const addOutput = async (draft: EnrollmentDraft): Promise<boolean> => {
+    if (isAdding) return false;
 
-  const addOutput = (draft: EnrollmentDraft) => {
-    setOutputs((prev) => {
-      if (prev.some((output) => output.id === draft.id)) return prev;
-      const usedColors = new Set(prev.map((output) => output.color));
-      const color =
-        BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
-        BAR_CHART_COLORS[0];
+    setIsAdding(true);
 
-      return [{ ...draft, color }, ...prev];
-    });
+    try {
+      const response = await client.query({
+        query: GetEnrollmentDocument,
+        variables: {
+          year: draft.input.year,
+          semester: draft.input.semester,
+          sessionId: draft.input.sessionId,
+          subject: draft.input.subject,
+          courseNumber: draft.input.courseNumber,
+          sectionNumber: draft.input.sectionNumber,
+        },
+        fetchPolicy: "no-cache",
+      });
+
+      const enrollmentData = response.data?.enrollment;
+      if (!enrollmentData) return false;
+
+      setOutputs((prev) => {
+        if (prev.some((output) => output.id === draft.id)) return prev;
+
+        const usedColors = new Set(prev.map((output) => output.color));
+        const color =
+          BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
+          BAR_CHART_COLORS[0];
+
+        return [{ ...draft, color, data: enrollmentData }, ...prev];
+      });
+
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const remove = (index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
+    setHoveredIndex((prev) => {
+      if (prev === null) return null;
+      if (prev === index) return null;
+      if (prev > index) return prev - 1;
+      return prev;
+    });
   };
+
+  const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
 
   return (
     <CourseAnalyticsLayout
       isDesktop={isDesktop}
       drawerOpen={drawerOpen}
       onDrawerOpenChange={setDrawerOpen}
-      sidebar={<EnrollmentSidebar outputs={outputs} onAddCourse={addOutput} />}
+      sidebar={
+        <EnrollmentSidebar
+          outputs={outputs}
+          onAddCourse={addOutput}
+          isAdding={isAdding}
+        />
+      }
     >
       <div className={styles.outputList}>
         <CourseAnalyticsCardGrid>
@@ -370,7 +512,10 @@ export default function Enrollment() {
                       subject={output.course.subject}
                       number={output.course.number}
                       metadata={output.metadata}
+                      dimmed={shouldDimOthers && hoveredIndex !== index}
                       fluid
+                      onMouseEnter={() => setHoveredIndex(index)}
+                      onMouseLeave={() => setHoveredIndex(null)}
                       onClickDelete={() => remove(index)}
                     />
                   </motion.div>
@@ -380,10 +525,7 @@ export default function Enrollment() {
           )}
         </CourseAnalyticsCardGrid>
       </div>
-
-      <div className={styles.graphPlaceholder}>
-        <div className={styles.graphMessage}>{graphMessage}</div>
-      </div>
+      <EnrollmentGraph outputs={outputs} hoveredIndex={hoveredIndex} />
     </CourseAnalyticsLayout>
   );
 }

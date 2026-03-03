@@ -1,0 +1,111 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 360px;
+}
+
+.chart {
+  width: 100%;
+
+  :global(.recharts-wrapper:focus),
+  :global(.recharts-wrapper:focus-visible),
+  :global(.recharts-surface:focus),
+  :global(.recharts-surface:focus-visible),
+  :global([tabindex]:focus),
+  :global([tabindex]:focus-visible),
+  :global(svg:focus),
+  :global(svg:focus-visible) {
+    outline: none;
+  }
+}
+
+.graphHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.toggleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleLabel {
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+}
+
+.emptyGraphPrompt {
+  min-height: 360px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.emptyGraphMessage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  text-align: center;
+}
+
+.tooltipCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  max-width: 360px;
+  min-width: 220px;
+}
+
+.tooltipLabel {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+}
+
+.tooltipItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.tooltipItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  font-size: var(--text-13);
+}
+
+.tooltipItemLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--heading-color);
+}
+
+.tooltipIndicator {
+  flex-shrink: 0;
+}
+
+.tooltipItemValue {
+  color: var(--heading-color);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+}
