@@ -11,7 +11,16 @@ interface MiniGradeBarChartProps {
   gradeDistribution?: IGradeDistribution | null;
 }
 
-const GRADE_BINS = [
+const GRADE_COLOR_MAP = {
+  gradeA: styles.gradeA,
+  gradeB: styles.gradeB,
+  gradeC: styles.gradeC,
+  gradeLow: styles.gradeLow,
+} as const;
+
+type GradeColor = keyof typeof GRADE_COLOR_MAP;
+
+const GRADE_BINS: { letter: string; colorClass: GradeColor }[] = [
   { letter: "A+", colorClass: "gradeA" },
   { letter: "A", colorClass: "gradeA" },
   { letter: "A-", colorClass: "gradeA" },
@@ -25,11 +34,11 @@ const GRADE_BINS = [
   { letter: "D", colorClass: "gradeLow" },
   { letter: "D-", colorClass: "gradeLow" },
   { letter: "F", colorClass: "gradeLow" },
-] as const;
+];
 
 interface Segment {
   letter: string;
-  colorClass: string;
+  colorClass: GradeColor;
   percentage: number;
 }
 
@@ -77,7 +86,7 @@ export default function MiniGradeBarChart({
           key={seg.letter}
           trigger={
             <div
-              className={`${styles.segment} ${styles[seg.colorClass]}`}
+              className={`${styles.segment} ${GRADE_COLOR_MAP[seg.colorClass]}`}
               style={{ width: `${seg.percentage}%` }}
             />
           }
