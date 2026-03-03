@@ -1,5 +1,5 @@
-import { Eye, EyeClosed, Trash } from "iconoir-react";
 import classNames from "classnames";
+import { Eye, EyeClosed, Trash } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
 import {

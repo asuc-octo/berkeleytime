@@ -223,24 +223,30 @@ export default function GradeBarGraph({
     [commitSliderRange]
   );
 
-  const handleSliderLiveChange = useCallback((next: [number, number]) => {
-    setLiveRange((prevRange) =>
-      isSameRange(prevRange, next) ? prevRange : next
-    );
-    scheduleSliderRangeUpdate(next);
-  }, [scheduleSliderRangeUpdate]);
+  const handleSliderLiveChange = useCallback(
+    (next: [number, number]) => {
+      setLiveRange((prevRange) =>
+        isSameRange(prevRange, next) ? prevRange : next
+      );
+      scheduleSliderRangeUpdate(next);
+    },
+    [scheduleSliderRangeUpdate]
+  );
 
-  const handleSliderCommit = useCallback((next: [number, number]) => {
-    if (throttleTimeoutRef.current !== null) {
-      window.clearTimeout(throttleTimeoutRef.current);
-      throttleTimeoutRef.current = null;
-    }
-    pendingRangeRef.current = null;
-    setLiveRange((prevRange) =>
-      isSameRange(prevRange, next) ? prevRange : next
-    );
-    commitSliderRange(next);
-  }, [commitSliderRange]);
+  const handleSliderCommit = useCallback(
+    (next: [number, number]) => {
+      if (throttleTimeoutRef.current !== null) {
+        window.clearTimeout(throttleTimeoutRef.current);
+        throttleTimeoutRef.current = null;
+      }
+      pendingRangeRef.current = null;
+      setLiveRange((prevRange) =>
+        isSameRange(prevRange, next) ? prevRange : next
+      );
+      commitSliderRange(next);
+    },
+    [commitSliderRange]
+  );
   const hasOutputs = outputs.length > 0;
 
   useEffect(() => {
@@ -252,7 +258,10 @@ export default function GradeBarGraph({
   const chartHeightRatio = horizontal
     ? HORIZONTAL_CHART_HEIGHT_RATIO
     : CHART_HEIGHT_RATIO;
-  const chartHeight = Math.max(360, Math.round(viewportHeight * chartHeightRatio));
+  const chartHeight = Math.max(
+    360,
+    Math.round(viewportHeight * chartHeightRatio)
+  );
   const emptyGraphHeight = chartHeight + 32;
   const graphControls = (
     <div className={styles.graphHeader}>
@@ -420,7 +429,10 @@ export default function GradeBarGraph({
           </ChartContainer>
         </CourseAnalyticsGraphBox>
       ) : (
-        <div className={styles.emptyGraphPrompt} style={{ height: emptyGraphHeight }}>
+        <div
+          className={styles.emptyGraphPrompt}
+          style={{ height: emptyGraphHeight }}
+        >
           {graphControls}
           <div className={styles.emptyGraphMessage}>
             Add a class from the sidebar to view the graph.

@@ -7,6 +7,13 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Button, PillSwitcher, Select } from "@repo/theme";
 
 import {
+  CourseAnalyticsCardGrid,
+  CourseAnalyticsField,
+  CourseAnalyticsLayout,
+  CourseAnalyticsSidebar,
+} from "@/components/CourseAnalytics/CourseAnalyticsLayout";
+import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import {
   type CourseOutput,
   type Input,
   InputType,
@@ -15,13 +22,6 @@ import {
 } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
-import {
-  CourseAnalyticsCardGrid,
-  CourseAnalyticsField,
-  CourseAnalyticsLayout,
-  CourseAnalyticsSidebar,
-} from "@/components/CourseAnalytics/CourseAnalyticsLayout";
-import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -30,12 +30,7 @@ import {
   Semester,
 } from "@/lib/generated/graphql";
 import { LETTER_GRADES } from "@/lib/grades";
-import {
-  RecentType,
-  addRecent,
-  getPageUrl,
-  savePageUrl,
-} from "@/lib/recent";
+import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import GradeBarGraph from "./GradeBarGraph";
@@ -385,7 +380,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     outputs.some((o) => isInputEqual(o.input, currentInput));
   const lacksLetterGrades = hasLetterGrades === false;
   const waitingForLetterGradeCheck =
-    currentInput !== null && (isCheckingLetterGrades || hasLetterGrades === null);
+    currentInput !== null &&
+    (isCheckingLetterGrades || hasLetterGrades === null);
 
   const add = async () => {
     if (!currentInput || isFull || isAlreadyAdded || hasLetterGrades !== true)
@@ -641,10 +637,7 @@ export default function Grades() {
   }, []);
 
   useEffect(() => {
-    if (
-      !initialRestoreCompleteRef.current &&
-      searchParamsString.length > 0
-    ) {
+    if (!initialRestoreCompleteRef.current && searchParamsString.length > 0) {
       initialRestoreCompleteRef.current = true;
     }
   }, [searchParamsString]);

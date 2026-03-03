@@ -3,8 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 
 import { Button, Select } from "@repo/theme";
-import CourseSelect, { CourseOption } from "@/components/CourseSelect";
-import CourseSelectionCard from "@/components/CourseSelectionCard";
+
 import {
   CourseAnalyticsCardGrid,
   CourseAnalyticsField,
@@ -12,6 +11,8 @@ import {
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
+import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import { sortByTermDescending } from "@/lib/classes";
 import { RecentType, addRecent } from "@/lib/recent";
@@ -57,7 +58,10 @@ const parseSemesterValue = (value: string | null): SemesterSelection | null => {
 
   try {
     const parsed = JSON.parse(value);
-    if (typeof parsed.year === "number" && typeof parsed.semester === "string") {
+    if (
+      typeof parsed.year === "number" &&
+      typeof parsed.semester === "string"
+    ) {
       return parsed;
     }
     return null;
@@ -67,7 +71,9 @@ const parseSemesterValue = (value: string | null): SemesterSelection | null => {
 };
 
 function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
-  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
   const [selectedSemesterValue, setSelectedSemesterValue] = useState<
     string | null
   >(null);
@@ -119,7 +125,8 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
 
       courseClass.primarySection?.meetings.forEach((meeting) => {
         meeting.instructors.forEach((instructor) => {
-          const name = `${instructor.givenName} ${instructor.familyName}`.trim();
+          const name =
+            `${instructor.givenName} ${instructor.familyName}`.trim();
           if (name) instructors.add(name);
         });
       });
@@ -149,7 +156,9 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
     }
 
     if (!selectedInstructor) return;
-    if (!instructorOptions.some((option) => option.value === selectedInstructor)) {
+    if (
+      !instructorOptions.some((option) => option.value === selectedInstructor)
+    ) {
       setSelectedInstructor(null);
     }
   }, [selectedSemester, instructorOptions, selectedInstructor]);
@@ -164,8 +173,8 @@ function EnrollmentSidebar({ outputs, onAddCourse }: EnrollmentSidebarProps) {
       ?.label ?? "All semesters";
 
   const selectedInstructorLabel =
-    instructorOptions.find((option) => option.value === selectedInstructor)?.label ??
-    DEFAULT_INSTRUCTOR_LABEL;
+    instructorOptions.find((option) => option.value === selectedInstructor)
+      ?.label ?? DEFAULT_INSTRUCTOR_LABEL;
   const selectionId =
     selectedCourse && selectedSemester
       ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedSemesterLabel}-${selectedInstructorLabel}`
@@ -311,9 +320,10 @@ export default function Enrollment() {
     setDrawerOpen(true);
   }, [isDesktop, outputs.length]);
 
-  const graphMessage = outputs.length > 0
-    ? "Enrollment graph coming soon."
-    : "Add a class from the sidebar to view enrollment trends.";
+  const graphMessage =
+    outputs.length > 0
+      ? "Enrollment graph coming soon."
+      : "Add a class from the sidebar to view enrollment trends.";
 
   const addOutput = (draft: EnrollmentDraft) => {
     setOutputs((prev) => {
