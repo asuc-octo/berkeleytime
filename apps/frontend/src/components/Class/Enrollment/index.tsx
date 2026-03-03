@@ -20,10 +20,8 @@ import {
   createChartConfig,
   formatters,
 } from "@/components/Chart";
-import { useReadEnrollmentTimeframes } from "@/hooks/api";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
-import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./Enrollment.module.scss";
 
@@ -34,10 +32,11 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
-const chartConfig = createChartConfig(["enrolled", "waitlisted"], {
-  labels: { enrolled: "Enrolled", waitlisted: "Waitlisted" },
-  colors: { enrolled: "var(--blue-500)", waitlisted: "var(--orange-500)" },
+const chartConfig = createChartConfig(["enrolled"], {
+  labels: { enrolled: "Enrolled" },
+  colors: { enrolled: "var(--blue-500)" },
 });
+const ACTIVITY_THRESHOLD_PERCENT = 5;
 
 function EnrollmentLoadingInBox() {
   return (
@@ -73,6 +72,27 @@ function EnrollmentNoDataInBox() {
   );
 }
 
+function EnrollmentNoActivityInBox() {
+  return (
+    <Box p="5" className={styles.root}>
+      <Container size="3">
+        <div className={styles.wrapper}>
+          <div className={styles.emptyInBox}>
+            <GraphUp width={32} height={32} className={styles.emptyIcon} />
+            <p className={styles.emptyHeading}>
+              No Enrollment Activity Available
+            </p>
+            <p className={styles.emptyParagraph}>
+              Enrollment history exists for this class, but no enrolled activity
+              was recorded.
+            </p>
+          </div>
+        </div>
+      </Container>
+    </Box>
+  );
+}
+
 export default function Enrollment() {
   const { class: _class } = useClass();
   const { data: enrollmentData, loading } = useGetClassEnrollment(
@@ -86,22 +106,21 @@ export default function Enrollment() {
 
   const history = enrollmentData?.primarySection?.enrollment?.history ?? [];
 
-  // Fetch enrollment timeframes for this class's semester
-  const { data: timeframes } = useReadEnrollmentTimeframes(
-    _class.year,
-    _class.semester as Semester
-  );
-
   const data = useMemo(() => {
     if (history.length === 0) return [];
 
     const firstTime = moment(history[0].startTime).startOf("minute");
-    const maxEnroll = history[history.length - 1].maxEnroll ?? 1;
-    const maxWaitlist = history[history.length - 1].maxWaitlist ?? 1;
+    const maxEnrollHistory = history.map(
+      (enrollment) => enrollment.maxEnroll ?? 0
+    );
+    const maxEnrollMax = Math.max(...maxEnrollHistory);
+    const lastMaxEnroll = history[history.length - 1].maxEnroll ?? 0;
+    const validMaxEnroll =
+      maxEnrollMax > 0 ? (lastMaxEnroll > 0 ? lastMaxEnroll : maxEnrollMax) : 0;
 
     const timeToEnrollmentMap = new Map<
       number,
-      { enrolledPercent: number; waitlistedPercent: number }
+      { enrolledPercent: number | null }
     >();
 
     for (const enrollment of history) {
@@ -117,58 +136,38 @@ export default function Enrollment() {
         const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
 
         timeToEnrollmentMap.set(timeDelta, {
-          enrolledPercent: (enrollment.enrolledCount / maxEnroll) * 100,
-          waitlistedPercent: (enrollment.waitlistedCount / maxWaitlist) * 100,
+          enrolledPercent:
+            validMaxEnroll > 0
+              ? (enrollment.enrolledCount / validMaxEnroll) * 100
+              : null,
         });
       }
     }
 
-    return Array.from(timeToEnrollmentMap.entries())
+    const sortedData = Array.from(timeToEnrollmentMap.entries())
       .map(([timeDelta, values]) => ({
         timeDelta,
         enrolled: values.enrolledPercent,
-        waitlisted: values.waitlistedPercent,
       }))
       .sort((a, b) => a.timeDelta - b.timeDelta);
+    return sortedData;
   }, [history]);
 
   const dataMax = useMemo(() => {
     if (data.length === 0) return 0;
     const maxValue = data.reduce(
-      (acc, point) => Math.max(acc, point.enrolled, point.waitlisted),
+      (acc, point) => Math.max(acc, point.enrolled ?? 0),
       0
     );
 
     return maxValue * 1.2;
   }, [data]);
 
-  // Calculate phase line positions (x-axis = minutes since first data point)
-  const phaseLines = useMemo(() => {
-    if (data.length === 0 || timeframes.length === 0) return [];
-    if (history.length === 0) return [];
-
-    const firstTime = moment(history[0].startTime);
-    const lastTimeDelta = data[data.length - 1].timeDelta;
-
-    return timeframes
-      .filter((tf) => tf.phase === 2 && tf.group === "continuing")
-      .map((tf) => {
-        const phaseStart = moment(tf.startDate);
-        const timeDelta = moment
-          .duration(phaseStart.diff(firstTime))
-          .asMinutes();
-
-        // Only include lines within the chart's data range
-        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
-
-        return {
-          timeDelta,
-          label: "Phase 2 Continuing",
-          key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
-        };
-      })
-      .filter((line): line is NonNullable<typeof line> => line !== null);
-  }, [data, timeframes, history]);
+  const hasEnrolledActivity = useMemo(
+    () =>
+      data.some((point) => (point.enrolled ?? 0) > ACTIVITY_THRESHOLD_PERCENT),
+    [data]
+  );
 
   const enrollmentExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
@@ -203,6 +202,10 @@ export default function Enrollment() {
 
   if (data.length === 0) {
     return <EnrollmentNoDataInBox />;
+  }
+
+  if (!hasEnrolledActivity) {
+    return <EnrollmentNoActivityInBox />;
   }
 
   return (
@@ -300,45 +303,20 @@ export default function Enrollment() {
                       offset: 10,
                     }}
                   />
-                  {/* Enrollment phase start lines */}
-                  {phaseLines.map((line) => (
-                    <ReferenceLine
-                      key={line.key}
-                      x={line.timeDelta}
-                      stroke="var(--paragraph-color)"
-                      strokeWidth={1}
-                      strokeDasharray="6 4"
-                      strokeOpacity={0.8}
-                      label={{
-                        value: line.label,
-                        position: "insideBottomLeft",
-                        fill: "var(--paragraph-color)",
-                        fontSize: 10,
-                        angle: -90,
-                        dx: 12,
-                        dy: -10,
-                      }}
+                  {hasEnrolledActivity && (
+                    <Line
+                      type="monotone"
+                      dataKey="enrolled"
+                      stroke="var(--blue-500)"
+                      dot={false}
+                      strokeWidth={3}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      name="enrolled"
+                      connectNulls
+                      isAnimationActive={false}
                     />
-                  ))}
-                  <Line
-                    type="linear"
-                    dataKey="waitlisted"
-                    stroke="var(--orange-500)"
-                    dot={false}
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    name="waitlisted"
-                    connectNulls
-                  />
-                  <Line
-                    type="linear"
-                    dataKey="enrolled"
-                    stroke="var(--blue-500)"
-                    dot={false}
-                    strokeWidth={3}
-                    name="enrolled"
-                    connectNulls
-                  />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>

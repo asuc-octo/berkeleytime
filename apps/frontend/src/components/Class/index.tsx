@@ -3,11 +3,14 @@ import {
   lazy,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
+import { motion } from "framer-motion";
 import { OpenNewWindow } from "iconoir-react";
 import { Tabs } from "radix-ui";
 import { Link, useLocation } from "react-router-dom";
@@ -53,6 +56,7 @@ import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 import SuspenseBoundary from "../SuspenseBoundary";
 import BookmarkPopover from "./BookmarkPopover";
 import styles from "./Class.module.scss";
+import EmptyState from "./EmptyState";
 import UserFeedbackModal from "./Ratings/UserFeedbackModal";
 import { MetricData } from "./Ratings/metricsUtil";
 import { type RatingsTabClasses, RatingsTabLink } from "./locks";
@@ -109,9 +113,15 @@ interface UncontrolledProps {
 }
 
 // TODO: Determine whether a controlled input is even necessary
-type ClassProps = { dialog?: boolean } & (ControlledProps | UncontrolledProps);
+type ClassProps = {
+  dialog?: boolean;
+  scrollWithinContent?: boolean;
+} & (ControlledProps | UncontrolledProps);
 
 const ratingsTabClasses: RatingsTabClasses = {
+  menuItem: `${styles.classTabMenuItem} ${styles.ratingsMenuItem}`,
+  tabContent: styles.ratingsTabContent,
+  lockIcon: styles.ratingsLockIcon,
   badge: styles.badge,
   dot: styles.dot,
   tooltipArrow: styles.tooltipArrow,
@@ -143,6 +153,7 @@ export default function Class({
   class: providedClass,
   course: providedCourse,
   dialog,
+  scrollWithinContent = false,
 }: ClassProps) {
   const location = useLocation();
 
@@ -152,11 +163,40 @@ export default function Class({
   const [visitedTabs, setVisitedTabs] = useState<Set<ClassTab>>(
     () => new Set([DEFAULT_TAB])
   );
+  const [tabIndicator, setTabIndicator] = useState<{
+    x: number;
+    width: number;
+  } | null>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisitedTabs((prev) => {
       if (prev.has(activeTab)) return prev;
       return new Set(prev).add(activeTab);
+    });
+  }, [activeTab]);
+
+  const updateTabIndicator = useCallback(() => {
+    const tabListElement = tabListRef.current;
+    if (!tabListElement) return;
+
+    const activeTabElement = tabListElement.querySelector<HTMLElement>(
+      `[data-class-tab="${activeTab}"]`
+    );
+    if (!activeTabElement) {
+      setTabIndicator(null);
+      return;
+    }
+
+    const listRect = tabListElement.getBoundingClientRect();
+    const tabRect = activeTabElement.getBoundingClientRect();
+    const horizontalInset = 12;
+    const nextX = tabRect.left - listRect.left + horizontalInset;
+    const nextWidth = Math.max(tabRect.width - horizontalInset * 2, 0);
+
+    setTabIndicator((prev) => {
+      if (prev && prev.x === nextX && prev.width === nextWidth) return prev;
+      return { x: nextX, width: nextWidth };
     });
   }, [activeTab]);
 
@@ -311,6 +351,25 @@ export default function Class({
   const ratingsLocked = RatingsTabLink.isLocked(ratingsLockContext);
   const ratingsNeeded = RatingsTabLink.ratingsNeeded(ratingsLockContext) ?? 0;
 
+  useLayoutEffect(() => {
+    updateTabIndicator();
+  }, [updateTabIndicator, dialog, shouldShowRatingsTab, ratingsCount]);
+
+  useEffect(() => {
+    const tabListElement = tabListRef.current;
+    if (!tabListElement) return;
+
+    const observer = new ResizeObserver(updateTabIndicator);
+    observer.observe(tabListElement);
+
+    const activeTabElement = tabListElement.querySelector<HTMLElement>(
+      `[data-class-tab="${activeTab}"]`
+    );
+    if (activeTabElement) observer.observe(activeTabElement);
+
+    return () => observer.disconnect();
+  }, [activeTab, updateTabIndicator]);
+
   useEffect(() => {
     if (dialog || !ratingsLocked) return;
     if (activeTab !== "ratings") return;
@@ -451,7 +510,11 @@ export default function Class({
   return (
     <>
       <Root dialog={dialog} activeTab={activeTab} onTabChange={setActiveTab}>
-        <Flex direction="column" flexGrow="1" className={styles.root}>
+        <Flex
+          direction="column"
+          flexGrow="1"
+          className={`${styles.root}${scrollWithinContent ? ` ${styles.catalogScrollable}` : ""}`}
+        >
           <Box className={styles.header} pt="5" px="5">
             <Container size="3">
               <Flex direction="column" gap="4">
@@ -569,12 +632,27 @@ export default function Class({
               </Flex>
               {dialog ? (
                 <Tabs.List asChild>
-                  <Flex mx="-3" mb="3">
+                  <Flex
+                    className={styles.tabList}
+                    mx="-3"
+                    mb="3"
+                    ref={tabListRef}
+                  >
                     <Tabs.Trigger value="overview" asChild>
-                      <MenuItem>Overview</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="overview"
+                      >
+                        Overview
+                      </MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="sections" asChild>
-                      <MenuItem>Sections</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="sections"
+                      >
+                        Sections
+                      </MenuItem>
                     </Tabs.Trigger>
                     {shouldShowRatingsTab && (
                       <RatingsTabLink
@@ -590,23 +668,59 @@ export default function Class({
                       />
                     )}
                     <Tabs.Trigger value="grades" asChild>
-                      <MenuItem>Grades</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="grades"
+                      >
+                        Grades
+                      </MenuItem>
                     </Tabs.Trigger>
                     <Tabs.Trigger value="enrollment" asChild>
-                      <MenuItem>Enrollment</MenuItem>
+                      <MenuItem
+                        className={styles.classTabMenuItem}
+                        data-class-tab="enrollment"
+                      >
+                        Enrollment
+                      </MenuItem>
                     </Tabs.Trigger>
+                    {tabIndicator && (
+                      <motion.span
+                        aria-hidden
+                        className={styles.tabIndicator}
+                        initial={false}
+                        animate={{
+                          x: tabIndicator.x,
+                          width: tabIndicator.width,
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 480,
+                          damping: 36,
+                          mass: 0.75,
+                        }}
+                      />
+                    )}
                   </Flex>
                 </Tabs.List>
               ) : (
-                <Flex mx="-3" mb="3">
+                <Flex
+                  className={styles.tabList}
+                  mx="-3"
+                  mb="3"
+                  ref={tabListRef}
+                >
                   <MenuItem
                     active={activeTab === "overview"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="overview"
                     onClick={() => setActiveTab("overview")}
                   >
                     Overview
                   </MenuItem>
                   <MenuItem
                     active={activeTab === "sections"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="sections"
                     onClick={() => setActiveTab("sections")}
                   >
                     Sections
@@ -625,117 +739,141 @@ export default function Class({
                   )}
                   <MenuItem
                     active={activeTab === "grades"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="grades"
                     onClick={() => setActiveTab("grades")}
                   >
                     Grades
                   </MenuItem>
                   <MenuItem
                     active={activeTab === "enrollment"}
+                    className={styles.classTabMenuItem}
+                    data-class-tab="enrollment"
                     onClick={() => setActiveTab("enrollment")}
                   >
                     Enrollment
                   </MenuItem>
+                  {tabIndicator && (
+                    <motion.span
+                      aria-hidden
+                      className={styles.tabIndicator}
+                      initial={false}
+                      animate={{ x: tabIndicator.x, width: tabIndicator.width }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 480,
+                        damping: 36,
+                        mass: 0.75,
+                      }}
+                    />
+                  )}
                 </Flex>
               )}
             </Container>
           </Box>
-          <ClassContext
-            value={{
-              class: _class as IClassDetails,
-              course: _course as IClassCourse,
-            }}
+          <div
+            className={`${styles.contentScroll} ${
+              activeTab === "sections" ? styles.disableOverscrollY : ""
+            }`}
           >
-            {dialog ? (
-              <>
-                <Tabs.Content value="overview" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Overview />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="sections" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Sections />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                <Tabs.Content value="grades" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Grades />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-                {!ratingsLocked && (
-                  <Tabs.Content value="ratings" asChild>
-                    <SuspenseBoundary fallback={<></>}>
-                      <Ratings />
-                    </SuspenseBoundary>
-                  </Tabs.Content>
-                )}
-                <Tabs.Content value="enrollment" asChild>
-                  <SuspenseBoundary fallback={<></>}>
-                    <Enrollment />
-                  </SuspenseBoundary>
-                </Tabs.Content>
-              </>
-            ) : (
-              <>
-                {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
-                {visitedTabs.has("sections") && (
-                  <div
-                    style={{
-                      display: activeTab === "sections" ? "block" : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Sections />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("grades") && (
-                  <div
-                    style={{
-                      display: activeTab === "grades" ? "block" : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Grades />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {!ratingsLocked && visitedTabs.has("ratings") && (
-                  <div
-                    style={{
-                      display: activeTab === "ratings" ? "block" : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Ratings />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("enrollment") && (
-                  <div
-                    style={{
-                      display: activeTab === "enrollment" ? "block" : "none",
-                    }}
-                  >
-                    <SuspenseBoundary fallback={<></>}>
-                      <Enrollment />
-                    </SuspenseBoundary>
-                  </div>
-                )}
-                {visitedTabs.has("overview") && (
-                  <div
-                    style={{
-                      display: activeTab === "overview" ? "block" : "none",
-                    }}
-                  >
+            <ClassContext
+              value={{
+                class: _class as IClassDetails,
+                course: _course as IClassCourse,
+              }}
+            >
+              {dialog ? (
+                <>
+                  <Tabs.Content value="overview" asChild>
                     <SuspenseBoundary fallback={<></>}>
                       <Overview />
                     </SuspenseBoundary>
-                  </div>
-                )}
-              </>
-            )}
-          </ClassContext>
+                  </Tabs.Content>
+                  <Tabs.Content value="sections" asChild>
+                    <SuspenseBoundary fallback={<EmptyState loading />}>
+                      <Sections />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  <Tabs.Content value="grades" asChild>
+                    <SuspenseBoundary fallback={<></>}>
+                      <Grades />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                  {!ratingsLocked && (
+                    <Tabs.Content value="ratings" asChild>
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Ratings />
+                      </SuspenseBoundary>
+                    </Tabs.Content>
+                  )}
+                  <Tabs.Content value="enrollment" asChild>
+                    <SuspenseBoundary fallback={<></>}>
+                      <Enrollment />
+                    </SuspenseBoundary>
+                  </Tabs.Content>
+                </>
+              ) : (
+                <>
+                  {/* Lazy mount: only render tabs that have been visited, keep them mounted */}
+                  {visitedTabs.has("sections") && (
+                    <div
+                      style={{
+                        display: activeTab === "sections" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Sections />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("grades") && (
+                    <div
+                      style={{
+                        display: activeTab === "grades" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Grades />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {!ratingsLocked && visitedTabs.has("ratings") && (
+                    <div
+                      style={{
+                        display: activeTab === "ratings" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<EmptyState loading />}>
+                        <Ratings />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("enrollment") && (
+                    <div
+                      style={{
+                        display: activeTab === "enrollment" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Enrollment />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                  {visitedTabs.has("overview") && (
+                    <div
+                      style={{
+                        display: activeTab === "overview" ? "block" : "none",
+                      }}
+                    >
+                      <SuspenseBoundary fallback={<></>}>
+                        <Overview />
+                      </SuspenseBoundary>
+                    </div>
+                  )}
+                </>
+              )}
+            </ClassContext>
+          </div>
         </Flex>
       </Root>
       {shouldShowUnlockModal && (

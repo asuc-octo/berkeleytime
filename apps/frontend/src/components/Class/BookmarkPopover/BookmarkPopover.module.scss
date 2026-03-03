@@ -38,14 +38,6 @@
   flex-direction: column;
 }
 
-.bookmarkNote {
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border-color);
-  font-size: var(--text-12);
-  color: var(--secondary-color);
-  line-height: 1.4;
-}
-
 .collectionRows {
   max-height: 300px;
   overflow-y: auto;
@@ -88,12 +80,16 @@
   font-weight: var(--font-normal);
 }
 
-.colorIndicator {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
+.collectionFolderIcon {
   flex-shrink: 0;
-  margin-top: 4px;
+  margin-top: 2px;
+}
+
+.collectionFolderIconColored {
+  path {
+    stroke: currentColor;
+    fill: currentColor;
+  }
 }
 
 .createCollectionBtn {

@@ -32,7 +32,6 @@ export interface Config {
     WORKGROUP: string;
   };
   BACKEND_URL: string;
-  SEMANTIC_SEARCH_URL: string;
 }
 
 export function loadConfig(): Config {
@@ -65,6 +64,5 @@ export function loadConfig(): Config {
       WORKGROUP: env("AWS_WORKGROUP"),
     },
     BACKEND_URL: env("BACKEND_URL"),
-    SEMANTIC_SEARCH_URL: env("SEMANTIC_SEARCH_URL"),
   };
 }

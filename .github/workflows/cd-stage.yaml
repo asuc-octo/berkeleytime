@@ -34,9 +34,6 @@ jobs:
         backend:
           image:
             tag: latest
-        semanticSearch:
-          image:
-            tag: latest
         datapuller:
           image:
             tag: latest

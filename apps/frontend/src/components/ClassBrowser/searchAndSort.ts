@@ -1,5 +1,6 @@
-import { ICatalogClass } from "@/lib/api";
 import { FuzzySearch } from "@repo/common";
+
+import { ICatalogClass } from "@/lib/api";
 
 import { SortBy } from "./browser";
 import { SortOrder, sortClasses } from "./sorting";
