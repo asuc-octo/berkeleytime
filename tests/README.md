@@ -184,8 +184,3 @@ npx playwright codegen http://localhost:3000
 ### Tests timeout
 - Increase timeout in test: `test.setTimeout(60000)`
 - Or in config: Update `timeout` in `playwright.config.ts`
-
-### Docker won't start in CI
-- Check GitHub Actions logs
-- Ensure `.env.template` has all required variables
-- May need to add test secrets to GitHub repo settings

@@ -31,10 +31,13 @@ test.describe("Course Search", () => {
     await searchInput.fill("CS 61A");
 
     // Wait for search results to appear
-    await page.getByText("COMPSCI 61A #01The Structure").click();
+    await page
+      .getByRole("paragraph")
+      .filter({ hasText: "COMPSCI 61A" })
+      .click();
 
     // Verify results (course details page loads)
-    const results = page.getByRole("heading", { name: "COMPSCI 61A #" });
+    const results = page.getByRole("heading", { name: "COMPSCI 61A" });
     await expect(results).toBeVisible();
   });
 });
