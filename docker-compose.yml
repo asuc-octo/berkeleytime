@@ -31,6 +31,8 @@ services:
     volumes:
       - ./apps/frontend:/frontend/apps/frontend
       - ./packages:/frontend/packages
+      - /frontend/node_modules
+      - /frontend/apps/frontend/node_modules
   ag-frontend:
     build:
       context: .
@@ -118,7 +120,7 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
-      
+
   # if using staff photos in dev, use --profile dev
   minio:
     image: 'minio/minio:latest'
@@ -144,7 +146,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set myminio http://localhost:9000 root password;
-      /usr/bin/mc mb myminio/images; 
+      /usr/bin/mc mb myminio/images;
       /usr/bin/mc anonymous set public myminio/images;
       exit 0;
       "
