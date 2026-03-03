@@ -5,30 +5,27 @@ import { NavArrowDown, NavArrowUp, RefreshDouble, User } from "iconoir-react";
 import { DropdownMenu } from "@repo/theme";
 
 import useUser from "@/hooks/useUser";
+import {
+  DEV_AUTH_LOGIN_ROUTE,
+  DEV_AUTH_USERS_ROUTE,
+  DevUser,
+  clearStoredDevUserId,
+  isDevAuthCollapsed,
+  setDevAuthCollapsed,
+  setStoredDevUserId,
+} from "@/utils/devAuth";
 
 import styles from "./DevAuthBanner.module.scss";
-
-interface DevUser {
-  _id: string;
-  email: string;
-  name: string;
-  staff: boolean;
-}
-
-const DEV_AUTH_STORAGE_KEY = "bt.devAuth.userId";
-const DEV_AUTH_COLLAPSED_KEY = "bt.devAuth.collapsed";
 
 export default function DevAuthBanner() {
   const { user, loading: userLoading } = useUser();
   const [devUsers, setDevUsers] = useState<DevUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [collapsed, setCollapsed] = useState(() => {
-    return localStorage.getItem(DEV_AUTH_COLLAPSED_KEY) === "true";
-  });
+  const [collapsed, setCollapsed] = useState(() => isDevAuthCollapsed());
 
   useEffect(() => {
-    fetch("/api/dev/users")
+    fetch(DEV_AUTH_USERS_ROUTE)
       .then((res) => res.json())
       .then((users) => {
         setDevUsers(users);
@@ -38,20 +35,20 @@ export default function DevAuthBanner() {
   }, []);
 
   const selectUser = (userId: string) => {
-    localStorage.setItem(DEV_AUTH_STORAGE_KEY, userId);
+    setStoredDevUserId(userId);
     const redirectUri = window.location.pathname + window.location.search;
-    window.location.href = `/api/dev/login?userId=${userId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `${DEV_AUTH_LOGIN_ROUTE}?userId=${userId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   const clearSelection = () => {
-    localStorage.removeItem(DEV_AUTH_STORAGE_KEY);
+    clearStoredDevUserId();
     window.location.href = `/api/logout?redirect_uri=${encodeURIComponent(window.location.pathname)}`;
   };
 
   const toggleCollapsed = () => {
     const newCollapsed = !collapsed;
     setCollapsed(newCollapsed);
-    localStorage.setItem(DEV_AUTH_COLLAPSED_KEY, String(newCollapsed));
+    setDevAuthCollapsed(newCollapsed);
   };
 
   const filteredUsers = devUsers.filter(

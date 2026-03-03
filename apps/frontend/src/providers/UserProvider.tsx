@@ -2,12 +2,11 @@ import { ReactNode, useEffect, useRef } from "react";
 
 import UserContext from "@/contexts/UserContext";
 import { useReadUser } from "@/hooks/api";
+import { DEV_AUTH_LOGIN_ROUTE, getStoredDevUserId } from "@/utils/devAuth";
 
 interface UserProviderProps {
   children: ReactNode;
 }
-
-const DEV_AUTH_STORAGE_KEY = "bt.devAuth.userId";
 
 export default function UserProvider({ children }: UserProviderProps) {
   const {
@@ -27,11 +26,11 @@ export default function UserProvider({ children }: UserProviderProps) {
     if (user) return;
     if (autoLoginAttempted.current) return;
 
-    const savedUserId = localStorage.getItem(DEV_AUTH_STORAGE_KEY);
+    const savedUserId = getStoredDevUserId();
     if (savedUserId) {
       autoLoginAttempted.current = true;
       const redirectUri = window.location.pathname + window.location.search;
-      window.location.href = `/api/dev/login?userId=${savedUserId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      window.location.href = `${DEV_AUTH_LOGIN_ROUTE}?userId=${savedUserId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
     }
   }, [loading, user]);
 
