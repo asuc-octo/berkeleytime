@@ -1,6 +1,41 @@
 import { describe, expect, it } from "vitest";
 
-import { estimateSeriesValueAtTime } from "./EnrollmentGraph.utils";
+import {
+  estimateSeriesValueAtTime,
+  getCapacityChangeTimeDeltas,
+} from "./EnrollmentGraph.utils";
+
+describe("getCapacityChangeTimeDeltas", () => {
+  it("returns change time deltas when max enrollment shifts", () => {
+    const history = [
+      { startTime: "2024-08-20T08:00:12.000Z", maxEnroll: 100 },
+      { startTime: "2024-08-20T08:30:30.000Z", maxEnroll: 100 },
+      { startTime: "2024-08-20T09:00:09.000Z", maxEnroll: 120 },
+      { startTime: "2024-08-20T09:15:02.000Z", maxEnroll: 120 },
+      { startTime: "2024-08-20T10:00:00.000Z", maxEnroll: 80 },
+    ];
+
+    expect(getCapacityChangeTimeDeltas(history)).toEqual([60, 120]);
+  });
+
+  it("treats null maxEnroll as zero and ignores unchanged values", () => {
+    const history = [
+      { startTime: "2024-08-20T08:00:00.000Z", maxEnroll: null },
+      { startTime: "2024-08-20T08:10:00.000Z", maxEnroll: 0 },
+      { startTime: "2024-08-20T08:20:00.000Z", maxEnroll: 5 },
+    ];
+
+    expect(getCapacityChangeTimeDeltas(history)).toEqual([20]);
+  });
+
+  it("returns an empty list for short histories", () => {
+    expect(
+      getCapacityChangeTimeDeltas([
+        { startTime: "2024-08-20T08:00:00.000Z", maxEnroll: 50 },
+      ])
+    ).toEqual([]);
+  });
+});
 
 describe("estimateSeriesValueAtTime", () => {
   const points = [

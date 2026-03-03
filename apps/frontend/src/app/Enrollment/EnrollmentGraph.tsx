@@ -23,6 +23,7 @@ import { Semester } from "@/lib/generated/graphql";
 
 import {
   estimateSeriesValueAtTime,
+  getCapacityChangeTimeDeltas,
   type SeriesPoint,
 } from "./EnrollmentGraph.utils";
 import styles from "./EnrollmentGraph.module.scss";
@@ -66,6 +67,9 @@ const ROTATED_CHART_HEIGHT_RATIO = 0.72;
 const ROTATE_ENTER_WIDTH = 600;
 const ROTATE_EXIT_WIDTH = 640;
 const SERIES_ANIMATION_DURATION_MS = 320;
+const CAPACITY_CHANGE_MARKER_SIZE = 5;
+const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
+const EMPTY_CAPACITY_CHANGE_KEYS = new Set<string>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
   new_transfer: "New Transfer Students",
@@ -74,6 +78,8 @@ const GROUP_LABELS: Record<string, string> = {
   new_student: "New Students",
   all: "All Students",
 };
+
+const getTimeDeltaKey = (timeDelta: number) => timeDelta.toFixed(4);
 
 const getValidDenominator = (values: number[]) => {
   const maxSeen = Math.max(...values, 0);
@@ -197,6 +203,18 @@ export default function EnrollmentGraph({
         }, []);
       }),
     [chartData, outputs]
+  );
+
+  const capacityChangeTimeDeltaKeysByOutput = useMemo(
+    () =>
+      outputs.map((output) => {
+        const keys = new Set<string>();
+        getCapacityChangeTimeDeltas(output.data.history).forEach((timeDelta) => {
+          keys.add(getTimeDeltaKey(timeDelta));
+        });
+        return keys;
+      }),
+    [outputs]
   );
 
   const hasSeriesData = useMemo(
@@ -565,6 +583,9 @@ export default function EnrollmentGraph({
                       hoveredIndex !== null &&
                       outputs.length > 1 &&
                       hoveredIndex !== outputIndex;
+                    const capacityChangeTimeDeltaKeys =
+                      capacityChangeTimeDeltaKeysByOutput[outputIndex] ??
+                      EMPTY_CAPACITY_CHANGE_KEYS;
                     const lineStroke = isDimmed
                       ? "var(--border-color)"
                       : `url(#${getGradientId(output.id)})`;
@@ -578,7 +599,27 @@ export default function EnrollmentGraph({
                           dataKey={getSeriesKey(outputIndex)}
                           stroke={lineStroke}
                           strokeWidth={isDimmed ? 1.75 : 2.75}
-                          dot={false}
+                          dot={(dotProps) => {
+                            if (
+                              typeof dotProps.cx !== "number" ||
+                              typeof dotProps.cy !== "number" ||
+                              typeof dotProps.payload?.timeDelta !== "number" ||
+                              !capacityChangeTimeDeltaKeys.has(
+                                getTimeDeltaKey(dotProps.payload.timeDelta)
+                              )
+                            ) {
+                              return null;
+                            }
+
+                            return (
+                              <path
+                                d={`M ${dotProps.cx} ${dotProps.cy + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} L ${dotProps.cx - CAPACITY_CHANGE_MARKER_SIZE} ${dotProps.cy + CAPACITY_CHANGE_MARKER_SIZE * 1.6 + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} L ${dotProps.cx + CAPACITY_CHANGE_MARKER_SIZE} ${dotProps.cy + CAPACITY_CHANGE_MARKER_SIZE * 1.6 + CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET} Z`}
+                                fill="var(--heading-color)"
+                                stroke="var(--heading-color)"
+                                strokeWidth={1}
+                              />
+                            );
+                          }}
                           activeDot={{
                             r: 3,
                             fill: dotColor,

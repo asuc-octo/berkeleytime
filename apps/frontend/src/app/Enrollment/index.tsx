@@ -100,7 +100,7 @@ const getInstructorNames = (courseClass: ICourseWithInstructorClass) => {
     });
   });
 
-  return Array.from(names);
+  return Array.from(names).toSorted((a, b) => a.localeCompare(b));
 };
 
 const hasEnrollmentData = (courseClass: ICourseWithInstructorClass) =>
@@ -109,13 +109,18 @@ const hasEnrollmentData = (courseClass: ICourseWithInstructorClass) =>
       courseClass.primarySection?.enrollment?.latest
   );
 
-const classMatchesInstructor = (
-  courseClass: ICourseWithInstructorClass,
-  selectedInstructor: string | null
-) => {
-  if (!selectedInstructor || selectedInstructor === "all") return true;
-  return getInstructorNames(courseClass).includes(selectedInstructor);
+const formatSectionNumber = (sectionNumber: string) =>
+  sectionNumber.replace(/^0+(?=\d)/, "");
+
+const getInstructorLabel = (courseClass: ICourseWithInstructorClass) => {
+  const instructors = getInstructorNames(courseClass);
+  if (instructors.length === 0) return DEFAULT_INSTRUCTOR_LABEL;
+  if (instructors.length === 1) return instructors[0];
+  return `${instructors[0]} +${instructors.length - 1}`;
 };
+
+const getOfferingId = (courseClass: ICourseWithInstructorClass) =>
+  `${courseClass.sessionId ?? "1"}-${courseClass.number}`;
 
 function EnrollmentSidebar({
   outputs,
@@ -128,7 +133,7 @@ function EnrollmentSidebar({
   const [selectedSemesterValue, setSelectedSemesterValue] = useState<
     string | null
   >(null);
-  const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
+  const [selectedOfferingId, setSelectedOfferingId] = useState<string | null>(
     null
   );
 
@@ -167,36 +172,6 @@ function EnrollmentSidebar({
     [selectedSemesterValue]
   );
 
-  const instructorOptions = useMemo(() => {
-    if (!selectedSemester) return [];
-
-    const instructors = new Set<string>();
-
-    classesWithEnrollment.forEach((courseClass) => {
-      if (
-        courseClass.year !== selectedSemester.year ||
-        courseClass.semester !== selectedSemester.semester
-      ) {
-        return;
-      }
-
-      getInstructorNames(courseClass).forEach((instructorName) => {
-        instructors.add(instructorName);
-      });
-    });
-
-    const options = Array.from(instructors).map((instructor) => ({
-      value: instructor,
-      label: instructor,
-    }));
-
-    if (options.length === 0) {
-      return [{ value: "all", label: DEFAULT_INSTRUCTOR_LABEL }];
-    }
-
-    return options;
-  }, [classesWithEnrollment, selectedSemester]);
-
   const availableClasses = useMemo(() => {
     if (!selectedSemester) return [];
 
@@ -206,41 +181,62 @@ function EnrollmentSidebar({
           courseClass.year === selectedSemester.year &&
           courseClass.semester === selectedSemester.semester
       )
-      .filter((courseClass) =>
-        classMatchesInstructor(courseClass, selectedInstructor)
-      )
       .toSorted((a, b) =>
-        (a.primarySection?.number ?? "").localeCompare(
-          b.primarySection?.number ?? "",
+        (a.primarySection?.number ?? a.number).localeCompare(
+          b.primarySection?.number ?? b.number,
           undefined,
           { numeric: true }
         )
       );
-  }, [classesWithEnrollment, selectedInstructor, selectedSemester]);
+  }, [classesWithEnrollment, selectedSemester]);
 
-  const selectedClass = availableClasses[0] ?? null;
+  const selectedClass = useMemo(
+    () =>
+      availableClasses.find(
+        (courseClass) => getOfferingId(courseClass) === selectedOfferingId
+      ) ??
+      (availableClasses.length === 1 ? availableClasses[0] : null),
+    [availableClasses, selectedOfferingId]
+  );
 
   useEffect(() => {
     if (!selectedSemester) {
-      setSelectedInstructor(null);
+      setSelectedOfferingId(null);
       return;
     }
 
-    if (instructorOptions.length <= 1) {
-      setSelectedInstructor(instructorOptions[0]?.value ?? "all");
+    if (availableClasses.length === 1) {
+      setSelectedOfferingId(getOfferingId(availableClasses[0]));
       return;
     }
 
-    if (!selectedInstructor) return;
     if (
-      !instructorOptions.some((option) => option.value === selectedInstructor)
+      selectedOfferingId &&
+      !availableClasses.some(
+        (courseClass) => getOfferingId(courseClass) === selectedOfferingId
+      )
     ) {
-      setSelectedInstructor(null);
+      setSelectedOfferingId(null);
     }
-  }, [selectedSemester, instructorOptions, selectedInstructor]);
+  }, [selectedSemester, availableClasses, selectedOfferingId]);
 
-  const shouldShowInstructorSelect =
-    !!selectedSemester && instructorOptions.length > 1;
+  const shouldShowOfferingCards =
+    !!selectedSemester && availableClasses.length > 1;
+  const offeringOptions = useMemo(
+    () =>
+      availableClasses.map((courseClass) => {
+        const offeringId = getOfferingId(courseClass);
+        const sectionNumber = formatSectionNumber(
+          courseClass.primarySection?.number ?? courseClass.number
+        );
+
+        return {
+          value: offeringId,
+          label: `Section ${sectionNumber}\n${getInstructorLabel(courseClass)}`,
+        };
+      }),
+    [availableClasses]
+  );
   const shouldShowSemesterSelect = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
   const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
@@ -249,9 +245,9 @@ function EnrollmentSidebar({
     semesterOptions.find((option) => option.value === selectedSemesterValue)
       ?.label ?? "All semesters";
 
-  const selectedInstructorLabel =
-    instructorOptions.find((option) => option.value === selectedInstructor)
-      ?.label ?? DEFAULT_INSTRUCTOR_LABEL;
+  const selectedInstructorLabel = selectedClass
+    ? getInstructorLabel(selectedClass)
+    : DEFAULT_INSTRUCTOR_LABEL;
   const selectionId =
     selectedCourse && selectedClass && selectedClass.primarySection?.number
       ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedClass.year}-${selectedClass.semester}-${selectedClass.sessionId ?? "1"}-${selectedClass.primarySection.number}`
@@ -261,7 +257,6 @@ function EnrollmentSidebar({
   const canAddWithoutLoading =
     shouldShowAddButton &&
     hasSelectableClass &&
-    (!shouldShowInstructorSelect || Boolean(selectedInstructor)) &&
     !isFull &&
     !isAlreadyAdded;
   const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
@@ -297,13 +292,13 @@ function EnrollmentSidebar({
 
     setSelectedCourse(null);
     setSelectedSemesterValue(null);
-    setSelectedInstructor(null);
+    setSelectedOfferingId(null);
   };
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
     setSelectedSemesterValue(null);
-    setSelectedInstructor(null);
+    setSelectedOfferingId(null);
     addRecent(RecentType.Course, {
       subject: course.subject,
       number: course.number,
@@ -313,7 +308,7 @@ function EnrollmentSidebar({
   const handleCourseClear = () => {
     setSelectedCourse(null);
     setSelectedSemesterValue(null);
-    setSelectedInstructor(null);
+    setSelectedOfferingId(null);
   };
 
   return (
@@ -344,7 +339,7 @@ function EnrollmentSidebar({
                 onChange={(semester) => {
                   if (Array.isArray(semester)) return;
                   setSelectedSemesterValue(semester);
-                  setSelectedInstructor(null);
+                  setSelectedOfferingId(null);
                 }}
               />
             </CourseAnalyticsField>
@@ -352,24 +347,24 @@ function EnrollmentSidebar({
         )}
       </AnimatePresence>
       <AnimatePresence initial={false}>
-        {shouldShowInstructorSelect && (
+        {shouldShowOfferingCards && (
           <motion.div
-            key="enrollment-instructor-select"
+            key="enrollment-offering-select"
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ type: "spring", stiffness: 320, damping: 26 }}
           >
-            <CourseAnalyticsField label="Instructor">
+            <CourseAnalyticsField label="Section">
               <Select
-                options={instructorOptions}
+                options={offeringOptions}
                 searchable
-                searchPlaceholder="Search instructors..."
-                placeholder="Select instructor"
-                value={selectedInstructor}
-                onChange={(instructor) => {
-                  if (Array.isArray(instructor)) return;
-                  setSelectedInstructor(instructor);
+                searchPlaceholder="Search sections..."
+                placeholder="Select section"
+                value={selectedOfferingId}
+                onChange={(offeringId) => {
+                  if (Array.isArray(offeringId)) return;
+                  setSelectedOfferingId(offeringId);
                 }}
               />
             </CourseAnalyticsField>
@@ -397,11 +392,11 @@ function EnrollmentSidebar({
                     ? "Already added"
                     : isFull
                       ? "Remove a course first"
-                      : !hasSelectableClass
+                      : availableClasses.length === 0
                         ? "No enrollment data"
                         : canAddWithoutLoading
                           ? "Add course"
-                          : "Select instructor"}
+                          : "Select section"}
               </Button>
             </motion.div>
           )}

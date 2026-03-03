@@ -3,7 +3,45 @@ export interface SeriesPoint {
   value: number;
 }
 
+export interface CapacityHistoryPoint {
+  startTime: string;
+  maxEnroll: number | null;
+}
+
 const TIME_DELTA_EPSILON = 1e-6;
+const MINUTE_MS = 60_000;
+
+const getMinuteStartMs = (isoDate: string): number | null => {
+  const timestampMs = new Date(isoDate).getTime();
+  if (Number.isNaN(timestampMs)) return null;
+  return Math.floor(timestampMs / MINUTE_MS) * MINUTE_MS;
+};
+
+export const getCapacityChangeTimeDeltas = (
+  history: CapacityHistoryPoint[]
+): number[] => {
+  if (history.length < 2) return [];
+
+  const firstTimeMs = getMinuteStartMs(history[0].startTime);
+  if (firstTimeMs === null) return [];
+
+  const changeDeltas: number[] = [];
+  let previousMaxEnroll = history[0].maxEnroll ?? 0;
+
+  for (let index = 1; index < history.length; index += 1) {
+    const entry = history[index];
+    const currentMaxEnroll = entry.maxEnroll ?? 0;
+    const startTimeMs = getMinuteStartMs(entry.startTime);
+
+    if (currentMaxEnroll !== previousMaxEnroll && startTimeMs !== null) {
+      changeDeltas.push((startTimeMs - firstTimeMs) / MINUTE_MS);
+    }
+
+    previousMaxEnroll = currentMaxEnroll;
+  }
+
+  return Array.from(new Set(changeDeltas));
+};
 
 /**
  * Estimate a value at a given timestamp by linearly interpolating between the
