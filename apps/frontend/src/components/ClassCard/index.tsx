@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, ReactNode } from "react";
+import { ComponentPropsWithRef, Fragment, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -10,7 +10,7 @@ import {
 } from "iconoir-react";
 
 import { METRIC_ORDER } from "@repo/shared";
-import { Card, Tooltip } from "@repo/theme";
+import { Badge, Card, Color as ThemeColor, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import {
@@ -222,9 +222,10 @@ export default function ClassCard({
                     <div
                       style={{
                         display: "grid",
-                        gridTemplateColumns: "auto auto auto",
-                        gap: "4px 12px",
+                        gridTemplateColumns: "auto max-content",
+                        gap: "8px 12px",
                         alignItems: "center",
+                        width: "max-content",
                       }}
                     >
                       {METRIC_ORDER.map((metricName) => {
@@ -241,24 +242,17 @@ export default function ClassCard({
                           metricName,
                           metric.weightedAverage
                         );
-                        return [
-                          <span key={`${metricName}-name`}>{metricName}:</span>,
-                          <span
-                            key={`${metricName}-status`}
-                            style={{
-                              color: `var(--${color}-500)`,
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {status}
-                          </span>,
-                          <span
-                            key={`${metricName}-avg`}
-                            style={{ color: "var(--secondary-text-color)" }}
-                          >
-                            {metric.weightedAverage.toFixed(1)}/5.0
-                          </span>,
-                        ];
+                        return (
+                          <Fragment key={metricName}>
+                            <span>{metricName}</span>
+                            <div style={{ width: "fit-content" }}>
+                              <Badge
+                                color={color as ThemeColor}
+                                label={status}
+                              />
+                            </div>
+                          </Fragment>
+                        );
                       })}
                     </div>
                   }
