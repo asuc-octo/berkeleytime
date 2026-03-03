@@ -94,14 +94,13 @@ export const parseLine = (
         angleDepth === 0 &&
         parenDepth === 0 &&
         squareDepth === 0 &&
-        curlyDepth === 0
+        curlyDepth === 0 &&
+        parts.length < 2
       ) {
-        // Only split on space if we're not inside any brackets
+        // Only split on space if we're not inside any brackets AND we haven't found Type and VarName yet
         if (currentPart.trim()) {
           parts.push(currentPart.trim());
           currentPart = "";
-          // Stop if we have 3 parts
-          if (parts.length === 3) break;
         }
       } else {
         currentPart += char;

@@ -29,14 +29,13 @@ type RequirementResult = {
 
 // Render requirement details that appear below the title
 const renderRequirementDetails = (req: RequirementResult, depth: number) => {
-  const indentAmount = depth * 24; // Base indent for requirement items
   // Align with requirement text (checkbox space 1.25rem = 20px + gap 0.5rem = 8px = 28px total)
-  const textIndent = indentAmount + 28;
+  const textIndent = 28;
 
   if (req.type?.data === "NumberRequirement") {
     return (
       <p className={styles.metadata} style={{ marginLeft: `${textIndent}px` }}>
-        {req.actual.data} / {req.required.data}
+        {req.actual.data} / {req.required.data} units currently satisfying
       </p>
     );
   }
@@ -119,6 +118,24 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
     const subRequirements: RequirementResult[] = req.requirements.data ?? [];
     if (subRequirements.length === 0) return null;
 
+    // Special rendering for the Domain Emphasis OrRequirement —
+    // each child AndRequirement is a collapsible sub-accordion.
+    if (
+      req.type?.data === "OrRequirement" &&
+      req.description?.data === "Domain Emphasis"
+    ) {
+      return (
+        <div style={{ marginTop: "0.25rem" }}>
+          {subRequirements.map((subReq, index) => (
+            <div key={`sub-${index}`}>
+              {/* Render domain emphases as standard items without 'OR' connectors */}
+              {renderRequirementItem(subReq, `de-sub-${index}`, depth + 1, -1)}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
     const isAnd = req.type?.data === "AndRequirement";
     const isOr = req.type?.data === "OrRequirement";
     const connector = isAnd ? "AND" : isOr ? "OR" : null;
@@ -172,7 +189,7 @@ function RequirementItem({
     !(isMet || isManuallyOverridden)
   );
   const [isHovered, setIsHovered] = useState(false);
-  const indentAmount = depth * 24; // Increased indent for clearer hierarchy
+  const indentAmount = depth > 0 ? 24 : 0; // Fixed indent per level avoiding quadratic nesting
 
   // Check if this requirement has details to show
   const hasDetails =

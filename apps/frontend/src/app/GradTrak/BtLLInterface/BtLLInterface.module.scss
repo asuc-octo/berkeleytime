@@ -235,6 +235,61 @@
       text-transform: uppercase;
     }
 
+    // Domain Emphasis OR section — list of collapsible DE option rows
+    .deSection {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-top: 0.25rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .deRow {
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid var(--border-color);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .deRowHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--border-color);
+      }
+    }
+
+    .deRowStart {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .deRowTitle {
+      margin: 0;
+      font-size: 0.8125em;
+      color: var(--heading-color);
+      font-weight: 500;
+    }
+
+    .deRowBody {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 0.75rem 0.75rem;
+      gap: 0.5rem;
+      background-color: var(--background-secondary, rgba(0, 0, 0, 0.02));
+    }
+
     .comingSoon {
       display: flex;
       flex-direction: column;
