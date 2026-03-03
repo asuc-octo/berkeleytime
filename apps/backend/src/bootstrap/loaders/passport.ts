@@ -169,4 +169,53 @@ export default async (app: Application, redis: RedisClientType) => {
       }
     )
   );
+
+  // DEV-ONLY: Direct user login without Google OAuth
+  if (config.isDev) {
+    const DEV_LOGIN_ROUTE = "/dev/login";
+    const DEV_USERS_ROUTE = "/dev/users";
+
+    // GET /dev/login?userId=xxx&redirect_uri=/
+    app.get(DEV_LOGIN_ROUTE, async (req, res) => {
+      const { userId, redirect_uri: redirectURI } = req.query;
+
+      if (!userId || typeof userId !== "string") {
+        res.status(400).json({ error: "userId required" });
+        return;
+      }
+
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+        return;
+      }
+
+      const sessionUser = { _id: user._id.toString(), email: user.email };
+
+      req.login(sessionUser, (err) => {
+        if (err) {
+          res.status(500).json({ error: "Login failed" });
+          return;
+        }
+
+        if (req.session?.cookie) {
+          req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
+        }
+
+        const parsedRedirectURI =
+          typeof redirectURI === "string" ? redirectURI : "/";
+        res.redirect(parsedRedirectURI);
+      });
+    });
+
+    // GET /dev/users - List available users for selection
+    app.get(DEV_USERS_ROUTE, async (_req, res) => {
+      const users = await UserModel.find({})
+        .select("_id email name staff")
+        .sort({ lastSeenAt: -1 })
+        .limit(50);
+
+      res.json(users);
+    });
+  }
 };
