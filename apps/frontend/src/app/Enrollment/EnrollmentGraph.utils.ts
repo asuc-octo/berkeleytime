@@ -85,7 +85,8 @@ export const getCapacityChangeEvents = (
           previousMaxEnroll,
           currentMaxEnroll
         ),
-        direction: currentMaxEnroll > previousMaxEnroll ? "increase" : "decrease",
+        direction:
+          currentMaxEnroll > previousMaxEnroll ? "increase" : "decrease",
       });
     }
 
@@ -99,8 +100,7 @@ export const getCapacityChangeEvents = (
 
 export const getCapacityChangeTimeDeltas = (
   history: CapacityHistoryPoint[]
-): number[] =>
-  getCapacityChangeEvents(history).map((event) => event.timeDelta);
+): number[] => getCapacityChangeEvents(history).map((event) => event.timeDelta);
 
 /**
  * Estimate a value at a given timestamp by linearly interpolating between the

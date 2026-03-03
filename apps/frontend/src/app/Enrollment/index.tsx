@@ -21,8 +21,8 @@ import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
 
-import EnrollmentGraph from "./EnrollmentGraph";
 import styles from "./Enrollment.module.scss";
+import EnrollmentGraph from "./EnrollmentGraph";
 
 interface SemesterSelection {
   year: number;
@@ -194,8 +194,7 @@ function EnrollmentSidebar({
     () =>
       availableClasses.find(
         (courseClass) => getOfferingId(courseClass) === selectedOfferingId
-      ) ??
-      (availableClasses.length === 1 ? availableClasses[0] : null),
+      ) ?? (availableClasses.length === 1 ? availableClasses[0] : null),
     [availableClasses, selectedOfferingId]
   );
 
@@ -255,10 +254,7 @@ function EnrollmentSidebar({
   const isAlreadyAdded =
     selectionId !== null && outputs.some((output) => output.id === selectionId);
   const canAddWithoutLoading =
-    shouldShowAddButton &&
-    hasSelectableClass &&
-    !isFull &&
-    !isAlreadyAdded;
+    shouldShowAddButton && hasSelectableClass && !isFull && !isAlreadyAdded;
   const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
 
   const handleAdd = async () => {
@@ -389,14 +385,14 @@ function EnrollmentSidebar({
                 className={styles.addButton}
               >
                 {isAlreadyAdded
-                    ? "Already added"
-                    : isFull
-                      ? "Remove a course first"
-                      : availableClasses.length === 0
-                        ? "No enrollment data"
-                        : canAddWithoutLoading
-                          ? "Add course"
-                          : "Select section"}
+                  ? "Already added"
+                  : isFull
+                    ? "Remove a course first"
+                    : availableClasses.length === 0
+                      ? "No enrollment data"
+                      : canAddWithoutLoading
+                        ? "Add course"
+                        : "Select section"}
               </Button>
             </motion.div>
           )}
