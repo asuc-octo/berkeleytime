@@ -5,9 +5,7 @@ This Worker serves Mongo backups from R2 at `https://backups.berkeleytime.com`:
 - `GET /public/*` → `prod-mongo-public-backups`
 - `GET /private/*` → `prod-mongo-backups`
 
-Cloudflare Access protects private paths; public paths can be read without auth.
-
-## 1. Install `cloudflared` (once per machine)
+## 1. Install `cloudflared`
 
 ```bash
 brew install cloudflare/cloudflare/cloudflared
@@ -22,7 +20,7 @@ curl -f -o "prod_public_backup-YYYYMMDD.gz" \
   "https://backups.berkeleytime.com/public/daily/prod_public_backup-YYYYMMDD.gz"
 ```
 
-Replace `YYYYMMDD` with the date embedded in the R2 key.
+Replace `YYYYMMDD` with the date.
 
 ## 3. Log in for private backups
 
@@ -31,8 +29,6 @@ Private backups require Cloudflare Access.
 ```bash
 cloudflared access login https://backups.berkeleytime.com
 ```
-
-This opens a browser; sign in with an email that is allowed by the `Backups` Access app.
 
 ## 4. Fetch a private backup
 

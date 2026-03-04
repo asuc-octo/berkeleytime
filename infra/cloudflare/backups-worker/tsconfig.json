@@ -1,10 +1,11 @@
 {
-    "compilerOptions": {
-      "target": "ES2022",
-      "module": "esnext",
-      "moduleResolution": "node",
-      "strict": true,
-      "types": ["@cloudflare/workers-types"]
-    },
-    "include": ["src"]
-  }
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "lib": ["esnext"],
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": ["src"]
+}
