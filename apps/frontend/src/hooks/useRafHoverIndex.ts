@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+const DEBOUNCE_MS = 100;
+
 interface UseRafHoverIndexResult {
   hoveredIndex: number | null;
   hoverCard: (index: number) => void;
@@ -14,8 +16,7 @@ export default function useRafHoverIndex(
     initialHoveredIndex
   );
   const hoveredIndexRef = useRef<number | null>(initialHoveredIndex);
-  const pendingIndexRef = useRef<number | null | undefined>(undefined);
-  const animationFrameRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const commitHoverIndex = useCallback((nextIndex: number | null) => {
     if (hoveredIndexRef.current === nextIndex) return;
@@ -23,30 +24,18 @@ export default function useRafHoverIndex(
     setHoveredIndex(nextIndex);
   }, []);
 
-  const flushPendingHoverIndex = useCallback(() => {
-    animationFrameRef.current = null;
-    if (pendingIndexRef.current === undefined) return;
-
-    const nextIndex = pendingIndexRef.current;
-    pendingIndexRef.current = undefined;
-    commitHoverIndex(nextIndex);
-  }, [commitHoverIndex]);
-
   const scheduleHoverIndex = useCallback(
     (nextIndex: number | null) => {
-      if (typeof window === "undefined") {
-        commitHoverIndex(nextIndex);
-        return;
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
       }
 
-      pendingIndexRef.current = nextIndex;
-      if (animationFrameRef.current !== null) return;
-
-      animationFrameRef.current = window.requestAnimationFrame(
-        flushPendingHoverIndex
-      );
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
+        commitHoverIndex(nextIndex);
+      }, DEBOUNCE_MS);
     },
-    [commitHoverIndex, flushPendingHoverIndex]
+    [commitHoverIndex]
   );
 
   const hoverCard = useCallback(
@@ -62,6 +51,11 @@ export default function useRafHoverIndex(
 
   const shiftAfterRemoval = useCallback(
     (removedIndex: number) => {
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+
       const currentIndex = hoveredIndexRef.current;
       if (currentIndex === null) return;
 
@@ -79,8 +73,8 @@ export default function useRafHoverIndex(
 
   useEffect(() => {
     return () => {
-      if (animationFrameRef.current !== null && typeof window !== "undefined") {
-        window.cancelAnimationFrame(animationFrameRef.current);
+      if (timerRef.current !== null) {
+        clearTimeout(timerRef.current);
       }
     };
   }, []);

@@ -51,9 +51,8 @@ export function useCapacityChangeTooltip(
 
       const prefix = seatDelta > 0 ? "+" : "";
       const seatWord = Math.abs(seatDelta) === 1 ? "seat" : "seats";
-      text.textContent = `${formatters.percent(event.percentChange, 0)} ${
-        isIncrease ? "increase" : "decrease"
-      } (${prefix}${formatters.number(seatDelta)} ${seatWord})`;
+      const percentPrefix = event.percentChange > 0 ? "+" : "";
+      text.textContent = `${prefix}${formatters.number(seatDelta)} ${seatWord} (${percentPrefix}${formatters.percent(event.percentChange, 0)})`;
 
       if (seatsRef.current) {
         seatsRef.current.textContent = `${formatters.number(event.previousMaxEnroll)} → ${formatters.number(event.currentMaxEnroll)} seats`;

@@ -839,7 +839,11 @@ export default function Grades() {
 
       return prev.filter((_, i) => i !== index);
     });
-  }, []);
+
+    if (!isDesktop) {
+      setDrawerOpen(true);
+    }
+  }, [isDesktop]);
 
   const clearEditDraft = useCallback(() => {
     setEditDraft(null);
