@@ -26,6 +26,7 @@ import ClassChartBox from "@/components/Class/ClassChartBox";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useClass from "@/hooks/useClass";
+import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
 
 import type {
   CapacityChangeEvent,
@@ -265,7 +266,14 @@ export default function Enrollment() {
     const params = new URLSearchParams();
     params.set(
       "input",
-      `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+      getEnrollmentInputSearchParam({
+        subject: _class.subject,
+        courseNumber: _class.courseNumber,
+        year: _class.year,
+        semester: _class.semester,
+        sessionId: _class.sessionId ?? undefined,
+        sectionNumber: _class.number,
+      })
     );
 
     if (typeof window !== "undefined") {
@@ -285,6 +293,7 @@ export default function Enrollment() {
     _class.courseNumber,
     _class.year,
     _class.semester,
+    _class.sessionId,
     _class.number,
   ]);
 

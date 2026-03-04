@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button, Select } from "@repo/theme";
 
@@ -16,11 +17,18 @@ import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
+import {
+  EnrollmentUrlInput,
+  getEnrollmentInputId,
+  getEnrollmentInputSearchParam,
+  isEnrollmentInputEqual,
+  parseEnrollmentInputsFromUrl,
+} from "@/lib/enrollmentUrl";
 import type { ICourseWithInstructorClass } from "@/lib/api/courses";
 import type { IEnrollment } from "@/lib/api/enrollment";
 import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
-import { RecentType, addRecent } from "@/lib/recent";
+import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import styles from "./Enrollment.module.scss";
 import EnrollmentGraph from "./EnrollmentGraph";
@@ -30,14 +38,7 @@ interface SemesterSelection {
   semester: Semester;
 }
 
-interface EnrollmentInput {
-  year: number;
-  semester: Semester;
-  sessionId?: string;
-  subject: string;
-  courseNumber: string;
-  sectionNumber: string;
-}
+type EnrollmentInput = EnrollmentUrlInput;
 
 interface EnrollmentDraft {
   id: string;
@@ -122,6 +123,75 @@ const getInstructorLabel = (courseClass: ICourseWithInstructorClass) => {
 
 const getOfferingId = (courseClass: ICourseWithInstructorClass) =>
   `${courseClass.sessionId ?? "1"}-${courseClass.number}`;
+
+const getOutputMetadataFromInput = (input: EnrollmentInput) =>
+  `${input.semester} ${input.year} • Section ${formatSectionNumber(input.sectionNumber)}`;
+
+const loadOutputsFromInputs = async (
+  client: ReturnType<typeof useApolloClient>,
+  inputs: EnrollmentInput[]
+): Promise<EnrollmentOutput[]> => {
+  const dedupedInputs = inputs
+    .filter(
+      (input, index, allInputs) =>
+        allInputs.findIndex((candidate) =>
+          isEnrollmentInputEqual(candidate, input)
+        ) === index
+    )
+    .slice(0, BAR_CHART_COLORS.length);
+
+  const results = await Promise.all(
+    dedupedInputs.map(async (input) => {
+      try {
+        const response = await client.query({
+          query: GetEnrollmentDocument,
+          variables: {
+            year: input.year,
+            semester: input.semester,
+            sessionId: input.sessionId,
+            subject: input.subject,
+            courseNumber: input.courseNumber,
+            sectionNumber: input.sectionNumber,
+          },
+          fetchPolicy: "no-cache",
+        });
+
+        if (!response.data?.enrollment) return null;
+
+        return {
+          input,
+          data: response.data.enrollment,
+        };
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return results
+    .filter(
+      (
+        result
+      ): result is {
+        input: EnrollmentInput;
+        data: IEnrollment;
+      } => Boolean(result)
+    )
+    .map((result, index) => ({
+      id: getEnrollmentInputId(result.input),
+      course: {
+        subject: result.input.subject,
+        number: result.input.courseNumber,
+        courseId:
+          result.data.sectionId ??
+          `${result.input.subject}-${result.input.courseNumber}`,
+      },
+      metadata: getOutputMetadataFromInput(result.input),
+      input: result.input,
+      color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
+      data: result.data,
+    }));
+};
 
 function EnrollmentSidebar({
   outputs,
@@ -248,10 +318,20 @@ function EnrollmentSidebar({
   const selectedInstructorLabel = selectedClass
     ? getInstructorLabel(selectedClass)
     : DEFAULT_INSTRUCTOR_LABEL;
-  const selectionId =
+  const selectionInput: EnrollmentInput | null =
     selectedCourse && selectedClass && selectedClass.primarySection?.number
-      ? `${selectedCourse.subject}-${selectedCourse.number}-${selectedClass.year}-${selectedClass.semester}-${selectedClass.sessionId ?? "1"}-${selectedClass.primarySection.number}`
+      ? {
+          year: selectedClass.year,
+          semester: selectedClass.semester,
+          sessionId: selectedClass.sessionId ?? undefined,
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
+          sectionNumber: selectedClass.primarySection.number,
+        }
       : null;
+  const selectionId = selectionInput
+    ? getEnrollmentInputId(selectionInput)
+    : null;
   const isAlreadyAdded =
     selectionId !== null && outputs.some((output) => output.id === selectionId);
   const canAddWithoutLoading =
@@ -264,6 +344,7 @@ function EnrollmentSidebar({
       !selectedSemester ||
       !selectedClass ||
       !selectedClass.primarySection?.number ||
+      !selectionInput ||
       !selectionId ||
       !canAddWithoutLoading ||
       isAdding
@@ -275,14 +356,7 @@ function EnrollmentSidebar({
       id: selectionId,
       course: selectedCourse,
       metadata: `${selectedSemesterLabel} • ${selectedInstructorLabel}`,
-      input: {
-        year: selectedSemester.year,
-        semester: selectedSemester.semester,
-        sessionId: selectedClass.sessionId ?? undefined,
-        subject: selectedCourse.subject,
-        courseNumber: selectedCourse.number,
-        sectionNumber: selectedClass.primarySection.number,
-      },
+      input: selectionInput,
     });
 
     if (!didAdd) return;
@@ -472,15 +546,112 @@ function EnrollmentVisualization({
 
 export default function Enrollment() {
   const client = useApolloClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchParamsString = searchParams.toString();
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
+  const skipNextUrlHydrationRef = useRef(false);
+  const initialRestoreCompleteRef = useRef(false);
+  const initialDrawerStateAppliedRef = useRef(false);
 
   useEffect(() => {
-    if (isDesktop || outputs.length > 0) return;
-    setDrawerOpen(true);
-  }, [isDesktop, outputs.length]);
+    if (searchParamsString.length > 0) return;
+
+    const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+    if (!savedUrl) {
+      initialRestoreCompleteRef.current = true;
+      return;
+    }
+
+    navigate({ ...location, search: savedUrl }, { replace: true });
+  }, []);
+
+  useEffect(() => {
+    if (!initialRestoreCompleteRef.current && searchParamsString.length > 0) {
+      initialRestoreCompleteRef.current = true;
+    }
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    if (!initialRestoreCompleteRef.current && location.search.length === 0) {
+      return;
+    }
+
+    savePageUrl(RecentType.EnrollmentPage, location.search);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (skipNextUrlHydrationRef.current) {
+      skipNextUrlHydrationRef.current = false;
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    let cancelled = false;
+    const parsedInputs = parseEnrollmentInputsFromUrl(
+      new URLSearchParams(searchParamsString)
+    ).slice(0, BAR_CHART_COLORS.length);
+
+    if (parsedInputs.length === 0) {
+      setOutputs((prev) => (prev.length === 0 ? prev : []));
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    setIsHydratingFromUrl(true);
+
+    void loadOutputsFromInputs(client, parsedInputs).then((hydratedOutputs) => {
+      if (cancelled) return;
+      setOutputs(hydratedOutputs);
+      setIsHydratingFromUrl(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, searchParamsString]);
+
+  useEffect(() => {
+    if (isHydratingFromUrl) return;
+
+    const nextParams = new URLSearchParams();
+    outputs.forEach((output) => {
+      nextParams.append("input", getEnrollmentInputSearchParam(output.input));
+    });
+
+    const nextSearch = nextParams.toString();
+    const currentSearch = searchParamsString;
+    if (nextSearch === currentSearch) return;
+
+    skipNextUrlHydrationRef.current = true;
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch.length > 0 ? `?${nextSearch}` : "",
+      },
+      { replace: true }
+    );
+  }, [
+    isHydratingFromUrl,
+    location.pathname,
+    navigate,
+    outputs,
+    searchParamsString,
+  ]);
+
+  useEffect(() => {
+    if (isDesktop) return;
+    if (isHydratingFromUrl) return;
+    if (initialDrawerStateAppliedRef.current) return;
+
+    setDrawerOpen(outputs.length === 0);
+    initialDrawerStateAppliedRef.current = true;
+  }, [isDesktop, isHydratingFromUrl, outputs.length]);
 
   const addOutput = async (draft: EnrollmentDraft): Promise<boolean> => {
     if (isAdding) return false;
