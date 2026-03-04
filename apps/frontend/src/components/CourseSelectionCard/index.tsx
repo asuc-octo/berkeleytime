@@ -1,10 +1,13 @@
+import { useMemo } from "react";
+
+import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import { EditPencil, Eye, EyeClosed, Trash } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
-import { Semester } from "@/lib/generated/graphql";
+import { GetCourseUnitsDocument, Semester } from "@/lib/generated/graphql";
 
 import styles from "./CourseSelectionCard.module.scss";
 
@@ -18,6 +21,7 @@ interface CourseSelectionCardProps {
   semester?: Semester;
   sectionNumber?: string;
   sessionId?: string;
+  gradeDistribution?: { average?: number | null };
   onClick?: () => void;
   onClickDelete?: () => void;
   onClickEdit?: () => void;
@@ -40,6 +44,7 @@ export default function CourseSelectionCard({
   semester,
   sectionNumber,
   sessionId,
+  gradeDistribution,
   onClick,
   onClickDelete,
   onClickEdit,
@@ -65,6 +70,19 @@ export default function CourseSelectionCard({
     sectionNumber ?? "",
     { skip: !hasClassIdentity }
   );
+
+  const { data: courseUnitsData } = useQuery(GetCourseUnitsDocument, {
+    variables: { subject, number },
+    skip: hasClassIdentity,
+  });
+
+  const courseUnits = useMemo(() => {
+    if (!courseUnitsData?.course?.classes?.length) return undefined;
+    const sorted = [...courseUnitsData.course.classes].sort(
+      (a, b) => b.year - a.year
+    );
+    return sorted[0].unitsMax;
+  }, [courseUnitsData]);
 
   const displayTitle = title ?? titleData?.title ?? "N/A";
   const hasActions = onClickHide || onClickEdit || onClickDelete;
@@ -125,10 +143,21 @@ export default function CourseSelectionCard({
         subject,
         courseNumber: number,
         title: displayTitle,
-        unitsMin: classData?.unitsMin,
-        unitsMax: classData?.unitsMax,
-        course: classData?.course,
-        primarySection: classData?.primarySection,
+        ...(classData
+          ? {
+              unitsMin: classData.unitsMin,
+              unitsMax: classData.unitsMax,
+              course: classData.course,
+              primarySection: classData.primarySection,
+            }
+          : {
+              gradeDistribution,
+              unitsMin: courseUnits,
+              unitsMax: courseUnits,
+              course: titleData?.ratingsCount
+                ? { ratingsCount: titleData.ratingsCount }
+                : undefined,
+            }),
       }}
       headingPrefix={
         <span

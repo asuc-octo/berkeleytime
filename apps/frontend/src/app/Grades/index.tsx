@@ -648,6 +648,7 @@ function OutputList({
                     subject={output.input.subject}
                     number={output.input.courseNumber}
                     subtitle={getMetadata(output.input)}
+                    gradeDistribution={output.data}
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
                     onMouseEnter={() => onHoverCard(index)}

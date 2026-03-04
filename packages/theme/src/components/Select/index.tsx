@@ -225,12 +225,9 @@ export interface SelectProps<T> {
   maxListHeight?: number;
   contentClassName?: string;
   tabsWrapperClassName?: string;
+  pills?: Array<{ value: T; label: string }>;
 }
 
-const hasVerticalOverflow = (element: HTMLElement | null): boolean => {
-  if (!element) return false;
-  return element.scrollHeight > element.clientHeight + 1;
-};
 
 export function Select<T>({
   options = [],
@@ -259,11 +256,10 @@ export function Select<T>({
   maxListHeight,
   contentClassName,
   tabsWrapperClassName,
+  pills,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [showContentDivider, setShowContentDivider] = useState(false);
-  const [showCommandListDivider, setShowCommandListDivider] = useState(false);
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
     tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
@@ -340,20 +336,6 @@ export function Select<T>({
     [options, tabs, activeTabValue]
   );
 
-  useEffect(() => {
-    if (!open) {
-      setShowContentDivider(false);
-      setShowCommandListDivider(false);
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      setShowContentDivider(hasVerticalOverflow(contentRef.current));
-      setShowCommandListDivider(hasVerticalOverflow(commandListRef.current));
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [open, currentOptions, searchValue, maxListHeight, activeTabValue]);
 
   const optionUniverse = useMemo(
     () => (tabs?.length ? tabs.flatMap((tab) => tab.options) : options),
@@ -616,11 +598,23 @@ export function Select<T>({
                     />
                   </div>
                 ) : null}
+                {pills?.length ? (
+                  <div className={styles.pillsWrapper}>
+                    {pills.map((pill, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={styles.pill}
+                        onClick={() => handleSelect(pill.value)}
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
                 <Command.List
                   ref={commandListRef}
-                  className={classNames(styles.commandList, {
-                    [styles.showDivider]: showCommandListDivider,
-                  })}
+                  className={styles.commandList}
                   style={
                     maxListHeight ? { maxHeight: maxListHeight } : undefined
                   }
@@ -662,9 +656,6 @@ export function Select<T>({
             ref={contentRef}
             className={classNames(
               styles.content,
-              {
-                [styles.showDivider]: showContentDivider,
-              },
               contentClassName
             )}
             style={{
