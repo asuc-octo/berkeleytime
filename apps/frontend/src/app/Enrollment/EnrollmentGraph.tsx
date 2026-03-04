@@ -526,23 +526,18 @@ export default function EnrollmentGraph({
     </div>
   );
 
-  return (
-    <div className={styles.root} ref={rootRef}>
-      {hasOutputs ? (
-        <CourseAnalyticsGraphBox>
-          {graphControls}
-          {hasSeriesData ? (
-            <div className={styles.chart} ref={chartRef}>
-              <ResponsiveContainer width="100%" height={chartHeight}>
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
-                  layout={isRotated ? "vertical" : "horizontal"}
-                  onMouseLeave={() => {
-                    setHoveredCapacityMarkerKey(null);
-                    setHoveredMarkerPos(null);
-                  }}
-                >
+  const chartElement = useMemo(
+    () => (
+      <ResponsiveContainer width="100%" height={chartHeight}>
+        <LineChart
+          data={chartData}
+          margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
+          layout={isRotated ? "vertical" : "horizontal"}
+          onMouseLeave={() => {
+            setHoveredCapacityMarkerKey(null);
+            setHoveredMarkerPos(null);
+          }}
+        >
                   <defs>
                     {outputs.map((output) => {
                       const gradientId = getGradientId(output.id);
@@ -820,12 +815,9 @@ export default function EnrollmentGraph({
                               dotProps.cy +
                               CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET +
                               iconSize / 2;
-                            const isMarkerHovered =
-                              hoveredCapacityMarkerKey === markerKey;
-
                             return (
                               <g
-                                style={{ cursor: "pointer" }}
+                                className={styles.capacityMarker}
                                 onMouseEnter={() => {
                                   setHoveredCapacityMarkerKey(markerKey);
                                   setHoveredMarkerPos({
@@ -846,19 +838,20 @@ export default function EnrollmentGraph({
                                   r={CAPACITY_CHANGE_MARKER_HIT_RADIUS}
                                   fill="transparent"
                                 />
+                                <circle
+                                  cx={dotProps.cx}
+                                  cy={iconCenterY}
+                                  r={iconSize / 2 + 2}
+                                  fill="var(--background-color)"
+                                  stroke="var(--border-color)"
+                                  strokeWidth={1}
+                                />
                                 <ArrowUpCircle
                                   width={iconSize}
                                   height={iconSize}
                                   x={dotProps.cx - iconSize / 2}
                                   y={iconCenterY - iconSize / 2}
                                   color={output.color}
-                                  style={{
-                                    transform: isMarkerHovered
-                                      ? `scale(1.15)`
-                                      : "scale(1)",
-                                    transformOrigin: `${dotProps.cx}px ${iconCenterY}px`,
-                                    transition: "transform 150ms ease-out",
-                                  }}
                                 />
                               </g>
                             );
@@ -881,6 +874,30 @@ export default function EnrollmentGraph({
                   })}
                 </LineChart>
               </ResponsiveContainer>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      chartHeight,
+      chartData,
+      isRotated,
+      outputs,
+      hoveredIndex,
+      showRawNumbers,
+      dataMax,
+      phaseLines,
+      capacityChangeEventsByOutput,
+      seriesPointsByOutput,
+    ]
+  );
+
+  return (
+    <div className={styles.root} ref={rootRef}>
+      {hasOutputs ? (
+        <CourseAnalyticsGraphBox>
+          {graphControls}
+          {hasSeriesData ? (
+            <div className={styles.chart} ref={chartRef}>
+              {chartElement}
               {hoveredCapacityGuide && hoveredMarkerPos && (
                 <div
                   ref={capacityTooltipRef}
