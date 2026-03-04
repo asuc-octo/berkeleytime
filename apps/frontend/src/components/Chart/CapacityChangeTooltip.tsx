@@ -114,7 +114,7 @@ export function useCapacityChangeTooltip(
         <div
           className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
         >
-          Seating capacity changed
+          Seating capacity update
         </div>
         <div
           className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}

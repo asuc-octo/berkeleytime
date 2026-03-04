@@ -55,10 +55,7 @@ const getCapacityPercentChange = (
     return currentMaxEnroll >= 1 ? 100 : 0;
   }
 
-  return Math.min(
-    (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100,
-    999
-  );
+  return (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100;
 };
 
 export const getCapacityChangeEvents = (

@@ -90,6 +90,8 @@ interface ClassProps {
   infoContent?: ReactNode;
   replaceInfoContent?: boolean;
   headingPrefix?: ReactNode;
+  subtitle?: ReactNode;
+  gradeInFooter?: boolean;
 }
 
 export default function ClassCard({
@@ -109,6 +111,8 @@ export default function ClassCard({
   infoContent,
   replaceInfoContent = false,
   headingPrefix,
+  subtitle,
+  gradeInFooter = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   // bookmarked is part of the interface but not used in this component
@@ -185,15 +189,20 @@ export default function ClassCard({
                 <Card.Description wrapDescription={wrapDescription}>
                   {_class?.title ?? _class?.course?.title}
                 </Card.Description>
-                {_class?.semester && _class?.year && (
-                  <span className={styles.semester}>
-                    {formatSemester(_class.semester)} {_class.year}
-                  </span>
+                {subtitle ? (
+                  <span className={styles.semester}>{subtitle}</span>
+                ) : (
+                  _class?.semester &&
+                  _class?.year && (
+                    <span className={styles.semester}>
+                      {formatSemester(_class.semester)} {_class.year}
+                    </span>
+                  )
                 )}
               </div>
-              {(gradeDistribution || topRightContent) && (
+              {((!gradeInFooter && gradeDistribution) || topRightContent) && (
                 <div className={styles.gradeContainer}>
-                  {gradeDistribution && (
+                  {!gradeInFooter && gradeDistribution && (
                     <AverageGrade
                       gradeDistribution={gradeDistribution}
                       style={{
@@ -212,6 +221,16 @@ export default function ClassCard({
             <Card.Footer className={styles.infoRow}>
               {!replaceInfoContent && (
                 <>
+                  {gradeInFooter && gradeDistribution && (
+                    <AverageGrade
+                      gradeDistribution={gradeDistribution}
+                      style={{
+                        fontSize: 14,
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
                   <EnrollmentDisplay
                     enrolledCount={
                       _class?.primarySection?.enrollment?.latest?.enrolledCount

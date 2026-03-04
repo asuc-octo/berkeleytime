@@ -797,10 +797,10 @@ export default function EnrollmentGraph({
                                 <circle
                                   cx={dotProps.cx}
                                   cy={dotProps.cy}
-                                  r={2.5}
+                                  r={4}
                                   fill={output.color}
                                   stroke="var(--foreground-color)"
-                                  strokeWidth={1}
+                                  strokeWidth={1.5}
                                 />
                               );
                             }
@@ -808,10 +808,10 @@ export default function EnrollmentGraph({
                             return <g />;
                           }}
                           activeDot={{
-                            r: 3,
+                            r: 5,
                             fill: dotColor,
                             stroke: "var(--foreground-color)",
-                            strokeWidth: 1,
+                            strokeWidth: 1.5,
                           }}
                           type={isFlatSeries ? "linear" : "monotone"}
                           connectNulls

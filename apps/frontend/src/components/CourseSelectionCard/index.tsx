@@ -2,7 +2,9 @@ import classNames from "classnames";
 import { EditPencil, Eye, EyeClosed, Trash } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
+import { Semester } from "@/lib/generated/graphql";
 
 import styles from "./CourseSelectionCard.module.scss";
 
@@ -11,7 +13,11 @@ interface CourseSelectionCardProps {
   subject: string;
   number: string;
   title?: string;
-  metadata: string;
+  subtitle: string;
+  year?: number;
+  semester?: Semester;
+  sectionNumber?: string;
+  sessionId?: string;
   onClick?: () => void;
   onClickDelete?: () => void;
   onClickEdit?: () => void;
@@ -29,7 +35,11 @@ export default function CourseSelectionCard({
   subject,
   number,
   title,
-  metadata,
+  subtitle,
+  year,
+  semester,
+  sectionNumber,
+  sessionId,
   onClick,
   onClickDelete,
   onClickEdit,
@@ -44,6 +54,17 @@ export default function CourseSelectionCard({
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
   });
+
+  const hasClassIdentity = !!(year && semester && sectionNumber);
+  const { data: classData } = useGetClass(
+    year ?? 0,
+    semester ?? Semester.Fall,
+    sessionId ?? "",
+    subject,
+    number,
+    sectionNumber ?? "",
+    { skip: !hasClassIdentity }
+  );
 
   const displayTitle = title ?? titleData?.title ?? "N/A";
   const hasActions = onClickHide || onClickEdit || onClickDelete;
@@ -104,6 +125,10 @@ export default function CourseSelectionCard({
         subject,
         courseNumber: number,
         title: displayTitle,
+        unitsMin: classData?.unitsMin,
+        unitsMax: classData?.unitsMax,
+        course: classData?.course,
+        primarySection: classData?.primarySection,
       }}
       headingPrefix={
         <span
@@ -114,8 +139,8 @@ export default function CourseSelectionCard({
       }
       active={active}
       disabled={hidden}
-      replaceInfoContent
-      infoContent={<span className={styles.metadata}>{metadata}</span>}
+      subtitle={subtitle}
+      gradeInFooter
       topRightContent={topRightContent}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

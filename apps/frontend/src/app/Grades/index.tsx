@@ -647,7 +647,7 @@ function OutputList({
                     color={output.color}
                     subject={output.input.subject}
                     number={output.input.courseNumber}
-                    metadata={getMetadata(output.input)}
+                    subtitle={getMetadata(output.input)}
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
                     onMouseEnter={() => onHoverCard(index)}

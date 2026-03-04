@@ -723,7 +723,7 @@ export default function Enrollment() {
                   key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
                   subject={input.subject}
                   number={input.courseNumber}
-                  metadata={`${semester} • ${instructor}`}
+                  subtitle={`${semester} • ${instructor}`}
                   onClick={() => updateActive(index, !rest.active)}
                   onClickDelete={() => remove(index)}
                   onClickHide={() => updateHidden(index, !rest.hidden)}

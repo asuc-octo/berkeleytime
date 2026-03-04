@@ -44,11 +44,11 @@ type EnrollmentInput = EnrollmentUrlInput;
 interface EnrollmentDraft {
   id: string;
   course: CourseOption;
-  metadata: string;
   input: EnrollmentInput;
 }
 
 export interface EnrollmentOutput extends EnrollmentDraft {
+  subtitle: string;
   color: string;
   data: IEnrollment;
 }
@@ -223,7 +223,7 @@ const loadOutputsFromInputs = async (
           result.data.sectionId ??
           `${result.input.subject}-${result.input.courseNumber}`,
       },
-      metadata: getOutputMetadataFromInput(result.input),
+      subtitle: getOutputMetadataFromInput(result.input),
       input: result.input,
       color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
       data: result.data,
@@ -407,13 +407,6 @@ function EnrollmentSidebar({
   const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
   const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
   const isFull = outputs.length >= BAR_CHART_COLORS.length;
-  const selectedSemesterLabel =
-    semesterOptions.find((option) => option.value === selectedSemesterValue)
-      ?.label ?? "All semesters";
-
-  const selectedInstructorLabel = selectedClass
-    ? getInstructorLabel(selectedClass)
-    : DEFAULT_INSTRUCTOR_LABEL;
   const selectionInput = useMemo((): EnrollmentInput | null => {
     if (!selectedCourse || !selectedClass || !selectedClass.primarySection?.number)
       return null;
@@ -504,7 +497,6 @@ function EnrollmentSidebar({
     const didAdd = await onAddCourse({
       id: selectionId,
       course: selectedCourse,
-      metadata: `${selectedSemesterLabel} • ${selectedInstructorLabel}`,
       input: selectionInput,
     });
 
@@ -690,7 +682,11 @@ function EnrollmentVisualization({
                       color={output.color}
                       subject={output.course.subject}
                       number={output.course.number}
-                      metadata={output.metadata}
+                      subtitle={output.subtitle}
+                      year={output.input.year}
+                      semester={output.input.semester}
+                      sectionNumber={output.input.sectionNumber}
+                      sessionId={output.input.sessionId}
                       dimmed={shouldDimOthers && hoveredIndex !== index}
                       fluid
                       onMouseEnter={() => hoverCard(index)}
@@ -851,7 +847,7 @@ export default function Enrollment() {
           BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
           BAR_CHART_COLORS[0];
 
-        return [{ ...draft, color, data: enrollmentData }, ...prev];
+        return [{ ...draft, subtitle: getOutputMetadataFromInput(draft.input), color, data: enrollmentData }, ...prev];
       });
 
       if (!isDesktop) {
