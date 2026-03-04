@@ -4,6 +4,11 @@
   pointer-events: none;
 }
 
+:global([data-capacity-change-active="true"] .recharts-tooltip-wrapper),
+:global([data-capacity-change-active="true"] .recharts-active-dot) {
+  display: none !important;
+}
+
 .tooltipCard {
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);

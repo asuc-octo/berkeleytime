@@ -48,6 +48,10 @@ export function useCapacityChangeTooltip(
         seatsRef.current.textContent = `${formatters.number(event.previousMaxEnroll)} → ${formatters.number(event.currentMaxEnroll)} seats`;
       }
 
+      // Use a DOM attribute so Recharts hover affordances can be hidden via CSS
+      // without triggering React state updates/re-renders.
+      chart.setAttribute("data-capacity-change-active", "true");
+
       anchor.style.display = "";
       anchor.style.left = `${pos.x}px`;
       anchor.style.top = `${pos.y}px`;
@@ -80,7 +84,10 @@ export function useCapacityChangeTooltip(
   const hide = useCallback(() => {
     const anchor = anchorRef.current;
     if (anchor) anchor.style.display = "none";
-  }, []);
+
+    const chart = chartRef.current;
+    if (chart) chart.removeAttribute("data-capacity-change-active");
+  }, [chartRef]);
 
   useEffect(() => {
     hide();
