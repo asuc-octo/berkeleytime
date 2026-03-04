@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
+import DevAuthBanner from "@/components/DevAuthBanner";
 import {
   useAllRouteRedirects,
   useIncrementRouteRedirectClick,
@@ -49,6 +50,7 @@ export default function RootWrapper() {
 
   return (
     <>
+      {import.meta.env.DEV && <DevAuthBanner />}
       <ScrollRestoration />
       <Outlet />
     </>

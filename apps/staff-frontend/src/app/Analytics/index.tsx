@@ -22,6 +22,7 @@ import {
   TotalGradTraksBlock,
   UtilizationRatioBlock,
 } from "./components/GradTrakAnalytics";
+import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   AverageScoresOverTimeBlock,
   CourseDistributionBlock,
@@ -41,7 +42,6 @@ import {
   TopSchedulerUsersBlock,
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";
-import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   DailyActivityBlock,
   SignupDayHistogramBlock,
