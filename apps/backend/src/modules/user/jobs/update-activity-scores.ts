@@ -23,6 +23,7 @@ const computeActivityScore = (_user: {
   lastSeenAt: Date;
   createdAt: Date;
 }): number => {
+  console.log(_user);
   return 0; // placeholder
 };
 
