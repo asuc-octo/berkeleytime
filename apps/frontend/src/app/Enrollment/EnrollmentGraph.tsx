@@ -40,6 +40,7 @@ import {
   getCapacityChangeEvents,
   getCapacityChangeTimeDeltas,
   getTimeDeltaKey,
+  interpolateEnrollmentPoint,
   reduceEnrollmentPoints,
 } from "./EnrollmentGraph.utils";
 
@@ -152,10 +153,10 @@ export default function EnrollmentGraph({
     if (outputs.length === 0) return [];
 
     const allTimeDeltas = new Set<number>();
-    const outputMaps = outputs.map((output) => {
+    const outputData = outputs.map((output) => {
       const history = output.data.history;
       const map = new Map<number, EnrollmentPoint>();
-      if (history.length === 0) return map;
+      if (history.length === 0) return { map, entries: [] as [number, EnrollmentPoint][] };
 
       const maxEnrollDenominator = getValidDenominator(
         history.map((entry) => entry.maxEnroll ?? 0)
@@ -205,8 +206,29 @@ export default function EnrollmentGraph({
         allTimeDeltas.add(timeDelta);
       }
 
-      return reducedMap;
+      return { map: reducedMap, entries: reduced };
     });
+
+    // Fill gaps with regular grid points for smooth tooltip tracking.
+    // Without this, compressed plateaus create large gaps where the
+    // tooltip can't snap, causing it to jump between distant data points.
+    const sortedDeltas = Array.from(allTimeDeltas).sort((a, b) => a - b);
+    if (sortedDeltas.length >= 2) {
+      const totalRange =
+        sortedDeltas[sortedDeltas.length - 1] - sortedDeltas[0];
+      const maxGap = Math.max(totalRange / 300, 5);
+
+      for (let i = 1; i < sortedDeltas.length; i++) {
+        const gap = sortedDeltas[i] - sortedDeltas[i - 1];
+        if (gap > maxGap) {
+          const steps = Math.ceil(gap / maxGap);
+          const step = gap / steps;
+          for (let j = 1; j < steps; j++) {
+            allTimeDeltas.add(sortedDeltas[i - 1] + j * step);
+          }
+        }
+      }
+    }
 
     return Array.from(allTimeDeltas)
       .sort((a, b) => a - b)
@@ -214,7 +236,10 @@ export default function EnrollmentGraph({
         const datum: EnrollmentGraphDatum = { timeDelta };
 
         outputs.forEach((_, outputIndex) => {
-          const point = outputMaps[outputIndex].get(timeDelta);
+          const { map, entries } = outputData[outputIndex];
+          const point =
+            map.get(timeDelta) ??
+            interpolateEnrollmentPoint(entries, timeDelta);
           datum[getSeriesKey(outputIndex)] = showRawNumbers
             ? (point?.enrolledCount ?? null)
             : (point?.enrolledPercent ?? null);

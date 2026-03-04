@@ -137,7 +137,7 @@ function EnrollmentSidebar({
     null
   );
 
-  const { data: courseData } = useReadCourseWithInstructor(
+  const { data: courseData, loading: courseLoading } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
     selectedCourse?.number ?? "",
     { skip: !selectedCourse }
@@ -331,6 +331,8 @@ function EnrollmentSidebar({
                 searchable
                 searchPlaceholder="Search semesters..."
                 placeholder="Select semester"
+                loading={courseLoading}
+                disabled={courseLoading}
                 value={selectedSemesterValue}
                 onChange={(semester) => {
                   if (Array.isArray(semester)) return;
@@ -357,6 +359,8 @@ function EnrollmentSidebar({
                 searchable
                 searchPlaceholder="Search sections..."
                 placeholder="Select section"
+                loading={courseLoading}
+                disabled={courseLoading}
                 value={selectedOfferingId}
                 onChange={(offeringId) => {
                   if (Array.isArray(offeringId)) return;

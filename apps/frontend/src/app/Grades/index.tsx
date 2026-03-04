@@ -168,7 +168,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     null
   );
 
-  const { data: course } = useReadCourseWithInstructor(
+  const { data: course, loading: courseLoading } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
     selectedCourse?.number ?? "",
     {
@@ -484,7 +484,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         <CourseAnalyticsField label="Instructor">
           <Select
             options={instructorOptions}
-            disabled={loading}
+            loading={courseLoading}
+            disabled={loading || courseLoading}
             searchable
             searchPlaceholder="Search instructors..."
             placeholder="Select instructor"
@@ -500,7 +501,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
         <CourseAnalyticsField label="Semester">
           <Select
             options={semesterOptions}
-            disabled={loading}
+            loading={courseLoading}
+            disabled={loading || courseLoading}
             searchable
             searchPlaceholder="Search semesters..."
             placeholder="Select semester"

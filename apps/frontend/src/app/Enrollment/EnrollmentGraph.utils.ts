@@ -164,6 +164,60 @@ export const estimateSeriesValueAtTime = (
   return previousPoint.value + (nextPoint.value - previousPoint.value) * ratio;
 };
 
+/**
+ * Interpolate an EnrollmentPoint at the given time delta using linear
+ * interpolation between the nearest known points in the sorted entry list.
+ * Returns null when the target lies outside the known time range.
+ */
+export const interpolateEnrollmentPoint = (
+  sortedEntries: EnrollmentEntry[],
+  targetTimeDelta: number
+): EnrollmentPoint | null => {
+  if (sortedEntries.length === 0) return null;
+
+  let left = 0;
+  let right = sortedEntries.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const delta = sortedEntries[mid][0] - targetTimeDelta;
+
+    if (Math.abs(delta) < TIME_DELTA_EPSILON) {
+      return sortedEntries[mid][1];
+    }
+
+    if (delta < 0) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  const prevEntry = sortedEntries[right];
+  const nextEntry = sortedEntries[left];
+
+  if (!prevEntry || !nextEntry) return null;
+
+  const span = nextEntry[0] - prevEntry[0];
+  if (Math.abs(span) < TIME_DELTA_EPSILON) return prevEntry[1];
+
+  const ratio = (targetTimeDelta - prevEntry[0]) / span;
+  const prev = prevEntry[1];
+  const next = nextEntry[1];
+
+  const lerp = (a: number | null, b: number | null): number | null => {
+    if (a === null || b === null) return null;
+    return a + (b - a) * ratio;
+  };
+
+  return {
+    enrolledCount: lerp(prev.enrolledCount, next.enrolledCount),
+    enrolledPercent: lerp(prev.enrolledPercent, next.enrolledPercent),
+    capacityCount: lerp(prev.capacityCount, next.capacityCount),
+    capacityPercent: lerp(prev.capacityPercent, next.capacityPercent),
+  };
+};
+
 const enrollmentPointsEqual = (
   a: EnrollmentPoint,
   b: EnrollmentPoint
