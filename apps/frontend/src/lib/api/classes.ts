@@ -36,6 +36,7 @@ export const GET_CLASS = gql`
       title
       description
       decal {
+        title
         syllabus
         description
         syllabusUrl
@@ -254,6 +255,9 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      decal {
+        title
+      }
       course {
         title
         description
@@ -315,6 +319,17 @@ export const GET_CLASS_DETAILS = gql`
             familyName
             givenName
           }
+        }
+      }
+      decal {
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
         }
       }
     }

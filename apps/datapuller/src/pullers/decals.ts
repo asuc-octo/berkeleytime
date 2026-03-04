@@ -16,9 +16,9 @@ const LIST_URL = `${BASE_URL}/`;
 const APPROVED_COURSES_API = `${BASE_URL}/api/approvedCourses`;
 
 // When true, skip remote fetches and just read existing decals.json
-const DEBUG = true;
+const DEBUG = false;
 
-export interface DecalSection {
+export interface DeCalSection {
   type?: string;
   dayTime?: string;
   room?: string;
@@ -27,23 +27,23 @@ export interface DecalSection {
   location?: string;
 }
 
-export interface DecalFacilitator {
+export interface DeCalFacilitator {
   name: string;
   email: string;
 }
 
-export interface DecalCourse {
+export interface DeCalCourse {
   category?: string;
   title: string;
   semester?: string;
   department?: string;
   units?: number;
-  sections: DecalSection[];
+  sections: DeCalSection[];
   detailsUrl?: string;
   applicationUrl?: string;
   applicationDueDate?: string;
   syllabusUrl?: string;
-  facilitators: DecalFacilitator[];
+  facilitators: DeCalFacilitator[];
   description?: string;
   contactEmail?: string;
   facultySponsorName?: string;
@@ -132,9 +132,7 @@ async function fetchApprovedCourses(): Promise<ApprovedCoursesApiResponse> {
   });
 
   if (!response.ok) {
-    throw new Error(
-      `HTTP ${response.status} fetching ${APPROVED_COURSES_API}`
-    );
+    throw new Error(`HTTP ${response.status} fetching ${APPROVED_COURSES_API}`);
   }
 
   const data = (await response.json()) as ApprovedCoursesApiResponse;
@@ -145,7 +143,9 @@ async function fetchApprovedCourses(): Promise<ApprovedCoursesApiResponse> {
   return data;
 }
 
-function extractCourseIdFromDetailsUrl(detailsUrl?: string): string | undefined {
+function extractCourseIdFromDetailsUrl(
+  detailsUrl?: string
+): string | undefined {
   if (!detailsUrl) return undefined;
   try {
     const url = new URL(detailsUrl, BASE_URL);
@@ -156,7 +156,9 @@ function extractCourseIdFromDetailsUrl(detailsUrl?: string): string | undefined 
   }
 }
 
-async function fetchCourseDetail(id: string): Promise<CourseDetailApiResponse["course"]> {
+async function fetchCourseDetail(
+  id: string
+): Promise<CourseDetailApiResponse["course"]> {
   const detailUrl = `${BASE_URL}/api/courses/${id}`;
   const response = await fetch(detailUrl, {
     headers: {
@@ -222,7 +224,14 @@ const departmentsMatch = (
   const b = normalizeString(department);
   const c = normalizeString(department.replace("and", "&"));
   if (!a || (!b && !c)) return true;
-  return a === b || a.includes(b) || b.includes(a) || a === c || a.includes(c) || c.includes(a);
+  return (
+    a === b ||
+    a.includes(b) ||
+    b.includes(a) ||
+    a === c ||
+    a.includes(c) ||
+    c.includes(a)
+  );
 };
 
 const formatMeetingDayTime = (meeting: {
@@ -304,7 +313,7 @@ const normalizeDayTime = (value: string | undefined): string => {
   return v.replace(/\s+/g, "").trim();
 };
 
-const buildDecalTimes = (sections: DecalSection[]): Set<string> => {
+const buildDeCalTimes = (sections: DeCalSection[]): Set<string> => {
   const decalTimes = new Set<string>();
 
   for (const s of sections) {
@@ -345,7 +354,7 @@ const buildDecalTimes = (sections: DecalSection[]): Set<string> => {
 };
 
 const computeMeetingScore = (
-  decal: DecalCourse,
+  decal: DeCalCourse,
   meetings?: {
     days?: boolean[];
     startTime?: string;
@@ -355,16 +364,11 @@ const computeMeetingScore = (
 ): number => {
   if (!decal.sections?.length || !meetings?.length) return 0;
 
-  const decalTimes = buildDecalTimes(decal.sections);
+  const decalTimes = buildDeCalTimes(decal.sections);
 
   const decalRooms = new Set(
     decal.sections
-      .map((s) =>
-        (s.room ?? "")
-          .toLowerCase()
-          .replace(/\s+/g, " ")
-          .trim()
-      )
+      .map((s) => (s.room ?? "").toLowerCase().replace(/\s+/g, " ").trim())
       .filter((s) => s.length > 0)
   );
 
@@ -396,17 +400,17 @@ const computeMeetingScore = (
   return roomMatched ? 2 : 1;
 };
 
-async function scrapeDecals(config: Config): Promise<void> {
+async function scrapeDeCals(config: Config): Promise<void> {
   const { log } = config;
   const outputPath = path.join(process.cwd(), "data", "decals.json");
 
   try {
-    let courses: DecalCourse[];
+    let courses: DeCalCourse[];
 
     if (DEBUG && fs.existsSync(outputPath)) {
       log.info("DEBUG=true: loading DeCal data from existing decals.json...");
       const raw = fs.readFileSync(outputPath, "utf-8");
-      courses = JSON.parse(raw) as DecalCourse[];
+      courses = JSON.parse(raw) as DeCalCourse[];
     } else {
       log.info("Fetching approved DeCal courses from berkeleydecal.com API...");
       const approved = await fetchApprovedCourses();
@@ -429,17 +433,17 @@ async function scrapeDecals(config: Config): Promise<void> {
       courses = [];
 
       for (const c of approved.courses) {
-        const base: DecalCourse = {
+        const base: DeCalCourse = {
           category: c.category ?? undefined,
           title: c.title,
           semester: c.semester ?? undefined,
           department: c.department ?? undefined,
           units: c.units,
           sections:
-            c.sections?.map<DecalSection>((s) => ({
+            c.sections?.map<DeCalSection>((s) => ({
               type: s.section_type ?? undefined,
               dayTime:
-                s.day && s.time ? `${s.day} ${s.time}` : s.time ?? undefined,
+                s.day && s.time ? `${s.day} ${s.time}` : (s.time ?? undefined),
               room: s.room ?? undefined,
               enrollment: s.enrollment_status ?? undefined,
             })) ?? [],
@@ -448,7 +452,7 @@ async function scrapeDecals(config: Config): Promise<void> {
           applicationDueDate: c.application_due_date ?? undefined,
           syllabusUrl: c.syllabus_url ?? undefined,
           facilitators:
-            c.facilitators?.map<DecalFacilitator>((f) => ({
+            c.facilitators?.map<DeCalFacilitator>((f) => ({
               name: f.name,
               email: f.email,
             })) ?? [],
@@ -459,8 +463,7 @@ async function scrapeDecals(config: Config): Promise<void> {
           websiteUrl: c.website ?? undefined,
         };
 
-        const detailId =
-          extractCourseIdFromDetailsUrl(base.detailsUrl) ?? c.id;
+        const detailId = extractCourseIdFromDetailsUrl(base.detailsUrl) ?? c.id;
 
         try {
           const detail = await fetchCourseDetail(detailId);
@@ -471,25 +474,24 @@ async function scrapeDecals(config: Config): Promise<void> {
             detail.faculty_sponsor_name ?? base.facultySponsorName;
           base.enrollmentInformation =
             detail.enrollment_information ?? base.enrollmentInformation;
-          base.applicationUrl =
-            detail.application_url ?? base.applicationUrl;
+          base.applicationUrl = detail.application_url ?? base.applicationUrl;
           base.applicationDueDate =
             detail.application_due_date ?? base.applicationDueDate;
           base.syllabusUrl = detail.syllabus_url ?? base.syllabusUrl;
           base.websiteUrl = detail.website ?? base.websiteUrl;
 
           if (detail.sections && detail.sections.length > 0) {
-            base.sections = detail.sections.map<DecalSection>((s) => ({
+            base.sections = detail.sections.map<DeCalSection>((s) => ({
               type: s.section_type ?? undefined,
               dayTime:
-                s.day && s.time ? `${s.day} ${s.time}` : s.time ?? undefined,
+                s.day && s.time ? `${s.day} ${s.time}` : (s.time ?? undefined),
               room: s.room ?? undefined,
               enrollment: s.enrollment_status ?? undefined,
             }));
           }
 
           if (detail.facilitators && detail.facilitators.length > 0) {
-            base.facilitators = detail.facilitators.map<DecalFacilitator>(
+            base.facilitators = detail.facilitators.map<DeCalFacilitator>(
               (f) => ({
                 name: f.name,
                 email: f.email,
@@ -521,12 +523,14 @@ async function scrapeDecals(config: Config): Promise<void> {
       .exec();
 
     if (!terms.length) {
-      log.info("No active or future undergraduate terms found; skipping DeCal-class matching.");
+      log.info(
+        "No active or future undergraduate terms found; skipping DeCal-class matching."
+      );
       return;
     }
 
     // 2. Group DeCals by semester string like "Spring 2026"
-    const decalsBySemester = new Map<string, DecalCourse[]>();
+    const decalsBySemester = new Map<string, DeCalCourse[]>();
     for (const decal of courses) {
       if (!decal.semester) continue;
       const key = decal.semester;
@@ -536,7 +540,9 @@ async function scrapeDecals(config: Config): Promise<void> {
     }
 
     if (!decalsBySemester.size) {
-      log.info("No DeCal semesters found in decals data; skipping DeCal-class matching.");
+      log.info(
+        "No DeCal semesters found in decals data; skipping DeCal-class matching."
+      );
       return;
     }
 
@@ -547,17 +553,17 @@ async function scrapeDecals(config: Config): Promise<void> {
       if (!year || !semesterName) continue;
 
       const semesterKey = `${semesterName} ${year}`;
-      const termDecals = decalsBySemester.get(semesterKey);
-      if (!termDecals || !termDecals.length) continue;
+      const termDeCals = decalsBySemester.get(semesterKey);
+      if (!termDeCals || !termDeCals.length) continue;
 
       log.info(
-        `Matching ${termDecals.length.toLocaleString()} DeCal(s) against classes in ${semesterKey}...`
+        `Matching ${termDeCals.length.toLocaleString()} DeCal(s) against classes in ${semesterKey}...`
       );
 
       const termClasses = await ClassModel.find({
         year,
         semester: semesterName,
-        courseNumber: {$in: ["198", "98"]},
+        courseNumber: { $in: ["198", "98"] },
       }).exec();
 
       if (!termClasses.length) {
@@ -566,9 +572,7 @@ async function scrapeDecals(config: Config): Promise<void> {
       }
 
       // Build courseId -> subjectName map for this term
-      const courseIds = Array.from(
-        new Set(termClasses.map((c) => c.courseId))
-      );
+      const courseIds = Array.from(new Set(termClasses.map((c) => c.courseId)));
       const coursesForTerm = await CourseModel.find({
         courseId: { $in: courseIds },
       })
@@ -614,7 +618,7 @@ async function scrapeDecals(config: Config): Promise<void> {
         const sections =
           primarySectionsByClassKey.get(`${cls.courseId}:${cls.number}`) ?? [];
         const meetings =
-          sections.length > 0 ? sections[0].meetings ?? [] : undefined;
+          sections.length > 0 ? (sections[0].meetings ?? []) : undefined;
 
         return {
           cls,
@@ -623,7 +627,7 @@ async function scrapeDecals(config: Config): Promise<void> {
         };
       });
 
-      for (const decal of termDecals) {
+      for (const decal of termDeCals) {
         if (!decal.title) continue;
 
         const faculty = decal.facultySponsorName ?? "unknown faculty";
@@ -645,7 +649,9 @@ async function scrapeDecals(config: Config): Promise<void> {
         let filteredCandidates = candidates.filter((c) =>
           departmentsMatch(c.subjectName, dept)
         );
-        log.info(`Filtered candidates by department: ${filteredCandidates.length}`);
+        log.info(
+          `Filtered candidates by department: ${filteredCandidates.length}`
+        );
         if (!filteredCandidates.length) {
           log.info(
             `No candidates found for department "${decal.department}"; searching across all departments.`
@@ -692,93 +698,94 @@ async function scrapeDecals(config: Config): Promise<void> {
           tiedCandidates = [];
 
           for (const cand of candidatesToSearch) {
-          const meetingScore = computeMeetingScore(decal, cand.meetings);
+            const meetingScore = computeMeetingScore(decal, cand.meetings);
 
-          // Separate instructor-name metric (0.5 max) based on fuzzy match
-          let instructorScore = 0;
-          if (decal.facultySponsorName && cand.meetings) {
-            const sponsorName = normalizeString(decal.facultySponsorName);
-            if (sponsorName) {
-              const instructorNames: string[] = [];
-              for (const meeting of cand.meetings) {
-                for (const inst of meeting.instructors ?? []) {
-                  const full = `${inst.givenName ?? ""} ${inst.familyName ?? ""}`
-                    .trim()
-                    .toLowerCase();
-                  if (full) instructorNames.push(full);
-                }
-              }
-
-              if (instructorNames.length) {
-                const nameItems = instructorNames.map((name) => ({ name }));
-                const nameSearch = new FuzzySearch<{ name: string }>(
-                  nameItems,
-                  {
-                    keys: ["name"],
-                    includeScore: true,
-                    threshold: 1,
+            // Separate instructor-name metric (0.5 max) based on fuzzy match
+            let instructorScore = 0;
+            if (decal.facultySponsorName && cand.meetings) {
+              const sponsorName = normalizeString(decal.facultySponsorName);
+              if (sponsorName) {
+                const instructorNames: string[] = [];
+                for (const meeting of cand.meetings) {
+                  for (const inst of meeting.instructors ?? []) {
+                    const full =
+                      `${inst.givenName ?? ""} ${inst.familyName ?? ""}`
+                        .trim()
+                        .toLowerCase();
+                    if (full) instructorNames.push(full);
                   }
-                );
-                const nameResults = nameSearch.search(sponsorName);
-                if (nameResults.length > 0) {
-                  instructorScore = 0.5;
+                }
+
+                if (instructorNames.length) {
+                  const nameItems = instructorNames.map((name) => ({ name }));
+                  const nameSearch = new FuzzySearch<{ name: string }>(
+                    nameItems,
+                    {
+                      keys: ["name"],
+                      includeScore: true,
+                      threshold: 1,
+                    }
+                  );
+                  const nameResults = nameSearch.search(sponsorName);
+                  if (nameResults.length > 0) {
+                    instructorScore = 0.5;
+                  }
                 }
               }
             }
-          }
 
-          let fuzzyComponent = fuzzyScoreByCandidate.get(cand) ?? 0;
-          if (fuzzyComponent === 0 && cand.cls.title) {
-            const editDist = levenshteinDistance(
-              (decal.title ?? "").toLowerCase(),
-              (cand.cls.title ?? "").toLowerCase()
-            );
-            if (editDist < 10) {
-              fuzzyComponent = 0.5;
-            } else {
-              fuzzyComponent = -1;
+            let fuzzyComponent = fuzzyScoreByCandidate.get(cand) ?? 0;
+            if (fuzzyComponent === 0 && cand.cls.title) {
+              const editDist = levenshteinDistance(
+                (decal.title ?? "").toLowerCase(),
+                (cand.cls.title ?? "").toLowerCase()
+              );
+              if (editDist < 10) {
+                fuzzyComponent = 0.5;
+              } else {
+                fuzzyComponent = -1;
+              }
             }
-          }
-          const totalScore = meetingScore + instructorScore + fuzzyComponent;
+            const totalScore = meetingScore + instructorScore + fuzzyComponent;
 
-          const classMeetingSummaries =
-            cand.meetings
-              ?.map((m) => {
-                const time = formatMeetingDayTime(m) ?? "unknown time";
-                const room =
-                  m.location?.toLowerCase().replace(/\s+/g, " ").trim() ??
-                  "unknown room";
-                return `${time} @ ${room}`;
-              })
-              .join("; ") ?? "no meetings";
+            const classMeetingSummaries =
+              cand.meetings
+                ?.map((m) => {
+                  const time = formatMeetingDayTime(m) ?? "unknown time";
+                  const room =
+                    m.location?.toLowerCase().replace(/\s+/g, " ").trim() ??
+                    "unknown room";
+                  return `${time} @ ${room}`;
+                })
+                .join("; ") ?? "no meetings";
 
-          const classInstructorNames =
-            cand.meetings
-              ?.flatMap((m) =>
-                (m.instructors ?? []).map((i) =>
-                  `${i.givenName ?? ""} ${i.familyName ?? ""}`.trim()
+            const classInstructorNames =
+              cand.meetings
+                ?.flatMap((m) =>
+                  (m.instructors ?? []).map((i) =>
+                    `${i.givenName ?? ""} ${i.familyName ?? ""}`.trim()
+                  )
                 )
-              )
-              .filter((n) => n.length > 0)
-              .join(", ") ?? "no instructors";
+                .filter((n) => n.length > 0)
+                .join(", ") ?? "no instructors";
 
-          log.info(
-            `Scores for candidate ${cand.cls.subject}:${cand.cls.courseNumber} #${cand.cls.number} - ${cand.cls.title} -> ` +
-              `meetingScore: ${meetingScore.toFixed(3)}, ` +
-              `instructorScore: ${instructorScore.toFixed(3)}, ` +
-              `titleScore: ${fuzzyComponent.toFixed(3)}, ` +
-              `total: ${totalScore.toFixed(3)}, ` +
-              `meetings: [${classMeetingSummaries}], ` +
-              `instructors: [${classInstructorNames}]`
-          );
+            log.info(
+              `Scores for candidate ${cand.cls.subject}:${cand.cls.courseNumber} #${cand.cls.number} - ${cand.cls.title} -> ` +
+                `meetingScore: ${meetingScore.toFixed(3)}, ` +
+                `instructorScore: ${instructorScore.toFixed(3)}, ` +
+                `titleScore: ${fuzzyComponent.toFixed(3)}, ` +
+                `total: ${totalScore.toFixed(3)}, ` +
+                `meetings: [${classMeetingSummaries}], ` +
+                `instructors: [${classInstructorNames}]`
+            );
 
-          if (totalScore > bestTotalScore + SCORE_EPSILON) {
-            bestTotalScore = totalScore;
-            bestCandidate = cand;
-            tiedCandidates = [cand];
-          } else if (Math.abs(totalScore - bestTotalScore) <= SCORE_EPSILON) {
-            tiedCandidates.push(cand);
-          }
+            if (totalScore > bestTotalScore + SCORE_EPSILON) {
+              bestTotalScore = totalScore;
+              bestCandidate = cand;
+              tiedCandidates = [cand];
+            } else if (Math.abs(totalScore - bestTotalScore) <= SCORE_EPSILON) {
+              tiedCandidates.push(cand);
+            }
           }
 
           if (bestCandidate && bestTotalScore > 0) break;
@@ -812,6 +819,7 @@ async function scrapeDecals(config: Config): Promise<void> {
 
         // Update class document with DeCal metadata (decal sub-object)
         (bestClass as any).decal = {
+          title: decal.title,
           syllabus: decal.syllabusUrl,
           description: decal.description,
           instructors:
@@ -829,7 +837,6 @@ async function scrapeDecals(config: Config): Promise<void> {
         log.trace(
           `Matched DeCal "${decal.title}" to class "${bestClass.subject} ${bestClass.courseNumber} ${bestClass.number} - ${bestClass.title}" in ${semesterKey} (score ${bestTotalScore.toFixed(3)}).`
         );
-
       }
     }
   } catch (err) {
@@ -844,5 +851,5 @@ async function scrapeDecals(config: Config): Promise<void> {
 }
 
 export default {
-  scrapeDecals,
+  scrapeDeCals,
 };

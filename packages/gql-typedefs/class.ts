@@ -33,15 +33,16 @@ export const classTypeDef = gql`
     ): Boolean!
   }
 
-  type DecalInstructor {
+  type DeCalInstructor {
     name: String!
     email: String!
   }
 
-  type Decal {
+  type DeCal {
+    title: String
     syllabus: String
     description: String
-    instructors: [DecalInstructor!]!
+    instructors: [DeCalInstructor!]!
     applicationUrl: String
     applicationDueDate: String
     syllabusUrl: String
@@ -76,7 +77,7 @@ export const classTypeDef = gql`
     requirementDesignation: SectionAttributeInfo
     anyPrintInScheduleOfClasses: Boolean
     viewCount: Int!
-    decal: Decal
+    decal: DeCal
   }
 
   enum ClassFinalExam {

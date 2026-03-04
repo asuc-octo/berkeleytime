@@ -269,12 +269,20 @@ export default function Class({
   );
 
   const classTitle = useMemo(() => {
+    if (_class?.decal?.title) {
+      return _class.decal.title;
+    }
+
     if (specialTitleAttribute?.value?.formalDescription) {
       return specialTitleAttribute.value.formalDescription;
     }
 
     return _course?.title ?? "";
-  }, [specialTitleAttribute?.value?.formalDescription, _course?.title]);
+  }, [
+    _class?.decal?.title,
+    specialTitleAttribute?.value?.formalDescription,
+    _course?.title,
+  ]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,

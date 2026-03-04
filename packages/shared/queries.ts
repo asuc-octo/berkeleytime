@@ -27,7 +27,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       viewCount
       gradingBasis
       decal {
-        syllabusUrl
+        title
       }
       primarySection {
         online

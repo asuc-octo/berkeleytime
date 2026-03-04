@@ -28,8 +28,9 @@ export interface IClassItem {
   title?: string;
   // classDescription
   description?: string;
-  // DeCal-specific data (when set, class is a Decal)
+  // DeCal-specific data (when set, class is a DeCal)
   decal?: {
+    title?: string;
     syllabus?: string;
     description?: string;
     instructors?: { name: string; email: string }[];
@@ -81,6 +82,7 @@ const classSchema = new Schema<IClassItem>({
   title: { type: String }, // classTitle
   description: { type: String }, // classDescription
   decal: {
+    title: { type: String },
     syllabus: { type: String },
     description: { type: String },
     instructors: [

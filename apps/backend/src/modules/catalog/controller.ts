@@ -59,7 +59,7 @@ export const getCatalog = async (
     ClassModel.find({
       year,
       semester,
-      anyPrintInScheduleOfClasses: true,
+      $or: [{ anyPrintInScheduleOfClasses: true }, { decal: { $ne: null } }],
     }).lean(),
   ]);
 
@@ -79,7 +79,6 @@ export const getCatalog = async (
       year,
       semester,
       courseId: { $in: uniqueCourseIds },
-      printInScheduleOfClasses: true,
     }).lean(),
   ]);
 

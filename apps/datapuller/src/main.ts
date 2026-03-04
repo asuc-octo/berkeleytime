@@ -22,7 +22,7 @@ const pullerMap: {
   [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
 } = {
   courses: coursesPuller.updateCourses,
-  decals: decalsPuller.scrapeDecals,
+  decals: decalsPuller.scrapeDeCals,
   "sections-active": sectionsPuller.activeTerms,
   "sections-last-five-years": sectionsPuller.lastFiveYearsTerms,
   "classes-active": classesPuller.activeTerms,
