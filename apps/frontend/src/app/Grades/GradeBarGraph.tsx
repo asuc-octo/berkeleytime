@@ -73,7 +73,9 @@ export default function GradeBarGraph({
   const { height: viewportHeight } = useWindowDimensions();
   const [horizontal, setHorizontal] = useState(false);
   const [sliderRange, setSliderRange] = useState<[number, number]>([0, 100]);
-  const [liveRange, setLiveRange] = useState<[number, number]>([0, 100]);
+  const liveRangeRef = useRef<[number, number]>([0, 100]);
+  const thumbLabelLeftRef = useRef<HTMLSpanElement>(null);
+  const thumbLabelRightRef = useRef<HTMLSpanElement>(null);
   const [showPassNoPass, setShowPassNoPass] = useState(false);
   const throttleTimeoutRef = useRef<number | null>(null);
   const pendingRangeRef = useRef<[number, number] | null>(null);
@@ -105,7 +107,33 @@ export default function GradeBarGraph({
     };
   }, []);
 
-  const isFilterActive = liveRange[0] !== 0 || liveRange[1] !== 100;
+  const updateThumbLabels = useCallback(() => {
+    const [lo, hi] = liveRangeRef.current;
+    const leftEl = thumbLabelLeftRef.current;
+    const rightEl = thumbLabelRightRef.current;
+    if (!leftEl || !rightEl) return;
+
+    const collapsed = hi - lo < 15;
+    if (collapsed) {
+      const mid = (lo + hi) / 2;
+      const offsetPx = 11 - (mid / 100) * 22;
+      leftEl.textContent = `Top ${lo}% – ${hi}%`;
+      leftEl.style.left = `calc(${mid}% + ${offsetPx}px)`;
+      leftEl.style.display = "";
+      rightEl.style.display = "none";
+    } else {
+      const loOffset = 11 - (lo / 100) * 22;
+      const hiOffset = 11 - (hi / 100) * 22;
+      leftEl.textContent = `Top ${lo}%`;
+      leftEl.style.left = `calc(${lo}% + ${loOffset}px)`;
+      leftEl.style.display = "";
+      rightEl.textContent = `Top ${hi}%`;
+      rightEl.style.left = `calc(${hi}% + ${hiOffset}px)`;
+      rightEl.style.display = "";
+    }
+  }, []);
+
+  const isFilterActive = sliderRange[0] !== 0 || sliderRange[1] !== 100;
   const displayedGrades = useMemo(
     () =>
       showPassNoPass && !isFilterActive
@@ -225,12 +253,11 @@ export default function GradeBarGraph({
 
   const handleSliderLiveChange = useCallback(
     (next: [number, number]) => {
-      setLiveRange((prevRange) =>
-        isSameRange(prevRange, next) ? prevRange : next
-      );
+      liveRangeRef.current = next;
+      updateThumbLabels();
       scheduleSliderRangeUpdate(next);
     },
-    [scheduleSliderRangeUpdate]
+    [scheduleSliderRangeUpdate, updateThumbLabels]
   );
 
   const handleSliderCommit = useCallback(
@@ -240,20 +267,42 @@ export default function GradeBarGraph({
         throttleTimeoutRef.current = null;
       }
       pendingRangeRef.current = null;
-      setLiveRange((prevRange) =>
-        isSameRange(prevRange, next) ? prevRange : next
-      );
+      liveRangeRef.current = next;
+      updateThumbLabels();
       commitSliderRange(next);
     },
-    [commitSliderRange]
+    [commitSliderRange, updateThumbLabels]
   );
   const hasOutputs = outputs.length > 0;
 
   useEffect(() => {
     if (hasOutputs) return;
     setSliderRange([0, 100]);
-    setLiveRange([0, 100]);
-  }, [hasOutputs]);
+    liveRangeRef.current = [0, 100];
+    updateThumbLabels();
+  }, [hasOutputs, updateThumbLabels]);
+
+  const cellFills = useMemo(() => {
+    return dataKeys.map((key, keyIndex) =>
+      chartData.map((row) => {
+        const pctlLo = row[`${key}_pctlLo`] as number;
+        const pctlHi = row[`${key}_pctlHi`] as number;
+        const inRange = isGradeInRange(
+          pctlLo,
+          pctlHi,
+          sliderRange[0],
+          sliderRange[1]
+        );
+        const isHoveredCourse =
+          hoveredIndex === null ||
+          outputs.length <= 1 ||
+          hoveredIndex === keyIndex;
+        return isHoveredCourse && inRange
+          ? `var(--color-${key})`
+          : "var(--border-color)";
+      })
+    );
+  }, [chartData, dataKeys, sliderRange, hoveredIndex, outputs.length]);
 
   const chartHeightRatio = horizontal
     ? HORIZONTAL_CHART_HEIGHT_RATIO
@@ -398,30 +447,9 @@ export default function GradeBarGraph({
                 />
                 {dataKeys.map((key, keyIndex) => (
                   <Bar key={key} dataKey={key} radius={4}>
-                    {chartData.map((row, i) => {
-                      const pctlLo = row[`${key}_pctlLo`] as number;
-                      const pctlHi = row[`${key}_pctlHi`] as number;
-                      const inRange = isGradeInRange(
-                        pctlLo,
-                        pctlHi,
-                        sliderRange[0],
-                        sliderRange[1]
-                      );
-                      const isHoveredCourse =
-                        hoveredIndex === null ||
-                        outputs.length <= 1 ||
-                        hoveredIndex === keyIndex;
-                      return (
-                        <Cell
-                          key={i}
-                          fill={
-                            isHoveredCourse && inRange
-                              ? `var(--color-${key})`
-                              : "var(--border-color)"
-                          }
-                        />
-                      );
-                    })}
+                    {chartData.map((_, i) => (
+                      <Cell key={i} fill={cellFills[keyIndex][i]} />
+                    ))}
                   </Bar>
                 ))}
               </BarChart>
@@ -454,32 +482,20 @@ export default function GradeBarGraph({
             onValueCommit={handleSliderCommit}
           />
           <div className={styles.thumbLabels}>
-            {liveRange[1] - liveRange[0] < 15 ? (
-              <span
-                className={styles.thumbLabel}
-                style={{
-                  left: `calc(${(liveRange[0] + liveRange[1]) / 2}% + ${11 - ((liveRange[0] + liveRange[1]) / 2 / 100) * 22}px)`,
-                }}
-              >
-                Top {liveRange[0]}% – {liveRange[1]}%
-              </span>
-            ) : (
-              liveRange.map((val, i) => {
-                const percent = val;
-                const offsetPx = 11 - (percent / 100) * 22;
-                return (
-                  <span
-                    key={i}
-                    className={styles.thumbLabel}
-                    style={{
-                      left: `calc(${percent}% + ${offsetPx}px)`,
-                    }}
-                  >
-                    Top {val}%
-                  </span>
-                );
-              })
-            )}
+            <span
+              ref={thumbLabelLeftRef}
+              className={styles.thumbLabel}
+              style={{ left: `calc(0% + 11px)` }}
+            >
+              Top 0%
+            </span>
+            <span
+              ref={thumbLabelRightRef}
+              className={styles.thumbLabel}
+              style={{ left: `calc(100% + -11px)` }}
+            >
+              Top 100%
+            </span>
           </div>
         </div>
       </div>

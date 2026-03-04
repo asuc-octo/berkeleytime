@@ -90,6 +90,37 @@ export const sumGradeCounts = (distributions: GradeCounts[]) => {
   }, emptyCounts());
 };
 
+/**
+ * Sums grade counts with per-distribution weights.
+ * Each distribution's counts are multiplied by its corresponding weight.
+ */
+export const weightedSumGradeCounts = (
+  distributions: GradeCounts[],
+  weights: number[]
+): GradeCounts => {
+  return distributions.reduce<GradeCounts>((acc, distribution, i) => {
+    const w = weights[i] ?? 1;
+    acc.countA += distribution.countA * w;
+    acc.countAMinus += distribution.countAMinus * w;
+    acc.countAPlus += distribution.countAPlus * w;
+    acc.countB += distribution.countB * w;
+    acc.countBMinus += distribution.countBMinus * w;
+    acc.countBPlus += distribution.countBPlus * w;
+    acc.countC += distribution.countC * w;
+    acc.countCMinus += distribution.countCMinus * w;
+    acc.countCPlus += distribution.countCPlus * w;
+    acc.countD += distribution.countD * w;
+    acc.countDMinus += distribution.countDMinus * w;
+    acc.countDPlus += distribution.countDPlus * w;
+    acc.countF += distribution.countF * w;
+    acc.countNP += distribution.countNP * w;
+    acc.countP += distribution.countP * w;
+    acc.countS += distribution.countS * w;
+    acc.countU += distribution.countU * w;
+    return acc;
+  }, emptyCounts());
+};
+
 export const letters: { [key: string]: string } = {
   countAPlus: "A+",
   countA: "A",
@@ -128,6 +159,28 @@ export const points: { [key: string]: number } = {
 
 export const getDistribution = (distributions: GradeCounts[]) => {
   const counts = sumGradeCounts(distributions);
+
+  const total = Object.values(counts).reduce((acc, count) => acc + count, 0);
+
+  return Object.entries(counts).map(
+    ([field, count]) =>
+      ({
+        letter: letters[field],
+        percentage: total > 0 && count > 0 ? count / total : 0,
+        count,
+      }) as Grade
+  );
+};
+
+/**
+ * Like getDistribution, but applies per-distribution weights before summing.
+ * Used for exponential moving average where older semesters decay.
+ */
+export const getWeightedDistribution = (
+  distributions: GradeCounts[],
+  weights: number[]
+) => {
+  const counts = weightedSumGradeCounts(distributions, weights);
 
   const total = Object.values(counts).reduce((acc, count) => acc + count, 0);
 
