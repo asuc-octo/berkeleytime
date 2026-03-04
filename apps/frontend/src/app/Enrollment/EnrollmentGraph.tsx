@@ -374,7 +374,7 @@ export default function EnrollmentGraph({
     }
 
     const paddedPercentMax = maxValue * PERCENT_AXIS_HEADROOM_MULTIPLIER;
-    return Math.max(100, Math.ceil(paddedPercentMax / 10) * 10);
+    return Math.ceil(paddedPercentMax / 10) * 10 || 10;
   }, [chartData, showRawNumbers]);
 
   const hasOutputs = outputs.length > 0;
@@ -572,6 +572,7 @@ export default function EnrollmentGraph({
                       <XAxis
                         type="number"
                         domain={[0, dataMax]}
+                        allowDataOverflow
                         tickFormatter={(value) =>
                           showRawNumbers
                             ? formatters.number(Math.round(value))
@@ -605,6 +606,7 @@ export default function EnrollmentGraph({
                       <YAxis
                         width={46}
                         domain={[0, dataMax]}
+                        allowDataOverflow
                         tickFormatter={(value) =>
                           showRawNumbers
                             ? formatters.number(Math.round(value))

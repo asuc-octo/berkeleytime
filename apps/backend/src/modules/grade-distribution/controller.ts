@@ -1,8 +1,8 @@
 import {
+  type AggregatedGradeDistribution,
   getAverageGrade,
   getDistribution,
   getPnpPercentage,
-  getWeightedDistribution,
 } from "@repo/common";
 import {
   GradeDistributionModel,
@@ -27,7 +27,7 @@ const EMA_ALPHA = 0.1;
 export const aggregateGradeDistributions = (
   distributions: IGradeDistributionItem[],
   options?: { alpha?: number }
-) => {
+): AggregatedGradeDistribution => {
   const alpha = options?.alpha ?? EMA_ALPHA;
 
   if (alpha === 0 || distributions.length === 0) {
@@ -63,7 +63,7 @@ export const aggregateGradeDistributions = (
     }
   }
 
-  const distribution = getWeightedDistribution(allDistributions, weights);
+  const distribution = getDistribution(allDistributions, weights);
   return {
     average: getAverageGrade(distribution),
     distribution,
@@ -83,7 +83,7 @@ export const getGradeDistributionBySectionIds = async (
 
   const distributions = await GradeDistributionModel.find({
     sectionId: { $in: sectionIds },
-  });
+  }).lean();
 
   return aggregateGradeDistributions(distributions);
 };
@@ -95,7 +95,7 @@ export const getGradeDistributionBySectionIds = async (
 export const getGradeDistributionsByCourseIds = async (
   courseIds: string[]
 ) => {
-  if (courseIds.length === 0) return new Map<string, ReturnType<typeof aggregateGradeDistributions>>();
+  if (courseIds.length === 0) return new Map<string, AggregatedGradeDistribution>();
 
   const sections = await SectionModel.find({
     courseId: { $in: courseIds },
@@ -104,7 +104,7 @@ export const getGradeDistributionsByCourseIds = async (
     .select({ sectionId: 1, courseId: 1 })
     .lean();
 
-  if (sections.length === 0) return new Map<string, ReturnType<typeof aggregateGradeDistributions>>();
+  if (sections.length === 0) return new Map<string, AggregatedGradeDistribution>();
 
   const allSectionIds = sections.map((s) => s.sectionId);
   const distributions = await GradeDistributionModel.find({
@@ -128,7 +128,7 @@ export const getGradeDistributionsByCourseIds = async (
   }
 
   // Aggregate each course's distributions
-  const result = new Map<string, ReturnType<typeof aggregateGradeDistributions>>();
+  const result = new Map<string, AggregatedGradeDistribution>();
   for (const [courseId, dists] of byCourseId) {
     result.set(courseId, aggregateGradeDistributions(dists));
   }

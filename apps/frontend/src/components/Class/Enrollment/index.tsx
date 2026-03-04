@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { ArrowUpRight, GraphUp } from "iconoir-react";
+import { GraphUp } from "iconoir-react";
 import moment from "moment";
 import {
   CartesianGrid,
@@ -12,14 +12,13 @@ import {
   YAxis,
 } from "recharts";
 
-import { Box, Button, Container, LoadingIndicator } from "@repo/theme";
-
 import {
   ChartContainer,
   ChartTooltip,
   createChartConfig,
   formatters,
 } from "@/components/Chart";
+import ClassChartBox from "@/components/Class/ClassChartBox";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 
@@ -37,61 +36,6 @@ const chartConfig = createChartConfig(["enrolled"], {
   colors: { enrolled: "var(--blue-500)" },
 });
 const ACTIVITY_THRESHOLD_PERCENT = 5;
-
-function EnrollmentLoadingInBox() {
-  return (
-    <Box p="5" className={styles.root}>
-      <Container size="3">
-        <div className={styles.wrapper}>
-          <div className={styles.emptyInBox}>
-            <LoadingIndicator size="lg" />
-          </div>
-        </div>
-      </Container>
-    </Box>
-  );
-}
-
-function EnrollmentNoDataInBox() {
-  return (
-    <Box p="5" className={styles.root}>
-      <Container size="3">
-        <div className={styles.wrapper}>
-          <div className={styles.emptyInBox}>
-            <GraphUp width={32} height={32} className={styles.emptyIcon} />
-            <p className={styles.emptyHeading}>No Enrollment Data Available</p>
-            <p className={styles.emptyParagraph}>
-              This class doesn&apos;t have enrollment history data yet.
-              <br />
-              Enrollment trends will appear here once data is available.
-            </p>
-          </div>
-        </div>
-      </Container>
-    </Box>
-  );
-}
-
-function EnrollmentNoActivityInBox() {
-  return (
-    <Box p="5" className={styles.root}>
-      <Container size="3">
-        <div className={styles.wrapper}>
-          <div className={styles.emptyInBox}>
-            <GraphUp width={32} height={32} className={styles.emptyIcon} />
-            <p className={styles.emptyHeading}>
-              No Enrollment Activity Available
-            </p>
-            <p className={styles.emptyParagraph}>
-              Enrollment history exists for this class, but no enrolled activity
-              was recorded.
-            </p>
-          </div>
-        </div>
-      </Container>
-    </Box>
-  );
-}
 
 export default function Enrollment() {
   const { class: _class } = useClass();
@@ -196,134 +140,131 @@ export default function Enrollment() {
     _class.number,
   ]);
 
-  if (loading && !enrollmentData) {
-    return <EnrollmentLoadingInBox />;
-  }
-
-  if (data.length === 0) {
-    return <EnrollmentNoDataInBox />;
-  }
-
-  if (!hasEnrolledActivity) {
-    return <EnrollmentNoActivityInBox />;
-  }
+  const emptyState = useMemo(() => {
+    if (data.length === 0) {
+      return {
+        icon: <GraphUp width={32} height={32} />,
+        heading: "No Enrollment Data Available",
+        paragraph: (
+          <>
+            This class doesn&apos;t have enrollment history data yet.
+            <br />
+            Enrollment trends will appear here once data is available.
+          </>
+        ),
+      };
+    }
+    if (!hasEnrolledActivity) {
+      return {
+        icon: <GraphUp width={32} height={32} />,
+        heading: "No Enrollment Activity Available",
+        paragraph:
+          "Enrollment history exists for this class, but no enrolled activity was recorded.",
+      };
+    }
+    return undefined;
+  }, [data.length, hasEnrolledActivity]);
 
   return (
-    <Box p="5" className={styles.root}>
-      <Container size="3">
-        <div className={styles.wrapper}>
-          <div className={styles.header}>
-            <div className={styles.titleBlock}>
-              <h2 className={styles.title}>Enrollment History</h2>
-              <p className={styles.subtitle}>
-                {_class.semester} {_class.year}
-              </p>
-            </div>
-            <Button
-              as="a"
-              href={enrollmentExplorerUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              variant="secondary"
-              className={styles.openButton}
+    <ClassChartBox
+      title="Enrollment History"
+      subtitle={`${_class.semester} ${_class.year}`}
+      actionLabel="Open in Enrollment"
+      actionHref={enrollmentExplorerUrl}
+      loading={loading && !enrollmentData}
+      emptyState={emptyState}
+    >
+      <div className={styles.chart}>
+        <ChartContainer
+          config={chartConfig}
+          className={styles.chartContainer}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              width={730}
+              height={450}
+              data={data}
+              margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
             >
-              Open in Enrollment
-              <ArrowUpRight height={16} width={16} />
-            </Button>
-          </div>
-          <div className={styles.chart}>
-            <ChartContainer
-              config={chartConfig}
-              className={styles.chartContainer}
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  width={730}
-                  height={450}
-                  data={data}
-                  margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="var(--border-color)"
-                  />
-                  <XAxis
-                    dataKey="timeDelta"
-                    type="number"
-                    stroke="var(--label-color)"
-                    tickMargin={8}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-14)",
-                    }}
-                    tickFormatter={(timeDelta) =>
-                      String(
-                        Math.floor(
-                          moment
-                            .duration(timeDelta as number, "minutes")
-                            .asDays()
-                        ) + 1
-                      )
-                    }
-                  />
-                  <YAxis
-                    stroke="var(--label-color)"
-                    tickFormatter={(v) => formatters.percentRound(v)}
-                    tick={{
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-14)",
-                    }}
-                    domain={[0, dataMax || 100]}
-                  />
-                  <ChartTooltip
-                    tooltipConfig={{
-                      labelFormatter: (label) => {
-                        const duration = moment.duration(label, "minutes");
-                        const day = Math.floor(duration.asDays()) + 1;
-                        const time = timeFormatter.format(
-                          moment.utc(0).add(duration).toDate()
-                        );
-                        return `Day ${day} ${time}`;
-                      },
-                      valueFormatter: (value) => formatters.percentRound(value),
-                      indicator: "line",
-                    }}
-                  />
-                  <ReferenceLine
-                    y={100}
-                    stroke="var(--label-color)"
-                    strokeDasharray="5 5"
-                    strokeOpacity={0.5}
-                    label={{
-                      value: "100% Capacity",
-                      position: "insideTopLeft",
-                      fill: "var(--paragraph-color)",
-                      fontSize: "var(--text-14)",
-                      offset: 10,
-                    }}
-                  />
-                  {hasEnrolledActivity && (
-                    <Line
-                      type="monotone"
-                      dataKey="enrolled"
-                      stroke="var(--blue-500)"
-                      dot={false}
-                      strokeWidth={3}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      name="enrolled"
-                      connectNulls
-                      isAnimationActive={false}
-                    />
-                  )}
-                </LineChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-            <p className={styles.axisLabel}>Days since enrollment opened</p>
-          </div>
-        </div>
-      </Container>
-    </Box>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="var(--border-color)"
+              />
+              <XAxis
+                dataKey="timeDelta"
+                type="number"
+                stroke="var(--label-color)"
+                tickMargin={8}
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-14)",
+                }}
+                tickFormatter={(timeDelta) =>
+                  String(
+                    Math.floor(
+                      moment
+                        .duration(timeDelta as number, "minutes")
+                        .asDays()
+                    ) + 1
+                  )
+                }
+              />
+              <YAxis
+                stroke="var(--label-color)"
+                tickFormatter={(v) => formatters.percentRound(v)}
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-14)",
+                }}
+                domain={[0, dataMax || 100]}
+              />
+              <ChartTooltip
+                tooltipConfig={{
+                  labelFormatter: (label) => {
+                    const duration = moment.duration(label, "minutes");
+                    const day = Math.floor(duration.asDays()) + 1;
+                    const time = timeFormatter.format(
+                      moment.utc(0).add(duration).toDate()
+                    );
+                    return `Day ${day} ${time}`;
+                  },
+                  valueFormatter: (value) => formatters.percentRound(value),
+                  indicator: "line",
+                }}
+              />
+              <ReferenceLine
+                y={100}
+                stroke="var(--label-color)"
+                strokeDasharray="5 5"
+                strokeOpacity={0.5}
+                label={{
+                  value: "100% Capacity",
+                  position: "insideTopLeft",
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-14)",
+                  offset: 10,
+                }}
+              />
+              {hasEnrolledActivity && (
+                <Line
+                  type="monotone"
+                  dataKey="enrolled"
+                  stroke="var(--blue-500)"
+                  dot={false}
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  name="enrolled"
+                  connectNulls
+                  isAnimationActive={false}
+                />
+              )}
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+        <p className={styles.axisLabel}>Days since enrollment opened</p>
+      </div>
+    </ClassChartBox>
   );
 }

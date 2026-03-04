@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from "graphql";
 
 import {
+  type AggregatedGradeDistribution,
   getPnpPercentageFromCounts,
 } from "@repo/common";
 import {
@@ -129,10 +130,7 @@ export const getCatalog = async (
         includesCourseGradeDistributionDistribution
           ? getGradeDistributionsByCourseIds(uniqueCourseIds)
           : Promise.resolve(
-              new Map<
-                string,
-                ReturnType<typeof aggregateGradeDistributions>
-              >()
+              new Map<string, AggregatedGradeDistribution>()
             ),
       ]);
 
