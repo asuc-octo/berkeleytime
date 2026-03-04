@@ -77,12 +77,10 @@ export function CourseAnalyticsSidebar({
 }: CourseAnalyticsSidebarProps) {
   return (
     <div className={styles.sidebarPanel}>
-      <div className={styles.sidebarBody}>
-        <div className={styles.sidebarHeader}>
-          <p className={styles.sidebarTitle}>{title}</p>
-        </div>
-        {children}
+      <div className={styles.sidebarHeader}>
+        <p className={styles.sidebarTitle}>{title}</p>
       </div>
+      <div className={styles.sidebarBody}>{children}</div>
     </div>
   );
 }

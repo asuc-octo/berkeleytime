@@ -308,12 +308,34 @@ function EnrollmentSidebar({
   const defaultSemesterValue = useMemo(() => {
     if (semesterOptions.length === 0) return null;
 
-    const latestNonSummer = semesterOptions.find((option) => {
-      const parsedSemester = parseSemesterValue(option.value);
-      return parsedSemester?.semester !== Semester.Summer;
-    });
+    const usedSemesterValues = new Set(
+      outputs
+        .filter(
+          (o) =>
+            o.input.subject === selectedCourse?.subject &&
+            o.input.courseNumber === selectedCourse?.number
+        )
+        .map((o) => toSemesterValue(o.input.semester, o.input.year))
+    );
+
+    const preferNonSummer = (option: { value: string }) => {
+      const parsed = parseSemesterValue(option.value);
+      return parsed?.semester !== Semester.Summer;
+    };
+
+    // Try excluding already-selected semesters first
+    const unusedOptions = semesterOptions.filter(
+      (option) => !usedSemesterValues.has(option.value)
+    );
+    if (unusedOptions.length > 0) {
+      const best = unusedOptions.find(preferNonSummer);
+      return best?.value ?? unusedOptions[0].value;
+    }
+
+    // All semesters already used — fall back to normal logic
+    const latestNonSummer = semesterOptions.find(preferNonSummer);
     return latestNonSummer?.value ?? semesterOptions[0]?.value ?? null;
-  }, [semesterOptions]);
+  }, [semesterOptions, outputs, selectedCourse]);
 
   useEffect(() => {
     if (!selectedCourse) return;
