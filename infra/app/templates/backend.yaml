@@ -1,3 +1,48 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "bt-app.backendName" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "bt-app.backendName" . }}-datapuller-trigger
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+rules:
+  - apiGroups: ["batch"]
+    resources: ["cronjobs"]
+    verbs: ["get"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "bt-app.backendName" . }}-datapuller-trigger
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "bt-app.backendName" . }}
+    namespace: {{ .Values.namespace }}
+roleRef:
+  kind: Role
+  name: {{ include "bt-app.backendName" . }}-datapuller-trigger
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,6 +59,7 @@ spec:
       labels:
         {{- include "bt-app.backendLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ include "bt-app.backendName" . }}
       containers:
         - name: backend
           image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository ( toString .Values.backend.image.tag ) }}
@@ -61,6 +107,8 @@ data:
   SIS_COURSE_APP_KEY: "_"
   SIS_TERM_APP_ID: "_"
   SIS_TERM_APP_KEY: "_"
+  K8S_NAMESPACE: {{ .Values.namespace }}
+  DATAPULLER_CRONJOB_PREFIX: "{{ include "bt-app.datapullerName" . }}"
 
 ---
 
