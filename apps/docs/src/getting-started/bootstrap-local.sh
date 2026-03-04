@@ -75,7 +75,6 @@ setup_node() {
   step "Setting up Node"
 
   source_nvm_if_possible
-  source_nvm_if_possible
 
   if have nvm; then
     # nvm sometimes needs TMPDIR set explicitly in constrained environments
