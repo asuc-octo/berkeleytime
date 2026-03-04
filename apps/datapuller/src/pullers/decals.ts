@@ -553,12 +553,7 @@ async function scrapeDeCals(config: Config): Promise<void> {
       if (!year || !semesterName) continue;
 
       const semesterKey = `${semesterName} ${year}`;
-      const termDeCals = decalsBySemester.get(semesterKey);
-      if (!termDeCals || !termDeCals.length) continue;
-
-      log.info(
-        `Matching ${termDeCals.length.toLocaleString()} DeCal(s) against classes in ${semesterKey}...`
-      );
+      const termDeCals = decalsBySemester.get(semesterKey) ?? [];
 
       const termClasses = await ClassModel.find({
         year,
@@ -570,6 +565,31 @@ async function scrapeDeCals(config: Config): Promise<void> {
         log.warn(`No classes found for ${semesterKey}; skipping.`);
         continue;
       }
+
+      if (termDeCals.length === 0) {
+        log.info(
+          `No DeCals for ${semesterKey}; clearing any existing decal metadata for ${termClasses.length} class(es).`
+        );
+        const clearResult = await ClassModel.updateMany(
+          {
+            year,
+            semester: semesterName,
+            courseNumber: { $in: ["198", "98"] },
+            decal: { $exists: true },
+          },
+          { $unset: { decal: "" } }
+        ).exec();
+        if (clearResult.modifiedCount > 0) {
+          log.info(
+            `Cleared DeCal metadata from ${clearResult.modifiedCount.toLocaleString()} class(es) in ${semesterKey}.`
+          );
+        }
+        continue;
+      }
+
+      log.info(
+        `Matching ${termDeCals.length.toLocaleString()} DeCal(s) against classes in ${semesterKey}...`
+      );
 
       // Build courseId -> subjectName map for this term
       const courseIds = Array.from(new Set(termClasses.map((c) => c.courseId)));
@@ -627,6 +647,8 @@ async function scrapeDeCals(config: Config): Promise<void> {
         };
       });
 
+      const matchedClassIds = new Set<string>();
+
       for (const decal of termDeCals) {
         if (!decal.title) continue;
 
@@ -644,19 +666,24 @@ async function scrapeDeCals(config: Config): Promise<void> {
           `Matching DeCal "${decal.title}" (dept: "${decal.department}", faculty: "${faculty}", meetings: ${meetingSummaries}) to classes in ${semesterKey}...`
         );
 
+        // Exclude classes already matched to a DeCal this run (one class → one DeCal).
+        const availableCandidates = candidates.filter(
+          (c) => !matchedClassIds.has(String(c.cls._id))
+        );
+
         // Constrain candidates by department/subjectName when possible
         const dept = decal.department ?? null;
-        let filteredCandidates = candidates.filter((c) =>
+        let filteredCandidates = availableCandidates.filter((c) =>
           departmentsMatch(c.subjectName, dept)
         );
         log.info(
-          `Filtered candidates by department: ${filteredCandidates.length}`
+          `Filtered candidates by department: ${filteredCandidates.length} (${availableCandidates.length} available, ${matchedClassIds.size} already matched)`
         );
         if (!filteredCandidates.length) {
           log.info(
             `No candidates found for department "${decal.department}"; searching across all departments.`
           );
-          filteredCandidates = candidates;
+          filteredCandidates = availableCandidates;
         }
 
         let candidatesToSearch = filteredCandidates;
@@ -748,36 +775,38 @@ async function scrapeDeCals(config: Config): Promise<void> {
             }
             const totalScore = meetingScore + instructorScore + fuzzyComponent;
 
-            const classMeetingSummaries =
-              cand.meetings
-                ?.map((m) => {
-                  const time = formatMeetingDayTime(m) ?? "unknown time";
-                  const room =
-                    m.location?.toLowerCase().replace(/\s+/g, " ").trim() ??
-                    "unknown room";
-                  return `${time} @ ${room}`;
-                })
-                .join("; ") ?? "no meetings";
+            if (DEBUG) {
+              const classMeetingSummaries =
+                cand.meetings
+                  ?.map((m) => {
+                    const time = formatMeetingDayTime(m) ?? "unknown time";
+                    const room =
+                      m.location?.toLowerCase().replace(/\s+/g, " ").trim() ??
+                      "unknown room";
+                    return `${time} @ ${room}`;
+                  })
+                  .join("; ") ?? "no meetings";
 
-            const classInstructorNames =
-              cand.meetings
-                ?.flatMap((m) =>
-                  (m.instructors ?? []).map((i) =>
-                    `${i.givenName ?? ""} ${i.familyName ?? ""}`.trim()
+              const classInstructorNames =
+                cand.meetings
+                  ?.flatMap((m) =>
+                    (m.instructors ?? []).map((i) =>
+                      `${i.givenName ?? ""} ${i.familyName ?? ""}`.trim()
+                    )
                   )
-                )
-                .filter((n) => n.length > 0)
-                .join(", ") ?? "no instructors";
+                  .filter((n) => n.length > 0)
+                  .join(", ") ?? "no instructors";
 
-            log.info(
-              `Scores for candidate ${cand.cls.subject}:${cand.cls.courseNumber} #${cand.cls.number} - ${cand.cls.title} -> ` +
-                `meetingScore: ${meetingScore.toFixed(3)}, ` +
-                `instructorScore: ${instructorScore.toFixed(3)}, ` +
-                `titleScore: ${fuzzyComponent.toFixed(3)}, ` +
-                `total: ${totalScore.toFixed(3)}, ` +
-                `meetings: [${classMeetingSummaries}], ` +
-                `instructors: [${classInstructorNames}]`
-            );
+              log.info(
+                `Scores for candidate ${cand.cls.subject}:${cand.cls.courseNumber} #${cand.cls.number} - ${cand.cls.title} -> ` +
+                  `meetingScore: ${meetingScore.toFixed(3)}, ` +
+                  `instructorScore: ${instructorScore.toFixed(3)}, ` +
+                  `titleScore: ${fuzzyComponent.toFixed(3)}, ` +
+                  `total: ${totalScore.toFixed(3)}, ` +
+                  `meetings: [${classMeetingSummaries}], ` +
+                  `instructors: [${classInstructorNames}]`
+              );
+            }
 
             if (totalScore > bestTotalScore + SCORE_EPSILON) {
               bestTotalScore = totalScore;
@@ -789,11 +818,11 @@ async function scrapeDeCals(config: Config): Promise<void> {
           }
 
           if (bestCandidate && bestTotalScore > 0) break;
-          if (candidatesToSearch === candidates) break;
+          if (candidatesToSearch === availableCandidates) break;
           log.info(
             `No best candidate found for DeCal "${decal.title}" within department; searching across all departments.`
           );
-          candidatesToSearch = candidates;
+          candidatesToSearch = availableCandidates;
         }
 
         if (tiedCandidates.length > 1 && bestTotalScore > 0) {
@@ -815,10 +844,7 @@ async function scrapeDeCals(config: Config): Promise<void> {
           continue;
         }
 
-        const bestClass = bestCandidate.cls;
-
-        // Update class document with DeCal metadata (decal sub-object)
-        (bestClass as any).decal = {
+        const decalPayload = {
           title: decal.title,
           syllabus: decal.syllabusUrl,
           description: decal.description,
@@ -832,10 +858,35 @@ async function scrapeDeCals(config: Config): Promise<void> {
           syllabusUrl: decal.syllabusUrl,
         };
 
-        await bestClass.save();
+        const classesToUpdate =
+          tiedCandidates.length > 1 ? tiedCandidates : [bestCandidate];
 
-        log.trace(
-          `Matched DeCal "${decal.title}" to class "${bestClass.subject} ${bestClass.courseNumber} ${bestClass.number} - ${bestClass.title}" in ${semesterKey} (score ${bestTotalScore.toFixed(3)}).`
+        for (const cand of classesToUpdate) {
+          const cls = cand.cls;
+          (cls as any).decal = decalPayload;
+          await cls.save();
+          matchedClassIds.add(String(cls._id));
+          log.trace(
+            `Matched DeCal "${decal.title}" to class "${cls.subject} ${cls.courseNumber} ${cls.number} - ${cls.title}" in ${semesterKey} (score ${bestTotalScore.toFixed(3)}).`
+          );
+        }
+      }
+
+      // Clear DeCal metadata from classes in this term that were not matched.
+      const unmatchedResult = await ClassModel.updateMany(
+        {
+          year,
+          semester: semesterName,
+          courseNumber: { $in: ["198", "98"] },
+          decal: { $exists: true },
+          _id: { $nin: Array.from(matchedClassIds) },
+        },
+        { $unset: { decal: "" } }
+      ).exec();
+
+      if (unmatchedResult.modifiedCount > 0) {
+        log.info(
+          `Cleared DeCal metadata from ${unmatchedResult.modifiedCount.toLocaleString()} unmatched class(es) in ${semesterKey}.`
         );
       }
     }
