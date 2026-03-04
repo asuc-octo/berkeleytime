@@ -33,10 +33,14 @@ import { Semester } from "@/lib/generated/graphql";
 import styles from "./EnrollmentGraph.module.scss";
 import {
   type CapacityChangeEvent,
+  type EnrollmentPoint,
   type SeriesPoint,
   areOutputsFromSameSemester,
   estimateSeriesValueAtTime,
   getCapacityChangeEvents,
+  getCapacityChangeTimeDeltas,
+  getTimeDeltaKey,
+  reduceEnrollmentPoints,
 } from "./EnrollmentGraph.utils";
 
 interface EnrollmentGraphOutput {
@@ -93,8 +97,6 @@ const GROUP_LABELS: Record<string, string> = {
   all: "All Students",
 };
 
-const getTimeDeltaKey = (timeDelta: number) => timeDelta.toFixed(4);
-
 const getValidDenominator = (values: number[]) => {
   const maxSeen = Math.max(...values, 0);
   if (maxSeen === 0) return 0;
@@ -102,13 +104,6 @@ const getValidDenominator = (values: number[]) => {
   const lastValue = values[values.length - 1] ?? 0;
   return lastValue > 0 ? lastValue : maxSeen;
 };
-
-interface EnrollmentPoint {
-  enrolledCount: number | null;
-  enrolledPercent: number | null;
-  capacityCount: number | null;
-  capacityPercent: number | null;
-}
 
 interface EnrollmentGraphDatum {
   timeDelta: number;
@@ -121,30 +116,19 @@ interface PhaseLine {
   key: string;
 }
 
-interface HoveredCapacityGuide {
-  timeDelta: number;
-  percentChange: number;
-  isIncrease: boolean;
-  seatDelta: number;
-  outputIndex: number;
-}
-
 export default function EnrollmentGraph({
   outputs,
   hoveredIndex = null,
 }: EnrollmentGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
+  const tooltipAnchorRef = useRef<HTMLDivElement>(null);
+  const tooltipDeltaRef = useRef<HTMLSpanElement>(null);
+  const tooltipTextRef = useRef<HTMLSpanElement>(null);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
   const [showPhases, setShowPhases] = useState(false);
+  const [smoothKinks, setSmoothKinks] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
-  const [hoveredCapacityMarkerKey, setHoveredCapacityMarkerKey] = useState<
-    string | null
-  >(null);
-  const [hoveredMarkerPos, setHoveredMarkerPos] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
   const { height: viewportHeight } = useWindowDimensions();
 
   useEffect(() => {
@@ -189,7 +173,6 @@ export default function EnrollmentGraph({
           cursor.add(granularitySeconds, "seconds")
         ) {
           const timeDelta = moment.duration(cursor.diff(firstTime)).asMinutes();
-          allTimeDeltas.add(timeDelta);
 
           const maxEnroll = entry.maxEnroll ?? 0;
           map.set(timeDelta, {
@@ -207,7 +190,22 @@ export default function EnrollmentGraph({
         }
       });
 
-      return map;
+      const sortedEntries = Array.from(map.entries()).sort(
+        (a, b) => a[0] - b[0]
+      );
+      const protectedTimeDeltas = getCapacityChangeTimeDeltas(history);
+      const reduced = reduceEnrollmentPoints(sortedEntries, protectedTimeDeltas, {
+        enableKinkRemoval: smoothKinks,
+        kinkWindowMinutes: 60,
+      });
+
+      const reducedMap = new Map<number, EnrollmentPoint>();
+      for (const [timeDelta, point] of reduced) {
+        reducedMap.set(timeDelta, point);
+        allTimeDeltas.add(timeDelta);
+      }
+
+      return reducedMap;
     });
 
     return Array.from(allTimeDeltas)
@@ -227,7 +225,7 @@ export default function EnrollmentGraph({
 
         return datum;
       });
-  }, [outputs, showRawNumbers]);
+  }, [outputs, showRawNumbers, smoothKinks]);
 
   const seriesPointsByOutput = useMemo(
     () =>
@@ -259,101 +257,66 @@ export default function EnrollmentGraph({
     [outputs]
   );
 
-  const capacityDenominatorByOutput = useMemo(
-    () =>
-      outputs.map((output) =>
-        getValidDenominator(
-          output.data.history.map((entry) => entry.maxEnroll ?? 0)
-        )
-      ),
-    [outputs]
-  );
+  const showCapacityTooltip = useCallback(
+    (event: CapacityChangeEvent, pos: { x: number; y: number }) => {
+      const anchor = tooltipAnchorRef.current;
+      const delta = tooltipDeltaRef.current;
+      const text = tooltipTextRef.current;
+      const chart = chartRef.current;
+      if (!anchor || !delta || !text || !chart) return;
 
-  const capacityGuideByMarkerKey = useMemo(() => {
-    const guides = new Map<string, HoveredCapacityGuide>();
+      const isIncrease = event.direction === "increase";
+      const seatDelta = event.currentMaxEnroll - event.previousMaxEnroll;
 
-    outputs.forEach((output, outputIndex) => {
-      const events =
-        capacityChangeEventsByOutput[outputIndex] ??
-        EMPTY_CAPACITY_CHANGE_EVENTS;
-      const denominator = capacityDenominatorByOutput[outputIndex] ?? 0;
+      delta.className = `${styles.capacityChangeTooltipDelta} ${
+        isIncrease
+          ? styles.capacityChangeTooltipDeltaIncrease
+          : styles.capacityChangeTooltipDeltaDecrease
+      }`;
 
-      events.forEach((event, timeDeltaKey) => {
-        const previousValue = showRawNumbers
-          ? event.previousMaxEnroll
-          : denominator > 0
-            ? (event.previousMaxEnroll / denominator) * 100
-            : null;
-        const currentValue = showRawNumbers
-          ? event.currentMaxEnroll
-          : denominator > 0
-            ? (event.currentMaxEnroll / denominator) * 100
-            : null;
+      const prefix = seatDelta > 0 ? "+" : "";
+      const seatWord = Math.abs(seatDelta) === 1 ? "seat" : "seats";
+      text.textContent = `${formatters.percent(event.percentChange, 0)} ${
+        isIncrease ? "increase" : "decrease"
+      } (${prefix}${formatters.number(seatDelta)} ${seatWord})`;
 
-        if (previousValue === null || currentValue === null) return;
+      anchor.style.display = "";
+      anchor.style.left = `${pos.x}px`;
+      anchor.style.top = `${pos.y}px`;
 
-        guides.set(`${output.id}-${timeDeltaKey}`, {
-          timeDelta: event.timeDelta,
-          percentChange: event.percentChange,
-          isIncrease: event.direction === "increase",
-          seatDelta: event.currentMaxEnroll - event.previousMaxEnroll,
-          outputIndex,
-        });
-      });
-    });
-
-    return guides;
-  }, [
-    capacityChangeEventsByOutput,
-    capacityDenominatorByOutput,
-    outputs,
-    showRawNumbers,
-  ]);
-
-  const hoveredCapacityGuide = useMemo(
-    () =>
-      hoveredCapacityMarkerKey
-        ? (capacityGuideByMarkerKey.get(hoveredCapacityMarkerKey) ?? null)
-        : null,
-    [capacityGuideByMarkerKey, hoveredCapacityMarkerKey]
-  );
-
-  const capacityTooltipRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (!node || !chartRef.current || !hoveredMarkerPos) return;
-
-      // The icon is centered at hoveredMarkerPos.y with radius iconSize/2 (12.5px).
-      // Use 20px offset to clear the icon edge with comfortable spacing.
       const gap = 20;
+      anchor.style.transform = `translate(-50%, ${gap}px)`;
 
-      // Default: below marker, centered horizontally
-      node.style.transform = `translate(-50%, ${gap}px)`;
+      const tooltipRect = anchor.getBoundingClientRect();
+      const chartRect = chart.getBoundingClientRect();
 
-      const tooltipRect = node.getBoundingClientRect();
-      const chartRect = chartRef.current.getBoundingClientRect();
-
-      // Vertical flip: if tooltip overflows bottom of chart, flip above marker
       if (tooltipRect.bottom > chartRect.bottom) {
-        node.style.transform = `translate(-50%, calc(-100% - ${gap}px))`;
+        anchor.style.transform = `translate(-50%, calc(-100% - ${gap}px))`;
       }
 
-      // Re-measure after possible vertical flip
-      const adjustedRect = node.getBoundingClientRect();
-
-      // Horizontal shift: nudge tooltip to stay within chart bounds
+      const adjustedRect = anchor.getBoundingClientRect();
       const overflowRight = adjustedRect.right - chartRect.right;
       const overflowLeft = chartRect.left - adjustedRect.left;
 
       if (overflowRight > 0) {
-        node.style.left = `${hoveredMarkerPos.x - overflowRight - 4}px`;
+        anchor.style.left = `${pos.x - overflowRight - 4}px`;
       } else if (overflowLeft > 0) {
-        node.style.left = `${hoveredMarkerPos.x + overflowLeft + 4}px`;
+        anchor.style.left = `${pos.x + overflowLeft + 4}px`;
       }
     },
-    // Re-run when tooltip position or content changes
+    // All references are module imports or refs (stable)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [hoveredMarkerPos, hoveredCapacityGuide]
+    []
   );
+
+  const hideCapacityTooltip = useCallback(() => {
+    const anchor = tooltipAnchorRef.current;
+    if (anchor) anchor.style.display = "none";
+  }, []);
+
+  useEffect(() => {
+    hideCapacityTooltip();
+  }, [outputs, hideCapacityTooltip]);
 
   const hasSeriesData = useMemo(
     () =>
@@ -492,6 +455,16 @@ export default function EnrollmentGraph({
       />
     </label>
   );
+  const smoothKinksToggle = (
+    <label className={styles.toggleRow}>
+      <span className={styles.toggleLabel}>Smooth anomalies</span>
+      <Switch
+        checked={smoothKinks}
+        onCheckedChange={setSmoothKinks}
+        aria-label="Smooth anomalies"
+      />
+    </label>
+  );
   const isPhasesDisabled = !allOutputsSameSemester;
   const phasesToggle = (
     <label
@@ -523,6 +496,7 @@ export default function EnrollmentGraph({
         phasesToggle
       )}
       {studentCountToggle}
+      {smoothKinksToggle}
     </div>
   );
 
@@ -533,10 +507,7 @@ export default function EnrollmentGraph({
           data={chartData}
           margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
           layout={isRotated ? "vertical" : "horizontal"}
-          onMouseLeave={() => {
-            setHoveredCapacityMarkerKey(null);
-            setHoveredMarkerPos(null);
-          }}
+          onMouseLeave={hideCapacityTooltip}
         >
                   <defs>
                     {outputs.map((output) => {
@@ -808,7 +779,6 @@ export default function EnrollmentGraph({
                                 markerTimeDeltaKey
                               );
                             if (!capacityChangeEvent || isDimmed) return null;
-                            const markerKey = `${output.id}-${markerTimeDeltaKey}`;
                             const iconSize =
                               CAPACITY_CHANGE_MARKER_SIZE * 5;
                             const iconCenterY =
@@ -819,18 +789,12 @@ export default function EnrollmentGraph({
                               <g
                                 className={styles.capacityMarker}
                                 onMouseEnter={() => {
-                                  setHoveredCapacityMarkerKey(markerKey);
-                                  setHoveredMarkerPos({
+                                  showCapacityTooltip(capacityChangeEvent, {
                                     x: dotProps.cx,
                                     y: iconCenterY,
                                   });
                                 }}
-                                onMouseLeave={() => {
-                                  setHoveredCapacityMarkerKey((current) =>
-                                    current === markerKey ? null : current
-                                  );
-                                  setHoveredMarkerPos(null);
-                                }}
+                                onMouseLeave={hideCapacityTooltip}
                               >
                                 <circle
                                   cx={dotProps.cx}
@@ -875,7 +839,6 @@ export default function EnrollmentGraph({
                 </LineChart>
               </ResponsiveContainer>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       chartHeight,
       chartData,
@@ -887,6 +850,8 @@ export default function EnrollmentGraph({
       phaseLines,
       capacityChangeEventsByOutput,
       seriesPointsByOutput,
+      showCapacityTooltip,
+      hideCapacityTooltip,
     ]
   );
 
@@ -898,66 +863,41 @@ export default function EnrollmentGraph({
           {hasSeriesData ? (
             <div className={styles.chart} ref={chartRef}>
               {chartElement}
-              {hoveredCapacityGuide && hoveredMarkerPos && (
+              <div
+                ref={tooltipAnchorRef}
+                className={styles.capacityTooltipAnchor}
+                style={{ display: "none" }}
+              >
                 <div
-                  ref={capacityTooltipRef}
-                  className={styles.capacityTooltipAnchor}
-                  style={{
-                    left: hoveredMarkerPos.x,
-                    top: hoveredMarkerPos.y,
-                  }}
+                  className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
                 >
                   <div
-                    className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
+                    className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
                   >
-                    <div
-                      className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
+                    Seating capacity changed
+                  </div>
+                  <div
+                    className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
+                  >
+                    <span
+                      ref={tooltipDeltaRef}
+                      className={styles.capacityChangeTooltipDelta}
                     >
-                      Seating capacity changed
-                    </div>
-                    <div
-                      className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
-                    >
-                      <span
-                        className={`${styles.capacityChangeTooltipDelta} ${
-                          hoveredCapacityGuide.isIncrease
-                            ? styles.capacityChangeTooltipDeltaIncrease
-                            : styles.capacityChangeTooltipDeltaDecrease
-                        }`}
-                      >
-                        {hoveredCapacityGuide.isIncrease ? (
-                          <StatUp
-                            className={styles.capacityChangeTooltipIcon}
-                            width={14}
-                            height={14}
-                          />
-                        ) : (
-                          <StatDown
-                            className={styles.capacityChangeTooltipIcon}
-                            width={14}
-                            height={14}
-                          />
-                        )}
-                        <span>
-                          {formatters.percent(
-                            hoveredCapacityGuide.percentChange,
-                            0
-                          )}{" "}
-                          {hoveredCapacityGuide.isIncrease
-                            ? "increase"
-                            : "decrease"}{" "}
-                          ({hoveredCapacityGuide.seatDelta > 0 ? "+" : ""}
-                          {formatters.number(hoveredCapacityGuide.seatDelta)}{" "}
-                          {Math.abs(hoveredCapacityGuide.seatDelta) === 1
-                            ? "seat"
-                            : "seats"}
-                          )
-                        </span>
-                      </span>
-                    </div>
+                      <StatUp
+                        className={`${styles.capacityChangeTooltipIcon} ${styles.tooltipIconUp}`}
+                        width={14}
+                        height={14}
+                      />
+                      <StatDown
+                        className={`${styles.capacityChangeTooltipIcon} ${styles.tooltipIconDown}`}
+                        width={14}
+                        height={14}
+                      />
+                      <span ref={tooltipTextRef} />
+                    </span>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           ) : (
             <div className={styles.emptyGraphMessage}>

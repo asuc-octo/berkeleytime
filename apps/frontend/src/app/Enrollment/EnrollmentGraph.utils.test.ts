@@ -1,10 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  type EnrollmentEntry,
+  type EnrollmentPoint,
   areOutputsFromSameSemester,
+  compressPlateaus,
   estimateSeriesValueAtTime,
   getCapacityChangeEvents,
   getCapacityChangeTimeDeltas,
+  removeKinks,
 } from "./EnrollmentGraph.utils";
 
 describe("getCapacityChangeEvents", () => {
@@ -202,5 +206,155 @@ describe("areOutputsFromSameSemester", () => {
         },
       ])
     ).toBe(false);
+  });
+});
+
+// Helper to create EnrollmentPoint tuples for reduction tests
+const ep = (
+  enrolled: number,
+  capacity: number
+): EnrollmentPoint => ({
+  enrolledCount: enrolled,
+  enrolledPercent: null,
+  capacityCount: capacity,
+  capacityPercent: null,
+});
+
+const entry = (
+  timeDelta: number,
+  enrolled: number,
+  capacity: number
+): EnrollmentEntry => [timeDelta, ep(enrolled, capacity)];
+
+describe("compressPlateaus", () => {
+  it("returns empty array unchanged", () => {
+    expect(compressPlateaus([], [])).toEqual([]);
+  });
+
+  it("returns single-point array unchanged", () => {
+    const entries: EnrollmentEntry[] = [entry(0, 100, 200)];
+    expect(compressPlateaus(entries, [])).toEqual(entries);
+  });
+
+  it("returns two-point array unchanged", () => {
+    const entries: EnrollmentEntry[] = [entry(0, 100, 200), entry(60, 100, 200)];
+    expect(compressPlateaus(entries, [])).toEqual(entries);
+  });
+
+  it("compresses 10-point flat plateau to 2 points", () => {
+    const entries: EnrollmentEntry[] = Array.from({ length: 10 }, (_, i) =>
+      entry(i * 15, 100, 200)
+    );
+    const result = compressPlateaus(entries, []);
+    expect(result).toHaveLength(2);
+    expect(result[0][0]).toBe(0);
+    expect(result[1][0]).toBe(135);
+  });
+
+  it("preserves transition boundary points on both sides", () => {
+    // A, A, B, B → all 4 kept (boundary points)
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(15, 100, 200),
+      entry(30, 120, 200),
+      entry(45, 120, 200),
+    ];
+    const result = compressPlateaus(entries, []);
+    expect(result).toHaveLength(4);
+  });
+
+  it("keeps protected time deltas even mid-plateau", () => {
+    const entries: EnrollmentEntry[] = Array.from({ length: 5 }, (_, i) =>
+      entry(i * 15, 100, 200)
+    );
+    // Protect the middle point (timeDelta=30)
+    const result = compressPlateaus(entries, [30]);
+    expect(result).toHaveLength(3); // first, protected, last
+    expect(result[1][0]).toBe(30);
+  });
+
+  it("handles alternating values with no plateaus", () => {
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(15, 110, 200),
+      entry(30, 100, 200),
+      entry(45, 110, 200),
+    ];
+    const result = compressPlateaus(entries, []);
+    expect(result).toHaveLength(4); // no compression possible
+  });
+});
+
+describe("removeKinks", () => {
+  it("returns entries with no kinks unchanged", () => {
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(30, 100, 200),
+      entry(60, 120, 200),
+      entry(90, 120, 200),
+    ];
+    const result = removeKinks(entries, [], 60);
+    expect(result).toEqual(entries);
+  });
+
+  it("removes short kink within window", () => {
+    // A → B → A pattern, B lasts 30 min (< 60 min window)
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(60, 100, 200),
+      entry(75, 110, 200), // kink start
+      entry(90, 110, 200), // kink end (15 min duration < 60)
+      entry(105, 100, 200),
+      entry(180, 100, 200),
+    ];
+    const result = removeKinks(entries, [], 60);
+    expect(result).toHaveLength(4);
+    expect(result.every(([, p]) => p.enrolledCount === 100)).toBe(true);
+  });
+
+  it("preserves kink exceeding window", () => {
+    // B lasts 90 min (> 60 min window)
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(60, 100, 200),
+      entry(75, 110, 200),
+      entry(165, 110, 200), // 90 min duration
+      entry(180, 100, 200),
+      entry(240, 100, 200),
+    ];
+    const result = removeKinks(entries, [], 60);
+    expect(result).toHaveLength(6); // all preserved
+  });
+
+  it("preserves kink containing protected time delta", () => {
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(60, 100, 200),
+      entry(75, 110, 200),
+      entry(90, 110, 200),
+      entry(105, 100, 200),
+      entry(180, 100, 200),
+    ];
+    // Protect timeDelta=75 (inside the kink)
+    const result = removeKinks(entries, [75], 60);
+    expect(result).toHaveLength(6); // all preserved
+  });
+
+  it("preserves non-returning deviation (A→B→C)", () => {
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(60, 100, 200),
+      entry(75, 110, 200),
+      entry(90, 110, 200),
+      entry(105, 120, 200), // doesn't return to 100
+      entry(180, 120, 200),
+    ];
+    const result = removeKinks(entries, [], 60);
+    expect(result).toHaveLength(6); // all preserved
+  });
+
+  it("returns short arrays unchanged", () => {
+    const entries: EnrollmentEntry[] = [entry(0, 100, 200), entry(60, 100, 200)];
+    expect(removeKinks(entries, [], 60)).toEqual(entries);
   });
 });

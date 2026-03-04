@@ -128,10 +128,18 @@
 
 .capacityChangeTooltipDeltaIncrease {
   color: var(--green-500);
+
+  .tooltipIconDown {
+    display: none;
+  }
 }
 
 .capacityChangeTooltipDeltaDecrease {
   color: var(--red-500);
+
+  .tooltipIconUp {
+    display: none;
+  }
 }
 
 .capacityChangeTooltipIcon {
