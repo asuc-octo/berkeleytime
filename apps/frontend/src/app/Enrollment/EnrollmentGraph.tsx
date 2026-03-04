@@ -75,7 +75,6 @@ const CAPACITY_CHANGE_MARKER_SIZE = 5;
 const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
 const CAPACITY_CHANGE_MARKER_HIT_RADIUS = 8;
 const CAPACITY_CHANGE_MARKER_HOVER_SCALE = 1.12;
-const CAPACITY_GUIDE_LABEL_FONT_SIZE = 13;
 const EMPTY_CAPACITY_CHANGE_EVENTS = new Map<string, CapacityChangeEvent>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
@@ -118,9 +117,6 @@ interface HoveredCapacityGuide {
   timeDelta: number;
   previousValue: number;
   currentValue: number;
-  previousLabel: string;
-  currentLabel: string;
-  currentColor: string;
   percentChange: number;
   isIncrease: boolean;
   seatDelta: number;
@@ -279,16 +275,6 @@ export default function EnrollmentGraph({
           timeDelta: event.timeDelta,
           previousValue,
           currentValue,
-          previousLabel: showRawNumbers
-            ? `prev: ${formatters.number(Math.round(event.previousMaxEnroll))}`
-            : `prev: ${formatters.percent(previousValue, 1)}`,
-          currentLabel: showRawNumbers
-            ? `new: ${formatters.number(Math.round(event.currentMaxEnroll))}`
-            : `new: ${formatters.percent(currentValue, 1)}`,
-          currentColor:
-            event.direction === "increase"
-              ? "var(--green-500)"
-              : "var(--red-500)",
           percentChange: event.percentChange,
           isIncrease: event.direction === "increase",
           seatDelta: event.currentMaxEnroll - event.previousMaxEnroll,
@@ -311,27 +297,6 @@ export default function EnrollmentGraph({
         : null,
     [capacityGuideByMarkerKey, hoveredCapacityMarkerKey]
   );
-
-  const hoveredCapacityGuideTimeWindow = useMemo(() => {
-    if (!hoveredCapacityGuide || chartData.length === 0) return null;
-
-    const minTimeDelta =
-      chartData[0]?.timeDelta ?? hoveredCapacityGuide.timeDelta;
-    const maxTimeDelta =
-      chartData[chartData.length - 1]?.timeDelta ??
-      hoveredCapacityGuide.timeDelta;
-    const clampedChangeTimeDelta = Math.min(
-      maxTimeDelta,
-      Math.max(minTimeDelta, hoveredCapacityGuide.timeDelta)
-    );
-
-    return {
-      previousStartTimeDelta: minTimeDelta,
-      previousEndTimeDelta: clampedChangeTimeDelta,
-      currentStartTimeDelta: clampedChangeTimeDelta,
-      currentEndTimeDelta: maxTimeDelta,
-    };
-  }, [chartData, hoveredCapacityGuide]);
 
   const hasSeriesData = useMemo(
     () =>
@@ -932,118 +897,6 @@ export default function EnrollmentGraph({
                       </Fragment>
                     );
                   })}
-                  {hoveredCapacityGuide && hoveredCapacityGuideTimeWindow ? (
-                    <>
-                      <ReferenceLine
-                        key="hovered-capacity-previous"
-                        segment={
-                          isRotated
-                            ? [
-                                {
-                                  x: hoveredCapacityGuide.previousValue,
-                                  y: hoveredCapacityGuideTimeWindow.previousStartTimeDelta,
-                                },
-                                {
-                                  x: hoveredCapacityGuide.previousValue,
-                                  y: hoveredCapacityGuideTimeWindow.previousEndTimeDelta,
-                                },
-                              ]
-                            : [
-                                {
-                                  x: hoveredCapacityGuideTimeWindow.previousStartTimeDelta,
-                                  y: hoveredCapacityGuide.previousValue,
-                                },
-                                {
-                                  x: hoveredCapacityGuideTimeWindow.previousEndTimeDelta,
-                                  y: hoveredCapacityGuide.previousValue,
-                                },
-                              ]
-                        }
-                        stroke="var(--paragraph-color)"
-                        strokeOpacity={0.9}
-                        strokeWidth={1.3}
-                        label={
-                          isRotated
-                            ? {
-                                value: hoveredCapacityGuide.previousLabel,
-                                position: "top",
-                                fill: "var(--paragraph-color)",
-                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
-                                dy: -8,
-                                stroke: "var(--foreground-color)",
-                                strokeWidth: 4,
-                                paintOrder: "stroke",
-                              }
-                            : {
-                                value: hoveredCapacityGuide.previousLabel,
-                                position: "right",
-                                textAnchor: "end",
-                                fill: "var(--paragraph-color)",
-                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
-                                dx: -4,
-                                dy: -10,
-                                stroke: "var(--foreground-color)",
-                                strokeWidth: 4,
-                                paintOrder: "stroke",
-                              }
-                        }
-                      />
-                      <ReferenceLine
-                        key="hovered-capacity-current"
-                        segment={
-                          isRotated
-                            ? [
-                                {
-                                  x: hoveredCapacityGuide.currentValue,
-                                  y: hoveredCapacityGuideTimeWindow.currentStartTimeDelta,
-                                },
-                                {
-                                  x: hoveredCapacityGuide.currentValue,
-                                  y: hoveredCapacityGuideTimeWindow.currentEndTimeDelta,
-                                },
-                              ]
-                            : [
-                                {
-                                  x: hoveredCapacityGuideTimeWindow.currentStartTimeDelta,
-                                  y: hoveredCapacityGuide.currentValue,
-                                },
-                                {
-                                  x: hoveredCapacityGuideTimeWindow.currentEndTimeDelta,
-                                  y: hoveredCapacityGuide.currentValue,
-                                },
-                              ]
-                        }
-                        stroke={hoveredCapacityGuide.currentColor}
-                        strokeOpacity={0.95}
-                        strokeWidth={1.6}
-                        label={
-                          isRotated
-                            ? {
-                                value: hoveredCapacityGuide.currentLabel,
-                                position: "bottom",
-                                fill: hoveredCapacityGuide.currentColor,
-                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
-                                dy: 6,
-                                stroke: "var(--foreground-color)",
-                                strokeWidth: 4,
-                                paintOrder: "stroke",
-                              }
-                            : {
-                                value: hoveredCapacityGuide.currentLabel,
-                                position: "left",
-                                textAnchor: "start",
-                                fill: hoveredCapacityGuide.currentColor,
-                                fontSize: CAPACITY_GUIDE_LABEL_FONT_SIZE,
-                                dx: 4,
-                                dy: -10,
-                                stroke: "var(--foreground-color)",
-                                strokeWidth: 4,
-                                paintOrder: "stroke",
-                              }
-                        }
-                      />
-                    </>
-                  ) : null}
                 </LineChart>
               </ResponsiveContainer>
             </div>
