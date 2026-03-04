@@ -1,12 +1,8 @@
 # Cloudflare Worker: serves public and private Mongo backups from R2.
 # Deploy: npx wrangler deploy
-# Set bearer secret: npx wrangler secret put AUTH_SECRET
-#
 # Before first deploy:
 # 1. Remove the R2 Public Bucket custom-domain mapping for backups.berkeleytime.com.
 # 2. Ensure backups.berkeleytime.com DNS is proxied (orange cloud) in Cloudflare.
-# 3. Run: npx wrangler secret put AUTH_SECRET (paste a long random token, e.g. openssl rand -hex 32)
-
 name = "backups-worker"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"

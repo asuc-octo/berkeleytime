@@ -1,7 +1,6 @@
 interface Env {
   PUBLIC_BACKUPS: R2Bucket;
   PRIVATE_BACKUPS: R2Bucket;
-  AUTH_SECRET: string;
 }
 
 export default {
@@ -20,13 +19,6 @@ export default {
 
     if (pathname.startsWith("private/")) {
       const key = pathname.substring("private/".length);
-
-      const auth = request.headers.get("Authorization");
-      const expected = `Bearer ${env.AUTH_SECRET}`;
-      if (!auth || auth !== expected) {
-        return new Response("Unauthorized", { status: 401 });
-      }
-
       return handleGetFromBucket(env.PRIVATE_BACKUPS, key);
     }
 

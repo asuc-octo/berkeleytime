@@ -1,42 +1,53 @@
-# backups-worker
+# backups-worker – accessing backups
 
-Cloudflare Worker that serves Mongo backups from R2 at `https://backups.berkeleytime.com`:
+This Worker serves Mongo backups from R2 at `https://backups.berkeleytime.com`:
 
-- **`/public/*`** — reads from `prod-mongo-public-backups` (no auth).
-- **`/private/*`** — reads from `prod-mongo-backups` (requires `Authorization: Bearer <AUTH_SECRET>`).
+- `GET /public/*` → `prod-mongo-public-backups`
+- `GET /private/*` → `prod-mongo-backups`
 
-## Prerequisites
+Cloudflare Access protects private paths; public paths can be read without auth.
 
-1. **Remove R2 Public Bucket mapping**  
-   In Cloudflare: R2 → Public Buckets / Custom domains → remove the mapping that exposes `prod-mongo-public-backups` as `backups.berkeleytime.com`.
-
-2. **DNS**  
-   Ensure `backups.berkeleytime.com` is a proxied (orange cloud) record in the `berkeleytime.com` zone.
-
-3. **Auth secret**  
-   Generate a long random token (e.g. `openssl rand -hex 32`) and store it in your secret manager (e.g. 1Password). You will add it to the Worker in the deploy step below.
-
-## Deploy
-
-From this directory:
+## 1. Install `cloudflared` (once per machine)
 
 ```bash
-npm install
-npx wrangler secret put AUTH_SECRET   # paste the token when prompted
-npm run deploy
+brew install cloudflare/cloudflare/cloudflared
 ```
 
-Or with global wrangler:
+## 2. Fetch a public backup
+
+Public does **not** require authentication:
 
 ```bash
-cd infra/cloudflare/backups-worker
-wrangler secret put AUTH_SECRET
-wrangler deploy
+curl -f -o "prod_public_backup-YYYYMMDD.gz" \
+  "https://backups.berkeleytime.com/public/daily/prod_public_backup-YYYYMMDD.gz"
 ```
 
-## Usage
+Replace `YYYYMMDD` with the date embedded in the R2 key.
 
-- Public: `curl "https://backups.berkeleytime.com/public/daily/prod_public_backup-YYYYMMDD.gz" -o file.gz`
-- Private: `curl -H "Authorization: Bearer $BT_BACKUPS_AUTH" "https://backups.berkeleytime.com/private/hourly/prod_backup-YYYYMMDDHH.gz" -o file.gz`
+## 3. Log in for private backups
 
-See the docs (e.g. `apps/docs`) for full examples and how to set `BT_BACKUPS_AUTH`.
+Private backups require Cloudflare Access.
+
+```bash
+cloudflared access login https://backups.berkeleytime.com
+```
+
+This opens a browser; sign in with an email that is allowed by the `Backups` Access app.
+
+## 4. Fetch a private backup
+
+After logging in:
+
+```bash
+cloudflared access curl \
+  "https://backups.berkeleytime.com/private/hourly/prod_backup-YYYYMMDDHH.gz" \
+  -o "prod_backup-YYYYMMDDHH.gz"
+```
+
+For monthly persistent backups:
+
+```bash
+cloudflared access curl \
+  "https://backups.berkeleytime.com/private/persistent/prod_backup-YYYYMMDD.gz" \
+  -o "prod_backup-YYYYMMDD.gz"
+```
