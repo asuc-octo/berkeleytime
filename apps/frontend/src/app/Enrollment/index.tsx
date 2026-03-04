@@ -28,6 +28,7 @@ import type { ICourseWithInstructorClass } from "@/lib/api/courses";
 import type { IEnrollment } from "@/lib/api/enrollment";
 import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import useEnterToAdd from "@/hooks/useEnterToAdd";
 import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import styles from "./Enrollment.module.scss";
@@ -52,10 +53,22 @@ export interface EnrollmentOutput extends EnrollmentDraft {
   data: IEnrollment;
 }
 
+interface EnrollmentEditDraft {
+  subject: string;
+  courseNumber: string;
+  courseId: string;
+  year: number;
+  semester: Semester;
+  sectionNumber: string;
+  sessionId?: string;
+}
+
 interface EnrollmentSidebarProps {
   outputs: EnrollmentOutput[];
   onAddCourse: (draft: EnrollmentDraft) => Promise<boolean>;
   isAdding: boolean;
+  editDraft: EnrollmentEditDraft | null;
+  onEditDraftConsumed: () => void;
 }
 
 const BAR_CHART_COLORS = [
@@ -221,6 +234,8 @@ function EnrollmentSidebar({
   outputs,
   onAddCourse,
   isAdding,
+  editDraft,
+  onEditDraftConsumed,
 }: EnrollmentSidebarProps) {
   const client = useApolloClient();
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
@@ -236,6 +251,25 @@ function EnrollmentSidebar({
     null
   );
   const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
+  const pendingOfferingRef = useRef<{ sectionNumber: string; sessionId?: string } | null>(null);
+
+  // Consume editDraft: populate sidebar state from the draft, then clear it
+  useEffect(() => {
+    if (!editDraft) return;
+
+    setSelectedCourse({
+      subject: editDraft.subject,
+      number: editDraft.courseNumber,
+      courseId: editDraft.courseId,
+    });
+    setSelectedSemesterValue(toSemesterValue(editDraft.semester, editDraft.year));
+    pendingOfferingRef.current = {
+      sectionNumber: editDraft.sectionNumber,
+      sessionId: editDraft.sessionId,
+    };
+
+    onEditDraftConsumed();
+  }, [editDraft, onEditDraftConsumed]);
 
   const { data: courseData, loading: courseLoading } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
@@ -352,6 +386,27 @@ function EnrollmentSidebar({
     }
   }, [selectedSemester, availableClasses, selectedOfferingId]);
 
+  // Resolve pending offering from editDraft once classes are loaded
+  useEffect(() => {
+    if (!pendingOfferingRef.current || availableClasses.length === 0) return;
+
+    const { sectionNumber, sessionId } = pendingOfferingRef.current;
+    const match = availableClasses.find((courseClass) => {
+      const sectionMatch =
+        courseClass.primarySection?.number === sectionNumber ||
+        courseClass.number === sectionNumber;
+      if (sessionId) {
+        return sectionMatch && courseClass.sessionId === sessionId;
+      }
+      return sectionMatch;
+    });
+
+    if (match) {
+      setSelectedOfferingId(getOfferingId(match));
+    }
+    pendingOfferingRef.current = null;
+  }, [availableClasses]);
+
   const shouldShowOfferingCards =
     !!selectedSemester && availableClasses.length > 1;
   const offeringOptions = useMemo(
@@ -452,8 +507,6 @@ function EnrollmentSidebar({
     hasValidEnrollment === true;
   const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
 
-  const handleAddRef = useRef<() => void>(() => {});
-
   const handleAdd = async () => {
     if (
       !selectedCourse ||
@@ -483,21 +536,7 @@ function EnrollmentSidebar({
     setSelectedOfferingId(null);
   };
 
-  handleAddRef.current = () => void handleAdd();
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Enter") return;
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (!canAddWithoutLoading || isAdding) return;
-
-      e.preventDefault();
-      handleAddRef.current();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [canAddWithoutLoading, isAdding]);
+  useEnterToAdd(() => void handleAdd(), canAddWithoutLoading && !isAdding);
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
@@ -621,11 +660,13 @@ function EnrollmentSidebar({
 interface EnrollmentVisualizationProps {
   outputs: EnrollmentOutput[];
   remove: (index: number) => void;
+  edit: (index: number) => void;
 }
 
 function EnrollmentVisualization({
   outputs,
   remove,
+  edit,
 }: EnrollmentVisualizationProps) {
   const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
     useRafHoverIndex();
@@ -637,6 +678,14 @@ function EnrollmentVisualization({
       shiftAfterRemoval(index);
     },
     [remove, shiftAfterRemoval]
+  );
+
+  const handleEdit = useCallback(
+    (index: number) => {
+      edit(index);
+      shiftAfterRemoval(index);
+    },
+    [edit, shiftAfterRemoval]
   );
 
   return (
@@ -667,6 +716,7 @@ function EnrollmentVisualization({
                       fluid
                       onMouseEnter={() => hoverCard(index)}
                       onMouseLeave={clearHover}
+                      onClickEdit={() => handleEdit(index)}
                       onClickDelete={() => handleRemove(index)}
                     />
                   </motion.div>
@@ -690,6 +740,7 @@ export default function Enrollment() {
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
+  const [editDraft, setEditDraft] = useState<EnrollmentEditDraft | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
   const skipNextUrlHydrationRef = useRef(false);
@@ -836,6 +887,29 @@ export default function Enrollment() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
+  const edit = useCallback((index: number) => {
+    setOutputs((prev) => {
+      const output = prev[index];
+      if (!output) return prev;
+
+      setEditDraft({
+        subject: output.input.subject,
+        courseNumber: output.input.courseNumber,
+        courseId: output.course.courseId,
+        year: output.input.year,
+        semester: output.input.semester,
+        sectionNumber: output.input.sectionNumber,
+        sessionId: output.input.sessionId,
+      });
+
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  const clearEditDraft = useCallback(() => {
+    setEditDraft(null);
+  }, []);
+
   return (
     <CourseAnalyticsLayout
       isDesktop={isDesktop}
@@ -846,10 +920,12 @@ export default function Enrollment() {
           outputs={outputs}
           onAddCourse={addOutput}
           isAdding={isAdding}
+          editDraft={editDraft}
+          onEditDraftConsumed={clearEditDraft}
         />
       }
     >
-      <EnrollmentVisualization outputs={outputs} remove={remove} />
+      <EnrollmentVisualization outputs={outputs} remove={remove} edit={edit} />
     </CourseAnalyticsLayout>
   );
 }

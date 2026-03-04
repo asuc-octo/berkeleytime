@@ -42,22 +42,38 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
   padding: 0;
-  border: none;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   background: transparent;
   line-height: 1;
   cursor: pointer;
   color: var(--paragraph-color);
-}
+  transition:
+    background-color 150ms ease-in-out,
+    color 150ms ease-in-out,
+    border-color 150ms ease-in-out;
 
-.iconButton:hover {
-  color: var(--heading-color);
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-hover-color);
+      color: var(--heading-color);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background-color: var(--button-hover-color);
+  }
 }
 
 .deleteIconButton {
-  color: var(--red-700);
-}
-
-.deleteIconButton:hover {
-  color: var(--red-600);
+  color: var(--paragraph-color);
 }

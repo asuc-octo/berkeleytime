@@ -1,12 +1,8 @@
 import classNames from "classnames";
-import { Eye, EyeClosed, Trash } from "iconoir-react";
+import { EditPencil, Eye, EyeClosed, Trash } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
-import {
-  useReadCourseGradeDist,
-  useReadCourseTitle,
-} from "@/hooks/api/courses/useReadCourse";
-import { IGradeDistribution } from "@/lib/api";
+import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
 
 import styles from "./CourseSelectionCard.module.scss";
 
@@ -16,10 +12,9 @@ interface CourseSelectionCardProps {
   number: string;
   title?: string;
   metadata: string;
-  gradeDistribution?: IGradeDistribution;
-  loadGradeDistribution?: boolean;
   onClick?: () => void;
   onClickDelete?: () => void;
+  onClickEdit?: () => void;
   onClickHide?: () => void;
   active?: boolean;
   hidden?: boolean;
@@ -35,10 +30,9 @@ export default function CourseSelectionCard({
   number,
   title,
   metadata,
-  gradeDistribution,
-  loadGradeDistribution = true,
   onClick,
   onClickDelete,
+  onClickEdit,
   onClickHide,
   active,
   hidden,
@@ -50,46 +44,55 @@ export default function CourseSelectionCard({
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
   });
-  const { data: courseGradeData } = useReadCourseGradeDist(subject, number, {
-    skip: !!gradeDistribution || !loadGradeDistribution,
-  });
 
   const displayTitle = title ?? titleData?.title ?? "N/A";
-  const displayGradeDistribution =
-    gradeDistribution ?? courseGradeData?.gradeDistribution;
-  const topRightContent =
-    onClickHide || onClickDelete ? (
-      <>
-        {onClickHide && (
-          <button
-            type="button"
-            aria-label={hidden ? "Show course" : "Hide course"}
-            className={styles.iconButton}
-            onClick={(event) => {
-              event.stopPropagation();
-              event.preventDefault();
-              onClickHide();
-            }}
-          >
-            {!hidden ? <Eye /> : <EyeClosed />}
-          </button>
-        )}
-        {onClickDelete && (
-          <button
-            type="button"
-            aria-label="Delete course"
-            className={styles.deleteIconButton}
-            onClick={(event) => {
-              event.stopPropagation();
-              event.preventDefault();
-              onClickDelete();
-            }}
-          >
-            <Trash />
-          </button>
-        )}
-      </>
-    ) : undefined;
+  const hasActions = onClickHide || onClickEdit || onClickDelete;
+  const topRightContent = hasActions ? (
+    <>
+      {onClickHide && (
+        <button
+          type="button"
+          aria-label={hidden ? "Show course" : "Hide course"}
+          className={styles.iconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickHide();
+          }}
+        >
+          {!hidden ? <Eye /> : <EyeClosed />}
+        </button>
+      )}
+      {onClickEdit && (
+        <button
+          type="button"
+          aria-label="Edit course"
+          className={styles.iconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickEdit();
+          }}
+        >
+          <EditPencil />
+        </button>
+      )}
+      {onClickDelete && (
+        <button
+          type="button"
+          aria-label="Delete course"
+          className={styles.deleteIconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickDelete();
+          }}
+        >
+          <Trash />
+        </button>
+      )}
+    </>
+  ) : undefined;
 
   return (
     <ClassCard
@@ -101,7 +104,6 @@ export default function CourseSelectionCard({
         subject,
         courseNumber: number,
         title: displayTitle,
-        gradeDistribution: displayGradeDistribution,
       }}
       headingPrefix={
         <span

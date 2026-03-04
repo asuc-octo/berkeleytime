@@ -70,8 +70,9 @@
 }
 
 .semester {
-  color: var(--paragraph-color);
-  margin-top: 4px;
+  display: block;
+  color: var(--description-color);
+  line-height: 1.5;
 }
 
 .ratingsCount {

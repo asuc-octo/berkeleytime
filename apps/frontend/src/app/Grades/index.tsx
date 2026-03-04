@@ -23,6 +23,7 @@ import {
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
@@ -155,12 +156,26 @@ const parseSemesterValue = (
 const formatSemesterLabel = (semester: string, year: number) =>
   `${semester} ${year}`;
 
+interface EditDraft {
+  subject: string;
+  courseNumber: string;
+  courseId: string;
+  type?: InputType;
+  givenName?: string;
+  familyName?: string;
+  year?: number;
+  semester?: string;
+  sessionId?: string;
+}
+
 interface FilterPanelProps {
   outputs: Output[];
   setOutputs: React.Dispatch<React.SetStateAction<Output[]>>;
+  editDraft: EditDraft | null;
+  onEditDraftConsumed: () => void;
 }
 
-function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
+function FilterPanel({ outputs, setOutputs, editDraft, onEditDraftConsumed }: FilterPanelProps) {
   const client = useApolloClient();
 
   const [loading, setLoading] = useState(false);
@@ -187,6 +202,33 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     "all"
   );
   const [hasLetterGrades, setHasLetterGrades] = useState<boolean | null>(null);
+
+  // Consume editDraft: populate sidebar state from the draft, then clear it
+  useEffect(() => {
+    if (!editDraft) return;
+
+    setSelectedCourse({
+      subject: editDraft.subject,
+      number: editDraft.courseNumber,
+      courseId: editDraft.courseId,
+    });
+
+    if (editDraft.type === InputType.Term && editDraft.year && editDraft.semester && editDraft.sessionId) {
+      setSelectedType(InputType.Term);
+      setSelectedSemester(buildSemesterValue(editDraft.year, editDraft.semester, editDraft.sessionId));
+      setSelectedInstructor("all");
+    } else if (editDraft.type === InputType.Instructor && editDraft.familyName && editDraft.givenName) {
+      setSelectedType(InputType.Instructor);
+      setSelectedInstructor(`${editDraft.familyName}, ${editDraft.givenName}`);
+      setSelectedSemester("all");
+    } else {
+      setSelectedType(DEFAULT_BY_OPTION.value);
+      setSelectedInstructor("all");
+      setSelectedSemester("all");
+    }
+
+    onEditDraftConsumed();
+  }, [editDraft, onEditDraftConsumed]);
   const [isCheckingLetterGrades, setIsCheckingLetterGrades] = useState(false);
 
   const instructorOptionsData = useMemo(() => {
@@ -461,6 +503,8 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     isAlreadyAdded ||
     hasLetterGrades !== true;
 
+  useEnterToAdd(() => void add(), !isAddButtonDisabled);
+
   return (
     <CourseAnalyticsSidebar title="Grades">
       <CourseAnalyticsField label="Class">
@@ -565,6 +609,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
 interface OutputListProps {
   outputs: Output[];
   remove: (index: number) => void;
+  edit: (index: number) => void;
   hoveredIndex: number | null;
   onHoverCard: (index: number) => void;
   onClearHover: () => void;
@@ -573,6 +618,7 @@ interface OutputListProps {
 function OutputList({
   outputs,
   remove,
+  edit,
   hoveredIndex,
   onHoverCard,
   onClearHover,
@@ -602,11 +648,11 @@ function OutputList({
                     subject={output.input.subject}
                     number={output.input.courseNumber}
                     metadata={getMetadata(output.input)}
-                    gradeDistribution={output.data}
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
                     onMouseEnter={() => onHoverCard(index)}
                     onMouseLeave={onClearHover}
+                    onClickEdit={() => edit(index)}
                     onClickDelete={() => remove(index)}
                   />
                 </motion.div>
@@ -622,9 +668,10 @@ function OutputList({
 interface GradesVisualizationProps {
   outputs: Output[];
   remove: (index: number) => void;
+  edit: (index: number) => void;
 }
 
-function GradesVisualization({ outputs, remove }: GradesVisualizationProps) {
+function GradesVisualization({ outputs, remove, edit }: GradesVisualizationProps) {
   const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
     useRafHoverIndex();
 
@@ -636,11 +683,20 @@ function GradesVisualization({ outputs, remove }: GradesVisualizationProps) {
     [remove, shiftAfterRemoval]
   );
 
+  const handleEdit = useCallback(
+    (index: number) => {
+      edit(index);
+      shiftAfterRemoval(index);
+    },
+    [edit, shiftAfterRemoval]
+  );
+
   return (
     <>
       <OutputList
         outputs={outputs}
         remove={handleRemove}
+        edit={handleEdit}
         hoveredIndex={hoveredIndex}
         onHoverCard={hoverCard}
         onClearHover={clearHover}
@@ -659,6 +715,7 @@ export default function Grades() {
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
+  const [editDraft, setEditDraft] = useState<EditDraft | null>(null);
   const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
   const skipNextUrlHydrationRef = useRef(false);
   const initialRestoreCompleteRef = useRef(false);
@@ -762,14 +819,47 @@ export default function Grades() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
+  const edit = useCallback((index: number) => {
+    setOutputs((prev) => {
+      const output = prev[index];
+      if (!output) return prev;
+
+      const input = output.input;
+      setEditDraft({
+        subject: input.subject,
+        courseNumber: input.courseNumber,
+        courseId: `${input.subject}-${input.courseNumber}`,
+        type: input.type,
+        givenName: "givenName" in input ? input.givenName : undefined,
+        familyName: "familyName" in input ? input.familyName : undefined,
+        year: "year" in input ? input.year : undefined,
+        semester: "semester" in input ? input.semester : undefined,
+        sessionId: "sessionId" in input ? input.sessionId : undefined,
+      });
+
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  const clearEditDraft = useCallback(() => {
+    setEditDraft(null);
+  }, []);
+
   return (
     <CourseAnalyticsLayout
       isDesktop={isDesktop}
       drawerOpen={drawerOpen}
       onDrawerOpenChange={setDrawerOpen}
-      sidebar={<FilterPanel outputs={outputs} setOutputs={setOutputs} />}
+      sidebar={
+        <FilterPanel
+          outputs={outputs}
+          setOutputs={setOutputs}
+          editDraft={editDraft}
+          onEditDraftConsumed={clearEditDraft}
+        />
+      }
     >
-      <GradesVisualization outputs={outputs} remove={remove} />
+      <GradesVisualization outputs={outputs} remove={remove} edit={edit} />
     </CourseAnalyticsLayout>
   );
 }

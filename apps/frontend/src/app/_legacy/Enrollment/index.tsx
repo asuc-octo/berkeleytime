@@ -724,8 +724,6 @@ export default function Enrollment() {
                   subject={input.subject}
                   number={input.courseNumber}
                   metadata={`${semester} • ${instructor}`}
-                  gradeDistribution={undefined}
-                  loadGradeDistribution={false}
                   onClick={() => updateActive(index, !rest.active)}
                   onClickDelete={() => remove(index)}
                   onClickHide={() => updateHidden(index, !rest.hidden)}

@@ -323,7 +323,6 @@ const GradeDistributions = () => {
                   subject={output.input.subject}
                   number={output.input.courseNumber}
                   metadata={`${semester} • ${instructor}`}
-                  gradeDistribution={output.data}
                   onClick={() => updateActive(index, !output.active)}
                   onClickDelete={() => remove(index)}
                   onClickHide={() => updateHidden(index, !output.hidden)}
