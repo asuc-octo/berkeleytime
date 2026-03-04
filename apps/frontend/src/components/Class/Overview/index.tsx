@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Box, Container, Flex } from "@repo/theme";
 
 import Details from "@/components/Details";
+import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import useClass from "@/hooks/useClass";
 import { linkify } from "@/utils/linkify";
 
@@ -12,6 +13,7 @@ import { UserSubmittedData } from "./UserSubmittedData";
 
 export default function Overview() {
   const { class: _class, course } = useClass();
+  const decal: any = (_class as any)?.decal ?? null;
 
   const sectionAttributes = useMemo(
     () => _class.primarySection?.sectionAttributes ?? [],
@@ -26,6 +28,9 @@ export default function Overview() {
   }, [course.requirements]);
 
   const classDescription = useMemo(() => {
+    if (decal?.description?.trim()) {
+      return decal.description;
+    }
     const classDescriptionAttribute = sectionAttributes.find(
       (attribute) =>
         attribute.attribute?.code === "NOTE" &&
@@ -38,7 +43,7 @@ export default function Overview() {
       null;
 
     return text ?? course.description ?? "";
-  }, [course.description, sectionAttributes]);
+  }, [course.description, decal?.description, sectionAttributes]);
 
   const classNoteLines = useMemo(() => {
     if (!sectionAttributes.length) return null;
@@ -89,6 +94,83 @@ export default function Overview() {
           {_class.primarySection?.meetings.map((meeting, i) => (
             <Details {...meeting} key={i} />
           ))}
+          {decal && (
+            <>
+              {decal.applicationDueDate && (
+                <Flex direction="column" gap="2">
+                  <p className={styles.label}>Application Deadline</p>
+                  <p className={styles.description}>
+                    {decal.applicationDueDate}
+                  </p>
+                </Flex>
+              )}
+              {decal.applicationUrl && (
+                <Flex direction="column" gap="2">
+                  <p className={styles.label}>Application</p>
+                  <p className={styles.description}>
+                    <a
+                      href={decal.applicationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.link}
+                    >
+                      Course Website / Start Application
+                    </a>
+                    {decal.syllabusUrl && (
+                      <>
+                        {" · "}
+                        <a
+                          href={decal.syllabusUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.link}
+                        >
+                          Syllabus
+                        </a>
+                      </>
+                    )}
+                  </p>
+                </Flex>
+              )}
+              {decal.syllabusUrl && !decal.applicationUrl && (
+                <Flex direction="column" gap="2">
+                  <p className={styles.label}>Syllabus</p>
+                  <p className={styles.description}>
+                    <a
+                      href={decal.syllabusUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.link}
+                    >
+                      View syllabus
+                    </a>
+                  </p>
+                </Flex>
+              )}
+              {decal.instructors && decal.instructors.length > 0 && (
+                <Flex direction="column" gap="2">
+                  <p className={styles.label}>Contact Information</p>
+                  <p className={styles.description}>
+                    {decal.instructors.map((inst: any, i: number) => (
+                      <span key={i}>
+                        {inst.email ? (
+                          <a
+                            href={`mailto:${inst.email}`}
+                            className={styles.link}
+                          >
+                            {inst.name || inst.email}
+                          </a>
+                        ) : (
+                          inst.name
+                        )}
+                        {i < decal.instructors!.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </p>
+                </Flex>
+              )}
+            </>
+          )}
           {prereqs && (
             <Flex direction="column" gap="2">
               <p className={styles.label}>Prerequisites</p>

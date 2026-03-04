@@ -1,10 +1,22 @@
-import * as cheerio from "cheerio";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Logger } from "tslog";
+
+import { FuzzySearch } from "@repo/common";
+import {
+  ClassModel,
+  CourseModel,
+  SectionModel,
+  TermModel,
+} from "@repo/common/models";
+
+import { Config } from "../shared/config";
 
 const BASE_URL = "https://berkeleydecal.com";
 const LIST_URL = `${BASE_URL}/`;
+const APPROVED_COURSES_API = `${BASE_URL}/api/approvedCourses`;
+
+// When true, skip remote fetches and just read existing decals.json
+const DEBUG = true;
 
 export interface DecalSection {
   type?: string;
@@ -23,6 +35,7 @@ export interface DecalFacilitator {
 export interface DecalCourse {
   category?: string;
   title: string;
+  semester?: string;
   department?: string;
   units?: number;
   sections: DecalSection[];
@@ -31,329 +44,803 @@ export interface DecalCourse {
   applicationDueDate?: string;
   syllabusUrl?: string;
   facilitators: DecalFacilitator[];
+  description?: string;
+  contactEmail?: string;
+  facultySponsorName?: string;
+  enrollmentInformation?: string;
+  websiteUrl?: string;
 }
 
-function resolveUrl(base: string, href: string): string {
-  if (href.startsWith("http")) return href;
-  const baseUrl = base.endsWith("/") ? base : base + "/";
-  return new URL(href, baseUrl).href;
+interface ApprovedCoursesApiResponse {
+  success: boolean;
+  courses: Array<{
+    id: string;
+    semester?: string;
+    title: string;
+    department?: string;
+    category?: string;
+    units?: number;
+    description?: string | null;
+    contact_email?: string | null;
+    faculty_sponsor_name?: string | null;
+    website?: string | null;
+    enrollment_information?: string | null;
+    application_url?: string | null;
+    application_due_date?: string | null;
+    syllabus_url?: string | null;
+    detailsUrl?: string | null;
+    sections?: Array<{
+      id: string;
+      enrollment_status?: string | null;
+      day?: string | null;
+      time?: string | null;
+      room?: string | null;
+      notes?: string | null;
+      section_type?: string | null;
+      capacity?: number | null;
+    }>;
+    facilitators?: Array<{
+      id: string;
+      name: string;
+      email: string;
+    }>;
+  }>;
 }
 
-async function fetchHtml(url: string): Promise<string> {
-  const response = await fetch(url, {
+interface CourseDetailApiResponse {
+  success: boolean;
+  course: {
+    id: string;
+    semester?: string;
+    title: string;
+    department?: string;
+    category?: string;
+    units?: number;
+    description?: string | null;
+    contact_email?: string | null;
+    faculty_sponsor_name?: string | null;
+    website?: string | null;
+    enrollment_information?: string | null;
+    application_url?: string | null;
+    application_due_date?: string | null;
+    syllabus_url?: string | null;
+    sections?: Array<{
+      id: string;
+      enrollment_status?: string | null;
+      day?: string | null;
+      time?: string | null;
+      room?: string | null;
+      notes?: string | null;
+      section_type?: string | null;
+      capacity?: number | null;
+    }>;
+    facilitators?: Array<{
+      id: string;
+      name: string;
+      email: string;
+    }>;
+  };
+}
+
+async function fetchApprovedCourses(): Promise<ApprovedCoursesApiResponse> {
+  const response = await fetch(APPROVED_COURSES_API, {
     headers: {
       "User-Agent":
         "Berkeleytime-Datapuller/1.0 (https://berkeleytime.berkeley.edu)",
+      Accept: "application/json",
     },
   });
+
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status} fetching ${url}`);
+    throw new Error(
+      `HTTP ${response.status} fetching ${APPROVED_COURSES_API}`
+    );
   }
-  return response.text();
+
+  const data = (await response.json()) as ApprovedCoursesApiResponse;
+  if (!data.success || !Array.isArray(data.courses)) {
+    throw new Error("Unexpected approvedCourses API response shape");
+  }
+
+  return data;
 }
 
-function extractCoursesFromListing(
-  html: string,
-  baseUrl: string
-): Array<{
-  url: string;
-  category?: string;
-  title: string;
-  department?: string;
-  units?: number;
-  sections: DecalSection[];
-}> {
-  const $ = cheerio.load(html);
+function extractCourseIdFromDetailsUrl(detailsUrl?: string): string | undefined {
+  if (!detailsUrl) return undefined;
+  try {
+    const url = new URL(detailsUrl, BASE_URL);
+    const parts = url.pathname.split("/").filter(Boolean);
+    return parts[parts.length - 1];
+  } catch {
+    return undefined;
+  }
+}
 
-  // Try embedded JSON first (e.g. Next.js __NEXT_DATA__, or similar)
-  const scriptText = $("script#__NEXT_DATA__").html();
-  if (scriptText) {
-    try {
-      const data = JSON.parse(scriptText) as {
-        props?: { pageProps?: { courses?: unknown[] } };
-        __NEXT_DATA__?: {
-          props?: {
-            pageProps?: {
-              courses?: Array<{
-                slug?: string;
-                title?: string;
-                category?: string;
-                department?: string;
-                units?: number;
-                sections?: DecalSection[];
-              }>;
-            };
-          };
-        };
-      };
-      const nextData = data as {
-        props?: {
-          pageProps?: {
-            courses?: Array<{
-              slug?: string;
-              id?: string;
-              title?: string;
-              category?: string;
-              department?: string;
-              units?: number;
-              sections?: DecalSection[];
-            }>;
-          };
-        };
-      };
-      const courses = nextData?.props?.pageProps?.courses;
-      if (Array.isArray(courses) && courses.length > 0) {
-        return courses
-          .map((c) => ({
-            url: c.slug
-              ? `${baseUrl}/course/${c.slug}`
-              : c.id
-                ? `${baseUrl}/course/${c.id}`
-                : "",
-            category: c.category,
-            title: c.title ?? "",
-            department: c.department,
-            units: c.units,
-            sections: c.sections ?? [],
-          }))
-          .filter((c) => c.url);
+async function fetchCourseDetail(id: string): Promise<CourseDetailApiResponse["course"]> {
+  const detailUrl = `${BASE_URL}/api/courses/${id}`;
+  const response = await fetch(detailUrl, {
+    headers: {
+      "User-Agent":
+        "Berkeleytime-Datapuller/1.0 (https://berkeleytime.berkeley.edu)",
+      Accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} fetching ${detailUrl}`);
+  }
+
+  const data = (await response.json()) as CourseDetailApiResponse;
+  if (!data.success || !data.course) {
+    throw new Error("Unexpected course detail API response shape");
+  }
+
+  return data.course;
+}
+
+const DAY_NAMES = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+const normalizeString = (value: string | undefined | null): string =>
+  (value ?? "").toLowerCase().replace(/\s+/g, "").trim();
+
+/** Levenshtein (edit) distance between two strings. */
+const levenshteinDistance = (a: string, b: string): number => {
+  const lenA = a.length;
+  const lenB = b.length;
+  const dp: number[][] = Array.from({ length: lenA + 1 }, () =>
+    new Array<number>(lenB + 1).fill(0)
+  );
+  for (let i = 0; i <= lenA; i++) dp[i][0] = i;
+  for (let j = 0; j <= lenB; j++) dp[0][j] = j;
+  for (let i = 1; i <= lenA; i++) {
+    for (let j = 1; j <= lenB; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + cost
+      );
+    }
+  }
+  return dp[lenA][lenB];
+};
+
+const departmentsMatch = (
+  subjectName?: string | null,
+  department?: string | null
+): boolean => {
+  if (!subjectName || !department) return true;
+  const a = normalizeString(subjectName);
+  const b = normalizeString(department);
+  const c = normalizeString(department.replace("and", "&"));
+  if (!a || (!b && !c)) return true;
+  return a === b || a.includes(b) || b.includes(a) || a === c || a.includes(c) || c.includes(a);
+};
+
+const formatMeetingDayTime = (meeting: {
+  days?: boolean[];
+  startTime?: string;
+  endTime?: string;
+}): string | undefined => {
+  if (!meeting.days || !meeting.days.length) return undefined;
+  const dayIndex = meeting.days.findIndex((d) => d);
+  if (dayIndex === -1) return undefined;
+  if (!meeting.startTime || !meeting.endTime) return undefined;
+  const dayName = DAY_NAMES[dayIndex] ?? "";
+  if (!dayName) return undefined;
+
+  const addOneMinute = (time: string): string => {
+    const [hStr, mStr] = time.split(":");
+    let hour = Number(hStr);
+    let minutes = Number(mStr ?? "0");
+    if (Number.isNaN(hour) || Number.isNaN(minutes)) return time;
+
+    minutes += 1;
+    if (minutes >= 60) {
+      minutes -= 60;
+      hour = (hour + 1) % 24;
+    }
+
+    const h = String(hour).padStart(2, "0");
+    const m = String(minutes).padStart(2, "0");
+    return `${h}:${m}`;
+  };
+
+  const formatTime = (time: string): string => {
+    const [hStr, mStr] = time.split(":");
+    const hour24 = Number(hStr);
+    const minutes = (mStr ?? "00").padStart(2, "0");
+    if (Number.isNaN(hour24)) return time;
+
+    const period = hour24 >= 12 ? "PM" : "AM";
+    const hour12 = ((hour24 + 11) % 12) + 1;
+
+    return `${hour12}:${minutes}${period}`;
+  };
+
+  const start = formatTime(meeting.startTime);
+  const end = formatTime(addOneMinute(meeting.endTime));
+
+  return `${dayName}${start}-${end}`.toLowerCase();
+};
+
+const normalizeDayTime = (value: string | undefined): string => {
+  if (!value) return "";
+  let v = value.toLowerCase();
+
+  // Normalize plural day names like "tuesdays" -> "tuesday"
+  for (const dayName of DAY_NAMES) {
+    const lower = dayName.toLowerCase();
+    v = v.replace(new RegExp(`${lower}s\\b`, "g"), lower);
+  }
+
+  // Normalize spacing
+  v = v.replace(/\s+/g, " ").trim();
+
+  // Normalize time ranges like "7:00-8:00pm", "3pm-5pm", or "3-5pm"
+  const timeRegex =
+    /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*-\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i;
+  const timeMatch = v.match(timeRegex);
+  if (timeMatch) {
+    const [, h1, m1, ampm1, h2, m2, ampm2] = timeMatch;
+    const period = (ampm1 || ampm2 || "pm").toLowerCase();
+    const startMinutes = m1 ?? "00";
+    const endMinutes = m2 ?? "00";
+    const t1 = `${h1}:${startMinutes}`;
+    const t2 = `${h2}:${endMinutes}`;
+    const replacement = `${t1}${period} - ${t2}${period}`;
+    v = v.replace(timeRegex, replacement);
+  }
+
+  // Final normalization: remove spaces
+  return v.replace(/\s+/g, "").trim();
+};
+
+const buildDecalTimes = (sections: DecalSection[]): Set<string> => {
+  const decalTimes = new Set<string>();
+
+  for (const s of sections) {
+    const base = normalizeDayTime(s.dayTime);
+    if (!base) continue;
+    decalTimes.add(base);
+
+    // Allow 1-minute offsets on the end time for cases like 6:29 vs 6:30
+    const match = base.match(/(\d{1,2}):(\d{2})(am|pm)$/);
+    if (!match) continue;
+
+    const [, hStr, mStr, period] = match;
+    let hour = Number(hStr);
+    let minutes = Number(mStr);
+    if (Number.isNaN(hour) || Number.isNaN(minutes)) continue;
+
+    if (minutes === 29 || minutes === 59) {
+      minutes += 1;
+      if (minutes >= 60) {
+        minutes -= 60;
+        hour = hour + 1;
+        if (hour > 12) hour -= 12;
+        if (hour === 0) hour = 12;
       }
-    } catch {
-      // ignore JSON parse errors
+
+      const hourStr = String(hour);
+      const minuteStr = String(minutes).padStart(2, "0");
+
+      const adjusted = base.replace(
+        /(\d{1,2}:\d{2})(am|pm)$/,
+        `${hourStr}:${minuteStr}${period}`
+      );
+      decalTimes.add(adjusted);
     }
   }
 
-  // Fallback: parse HTML cards / links
-  const results: Array<{
-    url: string;
-    category?: string;
-    title: string;
-    department?: string;
-    units?: number;
-    sections: DecalSection[];
-  }> = [];
-  const linkSelector = 'a[href*="/course/"]';
-  $(linkSelector).each((_, el) => {
-    const $el = $(el);
-    const href = $el.attr("href");
-    if (!href) return;
-    const fullUrl = resolveUrl(baseUrl, href);
-    const card = $el.closest(
-      "[class*='card'], [class*='Card'], article, .course"
-    );
-    const category =
-      card
-        .find("[class*='category'], [class*='tag'], .tag")
-        .first()
-        .text()
-        .trim() || undefined;
-    const titleEl = card.find("h2, h3, [class*='title']").first();
-    const title = titleEl.length ? titleEl.text().trim() : $el.text().trim();
-    if (!title) return;
-    const deptUnits = card
-      .find("[class*='department'], [class*='units'], .meta")
-      .first()
-      .text()
-      .trim();
-    let department: string | undefined;
-    let units: number | undefined;
-    const unitsMatch = deptUnits.match(/(\d+)\s*unit/i);
-    if (unitsMatch) units = parseInt(unitsMatch[1], 10);
-    const deptMatch = deptUnits.match(/^([^•·\-]+)/);
-    if (deptMatch) department = deptMatch[1].trim() || undefined;
-    const sections: DecalSection[] = [];
-    card
-      .find("[class*='section'], [class*='time'], [class*='location']")
-      .each((__, sectionEl) => {
-        const text = $(sectionEl).text().trim();
-        if (
-          text.includes("PM") ||
-          text.includes("AM") ||
-          text.match(/\d+:\d+/)
-        ) {
-          sections.push({ time: text, location: "" });
-        }
-      });
-    results.push({
-      url: fullUrl,
-      category,
-      title,
-      department,
-      units,
-      sections,
-    });
-  });
+  return decalTimes;
+};
 
-  // Dedupe by URL
-  const seen = new Set<string>();
-  return results.filter((r) => {
-    if (seen.has(r.url)) return false;
-    seen.add(r.url);
-    return true;
-  });
-}
+const computeMeetingScore = (
+  decal: DecalCourse,
+  meetings?: {
+    days?: boolean[];
+    startTime?: string;
+    endTime?: string;
+    location?: string;
+  }[]
+): number => {
+  if (!decal.sections?.length || !meetings?.length) return 0;
 
-function parseDetailPage(
-  html: string
-): Partial<
-  Pick<
-    DecalCourse,
-    | "applicationUrl"
-    | "applicationDueDate"
-    | "syllabusUrl"
-    | "sections"
-    | "facilitators"
-  >
-> {
-  const $ = cheerio.load(html);
-  const out: Partial<
-    Pick<
-      DecalCourse,
-      | "applicationUrl"
-      | "applicationDueDate"
-      | "syllabusUrl"
-      | "sections"
-      | "facilitators"
-    >
-  > = {
-    sections: [],
-    facilitators: [],
-  };
+  const decalTimes = buildDecalTimes(decal.sections);
 
-  // Enrollment: Application URL and Due Date (find section by heading text)
-  const allEls = $("h2, h3, h4, strong, *");
-  const enrollmentHeading = allEls
-    .filter((_, el) => $(el).text().trim() === "Enrollment Information")
-    .first();
-  const enrollmentSection = enrollmentHeading.closest("section, div").length
-    ? enrollmentHeading.closest("section, div")
-    : enrollmentHeading.parent();
-  const sectionText = enrollmentSection.text();
-  const appUrlMatch = sectionText.match(/Application URL:\s*(\S+)/);
-  if (appUrlMatch) out.applicationUrl = appUrlMatch[1].trim();
-  const appDueMatch = sectionText.match(
-    /Application Due Date:\s*([^\n]+?)(?:\n|$)/
+  const decalRooms = new Set(
+    decal.sections
+      .map((s) =>
+        (s.room ?? "")
+          .toLowerCase()
+          .replace(/\s+/g, " ")
+          .trim()
+      )
+      .filter((s) => s.length > 0)
   );
-  if (appDueMatch) out.applicationDueDate = appDueMatch[1].trim();
 
-  const appLink = enrollmentSection
-    .find('a[href*="forms.gle"], a[href*="docs.google"]')
-    .attr("href");
-  if (appLink && !out.applicationUrl) out.applicationUrl = appLink;
+  if (!decalTimes.size) return 0;
 
-  // Course Sections table: Type, Day & Time, Room, Enrollment
-  const sectionsHeading = allEls
-    .filter((_, el) => $(el).text().trim() === "Course Sections")
-    .first();
-  const sectionsParent = sectionsHeading.closest("section, div").length
-    ? sectionsHeading.closest("section, div")
-    : sectionsHeading.parent();
-  sectionsParent
-    .find("table tr, [class*='section'] tr, .section-row")
-    .each((_, row) => {
-      const cells = $(row).find("td, [class*='cell']");
-      if (cells.length >= 3) {
-        const texts = cells.map((__, c) => $(c).text().trim()).get();
-        out.sections!.push({
-          type: texts[0],
-          dayTime: texts[1],
-          room: texts[2],
-          enrollment: texts[3],
-        });
-      }
-    });
+  let timeMatched = false;
+  let roomMatched = false;
 
-  // Syllabus link
-  const syllabusAnchor = $("a")
-    .filter((_, el) => $(el).text().includes("View Syllabus Document"))
-    .first();
-  const syllabusLink =
-    syllabusAnchor.attr("href") ??
-    $('a[href*="syllabus"]').first().attr("href");
-  if (syllabusLink) out.syllabusUrl = resolveUrl(BASE_URL, syllabusLink);
+  for (const meeting of meetings) {
+    const formatted = formatMeetingDayTime(meeting);
+    if (formatted && decalTimes.has(normalizeDayTime(formatted))) {
+      timeMatched = true;
+    }
 
-  // Facilitators: name and email
-  const facilitatorsHeading = allEls
-    .filter((_, el) => $(el).text().trim() === "Facilitators")
-    .first();
-  const facilitatorsSection = facilitatorsHeading.closest("section, div").length
-    ? facilitatorsHeading.closest("section, div")
-    : facilitatorsHeading.parent();
-  facilitatorsSection
-    .find("a[href^='mailto:'], [class*='facilitator']")
-    .each((_, el) => {
-      const $el = $(el);
-      const email = $el
-        .attr("href")
-        ?.replace(/^mailto:/i, "")
+    if (!roomMatched && decalRooms.size && meeting.location) {
+      const roomNorm = meeting.location
+        .toLowerCase()
+        .replace(/\s+/g, " ")
         .trim();
-      const name = $el.text().trim();
-      if (email && name) out.facilitators!.push({ name, email });
-    });
+      if (decalRooms.has(roomNorm)) {
+        roomMatched = true;
+      }
+    }
+  }
 
-  return out;
-}
+  if (!timeMatched) return 0;
 
-async function scrapeDecals(config: { log: Logger<unknown> }): Promise<void> {
+  // Base score 1 for time match; double it if room also matches
+  return roomMatched ? 2 : 1;
+};
+
+async function scrapeDecals(config: Config): Promise<void> {
   const { log } = config;
   const outputPath = path.join(process.cwd(), "data", "decals.json");
 
-  log.info("Fetching course list from berkeleydecal.com...");
-  const listHtml = await fetchHtml(LIST_URL);
-  const listingCourses = extractCoursesFromListing(listHtml, BASE_URL);
+  try {
+    let courses: DecalCourse[];
 
-  if (listingCourses.length === 0) {
-    log.warn(
-      "No courses found on listing page (site may be client-rendered). Writing empty list."
+    if (DEBUG && fs.existsSync(outputPath)) {
+      log.info("DEBUG=true: loading DeCal data from existing decals.json...");
+      const raw = fs.readFileSync(outputPath, "utf-8");
+      courses = JSON.parse(raw) as DecalCourse[];
+    } else {
+      log.info("Fetching approved DeCal courses from berkeleydecal.com API...");
+      const approved = await fetchApprovedCourses();
+
+      if (!approved.courses.length) {
+        log.warn(
+          "No courses returned from approvedCourses API. Writing empty list."
+        );
+        const dir = path.dirname(outputPath);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(outputPath, JSON.stringify([], null, 2), "utf-8");
+        log.info(`Wrote ${outputPath}`);
+        return;
+      }
+
+      log.info(
+        `Fetched ${approved.courses.length} courses from approvedCourses API. Fetching per-course details...`
+      );
+
+      courses = [];
+
+      for (const c of approved.courses) {
+        const base: DecalCourse = {
+          category: c.category ?? undefined,
+          title: c.title,
+          semester: c.semester ?? undefined,
+          department: c.department ?? undefined,
+          units: c.units,
+          sections:
+            c.sections?.map<DecalSection>((s) => ({
+              type: s.section_type ?? undefined,
+              dayTime:
+                s.day && s.time ? `${s.day} ${s.time}` : s.time ?? undefined,
+              room: s.room ?? undefined,
+              enrollment: s.enrollment_status ?? undefined,
+            })) ?? [],
+          detailsUrl: c.detailsUrl ?? `${LIST_URL}courses/${c.id}`,
+          applicationUrl: c.application_url ?? undefined,
+          applicationDueDate: c.application_due_date ?? undefined,
+          syllabusUrl: c.syllabus_url ?? undefined,
+          facilitators:
+            c.facilitators?.map<DecalFacilitator>((f) => ({
+              name: f.name,
+              email: f.email,
+            })) ?? [],
+          description: c.description ?? undefined,
+          contactEmail: c.contact_email ?? undefined,
+          facultySponsorName: c.faculty_sponsor_name ?? undefined,
+          enrollmentInformation: c.enrollment_information ?? undefined,
+          websiteUrl: c.website ?? undefined,
+        };
+
+        const detailId =
+          extractCourseIdFromDetailsUrl(base.detailsUrl) ?? c.id;
+
+        try {
+          const detail = await fetchCourseDetail(detailId);
+
+          base.description = detail.description ?? base.description;
+          base.contactEmail = detail.contact_email ?? base.contactEmail;
+          base.facultySponsorName =
+            detail.faculty_sponsor_name ?? base.facultySponsorName;
+          base.enrollmentInformation =
+            detail.enrollment_information ?? base.enrollmentInformation;
+          base.applicationUrl =
+            detail.application_url ?? base.applicationUrl;
+          base.applicationDueDate =
+            detail.application_due_date ?? base.applicationDueDate;
+          base.syllabusUrl = detail.syllabus_url ?? base.syllabusUrl;
+          base.websiteUrl = detail.website ?? base.websiteUrl;
+
+          if (detail.sections && detail.sections.length > 0) {
+            base.sections = detail.sections.map<DecalSection>((s) => ({
+              type: s.section_type ?? undefined,
+              dayTime:
+                s.day && s.time ? `${s.day} ${s.time}` : s.time ?? undefined,
+              room: s.room ?? undefined,
+              enrollment: s.enrollment_status ?? undefined,
+            }));
+          }
+
+          if (detail.facilitators && detail.facilitators.length > 0) {
+            base.facilitators = detail.facilitators.map<DecalFacilitator>(
+              (f) => ({
+                name: f.name,
+                email: f.email,
+              })
+            );
+          }
+        } catch (err) {
+          log.warn(
+            `Failed to fetch detail for course ${c.id}: ${(err as Error).message}`
+          );
+        }
+
+        courses.push(base);
+      }
+
+      const dir = path.dirname(outputPath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(outputPath, JSON.stringify(courses, null, 2), "utf-8");
+      log.info(`Wrote ${courses.length} courses to ${outputPath}`);
+    }
+
+    // ----- DeCal → Class / Section augmentation -----
+    // 1. Active + future undergraduate terms
+    const terms = await TermModel.find({
+      temporalPosition: { $in: ["Current", "Future"] },
+      academicCareerCode: "UGRD",
+    })
+      .lean()
+      .exec();
+
+    if (!terms.length) {
+      log.info("No active or future undergraduate terms found; skipping DeCal-class matching.");
+      return;
+    }
+
+    // 2. Group DeCals by semester string like "Spring 2026"
+    const decalsBySemester = new Map<string, DecalCourse[]>();
+    for (const decal of courses) {
+      if (!decal.semester) continue;
+      const key = decal.semester;
+      const arr = decalsBySemester.get(key) ?? [];
+      arr.push(decal);
+      decalsBySemester.set(key, arr);
+    }
+
+    if (!decalsBySemester.size) {
+      log.info("No DeCal semesters found in decals data; skipping DeCal-class matching.");
+      return;
+    }
+
+    // 3. For each term, intersect with DeCal semesters and perform matching
+    for (const term of terms) {
+      const [yearStr, semesterName] = term.name.split(" ");
+      const year = parseInt(yearStr, 10);
+      if (!year || !semesterName) continue;
+
+      const semesterKey = `${semesterName} ${year}`;
+      const termDecals = decalsBySemester.get(semesterKey);
+      if (!termDecals || !termDecals.length) continue;
+
+      log.info(
+        `Matching ${termDecals.length.toLocaleString()} DeCal(s) against classes in ${semesterKey}...`
+      );
+
+      const termClasses = await ClassModel.find({
+        year,
+        semester: semesterName,
+        courseNumber: {$in: ["198", "98"]},
+      }).exec();
+
+      if (!termClasses.length) {
+        log.warn(`No classes found for ${semesterKey}; skipping.`);
+        continue;
+      }
+
+      // Build courseId -> subjectName map for this term
+      const courseIds = Array.from(
+        new Set(termClasses.map((c) => c.courseId))
+      );
+      const coursesForTerm = await CourseModel.find({
+        courseId: { $in: courseIds },
+      })
+        .select({ courseId: 1, subjectName: 1 })
+        .lean()
+        .exec();
+      const subjectNameByCourseId = new Map<string, string | undefined>();
+      for (const course of coursesForTerm) {
+        subjectNameByCourseId.set(course.courseId, course.subjectName);
+      }
+
+      // Preload primary sections for all classes in this term
+      const primarySections = await SectionModel.find({
+        year,
+        semester: semesterName,
+        primary: true,
+        courseId: { $in: courseIds },
+      }).exec();
+      const primarySectionsByClassKey = new Map<
+        string,
+        (typeof primarySections)[number][]
+      >();
+      for (const section of primarySections) {
+        const key = `${section.courseId}:${section.classNumber}`;
+        const arr = primarySectionsByClassKey.get(key) ?? [];
+        arr.push(section);
+        primarySectionsByClassKey.set(key, arr);
+      }
+
+      type Candidate = {
+        cls: (typeof termClasses)[number];
+        subjectName?: string;
+        meetings?: {
+          days?: boolean[];
+          startTime?: string;
+          endTime?: string;
+          location?: string;
+          instructors?: { givenName?: string; familyName?: string }[];
+        }[];
+      };
+
+      const candidates: Candidate[] = termClasses.map((cls) => {
+        const sections =
+          primarySectionsByClassKey.get(`${cls.courseId}:${cls.number}`) ?? [];
+        const meetings =
+          sections.length > 0 ? sections[0].meetings ?? [] : undefined;
+
+        return {
+          cls,
+          subjectName: subjectNameByCourseId.get(cls.courseId),
+          meetings,
+        };
+      });
+
+      for (const decal of termDecals) {
+        if (!decal.title) continue;
+
+        const faculty = decal.facultySponsorName ?? "unknown faculty";
+        const meetingSummaries =
+          decal.sections
+            ?.map((s) => {
+              const time = s.dayTime ?? "unknown time";
+              const room = s.room ?? "unknown room";
+              return `${time} @ ${room}`;
+            })
+            .join("; ") ?? "no sections";
+
+        log.info(
+          `Matching DeCal "${decal.title}" (dept: "${decal.department}", faculty: "${faculty}", meetings: ${meetingSummaries}) to classes in ${semesterKey}...`
+        );
+
+        // Constrain candidates by department/subjectName when possible
+        const dept = decal.department ?? null;
+        let filteredCandidates = candidates.filter((c) =>
+          departmentsMatch(c.subjectName, dept)
+        );
+        log.info(`Filtered candidates by department: ${filteredCandidates.length}`);
+        if (!filteredCandidates.length) {
+          log.info(
+            `No candidates found for department "${decal.department}"; searching across all departments.`
+          );
+          filteredCandidates = candidates;
+        }
+
+        let candidatesToSearch = filteredCandidates;
+        let bestCandidate: Candidate | null = null;
+        let bestTotalScore = 0;
+        let tiedCandidates: Candidate[] = [];
+        const SCORE_EPSILON = 1e-6;
+
+        while (true) {
+          // Fuzzy title match using FuzzySearch
+          const fuzzyIndex = new FuzzySearch<Candidate>(candidatesToSearch, {
+            keys: ["cls.title"],
+            includeScore: true,
+            threshold: 1,
+          });
+          const fuzzyResults = fuzzyIndex.search(decal.title);
+
+          const fuzzyScoreByCandidate = new Map<Candidate, number>();
+          if (fuzzyResults.length > 0) {
+            const scores = fuzzyResults
+              .map((r) => (typeof r.score === "number" ? r.score : 1))
+              .filter((s) => s > 0);
+            const bestScore = scores.length ? Math.min(...scores) : 0;
+
+            if (bestScore > 0) {
+              for (const r of fuzzyResults) {
+                const s =
+                  typeof r.score === "number" && r.score > 0 ? r.score : null;
+                if (!s) continue;
+                // Normalize so best match has score 1, others scaled relative to it
+                const normalized = bestScore / s;
+                fuzzyScoreByCandidate.set(r.item, normalized);
+              }
+            }
+          }
+
+          bestCandidate = null;
+          bestTotalScore = 0;
+          tiedCandidates = [];
+
+          for (const cand of candidatesToSearch) {
+          const meetingScore = computeMeetingScore(decal, cand.meetings);
+
+          // Separate instructor-name metric (0.5 max) based on fuzzy match
+          let instructorScore = 0;
+          if (decal.facultySponsorName && cand.meetings) {
+            const sponsorName = normalizeString(decal.facultySponsorName);
+            if (sponsorName) {
+              const instructorNames: string[] = [];
+              for (const meeting of cand.meetings) {
+                for (const inst of meeting.instructors ?? []) {
+                  const full = `${inst.givenName ?? ""} ${inst.familyName ?? ""}`
+                    .trim()
+                    .toLowerCase();
+                  if (full) instructorNames.push(full);
+                }
+              }
+
+              if (instructorNames.length) {
+                const nameItems = instructorNames.map((name) => ({ name }));
+                const nameSearch = new FuzzySearch<{ name: string }>(
+                  nameItems,
+                  {
+                    keys: ["name"],
+                    includeScore: true,
+                    threshold: 1,
+                  }
+                );
+                const nameResults = nameSearch.search(sponsorName);
+                if (nameResults.length > 0) {
+                  instructorScore = 0.5;
+                }
+              }
+            }
+          }
+
+          let fuzzyComponent = fuzzyScoreByCandidate.get(cand) ?? 0;
+          if (fuzzyComponent === 0 && cand.cls.title) {
+            const editDist = levenshteinDistance(
+              (decal.title ?? "").toLowerCase(),
+              (cand.cls.title ?? "").toLowerCase()
+            );
+            if (editDist < 10) {
+              fuzzyComponent = 0.5;
+            } else {
+              fuzzyComponent = -1;
+            }
+          }
+          const totalScore = meetingScore + instructorScore + fuzzyComponent;
+
+          const classMeetingSummaries =
+            cand.meetings
+              ?.map((m) => {
+                const time = formatMeetingDayTime(m) ?? "unknown time";
+                const room =
+                  m.location?.toLowerCase().replace(/\s+/g, " ").trim() ??
+                  "unknown room";
+                return `${time} @ ${room}`;
+              })
+              .join("; ") ?? "no meetings";
+
+          const classInstructorNames =
+            cand.meetings
+              ?.flatMap((m) =>
+                (m.instructors ?? []).map((i) =>
+                  `${i.givenName ?? ""} ${i.familyName ?? ""}`.trim()
+                )
+              )
+              .filter((n) => n.length > 0)
+              .join(", ") ?? "no instructors";
+
+          log.info(
+            `Scores for candidate ${cand.cls.subject}:${cand.cls.courseNumber} #${cand.cls.number} - ${cand.cls.title} -> ` +
+              `meetingScore: ${meetingScore.toFixed(3)}, ` +
+              `instructorScore: ${instructorScore.toFixed(3)}, ` +
+              `titleScore: ${fuzzyComponent.toFixed(3)}, ` +
+              `total: ${totalScore.toFixed(3)}, ` +
+              `meetings: [${classMeetingSummaries}], ` +
+              `instructors: [${classInstructorNames}]`
+          );
+
+          if (totalScore > bestTotalScore + SCORE_EPSILON) {
+            bestTotalScore = totalScore;
+            bestCandidate = cand;
+            tiedCandidates = [cand];
+          } else if (Math.abs(totalScore - bestTotalScore) <= SCORE_EPSILON) {
+            tiedCandidates.push(cand);
+          }
+          }
+
+          if (bestCandidate && bestTotalScore > 0) break;
+          if (candidatesToSearch === candidates) break;
+          log.info(
+            `No best candidate found for DeCal "${decal.title}" within department; searching across all departments.`
+          );
+          candidatesToSearch = candidates;
+        }
+
+        if (tiedCandidates.length > 1 && bestTotalScore > 0) {
+          const tieDescriptions = tiedCandidates
+            .map(
+              (c) =>
+                `${c.cls.subject}:${c.cls.courseNumber} #${c.cls.number} - ${c.cls.title}`
+            )
+            .join("; ");
+          log.info(
+            `Tie detected for DeCal "${decal.title}" at score ${bestTotalScore.toFixed(
+              3
+            )} between candidates: ${tieDescriptions}`
+          );
+        }
+
+        if (!bestCandidate || bestTotalScore <= 0) {
+          log.info(`No best candidate found for DeCal "${decal.title}"`);
+          continue;
+        }
+
+        const bestClass = bestCandidate.cls;
+
+        // Update class document with DeCal metadata (decal sub-object)
+        (bestClass as any).decal = {
+          syllabus: decal.syllabusUrl,
+          description: decal.description,
+          instructors:
+            decal.facilitators?.map((f) => ({
+              name: f.name,
+              email: f.email,
+            })) ?? [],
+          applicationUrl: decal.applicationUrl,
+          applicationDueDate: decal.applicationDueDate,
+          syllabusUrl: decal.syllabusUrl,
+        };
+
+        await bestClass.save();
+
+        log.trace(
+          `Matched DeCal "${decal.title}" to class "${bestClass.subject} ${bestClass.courseNumber} ${bestClass.number} - ${bestClass.title}" in ${semesterKey} (score ${bestTotalScore.toFixed(3)}).`
+        );
+
+      }
+    }
+  } catch (err) {
+    log.error(
+      `Failed to fetch decals from approvedCourses API: ${(err as Error).message}`
     );
     const dir = path.dirname(outputPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(outputPath, JSON.stringify([], null, 2), "utf-8");
-    log.info(`Wrote ${outputPath}`);
-    return;
+    log.info(`Wrote empty decals list to ${outputPath} due to error.`);
   }
-
-  log.info(`Found ${listingCourses.length} courses. Fetching detail pages...`);
-  const courses: DecalCourse[] = [];
-
-  for (let i = 0; i < listingCourses.length; i++) {
-    const c = listingCourses[i];
-    log.trace(`Fetching ${i + 1}/${listingCourses.length}: ${c.title}`);
-    try {
-      const detailHtml = await fetchHtml(c.url);
-      const detail = parseDetailPage(detailHtml);
-      courses.push({
-        category: c.category,
-        title: c.title,
-        department: c.department,
-        units: c.units,
-        sections: (detail.sections?.length
-          ? detail.sections
-          : c.sections) as DecalSection[],
-        detailsUrl: c.url,
-        applicationUrl: detail.applicationUrl,
-        applicationDueDate: detail.applicationDueDate,
-        syllabusUrl: detail.syllabusUrl,
-        facilitators: detail.facilitators ?? [],
-      });
-    } catch (err) {
-      log.warn(`Failed to fetch ${c.url}: ${(err as Error).message}`);
-      courses.push({
-        category: c.category,
-        title: c.title,
-        department: c.department,
-        units: c.units,
-        sections: c.sections,
-        detailsUrl: c.url,
-        facilitators: [],
-      });
-    }
-  }
-
-  const dir = path.dirname(outputPath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(outputPath, JSON.stringify(courses, null, 2), "utf-8");
-  log.info(`Wrote ${courses.length} courses to ${outputPath}`);
 }
 
 export default {

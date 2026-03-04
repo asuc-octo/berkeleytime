@@ -25,6 +25,9 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       unitsMax
       unitsMin
       gradingBasis
+      decal {
+        syllabusUrl
+      }
       primarySection {
         online
         sectionAttributes(attributeCode: "GE") {

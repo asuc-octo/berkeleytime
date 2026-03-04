@@ -6,7 +6,7 @@
     "main": "tsx src/main.ts",
     "lint": "eslint src/",
     "type-check": "tsc --noEmit --incremental false",
-    "pull:decals": "tsx src/run-decals.ts"
+    "pull:decals": "tsx src/main.ts --puller=decals"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

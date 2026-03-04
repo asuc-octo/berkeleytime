@@ -9,7 +9,7 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card, Tooltip } from "@repo/theme";
+import { Badge, Card, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
@@ -66,6 +66,7 @@ type ClassCardClass = Partial<BaseClassFields> & {
   year?: number;
   semester?: Semester;
   course?: Partial<CourseSummary> | null;
+  decal?: { syllabusUrl?: string | null } | null;
   primarySection?: {
     enrollment?: {
       latest?: Partial<EnrollmentSnapshot> | null;
@@ -143,6 +144,13 @@ export default function ClassCard({
             <span className={styles.sectionNumber}>
               #{formatClassNumber(_class?.number)}
             </span>
+            {_class?.decal != null && (
+              <Badge
+                label="Decal"
+                color={Color.Blue}
+                variant="filled"
+              />
+            )}
           </Card.Heading>
           <Card.Description wrapDescription={wrapDescription}>
             {_class?.title ?? _class?.course?.title}

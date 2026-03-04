@@ -35,6 +35,17 @@ export const GET_CLASS = gql`
       number
       title
       description
+      decal {
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
+        }
+      }
       unitsMax
       unitsMin
       gradingBasis

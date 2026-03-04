@@ -36,6 +36,10 @@ const fuzzyScore = (query: string, target: string): number => {
     );
   }
 
+  const reverseSubstringIndex = queryNoSpaces.indexOf(targetNoSpaces);
+  if (reverseSubstringIndex !== -1)
+    return SUBSTRING_MATCH_SCORE / 10 - query.length; // query contains target
+
   // fuzzy match - skip spaces in target
   let score = 0;
   let queryIndex = 0;
