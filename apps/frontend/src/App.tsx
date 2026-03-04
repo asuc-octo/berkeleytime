@@ -29,14 +29,6 @@ const CollectionDetail = lazy(
   () => import("@/app/Profile/Bookmarks/CollectionDetail")
 );
 
-const Class = {
-  Enrollment: lazy(() => import("@/components/Class/Enrollment")),
-  Grades: lazy(() => import("@/components/Class/Grades")),
-  Overview: lazy(() => import("@/components/Class/Overview")),
-  Sections: lazy(() => import("@/components/Class/Sections")),
-  Ratings: lazy(() => import("@/components/Class/Ratings")),
-};
-
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
@@ -249,44 +241,17 @@ const router = createBrowserRouter([
             path: "collection/:id/:subject?/:courseNumber?/:number?",
             children: [
               {
-                element: (
-                  <SuspenseBoundary key="overview">
-                    <Class.Overview />
-                  </SuspenseBoundary>
-                ),
-                index: true,
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="sections">
-                    <Class.Sections />
-                  </SuspenseBoundary>
-                ),
-                path: "sections",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="enrollment">
-                    <Class.Enrollment />
-                  </SuspenseBoundary>
-                ),
-                path: "enrollment",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="grades">
-                    <Class.Grades />
-                  </SuspenseBoundary>
-                ),
-                path: "grades",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="ratings">
-                    <Class.Ratings />
-                  </SuspenseBoundary>
-                ),
-                path: "ratings",
+                path: "*",
+                loader: ({ params: { id, subject, courseNumber, number } }) => {
+                  const parts = [
+                    "/collection",
+                    id,
+                    subject,
+                    courseNumber,
+                    number,
+                  ].filter(Boolean);
+                  return redirect(parts.join("/"));
+                },
               },
             ],
           },
@@ -317,46 +282,6 @@ const router = createBrowserRouter([
             ),
             path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
             children: [
-              {
-                element: (
-                  <SuspenseBoundary key="overview">
-                    <Class.Overview />
-                  </SuspenseBoundary>
-                ),
-                index: true,
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="sections">
-                    <Class.Sections />
-                  </SuspenseBoundary>
-                ),
-                path: "sections",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="enrollment">
-                    <Class.Enrollment />
-                  </SuspenseBoundary>
-                ),
-                path: "enrollment",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="grades">
-                    <Class.Grades />
-                  </SuspenseBoundary>
-                ),
-                path: "grades",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="ratings">
-                    <Class.Ratings />
-                  </SuspenseBoundary>
-                ),
-                path: "ratings",
-              },
               {
                 path: "*",
                 loader: ({
@@ -413,6 +338,13 @@ const client = new ApolloClient({
   }),
   cache: new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          class: {
+            merge: true,
+          },
+        },
+      },
       PlanTerm: {
         fields: {
           courses: {

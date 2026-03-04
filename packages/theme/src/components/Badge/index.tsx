@@ -32,10 +32,8 @@ export function Badge({
             ? `var(--${color}-500)`
             : `var(--${color}-badge)`,
         backgroundColor: `var(--${color}-500-20)`,
-        borderColor:
-          variant === "filled"
-            ? `var(--${color}-500)`
-            : `var(--${color}-badge)`,
+        border:
+          variant === "border" ? `1px solid var(--${color}-badge)` : "none",
         ...style,
       }}
       {...props}

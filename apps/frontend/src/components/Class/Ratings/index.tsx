@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
@@ -24,6 +24,8 @@ import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
   DeleteRatingsDocument,
+  GetAggregatedRatingsDocument,
+  GetUserRatingsDocument,
   Semester,
   TemporalPosition,
 } from "@/lib/generated/graphql";
@@ -91,8 +93,6 @@ export function RatingsContainer() {
   const {
     aggregatedRatings: aggregatedRatingsData,
     instructorAggregatedRatings,
-    userRatings,
-    userRatingsData,
     semestersWithRatings,
     courseClasses,
     hasRatings,
@@ -102,6 +102,29 @@ export function RatingsContainer() {
     subject: currentClass.subject,
     courseNumber: currentClass.courseNumber,
   });
+
+  const { data: userRatingsQueryData, refetch: refetchUserRatings } = useQuery(
+    GetUserRatingsDocument,
+    {
+      skip: !user,
+      fetchPolicy: "cache-and-network",
+    }
+  );
+  const userRatingsData = userRatingsQueryData?.userRatings;
+  const userRatings = useMemo(() => {
+    if (!userRatingsData?.classes) return null;
+    return (
+      userRatingsData.classes.find(
+        (classRating) =>
+          classRating.subject === currentClass.subject &&
+          classRating.courseNumber === currentClass.courseNumber
+      ) ?? null
+    );
+  }, [
+    currentClass.courseNumber,
+    currentClass.subject,
+    userRatingsData?.classes,
+  ]);
 
   const userRatedClasses = useMemo(() => {
     const ratedClasses =
@@ -118,6 +141,7 @@ export function RatingsContainer() {
       return true;
     });
   }, [userRatingsData]);
+  const showUserOnlyRatings = Boolean(userRatings) && !hasRatings;
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
@@ -297,6 +321,7 @@ export function RatingsContainer() {
       .map((t) => ({
         value: `${t.semester} ${t.year}`,
         label: `${t.semester} ${t.year}`,
+        classNumber: t.classNumber,
         count:
           semestersWithRatings?.find(
             (s) => s.semester === t.semester && s.year === t.year
@@ -326,11 +351,13 @@ export function RatingsContainer() {
         value: "all",
         label: "All Results",
         meta: formatRatingCount(courseRatingCount),
+        classNumber: undefined,
       },
       ...sortedOptions.map((option) => ({
         value: option.value,
         label: option.label,
         meta: formatRatingCount(option.count),
+        classNumber: option.classNumber,
       })),
     ];
   }, [
@@ -341,6 +368,56 @@ export function RatingsContainer() {
     semestersWithRatings,
     termsData,
   ]);
+
+  const selectedSemesterClass = useMemo(() => {
+    if (
+      activeRatingTab !== RATING_TABS.Semester ||
+      selectedValue === "all" ||
+      !isSemester(selectedValue)
+    ) {
+      return null;
+    }
+
+    const [semesterValue, yearValue] = selectedValue.split(" ");
+    const selectedOption = termSelectOptions.find(
+      (option) => option.value === selectedValue
+    );
+    const year = Number.parseInt(yearValue ?? "", 10);
+    if (!selectedOption?.classNumber || Number.isNaN(year)) {
+      return null;
+    }
+
+    return {
+      semester: semesterValue as Semester,
+      year,
+      classNumber: selectedOption.classNumber,
+    };
+  }, [activeRatingTab, selectedValue, termSelectOptions]);
+
+  const {
+    data: selectedSemesterRatingsData,
+    loading: selectedSemesterLoading,
+  } = useQuery(GetAggregatedRatingsDocument, {
+    variables: {
+      subject: currentClass.subject,
+      courseNumber: currentClass.courseNumber,
+      semester: selectedSemesterClass?.semester ?? Semester.Fall,
+      year: selectedSemesterClass?.year ?? 0,
+      classNumber: selectedSemesterClass?.classNumber,
+    },
+    skip: !selectedSemesterClass,
+    fetchPolicy: "cache-and-network",
+  });
+
+  useEffect(() => {
+    if (activeRatingTab !== RATING_TABS.Semester) return;
+    if (selectedValue === "all") {
+      setTermRatings(null);
+      return;
+    }
+
+    setTermRatings(selectedSemesterRatingsData?.aggregatedRatings ?? null);
+  }, [activeRatingTab, selectedSemesterRatingsData, selectedValue]);
 
   const instructorSelectOptions = useMemo(() => {
     const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
@@ -386,13 +463,33 @@ export function RatingsContainer() {
   //   [ratingsData]
   // );
 
-  if (loading) {
-    return <EmptyState heading="Loading Ratings Data" loading />;
+  if (
+    loading ||
+    (activeRatingTab === RATING_TABS.Semester &&
+      selectedValue !== "all" &&
+      selectedSemesterLoading)
+  ) {
+    return <EmptyState loading />;
   }
 
   return (
     <>
-      {!hasRatings ? (
+      {showUserOnlyRatings ? (
+        <div className={styles.root}>
+          <Container size="3">
+            {userRatings && (
+              <UserRatingSummary
+                userRatings={userRatings}
+                onOpenModal={handleModalStateChange}
+                ratingDelete={() => setIsDeleteModalOpen(true)}
+              />
+            )}
+            <p className={styles.userOnlyMessage}>
+              Only your rating is shown for this course.
+            </p>
+          </Container>
+        </div>
+      ) : !hasRatings ? (
         <EmptyState
           icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
           heading="No Course Ratings"
@@ -462,6 +559,8 @@ export function RatingsContainer() {
                           options: termSelectOptions,
                         },
                       ]}
+                      contentClassName={styles.ratingsSelectContent}
+                      tabsWrapperClassName={styles.ratingsSelectTabs}
                       value={selectedValue}
                       defaultTab={RATING_TABS.Instructor}
                       onTabChange={(tabValue) => {
@@ -476,22 +575,11 @@ export function RatingsContainer() {
 
                         // Handle tab-specific data fetching
                         if (activeRatingTab === RATING_TABS.Semester) {
-                          // Semester tab
                           if (newValue === "all") {
                             setTermRatings(null);
                           } else if (isSemester(newValue)) {
-                            const [semester, year] = newValue.split(" ");
-                            const selectedClass = courseClasses.find(
-                              (c) =>
-                                c.semester === semester &&
-                                c.year === parseInt(year)
-                            );
-                            if (
-                              selectedClass &&
-                              selectedClass.aggregatedRatings
-                            ) {
-                              setTermRatings(selectedClass.aggregatedRatings);
-                            }
+                            // Ratings are fetched by selected semester through query state.
+                            setTermRatings(null);
                           }
                         } else {
                           // Instructor tab
@@ -576,7 +664,10 @@ export function RatingsContainer() {
             },
             refetchQueries: [],
           });
-          refetchAllRatings();
+          await Promise.all([
+            refetchAllRatings(),
+            user ? refetchUserRatings() : Promise.resolve(),
+          ]);
           setIsModalOpen(false);
         }}
         initialUserClass={userRatings}
@@ -616,7 +707,10 @@ export function RatingsContainer() {
                 },
                 refetchQueries: [],
               });
-              refetchAllRatings();
+              await Promise.all([
+                refetchAllRatings(),
+                user ? refetchUserRatings() : Promise.resolve(),
+              ]);
               setIsDeleteModalOpen(false);
             } catch (error) {
               const message = getRatingErrorMessage(error);

@@ -1,15 +1,51 @@
 .root {
   width: 384px;
   flex-shrink: 0;
-  overflow: auto;
   background-color: var(--foreground-color);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 
-  &.loading {
-    overflow: hidden;
+  .topSection {
+    position: relative;
+    z-index: 2;
+    background-color: var(--foreground-color);
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -18px;
+      height: 18px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 140ms ease-in-out;
+      background: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--foreground-color) 100%, transparent) 0%,
+        color-mix(in srgb, var(--foreground-color) 0%, transparent) 100%
+      );
+    }
   }
 
-  &:focus {
-    outline: none;
+  .topSectionScrolled {
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  .catalogScroll {
+    overflow: auto;
+    scrollbar-width: none;
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   @media (width <= 992px) {
@@ -21,37 +57,71 @@
   }
 
   .recentlyViewed {
+    position: relative;
+    background-color: var(--foreground-color);
+
     .recentlyViewedList {
       display: flex;
-      flex-direction: column;
+      flex-wrap: nowrap;
+      overflow: hidden;
       gap: 10px;
       margin-bottom: 12px;
     }
-  }
 
-  .sectionTitle {
-    font-size: 11px;
-    font-weight: var(--font-semibold);
-    letter-spacing: 0.5px;
-    color: var(--label-color);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    margin-top: 0;
-  }
-
-  .catalogTitle {
-    font-size: 11px;
-    font-weight: var(--font-semibold);
-    letter-spacing: 0.5px;
-    color: var(--label-color);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-    margin-top: 0;
-
-    .recentlyViewed + & {
-      margin-top: 12px;
-      padding-top: 0;
+    .recentlyViewedMeasureList {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+      height: 0;
+      overflow: hidden;
     }
+
+    .recentlyViewedMeasureItem {
+      display: inline-flex;
+      flex: 0 0 auto;
+      min-width: 0;
+      max-width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--foreground-color);
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+  }
+
+  .recentlyViewedTagButton {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--foreground-color);
+    padding: 8px 12px;
+    cursor: pointer;
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+    transition: background-color 100ms ease-in-out;
+
+    &:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--blue-500);
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+  }
+
+  .recentlyViewedTagLabel {
+    white-space: nowrap;
+    color: var(--heading-color);
+    font-size: var(--text-14);
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .placeholder {
@@ -62,8 +132,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 0 24px 12px;
-    margin-top: var(--header-height, 72px); // Account for sticky header
+    padding: 12px 24px;
     gap: 16px;
     font-size: var(--text-16);
 
