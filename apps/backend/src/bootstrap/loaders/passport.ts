@@ -210,10 +210,7 @@ export default async (app: Application, redis: RedisClientType) => {
 
     // GET /dev/users - List available users for selection
     app.get(DEV_USERS_ROUTE, async (_req, res) => {
-      const users = await UserModel.find({})
-        .select("_id email name staff")
-        .sort({ lastSeenAt: -1 })
-        .limit(50);
+      const users = await UserModel.find({}).select("_id email name staff");
 
       res.json(users);
     });
