@@ -58,6 +58,7 @@ const TOOLTIP_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
 });
 
 const getSeriesKey = (index: number) => `enroll_${index}`;
+const getCapacityKey = (index: number) => `capacity_${index}`;
 
 const getGradientId = (outputId: string) =>
   `enroll-gradient-${outputId.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
@@ -100,6 +101,8 @@ const getValidDenominator = (values: number[]) => {
 interface EnrollmentPoint {
   enrolledCount: number | null;
   enrolledPercent: number | null;
+  capacityCount: number | null;
+  capacityPercent: number | null;
 }
 
 interface EnrollmentGraphDatum {
@@ -115,11 +118,10 @@ interface PhaseLine {
 
 interface HoveredCapacityGuide {
   timeDelta: number;
-  previousValue: number;
-  currentValue: number;
   percentChange: number;
   isIncrease: boolean;
   seatDelta: number;
+  outputIndex: number;
 }
 
 export default function EnrollmentGraph({
@@ -179,11 +181,17 @@ export default function EnrollmentGraph({
           const timeDelta = moment.duration(cursor.diff(firstTime)).asMinutes();
           allTimeDeltas.add(timeDelta);
 
+          const maxEnroll = entry.maxEnroll ?? 0;
           map.set(timeDelta, {
             enrolledCount: entry.enrolledCount ?? 0,
             enrolledPercent:
               maxEnrollDenominator > 0
                 ? (entry.enrolledCount / maxEnrollDenominator) * 100
+                : null,
+            capacityCount: maxEnroll,
+            capacityPercent:
+              maxEnrollDenominator > 0
+                ? (maxEnroll / maxEnrollDenominator) * 100
                 : null,
           });
         }
@@ -202,6 +210,9 @@ export default function EnrollmentGraph({
           datum[getSeriesKey(outputIndex)] = showRawNumbers
             ? (point?.enrolledCount ?? null)
             : (point?.enrolledPercent ?? null);
+          datum[getCapacityKey(outputIndex)] = showRawNumbers
+            ? (point?.capacityCount ?? null)
+            : (point?.capacityPercent ?? null);
         });
 
         return datum;
@@ -273,11 +284,10 @@ export default function EnrollmentGraph({
 
         guides.set(`${output.id}-${timeDeltaKey}`, {
           timeDelta: event.timeDelta,
-          previousValue,
-          currentValue,
           percentChange: event.percentChange,
           isIncrease: event.direction === "increase",
           seatDelta: event.currentMaxEnroll - event.previousMaxEnroll,
+          outputIndex,
         });
       });
     });
@@ -312,7 +322,12 @@ export default function EnrollmentGraph({
     const maxValue = chartData.reduce((acc, datum) => {
       const localMax = Object.entries(datum).reduce(
         (innerAcc, [key, value]) => {
-          if (key === "timeDelta" || typeof value !== "number") return innerAcc;
+          if (
+            key === "timeDelta" ||
+            key.startsWith("capacity_") ||
+            typeof value !== "number"
+          )
+            return innerAcc;
           return Math.max(innerAcc, value);
         },
         0
@@ -798,9 +813,11 @@ export default function EnrollmentGraph({
                   ))}
                   {outputs.map((output, outputIndex) => {
                     const isDimmed =
-                      hoveredIndex !== null &&
                       outputs.length > 1 &&
-                      hoveredIndex !== outputIndex;
+                      ((hoveredIndex !== null &&
+                        hoveredIndex !== outputIndex) ||
+                        (hoveredCapacityGuide !== null &&
+                          hoveredCapacityGuide.outputIndex !== outputIndex));
                     const capacityChangeEventsByTimeDelta =
                       capacityChangeEventsByOutput[outputIndex] ??
                       EMPTY_CAPACITY_CHANGE_EVENTS;
@@ -833,7 +850,7 @@ export default function EnrollmentGraph({
                               capacityChangeEventsByTimeDelta.get(
                                 markerTimeDeltaKey
                               );
-                            if (!capacityChangeEvent) return null;
+                            if (!capacityChangeEvent || isDimmed) return null;
                             const markerKey = `${output.id}-${markerTimeDeltaKey}`;
                             const markerTipY =
                               dotProps.cy +
@@ -897,6 +914,20 @@ export default function EnrollmentGraph({
                       </Fragment>
                     );
                   })}
+                  {hoveredCapacityGuide && (
+                    <Line
+                      key={`capacity-guide-${hoveredCapacityGuide.outputIndex}`}
+                      dataKey={getCapacityKey(hoveredCapacityGuide.outputIndex)}
+                      stroke="var(--paragraph-color)"
+                      strokeWidth={1.5}
+                      strokeOpacity={0.6}
+                      dot={false}
+                      activeDot={false}
+                      type="stepAfter"
+                      connectNulls
+                      isAnimationActive={false}
+                    />
+                  )}
                 </LineChart>
               </ResponsiveContainer>
             </div>
