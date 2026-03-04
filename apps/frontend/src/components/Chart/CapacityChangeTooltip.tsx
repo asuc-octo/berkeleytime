@@ -19,6 +19,7 @@ export function useCapacityChangeTooltip(
   const anchorRef = useRef<HTMLDivElement>(null);
   const deltaRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
+  const seatsRef = useRef<HTMLSpanElement>(null);
 
   const show = useCallback(
     (event: CapacityChangeEvent, pos: { x: number; y: number }) => {
@@ -42,6 +43,10 @@ export function useCapacityChangeTooltip(
       text.textContent = `${formatters.percent(event.percentChange, 0)} ${
         isIncrease ? "increase" : "decrease"
       } (${prefix}${formatters.number(seatDelta)} ${seatWord})`;
+
+      if (seatsRef.current) {
+        seatsRef.current.textContent = `${formatters.number(event.previousMaxEnroll)} → ${formatters.number(event.currentMaxEnroll)} seats`;
+      }
 
       anchor.style.display = "";
       anchor.style.left = `${pos.x}px`;
@@ -109,6 +114,7 @@ export function useCapacityChangeTooltip(
             />
             <span ref={textRef} />
           </span>
+          <span ref={seatsRef} className={styles.capacityChangeTooltipSeats} />
         </div>
       </div>
     </div>

@@ -42,6 +42,7 @@
 
 .capacityTooltipItems {
   padding: 10px;
+  gap: 2px;
 }
 
 .capacityChangeTooltipDelta {
@@ -68,6 +69,13 @@
   .tooltipIconUp {
     display: none;
   }
+}
+
+.capacityChangeTooltipSeats {
+  font-size: var(--text-12);
+  color: var(--paragraph-color);
+  font-variant-numeric: tabular-nums;
+  padding-left: 20px;
 }
 
 .capacityChangeTooltipIcon {

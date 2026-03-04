@@ -50,12 +50,13 @@ const getCapacityPercentChange = (
   previousMaxEnroll: number,
   currentMaxEnroll: number
 ) => {
-  if (previousMaxEnroll <= 0) {
-    return currentMaxEnroll > 0 ? 100 : 0;
+  if (previousMaxEnroll < 1) {
+    return currentMaxEnroll >= 1 ? 100 : 0;
   }
 
-  return (
-    (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100
+  return Math.min(
+    (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100,
+    999
   );
 };
 
