@@ -85,8 +85,6 @@ const GROUP_LABELS: Record<string, string> = {
   new_student: "New Students",
   all: "All Students",
 };
-const MULTI_SEMESTER_STUDENT_COUNT_TOOLTIP =
-  "Student count is unavailable when comparing multiple semesters.";
 
 const getTimeDeltaKey = (timeDelta: number) => timeDelta.toFixed(4);
 
@@ -352,9 +350,9 @@ export default function EnrollmentGraph({
   );
 
   useEffect(() => {
-    if (allOutputsSameSemester || !showRawNumbers) return;
-    setShowRawNumbers(false);
-  }, [allOutputsSameSemester, showRawNumbers]);
+    if (allOutputsSameSemester || !showPhases) return;
+    setShowPhases(false);
+  }, [allOutputsSameSemester, showPhases]);
 
   const phaseLinesConfig = useMemo(() => {
     if (!hasOutputs || !showPhases || !allOutputsSameSemester) return null;
@@ -435,44 +433,47 @@ export default function EnrollmentGraph({
     Math.round(viewportHeight * chartHeightRatio)
   );
   const emptyGraphHeight = chartHeight + 32;
-  const isStudentCountDisabled = !allOutputsSameSemester;
   const studentCountToggle = (
-    <label
-      className={`${styles.toggleRow} ${
-        isStudentCountDisabled ? styles.toggleRowDisabled : ""
-      }`}
-    >
+    <label className={styles.toggleRow}>
       <span className={styles.toggleLabel}>Show as student count</span>
       <Switch
         checked={showRawNumbers}
         onCheckedChange={setShowRawNumbers}
         aria-label="Show as student count"
-        disabled={isStudentCountDisabled}
+      />
+    </label>
+  );
+  const isPhasesDisabled = !allOutputsSameSemester;
+  const phasesToggle = (
+    <label
+      className={`${styles.toggleRow} ${
+        isPhasesDisabled ? styles.toggleRowDisabled : ""
+      }`}
+    >
+      <span className={styles.toggleLabel}>Show phases</span>
+      <Switch
+        checked={showPhases}
+        onCheckedChange={setShowPhases}
+        aria-label="Show phases"
+        disabled={isPhasesDisabled}
       />
     </label>
   );
   const graphControls = (
     <div className={styles.graphHeader}>
-      <label className={styles.toggleRow}>
-        <span className={styles.toggleLabel}>Show phases</span>
-        <Switch
-          checked={showPhases}
-          onCheckedChange={setShowPhases}
-          aria-label="Show phases"
-        />
-      </label>
-      {isStudentCountDisabled ? (
+      {isPhasesDisabled ? (
         <ThemeTooltip
-          title={MULTI_SEMESTER_STUDENT_COUNT_TOOLTIP}
+          title="Phases are only available when comparing classes of the same semester."
           trigger={
             <span className={styles.toggleTooltipTrigger}>
-              {studentCountToggle}
+              {phasesToggle}
             </span>
           }
         />
       ) : (
-        studentCountToggle
+        phasesToggle
       )}
+      {studentCountToggle}
     </div>
   );
 
