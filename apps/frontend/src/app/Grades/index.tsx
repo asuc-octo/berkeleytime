@@ -451,6 +451,7 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
     selectedType === InputType.Instructor
       ? !!selectedInstructor
       : !!selectedSemester;
+  const shouldShowSearchControls = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && hasSelection;
   const isAddButtonDisabled =
     !selectedCourse ||
@@ -469,51 +470,55 @@ function FilterPanel({ outputs, setOutputs }: FilterPanelProps) {
           selectedCourse={selectedCourse}
         />
       </CourseAnalyticsField>
-      <CourseAnalyticsField label="Search by">
-        <PillSwitcher
-          items={TYPE_ITEMS}
-          value={selectedType}
-          onValueChange={(value) => {
-            setSelectedInstructor("all");
-            setSelectedSemester("all");
-            setSelectedType(value as InputType);
-          }}
-          fullWidth
-        />
-      </CourseAnalyticsField>
-      {selectedType === InputType.Instructor && (
-        <CourseAnalyticsField label="Instructor">
-          <Select
-            options={instructorOptions}
-            loading={courseLoading}
-            disabled={loading || courseLoading}
-            searchable
-            searchPlaceholder="Search instructors..."
-            placeholder="Select instructor"
-            value={selectedInstructor}
-            onChange={(s) => {
-              if (Array.isArray(s) || !s) return;
-              setSelectedInstructor(s);
-            }}
-          />
-        </CourseAnalyticsField>
-      )}
-      {selectedType === InputType.Term && (
-        <CourseAnalyticsField label="Semester">
-          <Select
-            options={semesterOptions}
-            loading={courseLoading}
-            disabled={loading || courseLoading}
-            searchable
-            searchPlaceholder="Search semesters..."
-            placeholder="Select semester"
-            value={selectedSemester}
-            onChange={(s) => {
-              if (Array.isArray(s)) return;
-              setSelectedSemester(s);
-            }}
-          />
-        </CourseAnalyticsField>
+      {shouldShowSearchControls && (
+        <>
+          <CourseAnalyticsField label="Search by">
+            <PillSwitcher
+              items={TYPE_ITEMS}
+              value={selectedType}
+              onValueChange={(value) => {
+                setSelectedInstructor("all");
+                setSelectedSemester("all");
+                setSelectedType(value as InputType);
+              }}
+              fullWidth
+            />
+          </CourseAnalyticsField>
+          {selectedType === InputType.Instructor && (
+            <CourseAnalyticsField label="Instructor">
+              <Select
+                options={instructorOptions}
+                loading={courseLoading}
+                disabled={loading || courseLoading}
+                searchable
+                searchPlaceholder="Search instructors..."
+                placeholder="Select instructor"
+                value={selectedInstructor}
+                onChange={(s) => {
+                  if (Array.isArray(s) || !s) return;
+                  setSelectedInstructor(s);
+                }}
+              />
+            </CourseAnalyticsField>
+          )}
+          {selectedType === InputType.Term && (
+            <CourseAnalyticsField label="Semester">
+              <Select
+                options={semesterOptions}
+                loading={courseLoading}
+                disabled={loading || courseLoading}
+                searchable
+                searchPlaceholder="Search semesters..."
+                placeholder="Select semester"
+                value={selectedSemester}
+                onChange={(s) => {
+                  if (Array.isArray(s)) return;
+                  setSelectedSemester(s);
+                }}
+              />
+            </CourseAnalyticsField>
+          )}
+        </>
       )}
       <div className={styles.addButtonSlot}>
         <AnimatePresence initial={false}>
