@@ -8,6 +8,7 @@ import {
 } from "@repo/common";
 import {
   ClassModel,
+  ClassViewCountModel,
   CourseModel,
   GradeDistributionModel,
   IClassItem,
@@ -107,6 +108,7 @@ export const getCatalog = async (
     "gradeDistribution",
     "distribution",
   ]);
+  const includesViewCount = selectionIncludes(["viewCount"]);
 
   const shouldLoadGradeDistributions =
     includesClassGradeDistribution ||
@@ -218,6 +220,25 @@ export const getCatalog = async (
     );
   }
 
+  // Batch-fetch class view counts for the requested term to avoid per-class resolver queries.
+  let classViewCountsMap = {} as Record<string, number>;
+
+  if (includesViewCount) {
+    const classViewCounts = await ClassViewCountModel.find({
+      year,
+      semester,
+    }).lean();
+
+    classViewCountsMap = classViewCounts.reduce(
+      (accumulator, viewCountRecord) => {
+        const key = `${viewCountRecord.sessionId}:${viewCountRecord.subject}:${viewCountRecord.courseNumber}:${viewCountRecord.number}`;
+        accumulator[key] = viewCountRecord.viewCount ?? 0;
+        return accumulator;
+      },
+      {} as Record<string, number>
+    );
+  }
+
   // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
@@ -301,6 +322,11 @@ export const getCatalog = async (
       sections: formattedSections,
       course: formattedCourse,
     } as unknown as ClassModule.Class;
+
+    if (includesViewCount) {
+      const viewCountKey = `${_class.sessionId}:${_class.subject}:${_class.courseNumber}:${_class.number}`;
+      formattedClass.viewCount = classViewCountsMap[viewCountKey] ?? 0;
+    }
 
     // Add grade distribution to class
     if (includesClassGradeDistribution) {

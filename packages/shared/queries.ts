@@ -24,6 +24,7 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       title
       unitsMax
       unitsMin
+      viewCount
       gradingBasis
       decal {
         syllabusUrl
@@ -66,6 +67,12 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
         academicOrganization
         academicOrganizationName
         ratingsCount
+        aggregatedRatings {
+          metrics {
+            metricName
+            weightedAverage
+          }
+        }
       }
       requirementDesignation {
         description

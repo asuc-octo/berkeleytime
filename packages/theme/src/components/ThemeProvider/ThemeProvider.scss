@@ -308,6 +308,9 @@
   --heading-small: var(--font-semibold) var(--text-16);
   --heading-caps: var(--font-medium) var(--text-14);
   --body-medium: var(--font-normal) var(--text-14);
+  // Safe defaults before theme mixin applies — prevents border flash on initial paint
+  --border-color: transparent;
+
   --light-foreground-color: white;
   --light-background-color: white;
   --light-backdrop-color: var(--neutral-100);
