@@ -10,6 +10,7 @@ export interface CapacityHistoryPoint {
 
 export interface CapacityChangeEvent {
   timeDelta: number;
+  timestamp: number;
   previousMaxEnroll: number;
   currentMaxEnroll: number;
   percentChange: number;
@@ -86,6 +87,7 @@ export const getCapacityChangeEvents = (
         const timeDelta = (startTimeMs - firstTimeMs) / MINUTE_MS;
         eventsByTimeDeltaKey.set(timeDelta.toFixed(4), {
           timeDelta,
+          timestamp: startTimeMs,
           previousMaxEnroll,
           currentMaxEnroll,
           percentChange,

@@ -7,6 +7,16 @@ import type { CapacityChangeEvent } from "@/app/Enrollment/EnrollmentGraph.utils
 import { formatters } from "./utils";
 import styles from "./CapacityChange.module.scss";
 
+const CAPACITY_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
 interface CapacityChangeTooltipResult {
   show: (event: CapacityChangeEvent, pos: { x: number; y: number }) => void;
   hide: () => void;
@@ -20,6 +30,7 @@ export function useCapacityChangeTooltip(
   const deltaRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const seatsRef = useRef<HTMLSpanElement>(null);
+  const dateRef = useRef<HTMLSpanElement>(null);
 
   const show = useCallback(
     (event: CapacityChangeEvent, pos: { x: number; y: number }) => {
@@ -48,6 +59,10 @@ export function useCapacityChangeTooltip(
         seatsRef.current.textContent = `${formatters.number(event.previousMaxEnroll)} → ${formatters.number(event.currentMaxEnroll)} seats`;
       }
 
+      if (dateRef.current) {
+        dateRef.current.textContent = CAPACITY_DATE_FORMATTER.format(new Date(event.timestamp));
+      }
+
       // Use a DOM attribute so Recharts hover affordances can be hidden via CSS
       // without triggering React state updates/re-renders.
       chart.setAttribute("data-capacity-change-active", "true");
@@ -57,23 +72,20 @@ export function useCapacityChangeTooltip(
       anchor.style.top = `${pos.y}px`;
 
       const gap = 20;
-      anchor.style.transform = `translate(-50%, ${gap}px)`;
+      anchor.style.transform = `translate(-5%, ${gap}px)`;
 
       const tooltipRect = anchor.getBoundingClientRect();
       const chartRect = chart.getBoundingClientRect();
 
       if (tooltipRect.bottom > chartRect.bottom) {
-        anchor.style.transform = `translate(-50%, calc(-100% - ${gap}px))`;
+        anchor.style.transform = `translate(-5%, calc(-100% - ${gap}px))`;
       }
 
       const adjustedRect = anchor.getBoundingClientRect();
       const overflowRight = adjustedRect.right - chartRect.right;
-      const overflowLeft = chartRect.left - adjustedRect.left;
 
       if (overflowRight > 0) {
         anchor.style.left = `${pos.x - overflowRight - 4}px`;
-      } else if (overflowLeft > 0) {
-        anchor.style.left = `${pos.x + overflowLeft + 4}px`;
       }
     },
     // chartRef is a stable ref object
@@ -122,6 +134,7 @@ export function useCapacityChangeTooltip(
             <span ref={textRef} />
           </span>
           <span ref={seatsRef} className={styles.capacityChangeTooltipSeats} />
+          <span ref={dateRef} className={styles.capacityChangeTooltipSeats} />
         </div>
       </div>
     </div>

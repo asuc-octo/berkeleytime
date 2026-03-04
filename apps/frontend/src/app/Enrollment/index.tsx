@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -15,6 +15,7 @@ import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/Course
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import type { ICourseWithInstructorClass } from "@/lib/api/courses";
 import type { IEnrollment } from "@/lib/api/enrollment";
 import { sortByTermDescending } from "@/lib/classes";
@@ -406,12 +407,74 @@ function EnrollmentSidebar({
   );
 }
 
+interface EnrollmentVisualizationProps {
+  outputs: EnrollmentOutput[];
+  remove: (index: number) => void;
+}
+
+function EnrollmentVisualization({
+  outputs,
+  remove,
+}: EnrollmentVisualizationProps) {
+  const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
+    useRafHoverIndex();
+  const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
+
+  const handleRemove = useCallback(
+    (index: number) => {
+      remove(index);
+      shiftAfterRemoval(index);
+    },
+    [remove, shiftAfterRemoval]
+  );
+
+  return (
+    <>
+      <div className={styles.outputList}>
+        <CourseAnalyticsCardGrid>
+          {outputs.length === 0 ? (
+            <div className={styles.emptyCard} />
+          ) : (
+            <LayoutGroup>
+              <AnimatePresence mode="popLayout">
+                {outputs.map((output, index) => (
+                  <motion.div
+                    key={output.id}
+                    className={styles.outputCardItem}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  >
+                    <CourseSelectionCard
+                      color={output.color}
+                      subject={output.course.subject}
+                      number={output.course.number}
+                      metadata={output.metadata}
+                      dimmed={shouldDimOthers && hoveredIndex !== index}
+                      fluid
+                      onMouseEnter={() => hoverCard(index)}
+                      onMouseLeave={clearHover}
+                      onClickDelete={() => handleRemove(index)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </LayoutGroup>
+          )}
+        </CourseAnalyticsCardGrid>
+      </div>
+      <EnrollmentGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+    </>
+  );
+}
+
 export default function Enrollment() {
   const client = useApolloClient();
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
@@ -460,17 +523,9 @@ export default function Enrollment() {
     }
   };
 
-  const remove = (index: number) => {
+  const remove = useCallback((index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
-    setHoveredIndex((prev) => {
-      if (prev === null) return null;
-      if (prev === index) return null;
-      if (prev > index) return prev - 1;
-      return prev;
-    });
-  };
-
-  const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
+  }, []);
 
   return (
     <CourseAnalyticsLayout
@@ -485,42 +540,7 @@ export default function Enrollment() {
         />
       }
     >
-      <div className={styles.outputList}>
-        <CourseAnalyticsCardGrid>
-          {outputs.length === 0 ? (
-            <div className={styles.emptyCard} />
-          ) : (
-            <LayoutGroup>
-              <AnimatePresence mode="popLayout">
-                {outputs.map((output, index) => (
-                  <motion.div
-                    key={output.id}
-                    className={styles.outputCardItem}
-                    layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  >
-                    <CourseSelectionCard
-                      color={output.color}
-                      subject={output.course.subject}
-                      number={output.course.number}
-                      metadata={output.metadata}
-                      dimmed={shouldDimOthers && hoveredIndex !== index}
-                      fluid
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onMouseLeave={() => setHoveredIndex(null)}
-                      onClickDelete={() => remove(index)}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </LayoutGroup>
-          )}
-        </CourseAnalyticsCardGrid>
-      </div>
-      <EnrollmentGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+      <EnrollmentVisualization outputs={outputs} remove={remove} />
     </CourseAnalyticsLayout>
   );
 }

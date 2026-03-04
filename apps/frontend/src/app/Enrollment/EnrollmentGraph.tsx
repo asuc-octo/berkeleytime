@@ -331,6 +331,7 @@ export default function EnrollmentGraph({
   }, [chartData, showRawNumbers]);
 
   const hasOutputs = outputs.length > 0;
+  const shouldAnimateSeries = hoveredIndex === null && outputs.length <= 2;
   const allOutputsSameSemester = useMemo(
     () => areOutputsFromSameSemester(outputs),
     [outputs]
@@ -782,7 +783,7 @@ export default function EnrollmentGraph({
                           }}
                           type="monotone"
                           connectNulls
-                          isAnimationActive
+                          isAnimationActive={shouldAnimateSeries}
                           animationBegin={0}
                           animationDuration={SERIES_ANIMATION_DURATION_MS}
                           animationEasing="ease-out"
@@ -799,6 +800,7 @@ export default function EnrollmentGraph({
       isRotated,
       outputs,
       hoveredIndex,
+      shouldAnimateSeries,
       showRawNumbers,
       dataMax,
       phaseLines,

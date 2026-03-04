@@ -274,6 +274,7 @@ export default function GradeBarGraph({
     [commitSliderRange, updateThumbLabels]
   );
   const hasOutputs = outputs.length > 0;
+  const shouldAnimateBars = hoveredIndex === null && outputs.length <= 2;
 
   useEffect(() => {
     if (hasOutputs) return;
@@ -446,7 +447,12 @@ export default function GradeBarGraph({
                   }}
                 />
                 {dataKeys.map((key, keyIndex) => (
-                  <Bar key={key} dataKey={key} radius={4}>
+                  <Bar
+                    key={key}
+                    dataKey={key}
+                    radius={4}
+                    isAnimationActive={shouldAnimateBars}
+                  >
                     {chartData.map((_, i) => (
                       <Cell key={i} fill={cellFills[keyIndex][i]} />
                     ))}

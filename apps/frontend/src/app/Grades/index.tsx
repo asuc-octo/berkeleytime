@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
@@ -23,6 +23,7 @@ import {
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import { type IGradeDistribution } from "@/lib/api";
 import { sortByTermDescending } from "@/lib/classes";
 import {
@@ -560,14 +561,16 @@ interface OutputListProps {
   outputs: Output[];
   remove: (index: number) => void;
   hoveredIndex: number | null;
-  setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  onHoverCard: (index: number) => void;
+  onClearHover: () => void;
 }
 
 function OutputList({
   outputs,
   remove,
   hoveredIndex,
-  setHoveredIndex,
+  onHoverCard,
+  onClearHover,
 }: OutputListProps) {
   const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
 
@@ -597,8 +600,8 @@ function OutputList({
                     gradeDistribution={output.data}
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
+                    onMouseEnter={() => onHoverCard(index)}
+                    onMouseLeave={onClearHover}
                     onClickDelete={() => remove(index)}
                   />
                 </motion.div>
@@ -611,6 +614,37 @@ function OutputList({
   );
 }
 
+interface GradesVisualizationProps {
+  outputs: Output[];
+  remove: (index: number) => void;
+}
+
+function GradesVisualization({ outputs, remove }: GradesVisualizationProps) {
+  const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
+    useRafHoverIndex();
+
+  const handleRemove = useCallback(
+    (index: number) => {
+      remove(index);
+      shiftAfterRemoval(index);
+    },
+    [remove, shiftAfterRemoval]
+  );
+
+  return (
+    <>
+      <OutputList
+        outputs={outputs}
+        remove={handleRemove}
+        hoveredIndex={hoveredIndex}
+        onHoverCard={hoverCard}
+        onClearHover={clearHover}
+      />
+      <GradeBarGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+    </>
+  );
+}
+
 export default function Grades() {
   const client = useApolloClient();
   const location = useLocation();
@@ -620,7 +654,6 @@ export default function Grades() {
   const isDesktop = useCourseAnalyticsIsDesktop();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [outputs, setOutputs] = useState<Output[]>([]);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
   const skipNextUrlHydrationRef = useRef(false);
   const initialRestoreCompleteRef = useRef(false);
@@ -720,9 +753,9 @@ export default function Grades() {
     initialDrawerStateAppliedRef.current = true;
   }, [isDesktop, isHydratingFromUrl, outputs.length]);
 
-  const remove = (index: number) => {
+  const remove = useCallback((index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
-  };
+  }, []);
 
   return (
     <CourseAnalyticsLayout
@@ -731,13 +764,7 @@ export default function Grades() {
       onDrawerOpenChange={setDrawerOpen}
       sidebar={<FilterPanel outputs={outputs} setOutputs={setOutputs} />}
     >
-      <OutputList
-        outputs={outputs}
-        remove={remove}
-        hoveredIndex={hoveredIndex}
-        setHoveredIndex={setHoveredIndex}
-      />
-      <GradeBarGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+      <GradesVisualization outputs={outputs} remove={remove} />
     </CourseAnalyticsLayout>
   );
 }
