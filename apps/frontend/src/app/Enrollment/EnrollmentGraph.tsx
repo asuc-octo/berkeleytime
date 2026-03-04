@@ -71,6 +71,16 @@ const TOOLTIP_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
   timeZone: "America/Los_Angeles",
 });
 
+const TOOLTIP_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
 const getSeriesKey = (index: number) => `enroll_${index}`;
 const getCapacityKey = (index: number) => `capacity_${index}`;
 
@@ -127,7 +137,7 @@ export default function EnrollmentGraph({
     element: capacityTooltipElement,
   } = useCapacityChangeTooltip(chartRef);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
-  const [showPhases, setShowPhases] = useState(false);
+  const [showPhases, setShowPhases] = useState(true);
 
   const [isRotated, setIsRotated] = useState(false);
   const { height: viewportHeight } = useWindowDimensions();
@@ -326,10 +336,12 @@ export default function EnrollmentGraph({
     [outputs]
   );
 
-  useEffect(() => {
-    if (allOutputsSameSemester || !showPhases) return;
-    setShowPhases(false);
-  }, [allOutputsSameSemester, showPhases]);
+  const firstTime = useMemo(() => {
+    if (outputs.length === 0) return null;
+    const history = outputs[0].data.history;
+    if (history.length === 0) return null;
+    return moment(history[0].startTime).startOf("minute");
+  }, [outputs]);
 
   const phaseLinesConfig = useMemo(() => {
     if (!hasOutputs || !showPhases || !allOutputsSameSemester) return null;
@@ -578,13 +590,27 @@ export default function EnrollmentGraph({
 
                       if (labelMinutes === null) return null;
 
-                      const duration = moment.duration(labelMinutes, "minutes");
-                      const day = Math.floor(duration.asDays()) + 1;
-                      const timeLabel = TOOLTIP_TIME_FORMATTER.format(
-                        moment.utc(0).add(duration).toDate()
-                      );
-
                       if (!payload?.length) return null;
+
+                      let tooltipLabel: string;
+                      if (allOutputsSameSemester && firstTime) {
+                        tooltipLabel = TOOLTIP_DATE_FORMATTER.format(
+                          firstTime
+                            .clone()
+                            .add(labelMinutes, "minutes")
+                            .toDate()
+                        );
+                      } else {
+                        const duration = moment.duration(
+                          labelMinutes,
+                          "minutes"
+                        );
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const timeLabel = TOOLTIP_TIME_FORMATTER.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        tooltipLabel = `Day ${day} ${timeLabel}`;
+                      }
 
                       const payloadValuesBySeriesKey = new Map<
                         string,
@@ -641,7 +667,7 @@ export default function EnrollmentGraph({
                       return (
                         <div className={styles.tooltipCard}>
                           <div className={styles.tooltipLabel}>
-                            Day {day} {timeLabel}
+                            {tooltipLabel}
                           </div>
                           <div className={styles.tooltipItems}>
                             {rows.map((row) => (
@@ -775,6 +801,8 @@ export default function EnrollmentGraph({
       showRawNumbers,
       dataMax,
       phaseLines,
+      allOutputsSameSemester,
+      firstTime,
       capacityChangeEventsByOutput,
       seriesPointsByOutput,
       showCapacityTooltip,

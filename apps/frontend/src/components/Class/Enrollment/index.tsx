@@ -6,6 +6,7 @@ import {
   CartesianGrid,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -23,6 +24,7 @@ import {
 } from "@/components/Chart";
 import ClassChartBox from "@/components/Class/ClassChartBox";
 import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
+import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useClass from "@/hooks/useClass";
 
 import type {
@@ -45,6 +47,31 @@ const timeFormatter = new Intl.DateTimeFormat("en-US", {
   hour12: true,
   timeZone: "America/Los_Angeles",
 });
+
+const TOOLTIP_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+  timeZone: "America/Los_Angeles",
+});
+
+const GROUP_LABELS: Record<string, string> = {
+  continuing: "Continuing Students",
+  new_transfer: "New Transfer Students",
+  new_freshman: "New Freshman Students",
+  new_graduate: "New Graduate Students",
+  new_student: "New Students",
+  all: "All Students",
+};
+
+interface PhaseLine {
+  timeDelta: number;
+  label: string;
+  key: string;
+}
 
 const chartConfig = createChartConfig(["enrolled"], {
   labels: { enrolled: "Enrolled" },
@@ -159,6 +186,56 @@ export default function Enrollment() {
         };
       });
   }, [history]);
+
+  const firstTime = useMemo(() => {
+    if (history.length === 0) return null;
+    return moment(history[0].startTime).startOf("minute");
+  }, [history]);
+
+  const { data: enrollmentTimeframes } = useReadEnrollmentTimeframes(
+    _class.year,
+    _class.semester
+  );
+
+  const phaseLines = useMemo((): PhaseLine[] => {
+    if (!enrollmentTimeframes.length || !data.length || !firstTime) return [];
+
+    const lastTimeDelta = data[data.length - 1]?.timeDelta ?? 0;
+    if (lastTimeDelta <= 0) return [];
+
+    return enrollmentTimeframes
+      .filter(
+        (timeframe) =>
+          timeframe.group === "continuing" ||
+          timeframe.group === "all" ||
+          (timeframe.group === "new_freshman" &&
+            timeframe.phase === 1 &&
+            !timeframe.isAdjustment)
+      )
+      .map((timeframe) => {
+        const phaseStart = moment(timeframe.startDate);
+        const timeDelta = moment
+          .duration(phaseStart.diff(firstTime))
+          .asMinutes();
+
+        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
+
+        const phaseLabel = timeframe.isAdjustment
+          ? "Adjustment"
+          : timeframe.phase
+            ? `Phase ${timeframe.phase}`
+            : "Phase";
+        const groupLabel = GROUP_LABELS[timeframe.group] ?? timeframe.group;
+
+        return {
+          timeDelta,
+          label: `${phaseLabel} - ${groupLabel}`,
+          key: `${timeframe.phase ?? "adjustment"}-${timeframe.group}-${timeframe.startDate}`,
+        };
+      })
+      .filter((line): line is PhaseLine => line !== null)
+      .toSorted((a, b) => a.timeDelta - b.timeDelta);
+  }, [data, enrollmentTimeframes, firstTime]);
 
   const capacityChangeEvents = useMemo(() => {
     const events = new Map<string, CapacityChangeEvent>();
@@ -305,11 +382,24 @@ export default function Enrollment() {
 
                   if (labelMinutes === null) return null;
 
-                  const duration = moment.duration(labelMinutes, "minutes");
-                  const day = Math.floor(duration.asDays()) + 1;
-                  const timeLabel = timeFormatter.format(
-                    moment.utc(0).add(duration).toDate()
-                  );
+                  const tooltipLabel = firstTime
+                    ? TOOLTIP_DATE_FORMATTER.format(
+                        firstTime
+                          .clone()
+                          .add(labelMinutes, "minutes")
+                          .toDate()
+                      )
+                    : (() => {
+                        const duration = moment.duration(
+                          labelMinutes,
+                          "minutes"
+                        );
+                        const day = Math.floor(duration.asDays()) + 1;
+                        const timeLabel = timeFormatter.format(
+                          moment.utc(0).add(duration).toDate()
+                        );
+                        return `Day ${day} ${timeLabel}`;
+                      })();
 
                   const value = payload[0]?.value;
                   if (typeof value !== "number") return null;
@@ -317,7 +407,7 @@ export default function Enrollment() {
                   return (
                     <div className={styles.tooltipCard}>
                       <div className={styles.tooltipLabel}>
-                        Day {day} {timeLabel}
+                        {tooltipLabel}
                       </div>
                       <div className={styles.tooltipItems}>
                         <div className={styles.tooltipItem}>
@@ -339,6 +429,25 @@ export default function Enrollment() {
                   );
                 }}
               />
+              {phaseLines.map((phaseLine) => (
+                <ReferenceLine
+                  key={phaseLine.key}
+                  x={phaseLine.timeDelta}
+                  stroke="var(--paragraph-color)"
+                  strokeDasharray="6 4"
+                  strokeOpacity={0.8}
+                  strokeWidth={1}
+                  label={{
+                    value: phaseLine.label,
+                    position: "insideBottomLeft",
+                    fill: "var(--paragraph-color)",
+                    fontSize: 10,
+                    angle: -90,
+                    dx: 12,
+                    dy: -8,
+                  }}
+                />
+              ))}
               {hasEnrolledActivity && (
                 <Line
                   type="monotone"
