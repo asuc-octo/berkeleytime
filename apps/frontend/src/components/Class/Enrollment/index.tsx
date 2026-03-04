@@ -369,6 +369,7 @@ export default function Enrollment() {
                 domain={[0, dataMax || 100]}
               />
               <Tooltip
+                animationDuration={100}
                 cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length) return null;

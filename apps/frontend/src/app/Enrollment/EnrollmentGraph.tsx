@@ -577,6 +577,7 @@ export default function EnrollmentGraph({
                     </>
                   )}
                   <Tooltip
+                    animationDuration={100}
                     cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
                     content={({ active, payload, label }) => {
                       if (!active) return null;

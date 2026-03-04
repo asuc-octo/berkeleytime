@@ -6,7 +6,9 @@
 
 :global([data-capacity-change-active="true"] .recharts-tooltip-wrapper),
 :global([data-capacity-change-active="true"] .recharts-active-dot) {
-  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .tooltipCard {
