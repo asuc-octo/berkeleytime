@@ -115,6 +115,8 @@ export default function NavigationBar({
   const isLandingPage = location.pathname === "/";
   const savedGradesUrl = getPageUrl(RecentType.GradesPage);
   const gradesPath = savedGradesUrl ? `/grades${savedGradesUrl}` : "/grades";
+  const savedEnrollmentUrl = getPageUrl(RecentType.EnrollmentPage);
+  const enrollmentPath = savedEnrollmentUrl ? `/enrollment${savedEnrollmentUrl}` : "/enrollment";
 
   useEffect(() => {
     if (menuOpen) {
@@ -153,7 +155,7 @@ export default function NavigationBar({
                 { to: "/schedules", label: "Scheduler" },
                 { to: "/gradtrak", label: "Gradtrak" },
                 { to: gradesPath, label: "Grades" },
-                { to: "/enrollment", label: "Enrollment" },
+                { to: enrollmentPath, label: "Enrollment" },
               ].map(({ to, label }) => (
                 <motion.div
                   key={to}
@@ -213,7 +215,7 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
-          <NavLink to="/enrollment">
+          <NavLink to={enrollmentPath}>
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>
                 Enrollment

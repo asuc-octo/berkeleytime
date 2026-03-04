@@ -16,6 +16,8 @@ interface SideBarProps {
 export default function SideBar({ children }: SideBarProps) {
   const savedGradesUrl = getPageUrl(RecentType.GradesPage);
   const gradesPath = savedGradesUrl ? `/grades${savedGradesUrl}` : "/grades";
+  const savedEnrollmentUrl = getPageUrl(RecentType.EnrollmentPage);
+  const enrollmentPath = savedEnrollmentUrl ? `/enrollment${savedEnrollmentUrl}` : "/enrollment";
 
   return (
     <Dialog.Root>
@@ -64,7 +66,7 @@ export default function SideBar({ children }: SideBarProps) {
               <Link className={styles.item} to={gradesPath}>
                 Grade distributions
               </Link>
-              <Link className={styles.item} to="/enrollment">
+              <Link className={styles.item} to={enrollmentPath}>
                 Enrollment over time
               </Link>
               {/* <Link className={styles.item} to="/catalog">
