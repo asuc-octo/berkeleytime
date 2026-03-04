@@ -452,6 +452,8 @@ function EnrollmentSidebar({
     hasValidEnrollment === true;
   const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
 
+  const handleAddRef = useRef<() => void>(() => {});
+
   const handleAdd = async () => {
     if (
       !selectedCourse ||
@@ -480,6 +482,22 @@ function EnrollmentSidebar({
     setSelectedSemesterValue(null);
     setSelectedOfferingId(null);
   };
+
+  handleAddRef.current = () => void handleAdd();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Enter") return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (!canAddWithoutLoading || isAdding) return;
+
+      e.preventDefault();
+      handleAddRef.current();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [canAddWithoutLoading, isAdding]);
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);

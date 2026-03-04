@@ -402,7 +402,11 @@ export default function GradeBarGraph({
                   </>
                 )}
                 <Tooltip
-                  cursor={false}
+                  cursor={{
+                    fill: "var(--border-color)",
+                    opacity: 0.5,
+                    radius: 4,
+                  }}
                   content={({ active, payload, label }) => {
                     if (!active || !payload?.length) return null;
                     return (
