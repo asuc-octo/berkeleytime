@@ -14,7 +14,6 @@ export enum SortBy {
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
@@ -55,6 +54,16 @@ export enum Day {
   Saturday = "6",
 }
 
+export const EMPTY_DAYS: boolean[] = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
+
 export type Breadth = string;
 export type UniversityRequirement = string;
 export enum GradingBasis {
@@ -74,7 +83,6 @@ export enum GradingFilter {
 }
 
 export enum EnrollmentFilter {
-  All = "All",
   Open = "Open Seats",
   OpenApartFromReserved = "Non-reserved Open Seats",
   WaitlistOpen = "Open Seats or Open Waitlist",
@@ -163,10 +171,10 @@ export const getFilteredClasses = (
   currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
-  currentEnrollmentFilter: EnrollmentFilter,
+  currentEnrollmentFilter: EnrollmentFilter | null,
   currentOnline: boolean,
   currentBreadths: Breadth[] = [],
-  currentUniversityRequirement: UniversityRequirement | null = null,
+  currentUniversityRequirements: UniversityRequirement[] = [],
   currentGradingFilters: GradingFilter[] = [],
   currentAcademicOrganization: string | null = null,
   currentTimeRange: TimeRange = [null, null]
@@ -174,7 +182,7 @@ export const getFilteredClasses = (
   return classes.reduce(
     (acc, _class) => {
       // Filter by enrollment status
-      if (currentEnrollmentFilter !== EnrollmentFilter.All) {
+      if (currentEnrollmentFilter) {
         const enrollment = _class.primarySection?.enrollment?.latest;
         const isOpen = enrollment?.status === "O";
         const hasWaitlistSpace =
@@ -328,16 +336,16 @@ export const getFilteredClasses = (
         }
       }
 
-      // Filter by university requirement
-      if (currentUniversityRequirement) {
+      // Filter by university requirements
+      if (currentUniversityRequirements.length > 0) {
         const classRequirements = getUniversityRequirements(
           _class.requirementDesignation
         );
-        const hasRequirement = classRequirements.includes(
-          currentUniversityRequirement
+        const matchesAnyRequirement = currentUniversityRequirements.some(
+          (req) => classRequirements.includes(req)
         );
 
-        if (!hasRequirement) {
+        if (!matchesAnyRequirement) {
           acc.excludedClasses.push(_class);
 
           return acc;

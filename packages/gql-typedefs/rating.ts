@@ -60,7 +60,7 @@ export const ratingTypeDef = gql`
   """
   Ratings by user
   """
-  type UserRatings @cacheControl(maxAge: 1) {
+  type UserRatings @cacheControl(maxAge: 0, scope: PRIVATE) {
     createdBy: String!
     count: Int!
     classes: [UserClass!]!
@@ -167,7 +167,7 @@ export const ratingTypeDef = gql`
       classes: [ClassWithoutCourseInput!]!
     ): AggregatedRatings!
 
-    userRatings: UserRatings! @auth
+    userRatings: UserRatings! @auth @cacheControl(maxAge: 0, scope: PRIVATE)
 
     userClassRatings(
       year: Int!
@@ -175,7 +175,7 @@ export const ratingTypeDef = gql`
       subject: String!
       courseNumber: String!
       classNumber: String!
-    ): UserClass! @auth
+    ): UserClass! @auth @cacheControl(maxAge: 0, scope: PRIVATE)
 
     semestersWithRatings(
       subject: String!

@@ -22,8 +22,27 @@
 }
 
 .trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: var(--orange-500);
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  line-height: 1;
   cursor: pointer;
   user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 .header {
@@ -55,36 +74,10 @@
   color: var(--secondary-color);
 }
 
-.pillContainer {
+.badgeContainer {
   min-width: 80px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   flex-shrink: 0;
-}
-
-.pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 8px;
-  height: 32px;
-  border-radius: 15px;
-  font-size: var(--text-14);
-  font-weight: var(--font-medium);
-  white-space: nowrap;
-}
-
-.pillAvailable {
-  background-color: var(--button-hover-color);
-  color: var(--paragraph-color);
-}
-
-.pillFull {
-  background-color: var(--red-500-20);
-  color: var(--red-500);
-}
-
-.pillText {
-  line-height: 1;
 }

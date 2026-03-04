@@ -19,3 +19,4 @@ export * from "./banner";
 export * from "./banner-view-count";
 export * from "./route-redirect";
 export * from "./click-event";
+export * from "./targeted-message";

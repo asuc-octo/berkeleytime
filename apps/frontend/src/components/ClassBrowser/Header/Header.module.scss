@@ -19,8 +19,8 @@
     padding: 0 16px;
 
     &:has(.input:focus) {
-      outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
-      border-color: var(--blue-500);
+      border: solid 2px var(--blue-500);
+      padding: 0 15px;
     }
 
     .icon {

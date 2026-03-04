@@ -19,6 +19,7 @@ export interface BrowserContextType {
   responsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
+  allClasses: ICatalogClass[];
   classes: ICatalogClass[];
   includedClasses: ICatalogClass[];
   excludedClasses: ICatalogClass[];
@@ -32,12 +33,12 @@ export interface BrowserContextType {
   days: Day[];
   timeRange: TimeRange;
   breadths: Breadth[];
-  universityRequirement: UniversityRequirement | null;
+  universityRequirements: UniversityRequirement[];
   gradingFilters: GradingFilter[];
   academicOrganization: string | null;
   online: boolean;
   sortBy: SortBy;
-  enrollmentFilter: EnrollmentFilter;
+  enrollmentFilter: EnrollmentFilter | null;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
   updateUnits: Dispatch<UnitRange>;
@@ -45,12 +46,12 @@ export interface BrowserContextType {
   updateDays: Dispatch<Day[]>;
   updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<Breadth[]>;
-  updateUniversityRequirement: Dispatch<UniversityRequirement | null>;
+  updateUniversityRequirements: Dispatch<UniversityRequirement[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
   updateAcademicOrganization: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
-  updateEnrollmentFilter: Dispatch<EnrollmentFilter>;
+  updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
   loading: boolean;

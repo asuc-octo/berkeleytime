@@ -6,38 +6,39 @@ import {
   EditPlanDocument,
   EditPlanMutation,
   EditPlanMutationVariables,
-  GetPlanDocument,
   PlanInput,
 } from "@/lib/generated/graphql";
 
 export const useEditPlan = () => {
-  const mutation = useMutation(EditPlanDocument, {
-    refetchQueries: [{ query: GetPlanDocument }],
-    update(cache, { data }) {
-      const plan = data?.editPlan;
+  const mutation = useMutation<EditPlanMutation, EditPlanMutationVariables>(
+    EditPlanDocument,
+    {
+      update(cache, { data }) {
+        const plan = data?.editPlan;
 
-      if (!plan?._id) return;
+        if (!plan) return;
 
-      cache.modify({
-        id: `Plan:${plan._id}`,
-        fields: {
-          majors: () => plan.majors,
-          minors: () => plan.minors,
-          colleges: () => plan.colleges,
-          labels: () => plan.labels,
-          ...(plan.selectedPlanRequirements && {
-            selectedPlanRequirements: () => plan.selectedPlanRequirements,
-          }),
-        },
-      });
-    },
-  });
+        cache.modify({
+          id: `Plan:${plan._id}`,
+          fields: {
+            majors: () => plan.majors,
+            minors: () => plan.minors,
+            colleges: () => plan.colleges,
+            labels: () => plan.labels,
+            ...(plan.selectedPlanRequirements && {
+              selectedPlanRequirements: () => plan.selectedPlanRequirements,
+            }),
+          },
+        });
+      },
+    }
+  );
 
   const updatedPlan = useCallback(
     async (
       plan: PlanInput,
       options?: Omit<
-        useMutation.Options<EditPlanMutation, EditPlanMutationVariables>,
+        MutationHookOptions<EditPlanMutation, EditPlanMutationVariables>,
         "variables"
       >
     ) => {

@@ -67,7 +67,7 @@ export default function Section({
                 onBlockToggle();
               }}
               className={styles.blockButton}
-              title={blocked ? "Exclude section" : "Include section"}
+              title={blocked ? "Include section" : "Exclude section"}
             >
               {blocked ? (
                 <EyeClosed
@@ -80,7 +80,7 @@ export default function Section({
               )}
             </button>
           }
-          title={blocked ? "Exclude section" : "Include section"}
+          title={blocked ? "Include section" : "Exclude section"}
         />
       )}
     </div>
