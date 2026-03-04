@@ -1,14 +1,11 @@
 import {
   Fragment,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 
-import { StatDown, StatUp } from "iconoir-react";
-import { ArrowUpCircle } from "iconoir-react/solid";
 import moment from "moment";
 import {
   CartesianGrid,
@@ -23,7 +20,11 @@ import {
 
 import { ColoredSquare, Switch, Tooltip as ThemeTooltip } from "@repo/theme";
 
-import { formatters } from "@/components/Chart";
+import {
+  CapacityChangeMarker,
+  formatters,
+  useCapacityChangeTooltip,
+} from "@/components/Chart";
 import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
@@ -85,9 +86,6 @@ const PERCENT_AXIS_HEADROOM_MULTIPLIER = 1.05;
 const ROTATE_ENTER_WIDTH = 600;
 const ROTATE_EXIT_WIDTH = 640;
 const SERIES_ANIMATION_DURATION_MS = 320;
-const CAPACITY_CHANGE_MARKER_SIZE = 5;
-const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
-const CAPACITY_CHANGE_MARKER_HIT_RADIUS = 8;
 const EMPTY_CAPACITY_CHANGE_EVENTS = new Map<string, CapacityChangeEvent>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
@@ -123,9 +121,11 @@ export default function EnrollmentGraph({
 }: EnrollmentGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
-  const tooltipAnchorRef = useRef<HTMLDivElement>(null);
-  const tooltipDeltaRef = useRef<HTMLSpanElement>(null);
-  const tooltipTextRef = useRef<HTMLSpanElement>(null);
+  const {
+    show: showCapacityTooltip,
+    hide: hideCapacityTooltip,
+    element: capacityTooltipElement,
+  } = useCapacityChangeTooltip(chartRef);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
   const [showPhases, setShowPhases] = useState(false);
 
@@ -278,63 +278,6 @@ export default function EnrollmentGraph({
       }),
     [outputs]
   );
-
-  const showCapacityTooltip = useCallback(
-    (event: CapacityChangeEvent, pos: { x: number; y: number }) => {
-      const anchor = tooltipAnchorRef.current;
-      const delta = tooltipDeltaRef.current;
-      const text = tooltipTextRef.current;
-      const chart = chartRef.current;
-      if (!anchor || !delta || !text || !chart) return;
-
-      const isIncrease = event.direction === "increase";
-      const seatDelta = event.currentMaxEnroll - event.previousMaxEnroll;
-
-      delta.className = `${styles.capacityChangeTooltipDelta} ${
-        isIncrease
-          ? styles.capacityChangeTooltipDeltaIncrease
-          : styles.capacityChangeTooltipDeltaDecrease
-      }`;
-
-      const prefix = seatDelta > 0 ? "+" : "";
-      const seatWord = Math.abs(seatDelta) === 1 ? "seat" : "seats";
-      text.textContent = `${formatters.percent(event.percentChange, 0)} ${
-        isIncrease ? "increase" : "decrease"
-      } (${prefix}${formatters.number(seatDelta)} ${seatWord})`;
-
-      anchor.style.display = "";
-      anchor.style.left = `${pos.x}px`;
-      anchor.style.top = `${pos.y}px`;
-
-      const gap = 20;
-      anchor.style.transform = `translate(-50%, ${gap}px)`;
-
-      const tooltipRect = anchor.getBoundingClientRect();
-      const chartRect = chart.getBoundingClientRect();
-
-      if (tooltipRect.bottom > chartRect.bottom) {
-        anchor.style.transform = `translate(-50%, calc(-100% - ${gap}px))`;
-      }
-
-      const adjustedRect = anchor.getBoundingClientRect();
-      const overflowRight = adjustedRect.right - chartRect.right;
-      const overflowLeft = chartRect.left - adjustedRect.left;
-
-      if (overflowRight > 0) {
-        anchor.style.left = `${pos.x - overflowRight - 4}px`;
-      } else if (overflowLeft > 0) {
-        anchor.style.left = `${pos.x + overflowLeft + 4}px`;
-      }
-    },
-    // All references are module imports or refs (stable)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const hideCapacityTooltip = useCallback(() => {
-    const anchor = tooltipAnchorRef.current;
-    if (anchor) anchor.style.display = "none";
-  }, []);
 
   useEffect(() => {
     hideCapacityTooltip();
@@ -781,7 +724,7 @@ export default function EnrollmentGraph({
                               typeof dotProps.cy !== "number" ||
                               typeof dotProps.payload?.timeDelta !== "number"
                             ) {
-                              return null;
+                              return <g />;
                             }
 
                             const markerTimeDeltaKey = getTimeDeltaKey(
@@ -791,46 +734,17 @@ export default function EnrollmentGraph({
                               capacityChangeEventsByTimeDelta.get(
                                 markerTimeDeltaKey
                               );
-                            if (!capacityChangeEvent || isDimmed) return null;
-                            const iconSize =
-                              CAPACITY_CHANGE_MARKER_SIZE * 5;
-                            const iconCenterY =
-                              dotProps.cy +
-                              CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET +
-                              iconSize / 2;
+                            if (!capacityChangeEvent || isDimmed) return <g />;
+
                             return (
-                              <g
-                                className={styles.capacityMarker}
-                                onMouseEnter={() => {
-                                  showCapacityTooltip(capacityChangeEvent, {
-                                    x: dotProps.cx,
-                                    y: iconCenterY,
-                                  });
-                                }}
+                              <CapacityChangeMarker
+                                cx={dotProps.cx}
+                                cy={dotProps.cy}
+                                event={capacityChangeEvent}
+                                color={output.color}
+                                onMouseEnter={showCapacityTooltip}
                                 onMouseLeave={hideCapacityTooltip}
-                              >
-                                <circle
-                                  cx={dotProps.cx}
-                                  cy={iconCenterY}
-                                  r={CAPACITY_CHANGE_MARKER_HIT_RADIUS}
-                                  fill="transparent"
-                                />
-                                <circle
-                                  cx={dotProps.cx}
-                                  cy={iconCenterY}
-                                  r={iconSize / 2 + 2}
-                                  fill="var(--background-color)"
-                                  stroke="var(--border-color)"
-                                  strokeWidth={1}
-                                />
-                                <ArrowUpCircle
-                                  width={iconSize}
-                                  height={iconSize}
-                                  x={dotProps.cx - iconSize / 2}
-                                  y={iconCenterY - iconSize / 2}
-                                  color={output.color}
-                                />
-                              </g>
+                              />
                             );
                           }}
                           activeDot={{
@@ -876,41 +790,7 @@ export default function EnrollmentGraph({
           {hasSeriesData ? (
             <div className={styles.chart} ref={chartRef}>
               {chartElement}
-              <div
-                ref={tooltipAnchorRef}
-                className={styles.capacityTooltipAnchor}
-                style={{ display: "none" }}
-              >
-                <div
-                  className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
-                >
-                  <div
-                    className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
-                  >
-                    Seating capacity changed
-                  </div>
-                  <div
-                    className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
-                  >
-                    <span
-                      ref={tooltipDeltaRef}
-                      className={styles.capacityChangeTooltipDelta}
-                    >
-                      <StatUp
-                        className={`${styles.capacityChangeTooltipIcon} ${styles.tooltipIconUp}`}
-                        width={14}
-                        height={14}
-                      />
-                      <StatDown
-                        className={`${styles.capacityChangeTooltipIcon} ${styles.tooltipIconDown}`}
-                        width={14}
-                        height={14}
-                      />
-                      <span ref={tooltipTextRef} />
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {capacityTooltipElement}
             </div>
           ) : (
             <div className={styles.emptyGraphMessage}>

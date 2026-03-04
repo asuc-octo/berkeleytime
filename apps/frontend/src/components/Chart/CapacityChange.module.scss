@@ -1,0 +1,87 @@
+.capacityTooltipAnchor {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.tooltipCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  max-width: 350px;
+  min-width: 180px;
+}
+
+.capacityTooltipCard {
+  min-width: 0;
+  width: fit-content;
+  max-width: 280px;
+}
+
+.tooltipLabel {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+}
+
+.capacityTooltipLabel {
+  padding-inline: 10px;
+}
+
+.tooltipItems {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.capacityTooltipItems {
+  padding: 10px;
+}
+
+.capacityChangeTooltipDelta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-14);
+  line-height: 1.2;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.capacityChangeTooltipDeltaIncrease {
+  color: var(--green-500);
+
+  .tooltipIconDown {
+    display: none;
+  }
+}
+
+.capacityChangeTooltipDeltaDecrease {
+  color: var(--red-500);
+
+  .tooltipIconUp {
+    display: none;
+  }
+}
+
+.capacityChangeTooltipIcon {
+  color: currentColor;
+  flex-shrink: 0;
+}
+
+.capacityMarker {
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 150ms ease-out;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}

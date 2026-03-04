@@ -149,7 +149,7 @@ export const getDistribution = (
       ({
         letter: letters[field],
         percentage: total > 0 && count > 0 ? count / total : 0,
-        count,
+        count: Math.round(count),
       }) as Grade
   );
 };
