@@ -190,7 +190,7 @@ export default function EnrollmentGraph({
             enrolledCount: entry.enrolledCount ?? 0,
             enrolledPercent:
               maxEnrollDenominator > 0
-                ? (entry.enrolledCount / maxEnrollDenominator) * 100
+                ? ((entry.enrolledCount ?? 0) / maxEnrollDenominator) * 100
                 : null,
             capacityCount: maxEnroll,
             capacityPercent:
@@ -297,7 +297,11 @@ export default function EnrollmentGraph({
     () =>
       chartData.some((datum) =>
         Object.entries(datum).some(
-          ([key, value]) => key !== "timeDelta" && typeof value === "number"
+          ([key, value]) =>
+            key !== "timeDelta" &&
+            !key.startsWith("capacity_") &&
+            typeof value === "number" &&
+            value > 0
         )
       ),
     [chartData]
@@ -730,12 +734,21 @@ export default function EnrollmentGraph({
                       outputs.length > 1 &&
                       hoveredIndex !== null &&
                       hoveredIndex !== outputIndex;
+                    const seriesPoints = seriesPointsByOutput[outputIndex] ?? [];
+                    const firstSeriesValue = seriesPoints[0]?.value;
+                    const isFlatSeries =
+                      typeof firstSeriesValue === "number" &&
+                      seriesPoints.every(
+                        ({ value }) => Math.abs(value - firstSeriesValue) < 0.001
+                      );
                     const capacityChangeEventsByTimeDelta =
                       capacityChangeEventsByOutput[outputIndex] ??
                       EMPTY_CAPACITY_CHANGE_EVENTS;
                     const lineStroke = isDimmed
                       ? "var(--border-color)"
-                      : `url(#${getGradientId(output.id)})`;
+                      : isFlatSeries
+                        ? output.color
+                        : `url(#${getGradientId(output.id)})`;
                     const dotColor = isDimmed
                       ? "var(--border-color)"
                       : output.color;
@@ -762,18 +775,37 @@ export default function EnrollmentGraph({
                               capacityChangeEventsByTimeDelta.get(
                                 markerTimeDeltaKey
                               );
-                            if (!capacityChangeEvent || isDimmed) return <g />;
+                            if (capacityChangeEvent && !isDimmed) {
+                              return (
+                                <CapacityChangeMarker
+                                  cx={dotProps.cx}
+                                  cy={dotProps.cy}
+                                  event={capacityChangeEvent}
+                                  color={output.color}
+                                  onMouseEnter={showCapacityTooltip}
+                                  onMouseLeave={hideCapacityTooltip}
+                                />
+                              );
+                            }
 
-                            return (
-                              <CapacityChangeMarker
-                                cx={dotProps.cx}
-                                cy={dotProps.cy}
-                                event={capacityChangeEvent}
-                                color={output.color}
-                                onMouseEnter={showCapacityTooltip}
-                                onMouseLeave={hideCapacityTooltip}
-                              />
-                            );
+                            const isEndpoint =
+                              typeof dotProps.index === "number" &&
+                              (dotProps.index === 0 ||
+                                dotProps.index === chartData.length - 1);
+                            if (!isDimmed && isFlatSeries && isEndpoint) {
+                              return (
+                                <circle
+                                  cx={dotProps.cx}
+                                  cy={dotProps.cy}
+                                  r={2.5}
+                                  fill={output.color}
+                                  stroke="var(--foreground-color)"
+                                  strokeWidth={1}
+                                />
+                              );
+                            }
+
+                            return <g />;
                           }}
                           activeDot={{
                             r: 3,
@@ -781,7 +813,7 @@ export default function EnrollmentGraph({
                             stroke: "var(--foreground-color)",
                             strokeWidth: 1,
                           }}
-                          type="monotone"
+                          type={isFlatSeries ? "linear" : "monotone"}
                           connectNulls
                           isAnimationActive={shouldAnimateSeries}
                           animationBegin={0}

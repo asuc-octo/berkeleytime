@@ -135,7 +135,7 @@ export default function Enrollment() {
           enrolledCount: entry.enrolledCount ?? 0,
           enrolledPercent:
             maxEnrollDenominator > 0
-              ? (entry.enrolledCount / maxEnrollDenominator) * 100
+              ? ((entry.enrolledCount ?? 0) / maxEnrollDenominator) * 100
               : null,
           capacityCount: maxEnroll,
           capacityPercent:

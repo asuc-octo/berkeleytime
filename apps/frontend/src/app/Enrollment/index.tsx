@@ -63,6 +63,7 @@ const BAR_CHART_COLORS = [
   "var(--blue-300)",
   "var(--blue-800)",
 ] as const;
+const ENROLLMENT_ACTIVITY_THRESHOLD_PERCENT = 5;
 
 const DEFAULT_INSTRUCTOR_LABEL = "All instructors";
 
@@ -127,6 +128,28 @@ const getOfferingId = (courseClass: ICourseWithInstructorClass) =>
 const getOutputMetadataFromInput = (input: EnrollmentInput) =>
   `${input.semester} ${input.year} • Section ${formatSectionNumber(input.sectionNumber)}`;
 
+const getValidEnrollmentDenominator = (history: IEnrollment["history"]) => {
+  const maxSeen = Math.max(...history.map((entry) => entry.maxEnroll ?? 0), 0);
+  if (maxSeen === 0) return 0;
+
+  const lastValue = history[history.length - 1]?.maxEnroll ?? 0;
+  return lastValue > 0 ? lastValue : maxSeen;
+};
+
+const hasValidEnrollmentActivity = (
+  enrollment: IEnrollment | null | undefined
+) => {
+  const history = enrollment?.history ?? [];
+  const denominator = getValidEnrollmentDenominator(history);
+  if (denominator <= 0) return false;
+
+  return history.some((entry) => {
+    const enrolledCount = entry.enrolledCount ?? 0;
+    const enrolledPercent = (enrolledCount / denominator) * 100;
+    return enrolledPercent > ENROLLMENT_ACTIVITY_THRESHOLD_PERCENT;
+  });
+};
+
 const loadOutputsFromInputs = async (
   client: ReturnType<typeof useApolloClient>,
   inputs: EnrollmentInput[]
@@ -157,6 +180,7 @@ const loadOutputsFromInputs = async (
         });
 
         if (!response.data?.enrollment) return null;
+        if (!hasValidEnrollmentActivity(response.data.enrollment)) return null;
 
         return {
           input,
@@ -198,6 +222,7 @@ function EnrollmentSidebar({
   onAddCourse,
   isAdding,
 }: EnrollmentSidebarProps) {
+  const client = useApolloClient();
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
     null
   );
@@ -207,6 +232,10 @@ function EnrollmentSidebar({
   const [selectedOfferingId, setSelectedOfferingId] = useState<string | null>(
     null
   );
+  const [hasValidEnrollment, setHasValidEnrollment] = useState<boolean | null>(
+    null
+  );
+  const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
 
   const { data: courseData, loading: courseLoading } = useReadCourseWithInstructor(
     selectedCourse?.subject ?? "",
@@ -242,6 +271,39 @@ function EnrollmentSidebar({
     () => parseSemesterValue(selectedSemesterValue),
     [selectedSemesterValue]
   );
+  const defaultSemesterValue = useMemo(() => {
+    if (semesterOptions.length === 0) return null;
+
+    const latestNonSummer = semesterOptions.find((option) => {
+      const parsedSemester = parseSemesterValue(option.value);
+      return parsedSemester?.semester !== Semester.Summer;
+    });
+    return latestNonSummer?.value ?? semesterOptions[0]?.value ?? null;
+  }, [semesterOptions]);
+
+  useEffect(() => {
+    if (!selectedCourse) return;
+
+    if (!defaultSemesterValue) {
+      if (selectedSemesterValue !== null) {
+        setSelectedSemesterValue(null);
+      }
+      return;
+    }
+
+    const hasValidSelectedSemester =
+      selectedSemesterValue !== null &&
+      semesterOptions.some((option) => option.value === selectedSemesterValue);
+
+    if (!hasValidSelectedSemester) {
+      setSelectedSemesterValue(defaultSemesterValue);
+    }
+  }, [
+    defaultSemesterValue,
+    selectedCourse,
+    selectedSemesterValue,
+    semesterOptions,
+  ]);
 
   const availableClasses = useMemo(() => {
     if (!selectedSemester) return [];
@@ -318,24 +380,76 @@ function EnrollmentSidebar({
   const selectedInstructorLabel = selectedClass
     ? getInstructorLabel(selectedClass)
     : DEFAULT_INSTRUCTOR_LABEL;
-  const selectionInput: EnrollmentInput | null =
-    selectedCourse && selectedClass && selectedClass.primarySection?.number
-      ? {
-          year: selectedClass.year,
-          semester: selectedClass.semester,
-          sessionId: selectedClass.sessionId ?? undefined,
-          subject: selectedCourse.subject,
-          courseNumber: selectedCourse.number,
-          sectionNumber: selectedClass.primarySection.number,
-        }
-      : null;
-  const selectionId = selectionInput
-    ? getEnrollmentInputId(selectionInput)
-    : null;
+  const selectionInput = useMemo((): EnrollmentInput | null => {
+    if (!selectedCourse || !selectedClass || !selectedClass.primarySection?.number)
+      return null;
+
+    return {
+      year: selectedClass.year,
+      semester: selectedClass.semester,
+      sessionId: selectedClass.sessionId ?? undefined,
+      subject: selectedCourse.subject,
+      courseNumber: selectedCourse.number,
+      sectionNumber: selectedClass.primarySection.number,
+    };
+  }, [selectedClass, selectedCourse]);
+  const selectionId = useMemo(
+    () => (selectionInput ? getEnrollmentInputId(selectionInput) : null),
+    [selectionInput]
+  );
+
+  useEffect(() => {
+    if (!selectionInput) {
+      setHasValidEnrollment(null);
+      setIsCheckingEnrollment(false);
+      return;
+    }
+
+    let cancelled = false;
+    setHasValidEnrollment(null);
+    setIsCheckingEnrollment(true);
+
+    void client
+      .query({
+        query: GetEnrollmentDocument,
+        variables: {
+          year: selectionInput.year,
+          semester: selectionInput.semester,
+          sessionId: selectionInput.sessionId,
+          subject: selectionInput.subject,
+          courseNumber: selectionInput.courseNumber,
+          sectionNumber: selectionInput.sectionNumber,
+        },
+        fetchPolicy: "no-cache",
+      })
+      .then((response) => {
+        if (cancelled) return;
+        setHasValidEnrollment(hasValidEnrollmentActivity(response.data?.enrollment));
+        setIsCheckingEnrollment(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHasValidEnrollment(null);
+        setIsCheckingEnrollment(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, selectionInput]);
+
   const isAlreadyAdded =
     selectionId !== null && outputs.some((output) => output.id === selectionId);
+  const lacksEnrollmentActivity = hasValidEnrollment === false;
+  const waitingForEnrollmentCheck =
+    selectionInput !== null &&
+    (isCheckingEnrollment || hasValidEnrollment === null);
   const canAddWithoutLoading =
-    shouldShowAddButton && hasSelectableClass && !isFull && !isAlreadyAdded;
+    shouldShowAddButton &&
+    hasSelectableClass &&
+    !isFull &&
+    !isAlreadyAdded &&
+    hasValidEnrollment === true;
   const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
 
   const handleAdd = async () => {
@@ -346,6 +460,7 @@ function EnrollmentSidebar({
       !selectedClass.primarySection?.number ||
       !selectionInput ||
       !selectionId ||
+      hasValidEnrollment !== true ||
       !canAddWithoutLoading ||
       isAdding
     ) {
@@ -469,9 +584,13 @@ function EnrollmentSidebar({
                     ? "Remove a course first"
                     : availableClasses.length === 0
                       ? "No enrollment data"
-                      : canAddWithoutLoading
-                        ? "Add course"
-                        : "Select section"}
+                      : !hasSelectableClass
+                        ? "Select section"
+                        : lacksEnrollmentActivity
+                          ? "No enrollment activity"
+                          : waitingForEnrollmentCheck
+                            ? "Checking enrollment..."
+                            : "Add course"}
               </Button>
             </motion.div>
           )}
@@ -674,6 +793,7 @@ export default function Enrollment() {
 
       const enrollmentData = response.data?.enrollment;
       if (!enrollmentData) return false;
+      if (!hasValidEnrollmentActivity(enrollmentData)) return false;
 
       setOutputs((prev) => {
         if (prev.some((output) => output.id === draft.id)) return prev;
