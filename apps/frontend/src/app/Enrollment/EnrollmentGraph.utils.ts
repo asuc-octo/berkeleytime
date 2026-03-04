@@ -119,11 +119,6 @@ export interface EnrollmentPoint {
 
 export type EnrollmentEntry = [timeDelta: number, point: EnrollmentPoint];
 
-export interface ReductionOptions {
-  enableKinkRemoval: boolean;
-  kinkWindowMinutes: number;
-}
-
 export const getTimeDeltaKey = (timeDelta: number): string =>
   timeDelta.toFixed(4);
 
@@ -247,87 +242,4 @@ export const compressPlateaus = (
       !enrollmentPointsEqual(point, next)
     );
   });
-};
-
-/**
- * Remove short-lived A→B→A deviations ("kinks") where the B-value run
- * spans less than `windowMinutes`. Protected time deltas are never removed.
- */
-export const removeKinks = (
-  entries: EnrollmentEntry[],
-  protectedTimeDeltas: number[],
-  windowMinutes: number = 60
-): EnrollmentEntry[] => {
-  if (entries.length <= 2) return entries;
-
-  const protectedKeys = new Set(protectedTimeDeltas.map(getTimeDeltaKey));
-
-  // Group consecutive entries by (enrolledCount, capacityCount)
-  const runs: { startIdx: number; endIdx: number }[] = [];
-  let runStart = 0;
-
-  for (let i = 1; i <= entries.length; i++) {
-    if (
-      i === entries.length ||
-      !enrollmentPointsEqual(entries[i][1], entries[runStart][1])
-    ) {
-      runs.push({ startIdx: runStart, endIdx: i - 1 });
-      runStart = i;
-    }
-  }
-
-  const indicesToRemove = new Set<number>();
-
-  for (let r = 1; r < runs.length - 1; r++) {
-    const prevRun = runs[r - 1];
-    const currRun = runs[r];
-    const nextRun = runs[r + 1];
-
-    if (
-      !enrollmentPointsEqual(
-        entries[prevRun.startIdx][1],
-        entries[nextRun.startIdx][1]
-      )
-    ) {
-      continue;
-    }
-
-    const kinkDuration =
-      entries[currRun.endIdx][0] - entries[currRun.startIdx][0];
-    if (kinkDuration >= windowMinutes) continue;
-
-    let hasProtected = false;
-    for (let i = currRun.startIdx; i <= currRun.endIdx; i++) {
-      if (protectedKeys.has(getTimeDeltaKey(entries[i][0]))) {
-        hasProtected = true;
-        break;
-      }
-    }
-    if (hasProtected) continue;
-
-    for (let i = currRun.startIdx; i <= currRun.endIdx; i++) {
-      indicesToRemove.add(i);
-    }
-  }
-
-  return entries.filter((_, idx) => !indicesToRemove.has(idx));
-};
-
-/**
- * Orchestrator: always applies plateau compression, optionally removes kinks.
- */
-export const reduceEnrollmentPoints = (
-  entries: EnrollmentEntry[],
-  protectedTimeDeltas: number[],
-  options: ReductionOptions
-): EnrollmentEntry[] => {
-  let result = compressPlateaus(entries, protectedTimeDeltas);
-  if (options.enableKinkRemoval) {
-    result = removeKinks(
-      result,
-      protectedTimeDeltas,
-      options.kinkWindowMinutes
-    );
-  }
-  return result;
 };

@@ -8,7 +8,6 @@ import {
   estimateSeriesValueAtTime,
   getCapacityChangeEvents,
   getCapacityChangeTimeDeltas,
-  removeKinks,
 } from "./EnrollmentGraph.utils";
 
 describe("getCapacityChangeEvents", () => {
@@ -285,76 +284,3 @@ describe("compressPlateaus", () => {
   });
 });
 
-describe("removeKinks", () => {
-  it("returns entries with no kinks unchanged", () => {
-    const entries: EnrollmentEntry[] = [
-      entry(0, 100, 200),
-      entry(30, 100, 200),
-      entry(60, 120, 200),
-      entry(90, 120, 200),
-    ];
-    const result = removeKinks(entries, [], 60);
-    expect(result).toEqual(entries);
-  });
-
-  it("removes short kink within window", () => {
-    // A → B → A pattern, B lasts 30 min (< 60 min window)
-    const entries: EnrollmentEntry[] = [
-      entry(0, 100, 200),
-      entry(60, 100, 200),
-      entry(75, 110, 200), // kink start
-      entry(90, 110, 200), // kink end (15 min duration < 60)
-      entry(105, 100, 200),
-      entry(180, 100, 200),
-    ];
-    const result = removeKinks(entries, [], 60);
-    expect(result).toHaveLength(4);
-    expect(result.every(([, p]) => p.enrolledCount === 100)).toBe(true);
-  });
-
-  it("preserves kink exceeding window", () => {
-    // B lasts 90 min (> 60 min window)
-    const entries: EnrollmentEntry[] = [
-      entry(0, 100, 200),
-      entry(60, 100, 200),
-      entry(75, 110, 200),
-      entry(165, 110, 200), // 90 min duration
-      entry(180, 100, 200),
-      entry(240, 100, 200),
-    ];
-    const result = removeKinks(entries, [], 60);
-    expect(result).toHaveLength(6); // all preserved
-  });
-
-  it("preserves kink containing protected time delta", () => {
-    const entries: EnrollmentEntry[] = [
-      entry(0, 100, 200),
-      entry(60, 100, 200),
-      entry(75, 110, 200),
-      entry(90, 110, 200),
-      entry(105, 100, 200),
-      entry(180, 100, 200),
-    ];
-    // Protect timeDelta=75 (inside the kink)
-    const result = removeKinks(entries, [75], 60);
-    expect(result).toHaveLength(6); // all preserved
-  });
-
-  it("preserves non-returning deviation (A→B→C)", () => {
-    const entries: EnrollmentEntry[] = [
-      entry(0, 100, 200),
-      entry(60, 100, 200),
-      entry(75, 110, 200),
-      entry(90, 110, 200),
-      entry(105, 120, 200), // doesn't return to 100
-      entry(180, 120, 200),
-    ];
-    const result = removeKinks(entries, [], 60);
-    expect(result).toHaveLength(6); // all preserved
-  });
-
-  it("returns short arrays unchanged", () => {
-    const entries: EnrollmentEntry[] = [entry(0, 100, 200), entry(60, 100, 200)];
-    expect(removeKinks(entries, [], 60)).toEqual(entries);
-  });
-});

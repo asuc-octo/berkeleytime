@@ -41,7 +41,7 @@ import {
   getCapacityChangeTimeDeltas,
   getTimeDeltaKey,
   interpolateEnrollmentPoint,
-  reduceEnrollmentPoints,
+  compressPlateaus,
 } from "./EnrollmentGraph.utils";
 
 interface EnrollmentGraphOutput {
@@ -128,7 +128,7 @@ export default function EnrollmentGraph({
   const tooltipTextRef = useRef<HTMLSpanElement>(null);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
   const [showPhases, setShowPhases] = useState(false);
-  const [smoothKinks, setSmoothKinks] = useState(false);
+
   const [isRotated, setIsRotated] = useState(false);
   const { height: viewportHeight } = useWindowDimensions();
 
@@ -195,10 +195,7 @@ export default function EnrollmentGraph({
         (a, b) => a[0] - b[0]
       );
       const protectedTimeDeltas = getCapacityChangeTimeDeltas(history);
-      const reduced = reduceEnrollmentPoints(sortedEntries, protectedTimeDeltas, {
-        enableKinkRemoval: smoothKinks,
-        kinkWindowMinutes: 60,
-      });
+      const reduced = compressPlateaus(sortedEntries, protectedTimeDeltas);
 
       const reducedMap = new Map<number, EnrollmentPoint>();
       for (const [timeDelta, point] of reduced) {
@@ -250,7 +247,7 @@ export default function EnrollmentGraph({
 
         return datum;
       });
-  }, [outputs, showRawNumbers, smoothKinks]);
+  }, [outputs, showRawNumbers]);
 
   const seriesPointsByOutput = useMemo(
     () =>
@@ -480,16 +477,6 @@ export default function EnrollmentGraph({
       />
     </label>
   );
-  const smoothKinksToggle = (
-    <label className={styles.toggleRow}>
-      <span className={styles.toggleLabel}>Smooth anomalies</span>
-      <Switch
-        checked={smoothKinks}
-        onCheckedChange={setSmoothKinks}
-        aria-label="Smooth anomalies"
-      />
-    </label>
-  );
   const isPhasesDisabled = !allOutputsSameSemester;
   const phasesToggle = (
     <label
@@ -521,7 +508,6 @@ export default function EnrollmentGraph({
         phasesToggle
       )}
       {studentCountToggle}
-      {smoothKinksToggle}
     </div>
   );
 
