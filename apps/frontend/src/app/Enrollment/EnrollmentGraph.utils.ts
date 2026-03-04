@@ -76,18 +76,22 @@ export const getCapacityChangeEvents = (
     const startTimeMs = getMinuteStartMs(entry.startTime);
 
     if (currentMaxEnroll !== previousMaxEnroll && startTimeMs !== null) {
-      const timeDelta = (startTimeMs - firstTimeMs) / MINUTE_MS;
-      eventsByTimeDeltaKey.set(timeDelta.toFixed(4), {
-        timeDelta,
+      const percentChange = getCapacityPercentChange(
         previousMaxEnroll,
-        currentMaxEnroll,
-        percentChange: getCapacityPercentChange(
+        currentMaxEnroll
+      );
+
+      if (percentChange >= 2.5) {
+        const timeDelta = (startTimeMs - firstTimeMs) / MINUTE_MS;
+        eventsByTimeDeltaKey.set(timeDelta.toFixed(4), {
+          timeDelta,
           previousMaxEnroll,
-          currentMaxEnroll
-        ),
-        direction:
-          currentMaxEnroll > previousMaxEnroll ? "increase" : "decrease",
-      });
+          currentMaxEnroll,
+          percentChange,
+          direction:
+            currentMaxEnroll > previousMaxEnroll ? "increase" : "decrease",
+        });
+      }
     }
 
     previousMaxEnroll = currentMaxEnroll;

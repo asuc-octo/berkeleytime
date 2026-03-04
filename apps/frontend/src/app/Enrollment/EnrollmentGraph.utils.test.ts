@@ -36,6 +36,23 @@ describe("getCapacityChangeEvents", () => {
     expect(events[1]?.percentChange).toBeCloseTo(33.3333333333, 5);
   });
 
+  it("ignores changes below 2.5%", () => {
+    const history = [
+      { startTime: "2024-08-20T08:00:00.000Z", maxEnroll: 200 },
+      { startTime: "2024-08-20T08:30:00.000Z", maxEnroll: 204 }, // 2% change
+      { startTime: "2024-08-20T09:00:00.000Z", maxEnroll: 220 }, // ~7.8% change
+    ];
+
+    const events = getCapacityChangeEvents(history);
+
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      previousMaxEnroll: 204,
+      currentMaxEnroll: 220,
+      direction: "increase",
+    });
+  });
+
   it("handles changes from zero capacity", () => {
     const history = [
       { startTime: "2024-08-20T08:00:00.000Z", maxEnroll: 0 },

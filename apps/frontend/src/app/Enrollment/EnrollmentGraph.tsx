@@ -1,6 +1,14 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { StatDown, StatUp } from "iconoir-react";
+import { ArrowUpCircle } from "iconoir-react/solid";
 import moment from "moment";
 import {
   CartesianGrid,
@@ -75,7 +83,6 @@ const SERIES_ANIMATION_DURATION_MS = 320;
 const CAPACITY_CHANGE_MARKER_SIZE = 5;
 const CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET = 5;
 const CAPACITY_CHANGE_MARKER_HIT_RADIUS = 8;
-const CAPACITY_CHANGE_MARKER_HOVER_SCALE = 1.12;
 const EMPTY_CAPACITY_CHANGE_EVENTS = new Map<string, CapacityChangeEvent>();
 const GROUP_LABELS: Record<string, string> = {
   continuing: "Continuing Students",
@@ -127,12 +134,17 @@ export default function EnrollmentGraph({
   hoveredIndex = null,
 }: EnrollmentGraphProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
   const [showRawNumbers, setShowRawNumbers] = useState(false);
   const [showPhases, setShowPhases] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [hoveredCapacityMarkerKey, setHoveredCapacityMarkerKey] = useState<
     string | null
   >(null);
+  const [hoveredMarkerPos, setHoveredMarkerPos] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const { height: viewportHeight } = useWindowDimensions();
 
   useEffect(() => {
@@ -304,6 +316,43 @@ export default function EnrollmentGraph({
         ? (capacityGuideByMarkerKey.get(hoveredCapacityMarkerKey) ?? null)
         : null,
     [capacityGuideByMarkerKey, hoveredCapacityMarkerKey]
+  );
+
+  const capacityTooltipRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node || !chartRef.current || !hoveredMarkerPos) return;
+
+      // The icon is centered at hoveredMarkerPos.y with radius iconSize/2 (12.5px).
+      // Use 20px offset to clear the icon edge with comfortable spacing.
+      const gap = 20;
+
+      // Default: below marker, centered horizontally
+      node.style.transform = `translate(-50%, ${gap}px)`;
+
+      const tooltipRect = node.getBoundingClientRect();
+      const chartRect = chartRef.current.getBoundingClientRect();
+
+      // Vertical flip: if tooltip overflows bottom of chart, flip above marker
+      if (tooltipRect.bottom > chartRect.bottom) {
+        node.style.transform = `translate(-50%, calc(-100% - ${gap}px))`;
+      }
+
+      // Re-measure after possible vertical flip
+      const adjustedRect = node.getBoundingClientRect();
+
+      // Horizontal shift: nudge tooltip to stay within chart bounds
+      const overflowRight = adjustedRect.right - chartRect.right;
+      const overflowLeft = chartRect.left - adjustedRect.left;
+
+      if (overflowRight > 0) {
+        node.style.left = `${hoveredMarkerPos.x - overflowRight - 4}px`;
+      } else if (overflowLeft > 0) {
+        node.style.left = `${hoveredMarkerPos.x + overflowLeft + 4}px`;
+      }
+    },
+    // Re-run when tooltip position or content changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [hoveredMarkerPos, hoveredCapacityGuide]
   );
 
   const hasSeriesData = useMemo(
@@ -483,13 +532,16 @@ export default function EnrollmentGraph({
         <CourseAnalyticsGraphBox>
           {graphControls}
           {hasSeriesData ? (
-            <div className={styles.chart}>
+            <div className={styles.chart} ref={chartRef}>
               <ResponsiveContainer width="100%" height={chartHeight}>
                 <LineChart
                   data={chartData}
                   margin={{ top: 8, right: 16, bottom: 0, left: 0 }}
                   layout={isRotated ? "vertical" : "horizontal"}
-                  onMouseLeave={() => setHoveredCapacityMarkerKey(null)}
+                  onMouseLeave={() => {
+                    setHoveredCapacityMarkerKey(null);
+                    setHoveredMarkerPos(null);
+                  }}
                 >
                   <defs>
                     {outputs.map((output) => {
@@ -593,20 +645,16 @@ export default function EnrollmentGraph({
                   <Tooltip
                     cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
                     content={({ active, payload, label }) => {
-                      if (!active && !hoveredCapacityGuide) {
-                        return null;
-                      }
+                      if (!active) return null;
 
                       const labelMinutes =
                         typeof label === "number"
                           ? label
                           : typeof payload?.[0]?.payload?.timeDelta === "number"
                             ? payload[0].payload.timeDelta
-                            : (hoveredCapacityGuide?.timeDelta ?? null);
+                            : null;
 
-                      if (labelMinutes === null) {
-                        return null;
-                      }
+                      if (labelMinutes === null) return null;
 
                       const duration = moment.duration(labelMinutes, "minutes");
                       const day = Math.floor(duration.asDays()) + 1;
@@ -614,80 +662,7 @@ export default function EnrollmentGraph({
                         moment.utc(0).add(duration).toDate()
                       );
 
-                      if (hoveredCapacityGuide) {
-                        const formattedSeatDelta = `${
-                          hoveredCapacityGuide.seatDelta > 0 ? "+" : ""
-                        }${formatters.number(hoveredCapacityGuide.seatDelta)}`;
-                        const seatWord =
-                          Math.abs(hoveredCapacityGuide.seatDelta) === 1
-                            ? "seat"
-                            : "seats";
-                        const percentDirectionLabel =
-                          hoveredCapacityGuide.isIncrease
-                            ? "increase"
-                            : "decrease";
-
-                        return (
-                          <div
-                            className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
-                          >
-                            <div
-                              className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
-                            >
-                              Seating capacity changed
-                            </div>
-                            <div
-                              className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
-                            >
-                              <span
-                                className={`${styles.capacityChangeTooltipDelta} ${
-                                  hoveredCapacityGuide.isIncrease
-                                    ? styles.capacityChangeTooltipDeltaIncrease
-                                    : styles.capacityChangeTooltipDeltaDecrease
-                                }`}
-                              >
-                                {hoveredCapacityGuide.isIncrease ? (
-                                  <StatUp
-                                    className={styles.capacityChangeTooltipIcon}
-                                    width={14}
-                                    height={14}
-                                  />
-                                ) : (
-                                  <StatDown
-                                    className={styles.capacityChangeTooltipIcon}
-                                    width={14}
-                                    height={14}
-                                  />
-                                )}
-                                <span>
-                                  {formatters.percent(
-                                    hoveredCapacityGuide.percentChange,
-                                    0
-                                  )}{" "}
-                                  {percentDirectionLabel} ({formattedSeatDelta}{" "}
-                                  {seatWord})
-                                </span>
-                              </span>
-                            </div>
-                          </div>
-                        );
-                      }
-
                       if (!payload?.length) return null;
-
-                      const labelTimeDeltaKey = getTimeDeltaKey(labelMinutes);
-                      const capacityChangeLabels = outputs.reduce<string[]>(
-                        (labels, output, outputIndex) => {
-                          const markerEvents =
-                            capacityChangeEventsByOutput[outputIndex] ??
-                            EMPTY_CAPACITY_CHANGE_EVENTS;
-                          if (markerEvents.has(labelTimeDeltaKey)) {
-                            labels.push(getDisplayLabel(output));
-                          }
-                          return labels;
-                        },
-                        []
-                      );
 
                       const payloadValuesBySeriesKey = new Map<
                         string,
@@ -739,8 +714,7 @@ export default function EnrollmentGraph({
                           } => row !== null
                         );
 
-                      const hasCapacityChange = capacityChangeLabels.length > 0;
-                      if (rows.length === 0 && !hasCapacityChange) return null;
+                      if (rows.length === 0) return null;
 
                       return (
                         <div className={styles.tooltipCard}>
@@ -767,17 +741,6 @@ export default function EnrollmentGraph({
                               </div>
                             ))}
                           </div>
-                          {hasCapacityChange ? (
-                            <div className={styles.tooltipMeta}>
-                              <span className={styles.tooltipMetaIcon}>▲</span>
-                              <span className={styles.tooltipMetaText}>
-                                Seating capacity changed
-                                {capacityChangeLabels.length === 1
-                                  ? ` for ${capacityChangeLabels[0]}`
-                                  : ""}
-                              </span>
-                            </div>
-                          ) : null}
                         </div>
                       );
                     }}
@@ -815,10 +778,8 @@ export default function EnrollmentGraph({
                   {outputs.map((output, outputIndex) => {
                     const isDimmed =
                       outputs.length > 1 &&
-                      ((hoveredIndex !== null &&
-                        hoveredIndex !== outputIndex) ||
-                        (hoveredCapacityGuide !== null &&
-                          hoveredCapacityGuide.outputIndex !== outputIndex));
+                      hoveredIndex !== null &&
+                      hoveredIndex !== outputIndex;
                     const capacityChangeEventsByTimeDelta =
                       capacityChangeEventsByOutput[outputIndex] ??
                       EMPTY_CAPACITY_CHANGE_EVENTS;
@@ -853,48 +814,51 @@ export default function EnrollmentGraph({
                               );
                             if (!capacityChangeEvent || isDimmed) return null;
                             const markerKey = `${output.id}-${markerTimeDeltaKey}`;
-                            const markerTipY =
+                            const iconSize =
+                              CAPACITY_CHANGE_MARKER_SIZE * 5;
+                            const iconCenterY =
                               dotProps.cy +
-                              CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET;
-                            const markerBaseY =
-                              dotProps.cy +
-                              CAPACITY_CHANGE_MARKER_SIZE * 1.6 +
-                              CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET;
+                              CAPACITY_CHANGE_MARKER_VERTICAL_OFFSET +
+                              iconSize / 2;
                             const isMarkerHovered =
                               hoveredCapacityMarkerKey === markerKey;
-                            const markerScale = isMarkerHovered
-                              ? CAPACITY_CHANGE_MARKER_HOVER_SCALE
-                              : 1;
-                            const markerTransform =
-                              markerScale === 1
-                                ? undefined
-                                : `translate(${dotProps.cx} ${markerTipY}) scale(${markerScale}) translate(${-dotProps.cx} ${-markerTipY})`;
 
                             return (
                               <g
                                 style={{ cursor: "pointer" }}
-                                onMouseEnter={() =>
-                                  setHoveredCapacityMarkerKey(markerKey)
-                                }
-                                onMouseLeave={() =>
+                                onMouseEnter={() => {
+                                  setHoveredCapacityMarkerKey(markerKey);
+                                  setHoveredMarkerPos({
+                                    x: dotProps.cx,
+                                    y: iconCenterY,
+                                  });
+                                }}
+                                onMouseLeave={() => {
                                   setHoveredCapacityMarkerKey((current) =>
                                     current === markerKey ? null : current
-                                  )
-                                }
+                                  );
+                                  setHoveredMarkerPos(null);
+                                }}
                               >
                                 <circle
                                   cx={dotProps.cx}
-                                  cy={(markerTipY + markerBaseY) / 2}
+                                  cy={iconCenterY}
                                   r={CAPACITY_CHANGE_MARKER_HIT_RADIUS}
                                   fill="transparent"
                                 />
-                                <path
-                                  d={`M ${dotProps.cx} ${markerTipY} L ${dotProps.cx - CAPACITY_CHANGE_MARKER_SIZE} ${markerBaseY} L ${dotProps.cx + CAPACITY_CHANGE_MARKER_SIZE} ${markerBaseY} Z`}
-                                  fill="var(--heading-color)"
-                                  stroke="var(--heading-color)"
-                                  fillOpacity={isMarkerHovered ? 1 : 0.88}
-                                  strokeWidth={isMarkerHovered ? 1.4 : 1}
-                                  transform={markerTransform}
+                                <ArrowUpCircle
+                                  width={iconSize}
+                                  height={iconSize}
+                                  x={dotProps.cx - iconSize / 2}
+                                  y={iconCenterY - iconSize / 2}
+                                  color={output.color}
+                                  style={{
+                                    transform: isMarkerHovered
+                                      ? `scale(1.15)`
+                                      : "scale(1)",
+                                    transformOrigin: `${dotProps.cx}px ${iconCenterY}px`,
+                                    transition: "transform 150ms ease-out",
+                                  }}
                                 />
                               </g>
                             );
@@ -915,22 +879,68 @@ export default function EnrollmentGraph({
                       </Fragment>
                     );
                   })}
-                  {hoveredCapacityGuide && (
-                    <Line
-                      key={`capacity-guide-${hoveredCapacityGuide.outputIndex}`}
-                      dataKey={getCapacityKey(hoveredCapacityGuide.outputIndex)}
-                      stroke="var(--paragraph-color)"
-                      strokeWidth={1.5}
-                      strokeOpacity={0.6}
-                      dot={false}
-                      activeDot={false}
-                      type="stepAfter"
-                      connectNulls
-                      isAnimationActive={false}
-                    />
-                  )}
                 </LineChart>
               </ResponsiveContainer>
+              {hoveredCapacityGuide && hoveredMarkerPos && (
+                <div
+                  ref={capacityTooltipRef}
+                  className={styles.capacityTooltipAnchor}
+                  style={{
+                    left: hoveredMarkerPos.x,
+                    top: hoveredMarkerPos.y,
+                  }}
+                >
+                  <div
+                    className={`${styles.tooltipCard} ${styles.capacityTooltipCard}`}
+                  >
+                    <div
+                      className={`${styles.tooltipLabel} ${styles.capacityTooltipLabel}`}
+                    >
+                      Seating capacity changed
+                    </div>
+                    <div
+                      className={`${styles.tooltipItems} ${styles.capacityTooltipItems}`}
+                    >
+                      <span
+                        className={`${styles.capacityChangeTooltipDelta} ${
+                          hoveredCapacityGuide.isIncrease
+                            ? styles.capacityChangeTooltipDeltaIncrease
+                            : styles.capacityChangeTooltipDeltaDecrease
+                        }`}
+                      >
+                        {hoveredCapacityGuide.isIncrease ? (
+                          <StatUp
+                            className={styles.capacityChangeTooltipIcon}
+                            width={14}
+                            height={14}
+                          />
+                        ) : (
+                          <StatDown
+                            className={styles.capacityChangeTooltipIcon}
+                            width={14}
+                            height={14}
+                          />
+                        )}
+                        <span>
+                          {formatters.percent(
+                            hoveredCapacityGuide.percentChange,
+                            0
+                          )}{" "}
+                          {hoveredCapacityGuide.isIncrease
+                            ? "increase"
+                            : "decrease"}{" "}
+                          ({hoveredCapacityGuide.seatDelta > 0 ? "+" : ""}
+                          {formatters.number(hoveredCapacityGuide.seatDelta)}{" "}
+                          {Math.abs(hoveredCapacityGuide.seatDelta) === 1
+                            ? "seat"
+                            : "seats"}
+                          )
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className={styles.emptyGraphMessage}>
