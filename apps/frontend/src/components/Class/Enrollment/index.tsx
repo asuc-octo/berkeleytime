@@ -6,7 +6,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -338,19 +337,6 @@ export default function Enrollment() {
                       </div>
                     </div>
                   );
-                }}
-              />
-              <ReferenceLine
-                y={100}
-                stroke="var(--label-color)"
-                strokeDasharray="5 5"
-                strokeOpacity={0.5}
-                label={{
-                  value: "100% Capacity",
-                  position: "insideTopLeft",
-                  fill: "var(--paragraph-color)",
-                  fontSize: "var(--text-14)",
-                  offset: 10,
                 }}
               />
               {hasEnrolledActivity && (
