@@ -225,7 +225,7 @@ export const getGradeDistributionByInstructor = async (
     .select({ sectionId: 1 })
     .lean();
 
-  if (sections.length === 0) throw new Error("No classes found");
+  if (sections.length === 0) return aggregateGradeDistributions([]);
 
   const sectionIds = sections.map((section) => section.sectionId);
   return getGradeDistributionBySectionIds(sectionIds);
@@ -255,7 +255,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
     .select({ sectionId: 1 })
     .lean();
 
-  if (sections.length === 0) throw new Error("No classes found");
+  if (sections.length === 0) return aggregateGradeDistributions([]);
 
   const sectionIds = sections.map((section) => section.sectionId);
 
@@ -265,7 +265,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
     .select({ id: 1 })
     .lean();
 
-  if (!term) throw new Error("Term not found");
+  if (!term) return aggregateGradeDistributions([]);
 
   const distributions = await GradeDistributionModel.find({
     sectionId: { $in: sectionIds },
@@ -273,7 +273,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
     sessionId: sessionId,
   });
 
-  if (distributions.length === 0) throw new Error("No grades found");
+  if (distributions.length === 0) return aggregateGradeDistributions([]);
 
   return aggregateGradeDistributions(distributions);
 };
