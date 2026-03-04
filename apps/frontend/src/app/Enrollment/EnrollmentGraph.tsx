@@ -1,10 +1,4 @@
-import {
-  Fragment,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 import moment from "moment";
 import {
@@ -37,12 +31,12 @@ import {
   type EnrollmentPoint,
   type SeriesPoint,
   areOutputsFromSameSemester,
+  compressPlateaus,
   estimateSeriesValueAtTime,
   getCapacityChangeEvents,
   getCapacityChangeTimeDeltas,
   getTimeDeltaKey,
   interpolateEnrollmentPoint,
-  compressPlateaus,
 } from "./EnrollmentGraph.utils";
 
 interface EnrollmentGraphOutput {
@@ -166,7 +160,8 @@ export default function EnrollmentGraph({
     const outputData = outputs.map((output) => {
       const history = output.data.history;
       const map = new Map<number, EnrollmentPoint>();
-      if (history.length === 0) return { map, entries: [] as [number, EnrollmentPoint][] };
+      if (history.length === 0)
+        return { map, entries: [] as [number, EnrollmentPoint][] };
 
       const maxEnrollDenominator = getValidDenominator(
         history.map((entry) => entry.maxEnroll ?? 0)
@@ -459,9 +454,7 @@ export default function EnrollmentGraph({
         <ThemeTooltip
           title="Phases are only available when comparing classes of the same semester."
           trigger={
-            <span className={styles.toggleTooltipTrigger}>
-              {phasesToggle}
-            </span>
+            <span className={styles.toggleTooltipTrigger}>{phasesToggle}</span>
           }
         />
       ) : (
@@ -480,351 +473,327 @@ export default function EnrollmentGraph({
           layout={isRotated ? "vertical" : "horizontal"}
           onMouseLeave={hideCapacityTooltip}
         >
-                  <defs>
-                    {outputs.map((output) => {
-                      const gradientId = getGradientId(output.id);
-                      return (
-                        <linearGradient
-                          key={gradientId}
-                          id={gradientId}
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop
-                            offset="0%"
-                            stopColor={output.color}
-                            stopOpacity={1}
-                          />
-                          <stop
-                            offset="100%"
-                            stopColor={output.color}
-                            stopOpacity={0.68}
-                          />
-                        </linearGradient>
-                      );
-                    })}
-                  </defs>
-                  <CartesianGrid
-                    vertical={isRotated}
-                    horizontal={!isRotated}
-                    stroke="var(--border-color)"
+          <defs>
+            {outputs.map((output) => {
+              const gradientId = getGradientId(output.id);
+              return (
+                <linearGradient
+                  key={gradientId}
+                  id={gradientId}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor={output.color} stopOpacity={1} />
+                  <stop
+                    offset="100%"
+                    stopColor={output.color}
+                    stopOpacity={0.68}
                   />
-                  {isRotated ? (
-                    <>
-                      <YAxis
-                        dataKey="timeDelta"
-                        type="number"
-                        domain={["dataMin", "dataMax"]}
-                        width={56}
-                        tickMargin={10}
-                        tickLine={false}
-                        axisLine={false}
-                        tickFormatter={(value) =>
-                          `Day ${Math.floor(moment.duration(value, "minutes").asDays()) + 1}`
-                        }
-                        tick={{
-                          fill: "var(--paragraph-color)",
-                          fontSize: "var(--text-12)",
-                        }}
-                      />
-                      <XAxis
-                        type="number"
-                        domain={[0, dataMax]}
-                        allowDataOverflow
-                        tickFormatter={(value) =>
-                          showRawNumbers
-                            ? formatters.number(Math.round(value))
-                            : formatters.percentRound(value)
-                        }
-                        tickLine={false}
-                        axisLine={false}
-                        tick={{
-                          fill: "var(--paragraph-color)",
-                          fontSize: "var(--text-12)",
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <XAxis
-                        dataKey="timeDelta"
-                        type="number"
-                        domain={["dataMin", "dataMax"]}
-                        tickFormatter={(value) =>
-                          `Day ${Math.floor(moment.duration(value, "minutes").asDays()) + 1}`
-                        }
-                        tickMargin={8}
-                        tickLine={false}
-                        axisLine={false}
-                        tick={{
-                          fill: "var(--paragraph-color)",
-                          fontSize: "var(--text-12)",
-                        }}
-                      />
-                      <YAxis
-                        width={46}
-                        domain={[0, dataMax]}
-                        allowDataOverflow
-                        tickFormatter={(value) =>
-                          showRawNumbers
-                            ? formatters.number(Math.round(value))
-                            : formatters.percentRound(value)
-                        }
-                        tickLine={false}
-                        axisLine={false}
-                        tick={{
-                          fill: "var(--paragraph-color)",
-                          fontSize: "var(--text-12)",
-                        }}
-                      />
-                    </>
-                  )}
-                  <Tooltip
-                    animationDuration={100}
-                    cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
-                    content={({ active, payload, label }) => {
-                      if (!active) return null;
+                </linearGradient>
+              );
+            })}
+          </defs>
+          <CartesianGrid
+            vertical={isRotated}
+            horizontal={!isRotated}
+            stroke="var(--border-color)"
+          />
+          {isRotated ? (
+            <>
+              <YAxis
+                dataKey="timeDelta"
+                type="number"
+                domain={["dataMin", "dataMax"]}
+                width={56}
+                tickMargin={10}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) =>
+                  `Day ${Math.floor(moment.duration(value, "minutes").asDays()) + 1}`
+                }
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-12)",
+                }}
+              />
+              <XAxis
+                type="number"
+                domain={[0, dataMax]}
+                allowDataOverflow
+                tickFormatter={(value) =>
+                  showRawNumbers
+                    ? formatters.number(Math.round(value))
+                    : formatters.percentRound(value)
+                }
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-12)",
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <XAxis
+                dataKey="timeDelta"
+                type="number"
+                domain={["dataMin", "dataMax"]}
+                tickFormatter={(value) =>
+                  `Day ${Math.floor(moment.duration(value, "minutes").asDays()) + 1}`
+                }
+                tickMargin={8}
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-12)",
+                }}
+              />
+              <YAxis
+                width={46}
+                domain={[0, dataMax]}
+                allowDataOverflow
+                tickFormatter={(value) =>
+                  showRawNumbers
+                    ? formatters.number(Math.round(value))
+                    : formatters.percentRound(value)
+                }
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  fill: "var(--paragraph-color)",
+                  fontSize: "var(--text-12)",
+                }}
+              />
+            </>
+          )}
+          <Tooltip
+            animationDuration={100}
+            cursor={{ stroke: "var(--border-color)", strokeWidth: 1 }}
+            content={({ active, payload, label }) => {
+              if (!active) return null;
 
-                      const labelMinutes =
-                        typeof label === "number"
-                          ? label
-                          : typeof payload?.[0]?.payload?.timeDelta === "number"
-                            ? payload[0].payload.timeDelta
-                            : null;
+              const labelMinutes =
+                typeof label === "number"
+                  ? label
+                  : typeof payload?.[0]?.payload?.timeDelta === "number"
+                    ? payload[0].payload.timeDelta
+                    : null;
 
-                      if (labelMinutes === null) return null;
+              if (labelMinutes === null) return null;
 
-                      if (!payload?.length) return null;
+              if (!payload?.length) return null;
 
-                      let tooltipLabel: string;
-                      if (allOutputsSameSemester && firstTime) {
-                        tooltipLabel = TOOLTIP_DATE_FORMATTER.format(
-                          firstTime
-                            .clone()
-                            .add(labelMinutes, "minutes")
-                            .toDate()
-                        );
-                      } else {
-                        const duration = moment.duration(
-                          labelMinutes,
-                          "minutes"
-                        );
-                        const day = Math.floor(duration.asDays()) + 1;
-                        const timeLabel = TOOLTIP_TIME_FORMATTER.format(
-                          moment.utc(0).add(duration).toDate()
-                        );
-                        tooltipLabel = `Day ${day} ${timeLabel}`;
-                      }
+              let tooltipLabel: string;
+              if (allOutputsSameSemester && firstTime) {
+                tooltipLabel = TOOLTIP_DATE_FORMATTER.format(
+                  firstTime.clone().add(labelMinutes, "minutes").toDate()
+                );
+              } else {
+                const duration = moment.duration(labelMinutes, "minutes");
+                const day = Math.floor(duration.asDays()) + 1;
+                const timeLabel = TOOLTIP_TIME_FORMATTER.format(
+                  moment.utc(0).add(duration).toDate()
+                );
+                tooltipLabel = `Day ${day} ${timeLabel}`;
+              }
 
-                      const payloadValuesBySeriesKey = new Map<
-                        string,
-                        number
-                      >();
-                      payload.forEach((entry) => {
-                        if (
-                          typeof entry.dataKey === "string" &&
-                          typeof entry.value === "number"
-                        ) {
-                          payloadValuesBySeriesKey.set(
-                            entry.dataKey,
-                            entry.value
-                          );
-                        }
-                      });
+              const payloadValuesBySeriesKey = new Map<string, number>();
+              payload.forEach((entry) => {
+                if (
+                  typeof entry.dataKey === "string" &&
+                  typeof entry.value === "number"
+                ) {
+                  payloadValuesBySeriesKey.set(entry.dataKey, entry.value);
+                }
+              });
 
-                      const rows = outputs
-                        .map((output, outputIndex) => {
-                          const seriesKey = getSeriesKey(outputIndex);
-                          const exactValue =
-                            payloadValuesBySeriesKey.get(seriesKey);
-                          const interpolatedValue =
-                            typeof exactValue === "number"
-                              ? exactValue
-                              : estimateSeriesValueAtTime(
-                                  seriesPointsByOutput[outputIndex] ?? [],
-                                  labelMinutes
-                                );
-
-                          if (typeof interpolatedValue !== "number")
-                            return null;
-
-                          return {
-                            key: `${seriesKey}-${output.id}`,
-                            label: getDisplayLabel(output),
-                            value: interpolatedValue,
-                            color: output.color,
-                          };
-                        })
-                        .filter(
-                          (
-                            row
-                          ): row is {
-                            key: string;
-                            label: string;
-                            value: number;
-                            color: string;
-                          } => row !== null
+              const rows = outputs
+                .map((output, outputIndex) => {
+                  const seriesKey = getSeriesKey(outputIndex);
+                  const exactValue = payloadValuesBySeriesKey.get(seriesKey);
+                  const interpolatedValue =
+                    typeof exactValue === "number"
+                      ? exactValue
+                      : estimateSeriesValueAtTime(
+                          seriesPointsByOutput[outputIndex] ?? [],
+                          labelMinutes
                         );
 
-                      if (rows.length === 0) return null;
+                  if (typeof interpolatedValue !== "number") return null;
 
-                      return (
-                        <div className={styles.tooltipCard}>
-                          <div className={styles.tooltipLabel}>
-                            {tooltipLabel}
-                          </div>
-                          <div className={styles.tooltipItems}>
-                            {rows.map((row) => (
-                              <div key={row.key} className={styles.tooltipItem}>
-                                <span className={styles.tooltipItemLabel}>
-                                  <ColoredSquare
-                                    size="sm"
-                                    color={row.color}
-                                    variant="square"
-                                    className={styles.tooltipIndicator}
-                                  />
-                                  {row.label}
-                                </span>
-                                <span className={styles.tooltipItemValue}>
-                                  {showRawNumbers
-                                    ? formatters.number(Math.round(row.value))
-                                    : formatters.percent(row.value, 1)}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  />
-                  {phaseLines.map((phaseLine) => (
-                    <ReferenceLine
-                      key={phaseLine.key}
-                      x={isRotated ? undefined : phaseLine.timeDelta}
-                      y={isRotated ? phaseLine.timeDelta : undefined}
-                      stroke="var(--paragraph-color)"
-                      strokeDasharray="6 4"
-                      strokeOpacity={0.8}
-                      strokeWidth={1}
-                      label={
-                        isRotated
-                          ? {
-                              value: phaseLine.label,
-                              position: "insideLeft",
-                              fill: "var(--paragraph-color)",
-                              fontSize: 10,
-                              dx: 8,
-                            }
-                          : {
-                              value: phaseLine.label,
-                              position: "insideBottomLeft",
-                              fill: "var(--paragraph-color)",
-                              fontSize: 10,
-                              angle: -90,
-                              dx: 12,
-                              dy: -8,
-                            }
-                      }
-                    />
-                  ))}
-                  {outputs.map((output, outputIndex) => {
-                    const isDimmed =
-                      outputs.length > 1 &&
-                      hoveredIndex !== null &&
-                      hoveredIndex !== outputIndex;
-                    const seriesPoints = seriesPointsByOutput[outputIndex] ?? [];
-                    const firstSeriesValue = seriesPoints[0]?.value;
-                    const isFlatSeries =
-                      typeof firstSeriesValue === "number" &&
-                      seriesPoints.every(
-                        ({ value }) => Math.abs(value - firstSeriesValue) < 0.001
-                      );
-                    const capacityChangeEventsByTimeDelta =
-                      capacityChangeEventsByOutput[outputIndex] ??
-                      EMPTY_CAPACITY_CHANGE_EVENTS;
-                    const lineStroke = isDimmed
-                      ? "var(--border-color)"
-                      : isFlatSeries
-                        ? output.color
-                        : `url(#${getGradientId(output.id)})`;
-                    const dotColor = isDimmed
-                      ? "var(--border-color)"
-                      : output.color;
+                  return {
+                    key: `${seriesKey}-${output.id}`,
+                    label: getDisplayLabel(output),
+                    value: interpolatedValue,
+                    color: output.color,
+                  };
+                })
+                .filter(
+                  (
+                    row
+                  ): row is {
+                    key: string;
+                    label: string;
+                    value: number;
+                    color: string;
+                  } => row !== null
+                );
 
-                    return (
-                      <Fragment key={output.id}>
-                        <Line
-                          dataKey={getSeriesKey(outputIndex)}
-                          stroke={lineStroke}
-                          strokeWidth={isDimmed ? 1.75 : 2.75}
-                          dot={(dotProps) => {
-                            if (
-                              typeof dotProps.cx !== "number" ||
-                              typeof dotProps.cy !== "number" ||
-                              typeof dotProps.payload?.timeDelta !== "number"
-                            ) {
-                              return <g />;
-                            }
+              if (rows.length === 0) return null;
 
-                            const markerTimeDeltaKey = getTimeDeltaKey(
-                              dotProps.payload.timeDelta
-                            );
-                            const capacityChangeEvent =
-                              capacityChangeEventsByTimeDelta.get(
-                                markerTimeDeltaKey
-                              );
-                            if (capacityChangeEvent && !isDimmed) {
-                              return (
-                                <CapacityChangeMarker
-                                  cx={dotProps.cx}
-                                  cy={dotProps.cy}
-                                  event={capacityChangeEvent}
-                                  color={output.color}
-                                  onMouseEnter={showCapacityTooltip}
-                                  onMouseLeave={hideCapacityTooltip}
-                                />
-                              );
-                            }
+              return (
+                <div className={styles.tooltipCard}>
+                  <div className={styles.tooltipLabel}>{tooltipLabel}</div>
+                  <div className={styles.tooltipItems}>
+                    {rows.map((row) => (
+                      <div key={row.key} className={styles.tooltipItem}>
+                        <span className={styles.tooltipItemLabel}>
+                          <ColoredSquare
+                            size="sm"
+                            color={row.color}
+                            variant="square"
+                            className={styles.tooltipIndicator}
+                          />
+                          {row.label}
+                        </span>
+                        <span className={styles.tooltipItemValue}>
+                          {showRawNumbers
+                            ? formatters.number(Math.round(row.value))
+                            : formatters.percent(row.value, 1)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }}
+          />
+          {phaseLines.map((phaseLine) => (
+            <ReferenceLine
+              key={phaseLine.key}
+              x={isRotated ? undefined : phaseLine.timeDelta}
+              y={isRotated ? phaseLine.timeDelta : undefined}
+              stroke="var(--paragraph-color)"
+              strokeDasharray="6 4"
+              strokeOpacity={0.8}
+              strokeWidth={1}
+              label={
+                isRotated
+                  ? {
+                      value: phaseLine.label,
+                      position: "insideLeft",
+                      fill: "var(--paragraph-color)",
+                      fontSize: 10,
+                      dx: 8,
+                    }
+                  : {
+                      value: phaseLine.label,
+                      position: "insideBottomLeft",
+                      fill: "var(--paragraph-color)",
+                      fontSize: 10,
+                      angle: -90,
+                      dx: 12,
+                      dy: -8,
+                    }
+              }
+            />
+          ))}
+          {outputs.map((output, outputIndex) => {
+            const isDimmed =
+              outputs.length > 1 &&
+              hoveredIndex !== null &&
+              hoveredIndex !== outputIndex;
+            const seriesPoints = seriesPointsByOutput[outputIndex] ?? [];
+            const firstSeriesValue = seriesPoints[0]?.value;
+            const isFlatSeries =
+              typeof firstSeriesValue === "number" &&
+              seriesPoints.every(
+                ({ value }) => Math.abs(value - firstSeriesValue) < 0.001
+              );
+            const capacityChangeEventsByTimeDelta =
+              capacityChangeEventsByOutput[outputIndex] ??
+              EMPTY_CAPACITY_CHANGE_EVENTS;
+            const lineStroke = isDimmed
+              ? "var(--border-color)"
+              : isFlatSeries
+                ? output.color
+                : `url(#${getGradientId(output.id)})`;
+            const dotColor = isDimmed ? "var(--border-color)" : output.color;
 
-                            const isEndpoint =
-                              typeof dotProps.index === "number" &&
-                              (dotProps.index === 0 ||
-                                dotProps.index === chartData.length - 1);
-                            if (!isDimmed && isFlatSeries && isEndpoint) {
-                              return (
-                                <circle
-                                  cx={dotProps.cx}
-                                  cy={dotProps.cy}
-                                  r={4}
-                                  fill={output.color}
-                                  stroke="var(--foreground-color)"
-                                  strokeWidth={1.5}
-                                />
-                              );
-                            }
+            return (
+              <Fragment key={output.id}>
+                <Line
+                  dataKey={getSeriesKey(outputIndex)}
+                  stroke={lineStroke}
+                  strokeWidth={isDimmed ? 1.75 : 2.75}
+                  dot={(dotProps) => {
+                    if (
+                      typeof dotProps.cx !== "number" ||
+                      typeof dotProps.cy !== "number" ||
+                      typeof dotProps.payload?.timeDelta !== "number"
+                    ) {
+                      return <g />;
+                    }
 
-                            return <g />;
-                          }}
-                          activeDot={{
-                            r: 5,
-                            fill: dotColor,
-                            stroke: "var(--foreground-color)",
-                            strokeWidth: 1.5,
-                          }}
-                          type={isFlatSeries ? "linear" : "monotone"}
-                          connectNulls
-                          isAnimationActive={shouldAnimateSeries}
-                          animationBegin={0}
-                          animationDuration={SERIES_ANIMATION_DURATION_MS}
-                          animationEasing="ease-out"
-                        />
-                      </Fragment>
+                    const markerTimeDeltaKey = getTimeDeltaKey(
+                      dotProps.payload.timeDelta
                     );
-                  })}
-                </LineChart>
-              </ResponsiveContainer>
+                    const capacityChangeEvent =
+                      capacityChangeEventsByTimeDelta.get(markerTimeDeltaKey);
+                    if (capacityChangeEvent && !isDimmed) {
+                      return (
+                        <CapacityChangeMarker
+                          cx={dotProps.cx}
+                          cy={dotProps.cy}
+                          event={capacityChangeEvent}
+                          color={output.color}
+                          onMouseEnter={showCapacityTooltip}
+                          onMouseLeave={hideCapacityTooltip}
+                        />
+                      );
+                    }
+
+                    const isEndpoint =
+                      typeof dotProps.index === "number" &&
+                      (dotProps.index === 0 ||
+                        dotProps.index === chartData.length - 1);
+                    if (!isDimmed && isFlatSeries && isEndpoint) {
+                      return (
+                        <circle
+                          cx={dotProps.cx}
+                          cy={dotProps.cy}
+                          r={4}
+                          fill={output.color}
+                          stroke="var(--foreground-color)"
+                          strokeWidth={1.5}
+                        />
+                      );
+                    }
+
+                    return <g />;
+                  }}
+                  activeDot={{
+                    r: 5,
+                    fill: dotColor,
+                    stroke: "var(--foreground-color)",
+                    strokeWidth: 1.5,
+                  }}
+                  type={isFlatSeries ? "linear" : "monotone"}
+                  connectNulls
+                  isAnimationActive={shouldAnimateSeries}
+                  animationBegin={0}
+                  animationDuration={SERIES_ANIMATION_DURATION_MS}
+                  animationEasing="ease-out"
+                />
+              </Fragment>
+            );
+          })}
+        </LineChart>
+      </ResponsiveContainer>
     ),
     [
       chartHeight,

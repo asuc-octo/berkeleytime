@@ -44,12 +44,12 @@ import {
   TRACK_CLASS_VIEW,
   signIn,
 } from "@/lib/api";
+import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
 import {
   CreateRatingsDocument,
   GetUserRatingsDocument,
   Semester,
 } from "@/lib/generated/graphql";
-import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
 import { RecentType, addRecent } from "@/lib/recent";
 import { getExternalLink } from "@/lib/section";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";

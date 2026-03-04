@@ -55,7 +55,9 @@ const getCapacityPercentChange = (
     return currentMaxEnroll >= 1 ? 100 : 0;
   }
 
-  return (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100;
+  return (
+    (Math.abs(currentMaxEnroll - previousMaxEnroll) / previousMaxEnroll) * 100
+  );
 };
 
 export const getCapacityChangeEvents = (
@@ -238,8 +240,7 @@ export const compressPlateaus = (
     const prev = arr[index - 1][1];
     const next = arr[index + 1][1];
     return (
-      !enrollmentPointsEqual(prev, point) ||
-      !enrollmentPointsEqual(point, next)
+      !enrollmentPointsEqual(prev, point) || !enrollmentPointsEqual(point, next)
     );
   });
 };

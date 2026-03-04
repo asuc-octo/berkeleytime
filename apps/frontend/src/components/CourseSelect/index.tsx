@@ -209,7 +209,11 @@ export default function CourseSelect({
         if (!full) return null;
         const courseId = full.courseId;
         return {
-          value: { subject: full.subject, number: full.number, courseId } as CourseOption,
+          value: {
+            subject: full.subject,
+            number: full.number,
+            courseId,
+          } as CourseOption,
           label: `${full.subject.slice(0, 4)} ${full.number}`,
         };
       })

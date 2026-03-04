@@ -1,11 +1,17 @@
-import { type ReactNode, type RefObject, useCallback, useEffect, useRef } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 
 import { StatDown, StatUp } from "iconoir-react";
 
 import type { CapacityChangeEvent } from "@/app/Enrollment/EnrollmentGraph.utils";
 
-import { formatters } from "./utils";
 import styles from "./CapacityChange.module.scss";
+import { formatters } from "./utils";
 
 const CAPACITY_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "2-digit",
@@ -59,7 +65,9 @@ export function useCapacityChangeTooltip(
       }
 
       if (dateRef.current) {
-        dateRef.current.textContent = CAPACITY_DATE_FORMATTER.format(new Date(event.timestamp));
+        dateRef.current.textContent = CAPACITY_DATE_FORMATTER.format(
+          new Date(event.timestamp)
+        );
       }
 
       // Use a DOM attribute so Recharts hover affordances can be hidden via CSS

@@ -24,11 +24,11 @@ import { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import { EnrollmentModule } from "../enrollment/generated-types/module-types";
-import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 import {
   aggregateGradeDistributions,
   getGradeDistributionsByCourseIds,
 } from "../grade-distribution/controller";
+import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
 const EMPTY_GRADE_DISTRIBUTIONS: readonly IGradeDistributionItem[] =
   [] as const;
@@ -129,9 +129,7 @@ export const getCatalog = async (
           : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
         includesCourseGradeDistributionDistribution
           ? getGradeDistributionsByCourseIds(uniqueCourseIds)
-          : Promise.resolve(
-              new Map<string, AggregatedGradeDistribution>()
-            ),
+          : Promise.resolve(new Map<string, AggregatedGradeDistribution>()),
       ]);
 
     const reducedGradeDistributions = {} as Record<
@@ -152,9 +150,7 @@ export const getCatalog = async (
         {} as Record<string, IGradeDistributionItem[]>
       );
 
-      for (const [sectionId, distributions] of Object.entries(
-        classBySection
-      )) {
+      for (const [sectionId, distributions] of Object.entries(classBySection)) {
         reducedGradeDistributions[sectionId] = aggregateGradeDistributions(
           distributions
         ) as GradeDistributionModule.GradeDistribution;

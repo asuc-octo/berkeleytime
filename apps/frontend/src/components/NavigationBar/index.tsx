@@ -116,7 +116,9 @@ export default function NavigationBar({
   const savedGradesUrl = getPageUrl(RecentType.GradesPage);
   const gradesPath = savedGradesUrl ? `/grades${savedGradesUrl}` : "/grades";
   const savedEnrollmentUrl = getPageUrl(RecentType.EnrollmentPage);
-  const enrollmentPath = savedEnrollmentUrl ? `/enrollment${savedEnrollmentUrl}` : "/enrollment";
+  const enrollmentPath = savedEnrollmentUrl
+    ? `/enrollment${savedEnrollmentUrl}`
+    : "/enrollment";
 
   useEffect(() => {
     if (menuOpen) {

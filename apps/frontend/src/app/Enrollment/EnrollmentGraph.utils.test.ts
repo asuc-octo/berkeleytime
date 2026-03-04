@@ -209,10 +209,7 @@ describe("areOutputsFromSameSemester", () => {
 });
 
 // Helper to create EnrollmentPoint tuples for reduction tests
-const ep = (
-  enrolled: number,
-  capacity: number
-): EnrollmentPoint => ({
+const ep = (enrolled: number, capacity: number): EnrollmentPoint => ({
   enrolledCount: enrolled,
   enrolledPercent: null,
   capacityCount: capacity,
@@ -236,7 +233,10 @@ describe("compressPlateaus", () => {
   });
 
   it("returns two-point array unchanged", () => {
-    const entries: EnrollmentEntry[] = [entry(0, 100, 200), entry(60, 100, 200)];
+    const entries: EnrollmentEntry[] = [
+      entry(0, 100, 200),
+      entry(60, 100, 200),
+    ];
     expect(compressPlateaus(entries, [])).toEqual(entries);
   });
 
@@ -283,4 +283,3 @@ describe("compressPlateaus", () => {
     expect(result).toHaveLength(4); // no compression possible
   });
 });
-

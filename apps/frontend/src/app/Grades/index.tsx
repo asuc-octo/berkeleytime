@@ -175,7 +175,12 @@ interface FilterPanelProps {
   onEditDraftConsumed: () => void;
 }
 
-function FilterPanel({ outputs, setOutputs, editDraft, onEditDraftConsumed }: FilterPanelProps) {
+function FilterPanel({
+  outputs,
+  setOutputs,
+  editDraft,
+  onEditDraftConsumed,
+}: FilterPanelProps) {
   const client = useApolloClient();
 
   const [loading, setLoading] = useState(false);
@@ -213,11 +218,26 @@ function FilterPanel({ outputs, setOutputs, editDraft, onEditDraftConsumed }: Fi
       courseId: editDraft.courseId,
     });
 
-    if (editDraft.type === InputType.Term && editDraft.year && editDraft.semester && editDraft.sessionId) {
+    if (
+      editDraft.type === InputType.Term &&
+      editDraft.year &&
+      editDraft.semester &&
+      editDraft.sessionId
+    ) {
       setSelectedType(InputType.Term);
-      setSelectedSemester(buildSemesterValue(editDraft.year, editDraft.semester, editDraft.sessionId));
+      setSelectedSemester(
+        buildSemesterValue(
+          editDraft.year,
+          editDraft.semester,
+          editDraft.sessionId
+        )
+      );
       setSelectedInstructor("all");
-    } else if (editDraft.type === InputType.Instructor && editDraft.familyName && editDraft.givenName) {
+    } else if (
+      editDraft.type === InputType.Instructor &&
+      editDraft.familyName &&
+      editDraft.givenName
+    ) {
       setSelectedType(InputType.Instructor);
       setSelectedInstructor(`${editDraft.familyName}, ${editDraft.givenName}`);
       setSelectedSemester("all");
@@ -672,7 +692,11 @@ interface GradesVisualizationProps {
   edit: (index: number) => void;
 }
 
-function GradesVisualization({ outputs, remove, edit }: GradesVisualizationProps) {
+function GradesVisualization({
+  outputs,
+  remove,
+  edit,
+}: GradesVisualizationProps) {
   const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
     useRafHoverIndex();
 
@@ -820,31 +844,34 @@ export default function Grades() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const edit = useCallback((index: number) => {
-    setOutputs((prev) => {
-      const output = prev[index];
-      if (!output) return prev;
+  const edit = useCallback(
+    (index: number) => {
+      setOutputs((prev) => {
+        const output = prev[index];
+        if (!output) return prev;
 
-      const input = output.input;
-      setEditDraft({
-        subject: input.subject,
-        courseNumber: input.courseNumber,
-        courseId: `${input.subject}-${input.courseNumber}`,
-        type: input.type,
-        givenName: "givenName" in input ? input.givenName : undefined,
-        familyName: "familyName" in input ? input.familyName : undefined,
-        year: "year" in input ? input.year : undefined,
-        semester: "semester" in input ? input.semester : undefined,
-        sessionId: "sessionId" in input ? input.sessionId : undefined,
+        const input = output.input;
+        setEditDraft({
+          subject: input.subject,
+          courseNumber: input.courseNumber,
+          courseId: `${input.subject}-${input.courseNumber}`,
+          type: input.type,
+          givenName: "givenName" in input ? input.givenName : undefined,
+          familyName: "familyName" in input ? input.familyName : undefined,
+          year: "year" in input ? input.year : undefined,
+          semester: "semester" in input ? input.semester : undefined,
+          sessionId: "sessionId" in input ? input.sessionId : undefined,
+        });
+
+        return prev.filter((_, i) => i !== index);
       });
 
-      return prev.filter((_, i) => i !== index);
-    });
-
-    if (!isDesktop) {
-      setDrawerOpen(true);
-    }
-  }, [isDesktop]);
+      if (!isDesktop) {
+        setDrawerOpen(true);
+      }
+    },
+    [isDesktop]
+  );
 
   const clearEditDraft = useCallback(() => {
     setEditDraft(null);

@@ -125,7 +125,10 @@ const resolvers: CourseModule.Resolvers = {
 
       // Cross-listed courses share a courseId, so filter to only classes
       // matching this specific course's subject and number.
-      const matchesCourse = (courseClass: { subject?: string | null; courseNumber?: string | null }) =>
+      const matchesCourse = (courseClass: {
+        subject?: string | null;
+        courseNumber?: string | null;
+      }) =>
         courseClass.subject === parent.subject &&
         courseClass.courseNumber === parent.number;
 

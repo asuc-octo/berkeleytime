@@ -92,10 +92,9 @@ export const getGradeDistributionBySectionIds = async (
  * Batch version: fetches grade distributions for multiple courses at once,
  * grouped by courseId. Used by the catalog for efficient batch loading.
  */
-export const getGradeDistributionsByCourseIds = async (
-  courseIds: string[]
-) => {
-  if (courseIds.length === 0) return new Map<string, AggregatedGradeDistribution>();
+export const getGradeDistributionsByCourseIds = async (courseIds: string[]) => {
+  if (courseIds.length === 0)
+    return new Map<string, AggregatedGradeDistribution>();
 
   const sections = await SectionModel.find({
     courseId: { $in: courseIds },
@@ -104,7 +103,8 @@ export const getGradeDistributionsByCourseIds = async (
     .select({ sectionId: 1, courseId: 1 })
     .lean();
 
-  if (sections.length === 0) return new Map<string, AggregatedGradeDistribution>();
+  if (sections.length === 0)
+    return new Map<string, AggregatedGradeDistribution>();
 
   const allSectionIds = sections.map((s) => s.sectionId);
   const distributions = await GradeDistributionModel.find({

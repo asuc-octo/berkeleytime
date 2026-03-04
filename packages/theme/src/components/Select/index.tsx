@@ -228,7 +228,6 @@ export interface SelectProps<T> {
   pills?: Array<{ value: T; label: string }>;
 }
 
-
 export function Select<T>({
   options = [],
   value,
@@ -335,7 +334,6 @@ export function Select<T>({
         : options,
     [options, tabs, activeTabValue]
   );
-
 
   const optionUniverse = useMemo(
     () => (tabs?.length ? tabs.flatMap((tab) => tab.options) : options),
@@ -654,10 +652,7 @@ export function Select<T>({
         <DropdownMenu.Portal>
           <DropdownMenu.Content
             ref={contentRef}
-            className={classNames(
-              styles.content,
-              contentClassName
-            )}
+            className={classNames(styles.content, contentClassName)}
             style={{
               width: triggerWidth,
               zIndex: contentZIndex,

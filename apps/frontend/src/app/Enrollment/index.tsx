@@ -16,7 +16,11 @@ import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/Course
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
+import type { ICourseWithInstructorClass } from "@/lib/api/courses";
+import type { IEnrollment } from "@/lib/api/enrollment";
+import { sortByTermDescending } from "@/lib/classes";
 import {
   EnrollmentUrlInput,
   getEnrollmentInputId,
@@ -24,11 +28,7 @@ import {
   isEnrollmentInputEqual,
   parseEnrollmentInputsFromUrl,
 } from "@/lib/enrollmentUrl";
-import type { ICourseWithInstructorClass } from "@/lib/api/courses";
-import type { IEnrollment } from "@/lib/api/enrollment";
-import { sortByTermDescending } from "@/lib/classes";
 import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
-import useEnterToAdd from "@/hooks/useEnterToAdd";
 import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import styles from "./Enrollment.module.scss";
@@ -252,11 +252,12 @@ function EnrollmentSidebar({
   );
   const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
 
-  const { data: courseData, loading: courseLoading } = useReadCourseWithInstructor(
-    selectedCourse?.subject ?? "",
-    selectedCourse?.number ?? "",
-    { skip: !selectedCourse }
-  );
+  const { data: courseData, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      selectedCourse?.subject ?? "",
+      selectedCourse?.number ?? "",
+      { skip: !selectedCourse }
+    );
 
   // Consume editDraft: populate sidebar state from the draft, then clear it
   useEffect(() => {
@@ -430,7 +431,11 @@ function EnrollmentSidebar({
   const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
   const isFull = outputs.length >= BAR_CHART_COLORS.length;
   const selectionInput = useMemo((): EnrollmentInput | null => {
-    if (!selectedCourse || !selectedClass || !selectedClass.primarySection?.number)
+    if (
+      !selectedCourse ||
+      !selectedClass ||
+      !selectedClass.primarySection?.number
+    )
       return null;
 
     return {
@@ -473,7 +478,9 @@ function EnrollmentSidebar({
       })
       .then((response) => {
         if (cancelled) return;
-        setHasValidEnrollment(hasValidEnrollmentActivity(response.data?.enrollment));
+        setHasValidEnrollment(
+          hasValidEnrollmentActivity(response.data?.enrollment)
+        );
         setIsCheckingEnrollment(false);
       })
       .catch(() => {
@@ -869,7 +876,15 @@ export default function Enrollment() {
           BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
           BAR_CHART_COLORS[0];
 
-        return [{ ...draft, subtitle: getOutputMetadataFromInput(draft.input), color, data: enrollmentData }, ...prev];
+        return [
+          {
+            ...draft,
+            subtitle: getOutputMetadataFromInput(draft.input),
+            color,
+            data: enrollmentData,
+          },
+          ...prev,
+        ];
       });
 
       if (!isDesktop) {
@@ -888,28 +903,33 @@ export default function Enrollment() {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const edit = useCallback((index: number) => {
-    setOutputs((prev) => {
-      const output = prev[index];
-      if (!output) return prev;
+  const edit = useCallback(
+    (index: number) => {
+      setOutputs((prev) => {
+        const output = prev[index];
+        if (!output) return prev;
 
-      setEditDraft({
-        subject: output.input.subject,
-        courseNumber: output.input.courseNumber,
-        courseId: output.course.courseId ?? `${output.input.subject}-${output.input.courseNumber}`,
-        year: output.input.year,
-        semester: output.input.semester,
-        sectionNumber: output.input.sectionNumber,
-        sessionId: output.input.sessionId,
+        setEditDraft({
+          subject: output.input.subject,
+          courseNumber: output.input.courseNumber,
+          courseId:
+            output.course.courseId ??
+            `${output.input.subject}-${output.input.courseNumber}`,
+          year: output.input.year,
+          semester: output.input.semester,
+          sectionNumber: output.input.sectionNumber,
+          sessionId: output.input.sessionId,
+        });
+
+        return prev.filter((_, i) => i !== index);
       });
 
-      return prev.filter((_, i) => i !== index);
-    });
-
-    if (!isDesktop) {
-      setDrawerOpen(true);
-    }
-  }, [isDesktop]);
+      if (!isDesktop) {
+        setDrawerOpen(true);
+      }
+    },
+    [isDesktop]
+  );
 
   const clearEditDraft = useCallback(() => {
     setEditDraft(null);

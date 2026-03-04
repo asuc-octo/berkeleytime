@@ -15,6 +15,17 @@ import {
 
 import { ColoredSquare } from "@repo/theme";
 
+import type {
+  CapacityChangeEvent,
+  EnrollmentPoint,
+} from "@/app/Enrollment/EnrollmentGraph.utils";
+import {
+  compressPlateaus,
+  getCapacityChangeEvents,
+  getCapacityChangeTimeDeltas,
+  getTimeDeltaKey,
+  interpolateEnrollmentPoint,
+} from "@/app/Enrollment/EnrollmentGraph.utils";
 import {
   CapacityChangeMarker,
   ChartContainer,
@@ -27,18 +38,6 @@ import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useClass from "@/hooks/useClass";
 import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
-
-import type {
-  CapacityChangeEvent,
-  EnrollmentPoint,
-} from "@/app/Enrollment/EnrollmentGraph.utils";
-import {
-  compressPlateaus,
-  getCapacityChangeEvents,
-  getCapacityChangeTimeDeltas,
-  getTimeDeltaKey,
-  interpolateEnrollmentPoint,
-} from "@/app/Enrollment/EnrollmentGraph.utils";
 
 import styles from "./Enrollment.module.scss";
 
@@ -146,9 +145,7 @@ export default function Enrollment() {
       }
     }
 
-    const sortedEntries = Array.from(map.entries()).sort(
-      (a, b) => a[0] - b[0]
-    );
+    const sortedEntries = Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
     const protectedTimeDeltas = getCapacityChangeTimeDeltas(history);
     const compressed = compressPlateaus(sortedEntries, protectedTimeDeltas);
 
@@ -332,10 +329,7 @@ export default function Enrollment() {
       emptyState={emptyState}
     >
       <div className={styles.chart} ref={chartRef}>
-        <ChartContainer
-          config={chartConfig}
-          className={styles.chartContainer}
-        >
+        <ChartContainer config={chartConfig} className={styles.chartContainer}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               width={730}
@@ -361,9 +355,7 @@ export default function Enrollment() {
                 tickFormatter={(timeDelta) =>
                   String(
                     Math.floor(
-                      moment
-                        .duration(timeDelta as number, "minutes")
-                        .asDays()
+                      moment.duration(timeDelta as number, "minutes").asDays()
                     ) + 1
                   )
                 }
@@ -394,10 +386,7 @@ export default function Enrollment() {
 
                   const tooltipLabel = firstTime
                     ? TOOLTIP_DATE_FORMATTER.format(
-                        firstTime
-                          .clone()
-                          .add(labelMinutes, "minutes")
-                          .toDate()
+                        firstTime.clone().add(labelMinutes, "minutes").toDate()
                       )
                     : (() => {
                         const duration = moment.duration(
@@ -416,9 +405,7 @@ export default function Enrollment() {
 
                   return (
                     <div className={styles.tooltipCard}>
-                      <div className={styles.tooltipLabel}>
-                        {tooltipLabel}
-                      </div>
+                      <div className={styles.tooltipLabel}>{tooltipLabel}</div>
                       <div className={styles.tooltipItems}>
                         <div className={styles.tooltipItem}>
                           <span className={styles.tooltipItemLabel}>
