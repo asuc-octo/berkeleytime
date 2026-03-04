@@ -2,6 +2,7 @@ import { ArrowUpCircle } from "iconoir-react/solid";
 
 import type { CapacityChangeEvent } from "@/app/Enrollment/EnrollmentGraph.utils";
 
+// eslint-disable-next-line css-modules/no-unused-class -- classes shared with CapacityChangeTooltip
 import styles from "./CapacityChange.module.scss";
 
 const MARKER_SIZE = 5;

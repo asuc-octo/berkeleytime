@@ -26,17 +26,6 @@
   border-radius: 2px;
 }
 
-.metadata {
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--paragraph-color);
-  font-size: var(--text-14);
-  line-height: 1;
-}
-
 .iconButton,
 .deleteIconButton {
   display: inline-flex;

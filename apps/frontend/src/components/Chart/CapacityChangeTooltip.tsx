@@ -10,6 +10,7 @@ import { StatDown, StatUp } from "iconoir-react";
 
 import type { CapacityChangeEvent } from "@/app/Enrollment/EnrollmentGraph.utils";
 
+// eslint-disable-next-line css-modules/no-unused-class -- classes shared with CapacityChangeMarker
 import styles from "./CapacityChange.module.scss";
 import { formatters } from "./utils";
 
@@ -96,7 +97,6 @@ export function useCapacityChangeTooltip(
       }
     },
     // chartRef is a stable ref object
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
