@@ -146,6 +146,7 @@ export default function NavigationBar({
               }}
             >
               {[
+                { to: "/explore", label: "Explore" },
                 { to: "/catalog", label: "Catalog" },
                 { to: "/schedules", label: "Scheduler" },
                 { to: "/gradtrak", label: "Gradtrak" },
@@ -182,6 +183,13 @@ export default function NavigationBar({
           Berkeleytime
         </Link>
         <div className={styles.group}>
+          <NavLink to="/explore">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Explore
+              </MenuItem>
+            )}
+          </NavLink>
           <NavLink to="/catalog">
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>

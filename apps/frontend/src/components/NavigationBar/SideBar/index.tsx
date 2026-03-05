@@ -32,6 +32,9 @@ export default function SideBar({ children }: SideBarProps) {
               {/* <Link className={styles.item} to="/catalog">
               Dicover
             </Link> */}
+              <Link className={styles.item} to="/explore">
+                Explore
+              </Link>
               <Link className={styles.item} to="/catalog">
                 Catalog
               </Link>
