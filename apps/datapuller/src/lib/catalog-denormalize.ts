@@ -170,6 +170,43 @@ const filterInstructors = (
     .sort((a, b) => a.familyName.localeCompare(b.familyName));
 };
 
+type SeatReservationCountLike = {
+  number?: number;
+  maxEnroll?: number;
+};
+
+type SeatReservationTypeLike = {
+  number?: number;
+  fromDate?: string;
+};
+
+const computeActiveReservedMaxCount = (
+  seatReservationCount: SeatReservationCountLike[] | undefined,
+  seatReservationTypes: SeatReservationTypeLike[] | undefined
+): number => {
+  const counts = seatReservationCount ?? [];
+  if (counts.length === 0) return 0;
+
+  const types = seatReservationTypes ?? [];
+  const now = new Date();
+
+  return counts.reduce((sum, reservation) => {
+    const maxEnroll = reservation.maxEnroll ?? 0;
+    const matchingType = types.find((type) => type.number === reservation.number);
+    const fromDate = matchingType?.fromDate ?? "";
+    const fromDateObj = fromDate ? new Date(fromDate) : null;
+    const hasValidFromDate =
+      fromDateObj !== null && !Number.isNaN(fromDateObj.getTime());
+
+    // Keep this in sync with backend enrollment formatter logic:
+    // reservation is active when maxEnroll > 1 and the fromDate window has started.
+    const isActive =
+      maxEnroll > 1 && (!hasValidFromDate || (fromDateObj && fromDateObj <= now));
+
+    return sum + (isActive ? maxEnroll : 0);
+  }, 0);
+};
+
 /**
  * Builds denormalized catalog class documents for a given term.
  * Joins classes + courses + sections + enrollment into single documents.
@@ -263,6 +300,10 @@ export const buildCatalogClasses = async (
     const primaryEnrollment = enrollmentMap.get(primarySection.sectionId);
     const latestEnrollment =
       primaryEnrollment?.history?.[primaryEnrollment.history.length - 1];
+    const activeReservedMaxCount = computeActiveReservedMaxCount(
+      latestEnrollment?.seatReservationCount,
+      primaryEnrollment?.seatReservationTypes
+    );
 
     // Compute pre-computed fields
     const normalizedSubject = normalizeSubject(_class.subject);
@@ -407,7 +448,7 @@ export const buildCatalogClasses = async (
       maxEnroll: latestEnrollment?.maxEnroll,
       waitlistedCount: latestEnrollment?.waitlistedCount,
       maxWaitlist: latestEnrollment?.maxWaitlist,
-      activeReservedMaxCount: undefined, // computed from seat reservations if needed
+      activeReservedMaxCount,
 
       // Secondary sections
       sections: formattedSections,
@@ -571,6 +612,7 @@ export const updateCatalogEnrollment = async (
       maxEnroll?: number;
       waitlistedCount?: number;
       maxWaitlist?: number;
+      activeReservedMaxCount?: number;
     }
   >
 ) => {
@@ -590,6 +632,7 @@ export const updateCatalogEnrollment = async (
             maxEnroll: enrollment.maxEnroll,
             waitlistedCount: enrollment.waitlistedCount,
             maxWaitlist: enrollment.maxWaitlist,
+            activeReservedMaxCount: enrollment.activeReservedMaxCount,
           },
         },
       },

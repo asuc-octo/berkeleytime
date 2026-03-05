@@ -12,9 +12,21 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      redis-preflight:
+        condition: service_completed_successfully
     networks:
       - bt
     restart: always
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - require("http").get("http://localhost:5001/api/graphql",()=>process.exit(0)).on("error",()=>process.exit(1))
+      interval: 5s
+      timeout: 5s
+      start_period: 20s
+      retries: 20
     volumes:
       - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
@@ -144,10 +156,14 @@ services:
       - ./docker/mongodb/init:/scripts:ro
   nginx:
     depends_on:
-      - backend
-      - frontend
-      - ag-frontend
-      - staff-frontend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+      ag-frontend:
+        condition: service_started
+      staff-frontend:
+        condition: service_started
     image: nginx:1.21
     networks:
       - bt
@@ -165,6 +181,31 @@ services:
     networks:
       - bt
     restart: always
+  redis-preflight:
+    image: redis:7.2.4
+    depends_on:
+      redis:
+        condition: service_started
+    networks:
+      - bt
+    restart: "no"
+    entrypoint:
+      - /bin/sh
+    command:
+      - -ec
+      - |
+        attempts=0
+        until [ "$$(redis-cli -h redis ping)" = "PONG" ]; do
+          attempts=$$((attempts + 1))
+          if [ "$$attempts" -ge 30 ]; then
+            echo "redis-preflight failed waiting for redis."
+            exit 1
+          fi
+          sleep 1
+        done
+
+        redis-cli -h redis FLUSHALL
+        echo "Flushed redis cache on startup."
   storybook:
     build:
       context: .
