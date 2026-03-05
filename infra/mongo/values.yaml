@@ -5,9 +5,6 @@ mongodb:
   commonLabels:
     env: prod
 
-  image:
-    tag: 7.0.5
-
   architecture: replicaset
   arbiter:
     enabled: false
@@ -15,6 +12,23 @@ mongodb:
 
   auth:
     enabled: false
+
+  # MongoDB 8.0 removed storage.journal.enabled; custom config omits it to avoid "Unrecognized option"
+  configuration: |
+    storage:
+      dbPath: /bitnami/mongodb/data/db
+      directoryPerDB: false
+    systemLog:
+      destination: file
+      path: /opt/bitnami/mongodb/logs/mongodb.log
+      logAppend: true
+    net:
+      port: 27017
+      bindIp: 0.0.0.0
+    processManagement:
+      pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+    replication:
+      replSetName: rs0
 
   persistence:
     storageClass: manual

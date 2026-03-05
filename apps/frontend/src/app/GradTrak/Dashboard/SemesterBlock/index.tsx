@@ -569,9 +569,9 @@ function SemesterBlock({
                     Pin
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    onClick={() => {
+                    onClick={async () => {
                       try {
-                        removePlanTermByID(planTerm._id);
+                        await removePlanTermByID(planTerm._id);
                         handleRemoveTerm();
                       } catch {
                         return;

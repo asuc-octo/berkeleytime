@@ -13,16 +13,17 @@ const env = (name: string): string => {
   return value;
 };
 
+const envOptional = (name: string): string | undefined => process.env[name];
+
 export interface Config {
   port: number;
   cacheWarmingPort: number;
   url: string;
   backendPath: string;
+  /** Full public URL of the backend (e.g. https://berkeleytime.com/api). Required in production for OAuth callback. */
+  backendPublicUrl: string | undefined;
   graphqlPath: string;
   isDev: boolean;
-  semanticSearch: {
-    url: string;
-  };
   mongoDB: {
     uri: string;
   };
@@ -52,11 +53,9 @@ export const config: Config = {
   cacheWarmingPort: +env("CACHE_WARMING_PORT"),
   url: env("URL"),
   backendPath: env("BACKEND_PATH"),
+  backendPublicUrl: envOptional("BACKEND_PUBLIC_URL"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
-  semanticSearch: {
-    url: env("SEMANTIC_SEARCH_URL"),
-  },
   mongoDB: {
     uri: env("MONGODB_URI"),
   },

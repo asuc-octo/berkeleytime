@@ -11,7 +11,7 @@ const typedefFiles = fs.readdirSync(sourceDir)
   .sort();
 
 // Get all module directories from backend/src/modules (excluding non-module directories)
-const excludedDirs = ['cache', 'generated-types', 'semantic-search'];
+const excludedDirs = ['cache', 'generated-types'];
 const moduleDirs = fs.readdirSync(modulesDir, { withFileTypes: true })
   .filter(dirent => dirent.isDirectory() && !excludedDirs.includes(dirent.name))
   .map(dirent => dirent.name)
