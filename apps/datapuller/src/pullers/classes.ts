@@ -158,23 +158,15 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   await updateTermsCatalogDataFlags(log);
 
-  // Rebuild denormalized catalog_classes for all terms with catalog data
-  const distinctTermNames = await TermModel.distinct("name", {
-    hasCatalogData: true,
-  });
+  // Rebuild denormalized catalog_classes only for the terms we just pulled
+  const pulledTermNames = [
+    ...new Set(terms.map((term) => term.name as string)),
+  ];
+  const pulledTermsParsed = pulledTermNames
+    .map(parseTermName)
+    .filter((t): t is NonNullable<typeof t> => t !== null);
 
-  // Sort by year descending (latest first)
-  const termsWithCatalogData = distinctTermNames
-    .map((name) => {
-      const parsed = parseTermName(name);
-      return parsed ? { name, ...parsed } : null;
-    })
-    .filter(
-      (t): t is { name: string; year: number; semester: string } => t !== null
-    )
-    .sort((a, b) => b.year - a.year);
-
-  for (const term of termsWithCatalogData) {
+  for (const term of pulledTermsParsed) {
     await refreshCatalogClasses(log, term.year, term.semester);
   }
 };
