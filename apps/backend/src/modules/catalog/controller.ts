@@ -320,15 +320,10 @@ const buildSort = (
     case "AVERAGE_GRADE":
       return { allTimeAverageGrade: order, subject: 1, courseNumber: 1 };
     case "OPEN_SEATS":
-      return {
-        enrollmentStatus: 1,
-        enrolledCount: order,
-        subject: 1,
-        courseNumber: 1,
-      };
+      return { openSeats: order, subject: 1, courseNumber: 1 };
     case "RELEVANCE":
     default:
-      return { viewCount: -1, subject: 1, courseNumber: 1 };
+      return { viewCount: order, subject: 1, courseNumber: 1 };
   }
 };
 

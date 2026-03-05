@@ -115,6 +115,9 @@ export interface ICatalogClassItem {
   // Secondary sections
   sections?: ICatalogClassSection[];
 
+  // Pre-computed sort fields
+  openSeats?: number;
+
   // Ratings/grades
   viewCount?: number;
   aggregatedRatings?: {
@@ -268,6 +271,9 @@ const catalogClassSchema = new Schema<ICatalogClassItem>(
         maxWaitlist: { type: Number },
       },
     ],
+
+    // Pre-computed sort fields
+    openSeats: { type: Number, default: 0 },
 
     // Ratings/grades
     viewCount: { type: Number, default: 0 },

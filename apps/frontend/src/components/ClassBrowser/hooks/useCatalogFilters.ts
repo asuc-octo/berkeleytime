@@ -26,7 +26,7 @@ type CatalogSortBy = GetCatalogServerQueryVariables["sortBy"];
 type CatalogEnrollmentFilter = NonNullable<ICatalogFilters>["enrollmentFilter"];
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
-  [SortBy.Relevance]: "asc",
+  [SortBy.Relevance]: "desc",
   [SortBy.Units]: "asc",
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",

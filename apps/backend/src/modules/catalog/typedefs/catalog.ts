@@ -145,6 +145,9 @@ export const catalogTypeDef = gql`
     "Secondary sections"
     sections: [CatalogSection!]
 
+    "Pre-computed sort"
+    openSeats: Int
+
     "Stats"
     viewCount: Int
     aggregatedRatings: CatalogAggregatedRatings

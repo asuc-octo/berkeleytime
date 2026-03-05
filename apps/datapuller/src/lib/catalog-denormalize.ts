@@ -453,6 +453,13 @@ export const buildCatalogClasses = async (
       maxWaitlist: latestEnrollment?.maxWaitlist,
       activeReservedMaxCount,
 
+      // Pre-computed sort fields
+      openSeats: Math.max(
+        0,
+        (latestEnrollment?.maxEnroll ?? 0) -
+          (latestEnrollment?.enrolledCount ?? 0)
+      ),
+
       // Secondary sections
       sections: formattedSections,
 
@@ -562,9 +569,31 @@ export const updateCatalogRatings = async (
 
   if (courseIds.length === 0) return;
 
-  const ratingsMap = await aggregateRatingsForCourses(courseIds);
+  const [ratingsMap, viewCounts] = await Promise.all([
+    aggregateRatingsForCourses(courseIds),
+    ClassViewCountModel.find({ year, semester }).lean(),
+  ]);
 
   const bulkOps: Parameters<typeof CatalogClassModel.bulkWrite>[0] = [];
+
+  // Sync view counts
+  for (const vc of viewCounts) {
+    const count = vc.viewCount ?? 0;
+    if (count === 0) continue;
+    bulkOps.push({
+      updateOne: {
+        filter: {
+          year,
+          semester,
+          sessionId: vc.sessionId,
+          subject: vc.subject,
+          courseNumber: vc.courseNumber,
+          number: vc.number,
+        },
+        update: { $set: { viewCount: count } },
+      },
+    });
+  }
 
   for (const [courseId, metrics] of ratingsMap) {
     bulkOps.push({
@@ -592,7 +621,7 @@ export const updateCatalogRatings = async (
       ordered: false,
     });
     log.info(
-      `Updated ratings for ${ratingsMap.size} courses on catalog_classes (${result.modifiedCount} docs modified)`
+      `Updated ratings + view counts for ${ratingsMap.size} courses, ${viewCounts.length} view entries on catalog_classes (${result.modifiedCount} docs modified)`
     );
   }
 };
@@ -699,6 +728,10 @@ export const updateCatalogEnrollment = async (
 
   for (const [sectionId, enrollment] of sectionEnrollments) {
     // Update primary section enrollment
+    const openSeats = Math.max(
+      0,
+      (enrollment.maxEnroll ?? 0) - (enrollment.enrolledCount ?? 0)
+    );
     bulkOps.push({
       updateMany: {
         filter: { year, semester, primarySectionId: sectionId },
@@ -710,6 +743,7 @@ export const updateCatalogEnrollment = async (
             waitlistedCount: enrollment.waitlistedCount,
             maxWaitlist: enrollment.maxWaitlist,
             activeReservedMaxCount: enrollment.activeReservedMaxCount,
+            openSeats,
           },
         },
       },
