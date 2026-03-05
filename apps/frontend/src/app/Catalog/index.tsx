@@ -311,12 +311,19 @@ export default function Catalog() {
       });
     }
 
-    return selectedTerm;
+    return selectedTerm ?? null;
   }, [terms, year, semester]);
+
+  // Fallback term so the catalog UI always renders (query will return 0 results)
+  const [fallbackTerm] = useState(() => ({
+    year: new Date().getFullYear(),
+    semester: Semester.Spring as Semester,
+  }));
+  const effectiveTerm = term ?? fallbackTerm;
 
   useEffect(() => {
     setCatalogAvailabilityClasses([]);
-  }, [term?.year, term?.semester]);
+  }, [effectiveTerm.year, effectiveTerm.semester]);
 
   const subject = useMemo(
     () => providedSubject?.toUpperCase(),
@@ -331,8 +338,8 @@ export default function Catalog() {
   }, [isDesktop, hasClassSelected]);
 
   const { data: _class, error: classError } = useGetClass(
-    term?.year as number,
-    term?.semester as Semester,
+    effectiveTerm.year,
+    effectiveTerm.semester as Semester,
     sessionId as string,
     subject as string,
     courseNumber as string,
@@ -470,15 +477,15 @@ export default function Catalog() {
       const matchedClass = exactNumberMatch ?? candidates[0];
 
       return {
-        year: term.year,
-        semester: term.semester,
+        year: effectiveTerm.year,
+        semester: effectiveTerm.semester,
         subject: matchedClass.subject,
         courseNumber: matchedClass.courseNumber,
         number: matchedClass.number,
         sessionId: matchedClass.sessionId,
       };
     },
-    [catalogAvailabilityByCourse, term]
+    [catalogAvailabilityByCourse, effectiveTerm, term]
   );
 
   const handleSelect = useCallback(
@@ -494,10 +501,10 @@ export default function Catalog() {
 
       navigate({
         ...location,
-        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
+        pathname: `/catalog/${effectiveTerm.year}/${effectiveTerm.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [location, navigate, term]
+    [location, navigate, effectiveTerm, term]
   );
 
   const handleSavedClassSelect = useCallback(
@@ -519,17 +526,14 @@ export default function Catalog() {
     return <CatalogSkeleton />;
   }
 
-  // TODO: Error state
-  if (!terms || !term) {
-    return <></>;
-  }
+  // TODO: Error state for terms loading failure
 
   return (
     <>
       <div className={styles.root}>
         {catalogLoading && (
           <div className={styles.skeletonOverlay}>
-            <CatalogSkeleton terms={terms} currentTerm={term} />
+            <CatalogSkeleton terms={terms ?? undefined} currentTerm={effectiveTerm} />
           </div>
         )}
         {isDesktop ? (
@@ -542,9 +546,9 @@ export default function Catalog() {
               }
               onLoadingChange={setCatalogLoading}
               forceMode={mode}
-              semester={term.semester}
-              year={term.year}
-              terms={terms}
+              semester={effectiveTerm.semester}
+              year={effectiveTerm.year}
+              terms={terms ?? undefined}
               persistent
             />
           </div>
@@ -575,9 +579,9 @@ export default function Catalog() {
                 }
                 onLoadingChange={setCatalogLoading}
                 forceMode={mode}
-                semester={term.semester}
-                year={term.year}
-                terms={terms}
+                semester={effectiveTerm.semester}
+                year={effectiveTerm.year}
+                terms={terms ?? undefined}
                 persistent
               />
             </motion.div>

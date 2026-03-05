@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FrameAltEmpty } from "iconoir-react";
+import { EmptyPage } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
@@ -356,12 +356,8 @@ export default function List({ onSelect }: ListProps) {
       <div ref={catalogScrollRef} className={styles.catalogScroll}>
         {!loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
-            <FrameAltEmpty width={32} height={32} />
-            <p className={styles.heading}>No courses found</p>
-            <p className={styles.description}>
-              Find courses by broadening your search or entering a different
-              query.
-            </p>
+            <EmptyPage width={32} height={32} />
+            <p className={styles.heading}>No classes found</p>
           </div>
         ) : (
           <div

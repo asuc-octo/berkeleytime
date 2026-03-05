@@ -249,32 +249,31 @@ export default function Filters() {
             Clear
           </button>
         </div>
-        {terms && terms.length > 0 && (
-          <div className={styles.formControl}>
-            <p className={styles.label}>Semester</p>
-            <Select
-              searchable
-              value={currentTermLabel}
-              onChange={(value) => {
-                const selectedTerm = availableTerms.find(
-                  (term) => `${term.semester} ${term.year}` === value
+        <div className={styles.formControl}>
+          <p className={styles.label}>Semester</p>
+          <Select
+            searchable
+            disabled={!terms || terms.length === 0}
+            value={currentTermLabel}
+            onChange={(value) => {
+              const selectedTerm = availableTerms.find(
+                (term) => `${term.semester} ${term.year}` === value
+              );
+              if (selectedTerm) {
+                navigate(
+                  `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
                 );
-                if (selectedTerm) {
-                  navigate(
-                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
-                  );
-                }
-              }}
-              options={availableTerms.map((term) => ({
-                value: `${term.semester} ${term.year}`,
-                label: `${term.semester} ${term.year}`,
-              }))}
-              searchPlaceholder="Search semesters..."
-              emptyMessage="No semesters found."
-              maxListHeight={130}
-            />
-          </div>
-        )}
+              }
+            }}
+            options={availableTerms.map((term) => ({
+              value: `${term.semester} ${term.year}`,
+              label: `${term.semester} ${term.year}`,
+            }))}
+            searchPlaceholder="Search semesters..."
+            emptyMessage="No semesters found."
+            maxListHeight={130}
+          />
+        </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Sort By</p>
           <div className={styles.sortControls}>
