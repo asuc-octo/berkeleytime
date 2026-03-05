@@ -196,8 +196,8 @@ export const catalogTypeDef = gql`
       sortOrder: SortOrder
       page: Int
       pageSize: Int
-    ): CatalogResult!
+    ): CatalogResult! @cacheControl(maxAge: 300, scope: PUBLIC)
 
-    catalogFilterOptions(year: Int!, semester: Semester!): CatalogFilterOptions!
+    catalogFilterOptions(year: Int!, semester: Semester!): CatalogFilterOptions! @cacheControl(maxAge: 3600, scope: PUBLIC)
   }
 `;

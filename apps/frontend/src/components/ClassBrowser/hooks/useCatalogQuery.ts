@@ -134,8 +134,8 @@ export default function useCatalogQuery({
       page: 1,
       pageSize: DEFAULT_PAGE_SIZE,
     },
-    // Prefer fresh server data to avoid stale grade/rating display.
-    fetchPolicy: "network-only",
+    // Show cached data instantly, then revalidate in the background.
+    fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
   });
 
