@@ -192,7 +192,9 @@ const computeActiveReservedMaxCount = (
 
   return counts.reduce((sum, reservation) => {
     const maxEnroll = reservation.maxEnroll ?? 0;
-    const matchingType = types.find((type) => type.number === reservation.number);
+    const matchingType = types.find(
+      (type) => type.number === reservation.number
+    );
     const fromDate = matchingType?.fromDate ?? "";
     const fromDateObj = fromDate ? new Date(fromDate) : null;
     const hasValidFromDate =
@@ -201,7 +203,8 @@ const computeActiveReservedMaxCount = (
     // Keep this in sync with backend enrollment formatter logic:
     // reservation is active when maxEnroll > 1 and the fromDate window has started.
     const isActive =
-      maxEnroll > 1 && (!hasValidFromDate || (fromDateObj && fromDateObj <= now));
+      maxEnroll > 1 &&
+      (!hasValidFromDate || (fromDateObj && fromDateObj <= now));
 
     return sum + (isActive ? maxEnroll : 0);
   }, 0);
@@ -573,9 +576,7 @@ export const updateCatalogRatings = async (
   }
 
   // Null out ratings for courses that no longer have any
-  const courseIdsWithoutRatings = courseIds.filter(
-    (id) => !ratingsMap.has(id)
-  );
+  const courseIdsWithoutRatings = courseIds.filter((id) => !ratingsMap.has(id));
 
   if (courseIdsWithoutRatings.length > 0) {
     bulkOps.push({

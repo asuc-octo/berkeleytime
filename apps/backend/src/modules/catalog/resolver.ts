@@ -1,9 +1,13 @@
-import { getCatalog, getCatalogFilterOptions } from "./controller";
+import {
+  type CatalogQueryParams,
+  getCatalog,
+  getCatalogFilterOptions,
+} from "./controller";
 
 const resolvers = {
   Query: {
     catalog: async (
-      _: any,
+      _: unknown,
       {
         year,
         semester,
@@ -17,7 +21,7 @@ const resolvers = {
         year: number;
         semester: string;
         search?: string | null;
-        filters?: any;
+        filters?: CatalogQueryParams["filters"];
         sortBy?: string | null;
         sortOrder?: string | null;
         page?: number | null;
@@ -36,7 +40,7 @@ const resolvers = {
       });
     },
     catalogFilterOptions: async (
-      _: any,
+      _: unknown,
       { year, semester }: { year: number; semester: string }
     ) => {
       return await getCatalogFilterOptions(year, semester);

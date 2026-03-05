@@ -123,7 +123,10 @@ export default function ClassCard({
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
   const ratingsCount = _class?.course?.aggregatedRatings
-    ? Math.max(0, ..._class.course.aggregatedRatings.metrics.map((m) => m.count))
+    ? Math.max(
+        0,
+        ..._class.course.aggregatedRatings.metrics.map((m) => m.count)
+      )
     : 0;
 
   return (

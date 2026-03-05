@@ -1,6 +1,8 @@
+import type { PipelineStage } from "mongoose";
+
 import { CatalogClassModel, TermModel } from "@repo/common/models";
 
-interface CatalogQueryParams {
+export interface CatalogQueryParams {
   year: number;
   semester: string;
   search?: string | null;
@@ -24,6 +26,11 @@ interface CatalogQueryParams {
   pageSize?: number | null;
 }
 
+type CatalogFilterCondition = Record<string, unknown>;
+type CatalogFilterQuery = Record<string, unknown> & {
+  $and?: CatalogFilterCondition[];
+};
+
 const parseTimeToMinutes = (time: string): number | null => {
   const parts = time.split(":").map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
@@ -31,8 +38,8 @@ const parseTimeToMinutes = (time: string): number | null => {
 };
 
 const appendAndCondition = (
-  query: Record<string, any>,
-  condition: Record<string, any>
+  query: CatalogFilterQuery,
+  condition: CatalogFilterCondition
 ) => {
   if (!query.$and) {
     query.$and = [];
@@ -99,7 +106,7 @@ const getCatalogWithSearch = async (
   const filterMatch = buildFilterQuery(year, semester, filters);
 
   // Use Atlas Search $search stage
-  const pipeline: any[] = [
+  const pipeline: PipelineStage[] = [
     {
       $search: {
         index: "catalog_search",
@@ -141,13 +148,13 @@ const getCatalogWithSearch = async (
           minimumShouldMatch: 1,
         },
       },
-    },
-    { $match: filterMatch },
+    } as PipelineStage,
+    { $match: filterMatch } as PipelineStage,
     {
       $addFields: {
         searchScore: { $meta: "searchScore" },
       },
-    },
+    } as PipelineStage,
   ];
 
   // Use $facet for count + paginated results in one query
@@ -160,7 +167,7 @@ const getCatalogWithSearch = async (
       ],
       count: [{ $count: "total" }],
     },
-  });
+  } as PipelineStage);
 
   const [facetResult] = await CatalogClassModel.aggregate(pipeline);
 
@@ -174,8 +181,8 @@ const buildFilterQuery = (
   year: number,
   semester: string,
   filters: CatalogQueryParams["filters"]
-): Record<string, any> => {
-  const query: Record<string, any> = { year, semester };
+): CatalogFilterQuery => {
+  const query: CatalogFilterQuery = { year, semester };
 
   if (!filters) return query;
 
@@ -217,8 +224,11 @@ const buildFilterQuery = (
     if (filters.timeFrom) {
       const fromMinutes = parseTimeToMinutes(filters.timeFrom);
       if (fromMinutes !== null) {
+        const existingStartMinutes =
+          (query.meetingStartMinutes as Record<string, unknown> | undefined) ??
+          {};
         query.meetingStartMinutes = {
-          ...(query.meetingStartMinutes || {}),
+          ...existingStartMinutes,
           $gte: fromMinutes,
           $ne: null,
         };
@@ -227,8 +237,11 @@ const buildFilterQuery = (
     if (filters.timeTo) {
       const toMinutes = parseTimeToMinutes(filters.timeTo);
       if (toMinutes !== null) {
+        const existingEndMinutes =
+          (query.meetingEndMinutes as Record<string, unknown> | undefined) ??
+          {};
         query.meetingEndMinutes = {
-          ...(query.meetingEndMinutes || {}),
+          ...existingEndMinutes,
           $lte: toMinutes,
         };
       }
