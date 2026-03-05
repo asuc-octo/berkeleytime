@@ -14,6 +14,7 @@ export const GET_COURSE_TITLE = gql`
       subject
       number
       title
+      ratingsCount
     }
   }
 `;

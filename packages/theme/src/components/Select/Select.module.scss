@@ -1,22 +1,10 @@
-.scrollableWithDivider {
-  --select-scrollbar-width: 10px;
-  --select-divider-gap: 4px;
-
+.scrollable {
   &::-webkit-scrollbar {
-    width: var(--select-scrollbar-width);
+    width: 10px;
   }
 
   &::-webkit-scrollbar-track {
     background-color: transparent;
-  }
-
-  &.showDivider {
-    background-image: linear-gradient(var(--border-color), var(--border-color));
-    background-repeat: no-repeat;
-    background-size: 1px 100%;
-    background-position:
-      calc(100% - var(--select-scrollbar-width) - var(--select-divider-gap))
-      top;
   }
 }
 
@@ -83,7 +71,7 @@
 }
 
 .content {
-  @extend .scrollableWithDivider;
+  @extend .scrollable;
   @extend .menuElevation;
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
@@ -94,6 +82,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  [data-highlighted] > * {
+    background-color: var(--button-hover-color);
+  }
 }
 
 .sectionLabel {
@@ -168,8 +160,39 @@
   }
 }
 
+.pillsWrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: solid 1px var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.pill {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: var(--button-hover-color);
+  border: none;
+  font-size: var(--text-12);
+  color: var(--heading-color);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--button-active-color);
+  }
+}
+
 .commandList {
-  @extend .scrollableWithDivider;
+  @extend .scrollable;
   max-height: 300px;
   overflow-y: auto;
   min-height: 0;
@@ -181,6 +204,10 @@
 
     &:last-child {
       margin-bottom: 0;
+    }
+
+    &[data-selected="true"] > * {
+      background-color: var(--button-hover-color);
     }
   }
 }

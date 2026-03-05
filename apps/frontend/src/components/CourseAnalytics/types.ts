@@ -65,8 +65,8 @@ export interface CourseOutput<I, T> {
   active: boolean;
 }
 
-export const LIGHT_COLORS = ["#4EA6FA", "#6ADF86", "#EC5186", "#F9E151"];
-export const DARK_COLORS = ["#132a3e", "#1a3721", "#3b1621", "#3e3844"];
+export const LIGHT_COLORS = ["#4e79a7", "#76b7b2", "#af7aa1", "#ff9da7"];
+export const DARK_COLORS = ["#1a2a3b", "#1f3332", "#2e2233", "#3b2227"];
 
 export const getInputSearchParam = (input: Input) => {
   // Course input
