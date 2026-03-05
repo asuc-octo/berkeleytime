@@ -299,22 +299,6 @@ function ListSkeleton({ onOpenFilters }: { onOpenFilters: () => void }) {
 
       </div>
 
-        <div className={listStyles.recentlyViewedSection}>
-          <div className={listStyles.recentlyViewed}>
-            <div className={listStyles.recentlyViewedList}>
-              {[...Array(3)].map((_, i) => (
-                <span
-                  key={`recent-skeleton-${i}`}
-                  className={listStyles.recentlyViewedTagButton}
-                  style={{ cursor: "default" }}
-                >
-                  <span style={{ visibility: "hidden", fontSize: "var(--text-14)", lineHeight: 1 }}>{"XXXX 000"}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
       <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
         <div className={listStyles.skeletonContainer}>
           {[...Array(10)].map((_, i) => (

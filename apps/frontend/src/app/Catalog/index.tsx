@@ -530,9 +530,6 @@ export default function Catalog() {
 
   const [catalogLoading, setCatalogLoading] = useState(true);
 
-  // TODO: Remove debug flag
-  const [debugSkeleton, setDebugSkeleton] = useState(false);
-
   if (termsLoading) {
     return <CatalogSkeleton />;
   }
@@ -544,71 +541,15 @@ export default function Catalog() {
 
   return (
     <>
-      <button
-        type='button'
-        style={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
-          zIndex: 9999,
-          background: '#000',
-          color: '#fff',
-          padding: '8px 12px',
-          borderRadius: 8,
-          fontSize: 12,
-          cursor: 'pointer',
-          opacity: 0.8,
-          border: 'none',
-        }}
-        onClick={() => setDebugSkeleton(prev => !prev)}
-      >
-        {debugSkeleton ? 'Show real' : 'Show skeleton'}
-      </button>
-
-      {debugSkeleton ? (
-        <CatalogSkeleton terms={terms} currentTerm={term} />
-      ) : (
-    <div className={styles.root}>
-      {catalogLoading && (
-        <div className={styles.skeletonOverlay}>
-          <CatalogSkeleton terms={terms} currentTerm={term} />
-        </div>
-      )}
-      {isDesktop ? (
-        // Desktop: Static panel
-        <div className={styles.panel}>
-          <ClassBrowser
-            onSelect={handleSelect}
-            onCatalogClassAvailabilityChange={
-              handleCatalogClassAvailabilityChange
-            }
-            onLoadingChange={setCatalogLoading}
-            semester={term.semester}
-            year={term.year}
-            terms={terms}
-            persistent
-          />
-        </div>
-      ) : (
-        // Mobile: Drawer overlay
-        <>
-          <AnimatePresence>
-            {catalogDrawerOpen && (
-              <motion.div
-                className={styles.overlay}
-                onClick={() => setCatalogDrawerOpen(false)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              />
-            )}
-          </AnimatePresence>
-          <motion.div
-            className={styles.catalogDrawer}
-            animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          >
+      <div className={styles.root}>
+        {catalogLoading && (
+          <div className={styles.skeletonOverlay}>
+            <CatalogSkeleton terms={terms} currentTerm={term} />
+          </div>
+        )}
+        {isDesktop ? (
+          // Desktop: Static panel
+          <div className={styles.panel}>
             <ClassBrowser
               onSelect={handleSelect}
               onCatalogClassAvailabilityChange={
@@ -620,112 +561,143 @@ export default function Catalog() {
               terms={terms}
               persistent
             />
-          </motion.div>
-        </>
-      )}
-
-      {!isDesktop && (
-        <div
-          className={styles.drawerTrigger}
-          onClick={() => setCatalogDrawerOpen(true)}
-        >
-          {!catalogDrawerOpen && <NavArrowRight />}
-        </div>
-      )}
-
-      <Flex direction="column" flexGrow="1" className={styles.view}>
-        {user && (
-          <div className={styles.bookmarkBanner}>
-            <div
-              className={styles.bookmarkFoldersViewport}
-              ref={foldersViewportRef}
-            >
-              {collectionsLoading ? (
-                <span className={styles.bookmarkEmptyState}>
-                  Loading collections...
-                </span>
-              ) : cappedOrderedCollections.length > 0 ? (
-                <>
-                  <div className={styles.bookmarkFolders}>
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      {visibleCollections.map((collection, index) => (
-                        <SavedCollectionSection
-                          key={collection.id}
-                          collection={collection}
-                          index={index}
-                          onSelect={handleSavedClassSelect}
-                          resolveCurrentTermClass={resolveCurrentTermClass}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                  <div className={styles.bookmarkMeasureRow} aria-hidden="true">
-                    {cappedOrderedCollections.map((collection) => {
-                      const folderColor = getColorCSSVar(collection.color);
-                      const folderIconStyle = folderColor
-                        ? ({
-                            "--bookmark-folder-color": folderColor,
-                          } as CSSProperties)
-                        : undefined;
-
-                      return (
-                        <button
-                          key={`measure-${collection.id}`}
-                          type="button"
-                          className={styles.bookmarkButton}
-                          tabIndex={-1}
-                          ref={(el) => {
-                            measureButtonRefs.current[collection.id] = el;
-                          }}
-                        >
-                          <Folder
-                            width={16}
-                            height={16}
-                            className={
-                              folderColor
-                                ? styles.bookmarkFolderIcon
-                                : undefined
-                            }
-                            style={folderIconStyle}
-                          />
-                          <span className={styles.bookmarkButtonText}>
-                            {collection.name}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <span className={styles.bookmarkEmptyState}>
-                  No saved classes yet.
-                </span>
+          </div>
+        ) : (
+          // Mobile: Drawer overlay
+          <>
+            <AnimatePresence>
+              {catalogDrawerOpen && (
+                <motion.div
+                  className={styles.overlay}
+                  onClick={() => setCatalogDrawerOpen(false)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.9 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                />
               )}
+            </AnimatePresence>
+            <motion.div
+              className={styles.catalogDrawer}
+              animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            >
+              <ClassBrowser
+                onSelect={handleSelect}
+                onCatalogClassAvailabilityChange={
+                  handleCatalogClassAvailabilityChange
+                }
+                onLoadingChange={setCatalogLoading}
+                semester={term.semester}
+                year={term.year}
+                terms={terms}
+                persistent
+              />
+            </motion.div>
+          </>
+        )}
+
+        {!isDesktop && (
+          <div
+            className={styles.drawerTrigger}
+            onClick={() => setCatalogDrawerOpen(true)}
+          >
+            {!catalogDrawerOpen && <NavArrowRight />}
+          </div>
+        )}
+
+        <Flex direction="column" flexGrow="1" className={styles.view}>
+          {user && (
+            <div className={styles.bookmarkBanner}>
+              <div
+                className={styles.bookmarkFoldersViewport}
+                ref={foldersViewportRef}
+              >
+                {collectionsLoading ? (
+                  <span className={styles.bookmarkEmptyState}>
+                    Loading collections...
+                  </span>
+                ) : cappedOrderedCollections.length > 0 ? (
+                  <>
+                    <div className={styles.bookmarkFolders}>
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {visibleCollections.map((collection, index) => (
+                          <SavedCollectionSection
+                            key={collection.id}
+                            collection={collection}
+                            index={index}
+                            onSelect={handleSavedClassSelect}
+                            resolveCurrentTermClass={resolveCurrentTermClass}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                    <div className={styles.bookmarkMeasureRow} aria-hidden="true">
+                      {cappedOrderedCollections.map((collection) => {
+                        const folderColor = getColorCSSVar(collection.color);
+                        const folderIconStyle = folderColor
+                          ? ({
+                              "--bookmark-folder-color": folderColor,
+                            } as CSSProperties)
+                          : undefined;
+
+                        return (
+                          <button
+                            key={`measure-${collection.id}`}
+                            type="button"
+                            className={styles.bookmarkButton}
+                            tabIndex={-1}
+                            ref={(el) => {
+                              measureButtonRefs.current[collection.id] = el;
+                            }}
+                          >
+                            <Folder
+                              width={16}
+                              height={16}
+                              className={
+                                folderColor
+                                  ? styles.bookmarkFolderIcon
+                                  : undefined
+                              }
+                              style={folderIconStyle}
+                            />
+                            <span className={styles.bookmarkButtonText}>
+                              {collection.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <span className={styles.bookmarkEmptyState}>
+                    No saved classes yet.
+                  </span>
+                )}
+              </div>
+              <Tooltip
+                title="Collections page"
+                side="bottom"
+                trigger={
+                  <button
+                    type="button"
+                    className={styles.bookmarkCollectionsButton}
+                    onClick={handleGoToCollectionsPage}
+                    aria-label="Go to collections page"
+                  >
+                    <Book width={16} height={16} />
+                  </button>
+                }
+              />
             </div>
-            <Tooltip
-              title="Collections page"
-              side="bottom"
-              trigger={
-                <button
-                  type="button"
-                  className={styles.bookmarkCollectionsButton}
-                  onClick={handleGoToCollectionsPage}
-                  aria-label="Go to collections page"
-                >
-                  <Book width={16} height={16} />
-                </button>
-              }
-            />
-          </div>
-        )}
-        {displayedClass && !classError && (
-          <div className={styles.classContainer}>
-            <Class class={displayedClass} scrollWithinContent />
-          </div>
-        )}
-      </Flex>
-    </div>
-      )}
+          )}
+          {displayedClass && !classError && (
+            <div className={styles.classContainer}>
+              <Class class={displayedClass} scrollWithinContent />
+            </div>
+          )}
+        </Flex>
+      </div>
     </>
   );
 }

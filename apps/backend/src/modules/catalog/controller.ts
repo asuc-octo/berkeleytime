@@ -30,6 +30,17 @@ const parseTimeToMinutes = (time: string): number | null => {
   return parts[0] * 60 + parts[1];
 };
 
+const appendAndCondition = (
+  query: Record<string, any>,
+  condition: Record<string, any>
+) => {
+  if (!query.$and) {
+    query.$and = [];
+  }
+
+  query.$and.push(condition);
+};
+
 export const getCatalog = async (params: CatalogQueryParams) => {
   const {
     year,
@@ -189,12 +200,12 @@ const buildFilterQuery = (
         query[`meetingDays.${i}`] = false;
       }
     }
-    const dayConditions = filters.days.map((d) => ({
-      [`meetingDays.${d}`]: true,
+    const dayConditions = filters.days.map((day) => ({
+      [`meetingDays.${day}`]: true,
     }));
-    if (!query.$or) {
-      query.$or = dayConditions;
-    }
+    appendAndCondition(query, {
+      $or: dayConditions,
+    });
   }
 
   // Time range filter
@@ -239,15 +250,17 @@ const buildFilterQuery = (
         };
         break;
       case "WAITLIST_OPEN":
-        query.$or = [
-          { enrollmentStatus: "O" },
-          {
-            $and: [
-              { maxWaitlist: { $gt: 0 } },
-              { $expr: { $lt: ["$waitlistedCount", "$maxWaitlist"] } },
-            ],
-          },
-        ];
+        appendAndCondition(query, {
+          $or: [
+            { enrollmentStatus: "O" },
+            {
+              $and: [
+                { maxWaitlist: { $gt: 0 } },
+                { $expr: { $lt: ["$waitlistedCount", "$maxWaitlist"] } },
+              ],
+            },
+          ],
+        });
         break;
     }
   }
@@ -298,7 +311,7 @@ const buildSort = (
       };
     case "RELEVANCE":
     default:
-      return { subject: 1, courseNumber: 1, number: 1 };
+      return { subject: order, courseNumber: order, number: order };
   }
 };
 

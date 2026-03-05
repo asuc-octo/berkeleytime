@@ -13,7 +13,6 @@ export default function Header() {
     updateQuery,
     expanded,
     setExpanded,
-    classes,
     semester,
     year,
     responsive,
@@ -41,7 +40,6 @@ export default function Header() {
           autoFocus
           autoComplete="off"
         />
-        <div className={styles.label}>{classes.length.toLocaleString()}</div>
       </div>
       <Button
         className={classNames(styles.filterButton, {
