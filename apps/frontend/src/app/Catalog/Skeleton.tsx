@@ -1,4 +1,7 @@
+import { useMemo } from "react";
+
 import { Filter, Search, SortDown } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
 import {
   Button,
@@ -7,7 +10,6 @@ import {
   IconButton,
   Input,
   Select,
-  Skeleton,
   Slider,
 } from "@repo/theme";
 
@@ -18,6 +20,8 @@ import {
   Level,
   SortBy,
 } from "@/components/ClassBrowser/browser";
+import { sortByTermDescending } from "@/lib/classes";
+import { Semester } from "@/lib/generated/graphql";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -31,7 +35,28 @@ import listStyles from "../../components/ClassBrowser/List/List.module.scss";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./Catalog.module.scss";
 
-function FilterSkeleton() {
+type Term = { year: number; semester: Semester };
+
+function FilterSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term }) {
+  const navigate = useNavigate();
+
+  const availableTerms = useMemo(() => {
+    if (!terms) return [];
+    return [...terms]
+      .filter(
+        ({ year, semester }, index) =>
+          index ===
+          terms.findIndex(
+            (term) => term.semester === semester && term.year === year
+          )
+      )
+      .sort(sortByTermDescending);
+  }, [terms]);
+
+  const currentTermLabel = currentTerm
+    ? `${currentTerm.semester} ${currentTerm.year}`
+    : null;
+
   return (
     <div className={filterStyles.root}>
       {/* Header - hidden on desktop via CSS */}
@@ -44,7 +69,7 @@ function FilterSkeleton() {
             className={headerStyles.input}
             type="text"
             disabled
-            placeholder="Search classes..."
+            placeholder=""
           />
         </div>
         <Button className={headerStyles.filterButton} disabled>
@@ -58,17 +83,30 @@ function FilterSkeleton() {
           <p className={filterStyles.filtersTitle}>Filters</p>
         </div>
 
-        {/* Semester — needs network */}
+        {/* Semester */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Semester</p>
           <Select
             searchable
-            disabled
-            value={null}
-            onChange={() => {}}
-            options={[]}
+            disabled={!terms}
+            value={currentTermLabel}
+            onChange={(value) => {
+              const selectedTerm = availableTerms.find(
+                (term) => `${term.semester} ${term.year}` === value
+              );
+              if (selectedTerm) {
+                navigate(
+                  `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+                );
+              }
+            }}
+            options={availableTerms.map((term) => ({
+              value: `${term.semester} ${term.year}`,
+              label: `${term.semester} ${term.year}`,
+            }))}
             searchPlaceholder="Search semesters..."
             emptyMessage="No semesters found."
+            maxListHeight={130}
           />
         </div>
 
@@ -232,7 +270,7 @@ function ListSkeleton() {
               className={headerStyles.input}
               type="text"
               disabled
-              placeholder="Search classes..."
+              placeholder=""
             />
           </div>
           <Button className={headerStyles.filterButton} disabled>
@@ -240,6 +278,8 @@ function ListSkeleton() {
             <span>Open Filters</span>
           </Button>
         </div>
+
+      </div>
 
         <div className={listStyles.recentlyViewedSection}>
           <div className={listStyles.recentlyViewed}>
@@ -250,13 +290,12 @@ function ListSkeleton() {
                   className={listStyles.recentlyViewedTagButton}
                   style={{ cursor: "default" }}
                 >
-                  <Skeleton style={{ width: 61, borderRadius: 4 }} />
+                  <span style={{ visibility: "hidden", fontSize: "var(--text-14)", lineHeight: 1 }}>{"XXXX 000"}</span>
                 </span>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
       <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
         <div className={listStyles.skeletonContainer}>
@@ -269,12 +308,12 @@ function ListSkeleton() {
   );
 }
 
-export default function CatalogSkeleton() {
+export default function CatalogSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term } = {}) {
   return (
     <div className={styles.root}>
       <div className={styles.panel}>
         <div className={browserStyles.root}>
-          <FilterSkeleton />
+          <FilterSkeleton terms={terms} currentTerm={currentTerm} />
           <ListSkeleton />
         </div>
       </div>

@@ -530,6 +530,9 @@ export default function Catalog() {
 
   const [catalogLoading, setCatalogLoading] = useState(true);
 
+  // TODO: Remove debug flag
+  const [debugSkeleton, setDebugSkeleton] = useState(false);
+
   if (termsLoading) {
     return <CatalogSkeleton />;
   }
@@ -540,10 +543,35 @@ export default function Catalog() {
   }
 
   return (
+    <>
+      <button
+        type='button'
+        style={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          zIndex: 9999,
+          background: '#000',
+          color: '#fff',
+          padding: '8px 12px',
+          borderRadius: 8,
+          fontSize: 12,
+          cursor: 'pointer',
+          opacity: 0.8,
+          border: 'none',
+        }}
+        onClick={() => setDebugSkeleton(prev => !prev)}
+      >
+        {debugSkeleton ? 'Show real' : 'Show skeleton'}
+      </button>
+
+      {debugSkeleton ? (
+        <CatalogSkeleton terms={terms} currentTerm={term} />
+      ) : (
     <div className={styles.root}>
       {catalogLoading && (
         <div className={styles.skeletonOverlay}>
-          <CatalogSkeleton />
+          <CatalogSkeleton terms={terms} currentTerm={term} />
         </div>
       )}
       {isDesktop ? (
@@ -697,5 +725,7 @@ export default function Catalog() {
         )}
       </Flex>
     </div>
+      )}
+    </>
   );
 }
