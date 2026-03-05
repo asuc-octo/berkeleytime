@@ -1,5 +1,17 @@
 :root {
   --header-height: 90px; /* Default, overridden by JS */
+
+  /* Z-index layers
+  For elements in the <body> stacking context (position: fixed, Radix portals).
+  For local stacking within a component, use plain integers (1, 2, 3) instead. */
+  --z-fixed: 10;
+  --z-nav: 11;
+  --z-overlay: 12;
+  --z-modal: 13;
+  --z-popover: 14;
+  --z-toast: 15;
+  --z-tooltip: 16;
+  --z-dev: 9999;
 }
 
 html {
