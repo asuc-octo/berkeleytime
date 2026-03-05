@@ -5,6 +5,21 @@ This Worker serves Mongo backups from R2 at `https://backups.berkeleytime.com`:
 - `GET /public/*` → `prod-mongo-public-backups`
 - `GET /private/*` → `prod-mongo-backups`
 
+Behavior notes:
+
+- Only `GET` and `HEAD` are allowed.
+- `/private/*` requires Cloudflare Access, and the Worker cryptographically verifies `cf-access-jwt-assertion`.
+- Legacy public paths like `/daily/*` still resolve from the public bucket for compatibility.
+
+## Required private-route auth config
+
+Set these Worker variables for JWT verification:
+
+- `CLOUDFLARE_ACCESS_TEAM_DOMAIN` (for example: `your-team.cloudflareaccess.com`)
+- `CLOUDFLARE_ACCESS_AUDIENCE` (Access app AUD tag; comma-separated if you need multiple values)
+
+If either variable is missing or the token is invalid, `/private/*` returns `403`.
+
 ## 1. Install `cloudflared`
 
 ```bash
@@ -18,6 +33,7 @@ Public does **not** require authentication:
 ```bash
 curl -f -o "prod_public_backup-YYYYMMDD.gz" \
   "https://backups.berkeleytime.com/public/daily/prod_public_backup-YYYYMMDD.gz"
+printf "\033[33mNotice: Public backups are redacted and are not a comprehensive dataset. Use private backups (Cloudflare Access required) for full data.\033[0m\n"
 ```
 
 Replace `YYYYMMDD` with the date.
