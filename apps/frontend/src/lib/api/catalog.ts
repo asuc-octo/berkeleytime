@@ -2,12 +2,12 @@ import { gql } from "@apollo/client";
 
 import type {
   GetCatalogFilterOptionsQuery,
-  GetCatalogServerQuery,
-  GetCatalogServerQueryVariables,
+  GetCatalogSearchQuery,
+  GetCatalogSearchQueryVariables,
 } from "../generated/graphql";
 
-export const GET_CATALOG = gql`
-  query GetCatalogServer(
+export const GET_CATALOG_SEARCH = gql`
+  query GetCatalogSearch(
     $year: Int!
     $semester: Semester!
     $search: String
@@ -17,7 +17,7 @@ export const GET_CATALOG = gql`
     $page: Int
     $pageSize: Int
   ) {
-    catalog(
+    catalogSearch(
       year: $year
       semester: $semester
       search: $search
@@ -57,6 +57,17 @@ export const GET_CATALOG = gql`
   }
 `;
 
+export const GET_CATALOG_CLASS_IDENTITIES = gql`
+  query GetCatalogClassIdentities($year: Int!, $semester: Semester!) {
+    catalogClassIdentities(year: $year, semester: $semester) {
+      subject
+      courseNumber
+      number
+      sessionId
+    }
+  }
+`;
+
 export const GET_CATALOG_FILTER_OPTIONS = gql`
   query GetCatalogFilterOptions($year: Int!, $semester: Semester!) {
     catalogFilterOptions(year: $year, semester: $semester) {
@@ -72,7 +83,9 @@ export const GET_CATALOG_FILTER_OPTIONS = gql`
   }
 `;
 
-export type ICatalogResult = NonNullable<GetCatalogServerQuery["catalog"]>;
+export type ICatalogResult = NonNullable<
+  GetCatalogSearchQuery["catalogSearch"]
+>;
 
 export type ICatalogClassServer = ICatalogResult["results"][number];
 
@@ -80,4 +93,4 @@ export type ICatalogFilterOptions = NonNullable<
   GetCatalogFilterOptionsQuery["catalogFilterOptions"]
 >;
 
-export type ICatalogFilters = GetCatalogServerQueryVariables["filters"];
+export type ICatalogFilters = GetCatalogSearchQueryVariables["filters"];

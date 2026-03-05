@@ -9,10 +9,10 @@ import type {
 } from "@/lib/api/catalog";
 import {
   GetCatalogFilterOptionsDocument,
-  GetCatalogServerDocument,
+  GetCatalogSearchDocument,
 } from "@/lib/generated/graphql";
 import type {
-  GetCatalogServerQueryVariables,
+  GetCatalogSearchQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
 
@@ -23,10 +23,10 @@ const DEFAULT_PAGE_SIZE = 25;
 
 const mapSortOrder = (
   order: "asc" | "desc"
-): GetCatalogServerQueryVariables["sortOrder"] =>
+): GetCatalogSearchQueryVariables["sortOrder"] =>
   (order === "asc"
     ? "ASC"
-    : "DESC") as GetCatalogServerQueryVariables["sortOrder"];
+    : "DESC") as GetCatalogSearchQueryVariables["sortOrder"];
 
 const getCatalogClassKey = (_class: ICatalogClassServer): string =>
   `${_class.sessionId}-${_class.subject}-${_class.courseNumber}-${_class.number}`;
@@ -107,7 +107,7 @@ export default function useCatalogQuery({
   ]);
 
   const catalogQueryVariables = useMemo<
-    Omit<GetCatalogServerQueryVariables, "page" | "pageSize">
+    Omit<GetCatalogSearchQueryVariables, "page" | "pageSize">
   >(
     () => ({
       year: currentYear,
@@ -128,7 +128,7 @@ export default function useCatalogQuery({
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, fetchMore } = useQuery(GetCatalogServerDocument, {
+  const { data, loading, fetchMore } = useQuery(GetCatalogSearchDocument, {
     variables: {
       ...catalogQueryVariables,
       page: 1,
@@ -152,10 +152,10 @@ export default function useCatalogQuery({
   );
 
   const firstPageClasses: ICatalogClassServer[] = useMemo(
-    () => data?.catalog?.results ?? [],
+    () => data?.catalogSearch?.results ?? [],
     [data]
   );
-  const totalCount: number = data?.catalog?.totalCount ?? 0;
+  const totalCount: number = data?.catalogSearch?.totalCount ?? 0;
 
   useEffect(() => {
     if (localPage !== 1) return;
@@ -187,7 +187,7 @@ export default function useCatalogQuery({
       if (requestGeneration !== queryGenerationRef.current) return;
 
       const nextPageClasses: ICatalogClassServer[] =
-        nextPageData?.catalog?.results ?? [];
+        nextPageData?.catalogSearch?.results ?? [];
       if (nextPageClasses.length === 0) return;
 
       setClasses((previousClasses) =>

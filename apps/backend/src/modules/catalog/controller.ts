@@ -1,7 +1,36 @@
+import type { GraphQLResolveInfo } from "graphql";
 import type { PipelineStage } from "mongoose";
 
-import { parseTermName, parseTimeToMinutes } from "@repo/common";
-import { CatalogClassModel, TermModel } from "@repo/common/models";
+import {
+  getAverageGrade,
+  getDistribution,
+  getPnpPercentage,
+  getPnpPercentageFromCounts,
+  parseTermName,
+  parseTimeToMinutes,
+} from "@repo/common";
+import {
+  CatalogClassModel,
+  ClassModel,
+  ClassViewCountModel,
+  CourseModel,
+  GradeDistributionModel,
+  type IClassItem,
+  type ICourseItem,
+  type IGradeDistributionItem,
+  type ISectionItem,
+  NewEnrollmentHistoryModel,
+  SectionModel,
+  TermModel,
+} from "@repo/common/models";
+
+import { getFields, hasFieldPath } from "../../utils/graphql";
+import { formatClass, formatSection } from "../class/formatter";
+import type { ClassModule } from "../class/generated-types/module-types";
+import { formatCourse } from "../course/formatter";
+import { formatEnrollment } from "../enrollment/formatter";
+import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
+import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 
 export interface CatalogQueryParams {
   year: number;
@@ -43,7 +72,17 @@ const appendAndCondition = (
   query.$and.push(condition);
 };
 
-export const getCatalog = async (params: CatalogQueryParams) => {
+export const getCatalogClassIdentities = async (
+  year: number,
+  semester: string
+) => {
+  return CatalogClassModel.find(
+    { year, semester },
+    { subject: 1, courseNumber: 1, number: 1, sessionId: 1, _id: 0 }
+  ).lean();
+};
+
+export const getCatalogSearch = async (params: CatalogQueryParams) => {
   const {
     year,
     semester,
@@ -415,4 +454,295 @@ export const getCatalogFilterOptions = async (
     semesters: semesterList,
     timeRange,
   };
+};
+
+const EMPTY_GRADE_DISTRIBUTIONS: readonly IGradeDistributionItem[] =
+  [] as const;
+
+/**
+ * Legacy catalog resolver — returns the relational [Class!]! shape
+ * expected by ag-frontend's GET_CATALOG query.
+ */
+export const getCatalogLegacy = async (
+  year: number,
+  semester: string,
+  info: GraphQLResolveInfo
+) => {
+  const [term, classes] = await Promise.all([
+    TermModel.findOne({ name: `${year} ${semester}` })
+      .select({ _id: 1 })
+      .lean(),
+    ClassModel.find({
+      year,
+      semester,
+      anyPrintInScheduleOfClasses: true,
+    }).lean(),
+  ]);
+
+  if (!term) throw new Error("Invalid term");
+
+  const courseIds = classes.map((_class) => _class.courseId);
+  const uniqueCourseIds = [...new Set(courseIds)];
+
+  const [courses, sections] = await Promise.all([
+    CourseModel.find({
+      courseId: { $in: uniqueCourseIds },
+      printInCatalog: true,
+    }).lean(),
+    SectionModel.find({
+      year,
+      semester,
+      courseId: { $in: uniqueCourseIds },
+      printInScheduleOfClasses: true,
+    }).lean(),
+  ]);
+
+  let parsedGradeDistributions = {} as Record<
+    string,
+    GradeDistributionModule.GradeDistribution
+  >;
+
+  const children = getFields(info.fieldNodes);
+  const selectionIncludes = (path: string[]) =>
+    info.fieldNodes.some((node) =>
+      node.selectionSet
+        ? hasFieldPath(node.selectionSet.selections, info.fragments, path)
+        : false
+    );
+
+  const includesClassGradeDistribution = selectionIncludes([
+    "gradeDistribution",
+  ]);
+  const includesCourseGradeDistribution = selectionIncludes([
+    "course",
+    "gradeDistribution",
+  ]);
+  const includesCourseGradeDistributionDistribution = selectionIncludes([
+    "course",
+    "gradeDistribution",
+    "distribution",
+  ]);
+  const includesViewCount = selectionIncludes(["viewCount"]);
+
+  const shouldLoadGradeDistributions =
+    includesClassGradeDistribution ||
+    includesCourseGradeDistributionDistribution;
+
+  if (shouldLoadGradeDistributions) {
+    const sectionIds = sections.map((section) => section.sectionId);
+
+    const [classGradeDistributions, courseGradeDistributions] =
+      await Promise.all([
+        includesClassGradeDistribution
+          ? GradeDistributionModel.find({
+              sectionId: { $in: sectionIds },
+            }).lean()
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
+        includesCourseGradeDistributionDistribution
+          ? GradeDistributionModel.find({
+              $or: [
+                ...courses.map((course) => ({
+                  subject: course.subject,
+                  courseNumber: course.number,
+                })),
+                ...classes.map((_class) => ({
+                  subject: _class.subject,
+                  courseNumber: _class.courseNumber,
+                })),
+              ],
+            }).lean()
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
+      ]);
+
+    const reducedGradeDistributions = {} as Record<
+      string,
+      GradeDistributionModule.GradeDistribution
+    >;
+
+    if (includesClassGradeDistribution) {
+      const classBySection = classGradeDistributions.reduce(
+        (acc, gradeDistribution) => {
+          const sectionId = gradeDistribution.sectionId;
+          acc[sectionId] = acc[sectionId]
+            ? [...acc[sectionId], gradeDistribution]
+            : [gradeDistribution];
+          return acc;
+        },
+        {} as Record<string, IGradeDistributionItem[]>
+      );
+
+      for (const [sectionId, distributions] of Object.entries(classBySection)) {
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[sectionId] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
+      }
+    }
+
+    if (includesCourseGradeDistributionDistribution) {
+      const courseByCourse = courseGradeDistributions.reduce(
+        (acc, gradeDistribution) => {
+          const key = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+          acc[key] = acc[key]
+            ? [...acc[key], gradeDistribution]
+            : [gradeDistribution];
+          return acc;
+        },
+        {} as Record<string, IGradeDistributionItem[]>
+      );
+
+      for (const [key, distributions] of Object.entries(courseByCourse)) {
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[key] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
+      }
+    }
+
+    parsedGradeDistributions = reducedGradeDistributions;
+  }
+
+  let enrollmentMap = {} as Record<string, EnrollmentModule.Enrollment | null>;
+
+  const includesEnrollment = children.includes("enrollment");
+
+  if (includesEnrollment) {
+    const sectionIds = sections.map((section) => section.sectionId);
+
+    const enrollments = await NewEnrollmentHistoryModel.find({
+      termId: term._id,
+      sectionId: { $in: sectionIds },
+    }).lean();
+
+    enrollmentMap = enrollments.reduce(
+      (acc, enrollment) => {
+        acc[enrollment.sectionId] = formatEnrollment(enrollment);
+        return acc;
+      },
+      {} as Record<string, EnrollmentModule.Enrollment | null>
+    );
+  }
+
+  let classViewCountsMap = {} as Record<string, number>;
+
+  if (includesViewCount) {
+    const classViewCounts = await ClassViewCountModel.find({
+      year,
+      semester,
+    }).lean();
+
+    classViewCountsMap = classViewCounts.reduce(
+      (accumulator, viewCountRecord) => {
+        const key = `${viewCountRecord.sessionId}:${viewCountRecord.subject}:${viewCountRecord.courseNumber}:${viewCountRecord.number}`;
+        accumulator[key] = viewCountRecord.viewCount ?? 0;
+        return accumulator;
+      },
+      {} as Record<string, number>
+    );
+  }
+
+  const reducedCourses = courses.reduce(
+    (accumulator, course) => {
+      accumulator[course.courseId] = course as ICourseItem;
+      return accumulator;
+    },
+    {} as Record<string, ICourseItem>
+  );
+
+  const reducedSections = sections.reduce(
+    (accumulator, section) => {
+      const courseId = section.courseId;
+      const classNumber = section.classNumber;
+      const id = `${courseId}-${classNumber}`;
+
+      accumulator[id] = (
+        accumulator[id] ? [...accumulator[id], section] : [section]
+      ) as ISectionItem[];
+
+      return accumulator;
+    },
+    {} as Record<string, ISectionItem[]>
+  );
+
+  const reducedClasses = classes.reduce((accumulator, _class) => {
+    const courseId = _class.courseId;
+
+    const course = reducedCourses[courseId];
+    if (!course) return accumulator;
+
+    const classSections = reducedSections[`${courseId}-${_class.number}`];
+    if (!classSections) return accumulator;
+
+    const index = classSections.findIndex((section) => section.primary);
+    if (index === -1) return accumulator;
+
+    const primarySection = classSections.splice(index, 1)[0];
+    const formattedPrimarySection = formatSection(
+      primarySection,
+      includesEnrollment ? enrollmentMap[primarySection.sectionId] : undefined
+    );
+    const formattedSections = classSections.map((section) =>
+      formatSection(
+        section,
+        includesEnrollment ? enrollmentMap[section.sectionId] : undefined
+      )
+    );
+
+    const formattedCourse = formatCourse(
+      course
+    ) as unknown as ClassModule.Course;
+
+    if (includesCourseGradeDistribution) {
+      const courseFallback = {
+        average: course.allTimeAverageGrade ?? null,
+        distribution: [],
+        pnpPercentage: getPnpPercentageFromCounts(
+          course.allTimePassCount,
+          course.allTimeNoPassCount
+        ),
+      };
+
+      if (includesCourseGradeDistributionDistribution) {
+        const key = `${_class.subject}-${_class.courseNumber}`;
+        const gradeDistribution =
+          parsedGradeDistributions[key] ?? courseFallback;
+
+        formattedCourse.gradeDistribution = gradeDistribution;
+      } else {
+        formattedCourse.gradeDistribution = courseFallback;
+      }
+    }
+
+    const formattedClass = {
+      ...formatClass(_class as IClassItem),
+      primarySection: formattedPrimarySection,
+      sections: formattedSections,
+      course: formattedCourse,
+    } as unknown as ClassModule.Class;
+
+    if (includesViewCount) {
+      const viewCountKey = `${_class.sessionId}:${_class.subject}:${_class.courseNumber}:${_class.number}`;
+      formattedClass.viewCount = classViewCountsMap[viewCountKey] ?? 0;
+    }
+
+    if (includesClassGradeDistribution) {
+      const sectionId = formattedPrimarySection.sectionId;
+      const gradeDistribution = parsedGradeDistributions[sectionId] ?? {
+        average: null,
+        distribution: [],
+        pnpPercentage: null,
+      };
+
+      formattedClass.gradeDistribution = gradeDistribution;
+    }
+
+    accumulator.push(formattedClass);
+    return accumulator;
+  }, [] as ClassModule.Class[]);
+
+  return reducedClasses;
 };

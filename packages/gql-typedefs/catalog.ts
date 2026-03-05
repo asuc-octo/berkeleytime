@@ -186,8 +186,17 @@ export const catalogTypeDef = gql`
     semester: String!
   }
 
+  type CatalogClassIdentity {
+    subject: String!
+    courseNumber: String!
+    number: String!
+    sessionId: String!
+  }
+
   type Query {
-    catalog(
+    catalog(year: Int!, semester: Semester!): [Class!]!
+
+    catalogSearch(
       year: Int!
       semester: Semester!
       search: String
@@ -197,6 +206,11 @@ export const catalogTypeDef = gql`
       page: Int
       pageSize: Int
     ): CatalogResult!
+
+    catalogClassIdentities(
+      year: Int!
+      semester: Semester!
+    ): [CatalogClassIdentity!]!
 
     catalogFilterOptions(year: Int!, semester: Semester!): CatalogFilterOptions!
   }

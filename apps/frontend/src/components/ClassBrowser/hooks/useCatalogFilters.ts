@@ -10,7 +10,7 @@ import {
 import { useSearchParams } from "react-router-dom";
 
 import type { ICatalogFilters } from "@/lib/api/catalog";
-import type { GetCatalogServerQueryVariables } from "@/lib/generated/graphql";
+import type { GetCatalogSearchQueryVariables } from "@/lib/generated/graphql";
 
 import {
   Day,
@@ -22,7 +22,7 @@ import {
   UnitRange,
 } from "../browser";
 
-type CatalogSortBy = GetCatalogServerQueryVariables["sortBy"];
+type CatalogSortBy = GetCatalogSearchQueryVariables["sortBy"];
 type CatalogEnrollmentFilter = NonNullable<ICatalogFilters>["enrollmentFilter"];
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {

@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -23,7 +24,10 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { getColorCSSVar } from "@/lib/colors";
-import { Semester } from "@/lib/generated/graphql";
+import {
+  GetCatalogClassIdentitiesDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
@@ -265,15 +269,6 @@ export default function Catalog() {
     useGetAllCollections({
       skip: !user,
     });
-  const [catalogAvailabilityClasses, setCatalogAvailabilityClasses] = useState<
-    CatalogAvailabilityClass[]
-  >([]);
-  const handleCatalogClassAvailabilityChange = useCallback(
-    (classes: CatalogAvailabilityClass[]) => {
-      setCatalogAvailabilityClasses(classes);
-    },
-    []
-  );
 
   const semester = useMemo(() => {
     if (!providedSemester) return null;
@@ -321,9 +316,20 @@ export default function Catalog() {
 
   const effectiveTerm = term ?? FALLBACK_TERM;
 
-  useEffect(() => {
-    setCatalogAvailabilityClasses([]);
-  }, [effectiveTerm.year, effectiveTerm.semester]);
+  const { data: identitiesData } = useQuery(
+    GetCatalogClassIdentitiesDocument,
+    {
+      variables: {
+        year: effectiveTerm.year,
+        semester: effectiveTerm.semester as Semester,
+      },
+      fetchPolicy: "cache-and-network",
+    }
+  );
+  const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
+    () => identitiesData?.catalogClassIdentities ?? [],
+    [identitiesData]
+  );
 
   const subject = useMemo(
     () => providedSubject?.toUpperCase(),
@@ -530,9 +536,6 @@ export default function Catalog() {
           <div className={styles.panel}>
             <ClassBrowser
               onSelect={handleSelect}
-              onCatalogClassAvailabilityChange={
-                handleCatalogClassAvailabilityChange
-              }
               forceMode={mode}
               semester={effectiveTerm.semester}
               year={effectiveTerm.year}
@@ -562,9 +565,6 @@ export default function Catalog() {
             >
               <ClassBrowser
                 onSelect={handleSelect}
-                onCatalogClassAvailabilityChange={
-                  handleCatalogClassAvailabilityChange
-                }
                 forceMode={mode}
                 semester={effectiveTerm.semester}
                 year={effectiveTerm.year}

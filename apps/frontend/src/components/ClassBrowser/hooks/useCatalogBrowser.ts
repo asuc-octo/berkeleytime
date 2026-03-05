@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import { ITerm } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
@@ -14,14 +14,6 @@ export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {
   year: number;
   semester: Semester;
   terms?: ITerm[];
-  onCatalogClassAvailabilityChange?: (
-    classes: {
-      subject: string;
-      courseNumber: string;
-      number: string;
-      sessionId: string;
-    }[]
-  ) => void;
 }
 
 export interface UseCatalogBrowserReturn {
@@ -37,7 +29,6 @@ export default function useCatalogBrowser({
   semester,
   terms,
   persistent,
-  onCatalogClassAvailabilityChange,
 }: UseCatalogBrowserOptions): UseCatalogBrowserReturn {
   const filterState = useCatalogFilters({ persistent });
 
@@ -49,16 +40,6 @@ export default function useCatalogBrowser({
     effectiveOrder: filterState.effectiveOrder,
     filterVariables: filterState.filterVariables,
   });
-
-  useEffect(() => {
-    const availabilityClasses = queryResult.classes.map((_class) => ({
-      subject: _class.subject,
-      courseNumber: _class.courseNumber,
-      number: _class.number,
-      sessionId: _class.sessionId,
-    }));
-    onCatalogClassAvailabilityChange?.(availabilityClasses);
-  }, [onCatalogClassAvailabilityChange, queryResult.classes]);
 
   const filterContextValue: FilterContextType = useMemo(
     () => ({

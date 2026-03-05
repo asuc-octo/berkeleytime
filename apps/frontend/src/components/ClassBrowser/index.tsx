@@ -20,14 +20,6 @@ interface ClassBrowserProps {
     number: string,
     sessionId: string
   ) => void;
-  onCatalogClassAvailabilityChange?: (
-    classes: {
-      subject: string;
-      courseNumber: string;
-      number: string;
-      sessionId: string;
-    }[]
-  ) => void;
   forceMode?: CatalogLayoutMode;
   semester: Semester;
   year: number;
@@ -37,7 +29,6 @@ interface ClassBrowserProps {
 
 export default function ClassBrowser({
   onSelect,
-  onCatalogClassAvailabilityChange,
   forceMode = "full",
   semester,
   year,
@@ -51,7 +42,6 @@ export default function ClassBrowser({
     semester,
     terms,
     persistent,
-    onCatalogClassAvailabilityChange,
   });
 
   return (
