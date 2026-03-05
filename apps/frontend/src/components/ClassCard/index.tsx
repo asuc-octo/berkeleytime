@@ -135,15 +135,14 @@ export default function ClassCard({
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
-  const ratingsCount =
-    _class?.course?.aggregatedRatings
-      ? Math.max(
-          0,
-          ..._class.course.aggregatedRatings.metrics.map(
-            (metric) => metric.count ?? 0
-          )
+  const ratingsCount = _class?.course?.aggregatedRatings
+    ? Math.max(
+        0,
+        ..._class.course.aggregatedRatings.metrics.map(
+          (metric) => metric.count ?? 0
         )
-      : 0;
+      )
+    : 0;
 
   return (
     <Card.RootColumn
