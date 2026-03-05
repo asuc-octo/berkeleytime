@@ -6,13 +6,7 @@ import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
 import { METRIC_ORDER } from "@repo/shared";
-import {
-  Boundary,
-  Color,
-  Container,
-  LoadingIndicator,
-  Select,
-} from "@repo/theme";
+import { Color, Container, Select } from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
 import {
@@ -147,6 +141,7 @@ export function RatingsContainer() {
       return true;
     });
   }, [userRatingsData]);
+  const showUserOnlyRatings = Boolean(userRatings) && !hasRatings;
 
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
@@ -474,16 +469,27 @@ export function RatingsContainer() {
       selectedValue !== "all" &&
       selectedSemesterLoading)
   ) {
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
+    return <EmptyState loading />;
   }
 
   return (
     <>
-      {!hasRatings ? (
+      {showUserOnlyRatings ? (
+        <div className={styles.root}>
+          <Container size="3">
+            {userRatings && (
+              <UserRatingSummary
+                userRatings={userRatings}
+                onOpenModal={handleModalStateChange}
+                ratingDelete={() => setIsDeleteModalOpen(true)}
+              />
+            )}
+            <p className={styles.userOnlyMessage}>
+              Only your rating is shown for this course.
+            </p>
+          </Container>
+        </div>
+      ) : !hasRatings ? (
         <EmptyState
           icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
           heading="No Course Ratings"
@@ -553,6 +559,8 @@ export function RatingsContainer() {
                           options: termSelectOptions,
                         },
                       ]}
+                      contentClassName={styles.ratingsSelectContent}
+                      tabsWrapperClassName={styles.ratingsSelectTabs}
                       value={selectedValue}
                       defaultTab={RATING_TABS.Instructor}
                       onTabChange={(tabValue) => {

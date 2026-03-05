@@ -31,7 +31,6 @@ const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Units]: "asc",
   [SortBy.AverageGrade]: "desc",
   [SortBy.OpenSeats]: "desc",
-  [SortBy.PercentOpenSeats]: "desc",
 };
 
 const getEffectiveOrder = (
@@ -52,6 +51,15 @@ interface ClassBrowserProps {
     number: string,
     sessionId: string
   ) => void;
+  onCatalogClassAvailabilityChange?: (
+    classes: {
+      subject: string;
+      courseNumber: string;
+      number: string;
+      sessionId: string;
+    }[]
+  ) => void;
+  onLoadingChange?: (loading: boolean) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -61,6 +69,8 @@ interface ClassBrowserProps {
 
 export default function ClassBrowser({
   onSelect,
+  onCatalogClassAvailabilityChange,
+  onLoadingChange,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
@@ -106,7 +116,25 @@ export default function ClassBrowser({
     nextFetchPolicy: "no-cache",
   });
 
+  useEffect(() => {
+    onLoadingChange?.(loading);
+  }, [loading, onLoadingChange]);
+
   const classes = useMemo(() => data?.catalog ?? [], [data]);
+  const catalogAvailabilityClasses = useMemo(
+    () =>
+      classes.map((_class) => ({
+        subject: _class.subject,
+        courseNumber: _class.courseNumber,
+        number: _class.number,
+        sessionId: _class.sessionId,
+      })),
+    [classes]
+  );
+
+  useEffect(() => {
+    onCatalogClassAvailabilityChange?.(catalogAvailabilityClasses);
+  }, [onCatalogClassAvailabilityChange, catalogAvailabilityClasses]);
 
   const query = localQuery;
 
@@ -466,6 +494,7 @@ export default function ClassBrowser({
         expanded,
         responsive,
         sortBy,
+        allClasses: classes,
         classes: filteredClasses,
         includedClasses,
         excludedClasses,

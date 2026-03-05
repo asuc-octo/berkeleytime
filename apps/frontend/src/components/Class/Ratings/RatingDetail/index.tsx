@@ -1,12 +1,11 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
 
 import classNames from "classnames";
-import { InfoCircle, NavArrowDown } from "iconoir-react";
+import { NavArrowDown } from "iconoir-react";
 
 import { MetricName } from "@repo/shared";
 import { Badge, Color, Tooltip } from "@repo/theme";
 
-import { getMetricTooltip } from "../metricsUtil";
 import styles from "./RatingDetail.module.scss";
 
 export interface RatingDetailProps {
@@ -63,14 +62,6 @@ export function RatingDetailView({
         <div className={styles.titleAndStatusSection}>
           <div className={styles.titleSection}>
             <h3 className={styles.title}>{metric}</h3>
-            <Tooltip
-              trigger={
-                <span className={styles.info}>
-                  <InfoCircle width={14} height={14} />
-                </span>
-              }
-              title={`${getMetricTooltip(metric)}`}
-            />
           </div>
           <Badge color={statusColor} label={status} />
           <span className={styles.metricAverage}>

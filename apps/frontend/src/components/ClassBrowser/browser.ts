@@ -14,7 +14,6 @@ export enum SortBy {
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
@@ -54,6 +53,16 @@ export enum Day {
   Friday = "5",
   Saturday = "6",
 }
+
+export const EMPTY_DAYS: boolean[] = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
 
 export type Breadth = string;
 export type UniversityRequirement = string;

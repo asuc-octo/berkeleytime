@@ -225,6 +225,7 @@ export default function Grades() {
                   fill="var(--blue-500)"
                   radius={[5, 5, 0, 0]}
                   name="All semesters"
+                  isAnimationActive={false}
                 />
               </BarChart>
             </ResponsiveContainer>
