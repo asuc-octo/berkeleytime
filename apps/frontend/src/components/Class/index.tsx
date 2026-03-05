@@ -18,7 +18,9 @@ import { Link, useLocation } from "react-router-dom";
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import {
+  Badge,
   Box,
+  Color,
   Container,
   Flex,
   IconButton,
@@ -269,12 +271,20 @@ export default function Class({
   );
 
   const classTitle = useMemo(() => {
+    if (_class?.decal?.title) {
+      return _class.decal.title;
+    }
+
     if (specialTitleAttribute?.value?.formalDescription) {
       return specialTitleAttribute.value.formalDescription;
     }
 
     return _course?.title ?? "";
-  }, [specialTitleAttribute?.value?.formalDescription, _course?.title]);
+  }, [
+    _class?.decal?.title,
+    specialTitleAttribute?.value?.formalDescription,
+    _course?.title,
+  ]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -525,6 +535,18 @@ export default function Class({
                       <span className={styles.sectionNumber}>
                         #{formatClassNumber(_class.number)}
                       </span>
+                      {_class.decal != null && (
+                        <Badge
+                          label="DeCal"
+                          color={Color.Blue}
+                          variant="filled"
+                          style={{
+                            marginLeft: 12,
+                            position: "relative",
+                            bottom: 4,
+                          }}
+                        />
+                      )}
                     </h1>
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>

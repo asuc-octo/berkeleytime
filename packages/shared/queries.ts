@@ -26,6 +26,9 @@ export const GET_CANONICAL_CATALOG_QUERY = /* GraphQL */ `
       unitsMin
       viewCount
       gradingBasis
+      decal {
+        title
+      }
       primarySection {
         online
         sectionAttributes(attributeCode: "GE") {

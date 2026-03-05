@@ -74,6 +74,7 @@ type ClassCardClass = Partial<BaseClassFields> & {
   year?: number;
   semester?: Semester;
   course?: Partial<CourseSummary> | null;
+  decal?: { title?: string | null } | null;
   primarySection?: {
     enrollment?: {
       latest?: Partial<EnrollmentSnapshot> | null;
@@ -154,9 +155,19 @@ export default function ClassCard({
                   <span className={styles.sectionNumber}>
                     #{formatClassNumber(_class?.number)}
                   </span>
+                  {_class?.decal != null && (
+                    <Badge
+                      label="DeCal"
+                      color={Color.Blue}
+                      variant="filled"
+                      style={{ marginLeft: 8 }}
+                    />
+                  )}
                 </Card.Heading>
                 <Card.Description wrapDescription={wrapDescription}>
-                  {_class?.title ?? _class?.course?.title}
+                  {_class?.decal?.title ??
+                    _class?.title ??
+                    _class?.course?.title}
                 </Card.Description>
                 {_class?.semester && _class?.year && (
                   <span className={styles.semester}>
