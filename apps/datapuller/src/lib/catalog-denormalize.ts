@@ -8,8 +8,6 @@ import {
   ClassViewCountModel,
   CourseModel,
   ICatalogClassItem,
-  IClassItem,
-  ICourseItem,
   ISectionItem,
   NewEnrollmentHistoryModel,
   SectionModel,
@@ -411,7 +409,7 @@ export const buildCatalogClasses = async (
       viewCount: viewCountMap.get(viewCountKey) ?? 0,
       aggregatedRatings: ratingsMap.has(_class.courseId)
         ? { metrics: ratingsMap.get(_class.courseId)! }
-        : null,
+        : undefined,
     });
   }
 
@@ -554,7 +552,7 @@ export const updateCatalogRatings = async (
     },
   ]);
 
-  const bulkOps = ratingsAgg.map((r: any) => ({
+  const bulkOps: any[] = ratingsAgg.map((r: any) => ({
     updateMany: {
       filter: { year, semester, courseId: r._id },
       update: { $set: { aggregatedRatings: { metrics: r.metrics } } },
@@ -575,7 +573,7 @@ export const updateCatalogRatings = async (
           semester,
           courseId: { $in: courseIdsWithoutRatings },
         } as any,
-        update: { $set: { aggregatedRatings: null } },
+        update: { $unset: { aggregatedRatings: "" } },
       },
     });
   }

@@ -322,22 +322,8 @@ const updateEnrollmentHistories = async (config: Config) => {
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
 
-  // Update enrollment fields on denormalized catalog_classes
-  // Build a map of latest enrollment data per section from the singulars we just processed
-  const enrollmentUpdates = new Map<
-    string,
-    {
-      year: number;
-      semester: string;
-      status?: string;
-      enrolledCount?: number;
-      maxEnroll?: number;
-      waitlistedCount?: number;
-      maxWaitlist?: number;
-    }
-  >();
-
-  // Re-fetch the latest enrollment snapshot for each section we updated
+  // Update enrollment fields on denormalized catalog_classes.
+  // Re-fetch the latest enrollment snapshot for each term we updated.
   for (const term of terms) {
     const parts = term.name.split(" ");
     if (parts.length !== 2) continue;
