@@ -59,7 +59,6 @@ type BaseClassFields = Pick<
 >;
 
 type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
-  ratingsCount?: number | null;
   aggregatedRatings?: {
     metrics: Array<{
       metricName: string;
@@ -137,15 +136,14 @@ export default function ClassCard({
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
   const ratingsCount =
-    _class?.course?.ratingsCount ??
-    (_class?.course?.aggregatedRatings
+    _class?.course?.aggregatedRatings
       ? Math.max(
           0,
           ..._class.course.aggregatedRatings.metrics.map(
             (metric) => metric.count ?? 0
           )
         )
-      : 0);
+      : 0;
 
   return (
     <Card.RootColumn
