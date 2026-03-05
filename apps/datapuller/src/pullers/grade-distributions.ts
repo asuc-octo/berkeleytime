@@ -20,7 +20,7 @@ interface AggregatedCourseGradeSummary extends GradeCounts {
   };
 }
 
-const rebuildCourseGradeSummaries = async (log: Config["log"]) => {
+export const rebuildCourseGradeSummaries = async (log: Config["log"]) => {
   log.info("Recomputing course grade summaries...");
 
   await CourseModel.updateMany(

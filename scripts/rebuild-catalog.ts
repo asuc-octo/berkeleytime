@@ -1,5 +1,7 @@
 /**
  * Quick script to populate catalog_classes collection locally.
+ * For catalog-only rebuild, use this script.
+ *
  * Run from repo root: npx tsx scripts/rebuild-catalog.ts
  * Or inside backend container: npx tsx /backend/scripts/rebuild-catalog.ts
  */

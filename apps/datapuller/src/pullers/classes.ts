@@ -17,7 +17,7 @@ const TERMS_PER_API_BATCH = 4;
 // This is intentional to ensure data consistency, as class data may be modified
 // by sources other than the datapuller. Since the query is fast, the overhead
 // is minimal. Future optimization could track only affected terms if needed.
-const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
+export const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   log.trace("Updating hasCatalogData flags for all terms...");
 
   const allTerms = await TermModel.find({}).select({ _id: 1, name: 1 }).lean();
