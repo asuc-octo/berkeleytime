@@ -528,6 +528,8 @@ export default function Catalog() {
     navigate("/profile/bookmarks");
   }, [navigate]);
 
+  const [catalogLoading, setCatalogLoading] = useState(true);
+
   if (termsLoading) {
     return <CatalogSkeleton />;
   }
@@ -537,9 +539,13 @@ export default function Catalog() {
     return <></>;
   }
 
-  // TODO: Class error state, class loading state
   return (
     <div className={styles.root}>
+      {catalogLoading && (
+        <div className={styles.skeletonOverlay}>
+          <CatalogSkeleton />
+        </div>
+      )}
       {isDesktop ? (
         // Desktop: Static panel
         <div className={styles.panel}>
@@ -548,6 +554,7 @@ export default function Catalog() {
             onCatalogClassAvailabilityChange={
               handleCatalogClassAvailabilityChange
             }
+            onLoadingChange={setCatalogLoading}
             semester={term.semester}
             year={term.year}
             terms={terms}
@@ -579,6 +586,7 @@ export default function Catalog() {
               onCatalogClassAvailabilityChange={
                 handleCatalogClassAvailabilityChange
               }
+              onLoadingChange={setCatalogLoading}
               semester={term.semester}
               year={term.year}
               terms={terms}
