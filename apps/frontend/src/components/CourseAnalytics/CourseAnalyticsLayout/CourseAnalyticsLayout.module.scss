@@ -1,0 +1,143 @@
+$analytics-sidebar-width: 248px;
+
+.root {
+  flex: 1 1 0;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.view {
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-grow: 1;
+  background-color: var(--foreground-color);
+  position: relative;
+  min-height: 0;
+  max-width: 1920px;
+}
+
+.viewContent {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 20px 20px;
+}
+
+.drawer {
+  width: $analytics-sidebar-width;
+  background-color: var(--foreground-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: var(--background-color);
+  z-index: 999;
+}
+
+.drawerTrigger {
+  width: 30px;
+  flex-shrink: 0;
+  border: 0;
+  border-right: 1px solid var(--border-color);
+  cursor: pointer;
+  background-color: var(--foreground-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--paragraph-color);
+  padding: 0;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-hover-color);
+      transition: background-color 150ms ease-in-out;
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.sidebarPanel {
+  width: $analytics-sidebar-width;
+  flex-shrink: 0;
+  background-color: var(--foreground-color);
+
+  @media (width <= 992px) {
+    width: 100%;
+  }
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebarBody {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 14px;
+}
+
+.sidebarTitle {
+  font-weight: var(--font-medium);
+  font-size: var(--text-18);
+  line-height: 20px;
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.formControl {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: var(--font-medium);
+  font-size: var(--text-14);
+  line-height: 20px;
+  color: var(--heading-color);
+  margin: 0 0 8px 0;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.graphBox {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}

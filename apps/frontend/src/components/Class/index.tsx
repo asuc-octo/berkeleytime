@@ -44,6 +44,7 @@ import {
   TRACK_CLASS_VIEW,
   signIn,
 } from "@/lib/api";
+import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
 import {
   CreateRatingsDocument,
   GetUserRatingsDocument,
@@ -576,7 +577,14 @@ export default function Class({
                     {(content) => (
                       <Link
                         to={`/enrollment?input=${encodeURIComponent(
-                          `${_class.subject};${_class.courseNumber};T;${_class.year}:${_class.semester};${_class.number}`
+                          getEnrollmentInputSearchParam({
+                            subject: _class.subject,
+                            courseNumber: _class.courseNumber,
+                            year: _class.year,
+                            semester: _class.semester,
+                            sessionId: _class.sessionId ?? undefined,
+                            sectionNumber: _class.number,
+                          })
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
