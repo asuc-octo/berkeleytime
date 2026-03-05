@@ -1,5 +1,6 @@
 import type { PipelineStage } from "mongoose";
 
+import { parseTermName, parseTimeToMinutes } from "@repo/common";
 import { CatalogClassModel, TermModel } from "@repo/common/models";
 
 export interface CatalogQueryParams {
@@ -31,12 +32,6 @@ type CatalogFilterQuery = Record<string, unknown> & {
   $and?: CatalogFilterCondition[];
 };
 
-const parseTimeToMinutes = (time: string): number | null => {
-  const parts = time.split(":").map(Number);
-  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
-  return parts[0] * 60 + parts[1];
-};
-
 const appendAndCondition = (
   query: CatalogFilterQuery,
   condition: CatalogFilterCondition
@@ -66,14 +61,14 @@ export const getCatalog = async (params: CatalogQueryParams) => {
 
   // If search is provided, use Atlas Search aggregation
   if (search && search.trim().length > 0) {
-    return getCatalogWithSearch(
+    return getCatalogWithSearch({
       year,
       semester,
-      search.trim(),
+      searchTerm: search.trim(),
       filters,
-      effectivePageSize,
-      skip
-    );
+      limit: effectivePageSize,
+      skip,
+    });
   }
 
   // Build filter query
@@ -95,14 +90,21 @@ export const getCatalog = async (params: CatalogQueryParams) => {
   return { results, totalCount };
 };
 
-const getCatalogWithSearch = async (
-  year: number,
-  semester: string,
-  searchTerm: string,
-  filters: CatalogQueryParams["filters"],
-  limit: number,
-  skip: number
-) => {
+const getCatalogWithSearch = async ({
+  year,
+  semester,
+  searchTerm,
+  filters,
+  limit,
+  skip,
+}: {
+  year: number;
+  semester: string;
+  searchTerm: string;
+  filters: CatalogQueryParams["filters"];
+  limit: number;
+  skip: number;
+}) => {
   const filterMatch = buildFilterQuery(year, semester, filters);
 
   // Use Atlas Search $search stage
@@ -157,7 +159,8 @@ const getCatalogWithSearch = async (
     } as PipelineStage,
   ];
 
-  // Use $facet for count + paginated results in one query
+  // NOTE: $facet materializes the full result set in memory before paginating.
+  // For broad searches, consider using $searchMeta in a separate query for the count.
   pipeline.push({
     $facet: {
       results: [
@@ -335,6 +338,18 @@ export const getCatalogFilterOptions = async (
     CatalogClassModel.aggregate([
       { $match: { year, semester } },
       {
+        $unwind: {
+          path: "$breadthRequirements",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$universityRequirements",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
         $group: {
           _id: null,
           departments: {
@@ -345,12 +360,8 @@ export const getCatalogFilterOptions = async (
           },
           levels: { $addToSet: "$level" },
           gradingOptions: { $addToSet: "$gradingBasis" },
-          breadthRequirements: {
-            $push: "$breadthRequirements",
-          },
-          universityRequirements: {
-            $push: "$universityRequirements",
-          },
+          breadthRequirements: { $addToSet: "$breadthRequirements" },
+          universityRequirements: { $addToSet: "$universityRequirements" },
           minStartMinutes: { $min: "$meetingStartMinutes" },
           maxEndMinutes: { $max: "$meetingEndMinutes" },
         },
@@ -362,22 +373,14 @@ export const getCatalogFilterOptions = async (
   const result = filterAgg[0];
 
   const breadths = result
-    ? [...new Set(result.breadthRequirements.flat() as string[])]
-        .filter(Boolean)
-        .sort()
+    ? (result.breadthRequirements as string[]).filter(Boolean).sort()
     : [];
   const uniReqs = result
-    ? [...new Set(result.universityRequirements.flat() as string[])]
-        .filter(Boolean)
-        .sort()
+    ? (result.universityRequirements as string[]).filter(Boolean).sort()
     : [];
 
   const semesterList = semesters
-    .map((t) => {
-      const parts = t.name.split(" ");
-      if (parts.length !== 2) return null;
-      return { year: parseInt(parts[0], 10), semester: parts[1] };
-    })
+    .map((t) => parseTermName(t.name))
     .filter((s): s is { year: number; semester: string } => s !== null)
     .sort((a, b) => b.year - a.year || a.semester.localeCompare(b.semester));
 

@@ -6,38 +6,8 @@ import {
 
 const resolvers = {
   Query: {
-    catalog: async (
-      _: unknown,
-      {
-        year,
-        semester,
-        search,
-        filters,
-        sortBy,
-        sortOrder,
-        page,
-        pageSize,
-      }: {
-        year: number;
-        semester: string;
-        search?: string | null;
-        filters?: CatalogQueryParams["filters"];
-        sortBy?: string | null;
-        sortOrder?: string | null;
-        page?: number | null;
-        pageSize?: number | null;
-      }
-    ) => {
-      return await getCatalog({
-        year,
-        semester,
-        search,
-        filters,
-        sortBy,
-        sortOrder,
-        page,
-        pageSize,
-      });
+    catalog: async (_: unknown, args: CatalogQueryParams) => {
+      return await getCatalog(args);
     },
     catalogFilterOptions: async (
       _: unknown,

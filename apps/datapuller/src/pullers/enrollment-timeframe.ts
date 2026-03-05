@@ -1,3 +1,4 @@
+import { parseTermName } from "@repo/common";
 import {
   EnrollmentTimeframeModel,
   ITermItem,
@@ -414,17 +415,13 @@ const syncEnrollmentTimeframe = async (config: Config) => {
   // Build termCode -> termId lookup
   const termLookup = new Map<string, { termId: string }>();
   for (const term of terms) {
-    const nameParts = term.name.split(" ");
-    if (nameParts.length >= 2) {
-      const year = parseInt(nameParts[0], 10);
-      const semester = nameParts[1];
-      if (!isNaN(year) && semester) {
-        const yearShort = year % 100;
-        const prefix =
-          semester === "Spring" ? "SP" : semester === "Fall" ? "FA" : "SU";
-        const termCode = `${prefix}${yearShort.toString().padStart(2, "0")}`;
-        termLookup.set(termCode, { termId: term.id });
-      }
+    const parsed = parseTermName(term.name);
+    if (parsed) {
+      const yearShort = parsed.year % 100;
+      const prefix =
+        parsed.semester === "Spring" ? "SP" : parsed.semester === "Fall" ? "FA" : "SU";
+      const termCode = `${prefix}${yearShort.toString().padStart(2, "0")}`;
+      termLookup.set(termCode, { termId: term.id });
     }
   }
 

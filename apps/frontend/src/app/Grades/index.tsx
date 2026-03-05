@@ -14,6 +14,7 @@ import {
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
 import {
+  BAR_CHART_COLORS,
   type CourseOutput,
   type Input,
   InputType,
@@ -37,14 +38,6 @@ import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import GradeBarGraph from "./GradeBarGraph";
 import styles from "./Grades.module.scss";
-
-// Ranked color palette for the bar chart (max 3 classes).
-// When a slot opens up, the highest-priority unused color is assigned.
-const BAR_CHART_COLORS = [
-  "var(--blue-500)", // 1st pick — primary blue
-  "var(--blue-300)", // 2nd pick — lighter
-  "var(--blue-800)", // 3rd pick — darker
-] as const;
 
 type Output = CourseOutput<Input, IGradeDistribution>;
 

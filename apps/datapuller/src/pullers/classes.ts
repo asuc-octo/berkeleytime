@@ -1,5 +1,6 @@
 import { connection } from "mongoose";
 
+import { parseTermName } from "@repo/common";
 import { ClassModel, TermModel } from "@repo/common/models";
 
 import { refreshCatalogClasses } from "../lib/catalog-denormalize";
@@ -44,19 +45,13 @@ export const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
 
   const bulkOps = allTerms
     .map((term) => {
-      const parts = term.name.split(" ");
-      if (parts.length !== 2) {
+      const parsed = parseTermName(term.name);
+      if (!parsed) {
         log.warn(`Invalid term name format: ${term.name}`);
         return null;
       }
 
-      const [yearStr, semester] = parts;
-      const year = parseInt(yearStr, 10);
-      if (isNaN(year)) {
-        log.warn(`Invalid year in term name: ${term.name}`);
-        return null;
-      }
-
+      const { year, semester } = parsed;
       const hasCatalogData = catalogDataSet.has(`${year} ${semester}`);
 
       return {
@@ -171,10 +166,10 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
   // Sort by year descending (latest first)
   const termsWithCatalogData = distinctTermNames
     .map((name) => {
-      const parts = name.split(" ");
-      return { name, year: parseInt(parts[0], 10), semester: parts[1] };
+      const parsed = parseTermName(name);
+      return parsed ? { name, ...parsed } : null;
     })
-    .filter((t) => !isNaN(t.year) && t.semester)
+    .filter((t): t is { name: string; year: number; semester: string } => t !== null)
     .sort((a, b) => b.year - a.year);
 
   for (const term of termsWithCatalogData) {

@@ -1,6 +1,12 @@
 import { connection } from "mongoose";
 
+import {
+  normalizeSubject,
+  parseTermName,
+  parseTimeToMinutes,
+} from "@repo/common";
 import { SUBJECT_NICKNAME_MAP } from "@repo/common/lib/departmentNicknames";
+import { computeActiveReservedMaxCount } from "./enrollment-utils";
 import {
   AggregatedMetricsModel,
   CatalogClassModel,
@@ -68,14 +74,6 @@ const aggregateRatingsForCourses = async (
   return new Map(results.map((r: any) => [r._id, r.metrics]));
 };
 
-const normalizeSubject = (subject: string) =>
-  subject.replace(/[,\s]/g, "").toUpperCase();
-
-const parseTimeToMinutes = (time: string): number | null => {
-  const parts = time.split(":").map(Number);
-  if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
-  return parts[0] * 60 + parts[1];
-};
 
 const getLevel = (
   academicCareer: string | undefined,
@@ -170,45 +168,6 @@ const filterInstructors = (
     .sort((a, b) => a.familyName.localeCompare(b.familyName));
 };
 
-type SeatReservationCountLike = {
-  number?: number;
-  maxEnroll?: number;
-};
-
-type SeatReservationTypeLike = {
-  number?: number;
-  fromDate?: string;
-};
-
-const computeActiveReservedMaxCount = (
-  seatReservationCount: SeatReservationCountLike[] | undefined,
-  seatReservationTypes: SeatReservationTypeLike[] | undefined
-): number => {
-  const counts = seatReservationCount ?? [];
-  if (counts.length === 0) return 0;
-
-  const types = seatReservationTypes ?? [];
-  const now = new Date();
-
-  return counts.reduce((sum, reservation) => {
-    const maxEnroll = reservation.maxEnroll ?? 0;
-    const matchingType = types.find(
-      (type) => type.number === reservation.number
-    );
-    const fromDate = matchingType?.fromDate ?? "";
-    const fromDateObj = fromDate ? new Date(fromDate) : null;
-    const hasValidFromDate =
-      fromDateObj !== null && !Number.isNaN(fromDateObj.getTime());
-
-    // Keep this in sync with backend enrollment formatter logic:
-    // reservation is active when maxEnroll > 1 and the fromDate window has started.
-    const isActive =
-      maxEnroll > 1 &&
-      (!hasValidFromDate || (fromDateObj && fromDateObj <= now));
-
-    return sum + (isActive ? maxEnroll : 0);
-  }, 0);
-};
 
 /**
  * Builds denormalized catalog class documents for a given term.
@@ -218,20 +177,18 @@ export const buildCatalogClasses = async (
   year: number,
   semester: string
 ): Promise<ICatalogClassItem[]> => {
-  const term = await TermModel.findOne({ name: `${year} ${semester}` })
-    .select({ _id: 1, id: 1 })
-    .lean();
+  const [term, classes] = await Promise.all([
+    TermModel.findOne({ name: `${year} ${semester}` })
+      .select({ _id: 1, id: 1 })
+      .lean(),
+    ClassModel.find({
+      year,
+      semester,
+      anyPrintInScheduleOfClasses: true,
+    }).lean(),
+  ]);
 
-  if (!term) return [];
-
-  // Fetch all needed data in parallel
-  const classes = await ClassModel.find({
-    year,
-    semester,
-    anyPrintInScheduleOfClasses: true,
-  }).lean();
-
-  if (classes.length === 0) return [];
+  if (!term || classes.length === 0) return [];
 
   const courseIds = [...new Set(classes.map((c) => c.courseId))];
 
@@ -538,15 +495,16 @@ export const refreshAllCatalogClasses = async (log: Config["log"]) => {
     `Rebuilding catalog for ${termNames.length} terms with catalog data...`
   );
 
-  for (const name of termNames) {
-    const parts = name.split(" ");
-    if (parts.length !== 2) continue;
+  const parsedTerms = termNames
+    .map(parseTermName)
+    .filter((t): t is NonNullable<typeof t> => t !== null);
 
-    const year = parseInt(parts[0], 10);
-    const semester = parts[1];
-    if (isNaN(year)) continue;
-
-    await refreshCatalogClasses(log, year, semester);
+  const CONCURRENCY = 3;
+  for (let i = 0; i < parsedTerms.length; i += CONCURRENCY) {
+    const batch = parsedTerms.slice(i, i + CONCURRENCY);
+    await Promise.all(
+      batch.map((t) => refreshCatalogClasses(log, t.year, t.semester))
+    );
   }
 
   log.info("Catalog rebuild complete.");

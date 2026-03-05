@@ -1,5 +1,6 @@
 import { connection } from "mongoose";
 
+import { parseTermName } from "@repo/common";
 import { SectionModel, TermModel } from "@repo/common/models";
 
 import { refreshCatalogClasses } from "../lib/catalog-denormalize";
@@ -120,12 +121,9 @@ const updateSections = async (config: Config, termSelector: TermSelector) => {
   });
 
   for (const name of distinctTermNames) {
-    const parts = name.split(" ");
-    if (parts.length !== 2) continue;
-    const year = parseInt(parts[0], 10);
-    const semester = parts[1];
-    if (isNaN(year)) continue;
-    await refreshCatalogClasses(log, year, semester);
+    const parsed = parseTermName(name);
+    if (!parsed) continue;
+    await refreshCatalogClasses(log, parsed.year, parsed.semester);
   }
 };
 

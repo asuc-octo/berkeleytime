@@ -38,6 +38,12 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Winter]: 3,
 };
 
+// Fallback term so the catalog UI always renders (query will return 0 results)
+const FALLBACK_TERM = {
+  year: new Date().getFullYear(),
+  semester: Semester.Spring as Semester,
+};
+
 type SavedClassItem = {
   year: number;
   semester: Semester;
@@ -313,12 +319,7 @@ export default function Catalog() {
     return selectedTerm ?? null;
   }, [terms, year, semester]);
 
-  // Fallback term so the catalog UI always renders (query will return 0 results)
-  const [fallbackTerm] = useState(() => ({
-    year: new Date().getFullYear(),
-    semester: Semester.Spring as Semester,
-  }));
-  const effectiveTerm = term ?? fallbackTerm;
+  const effectiveTerm = term ?? FALLBACK_TERM;
 
   useEffect(() => {
     setCatalogAvailabilityClasses([]);

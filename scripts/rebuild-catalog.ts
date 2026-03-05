@@ -7,6 +7,7 @@
  */
 import mongoose from "mongoose";
 
+import { parseTermName } from "@repo/common";
 import { CatalogClassModel, TermModel } from "@repo/common/models";
 
 const MONGODB_URI =
@@ -30,11 +31,9 @@ async function main() {
   console.log(`Found ${uniqueTerms.length} terms with catalog data.`);
 
   for (const name of uniqueTerms) {
-    const parts = name.split(" ");
-    if (parts.length !== 2) continue;
-    const year = parseInt(parts[0], 10);
-    const semester = parts[1];
-    if (isNaN(year)) continue;
+    const parsed = parseTermName(name);
+    if (!parsed) continue;
+    const { year, semester } = parsed;
 
     console.log(`Building catalog for ${year} ${semester}...`);
     const docs = await buildCatalogClasses(year, semester);

@@ -1,15 +1,14 @@
 import { DateTime } from "luxon";
 
+import { parseTermName } from "@repo/common";
 import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
 } from "@repo/common/models";
+import { computeActiveReservedMaxCount } from "../lib/enrollment-utils";
 
-import {
-  updateCatalogEnrollment,
-  updateCatalogRatings,
-} from "../lib/catalog-denormalize";
+import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -91,43 +90,6 @@ const seatReservationTypesEqual = (
       item.code === bSorted[idx].code &&
       item.description === bSorted[idx].description
   );
-};
-
-type SeatReservationCountLike = {
-  number?: number;
-  maxEnroll?: number;
-};
-
-type SeatReservationTypeLike = {
-  number?: number;
-  fromDate?: string;
-};
-
-const computeActiveReservedMaxCount = (
-  seatReservationCount: SeatReservationCountLike[] | undefined,
-  seatReservationTypes: SeatReservationTypeLike[] | undefined
-): number => {
-  const counts = seatReservationCount ?? [];
-  if (counts.length === 0) return 0;
-
-  const types = seatReservationTypes ?? [];
-  const now = new Date();
-
-  return counts.reduce((sum, reservation) => {
-    const maxEnroll = reservation.maxEnroll ?? 0;
-    const matchingType = types.find(
-      (type) => type.number === reservation.number
-    );
-    const fromDate = matchingType?.fromDate ?? "";
-    const fromDateObj = fromDate ? new Date(fromDate) : null;
-    const hasValidFromDate =
-      fromDateObj !== null && !Number.isNaN(fromDateObj.getTime());
-    const isActive =
-      maxEnroll > 1 &&
-      (!hasValidFromDate || (fromDateObj && fromDateObj <= now));
-
-    return sum + (isActive ? maxEnroll : 0);
-  }, 0);
 };
 
 const updateEnrollmentHistories = async (config: Config) => {
@@ -362,11 +324,9 @@ const updateEnrollmentHistories = async (config: Config) => {
   // Update enrollment fields on denormalized catalog_classes.
   // Re-fetch the latest enrollment snapshot for each term we updated.
   for (const term of terms) {
-    const parts = term.name.split(" ");
-    if (parts.length !== 2) continue;
-    const year = parseInt(parts[0], 10);
-    const semester = parts[1];
-    if (isNaN(year)) continue;
+    const parsed = parseTermName(term.name);
+    if (!parsed) continue;
+    const { year, semester } = parsed;
 
     // Get all enrollment histories for this term
     const histories = await NewEnrollmentHistoryModel.find({
@@ -411,8 +371,6 @@ const updateEnrollmentHistories = async (config: Config) => {
     if (termEnrollments.size > 0) {
       await updateCatalogEnrollment(log, year, semester, termEnrollments);
     }
-
-    await updateCatalogRatings(log, year, semester);
   }
 };
 
