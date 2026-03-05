@@ -15,10 +15,10 @@ const LOGOUT_ROUTE = "/logout";
 
 // route need to be added as authorized origins/redirect uris in google cloud console
 // OAuth requires an absolute callback URL (e.g. https://berkeleytime.com/api/login/redirect)
-const backendBase = config.backendPublicUrl ?? config.backendPath;
-const LOGIN_REDIRECT = backendBase.replace(/\/$/, "") + "/login/redirect";
+const backendBase = (config.backendPublicUrl ?? config.backendPath).replace(/\/$/, "");
+const LOGIN_REDIRECT = backendBase + "/login/redirect";
 const SUCCESS_REDIRECT = "/";
-const FAILURE_REDIRECT = backendBase.replace(/\/$/, "") + "/fail";
+const FAILURE_REDIRECT = backendBase + "/fail";
 
 const SCOPE = ["profile", "email"];
 
