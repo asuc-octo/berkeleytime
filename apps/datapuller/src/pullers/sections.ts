@@ -1,7 +1,8 @@
 import { connection } from "mongoose";
 
-import { SectionModel } from "@repo/common/models";
+import { SectionModel, TermModel } from "@repo/common/models";
 
+import { refreshCatalogClasses } from "../lib/catalog-denormalize";
 import { getSections } from "../lib/sections";
 import { Config } from "../shared/config";
 import {
@@ -112,6 +113,20 @@ const updateSections = async (config: Config, termSelector: TermSelector) => {
   log.info(
     `Completed updating database with ${totalSections.toLocaleString()} sections, inserted ${totalInserted.toLocaleString()} documents.`
   );
+
+  // Rebuild denormalized catalog_classes for affected terms
+  const distinctTermNames = await TermModel.distinct("name", {
+    hasCatalogData: true,
+  });
+
+  for (const name of distinctTermNames) {
+    const parts = name.split(" ");
+    if (parts.length !== 2) continue;
+    const year = parseInt(parts[0], 10);
+    const semester = parts[1];
+    if (isNaN(year)) continue;
+    await refreshCatalogClasses(log, year, semester);
+  }
 };
 
 const activeTerms = async (config: Config) => {

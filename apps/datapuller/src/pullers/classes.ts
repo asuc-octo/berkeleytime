@@ -2,7 +2,7 @@ import { connection } from "mongoose";
 
 import { ClassModel, TermModel } from "@repo/common/models";
 
-import { warmCatalogCacheForTerms } from "../lib/cache-warming";
+import { refreshCatalogClasses } from "../lib/catalog-denormalize";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -163,21 +163,23 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   await updateTermsCatalogDataFlags(log);
 
-  // Warm catalog cache for all terms with catalog data
+  // Rebuild denormalized catalog_classes for all terms with catalog data
   const distinctTermNames = await TermModel.distinct("name", {
     hasCatalogData: true,
   });
-  const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
 
   // Sort by year descending (latest first)
-  termsWithCatalogData.sort((a, b) => {
-    const yearA = parseInt(a.name.split(" ")[0], 10);
-    const yearB = parseInt(b.name.split(" ")[0], 10);
-    return yearB - yearA;
-  });
+  const termsWithCatalogData = distinctTermNames
+    .map((name) => {
+      const parts = name.split(" ");
+      return { name, year: parseInt(parts[0], 10), semester: parts[1] };
+    })
+    .filter((t) => !isNaN(t.year) && t.semester)
+    .sort((a, b) => b.year - a.year);
 
-  // Process sequentially to avoid overwhelming the server
-  await warmCatalogCacheForTerms(config, termsWithCatalogData);
+  for (const term of termsWithCatalogData) {
+    await refreshCatalogClasses(log, term.year, term.semester);
+  }
 };
 
 const activeTerms = async (config: Config) => {

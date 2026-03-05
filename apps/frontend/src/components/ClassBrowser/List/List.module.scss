@@ -165,6 +165,40 @@
     }
   }
 
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 12px;
+    font-size: var(--text-14);
+    color: var(--paragraph-color);
+
+    .paginationButton {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--foreground-color);
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: var(--text-14);
+      color: var(--heading-color);
+      transition: background-color 100ms ease-in-out;
+
+      &:hover:not(:disabled) {
+        background-color: var(--button-hover-color);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+
+    .paginationInfo {
+      white-space: nowrap;
+    }
+  }
+
   .skeletonContainer {
     padding: 0 12px 12px;
     display: flex;

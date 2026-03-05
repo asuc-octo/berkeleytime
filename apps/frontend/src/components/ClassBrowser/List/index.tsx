@@ -5,12 +5,38 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FrameAltEmpty } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
+import { ICatalogClassServer } from "@/lib/api/catalog";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
 import useBrowser from "../useBrowser";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
+
+// Adapt ICatalogClassServer to the shape ClassCard expects
+const adaptForClassCard = (_class: ICatalogClassServer) => ({
+  subject: _class.subject,
+  courseNumber: _class.courseNumber,
+  number: _class.number,
+  title: _class.title ?? _class.courseTitle,
+  unitsMax: _class.unitsMax,
+  unitsMin: _class.unitsMin,
+  course: {
+    title: _class.courseTitle,
+    gradeDistribution: _class.allTimeAverageGrade != null
+      ? { average: _class.allTimeAverageGrade, pnpPercentage: null }
+      : undefined,
+  },
+  primarySection: {
+    enrollment: {
+      latest: {
+        enrolledCount: _class.enrolledCount,
+        maxEnroll: _class.maxEnroll,
+        activeReservedMaxCount: _class.activeReservedMaxCount,
+      },
+    },
+  },
+});
 
 interface ListProps {
   onSelect: (
@@ -24,7 +50,7 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, allClasses, loading, year, semester } = useBrowser();
+  const { classes, allClasses, loading, year, semester, totalCount, page, pageSize, updatePage } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -158,10 +184,10 @@ export default function List({ onSelect }: ListProps) {
     count: classes.length,
     getScrollElement: () => catalogScrollRef.current,
     estimateSize: () => 136,
-    paddingStart: 0, // No padding needed - Recently Viewed section handles spacing
+    paddingStart: 0,
     paddingEnd: 12,
     gap: 12,
-    overscan: 5, // Keep extra items rendered for smoother scrolling
+    overscan: 5,
   });
 
   const items = virtualizer.getVirtualItems();
@@ -176,6 +202,11 @@ export default function List({ onSelect }: ListProps) {
       selected.sessionId
     );
   };
+
+  // Pagination
+  const totalPages = Math.ceil(totalCount / pageSize);
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
 
   return (
     <div className={styles.root}>
@@ -280,7 +311,7 @@ export default function List({ onSelect }: ListProps) {
 
                 return (
                   <ClassCard
-                    class={_class}
+                    class={adaptForClassCard(_class)}
                     data-index={index}
                     key={key}
                     ref={virtualizer.measureElement}
@@ -291,14 +322,30 @@ export default function List({ onSelect }: ListProps) {
             </div>
           </div>
         )}
+        {totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button
+              type="button"
+              disabled={!hasPrevPage}
+              onClick={() => updatePage((p) => Math.max(1, p - 1))}
+              className={styles.paginationButton}
+            >
+              Previous
+            </button>
+            <span className={styles.paginationInfo}>
+              Page {page} of {totalPages} ({totalCount} results)
+            </span>
+            <button
+              type="button"
+              disabled={!hasNextPage}
+              onClick={() => updatePage((p) => p + 1)}
+              className={styles.paginationButton}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
-      {/* <div className={styles.footer}>
-        <Link to="/discover" className={styles.button}>
-          <Sparks />
-          <p className={styles.text}>Try discovering courses</p>
-          <ArrowRight />
-        </Link>
-      </div> */}
     </div>
   );
 }

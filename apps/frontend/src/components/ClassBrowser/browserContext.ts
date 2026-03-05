@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, createContext } from "react";
 
-import { ICatalogClass, ITerm } from "@/lib/api";
+import { ITerm } from "@/lib/api";
+import { ICatalogClassServer, ICatalogFilterOptions } from "@/lib/api/catalog";
 import { Semester } from "@/lib/generated/graphql";
 
 import {
-  Breadth,
   Day,
   EnrollmentFilter,
   GradingFilter,
@@ -12,17 +12,16 @@ import {
   SortBy,
   TimeRange,
   UnitRange,
-  UniversityRequirement,
 } from "./browser";
 
 export interface BrowserContextType {
   responsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
-  allClasses: ICatalogClass[];
-  classes: ICatalogClass[];
-  includedClasses: ICatalogClass[];
-  excludedClasses: ICatalogClass[];
+  allClasses: ICatalogClassServer[];
+  classes: ICatalogClassServer[];
+  includedClasses: ICatalogClassServer[];
+  excludedClasses: ICatalogClassServer[];
   year: number;
   semester: Semester;
   terms?: ITerm[];
@@ -32,8 +31,8 @@ export interface BrowserContextType {
   levels: Level[];
   days: Day[];
   timeRange: TimeRange;
-  breadths: Breadth[];
-  universityRequirements: UniversityRequirement[];
+  breadths: string[];
+  universityRequirements: string[];
   gradingFilters: GradingFilter[];
   academicOrganization: string | null;
   online: boolean;
@@ -45,8 +44,8 @@ export interface BrowserContextType {
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
   updateTimeRange: Dispatch<TimeRange>;
-  updateBreadths: Dispatch<Breadth[]>;
-  updateUniversityRequirements: Dispatch<UniversityRequirement[]>;
+  updateBreadths: Dispatch<string[]>;
+  updateUniversityRequirements: Dispatch<string[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
   updateAcademicOrganization: Dispatch<string | null>;
   updateQuery: Dispatch<string>;
@@ -55,6 +54,13 @@ export interface BrowserContextType {
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
+  // Server-side pagination
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  updatePage: Dispatch<SetStateAction<number>>;
+  // Filter options from server
+  filterOptions: ICatalogFilterOptions | null;
 }
 
 const BrowserContext = createContext<BrowserContextType | null>(null);

@@ -6,7 +6,7 @@ import {
   TermModel,
 } from "@repo/common/models";
 
-import { warmCatalogCacheForTerms } from "../lib/cache-warming";
+import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -319,8 +319,67 @@ const updateEnrollmentHistories = async (config: Config) => {
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
 
-  // Warm catalog cache for all terms we just updated
-  await warmCatalogCacheForTerms(config, terms);
+  // Update enrollment fields on denormalized catalog_classes
+  // Build a map of latest enrollment data per section from the singulars we just processed
+  const enrollmentUpdates = new Map<
+    string,
+    {
+      year: number;
+      semester: string;
+      status?: string;
+      enrolledCount?: number;
+      maxEnroll?: number;
+      waitlistedCount?: number;
+      maxWaitlist?: number;
+    }
+  >();
+
+  // Re-fetch the latest enrollment snapshot for each section we updated
+  for (const term of terms) {
+    const parts = term.name.split(" ");
+    if (parts.length !== 2) continue;
+    const year = parseInt(parts[0], 10);
+    const semester = parts[1];
+    if (isNaN(year)) continue;
+
+    // Get all enrollment histories for this term
+    const histories = await NewEnrollmentHistoryModel.find({
+      year,
+      semester,
+    })
+      .select({
+        sectionId: 1,
+        history: { $slice: -1 },
+      })
+      .lean();
+
+    const termEnrollments = new Map<
+      string,
+      {
+        status?: string;
+        enrolledCount?: number;
+        maxEnroll?: number;
+        waitlistedCount?: number;
+        maxWaitlist?: number;
+      }
+    >();
+
+    for (const hist of histories) {
+      const latest = hist.history?.[0];
+      if (!latest) continue;
+      termEnrollments.set(hist.sectionId, {
+        status: latest.status,
+        enrolledCount: latest.enrolledCount,
+        maxEnroll: latest.maxEnroll,
+        waitlistedCount: latest.waitlistedCount,
+        maxWaitlist: latest.maxWaitlist,
+      });
+    }
+
+    if (termEnrollments.size > 0) {
+      await updateCatalogEnrollment(log, year, semester, termEnrollments);
+    }
+  }
 };
 
 export default { updateEnrollmentHistories };
