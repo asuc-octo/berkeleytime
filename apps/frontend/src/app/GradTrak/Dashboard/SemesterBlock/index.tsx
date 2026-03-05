@@ -359,18 +359,73 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   };
 
+  const BOOKMARK_DRAG_TYPE = "application/x-gradtrak-bookmark-class";
+
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
 
     try {
-      // get the dragged class data
+      const insertPos = findInsertPosition(e);
+
+      // Drop from bookmarks sidebar: add class at position
+      if (e.dataTransfer.types.includes(BOOKMARK_DRAG_TYPE)) {
+        const raw = e.dataTransfer.getData(BOOKMARK_DRAG_TYPE);
+        const { class: bookmarkClass } = JSON.parse(raw) as {
+          source: string;
+          class: {
+            subject: string;
+            courseNumber: string;
+            number: string;
+            title: string;
+            unitsMin?: number;
+            unitsMax?: number;
+          };
+        };
+        const { subject, courseNumber, number, title, unitsMin, unitsMax } =
+          bookmarkClass;
+        let courseUnits = unitsMin ?? unitsMax ?? 0;
+        if (courseUnits <= 0) {
+          courseUnits = await getCourseUnits(
+            subject,
+            courseNumber,
+            planTerm.term,
+            planTerm.year
+          );
+        }
+        const courseToAdd: ISelectedCourse = {
+          courseID: `${subject}_${number}`,
+          courseName: `${subject} ${courseNumber}`,
+          courseTitle: title || `${subject} ${courseNumber}`,
+          courseUnits,
+          uniReqs: [],
+          collegeReqs: [],
+          pnp: false,
+          transfer: false,
+          labels: [],
+        };
+        const updatedClasses = [...selectedClasses];
+        updatedClasses.splice(insertPos, 0, courseToAdd);
+        const oldClasses = [...selectedClasses];
+        setSelectedCourses(updatedClasses);
+        try {
+          await setCourses(semesterId, updatedClasses);
+          const updatedSemesters = {
+            ...filteredSemesters,
+            [semesterId]: updatedClasses,
+          };
+          updateAllSemesters(updatedSemesters);
+        } catch (error) {
+          setSelectedCourses(oldClasses);
+          console.error("Failed to add class from bookmarks:", error);
+        }
+        return;
+      }
+
+      // get the dragged class data (from another semester block)
       const data = JSON.parse(e.dataTransfer.getData("application/json"));
       const { sourceSemesterId, classIndex, class: draggedClass } = data;
-
-      // find the insertion position
-      const insertPos = findInsertPosition(e);
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
@@ -410,8 +465,8 @@ function SemesterBlock({
       const oldSemesters = { ...allSemesters };
       updateAllSemesters(updatedSemesters);
       try {
-        for (const semesterId of semestersToUpdate) {
-          await setCourses(semesterId, updatedSemesters[semesterId], {
+        for (const sid of semestersToUpdate) {
+          await setCourses(sid, updatedSemesters[sid], {
             fetchPolicy: "no-cache",
           });
         }
