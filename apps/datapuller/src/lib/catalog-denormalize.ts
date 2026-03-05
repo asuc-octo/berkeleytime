@@ -2,6 +2,7 @@ import { connection } from "mongoose";
 
 import { SUBJECT_NICKNAME_MAP } from "@repo/common/lib/departmentNicknames";
 import {
+  AggregatedMetricsModel,
   CatalogClassModel,
   ClassModel,
   ClassViewCountModel,
@@ -166,6 +167,52 @@ export const buildCatalogClasses = async (
 
   // Fetch view counts
   const viewCounts = await ClassViewCountModel.find({ year, semester }).lean();
+
+  // Fetch aggregated ratings for all courses in a single pipeline
+  const ratingsAgg = await AggregatedMetricsModel.aggregate([
+    { $match: { courseId: { $in: courseIds }, categoryCount: { $gt: 0 } } },
+    {
+      $group: {
+        _id: {
+          courseId: "$courseId",
+          metricName: "$metricName",
+          categoryValue: "$categoryValue",
+        },
+        categoryCount: { $sum: "$categoryCount" },
+      },
+    },
+    {
+      $group: {
+        _id: { courseId: "$_id.courseId", metricName: "$_id.metricName" },
+        totalCount: { $sum: "$categoryCount" },
+        sumValues: {
+          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.courseId",
+        metrics: {
+          $push: {
+            metricName: "$_id.metricName",
+            count: "$totalCount",
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
+          },
+        },
+      },
+    },
+  ]);
+  const ratingsMap = new Map<
+    string,
+    { metricName: string; count: number; weightedAverage: number }[]
+  >(ratingsAgg.map((r: any) => [r._id, r.metrics]));
 
   // Build lookup maps
   const courseMap = new Map(courses.map((c) => [c.courseId, c]));
@@ -362,6 +409,9 @@ export const buildCatalogClasses = async (
 
       // Ratings/grades
       viewCount: viewCountMap.get(viewCountKey) ?? 0,
+      aggregatedRatings: ratingsMap.has(_class.courseId)
+        ? { metrics: ratingsMap.get(_class.courseId)! }
+        : null,
     });
   }
 
@@ -444,6 +494,100 @@ export const refreshAllCatalogClasses = async (log: Config["log"]) => {
   }
 
   log.info("Catalog rebuild complete.");
+};
+
+/**
+ * Updates only the aggregated ratings on catalog_classes for a given term.
+ * Runs the same bulk aggregation pipeline as buildCatalogClasses but scoped
+ * to courseIds present in the catalog for this term.
+ */
+export const updateCatalogRatings = async (
+  log: Config["log"],
+  year: number,
+  semester: string
+) => {
+  const courseIds = await CatalogClassModel.distinct("courseId", {
+    year,
+    semester,
+  });
+
+  if (courseIds.length === 0) return;
+
+  const ratingsAgg = await AggregatedMetricsModel.aggregate([
+    { $match: { courseId: { $in: courseIds }, categoryCount: { $gt: 0 } } },
+    {
+      $group: {
+        _id: {
+          courseId: "$courseId",
+          metricName: "$metricName",
+          categoryValue: "$categoryValue",
+        },
+        categoryCount: { $sum: "$categoryCount" },
+      },
+    },
+    {
+      $group: {
+        _id: { courseId: "$_id.courseId", metricName: "$_id.metricName" },
+        totalCount: { $sum: "$categoryCount" },
+        sumValues: {
+          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.courseId",
+        metrics: {
+          $push: {
+            metricName: "$_id.metricName",
+            count: "$totalCount",
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
+          },
+        },
+      },
+    },
+  ]);
+
+  const bulkOps = ratingsAgg.map((r: any) => ({
+    updateMany: {
+      filter: { year, semester, courseId: r._id },
+      update: { $set: { aggregatedRatings: { metrics: r.metrics } } },
+    },
+  }));
+
+  // Also null out ratings for courses that no longer have any
+  const courseIdsWithRatings = new Set(ratingsAgg.map((r: any) => r._id));
+  const courseIdsWithoutRatings = courseIds.filter(
+    (id) => !courseIdsWithRatings.has(id)
+  );
+
+  if (courseIdsWithoutRatings.length > 0) {
+    bulkOps.push({
+      updateMany: {
+        filter: {
+          year,
+          semester,
+          courseId: { $in: courseIdsWithoutRatings },
+        } as any,
+        update: { $set: { aggregatedRatings: null } },
+      },
+    });
+  }
+
+  if (bulkOps.length > 0) {
+    const result = await CatalogClassModel.bulkWrite(bulkOps, {
+      ordered: false,
+    });
+    log.info(
+      `Updated ratings for ${ratingsAgg.length} courses on catalog_classes (${result.modifiedCount} docs modified)`
+    );
+  }
 };
 
 /**

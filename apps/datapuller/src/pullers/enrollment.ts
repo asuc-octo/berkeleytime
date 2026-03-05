@@ -6,7 +6,10 @@ import {
   TermModel,
 } from "@repo/common/models";
 
-import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
+import {
+  updateCatalogEnrollment,
+  updateCatalogRatings,
+} from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
 import { Config } from "../shared/config";
 
@@ -379,6 +382,8 @@ const updateEnrollmentHistories = async (config: Config) => {
     if (termEnrollments.size > 0) {
       await updateCatalogEnrollment(log, year, semester, termEnrollments);
     }
+
+    await updateCatalogRatings(log, year, semester);
   }
 };
 

@@ -113,6 +113,13 @@ export const GET_CATALOG = gql`
           maxWaitlist
         }
         viewCount
+        aggregatedRatings {
+          metrics {
+            metricName
+            count
+            weightedAverage
+          }
+        }
         requirementDesignation {
           description
         }

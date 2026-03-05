@@ -81,6 +81,16 @@ export const catalogTypeDef = gql`
     maxWaitlist: Int
   }
 
+  type CatalogMetric {
+    metricName: String!
+    count: Int!
+    weightedAverage: Float!
+  }
+
+  type CatalogAggregatedRatings {
+    metrics: [CatalogMetric!]!
+  }
+
   type CatalogClass {
     "Identity"
     year: Int!
@@ -137,6 +147,7 @@ export const catalogTypeDef = gql`
 
     "Stats"
     viewCount: Int
+    aggregatedRatings: CatalogAggregatedRatings
 
     "Requirement designation"
     requirementDesignation: SectionAttributeInfo

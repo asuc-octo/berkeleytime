@@ -25,9 +25,11 @@ const adaptForClassCard = (_class: ICatalogClassServer) => ({
   unitsMin: _class.unitsMin,
   course: {
     title: _class.courseTitle,
-    gradeDistribution: _class.allTimeAverageGrade != null
-      ? { average: _class.allTimeAverageGrade, pnpPercentage: null }
-      : undefined,
+    gradeDistribution:
+      _class.allTimeAverageGrade != null
+        ? { average: _class.allTimeAverageGrade, pnpPercentage: null }
+        : undefined,
+    aggregatedRatings: _class.aggregatedRatings,
   },
   primarySection: {
     enrollment: {

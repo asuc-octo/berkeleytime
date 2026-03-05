@@ -117,6 +117,9 @@ export interface ICatalogClassItem {
 
   // Ratings/grades
   viewCount?: number;
+  aggregatedRatings?: {
+    metrics: { metricName: string; count: number; weightedAverage: number }[];
+  } | null;
 
   // Timestamps
   updatedAt?: Date;
@@ -268,6 +271,20 @@ const catalogClassSchema = new Schema<ICatalogClassItem>(
 
     // Ratings/grades
     viewCount: { type: Number, default: 0 },
+    aggregatedRatings: {
+      _id: false,
+      type: {
+        metrics: [
+          {
+            _id: false,
+            metricName: String,
+            count: Number,
+            weightedAverage: Number,
+          },
+        ],
+      },
+      default: null,
+    },
   },
   { timestamps: true }
 );

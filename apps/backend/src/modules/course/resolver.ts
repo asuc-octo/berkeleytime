@@ -7,7 +7,6 @@ import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getCourseAggregatedRatings,
-  getCourseRatingsCount,
   getInstructorAggregatedRatings,
 } from "../rating/controller";
 import {
@@ -250,10 +249,6 @@ const resolvers: CourseModule.Resolvers = {
       return instructorRatings;
     },
 
-    ratingsCount: async (parent: IntermediateCourse | CourseModule.Course) => {
-      const count = await getCourseRatingsCount(parent.subject, parent.number);
-      return count;
-    },
   },
 
   // Session: {
