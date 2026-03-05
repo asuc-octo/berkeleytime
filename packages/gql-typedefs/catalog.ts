@@ -163,6 +163,11 @@ export const catalogTypeDef = gql`
     name: String!
   }
 
+  type CatalogTimeRange {
+    minStartTime: String!
+    maxEndTime: String!
+  }
+
   type CatalogFilterOptions {
     departments: [CatalogDepartment!]!
     levels: [String!]!
@@ -170,6 +175,7 @@ export const catalogTypeDef = gql`
     breadthRequirements: [String!]!
     universityRequirements: [String!]!
     semesters: [CatalogSemester!]!
+    timeRange: CatalogTimeRange
   }
 
   type CatalogSemester {

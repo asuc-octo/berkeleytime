@@ -3,6 +3,7 @@ import { connection } from "mongoose";
 import { GradeCounts, getAverageGrade, getDistribution } from "@repo/common";
 import { CourseModel, GradeDistributionModel } from "@repo/common/models";
 
+import { updateCatalogGradeSummaries } from "../lib/catalog-denormalize";
 import { getGradeDistributionDataByTerms } from "../lib/grade-distributions";
 import { Config } from "../shared/config";
 import {
@@ -211,6 +212,7 @@ const updateGradeDistributions = async (
   );
 
   await rebuildCourseGradeSummaries(log);
+  await updateCatalogGradeSummaries(log);
 };
 
 const recentPastTerms = async (config: Config) => {

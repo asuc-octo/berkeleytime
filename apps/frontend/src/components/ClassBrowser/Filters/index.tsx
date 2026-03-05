@@ -4,7 +4,7 @@ import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { DaySelect, IconButton, Input, Select, Slider } from "@repo/theme";
-import type { Option, OptionItem, SelectTab } from "@repo/theme";
+import type { Option, SelectTab } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 
@@ -43,8 +43,6 @@ export default function Filters() {
     updateUniversityRequirements,
     gradingFilters,
     updateGradingFilters,
-    academicOrganization,
-    updateAcademicOrganization,
     enrollmentFilter,
     updateEnrollmentFilter,
     sortBy,
@@ -173,31 +171,6 @@ export default function Filters() {
     }));
   }, []);
 
-  const academicOrganizationOptions = useMemo<OptionItem<string>[]>(() => {
-    if (!filterOptions) return [];
-    return filterOptions.departments.map((dept) => ({
-      value: dept.code,
-      label: dept.name,
-      type: "option" as const,
-    }));
-  }, [filterOptions]);
-
-  const departmentSearchFunction = (
-    query: string,
-    options: Option<string>[]
-  ) => {
-    if (!query || query.trim() === "") return options;
-    const searchLower = query.toLowerCase();
-    return options.filter((opt) => {
-      if (opt.type === "label") return true;
-      const dept = filterOptions?.departments.find((d) => d.code === opt.value);
-      if (!dept) return false;
-      return dept.name.toLowerCase().includes(searchLower);
-    });
-  };
-
-  const isAcademicOrganizationDisabled =
-    academicOrganizationOptions.length === 0;
   const isClassLevelDisabled = Object.values(filteredLevels).every(
     (count) => count === 0
   );
@@ -227,7 +200,6 @@ export default function Filters() {
     updateBreadths([]);
     updateUniversityRequirements([]);
     updateGradingFilters([]);
-    updateAcademicOrganization(null);
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
@@ -352,25 +324,6 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Department</p>
-          <Select<string>
-            searchable
-            value={academicOrganization}
-            placeholder="Select a department"
-            clearable
-            disabled={isAcademicOrganizationDisabled}
-            onChange={(value) => {
-              if (typeof value === "string" || value === null) {
-                updateAcademicOrganization(value);
-              }
-            }}
-            options={academicOrganizationOptions}
-            searchPlaceholder="Search departments..."
-            emptyMessage="No departments found."
-            customSearch={departmentSearchFunction}
-          />
-        </div>
-        <div className={styles.formControl}>
           <p className={styles.label}>Units</p>
           <Slider
             min={0}
@@ -427,6 +380,8 @@ export default function Filters() {
                 type="time"
                 id="time-from"
                 value={timeRange[0] ?? ""}
+                min={filterOptions?.timeRange?.minStartTime}
+                max={filterOptions?.timeRange?.maxEndTime}
                 onChange={(e) => {
                   const value = e.target.value || null;
                   updateTimeRange([value, timeRange[1]]);
@@ -442,6 +397,8 @@ export default function Filters() {
                 type="time"
                 id="time-to"
                 value={timeRange[1] ?? ""}
+                min={filterOptions?.timeRange?.minStartTime}
+                max={filterOptions?.timeRange?.maxEndTime}
                 onChange={(e) => {
                   const value = e.target.value || null;
                   updateTimeRange([timeRange[0], value]);

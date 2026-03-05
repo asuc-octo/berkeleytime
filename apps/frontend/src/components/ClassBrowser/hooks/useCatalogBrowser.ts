@@ -14,7 +14,6 @@ export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {
   year: number;
   semester: Semester;
   terms?: ITerm[];
-  onLoadingChange?: (loading: boolean) => void;
   onCatalogClassAvailabilityChange?: (
     classes: {
       subject: string;
@@ -38,7 +37,6 @@ export default function useCatalogBrowser({
   semester,
   terms,
   persistent,
-  onLoadingChange,
   onCatalogClassAvailabilityChange,
 }: UseCatalogBrowserOptions): UseCatalogBrowserReturn {
   const filterState = useCatalogFilters({ persistent });
@@ -51,10 +49,6 @@ export default function useCatalogBrowser({
     effectiveOrder: filterState.effectiveOrder,
     filterVariables: filterState.filterVariables,
   });
-
-  useEffect(() => {
-    onLoadingChange?.(queryResult.shouldShowCatalogOverlay);
-  }, [onLoadingChange, queryResult.shouldShowCatalogOverlay]);
 
   useEffect(() => {
     const availabilityClasses = queryResult.classes.map((_class) => ({
@@ -78,7 +72,6 @@ export default function useCatalogBrowser({
       breadths: filterState.breadths,
       universityRequirements: filterState.universityRequirements,
       gradingFilters: filterState.gradingFilters,
-      academicOrganization: filterState.academicOrganization,
       sortBy: filterState.sortBy,
       reverse: filterState.reverse,
       effectiveOrder: filterState.effectiveOrder,
@@ -92,7 +85,6 @@ export default function useCatalogBrowser({
       updateBreadths: filterState.updateBreadths,
       updateUniversityRequirements: filterState.updateUniversityRequirements,
       updateGradingFilters: filterState.updateGradingFilters,
-      updateAcademicOrganization: filterState.updateAcademicOrganization,
       updateSortBy: filterState.updateSortBy,
       updateEnrollmentFilter: filterState.updateEnrollmentFilter,
       updateOnline: filterState.updateOnline,

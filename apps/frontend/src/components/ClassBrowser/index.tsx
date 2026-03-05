@@ -28,7 +28,6 @@ interface ClassBrowserProps {
       sessionId: string;
     }[]
   ) => void;
-  onLoadingChange?: (loading: boolean) => void;
   forceMode?: CatalogLayoutMode;
   semester: Semester;
   year: number;
@@ -39,7 +38,6 @@ interface ClassBrowserProps {
 export default function ClassBrowser({
   onSelect,
   onCatalogClassAvailabilityChange,
-  onLoadingChange,
   forceMode = "full",
   semester,
   year,
@@ -53,7 +51,6 @@ export default function ClassBrowser({
     semester,
     terms,
     persistent,
-    onLoadingChange,
     onCatalogClassAvailabilityChange,
   });
 

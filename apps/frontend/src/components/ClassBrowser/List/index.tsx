@@ -15,32 +15,47 @@ import { useListContext } from "../context/ListContext";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
+const getPnpPercentage = (_class: ICatalogClassServer): number | null => {
+  const passCount = _class.allTimePassCount ?? 0;
+  const noPassCount = _class.allTimeNoPassCount ?? 0;
+  const totalCount = passCount + noPassCount;
+  if (totalCount <= 0) return null;
+  return passCount / totalCount;
+};
+
 // Adapt ICatalogClassServer to the shape ClassCard expects
-const adaptForClassCard = (_class: ICatalogClassServer) => ({
-  subject: _class.subject,
-  courseNumber: _class.courseNumber,
-  number: _class.number,
-  title: _class.title ?? _class.courseTitle,
-  unitsMax: _class.unitsMax,
-  unitsMin: _class.unitsMin,
-  course: {
-    title: _class.courseTitle,
-    gradeDistribution:
-      _class.allTimeAverageGrade != null
-        ? { average: _class.allTimeAverageGrade, pnpPercentage: null }
-        : undefined,
-    aggregatedRatings: _class.aggregatedRatings,
-  },
-  primarySection: {
-    enrollment: {
-      latest: {
-        enrolledCount: _class.enrolledCount,
-        maxEnroll: _class.maxEnroll,
-        activeReservedMaxCount: _class.activeReservedMaxCount,
+const adaptForClassCard = (_class: ICatalogClassServer) => {
+  const pnpPercentage = getPnpPercentage(_class);
+
+  return {
+    subject: _class.subject,
+    courseNumber: _class.courseNumber,
+    number: _class.number,
+    title: _class.title ?? _class.courseTitle,
+    unitsMax: _class.unitsMax,
+    unitsMin: _class.unitsMin,
+    course: {
+      title: _class.courseTitle,
+      gradeDistribution:
+        _class.allTimeAverageGrade != null || pnpPercentage != null
+          ? {
+              average: _class.allTimeAverageGrade,
+              pnpPercentage,
+            }
+          : undefined,
+      aggregatedRatings: _class.aggregatedRatings,
+    },
+    primarySection: {
+      enrollment: {
+        latest: {
+          enrolledCount: _class.enrolledCount,
+          maxEnroll: _class.maxEnroll,
+          activeReservedMaxCount: _class.activeReservedMaxCount,
+        },
       },
     },
-  },
-});
+  };
+};
 
 interface ListProps {
   onSelect: (
@@ -354,7 +369,13 @@ export default function List({ onSelect }: ListProps) {
         </div>
       </div>
       <div ref={catalogScrollRef} className={styles.catalogScroll}>
-        {!loading && classes.length === 0 ? (
+        {loading && classes.length === 0 ? (
+          <div className={styles.skeletonContainer}>
+            {[...Array(10)].map((_, i) => (
+              <ClassCardSkeleton key={`skeleton-${i}`} />
+            ))}
+          </div>
+        ) : !loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
             <EmptyPage width={32} height={32} />
             <p className={styles.heading}>No classes found</p>

@@ -597,6 +597,82 @@ export const updateCatalogRatings = async (
 };
 
 /**
+ * Updates denormalized all-time grade summary fields on catalog_classes.
+ * Uses courseId joins so we can refresh grades without rebuilding the catalog.
+ */
+export const updateCatalogGradeSummaries = async (log: Config["log"]) => {
+  const courseIds = (await CatalogClassModel.distinct("courseId")) as string[];
+  if (courseIds.length === 0) return;
+
+  const courses = await CourseModel.find({
+    courseId: { $in: courseIds },
+  })
+    .select({
+      courseId: 1,
+      allTimeAverageGrade: 1,
+      allTimePassCount: 1,
+      allTimeNoPassCount: 1,
+    })
+    .lean();
+
+  const seenCourseIds = new Set<string>();
+  const bulkOps: Parameters<typeof CatalogClassModel.bulkWrite>[0] = [];
+
+  for (const course of courses) {
+    if (!course.courseId) continue;
+    seenCourseIds.add(course.courseId);
+
+    bulkOps.push({
+      updateMany: {
+        filter: { courseId: course.courseId },
+        update: {
+          $set: {
+            allTimeAverageGrade: course.allTimeAverageGrade ?? null,
+            allTimePassCount: course.allTimePassCount ?? null,
+            allTimeNoPassCount: course.allTimeNoPassCount ?? null,
+          },
+        },
+      },
+    });
+  }
+
+  const courseIdsWithoutCourseRows = courseIds.filter(
+    (courseId) => !seenCourseIds.has(courseId)
+  );
+
+  if (courseIdsWithoutCourseRows.length > 0) {
+    bulkOps.push({
+      updateMany: {
+        filter: { courseId: { $in: courseIdsWithoutCourseRows } },
+        update: {
+          $set: {
+            allTimeAverageGrade: null,
+            allTimePassCount: null,
+            allTimeNoPassCount: null,
+          },
+        },
+      },
+    });
+  }
+
+  if (bulkOps.length === 0) return;
+
+  const BULK_BATCH_SIZE = 500;
+  let modifiedCount = 0;
+  for (let i = 0; i < bulkOps.length; i += BULK_BATCH_SIZE) {
+    const batch = bulkOps.slice(i, i + BULK_BATCH_SIZE);
+    const result = await CatalogClassModel.bulkWrite(batch, {
+      ordered: false,
+    });
+    modifiedCount += result.modifiedCount;
+  }
+
+  log.info(
+    `Updated grade summaries for ${seenCourseIds.size.toLocaleString()} courses on catalog_classes (${modifiedCount.toLocaleString()} docs modified)`
+  );
+};
+
+/**
  * Updates only the enrollment fields on catalog_classes for sections that changed.
  * Much cheaper than a full rebuild - used by the enrollment puller.
  */

@@ -61,7 +61,6 @@ export interface UseCatalogQueryOptions {
 export interface UseCatalogQueryReturn {
   classes: ICatalogClassServer[];
   loading: boolean;
-  shouldShowCatalogOverlay: boolean;
   totalCount: number;
   page: number;
   pageSize: number;
@@ -83,7 +82,6 @@ export default function useCatalogQuery({
   const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const isLoadingNextPageRef = useRef(false);
-  const hasCompletedInitialLoadRef = useRef(false);
   const queryGenerationRef = useRef(0);
 
   // Use debounced search for the query
@@ -136,7 +134,8 @@ export default function useCatalogQuery({
       page: 1,
       pageSize: DEFAULT_PAGE_SIZE,
     },
-    fetchPolicy: "cache-and-network",
+    // Prefer fresh server data to avoid stale grade/rating display.
+    fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
   });
 
@@ -204,21 +203,9 @@ export default function useCatalogQuery({
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
   const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
-  const shouldShowCatalogOverlay =
-    isFirstPageLoading &&
-    !hasCompletedInitialLoadRef.current &&
-    classes.length === 0;
-
-  useEffect(() => {
-    if (!isFirstPageLoading) {
-      hasCompletedInitialLoadRef.current = true;
-    }
-  }, [isFirstPageLoading]);
-
   return {
     classes,
     loading: isFirstPageLoading,
-    shouldShowCatalogOverlay,
     totalCount,
     page: localPage,
     pageSize: DEFAULT_PAGE_SIZE,

@@ -28,7 +28,6 @@ import { RecentType, addRecent, getRecents } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
-import CatalogSkeleton from "./Skeleton";
 import useCatalogLayoutMode from "./hooks/useCatalogLayoutMode";
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
@@ -255,7 +254,7 @@ export default function Catalog() {
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms, loading: termsLoading } = useReadTerms();
+  const { data: terms } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
@@ -520,22 +519,11 @@ export default function Catalog() {
     navigate("/profile/bookmarks");
   }, [navigate]);
 
-  const [catalogLoading, setCatalogLoading] = useState(true);
-
-  if (termsLoading) {
-    return <CatalogSkeleton />;
-  }
-
   // TODO: Error state for terms loading failure
 
   return (
     <>
       <div className={styles.root}>
-        {catalogLoading && (
-          <div className={styles.skeletonOverlay}>
-            <CatalogSkeleton terms={terms ?? undefined} currentTerm={effectiveTerm} />
-          </div>
-        )}
         {isDesktop ? (
           // Desktop: Static panel
           <div className={styles.panel}>
@@ -544,7 +532,6 @@ export default function Catalog() {
               onCatalogClassAvailabilityChange={
                 handleCatalogClassAvailabilityChange
               }
-              onLoadingChange={setCatalogLoading}
               forceMode={mode}
               semester={effectiveTerm.semester}
               year={effectiveTerm.year}
@@ -577,7 +564,6 @@ export default function Catalog() {
                 onCatalogClassAvailabilityChange={
                   handleCatalogClassAvailabilityChange
                 }
-                onLoadingChange={setCatalogLoading}
                 forceMode={mode}
                 semester={effectiveTerm.semester}
                 year={effectiveTerm.year}

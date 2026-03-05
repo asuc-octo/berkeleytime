@@ -343,6 +343,8 @@ export const getCatalogFilterOptions = async (
           universityRequirements: {
             $push: "$universityRequirements",
           },
+          minStartMinutes: { $min: "$meetingStartMinutes" },
+          maxEndMinutes: { $max: "$meetingEndMinutes" },
         },
       },
     ]),
@@ -371,6 +373,22 @@ export const getCatalogFilterOptions = async (
     .filter((s): s is { year: number; semester: string } => s !== null)
     .sort((a, b) => b.year - a.year || a.semester.localeCompare(b.semester));
 
+  // Compute time range rounded to nearest hour boundaries
+  let timeRange = null;
+  if (result?.minStartMinutes != null && result?.maxEndMinutes != null) {
+    const flooredStart = Math.floor(result.minStartMinutes / 60) * 60;
+    const ceiledEnd = Math.ceil(result.maxEndMinutes / 60) * 60;
+    const formatMinutes = (m: number) => {
+      const h = Math.floor(m / 60);
+      const min = m % 60;
+      return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+    };
+    timeRange = {
+      minStartTime: formatMinutes(flooredStart),
+      maxEndTime: formatMinutes(ceiledEnd),
+    };
+  }
+
   return {
     departments: (result?.departments ?? [])
       .filter(
@@ -384,5 +402,6 @@ export const getCatalogFilterOptions = async (
     breadthRequirements: breadths,
     universityRequirements: uniReqs,
     semesters: semesterList,
+    timeRange,
   };
 };

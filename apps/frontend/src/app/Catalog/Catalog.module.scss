@@ -109,12 +109,6 @@
     border-right: 1px solid var(--border-color);
   }
 
-  .skeletonOverlay {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-    background-color: var(--backdrop-color);
-  }
 }
 
 .bookmarkDropdown {

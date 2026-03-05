@@ -112,7 +112,6 @@ export interface CatalogFilterState {
   breadths: string[];
   universityRequirements: string[];
   gradingFilters: GradingFilter[];
-  academicOrganization: string | null;
   sortBy: SortBy;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
@@ -131,7 +130,6 @@ export interface CatalogFilterUpdaters {
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
-  updateAcademicOrganization: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
@@ -159,9 +157,6 @@ export default function useCatalogFilters({
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
-  const [localAcademicOrganization, setLocalAcademicOrganization] = useState<
-    string | null
-  >(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
@@ -245,12 +240,6 @@ export default function useCatalogFilters({
     [searchParams, localGradingFilters, persistent]
   );
 
-  const academicOrganization = useMemo(() => {
-    return persistent
-      ? (searchParams.get("academicOrganization") ?? null)
-      : localAcademicOrganization;
-  }, [searchParams, localAcademicOrganization, persistent]);
-
   const sortBy = useMemo(() => {
     if (persistent) {
       const parameter = searchParams.get("sortBy") as SortBy;
@@ -297,7 +286,6 @@ export default function useCatalogFilters({
     const filters: NonNullable<ICatalogFilters> = {};
 
     if (levels.length > 0) filters.levels = levels;
-    if (academicOrganization) filters.departments = [academicOrganization];
 
     if (units[0] !== 0 || units[1] !== 5) {
       filters.unitsMin = units[0];
@@ -325,7 +313,6 @@ export default function useCatalogFilters({
     return Object.keys(filters).length > 0 ? filters : undefined;
   }, [
     levels,
-    academicOrganization,
     units,
     days,
     timeRange,
@@ -346,7 +333,6 @@ export default function useCatalogFilters({
     breadths.length > 0 ||
     universityRequirements.length > 0 ||
     gradingFilters.length > 0 ||
-    academicOrganization !== null ||
     enrollmentFilter !== null ||
     online ||
     sortBy !== SortBy.Relevance;
@@ -440,7 +426,6 @@ export default function useCatalogFilters({
     breadths,
     universityRequirements,
     gradingFilters,
-    academicOrganization,
     sortBy,
     reverse: localReverse,
     effectiveOrder,
@@ -463,15 +448,6 @@ export default function useCatalogFilters({
       ),
     updateGradingFilters: (filters) =>
       updateArray("gradingBases", setLocalGradingFilters, filters),
-    updateAcademicOrganization: (org) => {
-      if (persistent) {
-        if (org) searchParams.set("academicOrganization", org);
-        else searchParams.delete("academicOrganization");
-        setSearchParams(searchParams);
-        return;
-      }
-      setLocalAcademicOrganization(org);
-    },
     updateSortBy,
     updateEnrollmentFilter: (filter) => {
       if (persistent) {
