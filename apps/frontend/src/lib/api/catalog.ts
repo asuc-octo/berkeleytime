@@ -1,4 +1,9 @@
 import { gql } from "@apollo/client";
+import type {
+  GetCatalogFilterOptionsQuery,
+  GetCatalogServerQuery,
+  GetCatalogServerQueryVariables,
+} from "../generated/graphql";
 
 export const GET_CATALOG = gql`
   query GetCatalogServer(
@@ -136,93 +141,12 @@ export const GET_CATALOG_FILTER_OPTIONS = gql`
   }
 `;
 
-// Types for the catalog query results
-export interface ICatalogClassServer {
-  year: number;
-  semester: string;
-  termId: string;
-  sessionId: string;
-  subject: string;
-  courseNumber: string;
-  number: string;
-  courseId: string;
-  title?: string;
-  description?: string;
-  gradingBasis?: string;
-  finalExam?: string;
-  unitsMin: number;
-  unitsMax: number;
-  courseTitle?: string;
-  courseDescription?: string;
-  departmentNicknames?: string;
-  academicCareer?: string;
-  academicOrganization?: string;
-  academicOrganizationName?: string;
-  allTimeAverageGrade?: number | null;
-  allTimePassCount?: number | null;
-  allTimeNoPassCount?: number | null;
-  primarySectionId?: string;
-  primaryComponent?: string;
-  primaryOnline?: boolean;
-  sectionAttributes?: {
-    attribute?: { code?: string; description?: string; formalDescription?: string };
-    value?: { code?: string; description?: string; formalDescription?: string };
-  }[];
-  meetings?: {
-    days?: boolean[];
-    startTime?: string;
-    endTime?: string;
-    location?: string;
-    instructors?: { familyName?: string; givenName?: string }[];
-  }[];
-  exams?: {
-    date?: string;
-    startTime?: string;
-    endTime?: string;
-    location?: string;
-    type?: string;
-  }[];
-  level?: string;
-  breadthRequirements?: string[];
-  universityRequirements?: string[];
-  enrollmentStatus?: string;
-  enrolledCount?: number;
-  maxEnroll?: number;
-  waitlistedCount?: number;
-  maxWaitlist?: number;
-  activeReservedMaxCount?: number;
-  sections?: {
-    sectionId: string;
-    number?: string;
-    component?: string;
-    online?: boolean;
-    meetings?: {
-      days?: boolean[];
-      startTime?: string;
-      endTime?: string;
-      location?: string;
-      instructors?: { familyName?: string; givenName?: string }[];
-    }[];
-    enrollmentStatus?: string;
-    enrolledCount?: number;
-    maxEnroll?: number;
-    waitlistedCount?: number;
-    maxWaitlist?: number;
-  }[];
-  viewCount?: number;
-  requirementDesignation?: { description?: string };
-}
+export type ICatalogResult = NonNullable<GetCatalogServerQuery["catalog"]>;
 
-export interface ICatalogResult {
-  results: ICatalogClassServer[];
-  totalCount: number;
-}
+export type ICatalogClassServer = ICatalogResult["results"][number];
 
-export interface ICatalogFilterOptions {
-  departments: { code: string; name: string }[];
-  levels: string[];
-  gradingOptions: string[];
-  breadthRequirements: string[];
-  universityRequirements: string[];
-  semesters: { year: number; semester: string }[];
-}
+export type ICatalogFilterOptions = NonNullable<
+  GetCatalogFilterOptionsQuery["catalogFilterOptions"]
+>;
+
+export type ICatalogFilters = GetCatalogServerQueryVariables["filters"];

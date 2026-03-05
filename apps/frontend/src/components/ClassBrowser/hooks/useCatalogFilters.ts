@@ -2,6 +2,9 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useRef, useState } from
 
 import { useSearchParams } from "react-router-dom";
 
+import type { ICatalogFilters } from "@/lib/api/catalog";
+import type { GetCatalogServerQueryVariables } from "@/lib/generated/graphql";
+
 import {
   Day,
   EnrollmentFilter,
@@ -11,6 +14,9 @@ import {
   TimeRange,
   UnitRange,
 } from "../browser";
+
+type CatalogSortBy = GetCatalogServerQueryVariables["sortBy"];
+type CatalogEnrollmentFilter = NonNullable<ICatalogFilters>["enrollmentFilter"];
 
 const DEFAULT_SORT_ORDER: Record<SortBy, "asc" | "desc"> = {
   [SortBy.Relevance]: "asc",
@@ -52,15 +58,15 @@ export const mapGradingFilterToBasisCodes = (
 // Map frontend EnrollmentFilter to GraphQL enum
 export const mapEnrollmentFilter = (
   filter: EnrollmentFilter | null
-): string | undefined => {
+): CatalogEnrollmentFilter | undefined => {
   if (!filter) return undefined;
   switch (filter) {
     case EnrollmentFilter.Open:
-      return "OPEN";
+      return "OPEN" as CatalogEnrollmentFilter;
     case EnrollmentFilter.OpenApartFromReserved:
-      return "NON_RESERVED_OPEN";
+      return "NON_RESERVED_OPEN" as CatalogEnrollmentFilter;
     case EnrollmentFilter.WaitlistOpen:
-      return "WAITLIST_OPEN";
+      return "WAITLIST_OPEN" as CatalogEnrollmentFilter;
     default:
       return undefined;
   }
@@ -72,17 +78,17 @@ const mapDayIndices = (days: Day[]): number[] => {
 };
 
 // Map frontend SortBy to GraphQL CatalogSortBy enum
-export const mapSortBy = (sortBy: SortBy): string => {
+export const mapSortBy = (sortBy: SortBy): CatalogSortBy => {
   switch (sortBy) {
     case SortBy.Units:
-      return "UNITS";
+      return "UNITS" as CatalogSortBy;
     case SortBy.AverageGrade:
-      return "AVERAGE_GRADE";
+      return "AVERAGE_GRADE" as CatalogSortBy;
     case SortBy.OpenSeats:
-      return "OPEN_SEATS";
+      return "OPEN_SEATS" as CatalogSortBy;
     case SortBy.Relevance:
     default:
-      return "RELEVANCE";
+      return "RELEVANCE" as CatalogSortBy;
   }
 };
 
@@ -106,7 +112,7 @@ export interface CatalogFilterState {
   enrollmentFilter: EnrollmentFilter | null;
   online: boolean;
   hasActiveFilters: boolean;
-  filterVariables: Record<string, unknown> | undefined;
+  filterVariables: ICatalogFilters | undefined;
 }
 
 export interface CatalogFilterUpdaters {
@@ -280,8 +286,8 @@ export default function useCatalogFilters({
   );
 
   // Build server-side filter variables
-  const filterVariables = useMemo(() => {
-    const filters: Record<string, unknown> = {};
+  const filterVariables = useMemo<ICatalogFilters | undefined>(() => {
+    const filters: NonNullable<ICatalogFilters> = {};
 
     if (levels.length > 0) filters.levels = levels;
     if (academicOrganization) filters.departments = [academicOrganization];

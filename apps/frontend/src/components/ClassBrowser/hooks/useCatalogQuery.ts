@@ -2,19 +2,29 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GET_CATALOG,
-  GET_CATALOG_FILTER_OPTIONS,
+import type {
   ICatalogClassServer,
+  ICatalogFilters,
   ICatalogFilterOptions,
-  ICatalogResult,
 } from "@/lib/api/catalog";
-import { Semester } from "@/lib/generated/graphql";
+import {
+  GetCatalogFilterOptionsDocument,
+  GetCatalogServerDocument,
+} from "@/lib/generated/graphql";
+import type {
+  GetCatalogServerQueryVariables,
+  Semester,
+} from "@/lib/generated/graphql";
 
 import { SortBy } from "../browser";
 import { mapSortBy } from "./useCatalogFilters";
 
 const DEFAULT_PAGE_SIZE = 25;
+
+const mapSortOrder = (
+  order: "asc" | "desc"
+): GetCatalogServerQueryVariables["sortOrder"] =>
+  (order === "asc" ? "ASC" : "DESC") as GetCatalogServerQueryVariables["sortOrder"];
 
 const getCatalogClassKey = (_class: ICatalogClassServer): string =>
   `${_class.sessionId}-${_class.subject}-${_class.courseNumber}-${_class.number}`;
@@ -43,7 +53,7 @@ export interface UseCatalogQueryOptions {
   query: string;
   sortBy: SortBy;
   effectiveOrder: "asc" | "desc";
-  filterVariables: Record<string, unknown> | undefined;
+  filterVariables: ICatalogFilters | undefined;
 }
 
 export interface UseCatalogQueryReturn {
@@ -72,6 +82,7 @@ export default function useCatalogQuery({
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const isLoadingNextPageRef = useRef(false);
   const hasCompletedInitialLoadRef = useRef(false);
+  const queryGenerationRef = useRef(0);
 
   // Use debounced search for the query
   const [debouncedQuery, setDebouncedQuery] = useState(rawQuery);
@@ -82,6 +93,7 @@ export default function useCatalogQuery({
 
   // Reset page when filters/search change
   useEffect(() => {
+    queryGenerationRef.current += 1;
     setLocalPage(1);
     setIsLoadingNextPage(false);
     isLoadingNextPageRef.current = false;
@@ -94,14 +106,16 @@ export default function useCatalogQuery({
     currentSemester,
   ]);
 
-  const catalogQueryVariables = useMemo(
+  const catalogQueryVariables = useMemo<
+    Omit<GetCatalogServerQueryVariables, "page" | "pageSize">
+  >(
     () => ({
       year: currentYear,
       semester: currentSemester,
       search: debouncedQuery || undefined,
       filters: filterVariables,
       sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
-      sortOrder: debouncedQuery ? undefined : effectiveOrder.toUpperCase(),
+      sortOrder: debouncedQuery ? undefined : mapSortOrder(effectiveOrder),
     }),
     [
       currentYear,
@@ -114,7 +128,7 @@ export default function useCatalogQuery({
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, fetchMore } = useQuery<{ catalog: ICatalogResult }>(GET_CATALOG, {
+  const { data, loading, fetchMore } = useQuery(GetCatalogServerDocument, {
     variables: {
       ...catalogQueryVariables,
       page: 1,
@@ -125,7 +139,7 @@ export default function useCatalogQuery({
   });
 
   // Fetch filter options (heavily cached)
-  const { data: filterOptionsData } = useQuery<{ catalogFilterOptions: ICatalogFilterOptions }>(GET_CATALOG_FILTER_OPTIONS, {
+  const { data: filterOptionsData } = useQuery(GetCatalogFilterOptionsDocument, {
     variables: {
       year: currentYear,
       semester: currentSemester,
@@ -152,6 +166,7 @@ export default function useCatalogQuery({
   const loadNextPage = useCallback(async () => {
     if (!hasNextPage || loading || isLoadingNextPageRef.current) return;
 
+    const requestGeneration = queryGenerationRef.current;
     const nextPage = localPage + 1;
     isLoadingNextPageRef.current = true;
     setIsLoadingNextPage(true);
@@ -165,8 +180,10 @@ export default function useCatalogQuery({
         },
       });
 
+      if (requestGeneration !== queryGenerationRef.current) return;
+
       const nextPageClasses: ICatalogClassServer[] =
-        (nextPageData as { catalog?: ICatalogResult })?.catalog?.results ?? [];
+        nextPageData?.catalog?.results ?? [];
       if (nextPageClasses.length === 0) return;
 
       setClasses((previousClasses) =>
@@ -174,8 +191,10 @@ export default function useCatalogQuery({
       );
       setLocalPage(nextPage);
     } finally {
-      isLoadingNextPageRef.current = false;
-      setIsLoadingNextPage(false);
+      if (requestGeneration === queryGenerationRef.current) {
+        isLoadingNextPageRef.current = false;
+        setIsLoadingNextPage(false);
+      }
     }
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
