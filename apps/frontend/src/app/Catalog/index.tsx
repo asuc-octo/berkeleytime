@@ -316,16 +316,13 @@ export default function Catalog() {
 
   const effectiveTerm = term ?? FALLBACK_TERM;
 
-  const { data: identitiesData } = useQuery(
-    GetCatalogClassIdentitiesDocument,
-    {
-      variables: {
-        year: effectiveTerm.year,
-        semester: effectiveTerm.semester as Semester,
-      },
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  const { data: identitiesData } = useQuery(GetCatalogClassIdentitiesDocument, {
+    variables: {
+      year: effectiveTerm.year,
+      semester: effectiveTerm.semester as Semester,
+    },
+    fetchPolicy: "cache-and-network",
+  });
   const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
     () => identitiesData?.catalogClassIdentities ?? [],
     [identitiesData]

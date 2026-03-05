@@ -6,7 +6,6 @@ import {
   parseTimeToMinutes,
 } from "@repo/common";
 import { SUBJECT_NICKNAME_MAP } from "@repo/common/lib/departmentNicknames";
-import { computeActiveReservedMaxCount } from "./enrollment-utils";
 import {
   AggregatedMetricsModel,
   CatalogClassModel,
@@ -21,6 +20,7 @@ import {
 } from "@repo/common/models";
 
 import { Config } from "../shared/config";
+import { computeActiveReservedMaxCount } from "./enrollment-utils";
 
 type AggregatedMetric = {
   metricName: string;
@@ -73,7 +73,6 @@ const aggregateRatingsForCourses = async (
   ]);
   return new Map(results.map((r: any) => [r._id, r.metrics]));
 };
-
 
 const getLevel = (
   academicCareer: string | undefined,
@@ -168,7 +167,6 @@ const filterInstructors = (
     .sort((a, b) => a.familyName.localeCompare(b.familyName));
 };
 
-
 /**
  * Builds denormalized catalog class documents for a given term.
  * Joins classes + courses + sections + enrollment into single documents.
@@ -237,7 +235,8 @@ export const buildCatalogClasses = async (
 
   const viewCountMap = new Map<string, number>();
   for (const vc of viewCounts) {
-    const key = `${vc.sessionId}:${vc.subject}:${vc.courseNumber}:${vc.number}`;
+    const normalizedViewCountSubject = normalizeSubject(vc.subject);
+    const key = `${vc.sessionId}:${normalizedViewCountSubject}:${vc.courseNumber}:${vc.number}`;
     viewCountMap.set(key, vc.viewCount ?? 0);
   }
 
@@ -538,13 +537,14 @@ export const updateCatalogRatings = async (
   for (const vc of viewCounts) {
     const count = vc.viewCount ?? 0;
     if (count === 0) continue;
+    const normalizedViewCountSubject = normalizeSubject(vc.subject);
     bulkOps.push({
       updateOne: {
         filter: {
           year,
           semester,
           sessionId: vc.sessionId,
-          subject: vc.subject,
+          subject: normalizedViewCountSubject,
           courseNumber: vc.courseNumber,
           number: vc.number,
         },

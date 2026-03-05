@@ -419,7 +419,11 @@ const syncEnrollmentTimeframe = async (config: Config) => {
     if (parsed) {
       const yearShort = parsed.year % 100;
       const prefix =
-        parsed.semester === "Spring" ? "SP" : parsed.semester === "Fall" ? "FA" : "SU";
+        parsed.semester === "Spring"
+          ? "SP"
+          : parsed.semester === "Fall"
+            ? "FA"
+            : "SU";
       const termCode = `${prefix}${yearShort.toString().padStart(2, "0")}`;
       termLookup.set(termCode, { termId: term.id });
     }

@@ -6,10 +6,10 @@ import {
   NewEnrollmentHistoryModel,
   TermModel,
 } from "@repo/common/models";
-import { computeActiveReservedMaxCount } from "../lib/enrollment-utils";
 
 import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
+import { computeActiveReservedMaxCount } from "../lib/enrollment-utils";
 import { Config } from "../shared/config";
 
 // duration of time in seconds that can pass before being considered a data gap

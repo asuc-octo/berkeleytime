@@ -1,6 +1,5 @@
-import useMinWidth from "@/hooks/useMinWidth";
-
 import type { CatalogLayoutMode } from "@/components/ClassBrowser/context/LayoutContext";
+import useMinWidth from "@/hooks/useMinWidth";
 
 // Re-export so existing imports keep working
 export type { CatalogLayoutMode } from "@/components/ClassBrowser/context/LayoutContext";

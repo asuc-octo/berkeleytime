@@ -169,7 +169,9 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
       const parsed = parseTermName(name);
       return parsed ? { name, ...parsed } : null;
     })
-    .filter((t): t is { name: string; year: number; semester: string } => t !== null)
+    .filter(
+      (t): t is { name: string; year: number; semester: string } => t !== null
+    )
     .sort((a, b) => b.year - a.year);
 
   for (const term of termsWithCatalogData) {
