@@ -188,6 +188,7 @@ export default function ClassBrowser({
   const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const isLoadingNextPageRef = useRef(false);
+  const hasCompletedInitialLoadRef = useRef(false);
 
   // Derive state from search params when persistent
   const query = localQuery;
@@ -364,7 +365,6 @@ export default function ClassBrowser({
   // Reset page when filters/search change
   useEffect(() => {
     setLocalPage(1);
-    setClasses([]);
     setIsLoadingNextPage(false);
     isLoadingNextPageRef.current = false;
   }, [
@@ -461,12 +461,22 @@ export default function ClassBrowser({
     }
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
-  const isInitialCatalogLoading =
+  const isFirstPageLoading =
     loading && localPage === 1 && !isLoadingNextPage;
+  const shouldShowCatalogOverlay =
+    isFirstPageLoading &&
+    !hasCompletedInitialLoadRef.current &&
+    classes.length === 0;
 
   useEffect(() => {
-    onLoadingChange?.(isInitialCatalogLoading);
-  }, [isInitialCatalogLoading, onLoadingChange]);
+    if (!isFirstPageLoading) {
+      hasCompletedInitialLoadRef.current = true;
+    }
+  }, [isFirstPageLoading]);
+
+  useEffect(() => {
+    onLoadingChange?.(shouldShowCatalogOverlay);
+  }, [onLoadingChange, shouldShowCatalogOverlay]);
 
   const catalogAvailabilityClasses = useMemo(
     () =>
@@ -655,7 +665,7 @@ export default function ClassBrowser({
         updateOnline: (o) =>
           updateBoolean("online", setLocalOnline, o),
         setExpanded,
-        loading: isInitialCatalogLoading,
+        loading: isFirstPageLoading,
         updateReverse: setLocalReverse,
         totalCount,
         page: localPage,

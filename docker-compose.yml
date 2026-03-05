@@ -54,22 +54,34 @@ services:
       - ./apps/staff-frontend:/staff-frontend/apps/staff-frontend
       - ./packages:/staff-frontend/packages
   mongodb:
-    image: mongo:7.0.5
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    image: mongodb/mongodb-atlas-local:8.0
+    hostname: rs0
     networks:
       - bt
     ports:
       - "${DEV_PORT_PREFIX:-30}08:27017"
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017',priority:1}]}) }" | mongosh --port 27017 --quiet
+      test: '/usr/bin/mongosh --port 27017 --quiet --eval "db.runCommand({ ping: 1 }).ok"'
       interval: 5s
-      timeout: 30s
-      start_period: 0s
-      start_interval: 1s
-      retries: 30
+      timeout: 10s
+      start_period: 15s
+      retries: 10
     volumes:
       - ./data/mongodb/db:/data/db
-      - ./data/mongodb/configdb:/data/configdb
+  mongodb-init:
+    image: mongodb/mongodb-atlas-local:8.0
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - bt
+    restart: "no"
+    entrypoint: mongosh
+    command:
+      - "mongodb://mongodb:27017/bt"
+      - /scripts/01-create-search-indexes.js
+    volumes:
+      - ./docker/mongodb/init:/scripts:ro
   nginx:
     depends_on:
       - backend
