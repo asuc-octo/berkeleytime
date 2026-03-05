@@ -306,6 +306,7 @@ export default function Class({
       semester: _class.semester,
       courseNumber: _class.courseNumber,
       number: _class.number,
+      sessionId: _class.sessionId,
     });
   }, [_class]);
 

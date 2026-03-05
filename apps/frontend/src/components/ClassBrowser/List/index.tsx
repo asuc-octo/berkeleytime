@@ -51,6 +51,25 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 const LOAD_MORE_THRESHOLD_PX = 320;
 
+type RecentClassItem = {
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId?: string;
+};
+
+type RecentlyViewedEntry = {
+  key: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId: string | null;
+};
+
+const getRecentClassKey = (
+  recent: Pick<RecentClassItem, "subject" | "courseNumber" | "number">
+) => `${recent.subject}-${recent.courseNumber}-${recent.number}`;
+
 export default function List({ onSelect }: ListProps) {
   const {
     classes,
@@ -66,13 +85,20 @@ export default function List({ onSelect }: ListProps) {
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
     useState(MAX_RECENTLY_VIEWED);
+  const [resolvedSessionIds, setResolvedSessionIds] = useState<
+    Record<string, string>
+  >({});
   const [showTopFade, setShowTopFade] = useState(false);
 
   const catalogScrollRef = useRef<HTMLDivElement>(null);
   const recentlyViewedListRef = useRef<HTMLDivElement>(null);
   const recentlyViewedMeasureRef = useRef<HTMLDivElement>(null);
 
-  const recentlyViewed = useMemo(() => {
+  useEffect(() => {
+    setResolvedSessionIds({});
+  }, [year, semester]);
+
+  const recentlyViewed = useMemo<RecentClassItem[]>(() => {
     const allRecents = getRecents(RecentType.Class);
     const seenCourses = new Set<string>();
 
@@ -87,23 +113,46 @@ export default function List({ onSelect }: ListProps) {
       .slice(0, MAX_RECENTLY_VIEWED);
   }, [year, semester, recentlyViewedVersion]);
 
-  const recentlyViewedClasses = useMemo(() => {
-    return recentlyViewed
-      .map((recent) => {
-        return allClasses.find(
-          (c) =>
-            c.subject === recent.subject &&
-            c.courseNumber === recent.courseNumber &&
-            c.number === recent.number
-        );
-      })
-      .filter((c) => c !== undefined);
-  }, [recentlyViewed, allClasses]);
+  const recentlyViewedEntries = useMemo<RecentlyViewedEntry[]>(() => {
+    return recentlyViewed.map((recent) => {
+      const key = getRecentClassKey(recent);
+      const fallbackSessionId = allClasses.find(
+        (catalogClass) =>
+          catalogClass.subject === recent.subject &&
+          catalogClass.courseNumber === recent.courseNumber &&
+          catalogClass.number === recent.number
+      )?.sessionId;
 
-  const showRecentlyViewed = recentlyViewedClasses.length > 0;
+      return {
+        key,
+        subject: recent.subject,
+        courseNumber: recent.courseNumber,
+        number: recent.number,
+        sessionId:
+          recent.sessionId ?? resolvedSessionIds[key] ?? fallbackSessionId ?? null,
+      };
+    });
+  }, [recentlyViewed, allClasses, resolvedSessionIds]);
+
+  useEffect(() => {
+    setResolvedSessionIds((previous) => {
+      let changed = false;
+      const next = { ...previous };
+
+      recentlyViewedEntries.forEach((entry) => {
+        if (!entry.sessionId || next[entry.key]) return;
+        next[entry.key] = entry.sessionId;
+        changed = true;
+      });
+
+      return changed ? next : previous;
+    });
+  }, [recentlyViewedEntries]);
+
+  const showRecentlyViewed = recentlyViewedEntries.length > 0;
   const visibleRecentlyViewedClasses = useMemo(
-    () => recentlyViewedClasses.slice(0, visibleRecentCount),
-    [recentlyViewedClasses, visibleRecentCount]
+    () => recentlyViewedEntries.slice(0, visibleRecentCount),
+    [recentlyViewedEntries, visibleRecentCount]
   );
 
   useEffect(() => {
@@ -171,7 +220,7 @@ export default function List({ onSelect }: ListProps) {
     observer.observe(measureElement);
 
     return () => observer.disconnect();
-  }, [showRecentlyViewed, recentlyViewedClasses]);
+  }, [showRecentlyViewed, recentlyViewedEntries]);
 
   useEffect(() => {
     const scrollElement = catalogScrollRef.current;
@@ -237,11 +286,11 @@ export default function List({ onSelect }: ListProps) {
                 className={styles.recentlyViewedList}
               >
                 <AnimatePresence initial={false} mode="popLayout">
-                  {visibleRecentlyViewedClasses.map((_class) => (
+                  {visibleRecentlyViewedClasses.map((recentClass) => (
                     <motion.button
                       type="button"
                       className={styles.recentlyViewedTagButton}
-                      key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                      key={`recent-${recentClass.key}`}
                       layout={shouldReduceMotion ? false : "position"}
                       initial={
                         shouldReduceMotion
@@ -264,17 +313,19 @@ export default function List({ onSelect }: ListProps) {
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (!recentClass.sessionId) return;
                         catalogScrollRef.current?.blur();
                         onSelect(
-                          _class.subject,
-                          _class.courseNumber,
-                          _class.number,
-                          _class.sessionId
+                          recentClass.subject,
+                          recentClass.courseNumber,
+                          recentClass.number,
+                          recentClass.sessionId
                         );
                       }}
                     >
                       <span className={styles.recentlyViewedTagLabel}>
-                        {_class.subject.slice(0, 4)} {_class.courseNumber}
+                        {recentClass.subject.slice(0, 4)}{" "}
+                        {recentClass.courseNumber}
                       </span>
                     </motion.button>
                   ))}
@@ -285,13 +336,13 @@ export default function List({ onSelect }: ListProps) {
                 className={styles.recentlyViewedMeasureList}
                 aria-hidden
               >
-                {recentlyViewedClasses.map((_class) => (
+                {recentlyViewedEntries.map((recentClass) => (
                   <span
                     className={styles.recentlyViewedMeasureItem}
-                    key={`recent-measure-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                    key={`recent-measure-${recentClass.key}`}
                   >
                     <span className={styles.recentlyViewedTagLabel}>
-                      {_class.subject.slice(0, 4)} {_class.courseNumber}
+                      {recentClass.subject.slice(0, 4)} {recentClass.courseNumber}
                     </span>
                   </span>
                 ))}
