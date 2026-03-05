@@ -370,8 +370,7 @@ export const getCatalogFilterOptions = async (
   return {
     departments: (result?.departments ?? [])
       .filter(
-        (d: { code: string; name: string }) =>
-          d.code != null && d.name != null
+        (d: { code: string; name: string }) => d.code != null && d.name != null
       )
       .sort((a: { name: string }, b: { name: string }) =>
         a.name.localeCompare(b.name)

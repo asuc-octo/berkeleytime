@@ -443,7 +443,6 @@ export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];
 export type IMeeting = ISection["meetings"][number];
 
-
 export const componentMap: Record<Component, string> = {
   [Component.Cln]: "Clinic",
   [Component.Col]: "Colloquium",

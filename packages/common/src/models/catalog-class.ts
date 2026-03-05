@@ -314,7 +314,14 @@ catalogClassSchema.index({ year: 1, semester: 1, gradingBasis: 1 });
 
 // Unique constraint for upserts
 catalogClassSchema.index(
-  { year: 1, semester: 1, sessionId: 1, subject: 1, courseNumber: 1, number: 1 },
+  {
+    year: 1,
+    semester: 1,
+    sessionId: 1,
+    subject: 1,
+    courseNumber: 1,
+    number: 1,
+  },
   { unique: true }
 );
 

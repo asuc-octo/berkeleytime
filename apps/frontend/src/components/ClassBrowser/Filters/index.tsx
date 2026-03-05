@@ -196,11 +196,13 @@ export default function Filters() {
     });
   };
 
-  const isAcademicOrganizationDisabled = academicOrganizationOptions.length === 0;
+  const isAcademicOrganizationDisabled =
+    academicOrganizationOptions.length === 0;
   const isClassLevelDisabled = Object.values(filteredLevels).every(
     (count) => count === 0
   );
-  const isGradingDisabled = !filterOptions || filterOptions.gradingOptions.length === 0;
+  const isGradingDisabled =
+    !filterOptions || filterOptions.gradingOptions.length === 0;
 
   const isAscending = effectiveOrder === "asc";
   const nextOrderLabel = isAscending ? "descending" : "ascending";

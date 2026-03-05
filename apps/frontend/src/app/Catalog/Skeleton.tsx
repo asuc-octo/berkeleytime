@@ -14,6 +14,10 @@ import {
   Slider,
 } from "@repo/theme";
 
+import browserStyles from "@/components/ClassBrowser/ClassBrowser.module.scss";
+import filterStyles from "@/components/ClassBrowser/Filters/Filters.module.scss";
+import headerStyles from "@/components/ClassBrowser/Header/Header.module.scss";
+import listStyles from "@/components/ClassBrowser/List/List.module.scss";
 import {
   EMPTY_DAYS,
   EnrollmentFilter,
@@ -25,17 +29,22 @@ import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { sortByTermDescending } from "@/lib/classes";
 import { Semester } from "@/lib/generated/graphql";
 
-import browserStyles from "@/components/ClassBrowser/ClassBrowser.module.scss";
-import filterStyles from "@/components/ClassBrowser/Filters/Filters.module.scss";
-import headerStyles from "@/components/ClassBrowser/Header/Header.module.scss";
-import listStyles from "@/components/ClassBrowser/List/List.module.scss";
-
 import styles from "./Catalog.module.scss";
-import useCatalogLayoutMode, { CatalogLayoutMode } from "./hooks/useCatalogLayoutMode";
+import useCatalogLayoutMode, {
+  CatalogLayoutMode,
+} from "./hooks/useCatalogLayoutMode";
 
 type Term = { year: number; semester: Semester };
 
-function SkeletonHeader({ mode, expanded, onToggle }: { mode: CatalogLayoutMode; expanded: boolean; onToggle: () => void }) {
+function SkeletonHeader({
+  mode,
+  expanded,
+  onToggle,
+}: {
+  mode: CatalogLayoutMode;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
   return (
     <div className={headerStyles.root}>
       <div className={headerStyles.group}>
@@ -59,7 +68,13 @@ function SkeletonHeader({ mode, expanded, onToggle }: { mode: CatalogLayoutMode;
   );
 }
 
-function FilterSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term }) {
+function FilterSkeleton({
+  terms,
+  currentTerm,
+}: {
+  terms?: Term[];
+  currentTerm?: Term;
+}) {
   const navigate = useNavigate();
 
   const availableTerms = useMemo(() => {
@@ -259,22 +274,34 @@ function FilterSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: 
   );
 }
 
-export default function CatalogSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term } = {}) {
+export default function CatalogSkeleton({
+  terms,
+  currentTerm,
+}: { terms?: Term[]; currentTerm?: Term } = {}) {
   const mode = useCatalogLayoutMode();
   const isDesktop = mode !== "compact";
   const [expanded, setExpanded] = useState(false);
 
   const browserContent = (
     <div
-      className={classNames(browserStyles.root, { [browserStyles.expanded]: expanded })}
+      className={classNames(browserStyles.root, {
+        [browserStyles.expanded]: expanded,
+      })}
       data-mode={mode}
     >
       <FilterSkeleton terms={terms} currentTerm={currentTerm} />
       <div className={listStyles.root}>
         <div className={listStyles.topSection}>
-          <SkeletonHeader mode={mode} expanded={expanded} onToggle={() => setExpanded((e) => !e)} />
+          <SkeletonHeader
+            mode={mode}
+            expanded={expanded}
+            onToggle={() => setExpanded((e) => !e)}
+          />
         </div>
-        <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
+        <div
+          className={listStyles.catalogScroll}
+          style={{ overflow: "hidden" }}
+        >
           <div className={listStyles.skeletonContainer}>
             {[...Array(10)].map((_, i) => (
               <ClassCardSkeleton key={`skeleton-${i}`} />

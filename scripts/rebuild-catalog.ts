@@ -4,9 +4,12 @@
  * Or inside backend container: npx tsx /backend/scripts/rebuild-catalog.ts
  */
 import mongoose from "mongoose";
+
 import { CatalogClassModel, TermModel } from "@repo/common/models";
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:3008/bt?directConnection=true";
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb://localhost:3008/bt?directConnection=true";
 
 async function main() {
   console.log("Connecting to MongoDB...", MONGODB_URI);
@@ -14,9 +17,13 @@ async function main() {
   console.log("Connected.");
 
   // Dynamic import to avoid config issues
-  const { buildCatalogClasses } = await import("../apps/datapuller/src/lib/catalog-denormalize");
+  const { buildCatalogClasses } = await import(
+    "../apps/datapuller/src/lib/catalog-denormalize"
+  );
 
-  const termNames: string[] = await TermModel.distinct("name", { hasCatalogData: true });
+  const termNames: string[] = await TermModel.distinct("name", {
+    hasCatalogData: true,
+  });
   const uniqueTerms = [...new Set(termNames)];
   console.log(`Found ${uniqueTerms.length} terms with catalog data.`);
 
@@ -41,7 +48,9 @@ async function main() {
     let inserted = 0;
     for (let i = 0; i < docs.length; i += BATCH_SIZE) {
       const batch = docs.slice(i, i + BATCH_SIZE);
-      const result = await CatalogClassModel.insertMany(batch, { ordered: false });
+      const result = await CatalogClassModel.insertMany(batch, {
+        ordered: false,
+      });
       inserted += result.length;
     }
     console.log(`  Inserted ${inserted} catalog classes.`);

@@ -9,7 +9,7 @@ import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
 import { FilterContext } from "./context/FilterContext";
-import { LayoutContext, type CatalogLayoutMode } from "./context/LayoutContext";
+import { type CatalogLayoutMode, LayoutContext } from "./context/LayoutContext";
 import { ListContext } from "./context/ListContext";
 import useCatalogBrowser from "./hooks/useCatalogBrowser";
 

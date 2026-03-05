@@ -4,8 +4,8 @@ import { useQuery } from "@apollo/client/react";
 
 import type {
   ICatalogClassServer,
-  ICatalogFilters,
   ICatalogFilterOptions,
+  ICatalogFilters,
 } from "@/lib/api/catalog";
 import {
   GetCatalogFilterOptionsDocument,
@@ -24,7 +24,9 @@ const DEFAULT_PAGE_SIZE = 25;
 const mapSortOrder = (
   order: "asc" | "desc"
 ): GetCatalogServerQueryVariables["sortOrder"] =>
-  (order === "asc" ? "ASC" : "DESC") as GetCatalogServerQueryVariables["sortOrder"];
+  (order === "asc"
+    ? "ASC"
+    : "DESC") as GetCatalogServerQueryVariables["sortOrder"];
 
 const getCatalogClassKey = (_class: ICatalogClassServer): string =>
   `${_class.sessionId}-${_class.subject}-${_class.courseNumber}-${_class.number}`;
@@ -139,13 +141,16 @@ export default function useCatalogQuery({
   });
 
   // Fetch filter options (heavily cached)
-  const { data: filterOptionsData } = useQuery(GetCatalogFilterOptionsDocument, {
-    variables: {
-      year: currentYear,
-      semester: currentSemester,
-    },
-    fetchPolicy: "cache-first",
-  });
+  const { data: filterOptionsData } = useQuery(
+    GetCatalogFilterOptionsDocument,
+    {
+      variables: {
+        year: currentYear,
+        semester: currentSemester,
+      },
+      fetchPolicy: "cache-first",
+    }
+  );
 
   const firstPageClasses: ICatalogClassServer[] = useMemo(
     () => data?.catalog?.results ?? [],
@@ -198,8 +203,7 @@ export default function useCatalogQuery({
     }
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
-  const isFirstPageLoading =
-    loading && localPage === 1 && !isLoadingNextPage;
+  const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
   const shouldShowCatalogOverlay =
     isFirstPageLoading &&
     !hasCompletedInitialLoadRef.current &&

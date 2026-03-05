@@ -74,13 +74,8 @@ const getRecentClassKey = (
 ) => `${recent.subject}-${recent.courseNumber}-${recent.number}`;
 
 export default function List({ onSelect }: ListProps) {
-  const {
-    classes,
-    loading,
-    hasNextPage,
-    loadNextPage,
-    isLoadingNextPage,
-  } = useListContext();
+  const { classes, loading, hasNextPage, loadNextPage, isLoadingNextPage } =
+    useListContext();
 
   const { year, semester } = useLayoutContext();
 
@@ -132,7 +127,10 @@ export default function List({ onSelect }: ListProps) {
         courseNumber: recent.courseNumber,
         number: recent.number,
         sessionId:
-          recent.sessionId ?? resolvedSessionIds[key] ?? fallbackSessionId ?? null,
+          recent.sessionId ??
+          resolvedSessionIds[key] ??
+          fallbackSessionId ??
+          null,
       };
     });
   }, [recentlyViewed, classes, resolvedSessionIds]);
@@ -345,7 +343,8 @@ export default function List({ onSelect }: ListProps) {
                     key={`recent-measure-${recentClass.key}`}
                   >
                     <span className={styles.recentlyViewedTagLabel}>
-                      {recentClass.subject.slice(0, 4)} {recentClass.courseNumber}
+                      {recentClass.subject.slice(0, 4)}{" "}
+                      {recentClass.courseNumber}
                     </span>
                   </span>
                 ))}

@@ -18,6 +18,8 @@ export const ListContext = createContext<ListContextType | null>(null);
 export function useListContext() {
   const context = useContext(ListContext);
   if (!context)
-    throw new Error("useListContext must be used within a ListContext provider");
+    throw new Error(
+      "useListContext must be used within a ListContext provider"
+    );
   return context;
 }

@@ -51,6 +51,8 @@ export const FilterContext = createContext<FilterContextType | null>(null);
 export function useFilterContext() {
   const context = useContext(FilterContext);
   if (!context)
-    throw new Error("useFilterContext must be used within a FilterContext provider");
+    throw new Error(
+      "useFilterContext must be used within a FilterContext provider"
+    );
   return context;
 }

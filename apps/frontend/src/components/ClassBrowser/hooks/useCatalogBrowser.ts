@@ -5,7 +5,9 @@ import { Semester } from "@/lib/generated/graphql";
 
 import { FilterContextType } from "../context/FilterContext";
 import { ListContextType } from "../context/ListContext";
-import useCatalogFilters, { UseCatalogFiltersOptions } from "./useCatalogFilters";
+import useCatalogFilters, {
+  UseCatalogFiltersOptions,
+} from "./useCatalogFilters";
 import useCatalogQuery from "./useCatalogQuery";
 
 export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {

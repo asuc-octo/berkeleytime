@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useSearchParams } from "react-router-dom";
 
@@ -131,7 +138,8 @@ export interface CatalogFilterUpdaters {
   updateReverse: Dispatch<SetStateAction<boolean>>;
 }
 
-export type UseCatalogFiltersReturn = CatalogFilterState & CatalogFilterUpdaters;
+export type UseCatalogFiltersReturn = CatalogFilterState &
+  CatalogFilterUpdaters;
 
 export default function useCatalogFilters({
   persistent = false,
@@ -180,9 +188,8 @@ export default function useCatalogFilters({
         ? ((searchParams
             .get("levels")
             ?.split(",")
-            .filter((level) =>
-              Object.values(Level).includes(level as Level)
-            ) ?? []) as Level[])
+            .filter((level) => Object.values(Level).includes(level as Level)) ??
+            []) as Level[])
         : localLevels,
     [searchParams, localLevels, persistent]
   );
@@ -345,7 +352,7 @@ export default function useCatalogFilters({
     sortBy !== SortBy.Relevance;
 
   // URL sync updater helpers
-  const updateArray = <T,>(
+  const updateArray = <T>(
     key: string,
     setState: (state: T[]) => void,
     state: T[]

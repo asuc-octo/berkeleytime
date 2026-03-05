@@ -67,10 +67,7 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-    document.body.setAttribute(
-      "data-theme",
-      prefersDark ? "dark" : "light"
-    );
+    document.body.setAttribute("data-theme", prefersDark ? "dark" : "light");
   }, [theme, forcedTheme]);
 
   const effectiveTheme = forcedTheme ?? theme;

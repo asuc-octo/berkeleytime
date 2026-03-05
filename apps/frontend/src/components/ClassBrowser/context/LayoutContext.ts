@@ -20,6 +20,8 @@ export const LayoutContext = createContext<LayoutContextType | null>(null);
 export function useLayoutContext() {
   const context = useContext(LayoutContext);
   if (!context)
-    throw new Error("useLayoutContext must be used within a LayoutContext provider");
+    throw new Error(
+      "useLayoutContext must be used within a LayoutContext provider"
+    );
   return context;
 }

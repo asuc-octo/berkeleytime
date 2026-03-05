@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+
 import type {
   GetCatalogFilterOptionsQuery,
   GetCatalogServerQuery,

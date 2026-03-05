@@ -248,7 +248,6 @@ const resolvers: CourseModule.Resolvers = {
 
       return instructorRatings;
     },
-
   },
 
   // Session: {

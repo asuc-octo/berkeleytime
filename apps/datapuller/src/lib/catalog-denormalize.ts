@@ -30,9 +30,7 @@ const getLevel = (
   courseNumber: string
 ): string => {
   if (academicCareer === "UGRD") {
-    return courseNumber.match(/(\d)\d\d/)
-      ? "Upper Division"
-      : "Lower Division";
+    return courseNumber.match(/(\d)\d\d/) ? "Upper Division" : "Lower Division";
   }
   if (academicCareer === "GRAD") return "Graduate";
   if (academicCareer === "UCBX") return "Extension";
@@ -57,9 +55,7 @@ const buildSearchableNames = (
     : [];
 
   const hardcodedNicknames = SUBJECT_NICKNAME_MAP[normalizedSubject] || [];
-  const abbreviations = [
-    ...new Set([...sisNicknames, ...hardcodedNicknames]),
-  ];
+  const abbreviations = [...new Set([...sisNicknames, ...hardcodedNicknames])];
 
   const names = new Set<string>();
 
@@ -106,9 +102,13 @@ const filterInstructors = (
       typeof i.givenName === "string"
   );
 
-  const list = pis.length > 0 ? pis : instructors.filter(
-    (i) => typeof i.familyName === "string" && typeof i.givenName === "string"
-  );
+  const list =
+    pis.length > 0
+      ? pis
+      : instructors.filter(
+          (i) =>
+            typeof i.familyName === "string" && typeof i.givenName === "string"
+        );
 
   return list
     .map((i) => ({

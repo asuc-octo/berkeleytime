@@ -619,7 +619,10 @@ export default function Catalog() {
                         ))}
                       </AnimatePresence>
                     </div>
-                    <div className={styles.bookmarkMeasureRow} aria-hidden="true">
+                    <div
+                      className={styles.bookmarkMeasureRow}
+                      aria-hidden="true"
+                    >
                       {cappedOrderedCollections.map((collection) => {
                         const folderColor = getColorCSSVar(collection.color);
                         const folderIconStyle = folderColor
