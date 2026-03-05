@@ -1,7 +1,6 @@
 ---
 networks:
   bt:
-    name: bt
 services:
   backend:
     build:
@@ -53,9 +52,58 @@ services:
     volumes:
       - ./apps/staff-frontend:/staff-frontend/apps/staff-frontend
       - ./packages:/staff-frontend/packages
+  mongodb-preflight:
+    image: alpine:3.22
+    networks:
+      - bt
+    restart: "no"
+    entrypoint:
+      - /bin/sh
+    command:
+      - -ec
+      - |
+        mkdir -p /data/db /data/configdb
+
+        # Ensure mongod can read/write persisted paths across host OSes.
+        chown -R 1000:1000 /data/db /data/configdb || true
+        chmod 700 /data/configdb || true
+
+        # Recover from an interrupted bootstrap where lock files exist but
+        # WiredTiger metadata was never fully initialized.
+        if [ -f /data/db/WiredTiger.lock ] && [ ! -f /data/db/WiredTiger ]; then
+          echo "Detected incomplete WiredTiger state. Resetting /data/db."
+          rm -rf /data/db/*
+        fi
+
+        rm -f /data/db/mongod.lock || true
+
+        # Let Atlas local create/rotate its own keyfile, but clear obviously
+        # invalid leftovers so startup can recover.
+        if [ -f /data/configdb/keyfile ] && ( [ ! -s /data/configdb/keyfile ] || ! tr -d '\r\n' < /data/configdb/keyfile | grep -Eq '^[A-Za-z0-9+/=][A-Za-z0-9+/=]*$' ); then
+          echo "Removing invalid MongoDB keyfile."
+          rm -f /data/configdb/keyfile
+        fi
+
+        # On first boot, seed a valid keyfile so Atlas local can start even
+        # when /data/configdb is an empty mounted volume.
+        if [ ! -f /data/configdb/keyfile ]; then
+          echo "Generating MongoDB keyfile for fresh volume."
+          head -c 756 /dev/urandom | base64 | tr -d '\n' > /data/configdb/keyfile
+        fi
+
+        if [ -f /data/configdb/keyfile ]; then
+          chmod 600 /data/configdb/keyfile || true
+          chown 1000:1000 /data/configdb/keyfile || true
+        fi
+    volumes:
+      - mongodb-db:/data/db
+      - mongodb-configdb:/data/configdb
   mongodb:
     image: mongodb/mongodb-atlas-local:8.0
     hostname: rs0
+    depends_on:
+      mongodb-preflight:
+        condition: service_completed_successfully
     networks:
       - bt
     ports:
@@ -67,7 +115,8 @@ services:
       start_period: 15s
       retries: 10
     volumes:
-      - ./data/mongodb/db:/data/db
+      - mongodb-db:/data/db
+      - mongodb-configdb:/data/configdb
   mongodb-init:
     image: mongodb/mongodb-atlas-local:8.0
     depends_on:
@@ -76,10 +125,21 @@ services:
     networks:
       - bt
     restart: "no"
-    entrypoint: mongosh
+    entrypoint:
+      - /bin/sh
     command:
-      - "mongodb://mongodb:27017/bt"
-      - /scripts/01-create-search-indexes.js
+      - -ec
+      - |
+        attempts=0
+        until mongosh "mongodb://mongodb:27017/bt" /scripts/01-create-search-indexes.js; do
+          attempts=$$((attempts + 1))
+          if [ "$$attempts" -ge 30 ]; then
+            echo "mongodb-init failed after $$attempts attempts."
+            exit 1
+          fi
+          echo "mongodb-init retry $$attempts/30..."
+          sleep 2
+        done
     volumes:
       - ./docker/mongodb/init:/scripts:ro
   nginx:
@@ -162,5 +222,9 @@ services:
       "
 volumes:
   minio:
+    driver: local
+  mongodb-db:
+    driver: local
+  mongodb-configdb:
     driver: local
 

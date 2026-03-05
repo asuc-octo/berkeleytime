@@ -64,6 +64,9 @@ datapuller:
     classes-active:
       schedule: "25 4 2-31 * *"
       args: ["--puller=classes-active"]
+    catalog-rebuild:
+      schedule: "45 4 * * *"
+      args: ["--puller=catalog-rebuild"]
 
     grades-l5y:
       schedule: "35 4 1 * *"
