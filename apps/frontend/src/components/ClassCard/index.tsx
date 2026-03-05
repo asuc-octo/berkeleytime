@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, ReactNode } from "react";
+import { ComponentPropsWithRef, Fragment, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -9,9 +9,14 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card, Tooltip } from "@repo/theme";
+import { METRIC_ORDER } from "@repo/shared";
+import { Badge, Card, Color as ThemeColor, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import {
+  getMetricStatus,
+  getStatusColor,
+} from "@/components/Class/Ratings/metricsUtil";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -55,6 +60,9 @@ type BaseClassFields = Pick<
 
 type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
   ratingsCount?: number | null;
+  aggregatedRatings?: {
+    metrics: Array<{ metricName: string; weightedAverage: number }>;
+  } | null;
 };
 
 type EnrollmentSnapshot = Pick<
@@ -261,10 +269,53 @@ export default function ClassCard({
                     />
                   )}
                   {(_class?.course?.ratingsCount ?? 0) > 0 && (
-                    <span className={styles.ratingsCount}>
-                      <Star className={styles.ratingsIcon} />
-                      {_class?.course?.ratingsCount}
-                    </span>
+                    <Tooltip
+                      trigger={
+                        <span className={styles.ratingsCount}>
+                          <Star className={styles.ratingsIcon} />
+                          {_class?.course?.ratingsCount}
+                        </span>
+                      }
+                      title="Ratings"
+                      description={
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "auto max-content",
+                            gap: "8px 12px",
+                            alignItems: "center",
+                            width: "max-content",
+                          }}
+                        >
+                          {METRIC_ORDER.map((metricName) => {
+                            const metric =
+                              _class?.course?.aggregatedRatings?.metrics?.find(
+                                (m) => m.metricName === metricName
+                              );
+                            if (!metric) return null;
+                            const status = getMetricStatus(
+                              metricName,
+                              metric.weightedAverage
+                            );
+                            const color = getStatusColor(
+                              metricName,
+                              metric.weightedAverage
+                            );
+                            return (
+                              <Fragment key={metricName}>
+                                <span>{metricName}</span>
+                                <div style={{ width: "fit-content" }}>
+                                  <Badge
+                                    color={color as ThemeColor}
+                                    label={status}
+                                  />
+                                </div>
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      }
+                    />
                   )}
                 </>
               )}
