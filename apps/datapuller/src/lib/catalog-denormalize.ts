@@ -16,6 +16,58 @@ import {
 
 import { Config } from "../shared/config";
 
+type AggregatedMetric = {
+  metricName: string;
+  count: number;
+  weightedAverage: number;
+};
+
+const aggregateRatingsForCourses = async (
+  courseIds: string[]
+): Promise<Map<string, AggregatedMetric[]>> => {
+  const results = await AggregatedMetricsModel.aggregate([
+    { $match: { courseId: { $in: courseIds }, categoryCount: { $gt: 0 } } },
+    {
+      $group: {
+        _id: {
+          courseId: "$courseId",
+          metricName: "$metricName",
+          categoryValue: "$categoryValue",
+        },
+        categoryCount: { $sum: "$categoryCount" },
+      },
+    },
+    {
+      $group: {
+        _id: { courseId: "$_id.courseId", metricName: "$_id.metricName" },
+        totalCount: { $sum: "$categoryCount" },
+        sumValues: {
+          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$_id.courseId",
+        metrics: {
+          $push: {
+            metricName: "$_id.metricName",
+            count: "$totalCount",
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
+          },
+        },
+      },
+    },
+  ]);
+  return new Map(results.map((r: any) => [r._id, r.metrics]));
+};
+
 const normalizeSubject = (subject: string) =>
   subject.replace(/[,\s]/g, "").toUpperCase();
 
@@ -156,61 +208,16 @@ export const buildCatalogClasses = async (
     }).lean(),
   ]);
 
-  // Fetch enrollment data for all sections
+  // Fetch enrollment, view counts, and ratings in parallel
   const sectionIds = sections.map((s) => s.sectionId);
-  const enrollments = await NewEnrollmentHistoryModel.find({
-    termId: term.id,
-    sectionId: { $in: sectionIds },
-  }).lean();
-
-  // Fetch view counts
-  const viewCounts = await ClassViewCountModel.find({ year, semester }).lean();
-
-  // Fetch aggregated ratings for all courses in a single pipeline
-  const ratingsAgg = await AggregatedMetricsModel.aggregate([
-    { $match: { courseId: { $in: courseIds }, categoryCount: { $gt: 0 } } },
-    {
-      $group: {
-        _id: {
-          courseId: "$courseId",
-          metricName: "$metricName",
-          categoryValue: "$categoryValue",
-        },
-        categoryCount: { $sum: "$categoryCount" },
-      },
-    },
-    {
-      $group: {
-        _id: { courseId: "$_id.courseId", metricName: "$_id.metricName" },
-        totalCount: { $sum: "$categoryCount" },
-        sumValues: {
-          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
-        },
-      },
-    },
-    {
-      $group: {
-        _id: "$_id.courseId",
-        metrics: {
-          $push: {
-            metricName: "$_id.metricName",
-            count: "$totalCount",
-            weightedAverage: {
-              $cond: [
-                { $eq: ["$totalCount", 0] },
-                0,
-                { $divide: ["$sumValues", "$totalCount"] },
-              ],
-            },
-          },
-        },
-      },
-    },
+  const [enrollments, viewCounts, ratingsMap] = await Promise.all([
+    NewEnrollmentHistoryModel.find({
+      termId: term.id,
+      sectionId: { $in: sectionIds },
+    }).lean(),
+    ClassViewCountModel.find({ year, semester }).lean(),
+    aggregateRatingsForCourses(courseIds),
   ]);
-  const ratingsMap = new Map<
-    string,
-    { metricName: string; count: number; weightedAverage: number }[]
-  >(ratingsAgg.map((r: any) => [r._id, r.metrics]));
 
   // Build lookup maps
   const courseMap = new Map(courses.map((c) => [c.courseId, c]));
@@ -409,7 +416,7 @@ export const buildCatalogClasses = async (
       viewCount: viewCountMap.get(viewCountKey) ?? 0,
       aggregatedRatings: ratingsMap.has(_class.courseId)
         ? { metrics: ratingsMap.get(_class.courseId)! }
-        : undefined,
+        : null,
     });
   }
 
@@ -511,69 +518,29 @@ export const updateCatalogRatings = async (
 
   if (courseIds.length === 0) return;
 
-  const ratingsAgg = await AggregatedMetricsModel.aggregate([
-    { $match: { courseId: { $in: courseIds }, categoryCount: { $gt: 0 } } },
-    {
-      $group: {
-        _id: {
-          courseId: "$courseId",
-          metricName: "$metricName",
-          categoryValue: "$categoryValue",
-        },
-        categoryCount: { $sum: "$categoryCount" },
-      },
-    },
-    {
-      $group: {
-        _id: { courseId: "$_id.courseId", metricName: "$_id.metricName" },
-        totalCount: { $sum: "$categoryCount" },
-        sumValues: {
-          $sum: { $multiply: ["$_id.categoryValue", "$categoryCount"] },
-        },
-      },
-    },
-    {
-      $group: {
-        _id: "$_id.courseId",
-        metrics: {
-          $push: {
-            metricName: "$_id.metricName",
-            count: "$totalCount",
-            weightedAverage: {
-              $cond: [
-                { $eq: ["$totalCount", 0] },
-                0,
-                { $divide: ["$sumValues", "$totalCount"] },
-              ],
-            },
-          },
-        },
-      },
-    },
-  ]);
+  const ratingsMap = await aggregateRatingsForCourses(courseIds);
 
-  const bulkOps: any[] = ratingsAgg.map((r: any) => ({
-    updateMany: {
-      filter: { year, semester, courseId: r._id },
-      update: { $set: { aggregatedRatings: { metrics: r.metrics } } },
-    },
-  }));
+  const bulkOps: Parameters<typeof CatalogClassModel.bulkWrite>[0] = [];
 
-  // Also null out ratings for courses that no longer have any
-  const courseIdsWithRatings = new Set(ratingsAgg.map((r: any) => r._id));
+  for (const [courseId, metrics] of ratingsMap) {
+    bulkOps.push({
+      updateMany: {
+        filter: { year, semester, courseId },
+        update: { $set: { aggregatedRatings: { metrics } } },
+      },
+    });
+  }
+
+  // Null out ratings for courses that no longer have any
   const courseIdsWithoutRatings = courseIds.filter(
-    (id) => !courseIdsWithRatings.has(id)
+    (id) => !ratingsMap.has(id)
   );
 
   if (courseIdsWithoutRatings.length > 0) {
     bulkOps.push({
       updateMany: {
-        filter: {
-          year,
-          semester,
-          courseId: { $in: courseIdsWithoutRatings },
-        } as any,
-        update: { $unset: { aggregatedRatings: "" } },
+        filter: { year, semester, courseId: { $in: courseIdsWithoutRatings } },
+        update: { $set: { aggregatedRatings: null } },
       },
     });
   }
@@ -583,7 +550,7 @@ export const updateCatalogRatings = async (
       ordered: false,
     });
     log.info(
-      `Updated ratings for ${ratingsAgg.length} courses on catalog_classes (${result.modifiedCount} docs modified)`
+      `Updated ratings for ${ratingsMap.size} courses on catalog_classes (${result.modifiedCount} docs modified)`
     );
   }
 };

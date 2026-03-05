@@ -122,6 +122,9 @@ export default function ClassCard({
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const ratingsCount = _class?.course?.aggregatedRatings
+    ? Math.max(0, ..._class.course.aggregatedRatings.metrics.map((m) => m.count))
+    : 0;
 
   return (
     <Card.RootColumn
@@ -212,65 +215,55 @@ export default function ClassCard({
                   description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
                 />
               )}
-              {(() => {
-                const ratingsCount = _class?.course?.aggregatedRatings
-                  ? Math.max(
-                      0,
-                      ..._class.course.aggregatedRatings.metrics.map(
-                        (m) => m.count
-                      )
-                    )
-                  : 0;
-                return ratingsCount > 0 ? (
-                  <Tooltip
-                    trigger={
-                      <span className={styles.ratingsCount}>
-                        <Star className={styles.ratingsIcon} />
-                        {ratingsCount}
-                      </span>
-                    }
-                    title="Ratings"
-                    description={
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns: "auto max-content",
-                          gap: "8px 12px",
-                          alignItems: "center",
-                          width: "max-content",
-                        }}
-                      >
-                        {METRIC_ORDER.map((metricName) => {
-                          const metric =
-                            _class?.course?.aggregatedRatings?.metrics?.find(
-                              (m) => m.metricName === metricName
-                            );
-                          if (!metric) return null;
-                          const status = getMetricStatus(
-                            metricName,
-                            metric.weightedAverage
+              {ratingsCount > 0 && (
+                <Tooltip
+                  trigger={
+                    <span className={styles.ratingsCount}>
+                      <Star className={styles.ratingsIcon} />
+                      {ratingsCount}
+                    </span>
+                  }
+                  title="Ratings"
+                  description={
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "auto max-content",
+                        gap: "8px 12px",
+                        alignItems: "center",
+                        width: "max-content",
+                      }}
+                    >
+                      {METRIC_ORDER.map((metricName) => {
+                        const metric =
+                          _class?.course?.aggregatedRatings?.metrics?.find(
+                            (m) => m.metricName === metricName
                           );
-                          const color = getStatusColor(
-                            metricName,
-                            metric.weightedAverage
-                          );
-                          return (
-                            <Fragment key={metricName}>
-                              <span>{metricName}</span>
-                              <div style={{ width: "fit-content" }}>
-                                <Badge
-                                  color={color as ThemeColor}
-                                  label={status}
-                                />
-                              </div>
-                            </Fragment>
-                          );
-                        })}
-                      </div>
-                    }
-                  />
-                ) : null;
-              })()}
+                        if (!metric) return null;
+                        const status = getMetricStatus(
+                          metricName,
+                          metric.weightedAverage
+                        );
+                        const color = getStatusColor(
+                          metricName,
+                          metric.weightedAverage
+                        );
+                        return (
+                          <Fragment key={metricName}>
+                            <span>{metricName}</span>
+                            <div style={{ width: "fit-content" }}>
+                              <Badge
+                                color={color as ThemeColor}
+                                label={status}
+                              />
+                            </div>
+                          </Fragment>
+                        );
+                      })}
+                    </div>
+                  }
+                />
+              )}
               {expandable && onExpandedChange !== undefined && (
                 <Card.ActionIcon
                   data-action-icon
