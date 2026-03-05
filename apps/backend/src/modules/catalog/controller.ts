@@ -311,7 +311,7 @@ const buildSort = (
       };
     case "RELEVANCE":
     default:
-      return { subject: order, courseNumber: order, number: order };
+      return { viewCount: -1, subject: 1, courseNumber: 1 };
   }
 };
 
