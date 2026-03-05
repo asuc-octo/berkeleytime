@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FrameAltEmpty } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
+import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { ICatalogClassServer } from "@/lib/api/catalog";
 import { RecentType, getRecents } from "@/lib/recent";
 
@@ -48,9 +49,19 @@ interface ListProps {
 }
 
 const MAX_RECENTLY_VIEWED = 5;
+const LOAD_MORE_THRESHOLD_PX = 320;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, allClasses, loading, year, semester, totalCount, page, pageSize, updatePage } = useBrowser();
+  const {
+    classes,
+    allClasses,
+    loading,
+    year,
+    semester,
+    hasNextPage,
+    loadNextPage,
+    isLoadingNextPage,
+  } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -166,19 +177,28 @@ export default function List({ onSelect }: ListProps) {
     const scrollElement = catalogScrollRef.current;
     if (!scrollElement) return;
 
-    const updateFadeVisibility = () => {
+    const handleScroll = () => {
       setShowTopFade(scrollElement.scrollTop > 0);
+
+      if (loading || isLoadingNextPage || !hasNextPage) return;
+
+      const distanceToBottom =
+        scrollElement.scrollHeight -
+        (scrollElement.scrollTop + scrollElement.clientHeight);
+      if (distanceToBottom <= LOAD_MORE_THRESHOLD_PX) {
+        void loadNextPage();
+      }
     };
 
-    updateFadeVisibility();
-    scrollElement.addEventListener("scroll", updateFadeVisibility, {
+    handleScroll();
+    scrollElement.addEventListener("scroll", handleScroll, {
       passive: true,
     });
 
     return () => {
-      scrollElement.removeEventListener("scroll", updateFadeVisibility);
+      scrollElement.removeEventListener("scroll", handleScroll);
     };
-  }, [loading, classes.length]);
+  }, [classes.length, hasNextPage, isLoadingNextPage, loadNextPage, loading]);
 
   const virtualizer = useVirtualizer({
     count: classes.length,
@@ -202,11 +222,6 @@ export default function List({ onSelect }: ListProps) {
       selected.sessionId
     );
   };
-
-  // Pagination
-  const totalPages = Math.ceil(totalCount / pageSize);
-  const hasNextPage = page < totalPages;
-  const hasPrevPage = page > 1;
 
   return (
     <div className={styles.root}>
@@ -322,27 +337,10 @@ export default function List({ onSelect }: ListProps) {
             </div>
           </div>
         )}
-        {totalPages > 1 && (
-          <div className={styles.pagination}>
-            <button
-              type="button"
-              disabled={!hasPrevPage}
-              onClick={() => updatePage((p) => Math.max(1, p - 1))}
-              className={styles.paginationButton}
-            >
-              Previous
-            </button>
-            <span className={styles.paginationInfo}>
-              Page {page} of {totalPages} ({totalCount} results)
-            </span>
-            <button
-              type="button"
-              disabled={!hasNextPage}
-              onClick={() => updatePage((p) => p + 1)}
-              className={styles.paginationButton}
-            >
-              Next
-            </button>
+        {isLoadingNextPage && (
+          <div className={styles.loadMoreSkeletons} aria-hidden>
+            <ClassCardSkeleton />
+            <ClassCardSkeleton />
           </div>
         )}
       </div>

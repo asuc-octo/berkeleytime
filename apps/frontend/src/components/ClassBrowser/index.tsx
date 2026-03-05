@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -103,6 +103,27 @@ const mapDayIndices = (days: Day[]): number[] => {
   return days.map((day) => (parseInt(day) - 1 + 7) % 7);
 };
 
+const getCatalogClassKey = (_class: ICatalogClassServer): string =>
+  `${_class.sessionId}-${_class.subject}-${_class.courseNumber}-${_class.number}`;
+
+const mergeUniqueCatalogClasses = (
+  existingClasses: ICatalogClassServer[],
+  incomingClasses: ICatalogClassServer[]
+): ICatalogClassServer[] => {
+  if (incomingClasses.length === 0) return existingClasses;
+
+  const seenClassKeys = new Set(existingClasses.map(getCatalogClassKey));
+  const uniqueIncomingClasses = incomingClasses.filter((incomingClass) => {
+    const key = getCatalogClassKey(incomingClass);
+    if (seenClassKeys.has(key)) return false;
+    seenClassKeys.add(key);
+    return true;
+  });
+
+  if (uniqueIncomingClasses.length === 0) return existingClasses;
+  return [...existingClasses, ...uniqueIncomingClasses];
+};
+
 interface ClassBrowserProps {
   onSelect: (
     subject: string,
@@ -164,6 +185,9 @@ export default function ClassBrowser({
     useState<EnrollmentFilter | null>(null);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
   const [localPage, setLocalPage] = useState(1);
+  const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
+  const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
+  const isLoadingNextPageRef = useRef(false);
 
   // Derive state from search params when persistent
   const query = localQuery;
@@ -288,7 +312,7 @@ export default function ClassBrowser({
 
   // Build server-side filter variables
   const filterVariables = useMemo(() => {
-    const filters: Record<string, any> = {};
+    const filters: Record<string, unknown> = {};
 
     if (levels.length > 0) filters.levels = levels;
     if (academicOrganization) filters.departments = [academicOrganization];
@@ -340,6 +364,9 @@ export default function ClassBrowser({
   // Reset page when filters/search change
   useEffect(() => {
     setLocalPage(1);
+    setClasses([]);
+    setIsLoadingNextPage(false);
+    isLoadingNextPageRef.current = false;
   }, [
     debouncedQuery,
     filterVariables,
@@ -349,19 +376,34 @@ export default function ClassBrowser({
     currentSemester,
   ]);
 
-  // Server-side catalog query
-  const { data, loading } = useQuery(GET_CATALOG, {
-    variables: {
+  const catalogQueryVariables = useMemo(
+    () => ({
       year: currentYear,
       semester: currentSemester,
       search: debouncedQuery || undefined,
       filters: filterVariables,
       sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
       sortOrder: debouncedQuery ? undefined : effectiveOrder.toUpperCase(),
-      page: localPage,
+    }),
+    [
+      currentYear,
+      currentSemester,
+      debouncedQuery,
+      filterVariables,
+      sortBy,
+      effectiveOrder,
+    ]
+  );
+
+  // Server-side catalog query (always requests first page)
+  const { data, loading, fetchMore } = useQuery(GET_CATALOG, {
+    variables: {
+      ...catalogQueryVariables,
+      page: 1,
       pageSize: DEFAULT_PAGE_SIZE,
     },
     fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
   });
 
   // Fetch filter options (heavily cached)
@@ -373,15 +415,58 @@ export default function ClassBrowser({
     fetchPolicy: "cache-first",
   });
 
-  useEffect(() => {
-    onLoadingChange?.(loading);
-  }, [loading, onLoadingChange]);
-
-  const classes: ICatalogClassServer[] = useMemo(
+  const firstPageClasses: ICatalogClassServer[] = useMemo(
     () => data?.catalog?.results ?? [],
     [data]
   );
   const totalCount: number = data?.catalog?.totalCount ?? 0;
+
+  useEffect(() => {
+    if (localPage !== 1) return;
+
+    setClasses(firstPageClasses);
+    setIsLoadingNextPage(false);
+    isLoadingNextPageRef.current = false;
+  }, [firstPageClasses, localPage]);
+
+  const hasNextPage = classes.length < totalCount;
+
+  const loadNextPage = useCallback(async () => {
+    if (!hasNextPage || loading || isLoadingNextPageRef.current) return;
+
+    const nextPage = localPage + 1;
+    isLoadingNextPageRef.current = true;
+    setIsLoadingNextPage(true);
+
+    try {
+      const { data: nextPageData } = await fetchMore({
+        variables: {
+          ...catalogQueryVariables,
+          page: nextPage,
+          pageSize: DEFAULT_PAGE_SIZE,
+        },
+      });
+
+      const nextPageClasses: ICatalogClassServer[] =
+        nextPageData?.catalog?.results ?? [];
+      if (nextPageClasses.length === 0) return;
+
+      setClasses((previousClasses) =>
+        mergeUniqueCatalogClasses(previousClasses, nextPageClasses)
+      );
+      setLocalPage(nextPage);
+    } finally {
+      isLoadingNextPageRef.current = false;
+      setIsLoadingNextPage(false);
+    }
+  }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
+
+  const isInitialCatalogLoading =
+    loading && localPage === 1 && !isLoadingNextPage;
+
+  useEffect(() => {
+    onLoadingChange?.(isInitialCatalogLoading);
+  }, [isInitialCatalogLoading, onLoadingChange]);
 
   const catalogAvailabilityClasses = useMemo(
     () =>
@@ -570,12 +655,14 @@ export default function ClassBrowser({
         updateOnline: (o) =>
           updateBoolean("online", setLocalOnline, o),
         setExpanded,
-        loading,
+        loading: isInitialCatalogLoading,
         updateReverse: setLocalReverse,
         totalCount,
         page: localPage,
         pageSize: DEFAULT_PAGE_SIZE,
-        updatePage: setLocalPage,
+        hasNextPage,
+        loadNextPage,
+        isLoadingNextPage,
         filterOptions: filterOptionsData?.catalogFilterOptions ?? null,
       }}
     >

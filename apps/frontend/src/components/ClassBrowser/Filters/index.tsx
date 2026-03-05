@@ -36,7 +36,6 @@ export default function Filters() {
     updateUnits,
     levels,
     updateLevels,
-    days,
     updateDays,
     timeRange,
     updateTimeRange,

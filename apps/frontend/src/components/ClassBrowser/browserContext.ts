@@ -54,11 +54,13 @@ export interface BrowserContextType {
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
   loading: boolean;
-  // Server-side pagination
+  // Server-side pagination / infinite scroll
   totalCount: number;
   page: number;
   pageSize: number;
-  updatePage: Dispatch<SetStateAction<number>>;
+  hasNextPage: boolean;
+  loadNextPage: () => Promise<void>;
+  isLoadingNextPage: boolean;
   // Filter options from server
   filterOptions: ICatalogFilterOptions | null;
 }
