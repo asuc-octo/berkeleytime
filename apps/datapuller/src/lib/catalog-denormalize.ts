@@ -128,7 +128,7 @@ export const buildCatalogClasses = async (
   semester: string
 ): Promise<ICatalogClassItem[]> => {
   const term = await TermModel.findOne({ name: `${year} ${semester}` })
-    .select({ _id: 1 })
+    .select({ _id: 1, id: 1 })
     .lean();
 
   if (!term) return [];
@@ -160,7 +160,7 @@ export const buildCatalogClasses = async (
   // Fetch enrollment data for all sections
   const sectionIds = sections.map((s) => s.sectionId);
   const enrollments = await NewEnrollmentHistoryModel.find({
-    termId: term._id,
+    termId: term.id,
     sectionId: { $in: sectionIds },
   }).lean();
 
