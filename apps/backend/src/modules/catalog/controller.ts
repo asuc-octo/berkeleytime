@@ -109,6 +109,7 @@ const getCatalogWithSearch = async (
               autocomplete: {
                 query: searchTerm,
                 path: "searchableNames",
+                fuzzy: { maxEdits: 1 },
                 score: { boost: { value: 10 } },
               },
             },
@@ -116,6 +117,7 @@ const getCatalogWithSearch = async (
               text: {
                 query: searchTerm,
                 path: "searchableNames",
+                fuzzy: { maxEdits: 1 },
                 score: { boost: { value: 5 } },
               },
             },
@@ -123,6 +125,7 @@ const getCatalogWithSearch = async (
               text: {
                 query: searchTerm,
                 path: "courseTitle",
+                fuzzy: { maxEdits: 1 },
                 score: { boost: { value: 2 } },
               },
             },
@@ -130,6 +133,7 @@ const getCatalogWithSearch = async (
               text: {
                 query: searchTerm,
                 path: "courseDescription",
+                fuzzy: { maxEdits: 1 },
                 score: { boost: { value: 0.5 } },
               },
             },
