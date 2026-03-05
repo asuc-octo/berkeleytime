@@ -24,7 +24,7 @@ interface ListProps {
 const MAX_RECENTLY_VIEWED = 5;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, allClasses, loading, year, semester } = useBrowser();
+  const { classes, allClasses, loading, year, semester, aiSearchActive } = useBrowser();
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -182,6 +182,26 @@ export default function List({ onSelect }: ListProps) {
       <div
         className={`${styles.topSection} ${showTopFade ? styles.topSectionScrolled : ""}`}
       >
+        {!aiSearchActive && showRecentlyViewed && (
+          <div className={styles.recentlyViewed}>
+            <p className={styles.sectionTitle}>RECENTLY VIEWED</p>
+            <div className={styles.recentlyViewedList}>
+              {recentlyViewedClasses.map((_class) => (
+                <ClassCard
+                  class={_class}
+                  key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    rootRef.current?.blur();
+                    onSelect(
+                      _class.subject,
+                      _class.courseNumber,
+                      _class.number,
+                      _class.sessionId
+                    );
+                  }}
+                />
+              ))}
         <Header />
         <div className={styles.recentlyViewedSection}>
           {showRecentlyViewed && (
