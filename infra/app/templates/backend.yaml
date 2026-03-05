@@ -53,6 +53,7 @@ data:
   CACHE_WARMING_PORT: {{ .Values.backend.cacheWarmingPort | quote }}
   URL: "http://localhost:5001"
   BACKEND_PATH: {{ .Values.backend.path }}
+  BACKEND_PUBLIC_URL: {{ printf "https://%s%s" .Values.host .Values.backend.path | quote }}
   GRAPHQL_PATH: "/graphql"
   NODE_ENV: {{ .Values.nodeEnv }}
   MONGODB_URI: {{ .Values.mongoUri }}
