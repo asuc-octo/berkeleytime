@@ -1,21 +1,74 @@
-.chart {
-  height: var(--content-box-height);
+.root {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  position: relative;
-}
-
-.chartContainer {
   flex: 1;
-  min-height: 0;
+  min-height: 360px;
 }
 
-.axisLabel {
-  margin: 0;
-  text-align: center;
-  font-size: var(--text-14);
+.chart {
+  width: 100%;
+  position: relative;
+
+  :global(.recharts-wrapper:focus),
+  :global(.recharts-wrapper:focus-visible),
+  :global(.recharts-surface:focus),
+  :global(.recharts-surface:focus-visible),
+  :global([tabindex]:focus),
+  :global([tabindex]:focus-visible),
+  :global(svg:focus),
+  :global(svg:focus-visible) {
+    outline: none;
+  }
+}
+
+.graphHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.toggleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleRowDisabled {
+  opacity: 0.65;
+}
+
+.toggleTooltipTrigger {
+  display: inline-flex;
+}
+
+.toggleLabel {
   color: var(--paragraph-color);
+  font-size: var(--text-14);
+}
+
+.emptyGraphPrompt {
+  min-height: 360px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.emptyGraphMessage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  text-align: center;
 }
 
 .tooltipCard {
