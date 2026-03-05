@@ -29,23 +29,7 @@ import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
 import CatalogSkeleton from "./Skeleton";
-
-const DESKTOP_BREAKPOINT = 992;
-
-const useMinWidth = (breakpoint: number) => {
-  const [matches, setMatches] = useState(() => window.innerWidth > breakpoint);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(width > ${breakpoint}px)`);
-    const handleChange = (e: MediaQueryListEvent) => setMatches(e.matches);
-
-    setMatches(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [breakpoint]);
-
-  return matches;
-};
+import useCatalogLayoutMode from "./hooks/useCatalogLayoutMode";
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
@@ -263,7 +247,8 @@ export default function Catalog() {
   const location = useLocation();
   const { user } = useUser();
 
-  const isDesktop = useMinWidth(DESKTOP_BREAKPOINT);
+  const mode = useCatalogLayoutMode();
+  const isDesktop = mode !== "compact";
   const hasClassSelected = Boolean(providedSubject && courseNumber && number);
 
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
@@ -556,6 +541,7 @@ export default function Catalog() {
                 handleCatalogClassAvailabilityChange
               }
               onLoadingChange={setCatalogLoading}
+              forceMode={mode}
               semester={term.semester}
               year={term.year}
               terms={terms}
@@ -588,6 +574,7 @@ export default function Catalog() {
                   handleCatalogClassAvailabilityChange
                 }
                 onLoadingChange={setCatalogLoading}
+                forceMode={mode}
                 semester={term.semester}
                 year={term.year}
                 terms={terms}

@@ -65,19 +65,4 @@
       background-color: color-mix(in srgb, var(--blue-500) 10%, transparent);
     }
   }
-
-  @media (width > 992px) {
-    &:not(.responsive) .filterButton {
-      display: none;
-    }
-  }
-
-  @media (width > 1400px) {
-    .filterButton {
-      display: none;
-    }
-  }
-}
-
-.responsive {
 }

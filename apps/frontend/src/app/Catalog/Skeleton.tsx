@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import classNames from "classnames";
-import { Filter, Search, SortDown } from "iconoir-react";
+import { Filter, FilterSolid, Search, SortDown } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -21,41 +21,45 @@ import {
   Level,
   SortBy,
 } from "@/components/ClassBrowser/browser";
+import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import { sortByTermDescending } from "@/lib/classes";
 import { Semester } from "@/lib/generated/graphql";
-import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 
-// eslint-disable-next-line css-modules/no-unused-class
-import browserStyles from "../../components/ClassBrowser/ClassBrowser.module.scss";
-// eslint-disable-next-line css-modules/no-unused-class
-import filterStyles from "../../components/ClassBrowser/Filters/Filters.module.scss";
-// eslint-disable-next-line css-modules/no-unused-class
-import headerStyles from "../../components/ClassBrowser/Header/Header.module.scss";
-// eslint-disable-next-line css-modules/no-unused-class
-import listStyles from "../../components/ClassBrowser/List/List.module.scss";
-// eslint-disable-next-line css-modules/no-unused-class
+import browserStyles from "@/components/ClassBrowser/ClassBrowser.module.scss";
+import filterStyles from "@/components/ClassBrowser/Filters/Filters.module.scss";
+import headerStyles from "@/components/ClassBrowser/Header/Header.module.scss";
+import listStyles from "@/components/ClassBrowser/List/List.module.scss";
+
 import styles from "./Catalog.module.scss";
-
-const DESKTOP_BREAKPOINT = 992;
-
-function useIsDesktop() {
-  const [matches, setMatches] = useState(() => window.innerWidth > DESKTOP_BREAKPOINT);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(width > ${DESKTOP_BREAKPOINT}px)`);
-    const handleChange = (e: MediaQueryListEvent) => setMatches(e.matches);
-
-    setMatches(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  return matches;
-}
+import useCatalogLayoutMode, { CatalogLayoutMode } from "./hooks/useCatalogLayoutMode";
 
 type Term = { year: number; semester: Semester };
 
-function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; currentTerm?: Term; onClose: () => void }) {
+function SkeletonHeader({ mode, expanded, onToggle }: { mode: CatalogLayoutMode; expanded: boolean; onToggle: () => void }) {
+  return (
+    <div className={headerStyles.root}>
+      <div className={headerStyles.group}>
+        <label className={headerStyles.icon}>
+          <Search />
+        </label>
+        <input
+          className={headerStyles.input}
+          type="text"
+          disabled
+          placeholder=""
+        />
+      </div>
+      {mode !== "full" && (
+        <Button className={headerStyles.filterButton} onClick={onToggle}>
+          {expanded ? <FilterSolid /> : <Filter />}
+          <span>{expanded ? "Close Filters" : "Open Filters"}</span>
+        </Button>
+      )}
+    </div>
+  );
+}
+
+function FilterSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term }) {
   const navigate = useNavigate();
 
   const availableTerms = useMemo(() => {
@@ -76,26 +80,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
     : null;
 
   return (
-    <div className={classNames(filterStyles.root, filterStyles.responsive)}>
-      {/* Header - hidden on desktop via CSS */}
-      <div className={classNames(headerStyles.root, headerStyles.responsive)}>
-        <div className={headerStyles.group}>
-          <label className={headerStyles.icon}>
-            <Search />
-          </label>
-          <input
-            className={headerStyles.input}
-            type="text"
-            disabled
-            placeholder=""
-          />
-        </div>
-        <Button className={headerStyles.filterButton} onClick={onClose}>
-          <Filter />
-          <span>Close Filters</span>
-        </Button>
-      </div>
-
+    <div className={filterStyles.root}>
       <div className={filterStyles.body}>
         <div className={filterStyles.filtersHeader}>
           <p className={filterStyles.filtersTitle}>Filters</p>
@@ -128,7 +113,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Sort By — static */}
+        {/* Sort By */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Sort By</p>
           <div className={filterStyles.sortControls}>
@@ -151,7 +136,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           </div>
         </div>
 
-        {/* Class level — static */}
+        {/* Class level */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Class level</p>
           <Select
@@ -167,7 +152,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Requirements — needs network */}
+        {/* Requirements */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Requirements</p>
           <Select
@@ -182,7 +167,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Department — needs network */}
+        {/* Department */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Department</p>
           <Select
@@ -197,7 +182,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Units — static */}
+        {/* Units */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Units</p>
           <Slider
@@ -211,7 +196,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Enrollment Status — static */}
+        {/* Enrollment Status */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Enrollment Status</p>
           <Select
@@ -226,7 +211,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Grading Option — static */}
+        {/* Grading Option */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Grading Option</p>
           <Select<GradingFilter>
@@ -242,7 +227,7 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
           />
         </div>
 
-        {/* Date and Time — static */}
+        {/* Date and Time */}
         <div className={filterStyles.formControl}>
           <p className={filterStyles.label}>Date and Time</p>
           <DaySelect days={EMPTY_DAYS} updateDays={() => {}} size="sm" />
@@ -274,67 +259,42 @@ function FilterSkeleton({ terms, currentTerm, onClose }: { terms?: Term[]; curre
   );
 }
 
-function ListSkeleton({ onOpenFilters }: { onOpenFilters: () => void }) {
-  return (
-    <div className={listStyles.root}>
-      <div className={listStyles.topSection}>
-        {/* Header skeleton */}
-        <div className={classNames(headerStyles.root, headerStyles.responsive)}>
-          <div className={headerStyles.group}>
-            <label className={headerStyles.icon}>
-              <Search />
-            </label>
-            <input
-              className={headerStyles.input}
-              type="text"
-              disabled
-              placeholder=""
-            />
-          </div>
-          <Button className={headerStyles.filterButton} onClick={onOpenFilters}>
-            <Filter />
-            <span>Open Filters</span>
-          </Button>
+export default function CatalogSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term } = {}) {
+  const mode = useCatalogLayoutMode();
+  const isDesktop = mode !== "compact";
+  const [expanded, setExpanded] = useState(false);
+
+  const browserContent = (
+    <div
+      className={classNames(browserStyles.root, { [browserStyles.expanded]: expanded })}
+      data-mode={mode}
+    >
+      <FilterSkeleton terms={terms} currentTerm={currentTerm} />
+      <div className={listStyles.root}>
+        <div className={listStyles.topSection}>
+          <SkeletonHeader mode={mode} expanded={expanded} onToggle={() => setExpanded((e) => !e)} />
         </div>
-
-      </div>
-
-      <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
-        <div className={listStyles.skeletonContainer}>
-          {[...Array(10)].map((_, i) => (
-            <ClassCardSkeleton key={`skeleton-${i}`} />
-          ))}
+        <div className={listStyles.catalogScroll} style={{ overflow: "hidden" }}>
+          <div className={listStyles.skeletonContainer}>
+            {[...Array(10)].map((_, i) => (
+              <ClassCardSkeleton key={`skeleton-${i}`} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
-}
-
-export default function CatalogSkeleton({ terms, currentTerm }: { terms?: Term[]; currentTerm?: Term } = {}) {
-  const isDesktop = useIsDesktop();
-  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className={styles.root}>
       {isDesktop ? (
-        <div className={styles.panel}>
-          <div className={classNames(browserStyles.root, browserStyles.responsive, { [browserStyles.expanded]: expanded })}>
-            <FilterSkeleton terms={terms} currentTerm={currentTerm} onClose={() => setExpanded(false)} />
-            <ListSkeleton onOpenFilters={() => setExpanded(true)} />
-          </div>
-        </div>
+        <div className={styles.panel}>{browserContent}</div>
       ) : (
-        <div className={styles.catalogDrawer}>
-          <div className={classNames(browserStyles.root, browserStyles.responsive, { [browserStyles.expanded]: expanded })}>
-            <FilterSkeleton terms={terms} currentTerm={currentTerm} onClose={() => setExpanded(false)} />
-            <ListSkeleton onOpenFilters={() => setExpanded(true)} />
-          </div>
-        </div>
+        <div className={styles.catalogDrawer}>{browserContent}</div>
       )}
 
       {!isDesktop && <div className={styles.drawerTrigger} />}
 
-      {/* Right panel - empty like when no class selected */}
       <Flex direction="column" flexGrow="1" className={styles.view} />
     </div>
   );

@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, createContext } from "react";
+import { Dispatch, SetStateAction, createContext, useContext } from "react";
 
 import { ITerm } from "@/lib/api";
-import { ICatalogClassServer, ICatalogFilterOptions } from "@/lib/api/catalog";
+import { ICatalogFilterOptions } from "@/lib/api/catalog";
 import { Semester } from "@/lib/generated/graphql";
 
 import {
@@ -12,21 +12,12 @@ import {
   SortBy,
   TimeRange,
   UnitRange,
-} from "./browser";
+} from "../browser";
 
-export interface BrowserContextType {
-  responsive: boolean;
-  expanded: boolean;
-  setExpanded: Dispatch<SetStateAction<boolean>>;
-  allClasses: ICatalogClassServer[];
-  classes: ICatalogClassServer[];
-  includedClasses: ICatalogClassServer[];
-  excludedClasses: ICatalogClassServer[];
+export interface FilterContextType {
   year: number;
   semester: Semester;
   terms?: ITerm[];
-  hasActiveFilters: boolean;
-  query: string;
   units: UnitRange;
   levels: Level[];
   days: Day[];
@@ -35,11 +26,12 @@ export interface BrowserContextType {
   universityRequirements: string[];
   gradingFilters: GradingFilter[];
   academicOrganization: string | null;
-  online: boolean;
   sortBy: SortBy;
-  enrollmentFilter: EnrollmentFilter | null;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
+  enrollmentFilter: EnrollmentFilter | null;
+  online: boolean;
+  filterOptions: ICatalogFilterOptions | null;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
@@ -48,23 +40,17 @@ export interface BrowserContextType {
   updateUniversityRequirements: Dispatch<string[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
   updateAcademicOrganization: Dispatch<string | null>;
-  updateQuery: Dispatch<string>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
-  loading: boolean;
-  // Server-side pagination / infinite scroll
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  hasNextPage: boolean;
-  loadNextPage: () => Promise<void>;
-  isLoadingNextPage: boolean;
-  // Filter options from server
-  filterOptions: ICatalogFilterOptions | null;
 }
 
-const BrowserContext = createContext<BrowserContextType | null>(null);
+export const FilterContext = createContext<FilterContextType | null>(null);
 
-export default BrowserContext;
+export function useFilterContext() {
+  const context = useContext(FilterContext);
+  if (!context)
+    throw new Error("useFilterContext must be used within a FilterContext provider");
+  return context;
+}

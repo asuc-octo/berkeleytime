@@ -10,7 +10,8 @@ import { ICatalogClassServer } from "@/lib/api/catalog";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
-import useBrowser from "../useBrowser";
+import { useLayoutContext } from "../context/LayoutContext";
+import { useListContext } from "../context/ListContext";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
@@ -73,14 +74,14 @@ const getRecentClassKey = (
 export default function List({ onSelect }: ListProps) {
   const {
     classes,
-    allClasses,
     loading,
-    year,
-    semester,
     hasNextPage,
     loadNextPage,
     isLoadingNextPage,
-  } = useBrowser();
+  } = useListContext();
+
+  const { year, semester } = useLayoutContext();
+
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
@@ -116,7 +117,7 @@ export default function List({ onSelect }: ListProps) {
   const recentlyViewedEntries = useMemo<RecentlyViewedEntry[]>(() => {
     return recentlyViewed.map((recent) => {
       const key = getRecentClassKey(recent);
-      const fallbackSessionId = allClasses.find(
+      const fallbackSessionId = classes.find(
         (catalogClass) =>
           catalogClass.subject === recent.subject &&
           catalogClass.courseNumber === recent.courseNumber &&
@@ -132,7 +133,7 @@ export default function List({ onSelect }: ListProps) {
           recent.sessionId ?? resolvedSessionIds[key] ?? fallbackSessionId ?? null,
       };
     });
-  }, [recentlyViewed, allClasses, resolvedSessionIds]);
+  }, [recentlyViewed, classes, resolvedSessionIds]);
 
   useEffect(() => {
     setResolvedSessionIds((previous) => {

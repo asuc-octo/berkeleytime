@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import classNames from "classnames";
 import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +8,6 @@ import type { Option, OptionItem, SelectTab } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 
-import Header from "../Header";
 import {
   Day,
   EMPTY_DAYS,
@@ -18,7 +16,7 @@ import {
   Level,
   SortBy,
 } from "../browser";
-import useBrowser from "../useBrowser";
+import { useFilterContext } from "../context/FilterContext";
 import styles from "./Filters.module.scss";
 
 type RequirementSelection =
@@ -53,13 +51,12 @@ export default function Filters() {
     reverse,
     effectiveOrder,
     updateSortBy,
-    responsive,
     updateReverse,
     year,
     semester,
     terms,
     filterOptions,
-  } = useBrowser();
+  } = useFilterContext();
 
   const navigate = useNavigate();
 
@@ -84,7 +81,6 @@ export default function Filters() {
       Graduate: 0,
       Extension: 0,
     };
-    // No counts in server-side mode - just mark as available
     if (filterOptions) {
       for (const level of filterOptions.levels) {
         if (level in result) {
@@ -239,12 +235,7 @@ export default function Filters() {
   };
 
   return (
-    <div
-      className={classNames(styles.root, {
-        [styles.responsive]: responsive,
-      })}
-    >
-      <Header />
+    <div className={styles.root}>
       <div className={styles.body}>
         <div className={styles.filtersHeader}>
           <p className={styles.filtersTitle}>Filters</p>

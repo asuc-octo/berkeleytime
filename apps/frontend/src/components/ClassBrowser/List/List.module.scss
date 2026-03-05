@@ -48,7 +48,7 @@
     }
   }
 
-  @media (width <= 992px) {
+  [data-mode='compact'] > & {
     width: 100%;
   }
 
