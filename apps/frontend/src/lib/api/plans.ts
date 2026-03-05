@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-import { GetPlanQuery } from "../generated/graphql";
+import { GetCourseRequirementsQuery, GetPlanQuery } from "../generated/graphql";
 
 export type ILabel = NonNullable<
   GetPlanQuery["planByUser"][number]["labels"]
@@ -14,7 +14,15 @@ export type IPlanTerm = NonNullable<
 
 export type ISelectedCourse = NonNullable<
   GetPlanQuery["planByUser"]
->[number]["planTerms"][number]["courses"][number];
+>[number]["planTerms"][number]["courses"][number] & {
+  course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+};
+
+export type IPlanRequirement = NonNullable<
+  NonNullable<
+    NonNullable<GetPlanQuery["planByUser"]>[number]["selectedPlanRequirements"]
+  >[number]["planRequirement"]
+>;
 
 export const CREATE_NEW_PLAN = gql`
   mutation CreateNewPlan(
@@ -42,8 +50,6 @@ export const CREATE_NEW_PLAN = gql`
           courseName
           courseTitle
           courseUnits
-          uniReqs
-          collegeReqs
           pnp
           transfer
           labels {
@@ -62,8 +68,6 @@ export const CREATE_NEW_PLAN = gql`
         name
         color
       }
-      uniReqsSatisfied
-      collegeReqsSatisfied
     }
   }
 `;
@@ -82,8 +86,6 @@ export const READ_PLAN = gql`
           courseName
           courseTitle
           courseUnits
-          uniReqs
-          collegeReqs
           pnp
           transfer
           labels {
@@ -102,8 +104,19 @@ export const READ_PLAN = gql`
         name
         color
       }
-      uniReqsSatisfied
-      collegeReqsSatisfied
+      selectedPlanRequirements {
+        planRequirement {
+          _id
+          name
+          code
+          isUcReq
+          college
+          major
+          minor
+          isOfficial
+        }
+        manualOverrides
+      }
     }
   }
 `;
@@ -119,13 +132,26 @@ export const READ_PLANS = gql`
 export const EDIT_PLAN = gql`
   mutation EditPlan($plan: PlanInput!) {
     editPlan(plan: $plan) {
-      uniReqsSatisfied
-      collegeReqsSatisfied
+      _id
       majors
       minors
+      colleges
       labels {
         name
         color
+      }
+      selectedPlanRequirements {
+        planRequirement {
+          _id
+          name
+          code
+          isUcReq
+          college
+          major
+          minor
+          isOfficial
+        }
+        manualOverrides
       }
     }
   }
@@ -173,8 +199,6 @@ export const EDIT_PLAN_TERM = gql`
         courseName
         courseTitle
         courseUnits
-        uniReqs
-        collegeReqs
         pnp
         transfer
         labels {
@@ -185,6 +209,73 @@ export const EDIT_PLAN_TERM = gql`
       hidden
       status
       pinned
+    }
+  }
+`;
+
+export const GET_COURSE_REQUIREMENTS = gql`
+  query GetCourseRequirements($number: CourseNumber!, $subject: String!) {
+    course(number: $number, subject: $subject) {
+      mostRecentClass {
+        requirementDesignation {
+          code
+          description
+          formalDescription
+        }
+        primarySection {
+          sectionAttributes {
+            attribute {
+              code
+              description
+              formalDescription
+            }
+            value {
+              code
+              description
+              formalDescription
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const UPDATE_MANUAL_OVERRIDE = gql`
+  mutation UpdateManualOverride($input: UpdateManualOverrideInput!) {
+    updateManualOverride(input: $input) {
+      _id
+      selectedPlanRequirements {
+        planRequirement {
+          _id
+        }
+        manualOverrides
+      }
+    }
+  }
+`;
+
+export const UPDATE_SELECTED_PLAN_REQUIREMENTS = gql`
+  mutation UpdateSelectedPlanRequirements(
+    $selectedPlanRequirements: [SelectedPlanRequirementInput!]!
+  ) {
+    updateSelectedPlanRequirements(
+      selectedPlanRequirements: $selectedPlanRequirements
+    ) {
+      _id
+      selectedPlanRequirements {
+        planRequirement {
+          _id
+          name
+          code
+          isUcReq
+          college
+          major
+          minor
+          isOfficial
+        }
+        manualOverrides
+      }
     }
   }
 `;

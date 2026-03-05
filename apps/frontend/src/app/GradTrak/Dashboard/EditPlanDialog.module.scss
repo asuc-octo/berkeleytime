@@ -1,0 +1,101 @@
+.edit-dialog-card {
+  max-width: 1000px;
+  width: 95vw;
+  min-height: 500px;
+}
+
+.edit-dialog-body {
+  min-height: 450px;
+  padding-bottom: 24px;
+}
+
+.tabs {
+  width: 100%;
+}
+
+.tabs-list {
+  margin-bottom: 24px;
+}
+
+.tab-content {
+  padding-top: 8px;
+}
+
+.edit-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.degree-search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.add-button {
+  height: 100%;
+  min-height: 40px;
+  min-width: 80px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.degree-search-wrapper {
+  flex: 1;
+}
+
+.degree-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-right: 4px;
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+}
+
+.degree-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--button-hover-color);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--heading-color);
+  .remove-button {
+    cursor: pointer;
+    color: var(--paragraph-color);
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.7;
+    padding: 0 4px;
+    transition: opacity 0.2s;
+    transition: color 0.2s;
+    &:hover {
+      opacity: 1;
+      color: var(--heading-color);
+    }
+  }
+}
+
+.empty-state {
+  color: var(--gray-500);
+  font-size: 14px;
+}
