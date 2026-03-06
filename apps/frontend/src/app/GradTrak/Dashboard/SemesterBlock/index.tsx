@@ -84,6 +84,7 @@ function SemesterBlock({
   const [totalUnits, setTotalUnits] = useState(0);
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
 
@@ -333,6 +334,7 @@ function SemesterBlock({
   };
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
+    setDraggingIndex(classIndex);
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -351,6 +353,7 @@ function SemesterBlock({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    setDraggingIndex(null);
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -434,7 +437,11 @@ function SemesterBlock({
       onDragLeave={filtersActive ? undefined : handleDragLeave}
       onDrop={filtersActive ? undefined : handleDrop}
     >
-      <div className={styles.body} data-layout={settings.layout}>
+      <div
+        className={styles.body}
+        data-layout={settings.layout}
+        data-open={open}
+      >
         <Flex direction="row" justify="between" width="100%">
           <div className={styles.semesterCounter}>
             {planTerm.pinned && (
@@ -616,9 +623,12 @@ function SemesterBlock({
               })
               .map((cls, index) => (
                 <React.Fragment key={`class-group-${index}`}>
-                  {placeholderIndex === index && (
-                    <div className={styles.placeholder} />
-                  )}
+                  {placeholderIndex === index &&
+                    !(
+                      draggingIndex !== null &&
+                      (placeholderIndex === draggingIndex ||
+                        placeholderIndex === draggingIndex + 1)
+                    ) && <div className={styles.placeholder} />}
                   <Class
                     cls={cls}
                     index={index}
@@ -634,9 +644,12 @@ function SemesterBlock({
               ))}
 
             {/* Dragging placeholder */}
-            {placeholderIndex === selectedClasses.length && (
-              <div className={styles.placeholder} />
-            )}
+            {placeholderIndex === selectedClasses.length &&
+              !(
+                draggingIndex !== null &&
+                (placeholderIndex === draggingIndex ||
+                  placeholderIndex === draggingIndex + 1)
+              ) && <div className={styles.placeholder} />}
 
             {/* Dialog Component */}
             <AddClass

@@ -61,6 +61,7 @@ export const useGetClassRatingsData = ({
   }, [data?.course?.instructorAggregatedRatings]);
 
   return {
+    data,
     aggregatedRatings: data?.course?.aggregatedRatings,
     instructorAggregatedRatings,
     semestersWithRatings,
