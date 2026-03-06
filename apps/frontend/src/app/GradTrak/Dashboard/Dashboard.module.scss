@@ -9,10 +9,12 @@
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: none;
     overflow: hidden;
     scrollbar-color: var(--paragraph-color)
       var(--border-color, rgba(0, 0, 0, 0.1));
-    max-width: 78%;
 
     .header {
       display: flex;

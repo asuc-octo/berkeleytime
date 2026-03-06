@@ -6,7 +6,10 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
-    allowedHosts: ["frontend"],
+    allowedHosts: ["frontend", "localhost", ".localhost"],
+  },
+  optimizeDeps: {
+    include: ["react-is", "recharts"],
   },
   resolve: {
     alias: {
