@@ -26,7 +26,7 @@ import { LETTER_GRADES, PASS_FAIL } from "@/lib/grades";
 
 import styles from "./GradeBarGraph.module.scss";
 
-const CHART_HEIGHT_RATIO = 0.6;
+const CHART_HEIGHT_RATIO = 0.55;
 const HORIZONTAL_CHART_HEIGHT_RATIO = 0.72;
 const HORIZONTAL_ENTER_WIDTH = 600;
 const HORIZONTAL_EXIT_WIDTH = 640;

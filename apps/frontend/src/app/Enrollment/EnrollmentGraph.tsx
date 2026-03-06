@@ -84,7 +84,7 @@ const getGradientId = (outputId: string) =>
 const getDisplayLabel = (output: EnrollmentGraphOutput) =>
   `${output.course.subject} ${output.course.number}`;
 
-const CHART_HEIGHT_RATIO = 0.6;
+const CHART_HEIGHT_RATIO = 0.55;
 const ROTATED_CHART_HEIGHT_RATIO = 0.72;
 const PERCENT_AXIS_HEADROOM_MULTIPLIER = 1.05;
 const ROTATE_ENTER_WIDTH = 600;

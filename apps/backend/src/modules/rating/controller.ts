@@ -648,19 +648,6 @@ export const getSemestersWithRatings = async (
   return result;
 };
 
-export const getCourseRatingsCount = async (
-  subject: string,
-  courseNumber: string
-): Promise<number> => {
-  const formatted = await getCourseAggregatedRatings(subject, courseNumber);
-  // Return the max count across all metrics (they should be roughly equal)
-  const maxCount = Math.max(
-    0,
-    ...formatted.metrics.map((metric) => metric.count)
-  );
-  return maxCount;
-};
-
 export const getInstructorAggregatedRatings = async (
   subject: string,
   courseNumber: string

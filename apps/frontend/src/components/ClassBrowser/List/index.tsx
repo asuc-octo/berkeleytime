@@ -2,15 +2,60 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FrameAltEmpty } from "iconoir-react";
+import { EmptyPage } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
+import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
+import { ICatalogClassServer } from "@/lib/api/catalog";
 import { RecentType, getRecents } from "@/lib/recent";
 
 import Header from "../Header";
-import useBrowser from "../useBrowser";
+import { useLayoutContext } from "../context/LayoutContext";
+import { useListContext } from "../context/ListContext";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
+
+const getPnpPercentage = (_class: ICatalogClassServer): number | null => {
+  const passCount = _class.allTimePassCount ?? 0;
+  const noPassCount = _class.allTimeNoPassCount ?? 0;
+  const totalCount = passCount + noPassCount;
+  if (totalCount <= 0) return null;
+  return passCount / totalCount;
+};
+
+// Adapt ICatalogClassServer to the shape ClassCard expects
+const adaptForClassCard = (_class: ICatalogClassServer) => {
+  const pnpPercentage = getPnpPercentage(_class);
+
+  return {
+    subject: _class.subject,
+    courseNumber: _class.courseNumber,
+    number: _class.number,
+    title: _class.title ?? _class.courseTitle,
+    unitsMax: _class.unitsMax,
+    unitsMin: _class.unitsMin,
+    course: {
+      title: _class.courseTitle,
+      gradeDistribution:
+        _class.allTimeAverageGrade != null || pnpPercentage != null
+          ? {
+              average: _class.allTimeAverageGrade,
+              pnpPercentage,
+            }
+          : undefined,
+      aggregatedRatings: _class.aggregatedRatings,
+    },
+    primarySection: {
+      enrollment: {
+        latest: {
+          enrolledCount: _class.enrolledCount,
+          maxEnroll: _class.maxEnroll,
+          activeReservedMaxCount: _class.activeReservedMaxCount,
+        },
+      },
+    },
+  };
+};
 
 interface ListProps {
   onSelect: (
@@ -22,20 +67,51 @@ interface ListProps {
 }
 
 const MAX_RECENTLY_VIEWED = 5;
+const LOAD_MORE_THRESHOLD_PX = 320;
+
+type RecentClassItem = {
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId?: string;
+};
+
+type RecentlyViewedEntry = {
+  key: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId: string | null;
+};
+
+const getRecentClassKey = (
+  recent: Pick<RecentClassItem, "subject" | "courseNumber" | "number">
+) => `${recent.subject}-${recent.courseNumber}-${recent.number}`;
 
 export default function List({ onSelect }: ListProps) {
-  const { classes, allClasses, loading, year, semester } = useBrowser();
+  const { classes, loading, hasNextPage, loadNextPage, isLoadingNextPage } =
+    useListContext();
+
+  const { year, semester } = useLayoutContext();
+
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
   const [visibleRecentCount, setVisibleRecentCount] =
     useState(MAX_RECENTLY_VIEWED);
+  const [resolvedSessionIds, setResolvedSessionIds] = useState<
+    Record<string, string>
+  >({});
   const [showTopFade, setShowTopFade] = useState(false);
 
   const catalogScrollRef = useRef<HTMLDivElement>(null);
   const recentlyViewedListRef = useRef<HTMLDivElement>(null);
   const recentlyViewedMeasureRef = useRef<HTMLDivElement>(null);
 
-  const recentlyViewed = useMemo(() => {
+  useEffect(() => {
+    setResolvedSessionIds({});
+  }, [year, semester]);
+
+  const recentlyViewed = useMemo<RecentClassItem[]>(() => {
     const allRecents = getRecents(RecentType.Class);
     const seenCourses = new Set<string>();
 
@@ -50,23 +126,49 @@ export default function List({ onSelect }: ListProps) {
       .slice(0, MAX_RECENTLY_VIEWED);
   }, [year, semester, recentlyViewedVersion]);
 
-  const recentlyViewedClasses = useMemo(() => {
-    return recentlyViewed
-      .map((recent) => {
-        return allClasses.find(
-          (c) =>
-            c.subject === recent.subject &&
-            c.courseNumber === recent.courseNumber &&
-            c.number === recent.number
-        );
-      })
-      .filter((c) => c !== undefined);
-  }, [recentlyViewed, allClasses]);
+  const recentlyViewedEntries = useMemo<RecentlyViewedEntry[]>(() => {
+    return recentlyViewed.map((recent) => {
+      const key = getRecentClassKey(recent);
+      const fallbackSessionId = classes.find(
+        (catalogClass) =>
+          catalogClass.subject === recent.subject &&
+          catalogClass.courseNumber === recent.courseNumber &&
+          catalogClass.number === recent.number
+      )?.sessionId;
 
-  const showRecentlyViewed = recentlyViewedClasses.length > 0;
+      return {
+        key,
+        subject: recent.subject,
+        courseNumber: recent.courseNumber,
+        number: recent.number,
+        sessionId:
+          recent.sessionId ??
+          resolvedSessionIds[key] ??
+          fallbackSessionId ??
+          null,
+      };
+    });
+  }, [recentlyViewed, classes, resolvedSessionIds]);
+
+  useEffect(() => {
+    setResolvedSessionIds((previous) => {
+      let changed = false;
+      const next = { ...previous };
+
+      recentlyViewedEntries.forEach((entry) => {
+        if (!entry.sessionId || next[entry.key]) return;
+        next[entry.key] = entry.sessionId;
+        changed = true;
+      });
+
+      return changed ? next : previous;
+    });
+  }, [recentlyViewedEntries]);
+
+  const showRecentlyViewed = recentlyViewedEntries.length > 0;
   const visibleRecentlyViewedClasses = useMemo(
-    () => recentlyViewedClasses.slice(0, visibleRecentCount),
-    [recentlyViewedClasses, visibleRecentCount]
+    () => recentlyViewedEntries.slice(0, visibleRecentCount),
+    [recentlyViewedEntries, visibleRecentCount]
   );
 
   useEffect(() => {
@@ -134,34 +236,43 @@ export default function List({ onSelect }: ListProps) {
     observer.observe(measureElement);
 
     return () => observer.disconnect();
-  }, [showRecentlyViewed, recentlyViewedClasses]);
+  }, [showRecentlyViewed, recentlyViewedEntries]);
 
   useEffect(() => {
     const scrollElement = catalogScrollRef.current;
     if (!scrollElement) return;
 
-    const updateFadeVisibility = () => {
+    const handleScroll = () => {
       setShowTopFade(scrollElement.scrollTop > 0);
+
+      if (loading || isLoadingNextPage || !hasNextPage) return;
+
+      const distanceToBottom =
+        scrollElement.scrollHeight -
+        (scrollElement.scrollTop + scrollElement.clientHeight);
+      if (distanceToBottom <= LOAD_MORE_THRESHOLD_PX) {
+        void loadNextPage();
+      }
     };
 
-    updateFadeVisibility();
-    scrollElement.addEventListener("scroll", updateFadeVisibility, {
+    handleScroll();
+    scrollElement.addEventListener("scroll", handleScroll, {
       passive: true,
     });
 
     return () => {
-      scrollElement.removeEventListener("scroll", updateFadeVisibility);
+      scrollElement.removeEventListener("scroll", handleScroll);
     };
-  }, [loading, classes.length]);
+  }, [classes.length, hasNextPage, isLoadingNextPage, loadNextPage, loading]);
 
   const virtualizer = useVirtualizer({
     count: classes.length,
     getScrollElement: () => catalogScrollRef.current,
     estimateSize: () => 136,
-    paddingStart: 0, // No padding needed - Recently Viewed section handles spacing
+    paddingStart: 0,
     paddingEnd: 12,
     gap: 12,
-    overscan: 5, // Keep extra items rendered for smoother scrolling
+    overscan: 5,
   });
 
   const items = virtualizer.getVirtualItems();
@@ -191,11 +302,11 @@ export default function List({ onSelect }: ListProps) {
                 className={styles.recentlyViewedList}
               >
                 <AnimatePresence initial={false} mode="popLayout">
-                  {visibleRecentlyViewedClasses.map((_class) => (
+                  {visibleRecentlyViewedClasses.map((recentClass) => (
                     <motion.button
                       type="button"
                       className={styles.recentlyViewedTagButton}
-                      key={`recent-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                      key={`recent-${recentClass.key}`}
                       layout={shouldReduceMotion ? false : "position"}
                       initial={
                         shouldReduceMotion
@@ -218,17 +329,19 @@ export default function List({ onSelect }: ListProps) {
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (!recentClass.sessionId) return;
                         catalogScrollRef.current?.blur();
                         onSelect(
-                          _class.subject,
-                          _class.courseNumber,
-                          _class.number,
-                          _class.sessionId
+                          recentClass.subject,
+                          recentClass.courseNumber,
+                          recentClass.number,
+                          recentClass.sessionId
                         );
                       }}
                     >
                       <span className={styles.recentlyViewedTagLabel}>
-                        {_class.subject.slice(0, 4)} {_class.courseNumber}
+                        {recentClass.subject.slice(0, 4)}{" "}
+                        {recentClass.courseNumber}
                       </span>
                     </motion.button>
                   ))}
@@ -239,13 +352,14 @@ export default function List({ onSelect }: ListProps) {
                 className={styles.recentlyViewedMeasureList}
                 aria-hidden
               >
-                {recentlyViewedClasses.map((_class) => (
+                {recentlyViewedEntries.map((recentClass) => (
                   <span
                     className={styles.recentlyViewedMeasureItem}
-                    key={`recent-measure-${_class.subject}-${_class.courseNumber}-${_class.number}`}
+                    key={`recent-measure-${recentClass.key}`}
                   >
                     <span className={styles.recentlyViewedTagLabel}>
-                      {_class.subject.slice(0, 4)} {_class.courseNumber}
+                      {recentClass.subject.slice(0, 4)}{" "}
+                      {recentClass.courseNumber}
                     </span>
                   </span>
                 ))}
@@ -255,14 +369,16 @@ export default function List({ onSelect }: ListProps) {
         </div>
       </div>
       <div ref={catalogScrollRef} className={styles.catalogScroll}>
-        {!loading && classes.length === 0 ? (
+        {loading && classes.length === 0 ? (
+          <div className={styles.skeletonContainer}>
+            {[...Array(10)].map((_, i) => (
+              <ClassCardSkeleton key={`skeleton-${i}`} />
+            ))}
+          </div>
+        ) : !loading && classes.length === 0 ? (
           <div className={styles.placeholder}>
-            <FrameAltEmpty width={32} height={32} />
-            <p className={styles.heading}>No courses found</p>
-            <p className={styles.description}>
-              Find courses by broadening your search or entering a different
-              query.
-            </p>
+            <EmptyPage width={32} height={32} />
+            <p className={styles.heading}>No classes found</p>
           </div>
         ) : (
           <div
@@ -280,7 +396,7 @@ export default function List({ onSelect }: ListProps) {
 
                 return (
                   <ClassCard
-                    class={_class}
+                    class={adaptForClassCard(_class)}
                     data-index={index}
                     key={key}
                     ref={virtualizer.measureElement}
@@ -291,14 +407,13 @@ export default function List({ onSelect }: ListProps) {
             </div>
           </div>
         )}
+        {isLoadingNextPage && (
+          <div className={styles.loadMoreSkeletons} aria-hidden>
+            <ClassCardSkeleton />
+            <ClassCardSkeleton />
+          </div>
+        )}
       </div>
-      {/* <div className={styles.footer}>
-        <Link to="/discover" className={styles.button}>
-          <Sparks />
-          <p className={styles.text}>Try discovering courses</p>
-          <ArrowRight />
-        </Link>
-      </div> */}
     </div>
   );
 }

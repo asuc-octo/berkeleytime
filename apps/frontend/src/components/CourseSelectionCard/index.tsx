@@ -154,8 +154,8 @@ export default function CourseSelectionCard({
               gradeDistribution,
               unitsMin: courseUnits,
               unitsMax: courseUnits,
-              course: titleData?.ratingsCount
-                ? { ratingsCount: titleData.ratingsCount }
+              course: titleData?.aggregatedRatings
+                ? { aggregatedRatings: titleData.aggregatedRatings }
                 : undefined,
             }),
       }}
@@ -167,7 +167,6 @@ export default function CourseSelectionCard({
         />
       }
       active={active}
-      disabled={hidden}
       subtitle={subtitle}
       gradeInFooter
       topRightContent={topRightContent}

@@ -231,7 +231,6 @@ export const READ_CURATED_CLASSES = gql`
             average
           }
           academicCareer
-          ratingsCount
         }
       }
     }

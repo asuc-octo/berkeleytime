@@ -64,7 +64,6 @@ datapuller:
     classes-active:
       schedule: "25 4 2-31 * *"
       args: ["--puller=classes-active"]
-
     grades-l5y:
       schedule: "35 4 1 * *"
       args: ["--puller=grades-last-five-years"]

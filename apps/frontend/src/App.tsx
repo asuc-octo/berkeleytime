@@ -10,7 +10,6 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -297,7 +296,7 @@ const router = createBrowserRouter([
             element: (
               <SuspenseBoundary
                 key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
-                fallback={<CatalogSkeleton />}
+                fallback={<></>}
               >
                 <Catalog />
               </SuspenseBoundary>
