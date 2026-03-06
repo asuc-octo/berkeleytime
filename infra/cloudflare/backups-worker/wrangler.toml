@@ -1,0 +1,20 @@
+# Cloudflare Worker
+name = "backups-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+workers_dev = false
+# Configure these in Cloudflare dashboard (or Wrangler env vars):
+# - CLOUDFLARE_ACCESS_TEAM_DOMAIN
+# - CLOUDFLARE_ACCESS_AUDIENCE
+
+[[r2_buckets]]
+binding = "PUBLIC_BACKUPS"
+bucket_name = "prod-mongo-public-backups"
+
+[[r2_buckets]]
+binding = "PRIVATE_BACKUPS"
+bucket_name = "prod-mongo-backups"
+
+[[routes]]
+pattern = "backups.berkeleytime.com/*"
+zone_name = "berkeleytime.com"

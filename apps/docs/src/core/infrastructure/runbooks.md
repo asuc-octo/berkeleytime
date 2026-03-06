@@ -22,6 +22,41 @@
    k create job --from cronjob/bt-prod-datapuller-courses bt-prod-datapuller-courses-manual-01
    ```
 
+## Fetch Mongo Backups
+
+Backups are served at `https://backups.berkeleytime.com`:
+
+- Public: `GET /public/*` 
+- Private: `GET /private/*`
+
+### Public backup (no auth)
+
+Public backups are meant for local development and include only a redacted subset of the `bt` database. The public backup includes these collections:
+
+- `classes`
+- `courses`
+- `terms`
+- `sections`
+- `gradeDistributions`
+- `enrollmentHistories`
+- `enrollmenttimeframes`
+
+```sh
+curl -f -o "prod_public_backup-YYYYMMDD.gz" \
+  "https://backups.berkeleytime.com/public/daily/prod_public_backup-YYYYMMDD.gz"
+```
+
+### Private backup (Cloudflare Access)
+
+```sh
+brew install cloudflare/cloudflare/cloudflared
+cloudflared access login https://backups.berkeleytime.com
+
+cloudflared access curl \
+  "https://backups.berkeleytime.com/private/hourly/prod_backup-YYYYMMDDHH.gz" \
+  -o "prod_backup-YYYYMMDDHH.gz"
+```
+
 ## Deploying a New Environment Variable with sealed-secrets
 
 Useful when adding new environment variables to `.env`. To ensure our env variables can be deployed to GitHub without their true value being leaked, they should be encrypted before being pushed to GitHub.
