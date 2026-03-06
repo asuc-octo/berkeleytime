@@ -3,7 +3,10 @@ import { connection } from "mongoose";
 import { parseTermName } from "@repo/common";
 import { ClassModel, TermModel } from "@repo/common/models";
 
-import { refreshCatalogClasses } from "../lib/catalog-denormalize";
+import {
+  refreshAllCatalogClasses,
+  refreshCatalogClasses,
+} from "../lib/catalog-denormalize";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -74,7 +77,11 @@ export const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   }
 };
 
-const updateClasses = async (config: Config, termSelector: TermSelector) => {
+const updateClasses = async (
+  config: Config,
+  termSelector: TermSelector,
+  opts?: { rebuildEntireCatalog?: boolean }
+) => {
   const {
     log,
     sis: { CLASS_APP_ID, CLASS_APP_KEY },
@@ -158,16 +165,21 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   await updateTermsCatalogDataFlags(log);
 
-  // Rebuild denormalized catalog_classes only for the terms we just pulled
-  const pulledTermNames = [
-    ...new Set(terms.map((term) => term.name as string)),
-  ];
-  const pulledTermsParsed = pulledTermNames
-    .map(parseTermName)
-    .filter((t): t is NonNullable<typeof t> => t !== null);
+  if (opts?.rebuildEntireCatalog) {
+    // Rebuild catalog for all terms (covers terms beyond what was just pulled)
+    await refreshAllCatalogClasses(log);
+  } else {
+    // Rebuild denormalized catalog_classes only for the terms we just pulled
+    const pulledTermNames = [
+      ...new Set(terms.map((term) => term.name as string)),
+    ];
+    const pulledTermsParsed = pulledTermNames
+      .map(parseTermName)
+      .filter((t): t is NonNullable<typeof t> => t !== null);
 
-  for (const term of pulledTermsParsed) {
-    await refreshCatalogClasses(log, term.year, term.semester);
+    for (const term of pulledTermsParsed) {
+      await refreshCatalogClasses(log, term.year, term.semester);
+    }
   }
 };
 
@@ -176,7 +188,9 @@ const activeTerms = async (config: Config) => {
 };
 
 const lastFiveYearsTerms = async (config: Config) => {
-  return updateClasses(config, getLastFiveYearsTerms);
+  return updateClasses(config, getLastFiveYearsTerms, {
+    rebuildEntireCatalog: true,
+  });
 };
 
 export default {

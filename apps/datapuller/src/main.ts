@@ -1,9 +1,6 @@
 import { parseArgs } from "node:util";
 
-import {
-  refreshAllCatalogClasses,
-  updateCatalogGradeSummaries,
-} from "./lib/catalog-denormalize";
+import { updateCatalogGradeSummaries } from "./lib/catalog-denormalize";
 import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
@@ -37,8 +34,6 @@ const pullerMap: {
   "terms-nearby": termsPuller.nearbyTerms,
   "migrate-aggregated-metrics-classid":
     migrationsPuller.backfillAggregatedMetricsClassId,
-  "catalog-rebuild": async (config: Config) =>
-    refreshAllCatalogClasses(config.log),
   "catalog-sync-grades": async (config: Config) =>
     updateCatalogGradeSummaries(config.log),
 } as const;
