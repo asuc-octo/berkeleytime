@@ -1,8 +1,12 @@
 import { connection } from "mongoose";
 
+import { parseTermName } from "@repo/common";
 import { ClassModel, TermModel } from "@repo/common/models";
 
-import { warmCatalogCacheForTerms } from "../lib/cache-warming";
+import {
+  refreshAllCatalogClasses,
+  refreshCatalogClasses,
+} from "../lib/catalog-denormalize";
 import { getClasses } from "../lib/classes";
 import { Config } from "../shared/config";
 import {
@@ -17,7 +21,7 @@ const TERMS_PER_API_BATCH = 4;
 // This is intentional to ensure data consistency, as class data may be modified
 // by sources other than the datapuller. Since the query is fast, the overhead
 // is minimal. Future optimization could track only affected terms if needed.
-const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
+export const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   log.trace("Updating hasCatalogData flags for all terms...");
 
   const allTerms = await TermModel.find({}).select({ _id: 1, name: 1 }).lean();
@@ -44,19 +48,13 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
 
   const bulkOps = allTerms
     .map((term) => {
-      const parts = term.name.split(" ");
-      if (parts.length !== 2) {
+      const parsed = parseTermName(term.name);
+      if (!parsed) {
         log.warn(`Invalid term name format: ${term.name}`);
         return null;
       }
 
-      const [yearStr, semester] = parts;
-      const year = parseInt(yearStr, 10);
-      if (isNaN(year)) {
-        log.warn(`Invalid year in term name: ${term.name}`);
-        return null;
-      }
-
+      const { year, semester } = parsed;
       const hasCatalogData = catalogDataSet.has(`${year} ${semester}`);
 
       return {
@@ -79,7 +77,11 @@ const updateTermsCatalogDataFlags = async (log: Config["log"]) => {
   }
 };
 
-const updateClasses = async (config: Config, termSelector: TermSelector) => {
+const updateClasses = async (
+  config: Config,
+  termSelector: TermSelector,
+  opts?: { rebuildEntireCatalog?: boolean }
+) => {
   const {
     log,
     sis: { CLASS_APP_ID, CLASS_APP_KEY },
@@ -163,21 +165,22 @@ const updateClasses = async (config: Config, termSelector: TermSelector) => {
 
   await updateTermsCatalogDataFlags(log);
 
-  // Warm catalog cache for all terms with catalog data
-  const distinctTermNames = await TermModel.distinct("name", {
-    hasCatalogData: true,
-  });
-  const termsWithCatalogData = distinctTermNames.map((name) => ({ name }));
+  if (opts?.rebuildEntireCatalog) {
+    // Rebuild catalog for all terms (covers terms beyond what was just pulled)
+    await refreshAllCatalogClasses(log);
+  } else {
+    // Rebuild denormalized catalog_classes only for the terms we just pulled
+    const pulledTermNames = [
+      ...new Set(terms.map((term) => term.name as string)),
+    ];
+    const pulledTermsParsed = pulledTermNames
+      .map(parseTermName)
+      .filter((t): t is NonNullable<typeof t> => t !== null);
 
-  // Sort by year descending (latest first)
-  termsWithCatalogData.sort((a, b) => {
-    const yearA = parseInt(a.name.split(" ")[0], 10);
-    const yearB = parseInt(b.name.split(" ")[0], 10);
-    return yearB - yearA;
-  });
-
-  // Process sequentially to avoid overwhelming the server
-  await warmCatalogCacheForTerms(config, termsWithCatalogData);
+    for (const term of pulledTermsParsed) {
+      await refreshCatalogClasses(log, term.year, term.semester);
+    }
+  }
 };
 
 const activeTerms = async (config: Config) => {
@@ -185,7 +188,9 @@ const activeTerms = async (config: Config) => {
 };
 
 const lastFiveYearsTerms = async (config: Config) => {
-  return updateClasses(config, getLastFiveYearsTerms);
+  return updateClasses(config, getLastFiveYearsTerms, {
+    rebuildEntireCatalog: true,
+  });
 };
 
 export default {

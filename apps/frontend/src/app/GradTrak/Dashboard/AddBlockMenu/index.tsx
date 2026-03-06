@@ -94,7 +94,10 @@ export default function AddBlockMenu({
       if (
         e.target instanceof Node &&
         !el.contains(e.target) &&
-        !(e.target instanceof Element && e.target.closest("[data-radix-popper-content-wrapper]"))
+        !(
+          e.target instanceof Element &&
+          e.target.closest("[data-radix-popper-content-wrapper]")
+        )
       ) {
         onClose?.();
       }

@@ -1,838 +1,952 @@
-import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client/react";
-import moment from "moment";
+import { useApolloClient } from "@apollo/client/react";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { CategoricalChartFunc } from "recharts/types/chart/types";
 
-import { Boundary, LoadingIndicator } from "@repo/theme";
+import { Button, Select } from "@repo/theme";
 
 import {
-  type ChartConfig,
-  ChartTooltip,
-  ChartTooltipContent,
-  createChartConfig,
-  formatters,
-} from "@/components/Chart";
-import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
-import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
-import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
+  CourseAnalyticsCardGrid,
+  CourseAnalyticsField,
+  CourseAnalyticsLayout,
+  CourseAnalyticsSidebar,
+} from "@/components/CourseAnalytics/CourseAnalyticsLayout";
+import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import { BAR_CHART_COLORS } from "@/components/CourseAnalytics/types";
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
+import { useReadCourseWithInstructor } from "@/hooks/api";
+import useEnterToAdd from "@/hooks/useEnterToAdd";
+import useRafHoverIndex from "@/hooks/useRafHoverIndex";
+import type { ICourseWithInstructorClass } from "@/lib/api/courses";
+import type { IEnrollment } from "@/lib/api/enrollment";
+import { sortByTermDescending } from "@/lib/classes";
 import {
-  GetEnrollmentDocument,
-  GetEnrollmentTimeframesDocument,
-  Semester,
-} from "@/lib/generated/graphql";
-import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
+  EnrollmentUrlInput,
+  getEnrollmentInputId,
+  getEnrollmentInputSearchParam,
+  isEnrollmentInputEqual,
+  parseEnrollmentInputsFromUrl,
+} from "@/lib/enrollmentUrl";
+import { GetEnrollmentDocument, Semester } from "@/lib/generated/graphql";
+import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 
-import CourseInput from "./CourseManager/CourseInput";
-import DataBoard from "./DataBoard";
-import {
-  DARK_COLORS,
-  Input,
-  LIGHT_COLORS,
-  Output,
-  getInputSearchParam,
-  isInputEqual,
-} from "./types";
+import styles from "./Enrollment.module.scss";
+import EnrollmentGraph from "./EnrollmentGraph";
 
-// Map group names to full labels
-const GROUP_LABELS: Record<string, string> = {
-  continuing: "Continuing Students",
-  new_transfer: "New Transfer Students",
-  new_freshman: "New Freshman Students",
-  new_graduate: "New Graduate Students",
-  new_student: "New Students",
-  all: "All Students",
-};
+interface SemesterSelection {
+  year: number;
+  semester: Semester;
+}
 
-// Memoized formatter to avoid recreating on each render
-const timeFormatter = new Intl.DateTimeFormat("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-  hour12: true,
-  timeZone: "America/Los_Angeles",
-});
+type EnrollmentInput = EnrollmentUrlInput;
 
-// Helper function to get the dark version of a color
-const getDarkColor = (lightColor: string): string => {
-  const colorIndex = LIGHT_COLORS.indexOf(lightColor);
-  return colorIndex !== -1 ? DARK_COLORS[colorIndex] : lightColor;
-};
-const ACTIVITY_THRESHOLD_PERCENT = 5;
+interface EnrollmentDraft {
+  id: string;
+  course: CourseOption;
+  input: EnrollmentInput;
+}
 
-type PhaseLine = {
-  timeDelta: number;
-  label: string;
-  key: string;
-};
+export interface EnrollmentOutput extends EnrollmentDraft {
+  subtitle: string;
+  color: string;
+  data: IEnrollment;
+}
 
-type EnrollmentChartProps = {
-  data: { timeDelta: number; [key: string]: number | null }[] | undefined;
-  filteredOutputs: Output[];
-  chartConfig: ChartConfig;
-  activeOutput?: Output;
-  dataMax: number;
-  outputs: Output[];
-  animateIndices: Set<number>;
-  phaseLines: PhaseLine[];
-  onHoverDuration: (duration: moment.Duration | null) => void;
-};
+interface EnrollmentEditDraft {
+  subject: string;
+  courseNumber: string;
+  courseId: string;
+  year: number;
+  semester: Semester;
+  sectionNumber: string;
+  sessionId?: string;
+}
 
-const EnrollmentChart = memo(function EnrollmentChart({
-  data,
-  filteredOutputs,
-  chartConfig,
-  activeOutput,
-  dataMax,
-  outputs,
-  animateIndices,
-  phaseLines,
-  onHoverDuration,
-}: EnrollmentChartProps) {
-  const handleHover: CategoricalChartFunc = useCallback(
-    (payload) => {
-      onHoverDuration(
-        payload?.activeLabel !== undefined && payload?.activeLabel !== null
-          ? moment.duration(payload.activeLabel, "minutes")
-          : null
-      );
-    },
-    [onHoverDuration]
-  );
+interface EnrollmentSidebarProps {
+  outputs: EnrollmentOutput[];
+  onAddCourse: (draft: EnrollmentDraft) => Promise<boolean>;
+  isAdding: boolean;
+  editDraft: EnrollmentEditDraft | null;
+  onEditDraftConsumed: () => void;
+}
 
-  const seriesActivityByOutput = useMemo(() => {
-    const activity = new Map<
-      number,
-      { hasEnrolledActivity: boolean; hasWaitlistedActivity: boolean }
-    >();
-    if (!data || outputs.length === 0) return activity;
+const ENROLLMENT_ACTIVITY_THRESHOLD_PERCENT = 5;
 
-    outputs.forEach((_, outputIndex) => {
-      const enrollKey = `enroll_${outputIndex}`;
-      const waitlistKey = `waitlist_${outputIndex}`;
+const DEFAULT_INSTRUCTOR_LABEL = "All instructors";
 
-      const hasEnrolledActivity = data.some((point) => {
-        const value = point[enrollKey];
-        return typeof value === "number" && value > ACTIVITY_THRESHOLD_PERCENT;
-      });
+const formatSemesterLabel = (semester: Semester, year: number) =>
+  `${semester} ${year}`;
 
-      const hasWaitlistedActivity = data.some((point) => {
-        const value = point[waitlistKey];
-        return typeof value === "number" && value > ACTIVITY_THRESHOLD_PERCENT;
-      });
+const toSemesterValue = (semester: Semester, year: number) =>
+  JSON.stringify({ semester, year });
 
-      activity.set(outputIndex, {
-        hasEnrolledActivity,
-        hasWaitlistedActivity,
-      });
-    });
+const parseSemesterValue = (value: string | null): SemesterSelection | null => {
+  if (!value) return null;
 
-    return activity;
-  }, [data, outputs]);
-
-  return (
-    <ChartContainer config={chartConfig} hasData={filteredOutputs.length > 0}>
-      {() => (
-        <LineChart
-          syncId="grade-distributions"
-          width={730}
-          height={200}
-          data={data}
-          onMouseMove={handleHover}
-          onMouseLeave={() => onHoverDuration(null)}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            vertical={false}
-            stroke="var(--border-color)"
-          />
-          <XAxis
-            dataKey="timeDelta"
-            fill="var(--label-color)"
-            tickMargin={8}
-            interval={"preserveStartEnd"}
-            type="number"
-            tickFormatter={(timeDelta) =>
-              String(
-                Math.floor(moment.duration(timeDelta, "minutes").asDays()) + 1
-              )
-            }
-          />
-          <YAxis
-            domain={[0, dataMax]}
-            tickFormatter={(v) => formatters.percentRound(v)}
-          />
-          {dataMax >= 100 && (
-            <ReferenceLine
-              y={100}
-              stroke="var(--label-color)"
-              strokeDasharray="5 5"
-              strokeOpacity={0.5}
-              label={{
-                value: "100% Capacity",
-                position: "insideTopLeft",
-                fill: "var(--label-color)",
-                fontSize: 12,
-                offset: 10,
-              }}
-            />
-          )}
-          {/* Enrollment phase start lines */}
-          {phaseLines.map((line) => (
-            <ReferenceLine
-              key={line.key}
-              x={line.timeDelta}
-              stroke="var(--paragraph-color)"
-              strokeWidth={1}
-              strokeDasharray="6 4"
-              strokeOpacity={0.8}
-              label={{
-                value: line.label,
-                position: "insideBottomLeft",
-                fill: "var(--paragraph-color)",
-                fontSize: 10,
-                angle: -90,
-                dx: 12,
-                dy: -10,
-              }}
-            />
-          ))}
-          {outputs?.length > 0 && (
-            <ChartTooltip
-              content={(props) => {
-                // Filter payload to only show active output when a class is selected
-                let payloadToShow = props.payload;
-                if (props.payload && activeOutput) {
-                  const activeIndex = outputs.findIndex((o) => o.active);
-                  if (activeIndex !== -1) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    payloadToShow = props.payload.filter((item: any) => {
-                      const dataKey = item.dataKey || item.name;
-                      return (
-                        dataKey === `enroll_${activeIndex}` ||
-                        dataKey === `waitlist_${activeIndex}`
-                      );
-                    });
-                  }
-                }
-
-                return (
-                  <ChartTooltipContent
-                    {...props}
-                    payload={payloadToShow}
-                    config={chartConfig}
-                    tooltipConfig={{
-                      labelFormatter: (label) => {
-                        const duration = moment.duration(label, "minutes");
-                        const day = Math.floor(duration.asDays()) + 1;
-                        const time = timeFormatter.format(
-                          moment.utc(0).add(duration).toDate()
-                        );
-                        return `Day ${day} ${time}`;
-                      },
-                      valueFormatter: (value) => formatters.percentRound(value),
-                      indicator: "line",
-                    }}
-                  />
-                );
-              }}
-            />
-          )}
-          {filteredOutputs?.map((output, index) => {
-            const originalIndex = outputs.indexOf(output);
-            const shouldAnimateLine = animateIndices.has(originalIndex);
-            const lineColor =
-              activeOutput && !output.active
-                ? getDarkColor(output.color)
-                : output.color;
-            const { hasEnrolledActivity, hasWaitlistedActivity } =
-              seriesActivityByOutput.get(originalIndex) ?? {
-                hasEnrolledActivity: false,
-                hasWaitlistedActivity: false,
-              };
-
-            return (
-              <React.Fragment key={index}>
-                {hasEnrolledActivity && (
-                  <Line
-                    dataKey={`enroll_${originalIndex}`}
-                    stroke={lineColor}
-                    name={`${output.input.subject} ${output.input.courseNumber}`}
-                    isAnimationActive={shouldAnimateLine}
-                    dot={false}
-                    strokeWidth={3}
-                    type="monotone"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    connectNulls
-                  />
-                )}
-                {hasWaitlistedActivity && (
-                  <Line
-                    dataKey={`waitlist_${originalIndex}`}
-                    stroke={lineColor}
-                    name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                    isAnimationActive={shouldAnimateLine}
-                    dot={false}
-                    strokeWidth={2}
-                    strokeDasharray="5 5"
-                    type="monotone"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    connectNulls
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </LineChart>
-      )}
-    </ChartContainer>
-  );
-});
-
-const parseInputsFromUrl = (searchParams: URLSearchParams): Input[] =>
-  searchParams
-    .getAll("input")
-    .reduce((acc, input) => {
-      const output = input.split(";");
-
-      // Filter out invalid inputs
-      if (output.length < 4) return acc;
-
-      // Filter out invalid inputs
-      if (output[2] !== "T") return acc;
-
-      // COMPSCI;61B;T;2024:Spring;001, COMPSCI;61B;T;2024:Spring
-      const term = output[3]?.split(":");
-
-      const parsedInput: Input = {
-        subject: output[0],
-        courseNumber: output[1],
-        year: parseInt(term?.[0]),
-        semester: term?.[1] as Semester,
-        sectionNumber: output[4],
-      };
-
-      return acc.concat(parsedInput);
-    }, [] as Input[])
-    // Filter out duplicates
-    .filter(
-      (input, index, inputs) =>
-        inputs.findIndex((i) => isInputEqual(input, i)) === index
-    );
-
-const fetchEnrollment = async (
-  client: ReturnType<typeof useApolloClient>,
-  input: Input
-): Promise<{ data: Output["data"]; input: Input } | null> => {
   try {
-    const response = await client.query({
-      query: GetEnrollmentDocument,
-      variables: {
-        year: input.year,
-        semester: input.semester,
-        sessionId: input.sessionId,
-        subject: input.subject,
-        courseNumber: input.courseNumber,
-        sectionNumber: input.sectionNumber,
-      },
-      fetchPolicy: "no-cache",
-    });
-
-    if (!response.data?.enrollment) return null;
-
-    return {
-      data: response.data.enrollment,
-      input,
-    };
+    const parsed = JSON.parse(value);
+    if (
+      typeof parsed.year === "number" &&
+      typeof parsed.semester === "string"
+    ) {
+      return {
+        year: parsed.year,
+        semester: parsed.semester as Semester,
+      };
+    }
+    return null;
   } catch {
     return null;
   }
 };
 
-export default function Enrollment() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const initialInputs = useMemo(() => {
-    // If no current params, check for saved URL and parse it directly
-    if (searchParams.toString().length === 0) {
-      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
-      if (savedUrl) {
-        const savedParams = new URLSearchParams(savedUrl);
-        return parseInputsFromUrl(savedParams);
-      }
-    }
-    return parseInputsFromUrl(searchParams);
-  }, [searchParams]);
+const getInstructorNames = (courseClass: ICourseWithInstructorClass) => {
+  const names = new Set<string>();
 
-  // Save current URL to localStorage whenever it changes
-  useEffect(() => {
-    const currentUrl = location.search;
-    savePageUrl(RecentType.EnrollmentPage, currentUrl);
-  }, [location.search]);
-
-  // Update URL to match the restored state
-  useEffect(() => {
-    if (searchParams.toString().length === 0 && initialInputs.length > 0) {
-      const savedUrl = getPageUrl(RecentType.EnrollmentPage);
-      if (savedUrl) {
-        navigate({ ...location, search: savedUrl }, { replace: true });
-      }
-    }
-  }, []); // Only on mount
-
-  const {
-    outputs,
-    setOutputs,
-    loading,
-    activeOutput,
-    filteredOutputs,
-    remove,
-    updateActive,
-    updateHidden,
-  } = useCourseManager<Input, Output["data"]>({
-    initialInputs,
-    fetchData: fetchEnrollment,
-    serializeInput: getInputSearchParam,
-    colors: LIGHT_COLORS,
+  courseClass.primarySection?.meetings.forEach((meeting) => {
+    meeting.instructors.forEach((instructor) => {
+      const name = `${instructor.givenName} ${instructor.familyName}`.trim();
+      if (name) names.add(name);
+    });
   });
 
-  const [hoveredSeries, setHoveredSeries] = useState<number | null>(null);
-  const [animateIndices, setAnimateIndices] = useState<Set<number>>(new Set());
-  const previousOutputsLength = useRef(0);
+  return Array.from(names).toSorted((a, b) => a.localeCompare(b));
+};
 
-  const [hoveredDuration, setHoveredDuration] =
-    useState<moment.Duration | null>(null);
+const hasEnrollmentData = (courseClass: ICourseWithInstructorClass) =>
+  Boolean(
+    courseClass.primarySection?.number &&
+      courseClass.primarySection?.enrollment?.latest
+  );
 
-  // Track newly added classes and animate only their lines
-  useEffect(() => {
-    const currentLength = outputs.length;
-    const previousLength = previousOutputsLength.current;
+const formatSectionNumber = (sectionNumber: string) =>
+  sectionNumber.replace(/^0+(?=\d)/, "");
 
-    if (currentLength > previousLength) {
-      // New class(es) added - find which indices are new
-      const newIndices = new Set<number>();
-      for (let i = previousLength; i < currentLength; i++) {
-        newIndices.add(i);
-      }
-      setAnimateIndices(newIndices);
+const getInstructorLabel = (courseClass: ICourseWithInstructorClass) => {
+  const instructors = getInstructorNames(courseClass);
+  if (instructors.length === 0) return DEFAULT_INSTRUCTOR_LABEL;
+  if (instructors.length === 1) return instructors[0];
+  return `${instructors[0]} +${instructors.length - 1}`;
+};
 
-      // Clear animation after animation completes (recharts default is ~1000ms)
-      const timeout = setTimeout(() => {
-        setAnimateIndices(new Set());
-      }, 1500);
+const getOfferingId = (courseClass: ICourseWithInstructorClass) =>
+  `${courseClass.sessionId ?? "1"}-${courseClass.number}`;
 
-      previousOutputsLength.current = currentLength;
-      return () => clearTimeout(timeout);
-    }
+const getOutputMetadataFromInput = (input: EnrollmentInput) =>
+  `${input.semester} ${input.year} • Section ${formatSectionNumber(input.sectionNumber)}`;
 
-    // Update previous length even if no new classes were added
-    previousOutputsLength.current = currentLength;
-  }, [outputs.length]);
+const getValidEnrollmentDenominator = (history: IEnrollment["history"]) => {
+  const maxSeen = Math.max(...history.map((entry) => entry.maxEnroll ?? 0), 0);
+  if (maxSeen === 0) return 0;
 
-  /**
-   *
-   * A list of combined time series of the format:
-   *
-   *    ```
-   *    {
-   *      timeDelta: number,
-   *      enroll_0: number | null,
-   *      enroll_1: number | null,
-   *      waitlist_0: number | null,
-   *      waitlist_1: number | null,
-   *      // ...
-   *    }
-   *    ```
-   *
-   * `timeDelta` is in minutes since the first time data point of that selected class
-   */
-  const data:
-    | { timeDelta: number; [key: string]: number | null }[]
-    | undefined = useMemo(() => {
-    if (!outputs) return undefined;
+  const lastValue = history[history.length - 1]?.maxEnroll ?? 0;
+  return lastValue > 0 ? lastValue : maxSeen;
+};
 
-    // set of all unique time deltas (in minutes). used to generate combined time series
-    const timeDeltas = new Set<number>();
+const hasValidEnrollmentActivity = (
+  enrollment: IEnrollment | null | undefined
+) => {
+  const history = enrollment?.history ?? [];
+  const denominator = getValidEnrollmentDenominator(history);
+  if (denominator <= 0) return false;
 
-    // list (one for each selected class) of mappings from time (prettified string) to enrollment data
-    const timeToEnrollmentMaps: Map<
-      number,
-      { enrolledCount: number | null; waitlistedCount: number | null }
-    >[] = outputs.map((output) => {
-      // Calculate valid denominators for maxEnroll and maxWaitlist
-      const maxEnrollHistory = output.data.history.map((e) => e.maxEnroll ?? 0);
-      const maxWaitlistHistory = output.data.history.map(
-        (e) => e.maxWaitlist ?? 0
-      );
-
-      const maxEnrollMax = Math.max(...maxEnrollHistory);
-      const maxWaitlistMax = Math.max(...maxWaitlistHistory);
-      const lastMaxEnroll =
-        output.data.history[output.data.history.length - 1].maxEnroll ?? 0;
-      const lastMaxWaitlist =
-        output.data.history[output.data.history.length - 1].maxWaitlist ?? 0;
-
-      // Determine valid denominators:
-      // - If denominator was always zero, we'll set values to null (hide the line)
-      // - If denominator was non-zero but last is zero, use the max value from history
-      // - Otherwise, use the last value (or 1 as fallback)
-      const validMaxEnroll =
-        maxEnrollMax > 0
-          ? lastMaxEnroll > 0
-            ? lastMaxEnroll
-            : maxEnrollMax
-          : 0;
-      const validMaxWaitlist =
-        maxWaitlistMax > 0
-          ? lastMaxWaitlist > 0
-            ? lastMaxWaitlist
-            : maxWaitlistMax
-          : 0;
-
-      // the first time data point, floored to the nearest minute
-      const firstTime = moment(output.data.history[0].startTime).startOf(
-        "minute"
-      );
-      const map = new Map<
-        number,
-        { enrolledCount: number | null; waitlistedCount: number | null }
-      >();
-      for (const enrollment of output.data.history) {
-        const start = moment(enrollment.startTime).startOf("minute");
-        const end = moment(enrollment.endTime).startOf("minute");
-        const granularity = enrollment.granularitySeconds;
-
-        for (
-          let cur = start.clone();
-          !cur.isAfter(end);
-          cur.add(granularity, "seconds")
-        ) {
-          const timeDelta = moment.duration(cur.diff(firstTime)).asMinutes();
-          timeDeltas.add(timeDelta);
-
-          // If denominator was always zero, set to null (hide the line)
-          // Otherwise, calculate percentage using valid denominator
-          map.set(timeDelta, {
-            enrolledCount:
-              validMaxEnroll > 0
-                ? (enrollment.enrolledCount / validMaxEnroll) * 100
-                : null,
-            waitlistedCount:
-              validMaxWaitlist > 0
-                ? (enrollment.waitlistedCount / validMaxWaitlist) * 100
-                : null,
-          });
-        }
-      }
-      return map;
-    });
-
-    const sortedData = Array.from(timeDeltas)
-      .map((timeDelta) => {
-        const datapoint: { timeDelta: number; [key: string]: number | null } = {
-          timeDelta,
-        };
-        for (let i = 0; i < outputs.length; i++) {
-          const { enrolledCount, waitlistedCount } = timeToEnrollmentMaps[
-            i
-          ].get(timeDelta) || { enrolledCount: null, waitlistedCount: null };
-          datapoint[`enroll_${i}`] = enrolledCount;
-          datapoint[`waitlist_${i}`] = waitlistedCount;
-        }
-        return datapoint;
-      })
-      .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
-    return sortedData;
-  }, [outputs]);
-
-  useEffect(() => {
-    if (outputs.length > 0) {
-      if (!hoveredSeries) setHoveredSeries(0);
-    } else setHoveredSeries(null);
-  }, [hoveredSeries, outputs]);
-
-  const dataMax = useMemo(() => {
-    if (!data) return 0;
-
-    return (
-      data.reduce((acc, datapoint) => {
-        const datapointValues = Object.values({
-          ...datapoint,
-          timeDelta: null,
-        }).filter((v) => v !== null) as number[];
-        return Math.max(acc, ...datapointValues);
-      }, 0) * 1.2
-    );
-  }, [data]);
-
-  // Determine the semester to show phase lines for
-  const phaseLinesConfig = useMemo(() => {
-    if (!outputs || outputs.length === 0) return null;
-
-    // Check if all outputs are from the same semester
-    const firstSemester = outputs[0].input.semester;
-    const firstYear = outputs[0].input.year;
-    const allSameSemester = outputs.every(
-      (o) => o.input.semester === firstSemester && o.input.year === firstYear
-    );
-
-    if (allSameSemester) {
-      return { year: firstYear, semester: firstSemester, showAlways: true };
-    }
-
-    // If different semesters, show lines for active output's semester
-    if (activeOutput) {
-      return {
-        year: activeOutput.input.year,
-        semester: activeOutput.input.semester,
-        showAlways: false,
-      };
-    }
-
-    return null;
-  }, [outputs, activeOutput]);
-
-  // Fetch enrollment timeframes for the relevant semester
-  const { data: timeframesData } = useQuery(GetEnrollmentTimeframesDocument, {
-    variables: {
-      year: phaseLinesConfig?.year ?? 0,
-      semester: phaseLinesConfig?.semester ?? Semester.Fall,
-    },
-    skip: !phaseLinesConfig,
+  return history.some((entry) => {
+    const enrolledCount = entry.enrolledCount ?? 0;
+    const enrolledPercent = (enrolledCount / denominator) * 100;
+    return enrolledPercent > ENROLLMENT_ACTIVITY_THRESHOLD_PERCENT;
   });
+};
 
-  // Calculate phase line positions
-  const phaseLines = useMemo((): PhaseLine[] => {
-    if (!data || data.length === 0 || !timeframesData?.enrollmentTimeframes)
-      return [];
-    if (!phaseLinesConfig) return [];
+const loadOutputsFromInputs = async (
+  client: ReturnType<typeof useApolloClient>,
+  inputs: EnrollmentInput[]
+): Promise<EnrollmentOutput[]> => {
+  const dedupedInputs = inputs
+    .filter(
+      (input, index, allInputs) =>
+        allInputs.findIndex((candidate) =>
+          isEnrollmentInputEqual(candidate, input)
+        ) === index
+    )
+    .slice(0, BAR_CHART_COLORS.length);
 
-    // Find the output that matches the phase lines semester to get its first timestamp
-    const matchingOutput = outputs.find(
-      (o) =>
-        o.input.year === phaseLinesConfig.year &&
-        o.input.semester === phaseLinesConfig.semester
-    );
+  const results = await Promise.all(
+    dedupedInputs.map(async (input) => {
+      try {
+        const response = await client.query({
+          query: GetEnrollmentDocument,
+          variables: {
+            year: input.year,
+            semester: input.semester,
+            sessionId: input.sessionId,
+            subject: input.subject,
+            courseNumber: input.courseNumber,
+            sectionNumber: input.sectionNumber,
+          },
+          fetchPolicy: "no-cache",
+        });
 
-    if (!matchingOutput) return [];
-
-    const firstTime = moment(matchingOutput.data.history[0].startTime);
-    const lastTimeDelta = data[data.length - 1].timeDelta;
-
-    // Debug logging
-    console.log("Phase lines debug:", {
-      firstTime: firstTime.toISOString(),
-      lastTimeDelta,
-      lastTimeDeltaDays: lastTimeDelta / 1440,
-      timeframes: timeframesData.enrollmentTimeframes.map((tf) => ({
-        group: tf.group,
-        phase: tf.phase,
-        startDate: tf.startDate,
-        calculatedTimeDelta: moment
-          .duration(moment(tf.startDate).diff(firstTime))
-          .asMinutes(),
-        calculatedDay:
-          moment.duration(moment(tf.startDate).diff(firstTime)).asMinutes() /
-            1440 +
-          1,
-      })),
-    });
-
-    // Format semester as FA25, SP24, etc.
-    const semesterPrefix =
-      phaseLinesConfig.semester === "Fall"
-        ? "FA"
-        : phaseLinesConfig.semester === "Spring"
-          ? "SP"
-          : "SU";
-    const yearSuffix = String(phaseLinesConfig.year).slice(-2);
-    const termLabel = `${semesterPrefix}${yearSuffix}`;
-
-    const result = timeframesData.enrollmentTimeframes
-      .filter((tf) => tf.group === "continuing" || tf.group === "all")
-      .map((tf) => {
-        const phaseStart = moment(tf.startDate);
-        const timeDelta = moment
-          .duration(phaseStart.diff(firstTime))
-          .asMinutes();
-
-        // Only include lines within the chart's data range
-        if (timeDelta < 0 || timeDelta > lastTimeDelta) return null;
-
-        const phaseLabel = tf.isAdjustment
-          ? "Adjustment Period"
-          : `Phase ${tf.phase}`;
-        const groupLabel = GROUP_LABELS[tf.group] ?? tf.group;
+        if (!response.data?.enrollment) return null;
+        if (!hasValidEnrollmentActivity(response.data.enrollment)) return null;
 
         return {
-          timeDelta,
-          label: `${termLabel} ${phaseLabel} - ${groupLabel}`,
-          key: `${tf.phase}-${tf.group}-${tf.isAdjustment}`,
+          input,
+          data: response.data.enrollment,
         };
-      })
-      .filter((line): line is NonNullable<typeof line> => line !== null);
+      } catch {
+        return null;
+      }
+    })
+  );
 
-    console.log("Phase lines result:", result);
-    return result;
-  }, [data, timeframesData, phaseLinesConfig, outputs]);
+  return results
+    .filter(
+      (
+        result
+      ): result is {
+        input: EnrollmentInput;
+        data: IEnrollment;
+      } => Boolean(result)
+    )
+    .map((result, index) => ({
+      id: getEnrollmentInputId(result.input),
+      course: {
+        subject: result.input.subject,
+        number: result.input.courseNumber,
+        courseId:
+          result.data.sectionId ??
+          `${result.input.subject}-${result.input.courseNumber}`,
+      },
+      subtitle: getOutputMetadataFromInput(result.input),
+      input: result.input,
+      color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
+      data: result.data,
+    }));
+};
 
-  const chartConfig = useMemo(() => {
-    const labels: Record<string, string> = {};
-    const themes: Record<string, { light: string; dark: string }> = {};
+function EnrollmentSidebar({
+  outputs,
+  onAddCourse,
+  isAdding,
+  editDraft,
+  onEditDraftConsumed,
+}: EnrollmentSidebarProps) {
+  const client = useApolloClient();
+  const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
+    null
+  );
+  const [selectedSemesterValue, setSelectedSemesterValue] = useState<
+    string | null
+  >(null);
+  const [selectedOfferingId, setSelectedOfferingId] = useState<string | null>(
+    null
+  );
+  const [hasValidEnrollment, setHasValidEnrollment] = useState<boolean | null>(
+    null
+  );
+  const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
 
-    outputs.forEach((output, index) => {
-      const courseName = `${output.input.subject} ${output.input.courseNumber}${output.input.sectionNumber ? ` ${output.input.sectionNumber}` : ""}`;
-      labels[`enroll_${index}`] = `${courseName} - Enrolled`;
-      labels[`waitlist_${index}`] = `${courseName} - Waitlisted`;
+  const { data: courseData, loading: courseLoading } =
+    useReadCourseWithInstructor(
+      selectedCourse?.subject ?? "",
+      selectedCourse?.number ?? "",
+      { skip: !selectedCourse }
+    );
 
-      themes[`enroll_${index}`] = {
-        light: output.color,
-        dark: getDarkColor(output.color),
-      };
-      themes[`waitlist_${index}`] = {
-        light: output.color,
-        dark: getDarkColor(output.color),
-      };
+  // Consume editDraft: populate sidebar state from the draft, then clear it
+  useEffect(() => {
+    if (!editDraft) return;
+
+    setSelectedCourse({
+      subject: editDraft.subject,
+      number: editDraft.courseNumber,
+      courseId: editDraft.courseId,
     });
 
-    const keys = outputs.flatMap((_, i) => [`enroll_${i}`, `waitlist_${i}`]);
-    return createChartConfig(keys, { labels, themes });
-  }, [outputs]);
+    const semesterValue = toSemesterValue(editDraft.semester, editDraft.year);
+    setSelectedSemesterValue(semesterValue);
+    setSelectedOfferingId(
+      `${editDraft.sessionId ?? "1"}-${editDraft.sectionNumber}`
+    );
 
-  const sidebarOutputs = useMemo(() => {
-    const selected = filteredOutputs?.filter((output) => output.active) ?? [];
-    if (selected.length === 1) return selected;
-    if ((filteredOutputs?.length ?? 0) === 1) return filteredOutputs;
-    return [];
-  }, [filteredOutputs]);
+    onEditDraftConsumed();
+  }, [editDraft, onEditDraftConsumed]);
 
-  const handleHoverDuration = useCallback(
-    (duration: moment.Duration | null) => {
-      setHoveredDuration(duration);
+  const classesWithEnrollment = useMemo(
+    () => courseData?.classes.filter(hasEnrollmentData) ?? [],
+    [courseData]
+  );
+
+  const semesterOptions = useMemo(() => {
+    if (classesWithEnrollment.length === 0) return [];
+
+    return classesWithEnrollment
+      .filter(
+        (courseClass, index, classes) =>
+          classes.findIndex(
+            (candidate) =>
+              candidate.year === courseClass.year &&
+              candidate.semester === courseClass.semester
+          ) === index
+      )
+      .toSorted(sortByTermDescending)
+      .map((courseClass) => ({
+        value: toSemesterValue(courseClass.semester, courseClass.year),
+        label: formatSemesterLabel(courseClass.semester, courseClass.year),
+      }));
+  }, [classesWithEnrollment]);
+
+  const selectedSemester = useMemo(
+    () => parseSemesterValue(selectedSemesterValue),
+    [selectedSemesterValue]
+  );
+  const defaultSemesterValue = useMemo(() => {
+    if (semesterOptions.length === 0) return null;
+
+    const usedSemesterValues = new Set(
+      outputs
+        .filter(
+          (o) =>
+            o.input.subject === selectedCourse?.subject &&
+            o.input.courseNumber === selectedCourse?.number
+        )
+        .map((o) => toSemesterValue(o.input.semester, o.input.year))
+    );
+
+    const preferNonSummer = (option: { value: string }) => {
+      const parsed = parseSemesterValue(option.value);
+      return parsed?.semester !== Semester.Summer;
+    };
+
+    // Try excluding already-selected semesters first
+    const unusedOptions = semesterOptions.filter(
+      (option) => !usedSemesterValues.has(option.value)
+    );
+    if (unusedOptions.length > 0) {
+      const best = unusedOptions.find(preferNonSummer);
+      return best?.value ?? unusedOptions[0].value;
+    }
+
+    // All semesters already used — fall back to normal logic
+    const latestNonSummer = semesterOptions.find(preferNonSummer);
+    return latestNonSummer?.value ?? semesterOptions[0]?.value ?? null;
+  }, [semesterOptions, outputs, selectedCourse]);
+
+  useEffect(() => {
+    if (!selectedCourse) return;
+
+    if (!defaultSemesterValue) {
+      if (selectedSemesterValue !== null) {
+        setSelectedSemesterValue(null);
+      }
+      return;
+    }
+
+    const hasValidSelectedSemester =
+      selectedSemesterValue !== null &&
+      semesterOptions.some((option) => option.value === selectedSemesterValue);
+
+    if (!hasValidSelectedSemester) {
+      setSelectedSemesterValue(defaultSemesterValue);
+    }
+  }, [
+    defaultSemesterValue,
+    selectedCourse,
+    selectedSemesterValue,
+    semesterOptions,
+  ]);
+
+  const availableClasses = useMemo(() => {
+    if (!selectedSemester) return [];
+
+    return classesWithEnrollment
+      .filter(
+        (courseClass) =>
+          courseClass.year === selectedSemester.year &&
+          courseClass.semester === selectedSemester.semester
+      )
+      .toSorted((a, b) =>
+        (a.primarySection?.number ?? a.number).localeCompare(
+          b.primarySection?.number ?? b.number,
+          undefined,
+          { numeric: true }
+        )
+      );
+  }, [classesWithEnrollment, selectedSemester]);
+
+  const selectedClass = useMemo(
+    () =>
+      availableClasses.find(
+        (courseClass) => getOfferingId(courseClass) === selectedOfferingId
+      ) ?? (availableClasses.length === 1 ? availableClasses[0] : null),
+    [availableClasses, selectedOfferingId]
+  );
+
+  useEffect(() => {
+    if (!selectedSemester) {
+      setSelectedOfferingId(null);
+      return;
+    }
+
+    if (availableClasses.length === 1) {
+      setSelectedOfferingId(getOfferingId(availableClasses[0]));
+      return;
+    }
+
+    if (
+      selectedOfferingId &&
+      !availableClasses.some(
+        (courseClass) => getOfferingId(courseClass) === selectedOfferingId
+      )
+    ) {
+      setSelectedOfferingId(null);
+    }
+  }, [selectedSemester, availableClasses, selectedOfferingId]);
+
+  const shouldShowOfferingCards =
+    !!selectedSemester && availableClasses.length > 1;
+  const offeringOptions = useMemo(
+    () =>
+      availableClasses.map((courseClass) => {
+        const offeringId = getOfferingId(courseClass);
+        const sectionNumber = formatSectionNumber(
+          courseClass.primarySection?.number ?? courseClass.number
+        );
+
+        return {
+          value: offeringId,
+          label: `Section ${sectionNumber}\n${getInstructorLabel(courseClass)}`,
+        };
+      }),
+    [availableClasses]
+  );
+  const shouldShowSemesterSelect = !!selectedCourse;
+  const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
+  const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
+  const isFull = outputs.length >= BAR_CHART_COLORS.length;
+  const selectionInput = useMemo((): EnrollmentInput | null => {
+    if (
+      !selectedCourse ||
+      !selectedClass ||
+      !selectedClass.primarySection?.number
+    )
+      return null;
+
+    return {
+      year: selectedClass.year,
+      semester: selectedClass.semester,
+      sessionId: selectedClass.sessionId ?? undefined,
+      subject: selectedCourse.subject,
+      courseNumber: selectedCourse.number,
+      sectionNumber: selectedClass.primarySection.number,
+    };
+  }, [selectedClass, selectedCourse]);
+  const selectionId = useMemo(
+    () => (selectionInput ? getEnrollmentInputId(selectionInput) : null),
+    [selectionInput]
+  );
+
+  useEffect(() => {
+    if (!selectionInput) {
+      setHasValidEnrollment(null);
+      setIsCheckingEnrollment(false);
+      return;
+    }
+
+    let cancelled = false;
+    setHasValidEnrollment(null);
+    setIsCheckingEnrollment(true);
+
+    void client
+      .query({
+        query: GetEnrollmentDocument,
+        variables: {
+          year: selectionInput.year,
+          semester: selectionInput.semester,
+          sessionId: selectionInput.sessionId,
+          subject: selectionInput.subject,
+          courseNumber: selectionInput.courseNumber,
+          sectionNumber: selectionInput.sectionNumber,
+        },
+        fetchPolicy: "no-cache",
+      })
+      .then((response) => {
+        if (cancelled) return;
+        setHasValidEnrollment(
+          hasValidEnrollmentActivity(response.data?.enrollment)
+        );
+        setIsCheckingEnrollment(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHasValidEnrollment(null);
+        setIsCheckingEnrollment(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, selectionInput]);
+
+  const isAlreadyAdded =
+    selectionId !== null && outputs.some((output) => output.id === selectionId);
+  const lacksEnrollmentActivity = hasValidEnrollment === false;
+  const waitingForEnrollmentCheck =
+    selectionInput !== null &&
+    (isCheckingEnrollment || hasValidEnrollment === null);
+  const canAddWithoutLoading =
+    shouldShowAddButton &&
+    hasSelectableClass &&
+    !isFull &&
+    !isAlreadyAdded &&
+    hasValidEnrollment === true;
+  const isAddButtonDisabled = !canAddWithoutLoading || isAdding;
+
+  const handleAdd = async () => {
+    if (
+      !selectedCourse ||
+      !selectedSemester ||
+      !selectedClass ||
+      !selectedClass.primarySection?.number ||
+      !selectionInput ||
+      !selectionId ||
+      hasValidEnrollment !== true ||
+      !canAddWithoutLoading ||
+      isAdding
+    ) {
+      return;
+    }
+
+    const didAdd = await onAddCourse({
+      id: selectionId,
+      course: selectedCourse,
+      input: selectionInput,
+    });
+
+    if (!didAdd) return;
+
+    setSelectedCourse(null);
+    setSelectedSemesterValue(null);
+    setSelectedOfferingId(null);
+  };
+
+  useEnterToAdd(() => void handleAdd(), canAddWithoutLoading && !isAdding);
+
+  const handleCourseSelect = (course: CourseOption) => {
+    setSelectedCourse(course);
+    setSelectedSemesterValue(null);
+    setSelectedOfferingId(null);
+    addRecent(RecentType.Course, {
+      subject: course.subject,
+      number: course.number,
+    });
+  };
+
+  const handleCourseClear = () => {
+    setSelectedCourse(null);
+    setSelectedSemesterValue(null);
+    setSelectedOfferingId(null);
+  };
+
+  return (
+    <CourseAnalyticsSidebar title="Enrollment">
+      <CourseAnalyticsField label="Class">
+        <CourseSelect
+          selectedCourse={selectedCourse}
+          onSelect={handleCourseSelect}
+          onClear={handleCourseClear}
+        />
+      </CourseAnalyticsField>
+      <AnimatePresence initial={false}>
+        {shouldShowSemesterSelect && (
+          <motion.div
+            key="enrollment-semester-select"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ type: "spring", stiffness: 320, damping: 26 }}
+          >
+            <CourseAnalyticsField label="Semester">
+              <Select
+                options={semesterOptions}
+                searchable
+                searchPlaceholder="Search semesters..."
+                placeholder="Select semester"
+                loading={courseLoading}
+                disabled={courseLoading}
+                value={selectedSemesterValue}
+                onChange={(semester) => {
+                  if (Array.isArray(semester)) return;
+                  setSelectedSemesterValue(semester);
+                  setSelectedOfferingId(null);
+                }}
+              />
+            </CourseAnalyticsField>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence initial={false}>
+        {shouldShowOfferingCards && (
+          <motion.div
+            key="enrollment-offering-select"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ type: "spring", stiffness: 320, damping: 26 }}
+          >
+            <CourseAnalyticsField label="Section">
+              <Select
+                options={offeringOptions}
+                searchable
+                searchPlaceholder="Search sections..."
+                placeholder="Select section"
+                loading={courseLoading}
+                disabled={courseLoading}
+                value={selectedOfferingId}
+                onChange={(offeringId) => {
+                  if (Array.isArray(offeringId)) return;
+                  setSelectedOfferingId(offeringId);
+                }}
+              />
+            </CourseAnalyticsField>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className={styles.addButtonSlot}>
+        <AnimatePresence initial={false}>
+          {shouldShowAddButton && (
+            <motion.div
+              key="enrollment-add-course-button"
+              className={styles.addButtonMotion}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ type: "spring", stiffness: 320, damping: 26 }}
+            >
+              <Button
+                onClick={() => void handleAdd()}
+                disabled={isAddButtonDisabled}
+                variant={canAddWithoutLoading ? "primary" : "secondary"}
+                className={styles.addButton}
+              >
+                {isAlreadyAdded
+                  ? "Already added"
+                  : isFull
+                    ? "Remove a course first"
+                    : availableClasses.length === 0
+                      ? "No enrollment data"
+                      : !hasSelectableClass
+                        ? "Select section"
+                        : lacksEnrollmentActivity
+                          ? "No enrollment activity"
+                          : waitingForEnrollmentCheck
+                            ? "Checking enrollment..."
+                            : "Add course"}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </CourseAnalyticsSidebar>
+  );
+}
+
+interface EnrollmentVisualizationProps {
+  outputs: EnrollmentOutput[];
+  remove: (index: number) => void;
+  edit: (index: number) => void;
+}
+
+function EnrollmentVisualization({
+  outputs,
+  remove,
+  edit,
+}: EnrollmentVisualizationProps) {
+  const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
+    useRafHoverIndex();
+  const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
+
+  const handleRemove = useCallback(
+    (index: number) => {
+      remove(index);
+      shiftAfterRemoval(index);
     },
-    []
+    [remove, shiftAfterRemoval]
+  );
+
+  const handleEdit = useCallback(
+    (index: number) => {
+      edit(index);
+      shiftAfterRemoval(index);
+    },
+    [edit, shiftAfterRemoval]
   );
 
   return (
     <>
-      <CourseAnalyticsPage
-        courseInput={<CourseInput outputs={outputs} setOutputs={setOutputs} />}
-        bottomTitle="% of Class Filled vs Days After Enrollment Begins"
-        bottomDescription={
-          <>
-            We source our historic course and enrollment data directly from
-            Berkeley{" "}
-            <a
-              href="https://sis.berkeley.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Student Information System's
-            </a>{" "}
-            Course and Class APIs.
-          </>
-        }
-        courseCards={
-          <>
-            {outputs.map(({ input, ...rest }, index) => {
-              const instructorNames =
-                input.instructors && input.instructors.length
-                  ? input.instructors.join(", ")
-                  : null;
-              const instructor = instructorNames
-                ? instructorNames
-                : input.sectionNumber
-                  ? `LEC ${input.sectionNumber}`
-                  : "All Instructors";
-              const semester = `${input.semester} ${input.year}`;
-              return (
-                <CourseSelectionCard
-                  key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
-                  subject={input.subject}
-                  number={input.courseNumber}
-                  metadata={`${semester} • ${instructor}`}
-                  gradeDistribution={undefined}
-                  loadGradeDistribution={false}
-                  onClick={() => updateActive(index, !rest.active)}
-                  onClickDelete={() => remove(index)}
-                  onClickHide={() => updateHidden(index, !rest.hidden)}
-                  color={rest.color}
-                  active={rest.active}
-                  hidden={rest.hidden}
-                />
-              );
-            })}
-            {!outputs ||
-              (!outputs.length && <div style={{ height: "85px" }}></div>)}
-          </>
-        }
-        chart={
-          loading ? (
-            <Boundary>
-              <LoadingIndicator size="lg" />
-            </Boundary>
+      <div className={styles.outputList}>
+        <CourseAnalyticsCardGrid>
+          {outputs.length === 0 ? (
+            <div className={styles.emptyCard} />
           ) : (
-            <EnrollmentChart
-              data={data}
-              filteredOutputs={filteredOutputs}
-              chartConfig={chartConfig}
-              activeOutput={activeOutput}
-              dataMax={dataMax}
-              outputs={outputs}
-              animateIndices={animateIndices}
-              phaseLines={phaseLines}
-              onHoverDuration={handleHoverDuration}
-            />
-          )
-        }
-        dataBoard={
-          loading ? (
-            <Boundary>
-              <LoadingIndicator size="md" />
-            </Boundary>
-          ) : sidebarOutputs?.[0] ? (
-            sidebarOutputs.map((output: Output, i: number) => (
-              <DataBoard
-                key={i}
-                color={output.color}
-                subject={output.input.subject}
-                courseNumber={output.input.courseNumber}
-                enrollmentHistory={output.data}
-                instructors={output.input.instructors}
-                hoveredDuration={hoveredDuration}
-                semester={output.input.semester}
-                year={output.input.year}
-              />
-            ))
-          ) : (
-            <DataBoard
-              color={"#aaa"}
-              subject={"No Class"}
-              courseNumber={"Selected"}
-              hoveredDuration={null}
-            />
-          )
-        }
-      />
+            <LayoutGroup>
+              <AnimatePresence mode="popLayout">
+                {outputs.map((output, index) => (
+                  <motion.div
+                    key={output.id}
+                    className={styles.outputCardItem}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  >
+                    <CourseSelectionCard
+                      color={output.color}
+                      subject={output.course.subject}
+                      number={output.course.number}
+                      subtitle={output.subtitle}
+                      year={output.input.year}
+                      semester={output.input.semester}
+                      sectionNumber={output.input.sectionNumber}
+                      sessionId={output.input.sessionId}
+                      dimmed={shouldDimOthers && hoveredIndex !== index}
+                      fluid
+                      onMouseEnter={() => hoverCard(index)}
+                      onMouseLeave={clearHover}
+                      onClickEdit={() => handleEdit(index)}
+                      onClickDelete={() => handleRemove(index)}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </LayoutGroup>
+          )}
+        </CourseAnalyticsCardGrid>
+      </div>
+      <EnrollmentGraph outputs={outputs} hoveredIndex={hoveredIndex} />
     </>
+  );
+}
+
+export default function Enrollment() {
+  const client = useApolloClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchParamsString = searchParams.toString();
+  const isDesktop = useCourseAnalyticsIsDesktop();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [outputs, setOutputs] = useState<EnrollmentOutput[]>([]);
+  const [editDraft, setEditDraft] = useState<EnrollmentEditDraft | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isHydratingFromUrl, setIsHydratingFromUrl] = useState(true);
+  const skipNextUrlHydrationRef = useRef(false);
+  const initialRestoreCompleteRef = useRef(false);
+  const initialDrawerStateAppliedRef = useRef(false);
+
+  useEffect(() => {
+    if (searchParamsString.length > 0) return;
+
+    const savedUrl = getPageUrl(RecentType.EnrollmentPage);
+    if (!savedUrl) {
+      initialRestoreCompleteRef.current = true;
+      return;
+    }
+
+    navigate({ ...location, search: savedUrl }, { replace: true });
+  }, []);
+
+  useEffect(() => {
+    if (!initialRestoreCompleteRef.current && searchParamsString.length > 0) {
+      initialRestoreCompleteRef.current = true;
+    }
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    if (!initialRestoreCompleteRef.current && location.search.length === 0) {
+      return;
+    }
+
+    savePageUrl(RecentType.EnrollmentPage, location.search);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (skipNextUrlHydrationRef.current) {
+      skipNextUrlHydrationRef.current = false;
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    let cancelled = false;
+    const parsedInputs = parseEnrollmentInputsFromUrl(
+      new URLSearchParams(searchParamsString)
+    ).slice(0, BAR_CHART_COLORS.length);
+
+    if (parsedInputs.length === 0) {
+      setOutputs((prev) => (prev.length === 0 ? prev : []));
+      setIsHydratingFromUrl(false);
+      return;
+    }
+
+    setIsHydratingFromUrl(true);
+
+    void loadOutputsFromInputs(client, parsedInputs).then((hydratedOutputs) => {
+      if (cancelled) return;
+      setOutputs(hydratedOutputs);
+      setIsHydratingFromUrl(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [client, searchParamsString]);
+
+  useEffect(() => {
+    if (isHydratingFromUrl) return;
+
+    const nextParams = new URLSearchParams();
+    outputs.forEach((output) => {
+      nextParams.append("input", getEnrollmentInputSearchParam(output.input));
+    });
+
+    const nextSearch = nextParams.toString();
+    const currentSearch = searchParamsString;
+    if (nextSearch === currentSearch) return;
+
+    skipNextUrlHydrationRef.current = true;
+    navigate(
+      {
+        pathname: location.pathname,
+        search: nextSearch.length > 0 ? `?${nextSearch}` : "",
+      },
+      { replace: true }
+    );
+  }, [
+    isHydratingFromUrl,
+    location.pathname,
+    navigate,
+    outputs,
+    searchParamsString,
+  ]);
+
+  useEffect(() => {
+    if (isDesktop) return;
+    if (isHydratingFromUrl) return;
+    if (initialDrawerStateAppliedRef.current) return;
+
+    setDrawerOpen(outputs.length === 0);
+    initialDrawerStateAppliedRef.current = true;
+  }, [isDesktop, isHydratingFromUrl, outputs.length]);
+
+  const addOutput = async (draft: EnrollmentDraft): Promise<boolean> => {
+    if (isAdding) return false;
+
+    setIsAdding(true);
+
+    try {
+      const response = await client.query({
+        query: GetEnrollmentDocument,
+        variables: {
+          year: draft.input.year,
+          semester: draft.input.semester,
+          sessionId: draft.input.sessionId,
+          subject: draft.input.subject,
+          courseNumber: draft.input.courseNumber,
+          sectionNumber: draft.input.sectionNumber,
+        },
+        fetchPolicy: "no-cache",
+      });
+
+      const enrollmentData = response.data?.enrollment;
+      if (!enrollmentData) return false;
+      if (!hasValidEnrollmentActivity(enrollmentData)) return false;
+
+      setOutputs((prev) => {
+        if (prev.some((output) => output.id === draft.id)) return prev;
+
+        const usedColors = new Set(prev.map((output) => output.color));
+        const color =
+          BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
+          BAR_CHART_COLORS[0];
+
+        return [
+          {
+            ...draft,
+            subtitle: getOutputMetadataFromInput(draft.input),
+            color,
+            data: enrollmentData,
+          },
+          ...prev,
+        ];
+      });
+
+      if (!isDesktop) {
+        setDrawerOpen(false);
+      }
+
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setIsAdding(false);
+    }
+  };
+
+  const remove = useCallback((index: number) => {
+    setOutputs((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const edit = useCallback(
+    (index: number) => {
+      setOutputs((prev) => {
+        const output = prev[index];
+        if (!output) return prev;
+
+        setEditDraft({
+          subject: output.input.subject,
+          courseNumber: output.input.courseNumber,
+          courseId:
+            output.course.courseId ??
+            `${output.input.subject}-${output.input.courseNumber}`,
+          year: output.input.year,
+          semester: output.input.semester,
+          sectionNumber: output.input.sectionNumber,
+          sessionId: output.input.sessionId,
+        });
+
+        return prev.filter((_, i) => i !== index);
+      });
+
+      if (!isDesktop) {
+        setDrawerOpen(true);
+      }
+    },
+    [isDesktop]
+  );
+
+  const clearEditDraft = useCallback(() => {
+    setEditDraft(null);
+  }, []);
+
+  return (
+    <CourseAnalyticsLayout
+      isDesktop={isDesktop}
+      drawerOpen={drawerOpen}
+      onDrawerOpenChange={setDrawerOpen}
+      sidebar={
+        <EnrollmentSidebar
+          outputs={outputs}
+          onAddCourse={addOutput}
+          isAdding={isAdding}
+          editDraft={editDraft}
+          onEditDraftConsumed={clearEditDraft}
+        />
+      }
+    >
+      <EnrollmentVisualization outputs={outputs} remove={remove} edit={edit} />
+    </CourseAnalyticsLayout>
   );
 }
