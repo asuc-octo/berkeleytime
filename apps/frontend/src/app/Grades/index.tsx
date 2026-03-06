@@ -255,8 +255,7 @@ function FilterPanel({
 
     course?.classes.forEach((c) => {
       if (!c.gradeDistribution.average) return;
-      if (selectedType === InputType.Term) {
-        if (!selectedTerm) return;
+      if (selectedTerm) {
         if (
           c.year !== selectedTerm.year ||
           c.semester !== selectedTerm.semester ||
@@ -278,12 +277,12 @@ function FilterPanel({
       return { value: v as string, label };
     });
 
-    if (opts.length === 1 && selectedType === InputType.Term) {
+    if (opts.length === 1 && selectedTerm) {
       return { options: opts, autoSelectValue: opts[0].value };
     }
 
     return { options: [...list, ...opts], autoSelectValue: null };
-  }, [course, selectedSemester, selectedType]);
+  }, [course, selectedSemester]);
 
   const instructorOptions = instructorOptionsData.options;
 
@@ -300,21 +299,16 @@ function FilterPanel({
       return { options: list, autoSelectValue: null };
     }
 
-    const localSelectedInstructor = selectedInstructor;
     const filteredClasses =
-      selectedType === InputType.Term
+      selectedInstructor === "all"
         ? course.classes
-        : localSelectedInstructor === "all"
-          ? []
-          : course.classes.filter((c) =>
-              c.primarySection?.meetings.find((m) =>
-                m.instructors.find(
-                  (i) =>
-                    localSelectedInstructor ===
-                    `${i.familyName}, ${i.givenName}`
-                )
+        : course.classes.filter((c) =>
+            c.primarySection?.meetings.find((m) =>
+              m.instructors.find(
+                (i) => selectedInstructor === `${i.familyName}, ${i.givenName}`
               )
-            );
+            )
+          );
 
     const seen = new Set<string>();
     const uniqueClasses = filteredClasses
@@ -333,7 +327,7 @@ function FilterPanel({
       label: formatSemesterLabel(t.semester, t.year),
     }));
 
-    if (filteredOptions.length === 1) {
+    if (filteredOptions.length === 1 && selectedInstructor !== "all") {
       return {
         options: filteredOptions,
         autoSelectValue: filteredOptions[0].value,
@@ -341,7 +335,7 @@ function FilterPanel({
     }
 
     return { options: [...list, ...filteredOptions], autoSelectValue: null };
-  }, [course, selectedInstructor, selectedType]);
+  }, [course, selectedInstructor]);
 
   const semesterOptions = semesterOptionsData.options;
 
@@ -355,22 +349,52 @@ function FilterPanel({
   const currentInput = useMemo((): Input | null => {
     if (!selectedCourse) return null;
 
-    const instructor =
-      selectedType === InputType.Instructor ? selectedInstructor : "all";
-    const semester = selectedType === InputType.Term ? selectedSemester : "all";
+    const instructor = selectedInstructor;
+    const semester = selectedSemester;
 
     if (!instructor || !semester) return null;
 
-    if (instructor === "all" && semester === "all") {
+    const hasInstructor = instructor !== "all";
+    const parsedTerm = parseSemesterValue(semester);
+    const hasSemester = !!parsedTerm;
+
+    // Neither selected → aggregate
+    if (!hasInstructor && !hasSemester) {
       return {
         subject: selectedCourse.subject,
         courseNumber: selectedCourse.number,
       };
     }
 
-    if (selectedType === InputType.Term) {
-      const parsedTerm = parseSemesterValue(semester);
-      if (!parsedTerm) return null;
+    // Both selected → use primary tab's type with both dimensions
+    if (hasInstructor && hasSemester) {
+      const [familyName, givenName] = instructor.split(", ");
+      if (selectedType === InputType.Term) {
+        return {
+          subject: selectedCourse.subject,
+          courseNumber: selectedCourse.number,
+          type: InputType.Term,
+          year: parsedTerm.year,
+          semester: parsedTerm.semester as Semester,
+          sessionId: parsedTerm.sessionId,
+          givenName,
+          familyName,
+        };
+      }
+      return {
+        subject: selectedCourse.subject,
+        courseNumber: selectedCourse.number,
+        type: InputType.Instructor,
+        familyName,
+        givenName,
+        year: parsedTerm.year,
+        semester: parsedTerm.semester as Semester,
+        sessionId: parsedTerm.sessionId,
+      };
+    }
+
+    // Only semester selected
+    if (hasSemester) {
       return {
         subject: selectedCourse.subject,
         courseNumber: selectedCourse.number,
@@ -381,6 +405,7 @@ function FilterPanel({
       };
     }
 
+    // Only instructor selected
     const [familyName, givenName] = instructor.split(", ");
     return {
       subject: selectedCourse.subject,
@@ -502,10 +527,7 @@ function FilterPanel({
     setSelectedSemester("all");
   };
 
-  const hasSelection =
-    selectedType === InputType.Instructor
-      ? !!selectedInstructor
-      : !!selectedSemester;
+  const hasSelection = !!selectedInstructor || !!selectedSemester;
   const shouldShowSearchControls = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && hasSelection;
   const isAddButtonDisabled =
@@ -541,39 +563,74 @@ function FilterPanel({
               fullWidth
             />
           </CourseAnalyticsField>
-          {selectedType === InputType.Instructor && (
-            <CourseAnalyticsField label="Instructor">
-              <Select
-                options={instructorOptions}
-                loading={courseLoading}
-                disabled={loading || courseLoading}
-                searchable
-                searchPlaceholder="Search instructors..."
-                placeholder="Select instructor"
-                value={selectedInstructor}
-                onChange={(s) => {
-                  if (Array.isArray(s) || !s) return;
-                  setSelectedInstructor(s);
-                }}
-              />
-            </CourseAnalyticsField>
-          )}
-          {selectedType === InputType.Term && (
-            <CourseAnalyticsField label="Semester">
-              <Select
-                options={semesterOptions}
-                loading={courseLoading}
-                disabled={loading || courseLoading}
-                searchable
-                searchPlaceholder="Search semesters..."
-                placeholder="Select semester"
-                value={selectedSemester}
-                onChange={(s) => {
-                  if (Array.isArray(s)) return;
-                  setSelectedSemester(s);
-                }}
-              />
-            </CourseAnalyticsField>
+          {selectedType === InputType.Instructor ? (
+            <>
+              <CourseAnalyticsField label="Instructor">
+                <Select
+                  options={instructorOptions}
+                  loading={courseLoading}
+                  disabled={loading || courseLoading}
+                  searchable
+                  searchPlaceholder="Search instructors..."
+                  placeholder="Select instructor"
+                  value={selectedInstructor}
+                  onChange={(s) => {
+                    if (Array.isArray(s) || !s) return;
+                    setSelectedInstructor(s);
+                    setSelectedSemester("all");
+                  }}
+                />
+              </CourseAnalyticsField>
+              <CourseAnalyticsField label="Semester">
+                <Select
+                  options={semesterOptions}
+                  loading={courseLoading}
+                  disabled={loading || courseLoading}
+                  searchable
+                  searchPlaceholder="Search semesters..."
+                  placeholder="Select semester"
+                  value={selectedSemester}
+                  onChange={(s) => {
+                    if (Array.isArray(s)) return;
+                    setSelectedSemester(s);
+                  }}
+                />
+              </CourseAnalyticsField>
+            </>
+          ) : (
+            <>
+              <CourseAnalyticsField label="Semester">
+                <Select
+                  options={semesterOptions}
+                  loading={courseLoading}
+                  disabled={loading || courseLoading}
+                  searchable
+                  searchPlaceholder="Search semesters..."
+                  placeholder="Select semester"
+                  value={selectedSemester}
+                  onChange={(s) => {
+                    if (Array.isArray(s)) return;
+                    setSelectedSemester(s);
+                    setSelectedInstructor("all");
+                  }}
+                />
+              </CourseAnalyticsField>
+              <CourseAnalyticsField label="Instructor">
+                <Select
+                  options={instructorOptions}
+                  loading={courseLoading}
+                  disabled={loading || courseLoading}
+                  searchable
+                  searchPlaceholder="Search instructors..."
+                  placeholder="Select instructor"
+                  value={selectedInstructor}
+                  onChange={(s) => {
+                    if (Array.isArray(s) || !s) return;
+                    setSelectedInstructor(s);
+                  }}
+                />
+              </CourseAnalyticsField>
+            </>
           )}
         </>
       )}
@@ -609,7 +666,7 @@ function FilterPanel({
                       ? "Remove a course first"
                       : waitingForLetterGradeCheck
                         ? "Checking grades..."
-                        : "Add course"}
+                        : "Add class"}
               </Button>
             </motion.div>
           )}
