@@ -9,6 +9,15 @@ At its core, Berkeleytime serves as a data aggregation platform. We work directl
 
 Understanding the data sources Berkeleytime has access to is imperative for building streamlined services.
 
+## Backups and Access
+
+Production backups may contain sensitive data:
+
+- Public backups are **redacted** and are not a comprehensive dataset.
+- Full backups require Cloudflare Access.
+
+For details, see [Runbooks](../infrastructure/runbooks.md#fetch-mongo-backups).
+
 ## API Central
 
 The EIS maintains many [RESTful](https://en.wikipedia.org/wiki/REST) APIs that consolidate data from various other sources, and provides documentation in the form of [Swagger OpenAPI v3 specifications](https://swagger.io/specification/) for each API. [API Central](https://developers.api.berkeley.edu/) serves as a portal for requesting access to individual APIs, interactive documentation, and managing API usage. Berkeleytime only has access to and utilizes the APIs necessary for servicing students.

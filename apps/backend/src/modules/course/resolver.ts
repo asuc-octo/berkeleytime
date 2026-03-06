@@ -7,7 +7,6 @@ import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getCourseAggregatedRatings,
-  getCourseRatingsCount,
   getInstructorAggregatedRatings,
 } from "../rating/controller";
 import {
@@ -123,8 +122,18 @@ const resolvers: CourseModule.Resolvers = {
           ? Math.min(Math.max(Math.floor(limit), 1), 200)
           : undefined;
 
+      // Cross-listed courses share a courseId, so filter to only classes
+      // matching this specific course's subject and number.
+      const matchesCourse = (courseClass: {
+        subject?: string | null;
+        courseNumber?: string | null;
+      }) =>
+        courseClass.subject === parent.subject &&
+        courseClass.courseNumber === parent.number;
+
       if (parent.classes) {
         let classes = [...parent.classes];
+        classes = classes.filter(matchesCourse);
         if (printInScheduleOnly) {
           classes = classes.filter(
             (courseClass) => courseClass.anyPrintInScheduleOfClasses !== false
@@ -144,7 +153,7 @@ const resolvers: CourseModule.Resolvers = {
         limit: boundedLimit,
       });
 
-      return classes as unknown as CourseModule.Class[];
+      return classes.filter(matchesCourse) as unknown as CourseModule.Class[];
     },
 
     crossListing: async (parent: IntermediateCourse | CourseModule.Course) => {
@@ -248,11 +257,6 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return instructorRatings;
-    },
-
-    ratingsCount: async (parent: IntermediateCourse | CourseModule.Course) => {
-      const count = await getCourseRatingsCount(parent.subject, parent.number);
-      return count;
     },
   },
 

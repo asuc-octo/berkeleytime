@@ -1,3 +1,5 @@
+export { CapacityChangeMarker } from "./CapacityChangeMarker";
+export { useCapacityChangeTooltip } from "./CapacityChangeTooltip";
 export { ChartContainer } from "./ChartContainer";
 export { ChartTooltip } from "./ChartTooltip";
 export { ChartTooltipContent } from "./ChartTooltipContent";

@@ -1,4 +1,4 @@
-import { ComponentPropsWithRef, ReactNode } from "react";
+import { ComponentPropsWithRef, Fragment, ReactNode } from "react";
 
 import {
   ArrowSeparateVertical,
@@ -9,9 +9,14 @@ import {
   Trash,
 } from "iconoir-react";
 
-import { Card, Tooltip } from "@repo/theme";
+import { METRIC_ORDER } from "@repo/shared";
+import { Badge, Card, Color as ThemeColor, Tooltip } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
+import {
+  getMetricStatus,
+  getStatusColor,
+} from "@/components/Class/Ratings/metricsUtil";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
@@ -54,7 +59,13 @@ type BaseClassFields = Pick<
 >;
 
 type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
-  ratingsCount?: number | null;
+  aggregatedRatings?: {
+    metrics: Array<{
+      metricName: string;
+      count?: number;
+      weightedAverage: number;
+    }>;
+  } | null;
 };
 
 type EnrollmentSnapshot = Pick<
@@ -86,6 +97,12 @@ interface ClassProps {
   wrapDescription?: boolean;
   customActionMenu?: ReactNode;
   onUnlock?: () => void;
+  topRightContent?: ReactNode;
+  infoContent?: ReactNode;
+  replaceInfoContent?: boolean;
+  headingPrefix?: ReactNode;
+  subtitle?: ReactNode;
+  gradeInFooter?: boolean;
 }
 
 export default function ClassCard({
@@ -101,16 +118,31 @@ export default function ClassCard({
   wrapDescription = false,
   customActionMenu,
   onUnlock = undefined,
+  topRightContent,
+  infoContent,
+  replaceInfoContent = false,
+  headingPrefix,
+  subtitle,
+  gradeInFooter = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   // bookmarked is part of the interface but not used in this component
   void bookmarked;
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
+  const formattedClassNumber = formatClassNumber(_class?.number);
 
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const ratingsCount = _class?.course?.aggregatedRatings
+    ? Math.max(
+        0,
+        ..._class.course.aggregatedRatings.metrics.map(
+          (metric) => metric.count ?? 0
+        )
+      )
+    : 0;
 
   return (
     <Card.RootColumn
@@ -142,71 +174,163 @@ export default function ClassCard({
             <div className={styles.topRow}>
               <div className={styles.titleDescription}>
                 <Card.Heading>
-                  {_class?.subject} {_class?.courseNumber}{" "}
-                  <span className={styles.sectionNumber}>
-                    #{formatClassNumber(_class?.number)}
-                  </span>
+                  {headingPrefix ? (
+                    <span className={styles.headingWithPrefix}>
+                      <span className={styles.headingPrefix}>
+                        {headingPrefix}
+                      </span>
+                      <span>
+                        {_class?.subject} {_class?.courseNumber}
+                        {formattedClassNumber && (
+                          <>
+                            {" "}
+                            <span className={styles.sectionNumber}>
+                              #{formattedClassNumber}
+                            </span>
+                          </>
+                        )}
+                      </span>
+                    </span>
+                  ) : (
+                    <>
+                      {_class?.subject} {_class?.courseNumber}
+                      {formattedClassNumber && (
+                        <>
+                          {" "}
+                          <span className={styles.sectionNumber}>
+                            #{formattedClassNumber}
+                          </span>
+                        </>
+                      )}
+                    </>
+                  )}
                 </Card.Heading>
                 <Card.Description wrapDescription={wrapDescription}>
                   {_class?.title ?? _class?.course?.title}
                 </Card.Description>
-                {_class?.semester && _class?.year && (
-                  <span className={styles.semester}>
-                    {formatSemester(_class.semester)} {_class.year}
-                  </span>
+                {subtitle ? (
+                  <span className={styles.semester}>{subtitle}</span>
+                ) : (
+                  _class?.semester &&
+                  _class?.year && (
+                    <span className={styles.semester}>
+                      {formatSemester(_class.semester)} {_class.year}
+                    </span>
+                  )
                 )}
               </div>
-              {gradeDistribution && (
+              {((!gradeInFooter && gradeDistribution) || topRightContent) && (
                 <div className={styles.gradeContainer}>
-                  <AverageGrade
-                    gradeDistribution={gradeDistribution}
-                    style={{
-                      marginTop: 0.5,
-                      fontSize: 14,
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                      textAlign: "right",
-                    }}
-                  />
+                  {!gradeInFooter && gradeDistribution && (
+                    <AverageGrade
+                      gradeDistribution={gradeDistribution}
+                      style={{
+                        marginTop: 0.5,
+                        fontSize: 14,
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                        textAlign: "right",
+                      }}
+                    />
+                  )}
+                  {topRightContent}
                 </div>
               )}
             </div>
             <Card.Footer className={styles.infoRow}>
-              <EnrollmentDisplay
-                enrolledCount={
-                  _class?.primarySection?.enrollment?.latest?.enrolledCount
-                }
-                maxEnroll={
-                  _class?.primarySection?.enrollment?.latest?.maxEnroll
-                }
-                time={_class?.primarySection?.enrollment?.latest?.endTime}
-              />
-              {_class?.unitsMin !== undefined &&
-                _class.unitsMax !== undefined && (
-                  <Units
-                    unitsMin={_class.unitsMin}
-                    unitsMax={_class.unitsMax}
+              {!replaceInfoContent && (
+                <>
+                  {gradeInFooter && gradeDistribution && (
+                    <AverageGrade
+                      gradeDistribution={gradeDistribution}
+                      style={{
+                        fontSize: 14,
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    />
+                  )}
+                  <EnrollmentDisplay
+                    enrolledCount={
+                      _class?.primarySection?.enrollment?.latest?.enrolledCount
+                    }
+                    maxEnroll={
+                      _class?.primarySection?.enrollment?.latest?.maxEnroll
+                    }
+                    time={_class?.primarySection?.enrollment?.latest?.endTime}
                   />
-                )}
-              {(_class?.primarySection?.enrollment?.latest
-                ?.activeReservedMaxCount ?? 0) > 0 && (
-                <Tooltip
-                  trigger={
-                    <span className={styles.reservedSeating}>
-                      <InfoCircle className={styles.reservedSeatingIcon} />
-                      Rsvd
-                    </span>
-                  }
-                  title="Reserved Seating"
-                  description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
-                />
+                  {_class?.unitsMin !== undefined &&
+                    _class.unitsMax !== undefined && (
+                      <Units
+                        unitsMin={_class.unitsMin}
+                        unitsMax={_class.unitsMax}
+                      />
+                    )}
+                  {(_class?.primarySection?.enrollment?.latest
+                    ?.activeReservedMaxCount ?? 0) > 0 && (
+                    <Tooltip
+                      trigger={
+                        <span className={styles.reservedSeating}>
+                          <InfoCircle className={styles.reservedSeatingIcon} />
+                          Rsvd
+                        </span>
+                      }
+                      title="Reserved Seating"
+                      description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
+                    />
+                  )}
+                  {ratingsCount > 0 && (
+                    <Tooltip
+                      trigger={
+                        <span className={styles.ratingsCount}>
+                          <Star className={styles.ratingsIcon} />
+                          {ratingsCount}
+                        </span>
+                      }
+                      title="Ratings"
+                      description={
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "auto max-content",
+                            gap: "8px 12px",
+                            alignItems: "center",
+                            width: "max-content",
+                          }}
+                        >
+                          {METRIC_ORDER.map((metricName) => {
+                            const metric =
+                              _class?.course?.aggregatedRatings?.metrics?.find(
+                                (m) => m.metricName === metricName
+                              );
+                            if (!metric) return null;
+                            const status = getMetricStatus(
+                              metricName,
+                              metric.weightedAverage
+                            );
+                            const color = getStatusColor(
+                              metricName,
+                              metric.weightedAverage
+                            );
+                            return (
+                              <Fragment key={metricName}>
+                                <span>{metricName}</span>
+                                <div style={{ width: "fit-content" }}>
+                                  <Badge
+                                    color={color as ThemeColor}
+                                    label={status}
+                                  />
+                                </div>
+                              </Fragment>
+                            );
+                          })}
+                        </div>
+                      }
+                    />
+                  )}
+                </>
               )}
-              {(_class?.course?.ratingsCount ?? 0) > 0 && (
-                <span className={styles.ratingsCount}>
-                  <Star className={styles.ratingsIcon} />
-                  {_class?.course?.ratingsCount}
-                </span>
-              )}
+              {infoContent}
               {expandable && onExpandedChange !== undefined && (
                 <Card.ActionIcon
                   data-action-icon

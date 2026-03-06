@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
@@ -7,7 +7,6 @@ import type { Option } from "@repo/theme";
 
 import { ICourse } from "@/lib/api";
 import { GetCourseNamesDocument } from "@/lib/generated/graphql";
-import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import { initialize } from "../CourseSearch/browser";
 
@@ -34,9 +33,6 @@ export default function CourseSelect({
 }: CourseSelectProps) {
   const { data, loading } = useQuery(GetCourseNamesDocument);
 
-  const [recentCourses, setRecentCourses] = useState<
-    Recent<RecentType.Course>[]
-  >([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Deduplicate courses: keep course with highest courseId for each subject-number
@@ -57,11 +53,6 @@ export default function CourseSelect({
 
   // Initialize fuzzy search index
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
-
-  // Load recent courses on mount
-  useEffect(() => {
-    setRecentCourses(getRecents(RecentType.Course));
-  }, []);
 
   // Check if a course is rated
   const isCourseRated = (subject: string, number: string) => {
@@ -151,27 +142,6 @@ export default function CourseSelect({
       return opts;
     }
 
-    // No search: show recent + first 20 catalog courses for performance
-    if (!minimal && recentCourses.length > 0) {
-      opts.push({ type: "label", label: "Recent" });
-
-      for (const recent of recentCourses) {
-        const full = catalogCourses.find(
-          (c) => c.subject === recent.subject && c.number === recent.number
-        );
-        if (full) {
-          const isRated = isCourseRated(full.subject, full.number);
-          const optionValue = courseToOptionValue(full);
-          opts.push({
-            value: optionValue,
-            label: `${full.subject} ${full.number}`,
-            meta: isRated ? "Rated" : undefined,
-            disabled: disableRatedCourses && isRated,
-          });
-        }
-      }
-    }
-
     // Add catalog courses group (limited to first 20 for performance)
     opts.push({ type: "label", label: minimal ? "" : "Catalog" });
 
@@ -190,7 +160,6 @@ export default function CourseSelect({
     return opts;
   }, [
     catalogCourses,
-    recentCourses,
     minimal,
     ratedCourses,
     disableRatedCourses,

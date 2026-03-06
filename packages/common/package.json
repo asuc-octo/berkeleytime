@@ -3,7 +3,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./models": "./src/models/index.ts"
+    "./models": "./src/models/index.ts",
+    "./lib/departmentNicknames": "./src/lib/departmentNicknames.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
