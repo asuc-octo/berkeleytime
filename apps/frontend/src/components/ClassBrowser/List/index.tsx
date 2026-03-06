@@ -270,8 +270,8 @@ export default function List({ onSelect }: ListProps) {
     getScrollElement: () => catalogScrollRef.current,
     estimateSize: () => 136,
     paddingStart: 0,
-    paddingEnd: 12,
-    gap: 12,
+    paddingEnd: 10,
+    gap: 10,
     overscan: 5,
   });
 
@@ -409,6 +409,7 @@ export default function List({ onSelect }: ListProps) {
         )}
         {isLoadingNextPage && (
           <div className={styles.loadMoreSkeletons} aria-hidden>
+            <ClassCardSkeleton />
             <ClassCardSkeleton />
             <ClassCardSkeleton />
           </div>
