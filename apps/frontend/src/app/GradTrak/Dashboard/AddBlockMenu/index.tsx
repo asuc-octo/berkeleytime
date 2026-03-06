@@ -91,7 +91,11 @@ export default function AddBlockMenu({
     const handleMouseDown = (e: MouseEvent) => {
       const el = containerRef.current;
       if (!el) return;
-      if (e.target instanceof Node && !el.contains(e.target)) {
+      if (
+        e.target instanceof Node &&
+        !el.contains(e.target) &&
+        !(e.target instanceof Element && e.target.closest("[data-radix-popper-content-wrapper]"))
+      ) {
         onClose?.();
       }
     };

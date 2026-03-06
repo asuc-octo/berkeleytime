@@ -18,6 +18,7 @@ import Rating from "./rating";
 import RouteRedirect from "./route-redirect";
 import Schedule from "./schedule";
 import Staff from "./staff";
+import TargetedMessage from "./targeted-message";
 import Term from "./term";
 import User from "./user";
 
@@ -42,6 +43,7 @@ const modules = [
   Rating,
   RouteRedirect,
   Pod,
+  TargetedMessage,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

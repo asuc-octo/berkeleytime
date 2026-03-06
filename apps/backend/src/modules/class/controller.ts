@@ -55,8 +55,6 @@ export const getSecondarySections = async (
 
   const sectionId = primarySection?.sectionId;
 
-  console.log(primarySection);
-
   const sections = await SectionModel.find({
     year,
     semester,

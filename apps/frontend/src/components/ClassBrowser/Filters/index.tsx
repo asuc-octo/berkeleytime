@@ -5,7 +5,7 @@ import { SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
 import { DaySelect, IconButton, Input, Select, Slider } from "@repo/theme";
-import type { Option, OptionItem } from "@repo/theme";
+import type { Option, OptionItem, SelectTab } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
 import { ClassGradingBasis } from "@/lib/generated/graphql";
@@ -14,6 +14,7 @@ import Header from "../Header";
 import {
   Breadth,
   Day,
+  EMPTY_DAYS,
   EnrollmentFilter,
   GradingFilter,
   Level,
@@ -38,7 +39,10 @@ type RequirementSelection =
   | { type: "breadth"; value: Breadth }
   | { type: "university"; value: UniversityRequirement };
 
-const EMPTY_DAYS: boolean[] = [false, false, false, false, false, false, false];
+const REQUIREMENT_TABS = {
+  LS: "ls",
+  UNIVERSITY: "university",
+} as const;
 
 export default function Filters() {
   const {
@@ -54,8 +58,8 @@ export default function Filters() {
     updateTimeRange,
     breadths,
     updateBreadths,
-    universityRequirement,
-    updateUniversityRequirement,
+    universityRequirements,
+    updateUniversityRequirements,
     gradingFilters,
     updateGradingFilters,
     academicOrganization,
@@ -78,6 +82,9 @@ export default function Filters() {
   const navigate = useNavigate();
 
   const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
+  const [activeRequirementTab, setActiveRequirementTab] = useState<string>(
+    REQUIREMENT_TABS.LS
+  );
 
   useEffect(() => {
     const newDays = daysArray.reduce((acc, v, i) => {
@@ -105,7 +112,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       academicOrganization,
       timeRange
@@ -119,7 +126,7 @@ export default function Filters() {
     enrollmentFilter,
     online,
     breadths,
-    universityRequirement,
+    universityRequirements,
     gradingFilters,
     academicOrganization,
     timeRange,
@@ -146,6 +153,72 @@ export default function Filters() {
     );
   }, [classesForLevelCounts]);
 
+  const classesWithoutEnrollment = useMemo(
+    () =>
+      getFilteredClasses(
+        allClasses,
+        units,
+        levels,
+        days,
+        null,
+        online,
+        breadths,
+        universityRequirements,
+        gradingFilters,
+        academicOrganization,
+        timeRange
+      ).includedClasses,
+    [
+      allClasses,
+      units,
+      levels,
+      days,
+      online,
+      breadths,
+      universityRequirements,
+      gradingFilters,
+      academicOrganization,
+      timeRange,
+    ]
+  );
+
+  const enrollmentCounts = useMemo<Record<EnrollmentFilter, number>>(() => {
+    return classesWithoutEnrollment.reduce<Record<EnrollmentFilter, number>>(
+      (acc, _class) => {
+        const enrollment = _class.primarySection?.enrollment?.latest;
+        const isOpen = enrollment?.status === "O";
+        const hasWaitlistSpace =
+          enrollment &&
+          enrollment.maxWaitlist > 0 &&
+          enrollment.waitlistedCount < enrollment.maxWaitlist;
+        const openSeats = enrollment
+          ? enrollment.maxEnroll - enrollment.enrolledCount
+          : 0;
+        const hasUnreservedOpenSeats =
+          isOpen && openSeats > (enrollment?.activeReservedMaxCount ?? 0);
+
+        if (isOpen) {
+          acc[EnrollmentFilter.Open] += 1;
+        }
+
+        if (hasUnreservedOpenSeats) {
+          acc[EnrollmentFilter.OpenApartFromReserved] += 1;
+        }
+
+        if (isOpen || hasWaitlistSpace) {
+          acc[EnrollmentFilter.WaitlistOpen] += 1;
+        }
+
+        return acc;
+      },
+      {
+        [EnrollmentFilter.Open]: 0,
+        [EnrollmentFilter.OpenApartFromReserved]: 0,
+        [EnrollmentFilter.WaitlistOpen]: 0,
+      }
+    );
+  }, [classesWithoutEnrollment]);
+
   const classesWithoutAcademicOrganization = useMemo(
     () =>
       getFilteredClasses(
@@ -156,7 +229,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         gradingFilters,
         null,
         timeRange
@@ -169,7 +242,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       gradingFilters,
       timeRange,
     ]
@@ -195,7 +268,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         [],
-        null,
+        [],
         gradingFilters,
         academicOrganization,
         timeRange
@@ -249,7 +322,7 @@ export default function Filters() {
         enrollmentFilter,
         online,
         breadths,
-        universityRequirement,
+        universityRequirements,
         [],
         academicOrganization,
         timeRange
@@ -262,7 +335,7 @@ export default function Filters() {
       enrollmentFilter,
       online,
       breadths,
-      universityRequirement,
+      universityRequirements,
       academicOrganization,
       timeRange,
     ]
@@ -292,52 +365,90 @@ export default function Filters() {
     return getAllUniversityRequirements(allClasses);
   }, [allClasses]);
 
-  const requirementOptions = useMemo<Option<RequirementSelection>[]>(() => {
-    const options: Option<RequirementSelection>[] = [];
-
-    if (filteredBreadths.length > 0) {
-      options.push({ type: "label", label: "L&S REQUIREMENTS" });
-      options.push(
-        ...filteredBreadths.map((breadth) => ({
-          value: { type: "breadth", value: breadth } as RequirementSelection,
-          label: breadth,
-          meta: (breadthCounts.get(breadth) ?? 0).toString(),
-        }))
-      );
-    }
-
-    if (filteredUniversityRequirements.length > 0) {
-      options.push({ type: "label", label: "UNIVERSITY REQUIREMENTS" });
-      options.push(
-        ...filteredUniversityRequirements.map((requirement) => ({
-          value: {
-            type: "university",
-            value: requirement,
-          } as RequirementSelection,
-          label: requirement,
-          meta: (universityRequirementCounts.get(requirement) ?? 0).toString(),
-        }))
-      );
-    }
-
-    return options;
-  }, [
-    filteredBreadths,
-    filteredUniversityRequirements,
-    breadthCounts,
-    universityRequirementCounts,
-  ]);
-  const selectedRequirements = useMemo<RequirementSelection[]>(
-    () => [
-      ...breadths.map(
-        (breadth) => ({ type: "breadth", value: breadth }) as const
-      ),
-      ...(universityRequirement
-        ? [{ type: "university" as const, value: universityRequirement }]
-        : []),
-    ],
-    [breadths, universityRequirement]
+  const breadthRequirementOptions = useMemo<Option<RequirementSelection>[]>(
+    () =>
+      filteredBreadths.map((breadth) => ({
+        value: { type: "breadth", value: breadth } as RequirementSelection,
+        label: breadth,
+        meta: (breadthCounts.get(breadth) ?? 0).toString(),
+      })),
+    [breadthCounts, filteredBreadths]
   );
+
+  const universityRequirementOptions = useMemo<Option<RequirementSelection>[]>(
+    () =>
+      filteredUniversityRequirements.map((requirement) => ({
+        value: {
+          type: "university",
+          value: requirement,
+        } as RequirementSelection,
+        label: requirement,
+        meta: (universityRequirementCounts.get(requirement) ?? 0).toString(),
+      })),
+    [filteredUniversityRequirements, universityRequirementCounts]
+  );
+
+  const requirementTabs = useMemo<SelectTab<RequirementSelection>[]>(() => {
+    const tabs: SelectTab<RequirementSelection>[] = [];
+
+    if (breadthRequirementOptions.length > 0) {
+      tabs.push({
+        value: REQUIREMENT_TABS.LS,
+        label: "L&S",
+        options: breadthRequirementOptions,
+      });
+    }
+
+    if (universityRequirementOptions.length > 0) {
+      tabs.push({
+        value: REQUIREMENT_TABS.UNIVERSITY,
+        label: "University",
+        options: universityRequirementOptions,
+      });
+    }
+
+    return tabs;
+  }, [breadthRequirementOptions, universityRequirementOptions]);
+  const requirementSelectTabs =
+    requirementTabs.length > 0 ? requirementTabs : undefined;
+
+  const selectedRequirement = useMemo<RequirementSelection | null>(() => {
+    if (breadths.length > 0) {
+      return { type: "breadth", value: breadths[0] };
+    }
+
+    if (universityRequirements.length > 0) {
+      return {
+        type: "university",
+        value: universityRequirements[0],
+      };
+    }
+
+    return null;
+  }, [breadths, universityRequirements]);
+
+  useEffect(() => {
+    if (selectedRequirement?.type === "breadth") {
+      setActiveRequirementTab(REQUIREMENT_TABS.LS);
+      return;
+    }
+
+    if (selectedRequirement?.type === "university") {
+      setActiveRequirementTab(REQUIREMENT_TABS.UNIVERSITY);
+    }
+  }, [selectedRequirement]);
+
+  useEffect(() => {
+    if (!requirementSelectTabs?.length) return;
+
+    const hasActiveTab = requirementSelectTabs.some(
+      (tab) => tab.value === activeRequirementTab
+    );
+
+    if (!hasActiveTab) {
+      setActiveRequirementTab(requirementSelectTabs[0].value);
+    }
+  }, [activeRequirementTab, requirementSelectTabs]);
 
   const gradingOptions = useMemo<Option<GradingFilter>[]>(() => {
     return Object.values(GradingFilter).map((category) => ({
@@ -522,7 +633,7 @@ export default function Filters() {
   const handleClearFilters = () => {
     updateLevels([]);
     updateBreadths([]);
-    updateUniversityRequirement(null);
+    updateUniversityRequirements([]);
     updateGradingFilters([]);
     updateAcademicOrganization(null);
     updateUnits([0, 5]);
@@ -530,7 +641,7 @@ export default function Filters() {
     updateDays([]);
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
-    updateEnrollmentFilter(EnrollmentFilter.All);
+    updateEnrollmentFilter(null);
   };
 
   return (
@@ -573,6 +684,7 @@ export default function Filters() {
               }))}
               searchPlaceholder="Search semesters..."
               emptyMessage="No semesters found."
+              maxListHeight={130}
             />
           </div>
         )}
@@ -602,63 +714,6 @@ export default function Filters() {
           </div>
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Department</p>
-          <Select<string>
-            searchable
-            value={academicOrganization}
-            placeholder="Select a department"
-            clearable
-            disabled={isAcademicOrganizationDisabled}
-            onChange={(value) => {
-              if (typeof value === "string" || value === null) {
-                updateAcademicOrganization(value);
-              }
-            }}
-            options={academicOrganizationOptions}
-            searchPlaceholder="Search departments..."
-            emptyMessage="No departments found."
-            customSearch={departmentSearchFunction}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Requirements</p>
-          <Select<RequirementSelection>
-            searchable
-            multi
-            value={selectedRequirements}
-            placeholder="Filter by requirements"
-            disabled={false}
-            onChange={(v) => {
-              if (!Array.isArray(v)) return;
-              const nextBreadths = v
-                .filter(
-                  (
-                    option
-                  ): option is Extract<
-                    RequirementSelection,
-                    { type: "breadth" }
-                  > => option.type === "breadth"
-                )
-                .map((option) => option.value);
-              const nextUniversityRequirement =
-                v.find(
-                  (
-                    option
-                  ): option is Extract<
-                    RequirementSelection,
-                    { type: "university" }
-                  > => option.type === "university"
-                )?.value ?? null;
-
-              updateBreadths(nextBreadths);
-              updateUniversityRequirement(nextUniversityRequirement);
-            }}
-            options={requirementOptions}
-            searchPlaceholder="Search requirements..."
-            emptyMessage="No requirements found."
-          />
-        </div>
-        <div className={styles.formControl}>
           <p className={styles.label}>Class level</p>
           <Select
             multi
@@ -678,6 +733,62 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
+          <p className={styles.label}>Requirements</p>
+          <Select<RequirementSelection>
+            searchable
+            clearable
+            value={selectedRequirement}
+            placeholder="Filter by requirements"
+            tabs={requirementSelectTabs}
+            defaultTab={requirementSelectTabs?.[0]?.value}
+            tabValue={activeRequirementTab}
+            onTabChange={(tabValue) => {
+              setActiveRequirementTab(tabValue);
+            }}
+            onChange={(value) => {
+              if (value === null) {
+                updateBreadths([]);
+                updateUniversityRequirements([]);
+                return;
+              }
+
+              if (Array.isArray(value)) return;
+
+              if (value.type === "breadth") {
+                updateBreadths([value.value]);
+                updateUniversityRequirements([]);
+                return;
+              }
+
+              updateUniversityRequirements([value.value]);
+              updateBreadths([]);
+            }}
+            searchPlaceholder="Search requirements..."
+            emptyMessage="No requirements found."
+            contentClassName={styles.requirementsSelectContent}
+            tabsWrapperClassName={styles.requirementsTabs}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Department</p>
+          <Select<string>
+            searchable
+            value={academicOrganization}
+            placeholder="Select a department"
+            clearable
+            disabled={isAcademicOrganizationDisabled}
+            onChange={(value) => {
+              if (typeof value === "string" || value === null) {
+                updateAcademicOrganization(value);
+              }
+            }}
+            options={academicOrganizationOptions}
+            searchPlaceholder="Search departments..."
+            emptyMessage="No departments found."
+            customSearch={departmentSearchFunction}
+          />
+        </div>
+        <div className={styles.formControl}>
           <p className={styles.label}>Units</p>
           <Slider
             min={0}
@@ -686,6 +797,35 @@ export default function Filters() {
             value={units}
             onValueChange={updateUnits}
             labels={["0", "1", "2", "3", "4", "5+"]}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Enrollment Status</p>
+          <Select
+            value={enrollmentFilter}
+            placeholder="Select enrollment status"
+            clearable
+            onChange={(value) =>
+              updateEnrollmentFilter(value as EnrollmentFilter | null)
+            }
+            options={Object.values(EnrollmentFilter).map((filter) => ({
+              value: filter,
+              label: filter,
+              meta: enrollmentCounts[filter].toString(),
+            }))}
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Grading Option</p>
+          <Select<GradingFilter>
+            multi
+            value={gradingFilters}
+            placeholder="Filter by grading options"
+            disabled={isGradingDisabled}
+            onChange={(v) => {
+              if (Array.isArray(v)) updateGradingFilters(v);
+            }}
+            options={gradingOptions}
           />
         </div>
         <div className={styles.formControl}>
@@ -729,32 +869,6 @@ export default function Filters() {
               />
             </div>
           </div>
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Enrollment Status</p>
-          <Select
-            value={enrollmentFilter}
-            onChange={(value) =>
-              updateEnrollmentFilter(value as EnrollmentFilter)
-            }
-            options={Object.values(EnrollmentFilter).map((filter) => ({
-              value: filter,
-              label: filter,
-            }))}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Grading Option</p>
-          <Select<GradingFilter>
-            multi
-            value={gradingFilters}
-            placeholder="Filter by grading options"
-            disabled={isGradingDisabled}
-            onChange={(v) => {
-              if (Array.isArray(v)) updateGradingFilters(v);
-            }}
-            options={gradingOptions}
-          />
         </div>
       </div>
     </div>

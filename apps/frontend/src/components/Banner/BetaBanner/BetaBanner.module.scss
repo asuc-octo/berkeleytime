@@ -26,12 +26,6 @@
     border-radius: 4px;
     transition: color 100ms ease-in-out;
 
-    &.returnLink {
-      @media (width <= 992px) {
-        display: none;
-      }
-    }
-
     @include dark-mode {
       color: var(--gray-300);
     }

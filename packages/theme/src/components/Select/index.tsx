@@ -145,7 +145,13 @@
  * - Colors are applied to both badges and dropdown items
  * - Options can include meta text for additional information (e.g., counts)
  */
-import { useEffect, useImperativeHandle, useMemo, useState } from "react";
+import {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Flex } from "@radix-ui/themes";
 import classNames from "classnames";
@@ -153,7 +159,7 @@ import { Command } from "cmdk";
 import { NavArrowDown, Plus, Search, Xmark } from "iconoir-react";
 import { DropdownMenu, Popover } from "radix-ui";
 
-import { Badge } from "../Badge";
+import { useStack } from "../../hooks/useStack";
 import { PillSwitcher } from "../PillSwitcher";
 import { Color } from "../ThemeProvider";
 import styles from "./Select.module.scss";
@@ -216,7 +222,15 @@ export interface SelectProps<T> {
   onTabChange?: (value: string) => void;
   selectedLabel?: string;
   style?: React.CSSProperties;
+  maxListHeight?: number;
+  contentClassName?: string;
+  tabsWrapperClassName?: string;
 }
+
+const hasVerticalOverflow = (element: HTMLElement | null): boolean => {
+  if (!element) return false;
+  return element.scrollHeight > element.clientHeight + 1;
+};
 
 export function Select<T>({
   options = [],
@@ -242,13 +256,22 @@ export function Select<T>({
   onTabChange,
   selectedLabel,
   style,
+  maxListHeight,
+  contentClassName,
+  tabsWrapperClassName,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [showContentDivider, setShowContentDivider] = useState(false);
+  const [showCommandListDivider, setShowCommandListDivider] = useState(false);
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
     tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const commandListRef = useRef<HTMLDivElement | null>(null);
 
+  const stack = useStack();
+  const contentZIndex = Math.max(1010, stack + 1);
   const { triggerRef, triggerWidth } = useMatchTriggerWidth<HTMLDivElement>();
 
   // Tabs force searchable mode
@@ -317,6 +340,21 @@ export function Select<T>({
     [options, tabs, activeTabValue]
   );
 
+  useEffect(() => {
+    if (!open) {
+      setShowContentDivider(false);
+      setShowCommandListDivider(false);
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      setShowContentDivider(hasVerticalOverflow(contentRef.current));
+      setShowCommandListDivider(hasVerticalOverflow(commandListRef.current));
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [open, currentOptions, searchValue, maxListHeight, activeTabValue]);
+
   const optionUniverse = useMemo(
     () => (tabs?.length ? tabs.flatMap((tab) => tab.options) : options),
     [tabs, options]
@@ -326,6 +364,16 @@ export function Select<T>({
     () => optionUniverse.filter(isOptionItem),
     [optionUniverse]
   );
+
+  const getMultiSelectionText = (selectedOptions: OptionItem<T>[]): string => {
+    if (selectedOptions.length === 0) return effectivePlaceholder;
+    if (selectedOptions.length === 1) return selectedOptions[0].label;
+    if (selectedOptions.length === 2) {
+      return `${selectedOptions[0].label} and ${selectedOptions[1].label}`;
+    }
+
+    return `${selectedOptions[0].label} + ${selectedOptions.length - 1} others`;
+  };
 
   // Keep select usable even when no options match; only disable when explicitly disabled or loading
   const effectiveDisabled = disabled || loading;
@@ -363,44 +411,17 @@ export function Select<T>({
     }
   };
 
-  const handleRemoveBadge = (optValue: T) => {
-    if (!Array.isArray(value)) return;
-    onChange(value.filter((v) => !deepEqual(v, optValue)));
-  };
-
   // Trigger content (shared between searchable and non-searchable)
   const triggerContent = (
     <>
       <div className={styles.triggerLabel}>
-        {hasSelection ? (
-          Array.isArray(activeElem) ? (
-            <Flex className={styles.badgeContainer}>
-              {activeElem.map((el) => (
-                <Badge
-                  key={el.label}
-                  label={el.label}
-                  color={el.color ? el.color : Color.Blue}
-                  icon={
-                    <Xmark
-                      style={{ zIndex: 100 }}
-                      onPointerDown={(e) => {
-                        e.stopPropagation();
-                        handleRemoveBadge(el.value);
-                        e.preventDefault();
-                      }}
-                    />
-                  }
-                />
-              ))}
-            </Flex>
-          ) : activeElem ? (
-            (activeElem as OptionItem<T>).label
-          ) : (
-            selectedLabel
-          )
-        ) : (
-          effectivePlaceholder
-        )}
+        {hasSelection
+          ? Array.isArray(activeElem)
+            ? getMultiSelectionText(activeElem)
+            : activeElem
+              ? (activeElem as OptionItem<T>).label
+              : selectedLabel
+          : effectivePlaceholder}
       </div>
       <Flex
         direction="row"
@@ -506,6 +527,7 @@ export function Select<T>({
               selected={selected}
               disabled={opt.disabled}
               color={opt.color}
+              checkboxMulti={multi}
             />
           </Command.Item>
         );
@@ -552,41 +574,61 @@ export function Select<T>({
           </Flex>
         </Popover.Trigger>
         {!effectiveDisabled && (
-          <Popover.Content
-            className={styles.searchableContent}
-            style={{ width: triggerWidth, zIndex: 999 }}
-            sideOffset={5}
-            align="start"
-          >
-            <Command shouldFilter={false}>
-              <div className={styles.searchInputWrapper}>
-                <Search className={styles.searchIcon} width={16} height={16} />
-                <Command.Input
-                  placeholder={searchPlaceholder}
-                  value={searchValue}
-                  onValueChange={setSearchValue}
-                  className={styles.searchInput}
-                />
-              </div>
-              {tabs?.length ? (
-                <div className={styles.tabsWrapper}>
-                  <PillSwitcher
-                    value={activeTabValue}
-                    defaultValue={defaultTab || tabs[0]?.value}
-                    items={tabs.map((tab) => ({
-                      value: tab.value,
-                      label: tab.label,
-                    }))}
-                    fullWidth
-                    onValueChange={handleTabChange}
+          <Popover.Portal>
+            <Popover.Content
+              className={classNames(styles.searchableContent, contentClassName)}
+              style={{ width: triggerWidth, zIndex: contentZIndex }}
+              sideOffset={5}
+              align="start"
+              collisionPadding={8}
+            >
+              <Command shouldFilter={false}>
+                <div className={styles.searchInputWrapper}>
+                  <Search
+                    className={styles.searchIcon}
+                    width={16}
+                    height={16}
+                  />
+                  <Command.Input
+                    placeholder={searchPlaceholder}
+                    value={searchValue}
+                    onValueChange={setSearchValue}
+                    className={styles.searchInput}
                   />
                 </div>
-              ) : null}
-              <Command.List className={styles.commandList}>
-                {renderGroupedOptions()}
-              </Command.List>
-            </Command>
-          </Popover.Content>
+                {tabs?.length ? (
+                  <div
+                    className={classNames(
+                      styles.tabsWrapper,
+                      tabsWrapperClassName
+                    )}
+                  >
+                    <PillSwitcher
+                      value={activeTabValue}
+                      defaultValue={defaultTab || tabs[0]?.value}
+                      items={tabs.map((tab) => ({
+                        value: tab.value,
+                        label: tab.label,
+                      }))}
+                      fullWidth
+                      onValueChange={handleTabChange}
+                    />
+                  </div>
+                ) : null}
+                <Command.List
+                  ref={commandListRef}
+                  className={classNames(styles.commandList, {
+                    [styles.showDivider]: showCommandListDivider,
+                  })}
+                  style={
+                    maxListHeight ? { maxHeight: maxListHeight } : undefined
+                  }
+                >
+                  {renderGroupedOptions()}
+                </Command.List>
+              </Command>
+            </Popover.Content>
+          </Popover.Portal>
         )}
       </Popover.Root>
     );
@@ -614,81 +656,95 @@ export function Select<T>({
         </Flex>
       </DropdownMenu.Trigger>
       {!effectiveDisabled && (
-        <DropdownMenu.Content
-          className={styles.content}
-          style={{ width: triggerWidth, zIndex: 999 }}
-          sideOffset={5}
-        >
-          {currentOptions.length === 0 ? (
-            <div className={styles.commandEmpty}>{emptyMessage}</div>
-          ) : (
-            currentOptions.map((opt, i) => {
-              if (!isOptionItem(opt)) {
-                return (
-                  <div key={`label-${i}`} className={styles.sectionLabel}>
-                    {opt.label}
-                  </div>
-                );
-              }
+        <DropdownMenu.Portal>
+          <DropdownMenu.Content
+            ref={contentRef}
+            className={classNames(
+              styles.content,
+              {
+                [styles.showDivider]: showContentDivider,
+              },
+              contentClassName
+            )}
+            style={{
+              width: triggerWidth,
+              zIndex: contentZIndex,
+              ...(maxListHeight ? { maxHeight: maxListHeight } : {}),
+            }}
+            sideOffset={5}
+            collisionPadding={8}
+          >
+            {currentOptions.length === 0 ? (
+              <div className={styles.commandEmpty}>{emptyMessage}</div>
+            ) : (
+              currentOptions.map((opt, i) => {
+                if (!isOptionItem(opt)) {
+                  return (
+                    <div key={`label-${i}`} className={styles.sectionLabel}>
+                      {opt.label}
+                    </div>
+                  );
+                }
 
-              return (
-                <DropdownMenu.Item
-                  key={`${i}-${opt.label}`}
-                  style={{ outline: "none" }}
-                  disabled={opt.disabled}
-                  onSelect={(e) => {
-                    if (opt.disabled) {
-                      e.preventDefault();
-                      return;
-                    }
-                    if (multi) {
-                      e.preventDefault();
-                      let newValues: T[];
-                      if (Array.isArray(value))
-                        newValues = structuredClone(value);
-                      else newValues = [];
-                      if (!newValues.some((v) => deepEqual(v, opt.value))) {
-                        newValues.push(opt.value);
-                        onChange(newValues);
-                      } else
-                        onChange(
-                          newValues.filter((v) => !deepEqual(v, opt.value))
-                        );
-                    } else onChange(opt.value);
-                  }}
-                >
-                  <SelectItem
-                    label={opt.label}
-                    meta={opt.meta}
-                    checkboxMulti={checkboxMulti}
+                return (
+                  <DropdownMenu.Item
+                    key={`${i}-${opt.label}`}
+                    style={{ outline: "none" }}
                     disabled={opt.disabled}
-                    selected={
-                      Array.isArray(value)
-                        ? value.some((v) => deepEqual(v, opt.value))
-                        : deepEqual(value, opt.value)
-                    }
-                    color={opt.color}
-                  />
-                </DropdownMenu.Item>
-              );
-            })
-          )}
-          {addOption && (
-            <DropdownMenu.Item
-              key="add"
-              onSelect={addOption.onClick}
-              className={styles.addOption}
-            >
-              <Plus
-                style={{
-                  position: "relative",
-                  top: "2px",
-                }}
-              />{" "}
-              {addOption.text}
-            </DropdownMenu.Item>
-          )}
-        </DropdownMenu.Content>
+                    onSelect={(e) => {
+                      if (opt.disabled) {
+                        e.preventDefault();
+                        return;
+                      }
+                      if (multi) {
+                        e.preventDefault();
+                        let newValues: T[];
+                        if (Array.isArray(value))
+                          newValues = structuredClone(value);
+                        else newValues = [];
+                        if (!newValues.some((v) => deepEqual(v, opt.value))) {
+                          newValues.push(opt.value);
+                          onChange(newValues);
+                        } else
+                          onChange(
+                            newValues.filter((v) => !deepEqual(v, opt.value))
+                          );
+                      } else onChange(opt.value);
+                    }}
+                  >
+                    <SelectItem
+                      label={opt.label}
+                      meta={opt.meta}
+                      checkboxMulti={multi || checkboxMulti}
+                      disabled={opt.disabled}
+                      selected={
+                        Array.isArray(value)
+                          ? value.some((v) => deepEqual(v, opt.value))
+                          : deepEqual(value, opt.value)
+                      }
+                      color={opt.color}
+                    />
+                  </DropdownMenu.Item>
+                );
+              })
+            )}
+            {addOption && (
+              <DropdownMenu.Item
+                key="add"
+                onSelect={addOption.onClick}
+                className={styles.addOption}
+              >
+                <Plus
+                  style={{
+                    position: "relative",
+                    top: "2px",
+                  }}
+                />{" "}
+                {addOption.text}
+              </DropdownMenu.Item>
+            )}
+          </DropdownMenu.Content>
+        </DropdownMenu.Portal>
       )}
     </DropdownMenu.Root>
   );

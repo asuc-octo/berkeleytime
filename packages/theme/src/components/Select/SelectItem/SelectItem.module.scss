@@ -14,8 +14,8 @@
 
   &:active,
   &:focus-visible {
-    background-color: var(--blue-500);
-    color: white;
+    background-color: var(--blue-500-20);
+    color: var(--blue-500);
   }
 
   &[data-disabled="true"] {
@@ -24,15 +24,27 @@
   }
 
   &[data-selected="true"] {
-    background-color: var(--blue-500);
-    color: white;
+    background-color: var(--blue-500-20);
+    color: var(--blue-500);
 
     &:hover:not([data-disabled="true"]) {
-      background-color: var(--blue-hover);
+      background-color: var(--blue-500-20);
     }
 
     .meta {
-      color: white;
+      color: var(--blue-500);
+    }
+  }
+
+  &.checkbox {
+    &:hover:not([data-disabled="true"]) {
+      background-color: var(--button-hover-color);
+    }
+
+    &:active,
+    &:focus-visible {
+      background-color: var(--button-hover-color);
+      color: var(--secondary-color);
     }
   }
 

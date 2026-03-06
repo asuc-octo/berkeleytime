@@ -95,7 +95,7 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
         {classData.hasReservedSeats && (
           <span className={styles.reserved}>
             <InfoCircle className={styles.reservedIcon} />
-            Reserved
+            Rsvd
           </span>
         )}
       </div>
