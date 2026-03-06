@@ -131,32 +131,12 @@ start_services() {
   $compose_cmd up -d
 }
 
-backup_date_string() {
-  # Match docs: TZ=America/Los_Angeles date -v -6H +%Y%m%d (macOS)
-  # GNU date fallback: TZ=America/Los_Angeles date -d '6 hours ago' +%Y%m%d (Linux)
-  if TZ=America/Los_Angeles date -v -6H +%Y%m%d >/dev/null 2>&1; then
-    TZ=America/Los_Angeles date -v -6H +%Y%m%d
-    return 0
-  fi
-  if TZ=America/Los_Angeles date -d '6 hours ago' +%Y%m%d >/dev/null 2>&1; then
-    TZ=America/Los_Angeles date -d '6 hours ago' +%Y%m%d
-    return 0
-  fi
-  return 1
-}
-
 seed_database() {
   step "Seeding local MongoDB"
   require_cmd curl "Install curl, then re-run."
 
-  local date_str
-  date_str="$(backup_date_string)" || die "Unable to compute backup date string (date command unsupported)."
-
   local backup_file="prod-backup.gz"
-  local backup_url="https://backups.berkeleytime.com/daily/prod_public_backup-${date_str}.gz"
-
-  log "Downloading ${backup_url}"
-  curl -fL -o "$backup_file" "$backup_url"
+  curl -f -o "$backup_file" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d).gz"
 
   local compose_cmd
   compose_cmd="$(detect_compose_cmd)" || die "Docker Compose not found."
