@@ -15,10 +15,13 @@ const LOGOUT_ROUTE = "/logout";
 
 // route need to be added as authorized origins/redirect uris in google cloud console
 // OAuth requires an absolute callback URL (e.g. https://berkeleytime.com/api/login/redirect)
-const backendBase = config.backendPublicUrl ?? config.backendPath;
-const LOGIN_REDIRECT = backendBase.replace(/\/$/, "") + "/login/redirect";
+const backendBase = (config.backendPublicUrl ?? config.backendPath).replace(
+  /\/$/,
+  ""
+);
+const LOGIN_REDIRECT = backendBase + "/login/redirect";
 const SUCCESS_REDIRECT = "/";
-const FAILURE_REDIRECT = backendBase.replace(/\/$/, "") + "/fail";
+const FAILURE_REDIRECT = backendBase + "/fail";
 
 const SCOPE = ["profile", "email"];
 
@@ -237,7 +240,9 @@ export default async (app: Application, redis: RedisClientType) => {
 
     // GET /dev/users - List available users for selection
     app.get(DEV_USERS_ROUTE, async (_req, res) => {
-      const users = await UserModel.find({}).select("_id email name staff");
+      const users = await UserModel.find({})
+        .select("_id email name staff")
+        .limit(100);
 
       res.json(users);
     });

@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 
+import { useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -23,29 +24,15 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { getColorCSSVar } from "@/lib/colors";
-import { Semester } from "@/lib/generated/graphql";
+import {
+  GetCatalogClassIdentitiesDocument,
+  Semester,
+} from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
-import CatalogSkeleton from "./Skeleton";
-
-const DESKTOP_BREAKPOINT = 992;
-
-const useMinWidth = (breakpoint: number) => {
-  const [matches, setMatches] = useState(() => window.innerWidth > breakpoint);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(width > ${breakpoint}px)`);
-    const handleChange = (e: MediaQueryListEvent) => setMatches(e.matches);
-
-    setMatches(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [breakpoint]);
-
-  return matches;
-};
+import useCatalogLayoutMode from "./hooks/useCatalogLayoutMode";
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
@@ -53,6 +40,12 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Summer]: 1,
   [Semester.Fall]: 2,
   [Semester.Winter]: 3,
+};
+
+// Fallback term so the catalog UI always renders (query will return 0 results)
+const FALLBACK_TERM = {
+  year: new Date().getFullYear(),
+  semester: Semester.Spring as Semester,
 };
 
 type SavedClassItem = {
@@ -263,27 +256,19 @@ export default function Catalog() {
   const location = useLocation();
   const { user } = useUser();
 
-  const isDesktop = useMinWidth(DESKTOP_BREAKPOINT);
+  const mode = useCatalogLayoutMode();
+  const isDesktop = mode !== "compact";
   const hasClassSelected = Boolean(providedSubject && courseNumber && number);
 
   const [catalogDrawerOpen, setCatalogDrawerOpen] = useState(
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms, loading: termsLoading } = useReadTerms();
+  const { data: terms } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
     });
-  const [catalogAvailabilityClasses, setCatalogAvailabilityClasses] = useState<
-    CatalogAvailabilityClass[]
-  >([]);
-  const handleCatalogClassAvailabilityChange = useCallback(
-    (classes: CatalogAvailabilityClass[]) => {
-      setCatalogAvailabilityClasses(classes);
-    },
-    []
-  );
 
   const semester = useMemo(() => {
     if (!providedSemester) return null;
@@ -326,12 +311,22 @@ export default function Catalog() {
       });
     }
 
-    return selectedTerm;
+    return selectedTerm ?? null;
   }, [terms, year, semester]);
 
-  useEffect(() => {
-    setCatalogAvailabilityClasses([]);
-  }, [term?.year, term?.semester]);
+  const effectiveTerm = term ?? FALLBACK_TERM;
+
+  const { data: identitiesData } = useQuery(GetCatalogClassIdentitiesDocument, {
+    variables: {
+      year: effectiveTerm.year,
+      semester: effectiveTerm.semester as Semester,
+    },
+    fetchPolicy: "cache-and-network",
+  });
+  const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
+    () => identitiesData?.catalogClassIdentities ?? [],
+    [identitiesData]
+  );
 
   const subject = useMemo(
     () => providedSubject?.toUpperCase(),
@@ -346,8 +341,8 @@ export default function Catalog() {
   }, [isDesktop, hasClassSelected]);
 
   const { data: _class, error: classError } = useGetClass(
-    term?.year as number,
-    term?.semester as Semester,
+    effectiveTerm.year,
+    effectiveTerm.semester as Semester,
     sessionId as string,
     subject as string,
     courseNumber as string,
@@ -485,15 +480,15 @@ export default function Catalog() {
       const matchedClass = exactNumberMatch ?? candidates[0];
 
       return {
-        year: term.year,
-        semester: term.semester,
+        year: effectiveTerm.year,
+        semester: effectiveTerm.semester,
         subject: matchedClass.subject,
         courseNumber: matchedClass.courseNumber,
         number: matchedClass.number,
         sessionId: matchedClass.sessionId,
       };
     },
-    [catalogAvailabilityByCourse, term]
+    [catalogAvailabilityByCourse, effectiveTerm, term]
   );
 
   const handleSelect = useCallback(
@@ -509,10 +504,10 @@ export default function Catalog() {
 
       navigate({
         ...location,
-        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
+        pathname: `/catalog/${effectiveTerm.year}/${effectiveTerm.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [location, navigate, term]
+    [location, navigate, effectiveTerm, term]
   );
 
   const handleSavedClassSelect = useCallback(
@@ -528,174 +523,159 @@ export default function Catalog() {
     navigate("/profile/bookmarks");
   }, [navigate]);
 
-  const [catalogLoading, setCatalogLoading] = useState(true);
-
-  if (termsLoading) {
-    return <CatalogSkeleton />;
-  }
-
-  // TODO: Error state
-  if (!terms || !term) {
-    return <></>;
-  }
+  // TODO: Error state for terms loading failure
 
   return (
-    <div className={styles.root}>
-      {catalogLoading && (
-        <div className={styles.skeletonOverlay}>
-          <CatalogSkeleton />
-        </div>
-      )}
-      {isDesktop ? (
-        // Desktop: Static panel
-        <div className={styles.panel}>
-          <ClassBrowser
-            onSelect={handleSelect}
-            onCatalogClassAvailabilityChange={
-              handleCatalogClassAvailabilityChange
-            }
-            onLoadingChange={setCatalogLoading}
-            semester={term.semester}
-            year={term.year}
-            terms={terms}
-            persistent
-          />
-        </div>
-      ) : (
-        // Mobile: Drawer overlay
-        <>
-          <AnimatePresence>
-            {catalogDrawerOpen && (
-              <motion.div
-                className={styles.overlay}
-                onClick={() => setCatalogDrawerOpen(false)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              />
-            )}
-          </AnimatePresence>
-          <motion.div
-            className={styles.catalogDrawer}
-            animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          >
+    <>
+      <div className={styles.root}>
+        {isDesktop ? (
+          // Desktop: Static panel
+          <div className={styles.panel}>
             <ClassBrowser
               onSelect={handleSelect}
-              onCatalogClassAvailabilityChange={
-                handleCatalogClassAvailabilityChange
-              }
-              onLoadingChange={setCatalogLoading}
-              semester={term.semester}
-              year={term.year}
-              terms={terms}
+              forceMode={mode}
+              semester={effectiveTerm.semester}
+              year={effectiveTerm.year}
+              terms={terms ?? undefined}
               persistent
             />
-          </motion.div>
-        </>
-      )}
-
-      {!isDesktop && (
-        <div
-          className={styles.drawerTrigger}
-          onClick={() => setCatalogDrawerOpen(true)}
-        >
-          {!catalogDrawerOpen && <NavArrowRight />}
-        </div>
-      )}
-
-      <Flex direction="column" flexGrow="1" className={styles.view}>
-        {user && (
-          <div className={styles.bookmarkBanner}>
-            <div
-              className={styles.bookmarkFoldersViewport}
-              ref={foldersViewportRef}
-            >
-              {collectionsLoading ? (
-                <span className={styles.bookmarkEmptyState}>
-                  Loading collections...
-                </span>
-              ) : cappedOrderedCollections.length > 0 ? (
-                <>
-                  <div className={styles.bookmarkFolders}>
-                    <AnimatePresence mode="popLayout" initial={false}>
-                      {visibleCollections.map((collection, index) => (
-                        <SavedCollectionSection
-                          key={collection.id}
-                          collection={collection}
-                          index={index}
-                          onSelect={handleSavedClassSelect}
-                          resolveCurrentTermClass={resolveCurrentTermClass}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </div>
-                  <div className={styles.bookmarkMeasureRow} aria-hidden="true">
-                    {cappedOrderedCollections.map((collection) => {
-                      const folderColor = getColorCSSVar(collection.color);
-                      const folderIconStyle = folderColor
-                        ? ({
-                            "--bookmark-folder-color": folderColor,
-                          } as CSSProperties)
-                        : undefined;
-
-                      return (
-                        <button
-                          key={`measure-${collection.id}`}
-                          type="button"
-                          className={styles.bookmarkButton}
-                          tabIndex={-1}
-                          ref={(el) => {
-                            measureButtonRefs.current[collection.id] = el;
-                          }}
-                        >
-                          <Folder
-                            width={16}
-                            height={16}
-                            className={
-                              folderColor
-                                ? styles.bookmarkFolderIcon
-                                : undefined
-                            }
-                            style={folderIconStyle}
-                          />
-                          <span className={styles.bookmarkButtonText}>
-                            {collection.name}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <span className={styles.bookmarkEmptyState}>
-                  No saved classes yet.
-                </span>
+          </div>
+        ) : (
+          // Mobile: Drawer overlay
+          <>
+            <AnimatePresence>
+              {catalogDrawerOpen && (
+                <motion.div
+                  className={styles.overlay}
+                  onClick={() => setCatalogDrawerOpen(false)}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.9 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                />
               )}
+            </AnimatePresence>
+            <motion.div
+              className={styles.catalogDrawer}
+              animate={{ x: catalogDrawerOpen ? 0 : "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            >
+              <ClassBrowser
+                onSelect={handleSelect}
+                forceMode={mode}
+                semester={effectiveTerm.semester}
+                year={effectiveTerm.year}
+                terms={terms ?? undefined}
+                persistent
+              />
+            </motion.div>
+          </>
+        )}
+
+        {!isDesktop && (
+          <div
+            className={styles.drawerTrigger}
+            onClick={() => setCatalogDrawerOpen(true)}
+          >
+            {!catalogDrawerOpen && <NavArrowRight />}
+          </div>
+        )}
+
+        <Flex direction="column" flexGrow="1" className={styles.view}>
+          {user && (
+            <div className={styles.bookmarkBanner}>
+              <div
+                className={styles.bookmarkFoldersViewport}
+                ref={foldersViewportRef}
+              >
+                {collectionsLoading ? (
+                  <span className={styles.bookmarkEmptyState}>
+                    Loading collections...
+                  </span>
+                ) : cappedOrderedCollections.length > 0 ? (
+                  <>
+                    <div className={styles.bookmarkFolders}>
+                      <AnimatePresence mode="popLayout" initial={false}>
+                        {visibleCollections.map((collection, index) => (
+                          <SavedCollectionSection
+                            key={collection.id}
+                            collection={collection}
+                            index={index}
+                            onSelect={handleSavedClassSelect}
+                            resolveCurrentTermClass={resolveCurrentTermClass}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                    <div
+                      className={styles.bookmarkMeasureRow}
+                      aria-hidden="true"
+                    >
+                      {cappedOrderedCollections.map((collection) => {
+                        const folderColor = getColorCSSVar(collection.color);
+                        const folderIconStyle = folderColor
+                          ? ({
+                              "--bookmark-folder-color": folderColor,
+                            } as CSSProperties)
+                          : undefined;
+
+                        return (
+                          <button
+                            key={`measure-${collection.id}`}
+                            type="button"
+                            className={styles.bookmarkButton}
+                            tabIndex={-1}
+                            ref={(el) => {
+                              measureButtonRefs.current[collection.id] = el;
+                            }}
+                          >
+                            <Folder
+                              width={16}
+                              height={16}
+                              className={
+                                folderColor
+                                  ? styles.bookmarkFolderIcon
+                                  : undefined
+                              }
+                              style={folderIconStyle}
+                            />
+                            <span className={styles.bookmarkButtonText}>
+                              {collection.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <span className={styles.bookmarkEmptyState}>
+                    No saved classes yet.
+                  </span>
+                )}
+              </div>
+              <Tooltip
+                title="Collections page"
+                side="bottom"
+                trigger={
+                  <button
+                    type="button"
+                    className={styles.bookmarkCollectionsButton}
+                    onClick={handleGoToCollectionsPage}
+                    aria-label="Go to collections page"
+                  >
+                    <Book width={16} height={16} />
+                  </button>
+                }
+              />
             </div>
-            <Tooltip
-              title="Collections page"
-              side="bottom"
-              trigger={
-                <button
-                  type="button"
-                  className={styles.bookmarkCollectionsButton}
-                  onClick={handleGoToCollectionsPage}
-                  aria-label="Go to collections page"
-                >
-                  <Book width={16} height={16} />
-                </button>
-              }
-            />
-          </div>
-        )}
-        {displayedClass && !classError && (
-          <div className={styles.classContainer}>
-            <Class class={displayedClass} scrollWithinContent />
-          </div>
-        )}
-      </Flex>
-    </div>
+          )}
+          {displayedClass && !classError && (
+            <div className={styles.classContainer}>
+              <Class class={displayedClass} scrollWithinContent />
+            </div>
+          )}
+        </Flex>
+      </div>
+    </>
   );
 }

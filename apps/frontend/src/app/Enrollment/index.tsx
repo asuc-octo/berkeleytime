@@ -13,6 +13,7 @@ import {
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import { BAR_CHART_COLORS } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
@@ -71,11 +72,6 @@ interface EnrollmentSidebarProps {
   onEditDraftConsumed: () => void;
 }
 
-const BAR_CHART_COLORS = [
-  "var(--blue-500)",
-  "var(--blue-300)",
-  "var(--blue-800)",
-] as const;
 const ENROLLMENT_ACTIVITY_THRESHOLD_PERCENT = 5;
 
 const DEFAULT_INSTRUCTOR_LABEL = "All instructors";

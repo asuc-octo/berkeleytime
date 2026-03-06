@@ -65,6 +65,13 @@ export interface CourseOutput<I, T> {
   active: boolean;
 }
 
+// Ranked color palette for bar charts (max 3 classes).
+export const BAR_CHART_COLORS = [
+  "var(--blue-500)",
+  "var(--blue-300)",
+  "var(--blue-800)",
+] as const;
+
 export const LIGHT_COLORS = ["#4e79a7", "#76b7b2", "#af7aa1", "#ff9da7"];
 export const DARK_COLORS = ["#1a2a3b", "#1f3332", "#2e2233", "#3b2227"];
 

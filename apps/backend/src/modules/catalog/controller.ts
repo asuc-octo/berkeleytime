@@ -1,18 +1,24 @@
-import { GraphQLResolveInfo } from "graphql";
+import type { GraphQLResolveInfo } from "graphql";
+import type { PipelineStage } from "mongoose";
 
 import {
-  type AggregatedGradeDistribution,
+  getAverageGrade,
+  getDistribution,
+  getPnpPercentage,
   getPnpPercentageFromCounts,
+  parseTermName,
+  parseTimeToMinutes,
 } from "@repo/common";
 import {
+  CatalogClassModel,
   ClassModel,
   ClassViewCountModel,
   CourseModel,
   GradeDistributionModel,
-  IClassItem,
-  ICourseItem,
-  IGradeDistributionItem,
-  ISectionItem,
+  type IClassItem,
+  type ICourseItem,
+  type IGradeDistributionItem,
+  type ISectionItem,
   NewEnrollmentHistoryModel,
   SectionModel,
   TermModel,
@@ -20,42 +26,450 @@ import {
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
-import { ClassModule } from "../class/generated-types/module-types";
+import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
-import { EnrollmentModule } from "../enrollment/generated-types/module-types";
-import {
-  aggregateGradeDistributions,
-  getGradeDistributionsByCourseIds,
-} from "../grade-distribution/controller";
-import { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
+import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+
+export interface CatalogQueryParams {
+  year: number;
+  semester: string;
+  search?: string | null;
+  filters?: {
+    levels?: string[] | null;
+    departments?: string[] | null;
+    unitsMin?: number | null;
+    unitsMax?: number | null;
+    days?: number[] | null;
+    timeFrom?: string | null;
+    timeTo?: string | null;
+    enrollmentFilter?: string | null;
+    gradingFilters?: string[] | null;
+    breadths?: string[] | null;
+    universityRequirements?: string[] | null;
+    online?: boolean | null;
+  } | null;
+  sortBy?: string | null;
+  sortOrder?: string | null;
+  page?: number | null;
+  pageSize?: number | null;
+}
+
+type CatalogFilterCondition = Record<string, unknown>;
+type CatalogFilterQuery = Record<string, unknown> & {
+  $and?: CatalogFilterCondition[];
+};
+
+const appendAndCondition = (
+  query: CatalogFilterQuery,
+  condition: CatalogFilterCondition
+) => {
+  if (!query.$and) {
+    query.$and = [];
+  }
+
+  query.$and.push(condition);
+};
+
+export const getCatalogClassIdentities = async (
+  year: number,
+  semester: string
+) => {
+  return CatalogClassModel.find(
+    { year, semester },
+    { subject: 1, courseNumber: 1, number: 1, sessionId: 1, _id: 0 }
+  ).lean();
+};
+
+export const getCatalogSearch = async (params: CatalogQueryParams) => {
+  const {
+    year,
+    semester,
+    search,
+    filters,
+    sortBy,
+    sortOrder,
+    page = 1,
+    pageSize = 25,
+  } = params;
+
+  const effectivePage = Math.max(1, page ?? 1);
+  const effectivePageSize = Math.min(100, Math.max(1, pageSize ?? 25));
+  const skip = (effectivePage - 1) * effectivePageSize;
+
+  // If search is provided, use Atlas Search aggregation
+  if (search && search.trim().length > 0) {
+    return getCatalogWithSearch({
+      year,
+      semester,
+      searchTerm: search.trim(),
+      filters,
+      limit: effectivePageSize,
+      skip,
+    });
+  }
+
+  // Build filter query
+  const query = buildFilterQuery(year, semester, filters);
+
+  // Build sort
+  const sort = buildSort(sortBy, sortOrder);
+
+  // Execute count and find in parallel
+  const [totalCount, results] = await Promise.all([
+    CatalogClassModel.countDocuments(query),
+    CatalogClassModel.find(query)
+      .sort(sort)
+      .skip(skip)
+      .limit(effectivePageSize)
+      .lean(),
+  ]);
+
+  return { results, totalCount };
+};
+
+const getCatalogWithSearch = async ({
+  year,
+  semester,
+  searchTerm,
+  filters,
+  limit,
+  skip,
+}: {
+  year: number;
+  semester: string;
+  searchTerm: string;
+  filters: CatalogQueryParams["filters"];
+  limit: number;
+  skip: number;
+}) => {
+  const filterMatch = buildFilterQuery(year, semester, filters);
+
+  // Use Atlas Search $search stage
+  const pipeline: PipelineStage[] = [
+    {
+      $search: {
+        index: "catalog_search",
+        compound: {
+          should: [
+            {
+              autocomplete: {
+                query: searchTerm,
+                path: "searchableNames",
+                fuzzy: { maxEdits: 1 },
+                score: { boost: { value: 10 } },
+              },
+            },
+            {
+              text: {
+                query: searchTerm,
+                path: "searchableNames",
+                fuzzy: { maxEdits: 1 },
+                score: { boost: { value: 5 } },
+              },
+            },
+            {
+              text: {
+                query: searchTerm,
+                path: "courseTitle",
+                fuzzy: { maxEdits: 1 },
+                score: { boost: { value: 2 } },
+              },
+            },
+            {
+              text: {
+                query: searchTerm,
+                path: "courseDescription",
+                fuzzy: { maxEdits: 1 },
+                score: { boost: { value: 0.5 } },
+              },
+            },
+          ],
+          minimumShouldMatch: 1,
+        },
+      },
+    } as PipelineStage,
+    { $match: filterMatch } as PipelineStage,
+    {
+      $addFields: {
+        searchScore: { $meta: "searchScore" },
+      },
+    } as PipelineStage,
+  ];
+
+  // NOTE: $facet materializes the full result set in memory before paginating.
+  // For broad searches, consider using $searchMeta in a separate query for the count.
+  pipeline.push({
+    $facet: {
+      results: [
+        { $sort: { searchScore: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+      ],
+      count: [{ $count: "total" }],
+    },
+  } as PipelineStage);
+
+  const [facetResult] = await CatalogClassModel.aggregate(pipeline);
+
+  const results = facetResult?.results ?? [];
+  const totalCount = facetResult?.count?.[0]?.total ?? 0;
+
+  return { results, totalCount };
+};
+
+const buildFilterQuery = (
+  year: number,
+  semester: string,
+  filters: CatalogQueryParams["filters"]
+): CatalogFilterQuery => {
+  const query: CatalogFilterQuery = { year, semester };
+
+  if (!filters) return query;
+
+  // Level filter
+  if (filters.levels && filters.levels.length > 0) {
+    query.level = { $in: filters.levels };
+  }
+
+  // Department filter
+  if (filters.departments && filters.departments.length > 0) {
+    query.academicOrganization = { $in: filters.departments };
+  }
+
+  // Units range overlap
+  if (filters.unitsMin != null || filters.unitsMax != null) {
+    const min = filters.unitsMin ?? 0;
+    const max = filters.unitsMax ?? 99;
+    query.unitsMax = { $gte: min };
+    query.unitsMin = { $lte: max };
+  }
+
+  // Days filter - class meeting days must be a subset of selected days
+  if (filters.days && filters.days.length > 0) {
+    for (let i = 0; i < 7; i++) {
+      if (!filters.days.includes(i)) {
+        query[`meetingDays.${i}`] = false;
+      }
+    }
+    const dayConditions = filters.days.map((day) => ({
+      [`meetingDays.${day}`]: true,
+    }));
+    appendAndCondition(query, {
+      $or: dayConditions,
+    });
+  }
+
+  // Time range filter
+  if (filters.timeFrom || filters.timeTo) {
+    if (filters.timeFrom) {
+      const fromMinutes = parseTimeToMinutes(filters.timeFrom);
+      if (fromMinutes !== null) {
+        const existingStartMinutes =
+          (query.meetingStartMinutes as Record<string, unknown> | undefined) ??
+          {};
+        query.meetingStartMinutes = {
+          ...existingStartMinutes,
+          $gte: fromMinutes,
+          $ne: null,
+        };
+      }
+    }
+    if (filters.timeTo) {
+      const toMinutes = parseTimeToMinutes(filters.timeTo);
+      if (toMinutes !== null) {
+        const existingEndMinutes =
+          (query.meetingEndMinutes as Record<string, unknown> | undefined) ??
+          {};
+        query.meetingEndMinutes = {
+          ...existingEndMinutes,
+          $lte: toMinutes,
+        };
+      }
+    }
+    if (!query.meetingStartMinutes) {
+      query.meetingStartMinutes = { $ne: null };
+    }
+  }
+
+  // Enrollment filter
+  if (filters.enrollmentFilter) {
+    switch (filters.enrollmentFilter) {
+      case "OPEN":
+        query.enrollmentStatus = "O";
+        break;
+      case "NON_RESERVED_OPEN":
+        query.enrollmentStatus = "O";
+        query.$expr = {
+          $gt: [
+            { $subtract: ["$maxEnroll", "$enrolledCount"] },
+            { $ifNull: ["$activeReservedMaxCount", 0] },
+          ],
+        };
+        break;
+      case "WAITLIST_OPEN":
+        appendAndCondition(query, {
+          $or: [
+            { enrollmentStatus: "O" },
+            {
+              $and: [
+                { maxWaitlist: { $gt: 0 } },
+                { $expr: { $lt: ["$waitlistedCount", "$maxWaitlist"] } },
+              ],
+            },
+          ],
+        });
+        break;
+    }
+  }
+
+  // Grading filter
+  if (filters.gradingFilters && filters.gradingFilters.length > 0) {
+    query.gradingBasis = { $in: filters.gradingFilters };
+  }
+
+  // Breadth requirements
+  if (filters.breadths && filters.breadths.length > 0) {
+    query.breadthRequirements = { $in: filters.breadths };
+  }
+
+  // University requirements
+  if (
+    filters.universityRequirements &&
+    filters.universityRequirements.length > 0
+  ) {
+    query.universityRequirements = { $in: filters.universityRequirements };
+  }
+
+  // Online filter
+  if (filters.online) {
+    query.primaryOnline = true;
+  }
+
+  return query;
+};
+
+const buildSort = (
+  sortBy?: string | null,
+  sortOrder?: string | null
+): Record<string, 1 | -1> => {
+  const order = sortOrder === "ASC" ? 1 : -1;
+
+  switch (sortBy) {
+    case "UNITS":
+      return { unitsMax: order, subject: 1, courseNumber: 1 };
+    case "AVERAGE_GRADE":
+      return { allTimeAverageGrade: order, subject: 1, courseNumber: 1 };
+    case "OPEN_SEATS":
+      return { openSeats: order, subject: 1, courseNumber: 1 };
+    case "RELEVANCE":
+    default:
+      return { viewCount: order, subject: 1, courseNumber: 1 };
+  }
+};
+
+export const getCatalogFilterOptions = async (
+  year: number,
+  semester: string
+) => {
+  const [filterAgg, semesters] = await Promise.all([
+    CatalogClassModel.aggregate([
+      { $match: { year, semester } },
+      {
+        $unwind: {
+          path: "$breadthRequirements",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$universityRequirements",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          departments: {
+            $addToSet: {
+              code: "$academicOrganization",
+              name: "$academicOrganizationName",
+            },
+          },
+          levels: { $addToSet: "$level" },
+          gradingOptions: { $addToSet: "$gradingBasis" },
+          breadthRequirements: { $addToSet: "$breadthRequirements" },
+          universityRequirements: { $addToSet: "$universityRequirements" },
+          minStartMinutes: { $min: "$meetingStartMinutes" },
+          maxEndMinutes: { $max: "$meetingEndMinutes" },
+        },
+      },
+    ]),
+    TermModel.find({ hasCatalogData: true }).select({ name: 1 }).lean(),
+  ]);
+
+  const result = filterAgg[0];
+
+  const breadths = result
+    ? (result.breadthRequirements as string[]).filter(Boolean).sort()
+    : [];
+  const uniReqs = result
+    ? (result.universityRequirements as string[]).filter(Boolean).sort()
+    : [];
+
+  const semesterList = semesters
+    .map((t) => parseTermName(t.name))
+    .filter((s): s is { year: number; semester: string } => s !== null)
+    .sort((a, b) => b.year - a.year || a.semester.localeCompare(b.semester));
+
+  // Compute time range rounded to nearest hour boundaries
+  let timeRange = null;
+  if (result?.minStartMinutes != null && result?.maxEndMinutes != null) {
+    const flooredStart = Math.floor(result.minStartMinutes / 60) * 60;
+    const ceiledEnd = Math.ceil(result.maxEndMinutes / 60) * 60;
+    const formatMinutes = (m: number) => {
+      const h = Math.floor(m / 60);
+      const min = m % 60;
+      return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+    };
+    timeRange = {
+      minStartTime: formatMinutes(flooredStart),
+      maxEndTime: formatMinutes(ceiledEnd),
+    };
+  }
+
+  return {
+    departments: (result?.departments ?? [])
+      .filter(
+        (d: { code: string; name: string }) => d.code != null && d.name != null
+      )
+      .sort((a: { name: string }, b: { name: string }) =>
+        a.name.localeCompare(b.name)
+      ),
+    levels: (result?.levels ?? []).filter(Boolean).sort(),
+    gradingOptions: (result?.gradingOptions ?? []).filter(Boolean).sort(),
+    breadthRequirements: breadths,
+    universityRequirements: uniReqs,
+    semesters: semesterList,
+    timeRange,
+  };
+};
 
 const EMPTY_GRADE_DISTRIBUTIONS: readonly IGradeDistributionItem[] =
   [] as const;
 
-// TODO: Pagination, filtering
-export const getCatalog = async (
+/**
+ * Legacy catalog resolver — returns the relational [Class!]! shape
+ * expected by ag-frontend's GET_CATALOG query.
+ */
+export const getCatalogLegacy = async (
   year: number,
   semester: string,
   info: GraphQLResolveInfo
 ) => {
-  /**
-   * TODO:
-   * Basic pagination can be introduced by using skip and limit
-   * However, because filtering requires access to all three collections,
-   * we cannot paginate the MongoDB queries themselves while filtering
-   * course or section fields
-   *
-   * We can optimize filtering by applying skip and limit to the classes
-   * query when only filtering by class fields, and then fall back to
-   * in-memory filtering for fields from courses and sections
-   */
-
-  // Fetch term and classes in parallel
   const [term, classes] = await Promise.all([
-    TermModel.findOne({
-      name: `${year} ${semester}`,
-    })
+    TermModel.findOne({ name: `${year} ${semester}` })
       .select({ _id: 1 })
       .lean(),
     ClassModel.find({
@@ -67,11 +481,9 @@ export const getCatalog = async (
 
   if (!term) throw new Error("Invalid term");
 
-  // Filtering by identifiers reduces the amount of data returned for courses and sections
   const courseIds = classes.map((_class) => _class.courseId);
   const uniqueCourseIds = [...new Set(courseIds)];
 
-  // Fetch courses and sections in parallel
   const [courses, sections] = await Promise.all([
     CourseModel.find({
       courseId: { $in: uniqueCourseIds },
@@ -119,8 +531,7 @@ export const getCatalog = async (
   if (shouldLoadGradeDistributions) {
     const sectionIds = sections.map((section) => section.sectionId);
 
-    // Fetch class-level and course-level grade distributions in parallel when needed
-    const [classGradeDistributions, courseGradeDistributionMap] =
+    const [classGradeDistributions, courseGradeDistributions] =
       await Promise.all([
         includesClassGradeDistribution
           ? GradeDistributionModel.find({
@@ -128,8 +539,19 @@ export const getCatalog = async (
             }).lean()
           : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
         includesCourseGradeDistributionDistribution
-          ? getGradeDistributionsByCourseIds(uniqueCourseIds)
-          : Promise.resolve(new Map<string, AggregatedGradeDistribution>()),
+          ? GradeDistributionModel.find({
+              $or: [
+                ...courses.map((course) => ({
+                  subject: course.subject,
+                  courseNumber: course.number,
+                })),
+                ...classes.map((_class) => ({
+                  subject: _class.subject,
+                  courseNumber: _class.courseNumber,
+                })),
+              ],
+            }).lean()
+          : Promise.resolve(EMPTY_GRADE_DISTRIBUTIONS),
       ]);
 
     const reducedGradeDistributions = {} as Record<
@@ -138,7 +560,6 @@ export const getCatalog = async (
     >;
 
     if (includesClassGradeDistribution) {
-      // Process class-level distributions (by sectionId)
       const classBySection = classGradeDistributions.reduce(
         (acc, gradeDistribution) => {
           const sectionId = gradeDistribution.sectionId;
@@ -151,24 +572,40 @@ export const getCatalog = async (
       );
 
       for (const [sectionId, distributions] of Object.entries(classBySection)) {
-        reducedGradeDistributions[sectionId] = aggregateGradeDistributions(
-          distributions
-        ) as GradeDistributionModule.GradeDistribution;
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[sectionId] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
       }
     }
 
     if (includesCourseGradeDistributionDistribution) {
-      // Course-level distributions are already aggregated by courseId
-      for (const [courseId, gradeDistribution] of courseGradeDistributionMap) {
-        reducedGradeDistributions[courseId] =
-          gradeDistribution as GradeDistributionModule.GradeDistribution;
+      const courseByCourse = courseGradeDistributions.reduce(
+        (acc, gradeDistribution) => {
+          const key = `${gradeDistribution.subject}-${gradeDistribution.courseNumber}`;
+          acc[key] = acc[key]
+            ? [...acc[key], gradeDistribution]
+            : [gradeDistribution];
+          return acc;
+        },
+        {} as Record<string, IGradeDistributionItem[]>
+      );
+
+      for (const [key, distributions] of Object.entries(courseByCourse)) {
+        const distribution = getDistribution(distributions);
+        reducedGradeDistributions[key] = {
+          average: getAverageGrade(distribution),
+          distribution,
+          pnpPercentage: getPnpPercentage(distribution),
+        } as GradeDistributionModule.GradeDistribution;
       }
     }
 
     parsedGradeDistributions = reducedGradeDistributions;
   }
 
-  // Batch-fetch enrollment data to avoid N+1 queries
   let enrollmentMap = {} as Record<string, EnrollmentModule.Enrollment | null>;
 
   const includesEnrollment = children.includes("enrollment");
@@ -176,13 +613,11 @@ export const getCatalog = async (
   if (includesEnrollment) {
     const sectionIds = sections.map((section) => section.sectionId);
 
-    // Batch fetch all enrollment records for the term
     const enrollments = await NewEnrollmentHistoryModel.find({
       termId: term._id,
       sectionId: { $in: sectionIds },
     }).lean();
 
-    // Build lookup map by sectionId
     enrollmentMap = enrollments.reduce(
       (acc, enrollment) => {
         acc[enrollment.sectionId] = formatEnrollment(enrollment);
@@ -192,7 +627,6 @@ export const getCatalog = async (
     );
   }
 
-  // Batch-fetch class view counts for the requested term to avoid per-class resolver queries.
   let classViewCountsMap = {} as Record<string, number>;
 
   if (includesViewCount) {
@@ -211,7 +645,6 @@ export const getCatalog = async (
     );
   }
 
-  // Turn courses into a map to decrease time complexity for filtering
   const reducedCourses = courses.reduce(
     (accumulator, course) => {
       accumulator[course.courseId] = course as ICourseItem;
@@ -220,12 +653,10 @@ export const getCatalog = async (
     {} as Record<string, ICourseItem>
   );
 
-  // Turn sections into a map to decrease time complexity for filtering
   const reducedSections = sections.reduce(
     (accumulator, section) => {
       const courseId = section.courseId;
       const classNumber = section.classNumber;
-
       const id = `${courseId}-${classNumber}`;
 
       accumulator[id] = (
@@ -243,18 +674,18 @@ export const getCatalog = async (
     const course = reducedCourses[courseId];
     if (!course) return accumulator;
 
-    const sections = reducedSections[`${courseId}-${_class.number}`];
-    if (!sections) return accumulator;
+    const classSections = reducedSections[`${courseId}-${_class.number}`];
+    if (!classSections) return accumulator;
 
-    const index = sections.findIndex((section) => section.primary);
+    const index = classSections.findIndex((section) => section.primary);
     if (index === -1) return accumulator;
 
-    const primarySection = sections.splice(index, 1)[0];
+    const primarySection = classSections.splice(index, 1)[0];
     const formattedPrimarySection = formatSection(
       primarySection,
       includesEnrollment ? enrollmentMap[primarySection.sectionId] : undefined
     );
-    const formattedSections = sections.map((section) =>
+    const formattedSections = classSections.map((section) =>
       formatSection(
         section,
         includesEnrollment ? enrollmentMap[section.sectionId] : undefined
@@ -265,8 +696,6 @@ export const getCatalog = async (
       course
     ) as unknown as ClassModule.Course;
 
-    // Add grade distribution to course
-    // Use the class's subject and courseNumber to get the correct grades for cross-listed courses
     if (includesCourseGradeDistribution) {
       const courseFallback = {
         average: course.allTimeAverageGrade ?? null,
@@ -278,8 +707,9 @@ export const getCatalog = async (
       };
 
       if (includesCourseGradeDistributionDistribution) {
+        const key = `${_class.subject}-${_class.courseNumber}`;
         const gradeDistribution =
-          parsedGradeDistributions[courseId] ?? courseFallback;
+          parsedGradeDistributions[key] ?? courseFallback;
 
         formattedCourse.gradeDistribution = gradeDistribution;
       } else {
@@ -299,11 +729,8 @@ export const getCatalog = async (
       formattedClass.viewCount = classViewCountsMap[viewCountKey] ?? 0;
     }
 
-    // Add grade distribution to class
     if (includesClassGradeDistribution) {
       const sectionId = formattedPrimarySection.sectionId;
-
-      // Fall back to an empty grade distribution to prevent resolving the field again
       const gradeDistribution = parsedGradeDistributions[sectionId] ?? {
         average: null,
         distribution: [],

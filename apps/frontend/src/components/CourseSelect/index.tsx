@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
@@ -7,7 +7,6 @@ import type { Option } from "@repo/theme";
 
 import { ICourse } from "@/lib/api";
 import { GetCourseNamesDocument } from "@/lib/generated/graphql";
-import { Recent, RecentType, getRecents } from "@/lib/recent";
 
 import { initialize } from "../CourseSearch/browser";
 
@@ -34,9 +33,6 @@ export default function CourseSelect({
 }: CourseSelectProps) {
   const { data, loading } = useQuery(GetCourseNamesDocument);
 
-  const [recentCourses, setRecentCourses] = useState<
-    Recent<RecentType.Course>[]
-  >([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Deduplicate courses: keep course with highest courseId for each subject-number
@@ -57,11 +53,6 @@ export default function CourseSelect({
 
   // Initialize fuzzy search index
   const index = useMemo(() => initialize(catalogCourses), [catalogCourses]);
-
-  // Load recent courses on mount and when selection changes
-  useEffect(() => {
-    setRecentCourses(getRecents(RecentType.Course));
-  }, [selectedCourse]);
 
   // Check if a course is rated
   const isCourseRated = (subject: string, number: string) => {
@@ -169,7 +160,6 @@ export default function CourseSelect({
     return opts;
   }, [
     catalogCourses,
-    recentCourses,
     minimal,
     ratedCourses,
     disableRatedCourses,
@@ -199,27 +189,6 @@ export default function CourseSelect({
     } satisfies CourseOption;
   }, [selectedCourse, catalogCourses]);
 
-  const recentPills = useMemo(() => {
-    if (minimal || lockedCourse) return undefined;
-    return recentCourses
-      .map((recent) => {
-        const full = catalogCourses.find(
-          (c) => c.subject === recent.subject && c.number === recent.number
-        );
-        if (!full) return null;
-        const courseId = full.courseId;
-        return {
-          value: {
-            subject: full.subject,
-            number: full.number,
-            courseId,
-          } as CourseOption,
-          label: `${full.subject.slice(0, 4)} ${full.number}`,
-        };
-      })
-      .filter((p): p is { value: CourseOption; label: string } => p !== null);
-  }, [recentCourses, catalogCourses, minimal, lockedCourse]);
-
   const selectedLabel = selectedCourse
     ? `${selectedCourse.subject} ${selectedCourse.number}`
     : undefined;
@@ -244,7 +213,6 @@ export default function CourseSelect({
       disabled={loading}
       onSearchChange={lockedCourse ? undefined : setSearchQuery}
       clearable={!lockedCourse}
-      pills={recentPills}
     />
   );
 }

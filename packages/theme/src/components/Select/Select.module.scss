@@ -160,37 +160,6 @@
   }
 }
 
-.pillsWrapper {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 6px;
-  padding: 8px 12px;
-  border-bottom: solid 1px var(--border-color);
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-.pill {
-  padding: 4px 10px;
-  border-radius: 6px;
-  background-color: var(--button-hover-color);
-  border: none;
-  font-size: var(--text-12);
-  color: var(--heading-color);
-  cursor: pointer;
-  white-space: nowrap;
-  line-height: 1.4;
-  flex-shrink: 0;
-
-  &:hover {
-    background-color: var(--button-active-color);
-  }
-}
-
 .commandList {
   @extend .scrollable;
   max-height: 300px;

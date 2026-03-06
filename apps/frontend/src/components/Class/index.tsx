@@ -307,6 +307,7 @@ export default function Class({
       semester: _class.semester,
       courseNumber: _class.courseNumber,
       number: _class.number,
+      sessionId: _class.sessionId,
     });
   }, [_class]);
 
@@ -332,8 +333,10 @@ export default function Class({
   }, [_class, trackView]);
 
   const ratingsCount = useMemo<number | false>(() => {
-    const count = _course?.ratingsCount;
-    return count && count > 0 ? count : false;
+    const metrics = _course?.aggregatedRatings?.metrics;
+    if (!metrics || metrics.length === 0) return false;
+    const count = Math.max(0, ...metrics.map((m) => m.count));
+    return count > 0 ? count : false;
   }, [_course]);
 
   const ratingsLockContext = useMemo(() => {

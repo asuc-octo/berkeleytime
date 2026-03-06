@@ -225,7 +225,6 @@ export interface SelectProps<T> {
   maxListHeight?: number;
   contentClassName?: string;
   tabsWrapperClassName?: string;
-  pills?: Array<{ value: T; label: string }>;
 }
 
 export function Select<T>({
@@ -255,7 +254,6 @@ export function Select<T>({
   maxListHeight,
   contentClassName,
   tabsWrapperClassName,
-  pills,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -594,20 +592,6 @@ export function Select<T>({
                       variant="tabs"
                       onValueChange={handleTabChange}
                     />
-                  </div>
-                ) : null}
-                {pills?.length ? (
-                  <div className={styles.pillsWrapper}>
-                    {pills.map((pill, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        className={styles.pill}
-                        onClick={() => handleSelect(pill.value)}
-                      >
-                        {pill.label}
-                      </button>
-                    ))}
                   </div>
                 ) : null}
                 <Command.List

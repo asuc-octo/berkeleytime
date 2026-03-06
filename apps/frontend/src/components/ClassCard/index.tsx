@@ -59,9 +59,12 @@ type BaseClassFields = Pick<
 >;
 
 type CourseSummary = Pick<IClassCourse, "title" | "gradeDistribution"> & {
-  ratingsCount?: number | null;
   aggregatedRatings?: {
-    metrics: Array<{ metricName: string; weightedAverage: number }>;
+    metrics: Array<{
+      metricName: string;
+      count?: number;
+      weightedAverage: number;
+    }>;
   } | null;
 };
 
@@ -132,6 +135,14 @@ export default function ClassCard({
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
   const maxEnroll = _class?.primarySection?.enrollment?.latest?.maxEnroll ?? 0;
+  const ratingsCount = _class?.course?.aggregatedRatings
+    ? Math.max(
+        0,
+        ..._class.course.aggregatedRatings.metrics.map(
+          (metric) => metric.count ?? 0
+        )
+      )
+    : 0;
 
   return (
     <Card.RootColumn
@@ -268,12 +279,12 @@ export default function ClassCard({
                       description={`${activeReservedMaxCount.toLocaleString()} out of ${maxEnroll.toLocaleString()} seats for this class are reserved.`}
                     />
                   )}
-                  {(_class?.course?.ratingsCount ?? 0) > 0 && (
+                  {ratingsCount > 0 && (
                     <Tooltip
                       trigger={
                         <span className={styles.ratingsCount}>
                           <Star className={styles.ratingsIcon} />
-                          {_class?.course?.ratingsCount}
+                          {ratingsCount}
                         </span>
                       }
                       title="Ratings"
