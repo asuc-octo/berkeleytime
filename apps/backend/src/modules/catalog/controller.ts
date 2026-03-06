@@ -1,5 +1,4 @@
 import type { GraphQLResolveInfo } from "graphql";
-import type { PipelineStage } from "mongoose";
 
 import {
   getAverageGrade,
@@ -15,6 +14,7 @@ import {
   ClassViewCountModel,
   CourseModel,
   GradeDistributionModel,
+  type ICatalogClassItem,
   type IClassItem,
   type ICourseItem,
   type IGradeDistributionItem,
@@ -31,6 +31,7 @@ import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+import { getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
   year: number;
@@ -144,79 +145,146 @@ const getCatalogWithSearch = async ({
   limit: number;
   skip: number;
 }) => {
-  const filterMatch = buildFilterQuery(year, semester, filters);
-
-  // Use Atlas Search $search stage
-  const pipeline: PipelineStage[] = [
-    {
-      $search: {
-        index: "catalog_search",
-        compound: {
-          should: [
-            {
-              autocomplete: {
-                query: searchTerm,
-                path: "searchableNames",
-                fuzzy: { maxEdits: 1 },
-                score: { boost: { value: 10 } },
-              },
-            },
-            {
-              text: {
-                query: searchTerm,
-                path: "searchableNames",
-                fuzzy: { maxEdits: 1 },
-                score: { boost: { value: 5 } },
-              },
-            },
-            {
-              text: {
-                query: searchTerm,
-                path: "courseTitle",
-                fuzzy: { maxEdits: 1 },
-                score: { boost: { value: 2 } },
-              },
-            },
-            {
-              text: {
-                query: searchTerm,
-                path: "courseDescription",
-                fuzzy: { maxEdits: 1 },
-                score: { boost: { value: 0.5 } },
-              },
-            },
-          ],
-          minimumShouldMatch: 1,
-        },
-      },
-    } as PipelineStage,
-    { $match: filterMatch } as PipelineStage,
-    {
-      $addFields: {
-        searchScore: { $meta: "searchScore" },
-      },
-    } as PipelineStage,
-  ];
-
-  // NOTE: $facet materializes the full result set in memory before paginating.
-  // For broad searches, consider using $searchMeta in a separate query for the count.
-  pipeline.push({
-    $facet: {
-      results: [
-        { $sort: { searchScore: -1 } },
-        { $skip: skip },
-        { $limit: limit },
-      ],
-      count: [{ $count: "total" }],
-    },
-  } as PipelineStage);
-
-  const [facetResult] = await CatalogClassModel.aggregate(pipeline);
-
-  const results = facetResult?.results ?? [];
-  const totalCount = facetResult?.count?.[0]?.total ?? 0;
+  const index = await getSearchIndex(year, semester);
+  const hits = index.search(searchTerm);
+  const items = hits.map((r) => r.item);
+  const filtered = applyInMemoryFilters(items, filters);
+  const totalCount = filtered.length;
+  const results = filtered.slice(skip, skip + limit);
 
   return { results, totalCount };
+};
+
+const applyInMemoryFilters = (
+  items: ICatalogClassItem[],
+  filters: CatalogQueryParams["filters"]
+): ICatalogClassItem[] => {
+  if (!filters) return items;
+
+  return items.filter((item) => {
+    // Level filter
+    if (
+      filters.levels &&
+      filters.levels.length > 0 &&
+      !filters.levels.includes(item.level ?? "")
+    ) {
+      return false;
+    }
+
+    // Department filter
+    if (
+      filters.departments &&
+      filters.departments.length > 0 &&
+      !filters.departments.includes(item.academicOrganization ?? "")
+    ) {
+      return false;
+    }
+
+    // Units range overlap
+    if (filters.unitsMin != null || filters.unitsMax != null) {
+      const min = filters.unitsMin ?? 0;
+      const max = filters.unitsMax ?? 99;
+      if (item.unitsMax < min || item.unitsMin > max) {
+        return false;
+      }
+    }
+
+    // Days filter — non-selected days must be false, at least one selected day true
+    if (filters.days && filters.days.length > 0) {
+      const days = item.meetingDays;
+      if (!days) return false;
+      for (let i = 0; i < 7; i++) {
+        if (!filters.days.includes(i) && days[i]) return false;
+      }
+      if (!filters.days.some((d) => days[d])) return false;
+    }
+
+    // Time range filter
+    if (filters.timeFrom || filters.timeTo) {
+      if (item.meetingStartMinutes == null) return false;
+      if (filters.timeFrom) {
+        const fromMinutes = parseTimeToMinutes(filters.timeFrom);
+        if (fromMinutes !== null && item.meetingStartMinutes < fromMinutes) {
+          return false;
+        }
+      }
+      if (filters.timeTo) {
+        const toMinutes = parseTimeToMinutes(filters.timeTo);
+        if (
+          toMinutes !== null &&
+          (item.meetingEndMinutes == null || item.meetingEndMinutes > toMinutes)
+        ) {
+          return false;
+        }
+      }
+    }
+
+    // Enrollment filter
+    if (filters.enrollmentFilter) {
+      switch (filters.enrollmentFilter) {
+        case "OPEN":
+          if (item.enrollmentStatus !== "O") return false;
+          break;
+        case "NON_RESERVED_OPEN":
+          if (item.enrollmentStatus !== "O") return false;
+          if (
+            (item.maxEnroll ?? 0) - (item.enrolledCount ?? 0) <=
+            (item.activeReservedMaxCount ?? 0)
+          ) {
+            return false;
+          }
+          break;
+        case "WAITLIST_OPEN":
+          if (item.enrollmentStatus !== "O") {
+            if (
+              !(
+                (item.maxWaitlist ?? 0) > 0 &&
+                (item.waitlistedCount ?? 0) < (item.maxWaitlist ?? 0)
+              )
+            ) {
+              return false;
+            }
+          }
+          break;
+      }
+    }
+
+    // Grading filter
+    if (
+      filters.gradingFilters &&
+      filters.gradingFilters.length > 0 &&
+      !filters.gradingFilters.includes(item.gradingBasis ?? "")
+    ) {
+      return false;
+    }
+
+    // Breadth requirements
+    if (
+      filters.breadths &&
+      filters.breadths.length > 0 &&
+      !item.breadthRequirements?.some((b) => filters.breadths!.includes(b))
+    ) {
+      return false;
+    }
+
+    // University requirements
+    if (
+      filters.universityRequirements &&
+      filters.universityRequirements.length > 0 &&
+      !item.universityRequirements?.some((u) =>
+        filters.universityRequirements!.includes(u)
+      )
+    ) {
+      return false;
+    }
+
+    // Online filter
+    if (filters.online && item.primaryOnline !== true) {
+      return false;
+    }
+
+    return true;
+  });
 };
 
 const buildFilterQuery = (
