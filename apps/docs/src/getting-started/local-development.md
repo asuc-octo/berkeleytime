@@ -110,11 +110,12 @@ A seeded database is required for some pages on the frontend.
 # Ensure the MongoDB instance is already running.
 docker compose up -d
 
-# Download the data
+# Download the public data
 curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d).gz"
-printf "\033[33mNotice: Public backups are redacted and are not a comprehensive dataset. Use private backups (Cloudflare Access required) for full data.\033[0m\n"
 
 # Copy the data and restore
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
 docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/prod-backup.gz
 ```
+
+> **Note:** Public backups are redacted and are not a comprehensive dataset. Use private backups (Cloudflare Access required) for [full data](../core/infrastructure/runbooks.md#fetch-mongo-backups).
