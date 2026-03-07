@@ -17,6 +17,7 @@ import { BAR_CHART_COLORS } from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import TargetedMessageBanner from "@/components/CourseAnalytics/TargetedMessageBanner";
 import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import type { ICourseWithInstructorClass } from "@/lib/api/courses";
@@ -234,6 +235,16 @@ function EnrollmentSidebar({
   onEditDraftConsumed,
 }: EnrollmentSidebarProps) {
   const client = useApolloClient();
+
+  const displayedCourses = useMemo(
+    () =>
+      outputs.map((o) => ({
+        subject: o.input.subject,
+        courseNumber: o.input.courseNumber,
+      })),
+    [outputs]
+  );
+
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
     null
   );
@@ -551,7 +562,14 @@ function EnrollmentSidebar({
   };
 
   return (
-    <CourseAnalyticsSidebar title="Enrollment">
+    <CourseAnalyticsSidebar
+      title="Enrollment"
+      footer={
+        displayedCourses.length > 0 ? (
+          <TargetedMessageBanner courses={displayedCourses} />
+        ) : undefined
+      }
+    >
       <CourseAnalyticsField label="Class">
         <CourseSelect
           selectedCourse={selectedCourse}
