@@ -8,6 +8,7 @@ import Layout from "@/components/Layout";
 import styles from "./App.module.scss";
 import Analytics from "./app/Analytics";
 import Dashboard from "./app/Dashboard";
+import Datapuller from "./app/Datapuller";
 import Outreach from "./app/Outreach";
 import { BASE, signIn } from "./helper";
 import { useStaffMemberByUserId } from "./hooks/api/staff";
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Analytics />,
+      },
+      {
+        path: "datapuller",
+        element: <Datapuller />,
       },
       {
         path: "members",

@@ -21,6 +21,11 @@ export default function NavigationBar() {
         <NavLink to="/" end>
           {({ isActive }) => <MenuItem active={isActive}>Analytics</MenuItem>}
         </NavLink>
+        <NavLink to="/datapuller">
+          {({ isActive }) => (
+            <MenuItem active={isActive}>Datapuller</MenuItem>
+          )}
+        </NavLink>
         <NavLink to="/members">
           {({ isActive }) => <MenuItem active={isActive}>Members</MenuItem>}
         </NavLink>

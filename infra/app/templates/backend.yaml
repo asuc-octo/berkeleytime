@@ -21,11 +21,7 @@ rules:
     verbs: ["get"]
   - apiGroups: ["batch"]
     resources: ["jobs"]
-<<<<<<< HEAD
-    verbs: ["create", "list"]
-=======
     verbs: ["create", "list", "get"]
->>>>>>> d3abe54e512274c89703d6a6bfcb8298d1539eda
 
 ---
 
@@ -113,15 +109,12 @@ data:
   SIS_TERM_APP_KEY: "_"
   K8S_NAMESPACE: {{ .Values.namespace }}
   DATAPULLER_CRONJOB_PREFIX: "{{ include "bt-app.datapullerName" . }}"
-<<<<<<< HEAD
   {{- if .Values.otel.enabled }}
   # OpenTelemetry configuration
   OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.otel.collectorEndpoint | quote }}
   OTEL_SERVICE_NAME: {{ .Values.otel.serviceName | quote }}
   OTEL_RESOURCE_ATTRIBUTES: "service.version={{ .Values.backend.image.tag }},deployment.environment={{ .Values.env }}"
   {{- end }}
-=======
->>>>>>> d3abe54e512274c89703d6a6bfcb8298d1539eda
 
 ---
 
