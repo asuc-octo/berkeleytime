@@ -7,9 +7,7 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
-import { Toaster } from "sonner";
-
-import { ThemeProvider, useTheme } from "@repo/theme";
+import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
@@ -52,13 +50,6 @@ const GradTrak = lazy(() => import("@/app/GradTrak"));
 const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
 const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
 const NotFound = lazy(() => import("@/app/NotFound"));
-
-function ThemedToaster() {
-  const { theme } = useTheme();
-  return (
-    <Toaster position="bottom-right" theme={theme ?? "system"} offset={8} />
-  );
-}
 
 const router = createBrowserRouter([
   {
@@ -407,7 +398,6 @@ export default function App() {
       <UserProvider>
         <ThemeProvider>
           <RouterProvider router={router} />
-          <ThemedToaster />
         </ThemeProvider>
       </UserProvider>
     </ApolloProvider>

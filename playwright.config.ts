@@ -42,7 +42,7 @@ const getWebServer = () => {
     // Start docker-compose to build and run the app
     command: "docker compose up --build",
     url: "http://localhost:3000",
-    timeout: 120 * 1000, // 2 minutes for docker to build and start
+    timeout: 120 * 1000, // 5 minutes for docker to build and start
     // In 'local' mode: reuse server if developer already has docker-compose running
     // In 'ci' mode: always start fresh (process.env.CI will be true)
     reuseExistingServer: TEST_ENV === "local" && !process.env.CI,
