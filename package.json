@@ -31,7 +31,8 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-arm64-musl": "4.52.4",
     "@rollup/rollup-linux-x64-gnu": "4.52.4",
-    "@rollup/rollup-linux-x64-musl": "4.52.4"
+    "@rollup/rollup-linux-x64-musl": "4.52.4",
+    "@rollup/rollup-win32-x64-msvc": "^4.59.0"
   },
   "name": "berkeleytime",
   "dependencies": {

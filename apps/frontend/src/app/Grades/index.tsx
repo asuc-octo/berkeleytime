@@ -13,6 +13,7 @@ import {
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import TargetedMessageBanner from "@/components/CourseAnalytics/TargetedMessageBanner";
 import {
   BAR_CHART_COLORS,
   type CourseOutput,
@@ -177,6 +178,15 @@ function FilterPanel({
   const client = useApolloClient();
 
   const [loading, setLoading] = useState(false);
+
+  const displayedCourses = useMemo(
+    () =>
+      outputs.map((o) => ({
+        subject: o.input.subject,
+        courseNumber: o.input.courseNumber,
+      })),
+    [outputs]
+  );
 
   const [selectedCourse, setSelectedCourse] = useState<CourseOption | null>(
     null
@@ -541,7 +551,14 @@ function FilterPanel({
   useEnterToAdd(() => void add(), !isAddButtonDisabled);
 
   return (
-    <CourseAnalyticsSidebar title="Grades">
+    <CourseAnalyticsSidebar
+      title="Grades"
+      footer={
+        displayedCourses.length > 0 ? (
+          <TargetedMessageBanner courses={displayedCourses} />
+        ) : undefined
+      }
+    >
       <CourseAnalyticsField label="Class">
         <CourseSelect
           onSelect={handleCourseSelect}
