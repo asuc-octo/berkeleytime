@@ -7,6 +7,7 @@ import {
   createBrowserRouter,
   redirect,
 } from "react-router-dom";
+
 import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
