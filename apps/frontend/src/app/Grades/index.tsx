@@ -13,6 +13,7 @@ import {
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
+import TargetedMessageBanner from "@/components/CourseAnalytics/TargetedMessageBanner";
 import {
   BAR_CHART_COLORS,
   type CourseOutput,
@@ -24,7 +25,6 @@ import {
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
-import TargetedMessageBanner from "@/components/CourseAnalytics/TargetedMessageBanner";
 import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import { type IGradeDistribution } from "@/lib/api";

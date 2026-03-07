@@ -112,8 +112,7 @@ export default function TargetedMessageBanner({
           const message = messages.find((m) => {
             if (!m.persistent && !m.reappearing)
               return !isTargetedMessageDismissed(m.id);
-            if (m.reappearing)
-              return !isTargetedMessageSessionDismissed(m.id);
+            if (m.reappearing) return !isTargetedMessageSessionDismissed(m.id);
             return true;
           });
 
@@ -171,9 +170,7 @@ export default function TargetedMessageBanner({
       className={styles.messageBox}
     >
       <div className={styles.messageHeader}>
-        <p className={styles.messageTitle}>
-          Taking {message.courseNumber}?
-        </p>
+        <p className={styles.messageTitle}>Taking {message.courseNumber}?</p>
         {!message.message.persistent && (
           <button
             className={styles.dismissButton}
