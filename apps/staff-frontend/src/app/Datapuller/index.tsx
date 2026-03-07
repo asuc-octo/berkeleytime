@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { Button, Flex, PillSwitcher, Select } from "@repo/theme";
+
 import {
   useDatapullerJobStatus,
   useTriggerDatapuller,
@@ -12,111 +14,105 @@ import styles from "./Datapuller.module.scss";
 
 export default function Datapuller() {
   const [selectedJob, setSelectedJob] = useState<DatapullerJob>("COURSES");
-  const [datapullerDropdownOpen, setDatapullerDropdownOpen] = useState(false);
-  const [datapullerMessage, setDatapullerMessage] = useState<{
+  const [message, setMessage] = useState<{
     text: string;
     isError: boolean;
   } | null>(null);
   const [activeJobName, setActiveJobName] = useState<string | null>(null);
-  const { trigger: triggerDatapuller, loading: datapullerLoading } =
-    useTriggerDatapuller();
+
+  const { trigger, loading } = useTriggerDatapuller();
   const { status: jobStatus } = useDatapullerJobStatus(activeJobName);
+
+  const isRunning =
+    loading ||
+    jobStatus?.phase === "Pending" ||
+    jobStatus?.phase === "Running";
+
+  const handleTrigger = async () => {
+    setMessage(null);
+    setActiveJobName(null);
+    try {
+      const result = await trigger(selectedJob);
+      if (result?.jobName) setActiveJobName(result.jobName);
+      setMessage({
+        text: result?.message ?? "Job created successfully.",
+        isError: false,
+      });
+    } catch (e) {
+      setMessage({
+        text: e instanceof Error ? e.message : "Error running job",
+        isError: true,
+      });
+    }
+  };
+
+  const statusPhase = jobStatus?.phase;
+  const statusText =
+    statusPhase === "Pending"
+      ? "Pending"
+      : statusPhase === "Running"
+        ? "Running..."
+        : statusPhase === "Succeeded"
+          ? "Succeeded"
+          : statusPhase === "Failed"
+            ? "Failed"
+            : statusPhase === "NotFound"
+              ? "Job cleaned up"
+              : null;
 
   return (
     <div className={styles.root}>
-      <div className={styles.dataTab}>
-        <h2 className={styles.dataTabTitle}>Datapuller</h2>
-        <p className={styles.dataTabDescription}>
-          Manually trigger a datapuller job. A Kubernetes Job will be created
-          and run immediately.
-        </p>
-        <div className={styles.splitButton}>
-          <button
-            className={styles.splitButtonMain}
-            disabled={
-              datapullerLoading ||
-              jobStatus?.phase === "Pending" ||
-              jobStatus?.phase === "Running"
-            }
-            onClick={async () => {
-              setDatapullerMessage(null);
-              setActiveJobName(null);
-              try {
-                const result = await triggerDatapuller(selectedJob);
-                if (result?.jobName) setActiveJobName(result.jobName);
-                setDatapullerMessage({
-                  text: result?.message ?? "Job created successfully.",
-                  isError: false,
-                });
-              } catch (e) {
-                setDatapullerMessage({
-                  text: e instanceof Error ? e.message : "Error running job",
-                  isError: true,
-                });
-              }
-              setDatapullerDropdownOpen(false);
-            }}
-          >
-            {datapullerLoading
-              ? "Starting..."
-              : `Run ${DATAPULLER_JOB_OPTIONS.find((o) => o.value === selectedJob)?.label ?? selectedJob}`}
-          </button>
-          <button
-            className={styles.splitButtonCaret}
-            disabled={datapullerLoading}
-            onClick={() => setDatapullerDropdownOpen((prev) => !prev)}
-            aria-label="select datapuller job"
-          >
-            ▾
-          </button>
-          {datapullerDropdownOpen && (
-            <ul className={styles.splitButtonDropdown}>
-              {DATAPULLER_JOB_OPTIONS.map((option) => (
-                <li
-                  key={option.value}
-                  className={`${styles.splitButtonDropdownItem} ${
-                    option.value === selectedJob
-                      ? styles.splitButtonDropdownItemActive
-                      : ""
-                  }`}
-                  onClick={() => {
-                    setSelectedJob(option.value);
-                    setDatapullerDropdownOpen(false);
-                    setDatapullerMessage(null);
-                  }}
-                >
-                  {option.label}
-                </li>
-              ))}
-            </ul>
-          )}
+      <div className={styles.header}>
+        <div className={styles.tabsContainer}>
+          <PillSwitcher items={[{ value: "datapuller", label: "Datapuller" }]} />
         </div>
-        {datapullerMessage && (
+        <p className={styles.subtitle}>
+          Manually trigger a datapuller job to sync data from external sources.
+          A Kubernetes Job will be created and run immediately.
+        </p>
+      </div>
+
+      <div className={styles.card}>
+        <p className={styles.cardLabel}>Job</p>
+        <Flex gap="3" align="center" className={styles.row}>
+          <div className={styles.selectWrapper}>
+            <Select
+              value={selectedJob}
+              onChange={(v) => {
+                setSelectedJob(v as DatapullerJob);
+                setMessage(null);
+              }}
+              options={DATAPULLER_JOB_OPTIONS}
+              searchable
+              searchPlaceholder="Search jobs..."
+            />
+          </div>
+          <Button disabled={isRunning} onClick={handleTrigger}>
+            {isRunning ? "Running..." : "Run job"}
+          </Button>
+        </Flex>
+
+        {message && (
           <p
             className={
-              datapullerMessage.isError
-                ? styles.datapullerError
-                : styles.datapullerSuccess
+              message.isError ? styles.statusError : styles.statusSuccess
             }
           >
-            {datapullerMessage.text}
+            {message.text}
           </p>
         )}
-        {jobStatus && (
+
+        {jobStatus && statusText && (
           <p
             className={
-              jobStatus.phase === "Succeeded"
-                ? styles.datapullerSuccess
-                : jobStatus.phase === "Failed"
-                  ? styles.datapullerError
-                  : styles.datapullerStatus
+              statusPhase === "Succeeded"
+                ? styles.statusSuccess
+                : statusPhase === "Failed"
+                  ? styles.statusError
+                  : styles.statusInfo
             }
           >
-            Job status: {jobStatus.phase === "Pending" && "Pending"}
-            {jobStatus.phase === "Running" && "Running..."}
-            {jobStatus.phase === "Succeeded" && "Succeeded"}
-            {jobStatus.phase === "Failed" && "Failed"}
-            {jobStatus.phase === "NotFound" && "Job cleaned up"}
+            Job status: {statusText}
             {jobStatus.message ? ` — ${jobStatus.message}` : ""}
           </p>
         )}
