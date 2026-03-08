@@ -47,17 +47,21 @@ function emailsFromRule(rule: CloudflareAccessGroupRule): string[] {
   const raw = rule.email;
   if (raw == null) return [];
   if (typeof raw === "string") return [raw];
-  if (Array.isArray(raw)) return raw.filter((e): e is string => typeof e === "string");
+  if (Array.isArray(raw))
+    return raw.filter((e): e is string => typeof e === "string");
   if (typeof raw === "object" && raw !== null && "email" in raw) {
     const inner = (raw as { email?: string | string[] }).email;
     if (typeof inner === "string") return [inner];
-    if (Array.isArray(inner)) return inner.filter((e): e is string => typeof e === "string");
+    if (Array.isArray(inner))
+      return inner.filter((e): e is string => typeof e === "string");
   }
   return [];
 }
 
 /** Extract all emails currently in the group's include rules. */
-function parseEmailsFromInclude(include: CloudflareAccessGroupRule[]): string[] {
+function parseEmailsFromInclude(
+  include: CloudflareAccessGroupRule[]
+): string[] {
   const emails: string[] = [];
   for (const rule of include) {
     emails.push(...emailsFromRule(rule));
@@ -140,7 +144,8 @@ async function fetchGroup(
   const data = (await response.json()) as CloudflareGroupResponse;
   if (!data.success || !data.result) {
     const msg =
-      data.errors?.[0]?.message ?? "Unknown error from Cloudflare Access Groups";
+      data.errors?.[0]?.message ??
+      "Unknown error from Cloudflare Access Groups";
     throw new Error(`Cloudflare Access Groups: ${msg}`);
   }
 
@@ -179,7 +184,8 @@ async function updateGroup(
   const data = (await response.json()) as CloudflareGroupResponse;
   if (!data.success) {
     const msg =
-      data.errors?.[0]?.message ?? "Unknown error from Cloudflare Access Groups";
+      data.errors?.[0]?.message ??
+      "Unknown error from Cloudflare Access Groups";
     throw new Error(`Cloudflare Access Groups: ${msg}`);
   }
 }

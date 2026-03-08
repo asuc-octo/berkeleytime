@@ -11,10 +11,9 @@ import {
   UpdateStaffInfoInput,
   UpsertSemesterRoleInput,
 } from "../../generated-types/graphql";
-
 import {
-  addMissingStaffEmails,
   addEmailToStaffGroup,
+  addMissingStaffEmails,
   removeEmailFromStaffGroup,
 } from "./controllers/cloudflareAccess";
 
@@ -257,11 +256,9 @@ export const deleteStaffMember = async (
     return false;
   }
 
-  // Revoke Cloudflare Access to private backups 
+  // Revoke Cloudflare Access to private backups
   if (member.userId) {
-    const user = await UserModel.findById(member.userId)
-      .select("email")
-      .lean();
+    const user = await UserModel.findById(member.userId).select("email").lean();
     if (user?.email) {
       try {
         await removeEmailFromStaffGroup(user.email);
@@ -293,9 +290,7 @@ export const deleteStaffMember = async (
  * Returns the list of emails for all current staff (users with staff: true).
  */
 export const getStaffEmailsFromDb = async (): Promise<string[]> => {
-  const users = await UserModel.find({ staff: true })
-    .select("email")
-    .lean();
+  const users = await UserModel.find({ staff: true }).select("email").lean();
   return users
     .map((u) => u.email)
     .filter((e): e is string => typeof e === "string" && e.length > 0);

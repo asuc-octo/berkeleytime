@@ -135,9 +135,13 @@ export const staffTypeDef = gql`
   Result of syncing staff emails to the Cloudflare Access group.
   """
   type SyncCloudflareStaffAccessResult {
-    """Emails that were added to the group (previously missing)."""
+    """
+    Emails that were added to the group (previously missing).
+    """
     added: [String!]!
-    """If present, Cloudflare sync failed (e.g. API or lock); added may be partial or empty."""
+    """
+    If present, Cloudflare sync failed (e.g. API or lock); added may be partial or empty.
+    """
     errorMessage: String
   }
 `;
