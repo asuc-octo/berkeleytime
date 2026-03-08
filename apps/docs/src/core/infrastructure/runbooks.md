@@ -48,6 +48,8 @@ curl -f -o "prod_public_backup-YYYYMMDD.gz" \
 
 ### Private backup (Cloudflare Access)
 
+Access to `/private/*` is gated by Cloudflare Zero Trust. Only users in the configured Access group (e.g. "Berkeleytime Staff") can reach private backups.
+
 ```sh
 brew install cloudflare/cloudflare/cloudflared
 cloudflared access login https://backups.berkeleytime.com
@@ -56,6 +58,12 @@ cloudflared access curl \
   "https://backups.berkeleytime.com/private/hourly/prod_backup-YYYYMMDDHH.gz" \
   -o "prod_backup-YYYYMMDDHH.gz"
 ```
+
+### Cloudflare Access staff backup sync
+
+Staff membership in the Berkeleytime staff dashboard is synced to a Cloudflare Zero Trust Access group used to protect private backups. When a user is added as staff, their email is added to that group; when removed, their email is removed.
+
+**Bulk sync (add all current staff to the group):** From the staff dashboard, call the GraphQL mutation `syncCloudflareStaffAccess` (staff-only). It adds any Berkeleytime staff emails that are not already in the group; it does not remove existing group members. Run this once after enabling the feature to backfill existing staff, and again if the group drifts.
 
 ## Deploying a New Environment Variable with sealed-secrets
 

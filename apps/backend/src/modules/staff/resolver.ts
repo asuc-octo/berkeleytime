@@ -17,6 +17,7 @@ import {
   getStaffBySemester,
   getStaffMember,
   getStaffMemberByUserId,
+  syncCloudflareStaffAccess,
   updateStaffInfo,
   upsertSemesterRole,
 } from "./controller";
@@ -68,6 +69,12 @@ const resolvers = {
       { memberId }: { memberId: string },
       context: StaffRequestContext
     ) => deleteStaffMember(context, memberId),
+
+    syncCloudflareStaffAccess: (
+      _: unknown,
+      __: unknown,
+      context: StaffRequestContext
+    ) => syncCloudflareStaffAccess(context),
   },
 
   StaffMember: {
