@@ -252,7 +252,7 @@ function EnrollmentSidebar({
   const sectionSelectRef = useRef<SelectHandle>(null);
 
   const openNextSelect = (ref: React.RefObject<SelectHandle | null>) => {
-    requestAnimationFrame(() => ref.current?.openMenu());
+    setTimeout(() => ref.current?.openMenu(), 50);
   };
 
   const { data: courseData, loading: courseLoading } =

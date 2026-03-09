@@ -203,7 +203,7 @@ function FilterPanel({
   const secondarySelectRef = useRef<SelectHandle>(null);
 
   const openNextSelect = (ref: React.RefObject<SelectHandle | null>) => {
-    requestAnimationFrame(() => ref.current?.openMenu());
+    setTimeout(() => ref.current?.openMenu(), 50);
   };
 
   // Consume editDraft: populate sidebar state from the draft, then clear it
