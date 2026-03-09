@@ -4,7 +4,7 @@ import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { Button, PillSwitcher, Select } from "@repo/theme";
+import { Button, PillSwitcher, Select, type SelectHandle } from "@repo/theme";
 
 import {
   CourseAnalyticsCardGrid,
@@ -198,6 +198,13 @@ function FilterPanel({
 
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
   const [hasLetterGrades, setHasLetterGrades] = useState<boolean | null>(null);
+
+  const primarySelectRef = useRef<SelectHandle>(null);
+  const secondarySelectRef = useRef<SelectHandle>(null);
+
+  const openNextSelect = (ref: React.RefObject<SelectHandle | null>) => {
+    requestAnimationFrame(() => ref.current?.openMenu());
+  };
 
   // Consume editDraft: populate sidebar state from the draft, then clear it
   useEffect(() => {
@@ -517,6 +524,7 @@ function FilterPanel({
     setSelectedCourse(course);
     setSelectedInstructor(null);
     setSelectedSemester(null);
+    openNextSelect(primarySelectRef);
     addRecent(RecentType.Course, {
       subject: course.subject,
       number: course.number,
@@ -569,6 +577,7 @@ function FilterPanel({
             <>
               <CourseAnalyticsField label="Instructor">
                 <Select
+                  ref={primarySelectRef}
                   options={instructorOptions}
                   loading={courseLoading}
                   disabled={loading || courseLoading}
@@ -580,11 +589,13 @@ function FilterPanel({
                     if (Array.isArray(s) || !s) return;
                     setSelectedInstructor(s);
                     setSelectedSemester(null);
+                    openNextSelect(secondarySelectRef);
                   }}
                 />
               </CourseAnalyticsField>
               <CourseAnalyticsField label="Semester">
                 <Select
+                  ref={secondarySelectRef}
                   options={semesterOptions}
                   loading={courseLoading}
                   disabled={loading || courseLoading}
@@ -603,6 +614,7 @@ function FilterPanel({
             <>
               <CourseAnalyticsField label="Semester">
                 <Select
+                  ref={primarySelectRef}
                   options={semesterOptions}
                   loading={courseLoading}
                   disabled={loading || courseLoading}
@@ -614,11 +626,13 @@ function FilterPanel({
                     if (Array.isArray(s)) return;
                     setSelectedSemester(s);
                     setSelectedInstructor(null);
+                    openNextSelect(secondarySelectRef);
                   }}
                 />
               </CourseAnalyticsField>
               <CourseAnalyticsField label="Instructor">
                 <Select
+                  ref={secondarySelectRef}
                   options={instructorOptions}
                   loading={courseLoading}
                   disabled={loading || courseLoading}

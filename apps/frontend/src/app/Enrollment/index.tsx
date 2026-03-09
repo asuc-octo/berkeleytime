@@ -4,7 +4,7 @@ import { useApolloClient } from "@apollo/client/react";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-import { Button, Select } from "@repo/theme";
+import { Button, Select, type SelectHandle } from "@repo/theme";
 
 import {
   CourseAnalyticsCardGrid,
@@ -247,6 +247,13 @@ function EnrollmentSidebar({
     null
   );
   const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
+
+  const semesterSelectRef = useRef<SelectHandle>(null);
+  const sectionSelectRef = useRef<SelectHandle>(null);
+
+  const openNextSelect = (ref: React.RefObject<SelectHandle | null>) => {
+    requestAnimationFrame(() => ref.current?.openMenu());
+  };
 
   const { data: courseData, loading: courseLoading } =
     useReadCourseWithInstructor(
@@ -497,6 +504,7 @@ function EnrollmentSidebar({
     setSelectedCourse(course);
     setSelectedSemesterValue(null);
     setSelectedOfferingId(null);
+    openNextSelect(semesterSelectRef);
     addRecent(RecentType.Course, {
       subject: course.subject,
       number: course.number,
@@ -529,6 +537,7 @@ function EnrollmentSidebar({
           >
             <CourseAnalyticsField label="Semester">
               <Select
+                ref={semesterSelectRef}
                 options={semesterOptions}
                 searchable
                 searchPlaceholder="Search semesters..."
@@ -540,6 +549,7 @@ function EnrollmentSidebar({
                   if (Array.isArray(semester)) return;
                   setSelectedSemesterValue(semester);
                   setSelectedOfferingId(null);
+                  openNextSelect(sectionSelectRef);
                 }}
               />
             </CourseAnalyticsField>
@@ -557,6 +567,7 @@ function EnrollmentSidebar({
           >
             <CourseAnalyticsField label="Section">
               <Select
+                ref={sectionSelectRef}
                 options={offeringOptions}
                 searchable
                 searchPlaceholder="Search sections..."
