@@ -193,12 +193,10 @@ function FilterPanel({
   const [selectedType, setSelectedType] = useState(DEFAULT_BY_OPTION.value);
 
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
-    "all"
+    null
   );
 
-  const [selectedSemester, setSelectedSemester] = useState<string | null>(
-    "all"
-  );
+  const [selectedSemester, setSelectedSemester] = useState<string | null>(null);
   const [hasLetterGrades, setHasLetterGrades] = useState<boolean | null>(null);
 
   // Consume editDraft: populate sidebar state from the draft, then clear it
@@ -500,10 +498,6 @@ function FilterPanel({
         }))
       );
 
-      setSelectedCourse(null);
-      setSelectedInstructor("all");
-      setSelectedSemester("all");
-
       setLoading(false);
     } catch {
       setLoading(false);
@@ -513,8 +507,8 @@ function FilterPanel({
 
   const handleCourseSelect = (course: CourseOption) => {
     setSelectedCourse(course);
-    setSelectedInstructor("all");
-    setSelectedSemester("all");
+    setSelectedInstructor(null);
+    setSelectedSemester(null);
     addRecent(RecentType.Course, {
       subject: course.subject,
       number: course.number,
@@ -523,8 +517,8 @@ function FilterPanel({
 
   const handleCourseClear = () => {
     setSelectedCourse(null);
-    setSelectedInstructor("all");
-    setSelectedSemester("all");
+    setSelectedInstructor(null);
+    setSelectedSemester(null);
   };
 
   const hasSelection = !!selectedInstructor || !!selectedSemester;
@@ -556,8 +550,8 @@ function FilterPanel({
               items={TYPE_ITEMS}
               value={selectedType}
               onValueChange={(value) => {
-                setSelectedInstructor("all");
-                setSelectedSemester("all");
+                setSelectedInstructor(null);
+                setSelectedSemester(null);
                 setSelectedType(value as InputType);
               }}
               fullWidth
@@ -577,7 +571,6 @@ function FilterPanel({
                   onChange={(s) => {
                     if (Array.isArray(s) || !s) return;
                     setSelectedInstructor(s);
-                    setSelectedSemester("all");
                   }}
                 />
               </CourseAnalyticsField>
@@ -611,7 +604,6 @@ function FilterPanel({
                   onChange={(s) => {
                     if (Array.isArray(s)) return;
                     setSelectedSemester(s);
-                    setSelectedInstructor("all");
                   }}
                 />
               </CourseAnalyticsField>

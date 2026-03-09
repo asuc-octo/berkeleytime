@@ -302,61 +302,24 @@ function EnrollmentSidebar({
     () => parseSemesterValue(selectedSemesterValue),
     [selectedSemesterValue]
   );
-  const defaultSemesterValue = useMemo(() => {
-    if (semesterOptions.length === 0) return null;
-
-    const usedSemesterValues = new Set(
-      outputs
-        .filter(
-          (o) =>
-            o.input.subject === selectedCourse?.subject &&
-            o.input.courseNumber === selectedCourse?.number
-        )
-        .map((o) => toSemesterValue(o.input.semester, o.input.year))
-    );
-
-    const preferNonSummer = (option: { value: string }) => {
-      const parsed = parseSemesterValue(option.value);
-      return parsed?.semester !== Semester.Summer;
-    };
-
-    // Try excluding already-selected semesters first
-    const unusedOptions = semesterOptions.filter(
-      (option) => !usedSemesterValues.has(option.value)
-    );
-    if (unusedOptions.length > 0) {
-      const best = unusedOptions.find(preferNonSummer);
-      return best?.value ?? unusedOptions[0].value;
-    }
-
-    // All semesters already used — fall back to normal logic
-    const latestNonSummer = semesterOptions.find(preferNonSummer);
-    return latestNonSummer?.value ?? semesterOptions[0]?.value ?? null;
-  }, [semesterOptions, outputs, selectedCourse]);
-
   useEffect(() => {
     if (!selectedCourse) return;
 
-    if (!defaultSemesterValue) {
+    if (semesterOptions.length === 0) {
       if (selectedSemesterValue !== null) {
         setSelectedSemesterValue(null);
       }
       return;
     }
 
-    const hasValidSelectedSemester =
+    // Clear semester if it's no longer a valid option
+    if (
       selectedSemesterValue !== null &&
-      semesterOptions.some((option) => option.value === selectedSemesterValue);
-
-    if (!hasValidSelectedSemester) {
-      setSelectedSemesterValue(defaultSemesterValue);
+      !semesterOptions.some((option) => option.value === selectedSemesterValue)
+    ) {
+      setSelectedSemesterValue(null);
     }
-  }, [
-    defaultSemesterValue,
-    selectedCourse,
-    selectedSemesterValue,
-    semesterOptions,
-  ]);
+  }, [selectedCourse, selectedSemesterValue, semesterOptions]);
 
   const availableClasses = useMemo(() => {
     if (!selectedSemester) return [];
@@ -526,10 +489,6 @@ function EnrollmentSidebar({
     });
 
     if (!didAdd) return;
-
-    setSelectedCourse(null);
-    setSelectedSemesterValue(null);
-    setSelectedOfferingId(null);
   };
 
   useEnterToAdd(() => void handleAdd(), canAddWithoutLoading && !isAdding);
