@@ -19,9 +19,13 @@ bash apps/docs/src/getting-started/bootstrap-local.sh --no-seed-db
 bash apps/docs/src/getting-started/bootstrap-local.sh --no-docker
 ```
 
+If the script completes successfully, your local development environment is fully set up. You don't need to run any of the manual steps below until GraphQL typedefs change or a new dependency is added.
+
 > **Note:** The script is for **macOS and Linux/WSL**.
 
 ## Starting up the Application
+
+The steps below are the manual alternative to the bootstrap script. Use them only if you prefer to set up manually or if the script fails.
 
 Local development has a few local dependencies:
 - [Git](https://git-scm.com/install/)
@@ -102,7 +106,7 @@ DEV_PORT_PREFIX=80 docker compose up -d
 
 ## Seeding Local Database
 
-A seeded database is required for some pages on the frontend.
+A seeded database is required for some pages on the frontend. The bootstrap script handles this by default (use `--no-seed-db` to skip). The steps below are the manual alternative:
 
 ```sh
 # ./berkeleytime
