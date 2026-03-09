@@ -308,7 +308,7 @@
   --heading-small: var(--font-semibold) var(--text-16);
   --heading-caps: var(--font-medium) var(--text-14);
   --body-medium: var(--font-normal) var(--text-14);
-  // Safe defaults before theme mixin applies — prevents border flash on initial paint
+
   --border-color: transparent;
 
   --light-foreground-color: white;
@@ -492,23 +492,8 @@ body:not([data-theme]) {
 body {
   background-color: var(--background-color);
   font-family: Inter, sans-serif;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
 
   @supports (font-variation-settings: normal) {
     font-family: InterVariable, sans-serif;
   }
-}
-
-// Apply transition to all elements that use theme colors
-*,
-*::before,
-*::after {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease,
-    fill 0.3s ease,
-    stroke 0.3s ease;
 }

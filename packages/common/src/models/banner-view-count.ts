@@ -10,7 +10,5 @@ const bannerViewCountSchema = new Schema<IBannerViewCount>({
   viewCount: { type: Number, default: 0 },
 });
 
-bannerViewCountSchema.index({ bannerId: 1 }, { unique: true });
-
 export const BannerViewCountModel: Model<IBannerViewCount> =
   model<IBannerViewCount>("bannerviewcounts", bannerViewCountSchema);

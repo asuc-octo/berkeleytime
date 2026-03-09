@@ -2,82 +2,67 @@
   min-width: 300px;
   max-width: 330px;
   flex: 1 1 300px;
+  transition:
+    filter 140ms ease,
+    opacity 140ms ease;
 }
 
-.content {
-  padding: 16px;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+.fluid {
   min-width: 0;
+  max-width: none;
+  width: 100%;
+  flex: 1 1 auto;
 }
 
-.headerTitle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  flex-shrink: 1;
+.dimmed {
+  filter: grayscale(100%);
+  opacity: 0.55;
 }
 
-.courseCode {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  font-size: var(--text-16);
-  font-weight: var(--font-medium);
-  color: var(--heading-color);
+.colorBlock {
+  display: block;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
 }
 
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.icon {
-  color: var(--label-color);
-  cursor: pointer;
-  flex-shrink: 0;
-  display: flex;
+.iconButton,
+.deleteIconButton {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: transparent;
   line-height: 1;
-}
-
-.body {
-  width: 100%;
-  min-width: 0;
-  margin-top: 8px;
-  font-size: var(--text-14);
-  font-weight: var(--font-normal);
+  cursor: pointer;
   color: var(--paragraph-color);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  transition:
+    background-color 150ms ease-in-out,
+    color 150ms ease-in-out,
+    border-color 150ms ease-in-out;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-hover-color);
+      color: var(--heading-color);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background-color: var(--button-hover-color);
+  }
 }
 
-.title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.metadata {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.deleteIconButton {
+  color: var(--paragraph-color);
 }

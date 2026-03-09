@@ -1,15 +1,13 @@
-import { useRef } from "react";
+import { useMemo } from "react";
 
-import { Eye, EyeClosed, Trash } from "iconoir-react";
+import { useQuery } from "@apollo/client/react";
+import classNames from "classnames";
+import { EditPencil, Eye, EyeClosed, Trash } from "iconoir-react";
 
-import { Card, ColoredSquare } from "@repo/theme";
-
-import { AverageGrade } from "@/components/AverageGrade";
-import {
-  useReadCourseGradeDist,
-  useReadCourseTitle,
-} from "@/hooks/api/courses/useReadCourse";
-import { IGradeDistribution } from "@/lib/api";
+import ClassCard from "@/components/ClassCard";
+import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import { useReadCourseTitle } from "@/hooks/api/courses/useReadCourse";
+import { GetCourseUnitsDocument, Semester } from "@/lib/generated/graphql";
 
 import styles from "./CourseSelectionCard.module.scss";
 
@@ -18,14 +16,22 @@ interface CourseSelectionCardProps {
   subject: string;
   number: string;
   title?: string;
-  metadata: string;
-  gradeDistribution?: IGradeDistribution;
-  loadGradeDistribution?: boolean;
-  onClick: () => void;
-  onClickDelete: () => void;
-  onClickHide: () => void;
-  active: boolean;
-  hidden: boolean;
+  subtitle: string;
+  year?: number;
+  semester?: Semester;
+  sectionNumber?: string;
+  sessionId?: string;
+  gradeDistribution?: { average?: number | null };
+  onClick?: () => void;
+  onClickDelete?: () => void;
+  onClickEdit?: () => void;
+  onClickHide?: () => void;
+  active?: boolean;
+  hidden?: boolean;
+  dimmed?: boolean;
+  fluid?: boolean;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 export default function CourseSelectionCard({
@@ -33,77 +39,143 @@ export default function CourseSelectionCard({
   subject,
   number,
   title,
-  metadata,
+  subtitle,
+  year,
+  semester,
+  sectionNumber,
+  sessionId,
   gradeDistribution,
-  loadGradeDistribution = true,
   onClick,
   onClickDelete,
+  onClickEdit,
   onClickHide,
   active,
   hidden,
+  dimmed,
+  fluid = false,
+  onMouseEnter,
+  onMouseLeave,
 }: CourseSelectionCardProps) {
-  const hideRef = useRef<HTMLDivElement>(null);
-  const deleteRef = useRef<HTMLDivElement>(null);
-
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
   });
-  const { data: courseGradeData } = useReadCourseGradeDist(subject, number, {
-    skip: !!gradeDistribution || !loadGradeDistribution,
+
+  const hasClassIdentity = !!(year && semester && sectionNumber);
+  const { data: classData } = useGetClass(
+    year ?? 0,
+    semester ?? Semester.Fall,
+    sessionId ?? "",
+    subject,
+    number,
+    sectionNumber ?? "",
+    { skip: !hasClassIdentity }
+  );
+
+  const { data: courseUnitsData } = useQuery(GetCourseUnitsDocument, {
+    variables: { subject, number },
+    skip: hasClassIdentity,
   });
 
+  const courseUnits = useMemo(() => {
+    if (!courseUnitsData?.course?.classes?.length) return undefined;
+    const sorted = [...courseUnitsData.course.classes].sort(
+      (a, b) => b.year - a.year
+    );
+    return sorted[0].unitsMax;
+  }, [courseUnitsData]);
+
   const displayTitle = title ?? titleData?.title ?? "N/A";
-  const displayGradeDistribution =
-    gradeDistribution ?? courseGradeData?.gradeDistribution;
+  const hasActions = onClickHide || onClickEdit || onClickDelete;
+  const topRightContent = hasActions ? (
+    <>
+      {onClickHide && (
+        <button
+          type="button"
+          aria-label={hidden ? "Show course" : "Hide course"}
+          className={styles.iconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickHide();
+          }}
+        >
+          {!hidden ? <Eye /> : <EyeClosed />}
+        </button>
+      )}
+      {onClickEdit && (
+        <button
+          type="button"
+          aria-label="Edit course"
+          className={styles.iconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickEdit();
+          }}
+        >
+          <EditPencil />
+        </button>
+      )}
+      {onClickDelete && (
+        <button
+          type="button"
+          aria-label="Delete course"
+          className={styles.deleteIconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            onClickDelete();
+          }}
+        >
+          <Trash />
+        </button>
+      )}
+    </>
+  ) : undefined;
 
   return (
-    <Card.Root
-      className={styles.card}
-      active={active}
-      disabled={hidden}
-      onClick={(event) => {
-        if (hidden) return;
-        if (
-          hideRef.current &&
-          !hideRef.current.contains(event.target as Node) &&
-          deleteRef.current &&
-          !deleteRef.current.contains(event.target as Node)
-        ) {
-          onClick();
-        }
+    <ClassCard
+      className={classNames(styles.card, {
+        [styles.dimmed]: dimmed,
+        [styles.fluid]: fluid,
+      })}
+      class={{
+        subject,
+        courseNumber: number,
+        title: displayTitle,
+        ...(classData
+          ? {
+              unitsMin: classData.unitsMin,
+              unitsMax: classData.unitsMax,
+              course: classData.course,
+              primarySection: classData.primarySection,
+            }
+          : {
+              gradeDistribution,
+              unitsMin: courseUnits,
+              unitsMax: courseUnits,
+              course: titleData?.aggregatedRatings
+                ? { aggregatedRatings: titleData.aggregatedRatings }
+                : undefined,
+            }),
       }}
-    >
-      <div className={styles.content}>
-        <div className={styles.header}>
-          <div className={styles.headerTitle}>
-            <ColoredSquare color={color} size="lg" />
-            <span className={styles.courseCode}>
-              {subject} {number}
-            </span>
-          </div>
-
-          <div className={styles.headerActions}>
-            {displayGradeDistribution && (
-              <AverageGrade gradeDistribution={displayGradeDistribution} />
-            )}
-            <div onClick={onClickHide} ref={hideRef} className={styles.icon}>
-              {!hidden ? <Eye /> : <EyeClosed />}
-            </div>
-            <div
-              onClick={onClickDelete}
-              ref={deleteRef}
-              className={styles.icon}
-            >
-              <Trash />
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.body}>
-          <div className={styles.title}>{displayTitle}</div>
-          <div className={styles.metadata}>{metadata}</div>
-        </div>
-      </div>
-    </Card.Root>
+      headingPrefix={
+        <span
+          className={styles.colorBlock}
+          style={{ backgroundColor: color }}
+          aria-hidden
+        />
+      }
+      active={active}
+      subtitle={subtitle}
+      gradeInFooter
+      topRightContent={topRightContent}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onClick={() => {
+        if (hidden) return;
+        onClick?.();
+      }}
+    />
   );
 }

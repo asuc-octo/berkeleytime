@@ -10,7 +10,6 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -31,7 +30,13 @@ const CollectionDetail = lazy(
 
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
-const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
+const Grades = lazy(() => import("@/app/Grades"));
+
+// Legacy pages (preserved for reference during redesign)
+const LegacyEnrollment = lazy(() => import("@/app/_legacy/Enrollment"));
+const LegacyGradeDistributions = lazy(
+  () => import("@/app/_legacy/GradeDistributions")
+);
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
@@ -258,7 +263,7 @@ const router = createBrowserRouter([
           {
             element: (
               <SuspenseBoundary key="grades">
-                <GradeDistributions />
+                <Grades />
               </SuspenseBoundary>
             ),
             path: "grades",
@@ -273,9 +278,25 @@ const router = createBrowserRouter([
           },
           {
             element: (
+              <SuspenseBoundary key="grades-legacy">
+                <LegacyGradeDistributions />
+              </SuspenseBoundary>
+            ),
+            path: "grades-legacy",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="enrollment-legacy">
+                <LegacyEnrollment />
+              </SuspenseBoundary>
+            ),
+            path: "enrollment-legacy",
+          },
+          {
+            element: (
               <SuspenseBoundary
                 key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
-                fallback={<CatalogSkeleton />}
+                fallback={<></>}
               >
                 <Catalog />
               </SuspenseBoundary>
