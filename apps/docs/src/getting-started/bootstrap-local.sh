@@ -67,7 +67,9 @@ source_nvm_if_possible() {
   local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
   if [[ -s "$nvm_dir/nvm.sh" ]]; then
     # shellcheck disable=SC1090
+    set +u
     . "$nvm_dir/nvm.sh"
+    set -u
   fi
 }
 
@@ -79,11 +81,13 @@ setup_node() {
   if have nvm; then
     # nvm sometimes needs TMPDIR set explicitly in constrained environments
     export TMPDIR="${TMPDIR:-/tmp}"
+    set +u
     if ! nvm install --lts; then
       warn "nvm install --lts failed. Ensure your nvm installation is healthy or install Node manually (>= 22.12.0)."
     else
       nvm use --lts || warn "nvm use --lts failed; falling back to existing node on PATH."
     fi
+    set -u
   fi
 
   require_cmd node "Install Node.js >= 22.12.0 (recommended: via nvm), then re-run."
