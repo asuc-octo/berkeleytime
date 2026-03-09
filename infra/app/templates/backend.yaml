@@ -70,9 +70,9 @@ kind: SealedSecret
 metadata:
   annotations:
     sealedsecrets.bitnami.com/namespace-wide: "true"
-  creationTimestamp: null
-  name: bt-prod-app-backend-secret
-  namespace: bt
+  name: {{ include "bt-app.backendName" .}}-secret
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
 spec:
   encryptedData:
     CLOUDFLARE_API_TOKEN: AgCeZFQuDk9GyOK4IIf2J/bBQcZaouS1i5noolYEaP2E5A5aHoysFJTtGrEcL3mduzpnQ1Cg6bxPspQxFe4rxZvax7t2BBz+TaEkKOEhB1MerFN2kLUZzugKiLqPkXajJ7K9gaSY0WC+4k7VE19ayObr/Pe49zrwDm6t22LlawZCPEhpKqdC2uK7vfXz5tdA9459byKnvln7b8o76c7yCSD7k5v1cOZm0VqckfXGNg9A0wSMZDJhwNtmOnMOzN0Sswp81zXF77dzmVGH6J9MlijfJ4hbukYknTDoddDz/TfWc+ZDAAsC0hXqEoIcw1z8FYWFzlbbFpdkDm+0Ccp4pMkU7H6JZoNN8GVvb7Al5VFMTGNmWWQvzT8JbIW5T5XNCACvH5xT0zdeWrM43OXisd+j9g5op6dYI2GKAENovq7uo/tswaLocc5YmXTEXmE9Y4mDbLJDENjXdEWfi1WQb4MtJmzN8W1wn4Y9gFGZFP0HDXMrKcABFmcQxFIwubs8lq/eH/lGpwY27pB5PCybQHlyTe8yVLZYCsFhdTSCdLKN+P2ERz41tYql4C+pNyhckch0hteELQHbtKH3rBVqN3F4GIrbIWYGFH2NeClcTCjfiDpVtIlvwfREFWiUDNCGZUJSekYx/KeidZIZc6WiSV3p3F/lUApu7ABaZU8FBvuhrlTSGUcnulhjJuwFBU+P5cZxPJXyj5JCnRbKRxYA8+dJFQdB6MO7gItmubuN7+ahzMirjUbHB0pp
