@@ -248,7 +248,11 @@ function FilterPanel({
       return { options: list, autoSelectValue: null };
     }
 
-    const selectedTerm = parseSemesterValue(selectedSemester);
+    // Only filter by semester when instructor is the secondary field
+    const selectedTerm =
+      selectedType === InputType.Term
+        ? parseSemesterValue(selectedSemester)
+        : null;
     const instructorSet = new Set();
 
     course?.classes.forEach((c) => {
@@ -280,7 +284,7 @@ function FilterPanel({
     }
 
     return { options: [...list, ...opts], autoSelectValue: null };
-  }, [course, selectedSemester]);
+  }, [course, selectedSemester, selectedType]);
 
   const instructorOptions = instructorOptionsData.options;
 
@@ -297,16 +301,20 @@ function FilterPanel({
       return { options: list, autoSelectValue: null };
     }
 
-    const filteredClasses =
-      selectedInstructor === "all"
-        ? course.classes
-        : course.classes.filter((c) =>
-            c.primarySection?.meetings.find((m) =>
-              m.instructors.find(
-                (i) => selectedInstructor === `${i.familyName}, ${i.givenName}`
-              )
+    // Only filter by instructor when semester is the secondary field
+    const shouldFilterByInstructor =
+      selectedType === InputType.Instructor &&
+      selectedInstructor &&
+      selectedInstructor !== "all";
+    const filteredClasses = shouldFilterByInstructor
+      ? course.classes.filter((c) =>
+          c.primarySection?.meetings.find((m) =>
+            m.instructors.find(
+              (i) => selectedInstructor === `${i.familyName}, ${i.givenName}`
             )
-          );
+          )
+        )
+      : course.classes;
 
     const seen = new Set<string>();
     const uniqueClasses = filteredClasses
@@ -325,7 +333,7 @@ function FilterPanel({
       label: formatSemesterLabel(t.semester, t.year),
     }));
 
-    if (filteredOptions.length === 1 && selectedInstructor !== "all") {
+    if (filteredOptions.length === 1 && shouldFilterByInstructor) {
       return {
         options: filteredOptions,
         autoSelectValue: filteredOptions[0].value,
@@ -333,7 +341,7 @@ function FilterPanel({
     }
 
     return { options: [...list, ...filteredOptions], autoSelectValue: null };
-  }, [course, selectedInstructor]);
+  }, [course, selectedInstructor, selectedType]);
 
   const semesterOptions = semesterOptionsData.options;
 
@@ -571,6 +579,7 @@ function FilterPanel({
                   onChange={(s) => {
                     if (Array.isArray(s) || !s) return;
                     setSelectedInstructor(s);
+                    setSelectedSemester(null);
                   }}
                 />
               </CourseAnalyticsField>
@@ -604,6 +613,7 @@ function FilterPanel({
                   onChange={(s) => {
                     if (Array.isArray(s)) return;
                     setSelectedSemester(s);
+                    setSelectedInstructor(null);
                   }}
                 />
               </CourseAnalyticsField>
