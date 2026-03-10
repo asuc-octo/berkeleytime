@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: "Datapuller job to run"
+        description: "Select which datapuller job to run"
         required: true
         type: choice
         options:
@@ -33,13 +33,21 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          command_timeout: 30m
+          command_timeout: 10m
           script: |
             set -e
 
+            # define variables
             CRONJOB="bt-prod-datapuller-${{ github.event.inputs.job }}"
             JOB_NAME="${CRONJOB}-manual-$(date +%s)"
             NAMESPACE="bt"
+
+            # set timeout based on job type
+            case "${{ github.event.inputs.job }}" in grades-l5y|sections-l5y|classes-l5y)
+                TIMEOUT=600s ;;  # 10 min
+              *)
+                TIMEOUT=300s ;;  # 5 min
+            esac
 
             echo "=== Creating job ${JOB_NAME} from cronjob ${CRONJOB} ==="
             kubectl create job "${JOB_NAME}" --from="cronjob/${CRONJOB}" -n "${NAMESPACE}"
@@ -51,6 +59,6 @@ jobs:
             kubectl logs -n "${NAMESPACE}" -l job-name="${JOB_NAME}" --follow || true
 
             echo "=== Waiting for job to complete ==="
-            kubectl wait --for=condition=complete job/"${JOB_NAME}" -n "${NAMESPACE}" --timeout=1800s
+            kubectl wait --for=condition=complete job/"${JOB_NAME}" -n "${NAMESPACE}" --timeout="${TIMEOUT}"
 
             echo "=== Job completed successfully ==="
