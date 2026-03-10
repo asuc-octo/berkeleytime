@@ -178,7 +178,7 @@ export const getGradeDistributionByClass = async (
     .select({ sectionId: 1 })
     .lean();
 
-  if (!section) throw new Error("Class not found");
+  if (!section) return aggregateGradeDistributions([]);
 
   return getGradeDistributionBySectionIds([section.sectionId]);
 };
