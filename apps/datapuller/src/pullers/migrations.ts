@@ -49,10 +49,19 @@ const backfillAggregatedMetricsClassId = async (config: Config) => {
     .lean();
 
   // Create lookup map: "subject|courseNumber|semester|year|classNumber" -> { _id, courseId }
-  const classLookup = new Map<string, { _id: unknown; courseId: string }>();
+  const classLookup = new Map<
+    string,
+    {
+      _id: any;
+      courseId: string;
+    }
+  >();
   for (const cls of allClasses) {
     const key = `${cls.subject}|${cls.courseNumber}|${cls.semester}|${cls.year}|${cls.number}`;
-    classLookup.set(key, { _id: cls._id, courseId: cls.courseId });
+    classLookup.set(key, {
+      _id: cls._id,
+      courseId: cls.courseId,
+    });
   }
 
   log.info(
@@ -76,12 +85,7 @@ const backfillAggregatedMetricsClassId = async (config: Config) => {
     .lean()
     .cursor();
 
-  const bulkOps: {
-    updateOne: {
-      filter: { _id: unknown };
-      update: { $set: { classId: unknown; courseId: string } };
-    };
-  }[] = [];
+  const bulkOps: any[] = [];
 
   const orphanedDocs: {
     subject: string;
@@ -100,7 +104,9 @@ const backfillAggregatedMetricsClassId = async (config: Config) => {
     if (classInfo) {
       bulkOps.push({
         updateOne: {
-          filter: { _id: doc._id },
+          filter: {
+            _id: doc._id,
+          },
           update: {
             $set: { classId: classInfo._id, courseId: classInfo.courseId },
           },

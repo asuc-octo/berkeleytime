@@ -25,9 +25,11 @@ export default (app: Application, redis?: RedisClientType) => {
 
       // Track click event if enabled and redis is available
       if (banner.clickEventLogging && redis) {
-        trackIntensiveClick(redis, req, bannerId, "banner").catch((error) => {
-          console.error("Error tracking banner click event:", error);
-        });
+        trackIntensiveClick(redis, req, String(bannerId), "banner").catch(
+          (error) => {
+            console.error("Error tracking banner click event:", error);
+          }
+        );
       }
 
       // Redirect to the banner's link

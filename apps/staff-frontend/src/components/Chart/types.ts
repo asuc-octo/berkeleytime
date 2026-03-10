@@ -25,7 +25,7 @@ export interface ChartTooltipConfig {
   indicator?: "dot" | "line" | "square" | "circle";
 
   // Custom formatters
-  labelFormatter?: (label: any, payload: any[]) => ReactNode;
+  labelFormatter?: (label: any, payload: readonly any[]) => ReactNode;
   valueFormatter?: (value: any, name: string, payload: any) => ReactNode;
   nameFormatter?: (name: string, payload: any) => ReactNode;
 
@@ -35,14 +35,14 @@ export interface ChartTooltipConfig {
   sortOrder?: "asc" | "desc";
 
   // Custom sections
-  header?: (payload: any[]) => ReactNode;
-  footer?: (payload: any[]) => ReactNode;
+  header?: (payload: readonly any[]) => ReactNode;
+  footer?: (payload: readonly any[]) => ReactNode;
 }
 
 // Main tooltip content props
 export interface ChartTooltipContentProps {
   active?: boolean;
-  payload?: any[];
+  payload?: readonly any[];
   label?: any;
   config: ChartConfig;
   tooltipConfig?: ChartTooltipConfig;
