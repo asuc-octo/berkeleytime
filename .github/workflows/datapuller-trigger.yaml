@@ -38,7 +38,7 @@ jobs:
             set -e
 
             # define variables
-            CRONJOB="bt-prod-datapuller-${{ github.event.inputs.job }}"
+            CRONJOB="bt-prod-app-datapuller-${{ github.event.inputs.job }}"
             JOB_NAME="${CRONJOB}-manual-$(date +%s)"
             NAMESPACE="bt"
 
