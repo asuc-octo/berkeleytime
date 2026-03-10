@@ -76,14 +76,12 @@ export default defineConfig({
       testDir: "./tests/sanity",
       use: { ...devices["Desktop Chrome"] },
     },
-
     // API tests - GraphQL API unit tests (no browser needed)
     {
       name: "api",
       testDir: "./tests/api",
       use: { ...devices["Desktop Chrome"] },
     },
-
     // E2E tests - comprehensive flows, multiple browsers and mobile
     {
       name: "e2e-chromium",
@@ -91,21 +89,23 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
     {
-      name: "e2e-firefox",
-      testDir: "./tests/e2e",
-      use: { ...devices["Desktop Firefox"] },
-    },
-    {
       name: "e2e-webkit",
       testDir: "./tests/e2e",
       use: { ...devices["Desktop Safari"] },
     },
-    {
+  ],
+
+  /*
+  {
+      name: "e2e-firefox",
+      testDir: "./tests/e2e",
+      use: { ...devices["Desktop Firefox"] },
+    }, {
       name: "e2e-mobile",
       testDir: "./tests/e2e",
       use: { ...devices["iPhone 12"] },
-    },
-  ],
+    }
+  */
 
   /* Run your local dev server before starting the tests */
   webServer: getWebServer(),

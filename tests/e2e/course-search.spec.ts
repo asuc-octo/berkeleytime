@@ -37,4 +37,33 @@ test.describe("Course Search", () => {
     const results = page.getByRole("heading", { name: "COMPSCI 61A #" });
     await expect(results).toBeVisible();
   });
+
+  test("get to grades page from course catalog", async ({ page }) => {
+    await page.goto("/catalog");
+    await page.getByRole("button", { name: "Open Filters" }).click();
+    await page
+      .locator("div")
+      .filter({ hasText: /^Summer 2026$/ })
+      .first()
+      .click();
+    await page.getByText("Fall 2021").click();
+    await page
+      .getByRole("textbox", { name: "Search Fall 2021 classes..." })
+      .click();
+    await page
+      .getByRole("textbox", { name: "Search Fall 2021 classes..." })
+      .click();
+    await page
+      .getByRole("textbox", { name: "Search Fall 2021 classes..." })
+      .fill("data");
+    await page.getByText("DATA C100 #01Principles &").click();
+    await page.getByRole("button", { name: "Grades" }).nth(1).click();
+    const page1Promise = page.waitForEvent("popup");
+    await page.getByRole("link", { name: "Open in Grades" }).click();
+    const page1 = await page1Promise;
+    await expect(
+      page1.getByText("A+AA-B+BB-C+CC-D+DD-FPNP0.0%7")
+    ).toBeVisible();
+    await expect(page1.locator("#root")).toContainText("B+(3.358)");
+  });
 });

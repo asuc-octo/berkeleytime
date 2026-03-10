@@ -8,6 +8,7 @@ courses.spec.ts
 course-search.spec.ts
     goes to goes catalog
     searches CS61A on course catalog
+    get to grades page from course catalog
 ## Sanity
 smoke.spec.ts
     Landing page exists
