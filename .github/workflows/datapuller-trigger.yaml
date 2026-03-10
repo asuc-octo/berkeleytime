@@ -33,7 +33,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          command_timeout: 10m
+          command_timeout: 25m
           script: |
             set -e
 
@@ -44,9 +44,9 @@ jobs:
 
             # set timeout based on job type
             case "${{ github.event.inputs.job }}" in grades-l5y|sections-l5y|classes-l5y)
-                TIMEOUT=600s ;;  # 10 min
+                TIMEOUT=1200s ;;  # 20 min
               *)
-                TIMEOUT=300s ;;  # 5 min
+                TIMEOUT=600s ;;  # 10 min
             esac
 
             echo "=== Creating job ${JOB_NAME} from cronjob ${CRONJOB} ==="
