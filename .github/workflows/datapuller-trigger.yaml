@@ -1,0 +1,56 @@
+name: "Datapuller: Manual Trigger"
+run-name: "Datapuller: ${{ github.event.inputs.job }} triggered by ${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Datapuller job to run"
+        required: true
+        type: choice
+        options:
+          - terms-all
+          - terms-nearby
+          - courses
+          - sections-active
+          - sections-l5y
+          - classes-active
+          - classes-l5y
+          - grades-recent
+          - grades-l5y
+          - enrollments
+          - enrollment-timeframe
+
+jobs:
+  trigger:
+    name: Trigger and Stream Logs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH, Trigger Job, and Stream Logs
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          command_timeout: 30m
+          script: |
+            set -e
+
+            CRONJOB="bt-prod-datapuller-${{ github.event.inputs.job }}"
+            JOB_NAME="${CRONJOB}-manual-$(date +%s)"
+            NAMESPACE="bt"
+
+            echo "=== Creating job ${JOB_NAME} from cronjob ${CRONJOB} ==="
+            kubectl create job "${JOB_NAME}" --from="cronjob/${CRONJOB}" -n "${NAMESPACE}"
+
+            echo "=== Waiting for pod to start ==="
+            kubectl wait --for=condition=ready pod -l job-name="${JOB_NAME}" -n "${NAMESPACE}" --timeout=120s || true
+
+            echo "=== Streaming logs ==="
+            kubectl logs -n "${NAMESPACE}" -l job-name="${JOB_NAME}" --follow || true
+
+            echo "=== Waiting for job to complete ==="
+            kubectl wait --for=condition=complete job/"${JOB_NAME}" -n "${NAMESPACE}" --timeout=1800s
+
+            echo "=== Job completed successfully ==="
