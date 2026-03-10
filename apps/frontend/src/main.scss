@@ -11,6 +11,9 @@
   --z-popover: 14;
   --z-toast: 15;
   --z-tooltip: 16;
+  --z-menu-overlay: 17;   /* Mobile nav menu overlay (above all page content) */
+  --z-nav-header: 18;     /* Sticky navigation header (above menu overlay) */
+  --z-nav-dropdown: 19;   /* Nav bar dropdowns (above nav header) */
   --z-dev: 9999;
 }
 

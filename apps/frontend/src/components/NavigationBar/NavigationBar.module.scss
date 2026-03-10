@@ -7,7 +7,7 @@
   width: 100vw;
   height: 100vh;
   background-color: var(--foreground-color);
-  z-index: var(--z-nav);
+  z-index: var(--z-menu-overlay);
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -38,11 +38,11 @@
 
 .themeDropdown {
   min-width: 100px;
-  z-index: var(--z-popover);
+  z-index: var(--z-nav-dropdown);
 }
 
 .profileDropdown {
-  z-index: var(--z-popover);
+  z-index: var(--z-nav-dropdown);
 }
 
 .themeDropdownItem {
