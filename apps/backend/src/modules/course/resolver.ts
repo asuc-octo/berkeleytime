@@ -157,8 +157,8 @@ const resolvers: CourseModule.Resolvers = {
       return (parent.classes ?? classes)!.toSorted((a, b) => {
         if (a.year === b.year) {
           return (
-            SEMESTER_RECENCY_ORDER.indexOf(a.semester) -
-            SEMESTER_RECENCY_ORDER.indexOf(b.semester)
+            (SEMESTER_RECENCY_ORDER[a.semester ?? ""] ?? -1) -
+            (SEMESTER_RECENCY_ORDER[b.semester ?? ""] ?? -1)
           );
         }
         return b.year - a.year;

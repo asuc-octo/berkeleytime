@@ -16,6 +16,7 @@ export type BooleanRequirement = Requirement & {
 export type NCoursesRequirement = Requirement & {
   courses: Data<Array<any>>;
   required_count: Data<number>;
+  actual_count?: Data<number>;
 };
 
 export type CourseListRequirement = Requirement & {
@@ -34,6 +35,7 @@ export type OrRequirement = Requirement & {
 export type NumberRequirement = Requirement & {
   actual: Data<number>;
   required: Data<number>;
+  courses?: Data<Array<any>>;
 };
 
 export const constructor = (
@@ -100,16 +102,20 @@ export const booleanRequirementDefinedFields = [
 const createNCoursesRequirement = (
   courses: Data<Array<any>>,
   required_count: Data<number>,
-  description: Data<string>
+  description: Data<string>,
+  actual_count?: Data<number>
 ): Data<NCoursesRequirement> => {
   const result = {
-    data: courses.data.length >= required_count.data,
+    data:
+      (actual_count ? actual_count.data : courses.data.length) >=
+      required_count.data,
     type: "boolean" as Type,
   };
   return {
     data: {
       courses,
       required_count,
+      ...(actual_count && { actual_count }),
       result,
       description,
       type: { data: "NCoursesRequirement", type: "string" },
@@ -125,21 +131,38 @@ export const nCoursesRequirementConstructor = (
   variables: Variables,
   config: BtLLConfig = {}
 ): Data<NCoursesRequirement> => {
-  const [courses, required_count, description] = argSplit(
-    v.substring(1, v.length - 1)
-  );
-  const coursesData = evaluate(courses, "List<Course>", variables, config);
+  const args = argSplit(v.substring(1, v.length - 1));
+
+  let coursesStr, actualCountStr, requiredCountStr, descriptionStr;
+
+  if (args.length === 3) {
+    [coursesStr, requiredCountStr, descriptionStr] = args;
+  } else if (args.length === 4) {
+    [coursesStr, actualCountStr, requiredCountStr, descriptionStr] = args;
+  } else {
+    throw new Error(
+      `NCoursesRequirement expects 3 or 4 arguments, got ${args.length}`
+    );
+  }
+
+  const coursesData = evaluate(coursesStr, "List<Course>", variables, config);
   const requiredCountData = evaluate(
-    required_count,
+    requiredCountStr,
     "number",
     variables,
     config
   );
-  const descriptionData = evaluate(description, "string", variables, config);
+  const descriptionData = evaluate(descriptionStr, "string", variables, config);
+  let actualCountData;
+  if (actualCountStr) {
+    actualCountData = evaluate(actualCountStr, "number", variables, config);
+  }
+
   return createNCoursesRequirement(
     coursesData,
     requiredCountData,
-    descriptionData
+    descriptionData,
+    actualCountData
   );
 };
 
@@ -148,6 +171,7 @@ export const nCoursesRequirementDefinedFields = [
   "description",
   "courses",
   "required_count",
+  "actual_count",
   "type",
 ];
 
@@ -305,7 +329,8 @@ export const orRequirementDefinedFields = [
 const createNumberRequirement = (
   actual: Data<number>,
   required: Data<number>,
-  description: Data<string>
+  description: Data<string>,
+  courses?: Data<Array<any>>
 ): Data<NumberRequirement> => {
   const result = {
     data: actual.data >= required.data,
@@ -317,6 +342,7 @@ const createNumberRequirement = (
       required,
       result,
       description,
+      ...(courses && { courses }),
       type: { data: "NumberRequirement", type: "string" },
     },
     type: "NumberRequirement",
@@ -330,13 +356,33 @@ export const numberRequirementConstructor = (
   variables: Variables,
   config: BtLLConfig = {}
 ): Data<NumberRequirement> => {
-  const [actual, required, description] = argSplit(
-    v.substring(1, v.length - 1)
+  const args = argSplit(v.substring(1, v.length - 1));
+  let actualStr, requiredStr, descriptionStr, coursesStr;
+
+  if (args.length === 3) {
+    [actualStr, requiredStr, descriptionStr] = args;
+  } else if (args.length === 4) {
+    [coursesStr, actualStr, requiredStr, descriptionStr] = args;
+  } else {
+    throw new Error(
+      `NumberRequirement expects 3 or 4 arguments, got ${args.length}`
+    );
+  }
+
+  const actualData = evaluate(actualStr, "number", variables, config);
+  const requiredData = evaluate(requiredStr, "number", variables, config);
+  const descriptionData = evaluate(descriptionStr, "string", variables, config);
+  let coursesData;
+  if (coursesStr) {
+    coursesData = evaluate(coursesStr, "List<Course>", variables, config);
+  }
+
+  return createNumberRequirement(
+    actualData,
+    requiredData,
+    descriptionData,
+    coursesData
   );
-  const actualData = evaluate(actual, "number", variables, config);
-  const requiredData = evaluate(required, "number", variables, config);
-  const descriptionData = evaluate(description, "string", variables, config);
-  return createNumberRequirement(actualData, requiredData, descriptionData);
 };
 
 export const numberRequirementDefinedFields = [
@@ -344,6 +390,7 @@ export const numberRequirementDefinedFields = [
   "description",
   "actual",
   "required",
+  "courses",
   "type",
 ];
 
@@ -456,9 +503,15 @@ export const functions: FunctionMapEntry[] = [
           _: Variables,
           actual: Data<number>,
           required: Data<number>,
-          description: Data<string>
+          description: Data<string>,
+          courses?: Data<Array<any>>
         ) => {
-          return createNumberRequirement(actual, required, description);
+          return createNumberRequirement(
+            actual,
+            required,
+            description,
+            courses
+          );
         },
         args: ["number", "number", "string"],
       },

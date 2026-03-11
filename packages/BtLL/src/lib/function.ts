@@ -55,16 +55,30 @@ export const constructor = (
     .split(",")
     .map((t) => StringToType(t.trim()));
 
-  const functionCode = v.split("\n");
-  const functionBody = functionCode
-    .slice(1, functionCode.length - 1)
-    .join("\n");
   const openBracket = v.indexOf("(");
   const closeBracket = v.indexOf(")");
   const argNames = v
     .slice(openBracket + 1, closeBracket)
     .split(",")
     .map((t) => t.trim());
+
+  const openBraceIdx = v.indexOf("{", closeBracket);
+  let depth = 0;
+  let closeBraceIdx = -1;
+  for (let i = openBraceIdx; i < v.length; i++) {
+    if (v[i] === "{") depth++;
+    else if (v[i] === "}") {
+      depth--;
+      if (depth === 0) {
+        closeBraceIdx = i;
+        break;
+      }
+    }
+  }
+  const functionBody =
+    openBraceIdx >= 0 && closeBraceIdx > openBraceIdx
+      ? v.slice(openBraceIdx + 1, closeBraceIdx).trim()
+      : "";
 
   const func: Data<MyFunction> = {
     type: StringToType(type),

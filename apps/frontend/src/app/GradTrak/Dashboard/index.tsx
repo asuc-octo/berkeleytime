@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client/react";
+import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
 import {
   ArrowDown,
@@ -41,8 +41,6 @@ import { ILabel, IPlanTerm, ISelectedCourse } from "@/lib/api";
 import {
   Colleges,
   GetCourseNamesDocument,
-  GetCourseRequirementsDocument,
-  GetCourseRequirementsQuery,
   PlanInput,
   PlanTermInput,
   Status,
@@ -97,7 +95,6 @@ export interface SelectedCourse extends ISelectedCourse {
 export default function Dashboard() {
   const { data: user, loading: userLoading } = useReadUser();
   const navigate = useNavigate();
-  const apolloClient = useApolloClient();
 
   const {
     data: gradTrak,
@@ -528,7 +525,7 @@ export default function Dashboard() {
           transferUnits={transferUnits}
           pnpTotal={pnpTotal}
           plan={gradTrak}
-          planTerms={localPlanTerms}
+          planTerms={planTerms}
         />
       </div>
 

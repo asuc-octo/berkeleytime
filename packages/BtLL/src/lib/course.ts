@@ -160,4 +160,27 @@ export const functions: FunctionMapEntry[] = [
       },
     },
   ],
+  [
+    "take_until_units",
+    {
+      type: "Function<List<Course>>(List<Course>, number)",
+      data: {
+        eval: (
+          _: Variables,
+          list: Data<Array<Course>>,
+          targetUnits: Data<number>
+        ) => {
+          let sum = 0;
+          const result = [];
+          for (const course of list.data) {
+            if (sum >= targetUnits.data) break;
+            result.push(course);
+            sum += course.units.data || 0;
+          }
+          return { data: result, type: list.type };
+        },
+        args: ["List<Course>", "number"],
+      },
+    },
+  ],
 ];

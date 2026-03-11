@@ -33,23 +33,48 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
   const textIndent = 28;
 
   if (req.type?.data === "NumberRequirement") {
-    return (
-      <p className={styles.metadata} style={{ marginLeft: `${textIndent}px` }}>
-        {req.actual.data} / {req.required.data} units currently satisfying
-      </p>
-    );
-  }
-
-  if (req.type?.data === "NCoursesRequirement") {
-    const courses = req.courses.data ?? [];
-    const requiredCount = req.required_count.data;
+    const courses = req.courses?.data ?? [];
     return (
       <>
         <p
           className={styles.metadata}
           style={{ marginLeft: `${textIndent}px` }}
         >
-          {courses.length} / {requiredCount} courses currently satisfying
+          {req.actual.data} / {req.required.data} units currently satisfying
+        </p>
+        {courses.length > 0 && (
+          <div
+            className={styles.courseList}
+            style={{ marginLeft: `${textIndent}px` }}
+          >
+            {courses.map((course: Course, index: number) => (
+              <div key={index} className={styles.courseItem}>
+                <div className={styles.checkmarkSpace}>
+                  <Check className={styles.checkmarkIcon} />
+                </div>
+                <p>
+                  {course.subject.data} {course.number.data}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  if (req.type?.data === "NCoursesRequirement") {
+    const courses = req.courses.data ?? [];
+    const requiredCount = req.required_count.data;
+    const actualCount = req.actual_count?.data ?? courses.length;
+    const satisfyCount = Math.min(actualCount, requiredCount);
+    return (
+      <>
+        <p
+          className={styles.metadata}
+          style={{ marginLeft: `${textIndent}px` }}
+        >
+          {satisfyCount} / {requiredCount} courses currently satisfying
         </p>
         {courses.length > 0 && (
           <div
@@ -341,6 +366,75 @@ export default function BtLLGradTrakInterface({
       const foundMajors = new Set<string>();
       const foundMinors = new Set<string>();
 
+      // fetch course data for ALL courses in the plan
+      const allPlanCourses = planTerms.flatMap((t) => t.courses);
+      const uniqueCoursesMap = new Map<
+        string,
+        (typeof allPlanCourses)[0] & {
+          course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+        }
+      >();
+      for (const c of allPlanCourses) {
+        const key = c.courseName;
+        if (!uniqueCoursesMap.has(key)) uniqueCoursesMap.set(key, c);
+      }
+
+      await Promise.all(
+        Array.from(uniqueCoursesMap.values()).map(async (c) => {
+          const [subject, ...rest] = c.courseName.split(" ");
+          const number = rest.join(" ");
+          try {
+            const result = await apolloClient.query({
+              query: GetCourseRequirementsDocument,
+              variables: { subject, number },
+              fetchPolicy: "network-only",
+              errorPolicy: "all",
+            });
+            if (result.data?.course) {
+              uniqueCoursesMap.set(c.courseName, {
+                ...c,
+                course: result.data.course,
+              });
+            }
+          } catch {
+            // intentionally silent — course enrichment is best-effort
+          }
+        })
+      );
+
+      // Rebuild enriched columns with course data
+      const enrichedPlanTerms = planTerms.map((term) => ({
+        ...term,
+        courses: term.courses.map(
+          (c) => uniqueCoursesMap.get(c.courseName) ?? c
+        ),
+      }));
+      const columns = enrichedPlanTerms.map(columnAdapter);
+
+      const fetchCourse = async (subject: string, number: string) => {
+        try {
+          const result = await apolloClient.query({
+            query: GetCourseRequirementsDocument,
+            variables: { subject, number },
+            errorPolicy: "all",
+          });
+          return {
+            courseName: `${subject} ${number}`,
+            courseUnits: 0,
+            course: result.data?.course ?? undefined,
+          } as ISelectedCourse & {
+            course?: NonNullable<GetCourseRequirementsQuery["course"]>;
+          };
+        } catch (error) {
+          console.error(`Failed to fetch course ${subject} ${number}:`, error);
+          return {
+            courseName: `${subject} ${number}`,
+            courseUnits: 0,
+            course: undefined,
+          } as ISelectedCourse;
+        }
+      };
+
       for (const spr of plan.selectedPlanRequirements) {
         if (!spr.planRequirement) continue;
 
@@ -348,37 +442,6 @@ export default function BtLLGradTrakInterface({
 
         if (req.major) foundMajors.add(req.major);
         if (req.minor) foundMinors.add(req.minor);
-
-        // Re-evaluate the requirements to get the RequirementResult structure
-        const columns = planTerms
-          .filter((pt) => pt.year !== -1)
-          .map(columnAdapter);
-
-        const fetchCourse = async (subject: string, number: string) => {
-          try {
-            const result = await apolloClient.query({
-              query: GetCourseRequirementsDocument,
-              variables: { subject, number },
-            });
-            return {
-              courseName: `${subject} ${number}`,
-              courseUnits: 0,
-              course: result.data?.course ?? undefined,
-            } as ISelectedCourse & {
-              course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-            };
-          } catch (error) {
-            console.error(
-              `Failed to fetch course ${subject} ${number}:`,
-              error
-            );
-            return {
-              courseName: `${subject} ${number}`,
-              courseUnits: 0,
-              course: undefined,
-            } as ISelectedCourse;
-          }
-        };
 
         const commonVars = new Map<string, Data<unknown>>([
           ["this", { data: planAdapter(plan, columns), type: "Plan" }],

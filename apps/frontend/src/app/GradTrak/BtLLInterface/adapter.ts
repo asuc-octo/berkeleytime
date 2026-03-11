@@ -9,13 +9,24 @@ export function courseAdapter(
     course?: NonNullable<GetCourseRequirementsQuery["course"]>;
   }
 ): Course {
+  const primarySection = course.course?.mostRecentClass?.primarySection;
+
+  const breadthRequirements = {
+    data:
+      primarySection?.sectionAttributes
+        ?.filter((s) => s.attribute.code === "GE")
+        .map((sectionAttribute) => sectionAttribute.value?.description)
+        .filter((s) => s !== null && s !== undefined) ?? [],
+    type: "List<string>",
+  };
+
   return {
     subject: {
       data: course.courseName.split(" ")[0],
       type: "string",
     },
     number: {
-      data: course.courseName.split(" ")[1],
+      data: course.courseName.split(" ").slice(1).join(" "),
       type: "string",
     },
     units: {
@@ -26,14 +37,7 @@ export function courseAdapter(
       data: course.course?.mostRecentClass?.requirementDesignation?.code ?? "",
       type: "string",
     },
-    breadthRequirements: {
-      data:
-        course.course?.mostRecentClass?.primarySection?.sectionAttributes
-          ?.filter((s) => s.attribute.code === "GE")
-          .map((sectionAttribute) => sectionAttribute.value?.description)
-          .filter((s) => s !== null && s !== undefined) ?? [],
-      type: "List<string>",
-    },
+    breadthRequirements,
   };
 }
 
