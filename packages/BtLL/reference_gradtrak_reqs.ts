@@ -64,36 +64,8 @@ Function<boolean>() main (){
 }
 `;
 
-export const COE_REQ_BTLL = `
-Function<boolean>(Course) hss_finder (course){
-  List<string> breadth_requirements get_attr(course, "breadthRequirements")
-  // physical and biological sciences are not included in H/SS
-  boolean arts_and_lit contains(breadth_requirements, "Arts & Literature")
-  boolean historical_studies contains(breadth_requirements, "Historical Studies")
-  boolean international_studies contains(breadth_requirements, "International Studies")
-  boolean philosophy_and_values contains(breadth_requirements, "Philosophy & Values")
-  boolean social_and_behavioral_sciences contains(breadth_requirements, "Social & Behavioral Sciences")
-  boolean rca_requirement contains(breadth_requirements, "Reading and Composition A")
-  boolean rcb_requirement contains(breadth_requirements, "Reading and Composition B")
-  boolean return or([arts_and_lit, historical_studies, international_studies, philosophy_and_values, social_and_behavioral_sciences, rca_requirement, rcb_requirement])
-}
-
-Function<List<Requirement>>() main (){
-  // H/SS matcher
-  List<Course> courses get_attr(this, "allCourses")
-
-  // 6 H/SS
-  List<Course> hss_courses filter(courses, hss_finder)
-  NCoursesRequirement hss {hss_courses, 6, "Minimum 6 H/SS Courses"}
-
-  // 2 H/SS Upper div
-  List<Course> hss_upper_div_courses filter(courses, (c) {
-    boolean is_hss_course hss_finder(c)
-    boolean is_upper_div regex_match(get_attr(c, "number"), "\\d\\d\\d")
-    boolean return and([is_hss_course, is_upper_div])
-  })
-  NCoursesRequirement hss_upper_div {hss_upper_div_courses, 2, "Minimum 2 H/SS Upper Div Courses"}
-
+export const RNC_BTLL = `
+Function<List<Requirement>>(List<Course>) rc_requirements (courses){
   // R&C A
   List<Course> rca_courses filter(courses, (c) {
     List<string> breadth_requirements get_attr(c, "breadthRequirements")
@@ -108,7 +80,7 @@ Function<List<Requirement>>() main (){
   })
   NCoursesRequirement rcb {rcb_courses, 1, "Reading and Composition B"}
 
-  List<Requirement> return [hss, hss_upper_div, rca, rcb]
+  List<Requirement> return [rca, rcb]
 }
 `;
 
@@ -215,7 +187,45 @@ Function<List<Requirement>>(List<Course>) seven_breadths_requirements (courses){
 }
 `;
 
-export const CDSS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}
+export const COE_REQ_BTLL = `${RNC_BTLL}
+Function<boolean>(Course) hss_finder (course){
+  List<string> breadth_requirements get_attr(course, "breadthRequirements")
+  // physical and biological sciences are not included in H/SS
+  boolean arts_and_lit contains(breadth_requirements, "Arts & Literature")
+  boolean historical_studies contains(breadth_requirements, "Historical Studies")
+  boolean international_studies contains(breadth_requirements, "International Studies")
+  boolean philosophy_and_values contains(breadth_requirements, "Philosophy & Values")
+  boolean social_and_behavioral_sciences contains(breadth_requirements, "Social & Behavioral Sciences")
+  boolean rca_requirement contains(breadth_requirements, "Reading and Composition A")
+  boolean rcb_requirement contains(breadth_requirements, "Reading and Composition B")
+  boolean return or([arts_and_lit, historical_studies, international_studies, philosophy_and_values, social_and_behavioral_sciences, rca_requirement, rcb_requirement])
+}
+
+Function<List<Requirement>>() main (){
+  // H/SS matcher
+  List<Course> courses get_attr(this, "allCourses")
+
+  // 6 H/SS
+  List<Course> hss_courses filter(courses, hss_finder)
+  NCoursesRequirement hss {hss_courses, 6, "Minimum 6 H/SS Courses"}
+
+  // 2 H/SS Upper div
+  List<Course> hss_upper_div_courses filter(courses, (c) {
+    boolean is_hss_course hss_finder(c)
+    boolean is_upper_div regex_match(get_attr(c, "number"), "\\d\\d\\d")
+    boolean return and([is_hss_course, is_upper_div])
+  })
+  NCoursesRequirement hss_upper_div {hss_upper_div_courses, 2, "Minimum 2 H/SS Upper Div Courses"}
+
+  List<Requirement> rc_reqs rc_requirements(courses)
+  Requirement rca get_element(rc_reqs, 0)
+  Requirement rcb get_element(rc_reqs, 1)
+
+  List<Requirement> return [hss, hss_upper_div, rca, rcb]
+}
+`;
+
+export const CDSS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
 Function<List<Requirement>>() main (){
   // 7 course breadth & essential skills matcher
   List<Course> courses get_attr(this, "allCourses")
@@ -229,19 +239,9 @@ Function<List<Requirement>>() main (){
   Requirement physical_sciences get_element(breadth7, 5)
   Requirement social_and_behavioral_sciences get_element(breadth7, 6)
 
-  // R&C A
-  List<Course> rca_courses filter(courses, (c) {
-    List<string> br get_attr(c, "breadthRequirements")
-    boolean return contains(br, "Reading and Composition A")
-  })
-  NCoursesRequirement rca {rca_courses, 1, "Reading and Composition A"}
-
-  // R&C B
-  List<Course> rcb_courses filter(courses, (c) {
-    List<string> br get_attr(c, "breadthRequirements")
-    boolean return contains(br, "Reading and Composition B")
-  })
-  NCoursesRequirement rcb {rcb_courses, 1, "Reading and Composition B"}
+  List<Requirement> rc_reqs rc_requirements(courses)
+  Requirement rca get_element(rc_reqs, 0)
+  Requirement rcb get_element(rc_reqs, 1)
 
   // the below essential skills were manually pulled from https://cdss.berkeley.edu/academics/college-degree-requirements-and-policies#section-el-degree-requirements-1:~:text=see%20approved%20courses
 
@@ -341,9 +341,20 @@ Function<List<Requirement>>() main (){
 `;
 
 // // R&C, Quantitative Reasoning (different from CDSS), L&S Language Requirement, 7 Breadths
-// export const LNS_REQ_BTLL = `
+export const LNS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+  List<Requirement> breadth7 seven_breadths_requirements(courses)
 
-// `
+  AndRequirement seven_breadths {breadth7, "Seven Breadths"}
+
+  List<Requirement> rc_reqs rc_requirements(courses)
+  Requirement rca get_element(rc_reqs, 0)
+  Requirement rcb get_element(rc_reqs, 1)
+
+  List<Requirement> return [seven_breadths, rca, rcb]
+}
+`;
 
 export const EECS_REQ_BTLL = `
 Function<boolean>(Course) eecs_upper_div_finder (course){
