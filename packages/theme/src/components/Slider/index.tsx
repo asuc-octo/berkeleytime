@@ -9,6 +9,7 @@ interface SliderProps {
   value?: [number, number];
   defaultValue?: [number, number];
   onValueChange?: (value: [number, number]) => void;
+  onValueCommit?: (value: [number, number]) => void;
   disabled?: boolean;
   labels?: string[];
 }
@@ -20,6 +21,7 @@ export function Slider({
   value,
   defaultValue = [0, 5],
   onValueChange,
+  onValueCommit,
   disabled = false,
   labels,
 }: SliderProps) {
@@ -33,6 +35,7 @@ export function Slider({
         value={value}
         defaultValue={defaultValue}
         onValueChange={onValueChange as (value: number[]) => void}
+        onValueCommit={onValueCommit as (value: number[]) => void}
         disabled={disabled}
       >
         <Primitive.Track className={styles.track}>

@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="color-scheme" content="light dark" />
 	<link rel="preconnect" href="https://rsms.me" crossorigin />
 	<link rel="shortcut icon" href="/favicon.png" />
 	<link rel="apple-touch-icon" sizes="76x76" href="/favicon.png" />
@@ -31,6 +32,19 @@
 </head>
 
 <body>
+	<script>
+		// Set theme before first paint to prevent color flash (FOUC).
+		// Mirrors ThemeProvider logic: localStorage "theme" → data-theme attribute.
+		(function () {
+			var theme = localStorage.getItem("theme");
+			if (theme === "dark" || theme === "light") {
+				document.body.setAttribute("data-theme", theme);
+			} else {
+				var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+				document.body.setAttribute("data-theme", prefersDark ? "dark" : "light");
+			}
+		})();
+	</script>
 	<div id="root"></div>
 	<script type="module" src="/src/main.tsx"></script>
 </body>

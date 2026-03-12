@@ -1,0 +1,38 @@
+.addButton {
+  width: 100%;
+}
+
+.addButtonSlot {
+  min-height: 32px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.addButtonMotion {
+  width: 100%;
+}
+
+.outputList {
+  flex-shrink: 0;
+}
+
+.outputCardItem {
+  width: 100%;
+  justify-self: start;
+}
+
+.emptyCard {
+  height: 120px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-self: start;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
+  color: var(--paragraph-color);
+  font-size: var(--text-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+}

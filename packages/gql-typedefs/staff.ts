@@ -122,5 +122,26 @@ export const staffTypeDef = gql`
     Delete a staff member and all their roles.
     """
     deleteStaffMember(memberId: ID!): Boolean! @auth
+
+    """
+    Sync current Berkeleytime staff emails to the Cloudflare Access group
+    used for private backup access. Only adds missing emails; does not remove
+    any existing group members. Staff-only.
+    """
+    syncCloudflareStaffAccess: SyncCloudflareStaffAccessResult! @auth
+  }
+
+  """
+  Result of syncing staff emails to the Cloudflare Access group.
+  """
+  type SyncCloudflareStaffAccessResult {
+    """
+    Emails that were added to the group (previously missing).
+    """
+    added: [String!]!
+    """
+    If present, Cloudflare sync failed (e.g. API or lock); added may be partial or empty.
+    """
+    errorMessage: String
   }
 `;

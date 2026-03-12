@@ -6,7 +6,7 @@ import { Filter, FilterSolid, Search, Sparks, SparksSolid } from "iconoir-react"
 
 import { Button, IconButton } from "@repo/theme";
 
-import useBrowser from "../useBrowser";
+import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Header.module.scss";
 
 export default function Header() {
@@ -15,16 +15,15 @@ export default function Header() {
     updateQuery,
     expanded,
     setExpanded,
-    classes,
     semester,
     year,
-    responsive,
+    mode,
     hasActiveFilters,
     aiSearchActive,
     setAiSearchActive,
     handleSemanticSearch,
     semanticLoading,
-  } = useBrowser();
+  } = useLayoutContext();
 
   const handleAiSearchSubmit = () => {
     if (aiSearchActive && query.trim()) {
@@ -40,11 +39,7 @@ export default function Header() {
   };
 
   return (
-    <div
-      className={classNames(styles.root, {
-        [styles.responsive]: responsive,
-      })}
-    >
+    <div className={styles.root}>
       <div className={styles.group}>
         <label htmlFor="search" className={styles.icon}>
           <Search />
@@ -83,25 +78,27 @@ export default function Header() {
           {semanticLoading ? "Searching..." : "Search with AI (Beta)  →"}
         </Button>
       )}
-      <Button
-        className={classNames(styles.filterButton, {
-          [styles.active]: hasActiveFilters,
-        })}
-        onClick={() => setExpanded(!expanded)}
-      >
-        {hasActiveFilters ? <FilterSolid /> : <Filter />}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.span
-            key={expanded ? "close" : "open"}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.15 }}
-          >
-            {expanded ? "Close Filters" : "Open Filters"}
-          </motion.span>
-        </AnimatePresence>
-      </Button>
+      {mode !== "full" && (
+        <Button
+          className={classNames(styles.filterButton, {
+            [styles.active]: hasActiveFilters,
+          })}
+          onClick={() => setExpanded(!expanded)}
+        >
+          {hasActiveFilters ? <FilterSolid /> : <Filter />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={expanded ? "close" : "open"}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+            >
+              {expanded ? "Close Filters" : "Open Filters"}
+            </motion.span>
+          </AnimatePresence>
+        </Button>
+      )}
     </div>
   );
 }

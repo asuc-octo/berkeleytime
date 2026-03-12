@@ -64,7 +64,10 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
     }
 
     localStorage.removeItem("theme");
-    document.body.removeAttribute("data-theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    document.body.setAttribute("data-theme", prefersDark ? "dark" : "light");
   }, [theme, forcedTheme]);
 
   const effectiveTheme = forcedTheme ?? theme;

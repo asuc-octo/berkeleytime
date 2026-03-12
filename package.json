@@ -20,6 +20,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260301.1",
     "@playwright/test": "^1.58.2",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/node": "^25.2.1",
