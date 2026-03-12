@@ -13,7 +13,7 @@ export enum RecentType {
 const MaxLength = {
   [RecentType.Class]: 10,
   [RecentType.Schedule]: 5,
-  [RecentType.Course]: 3,
+  [RecentType.Course]: 6,
   [RecentType.CatalogTerm]: 1,
   [RecentType.GradesPage]: 1,
   [RecentType.EnrollmentPage]: 1,

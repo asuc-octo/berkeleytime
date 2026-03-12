@@ -2,13 +2,14 @@ import { useState } from "react";
 
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
-import { User } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { User, NavArrowDown, NavArrowUp } from "iconoir-react";
+import { Link, useNavigate } from "react-router-dom";
 
-import { Box, Button, Flex } from "@repo/theme";
-
+import { Box, Button, Flex, LoadingIndicator } from "@repo/theme";
+import { CollectionCard } from "@/app/Profile/Bookmarks/CollectionCard";
 import ClassCard from "@/components/ClassCard";
 import useUser from "@/hooks/useUser";
+import { useGetAllCollectionsWithPreview } from "@/hooks/api/collections";
 import { signIn } from "@/lib/api";
 import { RecentType, getRecents } from "@/lib/recent";
 
@@ -32,13 +33,17 @@ const GET_COURSES_EXPLORE = gql`
   }
 `;
 
+
 type Tab = "popular" | "for-you";
 
 export default function Explore() {
   const [activeTab, setActiveTab] = useState<Tab>("popular");
   const [showAll, setShowAll] = useState(false);
   const { user } = useUser();
-
+  const navigate = useNavigate();
+  const { data: apiCollections } = useGetAllCollectionsWithPreview();
+  const allSavedCollection = apiCollections?.find(c => c.isSystem);
+  const totalBookmarks = allSavedCollection?.classes?.length ?? 0;
   const { data, loading, error } = useQuery(GET_COURSES_EXPLORE);
   console.log("courses:", data, "error:", error);
 
@@ -68,7 +73,9 @@ export default function Explore() {
           <Button
             variant="secondary"
             onClick={() => setActiveTab("for-you")}
-            style={{ borderRadius: "999px" }}
+            className={
+              activeTab === "for-you" ? styles.activeTab : styles.inactiveTab
+            }
           >
             For You
           </Button>
@@ -76,7 +83,6 @@ export default function Explore() {
 
         {activeTab === "popular" && (
           <Flex direction="column" gap="4">
-            {/* Hero Banner - GradTrak feature */}
             <Flex mb="6" align="center" gap="6" className={styles.heroBanner}>
               <Box className={styles.heroImageContainer}>
                 <img
@@ -109,7 +115,7 @@ export default function Explore() {
               TODO: Replace with actual popularity metric.
               Currently sorted alphabetically by subject + number as placeholder
             */}
-            {loading && <p>Loading...</p>}
+            {loading && <LoadingIndicator size="md" />}
             <div className={styles.courseGridWrapper}>
               <div className={styles.courseGrid}>
                 {[...(data?.courses ?? [])]
@@ -142,13 +148,14 @@ export default function Explore() {
               )}
             </div>
             {!showAll ? (
-              <Flex justify="center" mt="4">
+              <Flex justify="center" mt="4" className={styles.showMoreWrapper}>
                 <Button
                   variant="secondary"
                   onClick={() => setShowAll(true)}
+                  className={styles.showMoreButton}
                   style={{ borderRadius: "999px" }}
                 >
-                  Show more ∨
+                  Show more <NavArrowDown width={16} height={16} />
                 </Button>
               </Flex>
             ) : (
@@ -156,9 +163,10 @@ export default function Explore() {
                 <Button
                   variant="secondary"
                   onClick={() => setShowAll(false)}
+                  className={styles.showMoreButton}
                   style={{ borderRadius: "999px" }}
                 >
-                  Show less ∧
+                  Show less <NavArrowUp width={16} height={16} />
                 </Button>
               </Flex>
             )}
@@ -167,7 +175,6 @@ export default function Explore() {
 
         {activeTab === "for-you" && (
           <Flex direction="column" gap="4">
-            <h2 className={styles.heading}>For You</h2>
             {!user ? (
               <Flex
                 direction="column"
@@ -187,22 +194,25 @@ export default function Explore() {
                 </Button>
               </Flex>
             ) : (
-              <Flex gap="6" align="flex-start">
-                {/* Bookmarks box */}
-                <Link
-                  to="/profile/bookmarks"
-                  style={{ textDecoration: "none", flexShrink: 0 }}
-                >
-                  <Box className={styles.bookmarksBox}>
-                    <Box className={styles.bookmarksImageArea} />
-                    <Box p="3">
-                      <h3 className={styles.bookmarksTitle}>Bookmarks</h3>
-                      <p className={styles.bookmarksSubtitle}>
-                        View your saved classes
-                      </p>
-                    </Box>
-                  </Box>
-                </Link>
+              <Flex gap="6" align="flex-start" style={{ flexWrap: "wrap" }}>
+                <CollectionCard
+                  name="Bookmarks"
+                  classCount={totalBookmarks}
+                  isSystem={true}
+                  previewClasses={allSavedCollection?.classes?.filter(entry => entry.class != null).slice(0, 2).map(entry => ({
+                    subject: entry.class!.subject,
+                    courseNumber: entry.class!.courseNumber,
+                    number: entry.class!.number,
+                    title: entry.class!.title ?? entry.class!.course?.title ?? null,
+                    gradeAverage: entry.class!.gradeDistribution?.average ?? null,
+                    enrolledCount: entry.class!.primarySection?.enrollment?.latest?.enrolledCount ?? null,
+                    maxEnroll: entry.class!.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+                    unitsMin: entry.class!.unitsMin,
+                    unitsMax: entry.class!.unitsMax,
+                    hasReservedSeats: false,
+                  })) ?? []}
+                  onClick={() => navigate("/profile/bookmarks")}
+                />
 
                 {/* Recently viewed */}
                 <Flex direction="column" gap="3" style={{ flex: 1 }}>
@@ -210,7 +220,7 @@ export default function Explore() {
                     Courses you recently viewed
                   </h3>
                   {recentCoursesData.length === 0 ? (
-                    <p className={styles.emptyState}>
+                    <p className={styles.signInDescription}>
                       No recently viewed courses yet. Browse the{" "}
                       <Link to="/catalog">catalog</Link> to get started.
                     </p>

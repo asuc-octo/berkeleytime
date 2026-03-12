@@ -57,7 +57,7 @@
 .heroImage {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 0px;
   display: block;
 }
 
@@ -127,6 +127,30 @@
   }
 }
 
+.showMoreWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+  }
+}
+
+.showMoreButton {
+  position: relative;
+  z-index: 1;
+  padding: 0 24px !important;
+  background: var(--background-color) !important;
+}
+
 .signInBanner {
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -152,8 +176,10 @@
 }
 
 .bookmarksBox {
-  width: 200px;
-  border: 1px solid var(--border);
+  width: 560px;
+  min-width: 260px;
+  max-width: 560px;
+  border: 1px solid var(--border-color);  
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -166,34 +192,41 @@
 
 .bookmarksImageArea {
   height: 130px;
-  background: var(--surface-2);
+  background: var(--button-hover-color);
+  border-radius: 8px 8px 0 0;
 }
 
 .bookmarksTitle {
   font-size: 15px;
   font-weight: 600;
   margin: 0 0 4px;
+  color: var(--heading-color);
 }
 
 .bookmarksSubtitle {
   font-size: 13px;
   color: var(--text-secondary);
   margin: 0;
+  color: var(--heading-color);
 }
 
 .subheading {
   font-size: 15px;
   font-weight: 600;
   margin: 0;
+  color: var(--heading-color);
 }
 
 .recentGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-}
 
-.emptyState {
-  color: var(--text-secondary);
-  font-size: 14px;
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
