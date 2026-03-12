@@ -1,0 +1,54 @@
+name: "CD: Deploy bt-base (Production)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "bt-base Helm chart version to deploy (e.g. 1.0.0)"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: SSH and Deploy bt-base
+    runs-on: ubuntu-latest
+    environment:
+      name: infrastructure
+
+    steps:
+      - name: SSH and Helm Install bt-base
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e  # Exit immediately if a command fails
+
+            echo "Deploying bt-base version '${{ github.event.inputs.version }}' to namespace 'bt'..."
+
+            # Check if bt-base release exists
+            if helm status bt-base -n bt &>/dev/null; then
+              status=true
+              echo "Existing bt-base release found."
+            else
+              status=false
+              echo "No existing bt-base release found; installing new release."
+            fi
+
+            # Upgrade bt-base chart, or install if not exists
+            helm upgrade bt-base oci://registry-1.docker.io/octoberkeleytime/bt-base \
+              --install \
+              --version=${{ github.event.inputs.version }} \
+              --namespace=bt
+
+            echo "bt-base deployment completed."
+
+      - name: Output Summary
+        run: |
+          echo "# bt-base deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Chart**: \`bt-base\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Version**: \`${{ github.event.inputs.version }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Namespace**: \`bt\`" >> "$GITHUB_STEP_SUMMARY"
+
