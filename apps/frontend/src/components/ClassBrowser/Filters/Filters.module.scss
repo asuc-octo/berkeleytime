@@ -5,8 +5,27 @@
   scrollbar-width: none;
   background-color: var(--foreground-color);
 
-  @media (width <= 992px) {
+  /* full mode: 360px, right border, no Header (hidden by parent via display:none logic) */
+  [data-mode='full'] > & {
+    border-right: 1px solid var(--border-color);
+  }
+
+  /* semi-compact mode: 384px, shown/hidden by parent toggle */
+  [data-mode='semi-compact'] > & {
     width: 384px;
+
+    .body {
+      padding-top: 12px;
+    }
+  }
+
+  /* compact mode: full width */
+  [data-mode='compact'] > & {
+    width: 100%;
+
+    .body {
+      padding-top: 12px;
+    }
   }
 
   .body {
@@ -103,39 +122,6 @@
       }
     }
   }
-
-  @media (width > 992px) {
-    border-right: 1px solid var(--border-color);
-
-    &:not(.responsive) > :first-child {
-      display: none;
-    }
-  }
-
-  @media (width > 1400px) {
-    > :first-child {
-      display: none;
-    }
-  }
-
-  @media (width <= 992px) {
-    width: 100%;
-
-    .body {
-      padding-top: 12px;
-    }
-  }
-
-  @media (992px < width <= 1400px) {
-    &.responsive {
-      width: 384px;
-
-      .body {
-        padding-top: 12px;
-      }
-    }
-  }
-
 }
 
 .requirementsSelectContent {

@@ -20,12 +20,12 @@ export default function ClassCardSkeleton() {
                 </Card.Description>
               </div>
               <div className={cardStyles.gradeContainer}>
-                <Skeleton className={styles.grade} />
+                <div className={styles.grade} />
               </div>
             </div>
             <Card.Footer className={cardStyles.infoRow}>
-              <Skeleton className={styles.enrolled} />
-              <Skeleton className={styles.units} />
+              <div className={styles.enrolled} />
+              <div className={styles.units} />
             </Card.Footer>
           </div>
         </Card.Body>

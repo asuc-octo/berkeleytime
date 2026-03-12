@@ -1,87 +1,9 @@
-.root {
-  background-color: var(--background-color);
-  height: 100%;
-}
-
-.wrapper {
-  --content-box-height: 360px;
-
-  background-color: var(--foreground-color);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  padding: 24px;
-  min-width: 450px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  position: relative;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.openButton {
-  flex-shrink: 0;
-}
-
-.titleBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.title {
-  margin: 0;
-  font: var(--heading-medium);
-  color: var(--heading-color);
-}
-
-.subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: var(--label-color);
-}
-
 .chart {
   height: var(--content-box-height);
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.emptyInBox {
-  height: var(--content-box-height);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.emptyIcon {
-  color: var(--label-color);
-}
-
-.emptyHeading {
-  margin: 24px 0 0;
-  color: var(--heading-color);
-  font-weight: var(--font-medium);
-  font-size: var(--text-16);
-}
-
-.emptyParagraph {
-  margin-top: 8px;
-  margin-bottom: 0;
-  max-width: 448px;
-  color: var(--paragraph-color);
-  font-size: var(--text-14);
-  font-weight: var(--font-normal);
-  line-height: 1.5;
+  position: relative;
 }
 
 .chartContainer {
@@ -94,4 +16,58 @@
   text-align: center;
   font-size: var(--text-14);
   color: var(--paragraph-color);
+}
+
+.tooltipCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0;
+  max-width: 350px;
+  min-width: 180px;
+}
+
+.tooltipLabel {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltipItems {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.tooltipItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--text-14);
+}
+
+.tooltipItemLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--heading-color);
+  font-weight: var(--font-normal);
+}
+
+.tooltipIndicator {
+  flex-shrink: 0;
+}
+
+.tooltipItemValue {
+  color: var(--heading-color);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }

@@ -5,8 +5,7 @@
     "build": "tsc --noEmit",
     "main": "tsx src/main.ts",
     "lint": "eslint src/",
-    "type-check": "tsc --noEmit --incremental false",
-    "pull:decals": "tsx src/main.ts --puller=decals"
+    "type-check": "tsc --noEmit --incremental false"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
