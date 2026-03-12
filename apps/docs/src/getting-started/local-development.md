@@ -119,7 +119,7 @@ curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_
 
 # Copy the data and restore
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
-docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/prod-backup.gz
+docker exec "$mongo_container_id" sh -c 'mongorestore --drop --gzip --archive=/tmp/prod-backup.gz && mongosh bt --eval "const r = db.users.findOneAndUpdate({ email: \"dev@berkeleytime.local\" }, { \$setOnInsert: { googleId: \"dev-fake-public-backup\", email: \"dev@berkeleytime.local\", name: \"Dev User\", staff: false, lastSeenAt: new Date() } }, { upsert: true, returnDocument: \"after\" }); print(\"Dev user id: \" + r._id); print(\"Login URL: http://localhost:3000/api/dev/login?userId=\" + r._id + \"&redirect_uri=/\");"'
 ```
 
 > **Note:** Public backups are redacted and are not a comprehensive dataset. Use private backups (Cloudflare Access required) for [full data](../core/infrastructure/runbooks.md#fetch-mongo-backups).
