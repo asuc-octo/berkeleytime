@@ -112,11 +112,8 @@ Function<List<Requirement>>() main (){
 }
 `;
 
-export const CDSS_REQ_BTLL = `
-Function<List<Requirement>>() main (){
-  // 7 course breadth & essential skills matcher
-  List<Course> courses get_attr(this, "allCourses")
-
+export const SEVEN_BREADTHS_BTLL = `
+Function<List<Requirement>>(List<Course>) seven_breadths_requirements (courses){
   // Collect all eligible courses per breadth category (unfiltered)
   List<Course> arts_and_lit_eligible filter(courses, (c) {
     List<string> br get_attr(c, "breadthRequirements")
@@ -148,18 +145,18 @@ Function<List<Requirement>>() main (){
   })
 
   // Greedy deduplication: assign courses to categories in order, excluding already-used ones
-  // 1. Arts & Literature 
+  // 1. Arts & Literature
   List<Course> arts_and_lit_courses slice(arts_and_lit_eligible, 0, 1)
   NCoursesRequirement arts_and_lit {arts_and_lit_eligible, length(arts_and_lit_courses), 1, "Arts & Literature"}
 
-  // 2. Biological Sciences 
+  // 2. Biological Sciences
   List<Course> biological_sciences_pool filter(biological_sciences_eligible, (c) {
     boolean return not(one_common_course([c], arts_and_lit_courses))
   })
   List<Course> biological_sciences_courses slice(biological_sciences_pool, 0, 1)
   NCoursesRequirement biological_sciences {biological_sciences_eligible, length(biological_sciences_courses), 1, "Biological Sciences"}
 
-  // 3. Historical Studies 
+  // 3. Historical Studies
   List<Course> historical_studies_pool filter(historical_studies_eligible, (c) {
     boolean used_arts one_common_course([c], arts_and_lit_courses)
     boolean used_bio one_common_course([c], biological_sciences_courses)
@@ -168,7 +165,7 @@ Function<List<Requirement>>() main (){
   List<Course> historical_studies_courses slice(historical_studies_pool, 0, 1)
   NCoursesRequirement historical_studies {historical_studies_eligible, length(historical_studies_courses), 1, "Historical Studies"}
 
-  // 4. International Studies 
+  // 4. International Studies
   List<Course> international_studies_pool filter(international_studies_eligible, (c) {
     boolean used_arts one_common_course([c], arts_and_lit_courses)
     boolean used_bio one_common_course([c], biological_sciences_courses)
@@ -178,7 +175,7 @@ Function<List<Requirement>>() main (){
   List<Course> international_studies_courses slice(international_studies_pool, 0, 1)
   NCoursesRequirement international_studies {international_studies_eligible, length(international_studies_courses), 1, "International Studies"}
 
-  // 5. Philosophy & Values 
+  // 5. Philosophy & Values
   List<Course> philosophy_and_values_pool filter(philosophy_and_values_eligible, (c) {
     boolean used_arts one_common_course([c], arts_and_lit_courses)
     boolean used_bio one_common_course([c], biological_sciences_courses)
@@ -189,7 +186,7 @@ Function<List<Requirement>>() main (){
   List<Course> philosophy_and_values_courses slice(philosophy_and_values_pool, 0, 1)
   NCoursesRequirement philosophy_and_values {philosophy_and_values_eligible, length(philosophy_and_values_courses), 1, "Philosophy & Values"}
 
-  // 6. Physical Sciences 
+  // 6. Physical Sciences
   List<Course> physical_sciences_pool filter(physical_sciences_eligible, (c) {
     boolean used_arts one_common_course([c], arts_and_lit_courses)
     boolean used_bio one_common_course([c], biological_sciences_courses)
@@ -201,7 +198,7 @@ Function<List<Requirement>>() main (){
   List<Course> physical_sciences_courses slice(physical_sciences_pool, 0, 1)
   NCoursesRequirement physical_sciences {physical_sciences_eligible, length(physical_sciences_courses), 1, "Physical Sciences"}
 
-  // 7. Social & Behavioral Sciences 
+  // 7. Social & Behavioral Sciences
   List<Course> social_and_behavioral_sciences_pool filter(social_and_behavioral_sciences_eligible, (c) {
     boolean used_arts one_common_course([c], arts_and_lit_courses)
     boolean used_bio one_common_course([c], biological_sciences_courses)
@@ -213,6 +210,24 @@ Function<List<Requirement>>() main (){
   })
   List<Course> social_and_behavioral_sciences_courses slice(social_and_behavioral_sciences_pool, 0, 1)
   NCoursesRequirement social_and_behavioral_sciences {social_and_behavioral_sciences_eligible, length(social_and_behavioral_sciences_courses), 1, "Social & Behavioral Sciences"}
+
+  List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences]
+}
+`;
+
+export const CDSS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}
+Function<List<Requirement>>() main (){
+  // 7 course breadth & essential skills matcher
+  List<Course> courses get_attr(this, "allCourses")
+
+  List<Requirement> breadth7 seven_breadths_requirements(courses)
+  Requirement arts_and_lit get_element(breadth7, 0)
+  Requirement biological_sciences get_element(breadth7, 1)
+  Requirement historical_studies get_element(breadth7, 2)
+  Requirement international_studies get_element(breadth7, 3)
+  Requirement philosophy_and_values get_element(breadth7, 4)
+  Requirement physical_sciences get_element(breadth7, 5)
+  Requirement social_and_behavioral_sciences get_element(breadth7, 6)
 
   // R&C A
   List<Course> rca_courses filter(courses, (c) {
@@ -324,6 +339,11 @@ Function<List<Requirement>>() main (){
   List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences, rca, rcb, computational_reasoning, statistical_reasoning, hsddt]
 }
 `;
+
+// // R&C, Quantitative Reasoning (different from CDSS), L&S Language Requirement, 7 Breadths
+// export const LNS_REQ_BTLL = `
+
+// `
 
 export const EECS_REQ_BTLL = `
 Function<boolean>(Course) eecs_upper_div_finder (course){
