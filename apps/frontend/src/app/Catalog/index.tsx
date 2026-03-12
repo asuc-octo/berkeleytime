@@ -500,6 +500,8 @@ export default function Catalog() {
     ) => {
       if (!term) return;
 
+      addRecent(RecentType.Course, { subject, number: courseNumber });
+
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
       navigate({

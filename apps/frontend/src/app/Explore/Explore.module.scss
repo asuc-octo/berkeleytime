@@ -134,6 +134,9 @@
   max-width: 400px;
   margin: 0 auto;
   text-align: center;
+  svg {
+    color: var(--heading-color);
+  }
 }
 
 .signInTitle {
@@ -146,4 +149,51 @@
 .signInDescription {
   color: var(--paragraph-color);
   margin: 0;
+}
+
+.bookmarksBox {
+  width: 200px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.bookmarksImageArea {
+  height: 130px;
+  background: var(--surface-2);
+}
+
+.bookmarksTitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.bookmarksSubtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.subheading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.recentGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.emptyState {
+  color: var(--text-secondary);
+  font-size: 14px;
 }

@@ -9,6 +9,8 @@ import { Box, Button, Flex } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
 import useUser from "@/hooks/useUser";
+import { signIn } from "@/lib/api";
+import { RecentType, getRecents } from "@/lib/recent";
 
 import styles from "./Explore.module.scss";
 
@@ -29,6 +31,7 @@ const GET_COURSES_EXPLORE = gql`
     }
   }
 `;
+
 type Tab = "popular" | "for-you";
 
 export default function Explore() {
@@ -38,6 +41,16 @@ export default function Explore() {
 
   const { data, loading, error } = useQuery(GET_COURSES_EXPLORE);
   console.log("courses:", data, "error:", error);
+
+  const recentCourseKeys = getRecents(RecentType.Course);
+  const recentCoursesData = recentCourseKeys
+    .map(({ subject, number }) =>
+      data?.courses?.find(
+        (c: { subject: string; number: string }) =>
+          c.subject === subject && c.number === number
+      )
+    )
+    .filter(Boolean);
 
   return (
     <Box p="6">
@@ -91,9 +104,9 @@ export default function Explore() {
               </Flex>
             </Flex>
 
-            <h2 className={styles.heading}>Popular Courses at UC Berkeley</h2>
+            <h2 className={styles.heading}>Popular Courses on Berkeleytime</h2>
             {/* 
-              TODO: Replace with actual popularity metric when available.
+              TODO: Replace with actual popularity metric.
               Currently sorted alphabetically by subject + number as placeholder
             */}
             {loading && <p>Loading...</p>}
@@ -169,14 +182,61 @@ export default function Explore() {
                   in to personalize results
                 </p>
                 <Button
-                  variant="primary"
-                  onClick={() => (window.location.href = "/login")}
-                >
+                  variant="primary" onClick={() => signIn()}>
                   Sign in →
                 </Button>
               </Flex>
             ) : (
-              <p>Personalized recommendations coming soon!</p>
+              <Flex gap="6" align="flex-start">
+                {/* Bookmarks box */}
+                <Link
+                  to="/profile/bookmarks"
+                  style={{ textDecoration: "none", flexShrink: 0 }}
+                >
+                  <Box className={styles.bookmarksBox}>
+                    <Box className={styles.bookmarksImageArea} />
+                    <Box p="3">
+                      <h3 className={styles.bookmarksTitle}>Bookmarks</h3>
+                      <p className={styles.bookmarksSubtitle}>
+                        View your saved classes
+                      </p>
+                    </Box>
+                  </Box>
+                </Link>
+
+                {/* Recently viewed */}
+                <Flex direction="column" gap="3" style={{ flex: 1 }}>
+                  <h3 className={styles.subheading}>
+                    Courses you recently viewed
+                  </h3>
+                  {recentCoursesData.length === 0 ? (
+                    <p className={styles.emptyState}>
+                      No recently viewed courses yet. Browse the{" "}
+                      <Link to="/catalog">catalog</Link> to get started.
+                    </p>
+                  ) : (
+                    <div className={styles.recentGrid}>
+                      {recentCoursesData.map((course) => (
+                        <Link
+                          key={course.courseId}
+                          to={`/catalog/${course.subject}/${course.number}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <ClassCard
+                            class={{
+                              subject: course.subject,
+                              courseNumber: course.number,
+                              title: course.title,
+                              gradeDistribution:
+                                course.gradeDistribution ?? undefined,
+                            }}
+                          />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </Flex>
+              </Flex>
             )}
           </Flex>
         )}
