@@ -543,7 +543,7 @@ export const getCatalogLegacy = async (
     ClassModel.find({
       year,
       semester,
-      anyPrintInScheduleOfClasses: true,
+      $or: [{ anyPrintInScheduleOfClasses: true }, { decal: { $ne: null } }],
     }).lean(),
   ]);
 
@@ -561,7 +561,6 @@ export const getCatalogLegacy = async (
       year,
       semester,
       courseId: { $in: uniqueCourseIds },
-      printInScheduleOfClasses: true,
     }).lean(),
   ]);
 

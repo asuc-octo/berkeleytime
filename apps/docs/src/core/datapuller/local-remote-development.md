@@ -31,6 +31,7 @@ The valid pullers are:
 - `enrollment-calendar`
 - `terms-all`
 - `terms-nearby`
+- `decals`
 
 > [!TIP]
 >  If you do not need any other services (backend, frontend), then you can run a Mongo instance independently from the `docker-compose.yml` configuration. However, the below commands do not allow data persistence.
