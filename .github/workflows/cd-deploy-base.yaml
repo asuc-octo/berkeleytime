@@ -29,10 +29,8 @@ jobs:
 
             # Check if bt-base release exists
             if helm status bt-base -n bt &>/dev/null; then
-              status=true
               echo "Existing bt-base release found."
             else
-              status=false
               echo "No existing bt-base release found; installing new release."
             fi
 
