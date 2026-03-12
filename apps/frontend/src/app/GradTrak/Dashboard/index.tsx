@@ -1145,6 +1145,7 @@ export default function Dashboard() {
           />
         )}
         <div className={styles.semesterBlocks}>
+          <div className={styles.semesterBlocksInner}>
           <div className={styles.semesterLayout} data-layout={settings.layout}>
             {[...planTerms]
               .filter((term) => {
@@ -1231,6 +1232,7 @@ export default function Dashboard() {
                   filtersActive={activeFiltersCount > 0}
                 />
               ))}
+          </div>
           </div>
         </div>
       </div>
