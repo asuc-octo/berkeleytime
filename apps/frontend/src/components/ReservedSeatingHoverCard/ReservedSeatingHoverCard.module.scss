@@ -3,7 +3,7 @@
   border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 0;
-  z-index: 998;
+  z-index: var(--z-popover);
   max-width: 500px;
   margin-right: 12px;
   animation: expandOut 150ms ease-out;

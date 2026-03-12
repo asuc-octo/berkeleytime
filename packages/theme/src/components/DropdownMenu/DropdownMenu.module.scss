@@ -1,5 +1,5 @@
 .content {
-  z-index: 9999;
+  z-index: var(--z-popover, 14);
   min-width: 150px;
   max-height: 300px;
   overflow-y: auto;
