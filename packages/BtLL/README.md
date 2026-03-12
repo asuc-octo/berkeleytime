@@ -280,3 +280,5 @@ console.log(result); // 6
 ```
 A value of any type can be returned by the main function.
 
+After modifying reference_gradtrak_reqs.ts, run "cd packages/BtLL && npm run seed:requirements" to reseed the requirements.
+
