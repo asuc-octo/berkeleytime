@@ -1,8 +1,10 @@
 import classNames from "classnames";
-import { AnimatePresence, motion } from "framer-motion";
-import { Filter, FilterSolid, Search } from "iconoir-react";
 
-import { Button } from "@repo/theme";
+import { AnimatePresence, motion } from "framer-motion";
+import { Filter, FilterSolid, Search, Sparks, SparksSolid } from "iconoir-react";
+
+
+import { Button, IconButton } from "@repo/theme";
 
 import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Header.module.scss";
@@ -17,7 +19,25 @@ export default function Header() {
     year,
     mode,
     hasActiveFilters,
+    aiSearchActive,
+    setAiSearchActive,
+    handleSemanticSearch,
+    semanticLoading,
+    semanticError,
   } = useLayoutContext();
+
+  const handleAiSearchSubmit = () => {
+    if (aiSearchActive && query.trim()) {
+      handleSemanticSearch();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && aiSearchActive) {
+      e.preventDefault();
+      handleAiSearchSubmit();
+    }
+  };
 
   return (
     <div className={styles.root}>
@@ -31,12 +51,35 @@ export default function Header() {
           value={query}
           name="search"
           onChange={(event) => updateQuery(event.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder={`Search ${semester} ${year} classes...`}
           onFocus={() => setExpanded(false)}
           autoFocus
           autoComplete="off"
         />
+
+        <IconButton
+          className={classNames(styles.sparksButton, {
+            [styles.active]: aiSearchActive,
+          })}
+          onClick={() => setAiSearchActive(!aiSearchActive)}
+          aria-label="AI Search"
+        >
+          {aiSearchActive ? <SparksSolid /> : <Sparks />}
+        </IconButton>
       </div>
+      {aiSearchActive && (
+        <Button
+          className={styles.aiSearchButton}
+          onClick={handleAiSearchSubmit}
+          disabled={semanticLoading || !query.trim()}
+        >
+          {semanticLoading ? "Searching..." : "Search with AI (Beta)  →"}
+        </Button>
+      )}
+      {aiSearchActive && semanticError && (
+        <div className={styles.semanticError}>{semanticError}</div>
+      )}
       {mode !== "full" && (
         <Button
           className={classNames(styles.filterButton, {

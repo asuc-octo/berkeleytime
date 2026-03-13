@@ -24,6 +24,9 @@ export interface Config {
   backendPublicUrl: string | undefined;
   graphqlPath: string;
   isDev: boolean;
+  semanticSearch: {
+    url: string;
+  };
   mongoDB: {
     uri: string;
   };
@@ -56,6 +59,9 @@ export const config: Config = {
   backendPublicUrl: envOptional("BACKEND_PUBLIC_URL"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
+  semanticSearch: {
+    url: env("SEMANTIC_SEARCH_URL"),
+  },
   mongoDB: {
     uri: env("MONGODB_URI"),
   },

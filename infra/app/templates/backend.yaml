@@ -36,7 +36,9 @@ spec:
               path: /healthz
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
-            periodSeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
 
 ---
 
@@ -62,6 +64,7 @@ data:
   SIS_COURSE_APP_KEY: "_"
   SIS_TERM_APP_ID: "_"
   SIS_TERM_APP_KEY: "_"
+  SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
 
 ---
 

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ITerm } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
@@ -22,6 +22,11 @@ export interface UseCatalogBrowserReturn {
   query: string;
   updateQuery: (q: string) => void;
   hasActiveFilters: boolean;
+  aiSearchActive: boolean;
+  setAiSearchActive: (active: boolean) => void;
+  handleSemanticSearch: () => void;
+  semanticLoading: boolean;
+  semanticError: string | null;
 }
 
 export default function useCatalogBrowser({
@@ -32,13 +37,34 @@ export default function useCatalogBrowser({
 }: UseCatalogBrowserOptions): UseCatalogBrowserReturn {
   const filterState = useCatalogFilters({ persistent });
 
+  // Semantic search state
+  const [aiSearchActive, setAiSearchActiveState] = useState(false);
+  // committedQuery is non-null only after the user has clicked "Search with AI"
+  const [committedQuery, setCommittedQuery] = useState<string | null>(null);
+
+  // Reset committed query when AI mode is turned off
+  useEffect(() => {
+    if (!aiSearchActive) setCommittedQuery(null);
+  }, [aiSearchActive]);
+
+  const setAiSearchActive = useCallback((active: boolean) => {
+    setAiSearchActiveState(active);
+  }, []);
+
+  const handleSemanticSearch = useCallback(() => {
+    setCommittedQuery(filterState.query);
+  }, [filterState.query]);
+
+  const isSemanticMode = aiSearchActive && committedQuery !== null;
+
   const queryResult = useCatalogQuery({
     year,
     semester,
-    query: filterState.query,
+    query: isSemanticMode ? committedQuery : filterState.query,
     sortBy: filterState.sortBy,
     effectiveOrder: filterState.effectiveOrder,
     filterVariables: filterState.filterVariables,
+    semanticSearch: isSemanticMode,
   });
 
   const filterContextValue: FilterContextType = useMemo(
@@ -94,5 +120,10 @@ export default function useCatalogBrowser({
     query: filterState.query,
     updateQuery: filterState.updateQuery,
     hasActiveFilters: filterState.hasActiveFilters,
+    aiSearchActive,
+    setAiSearchActive,
+    handleSemanticSearch,
+    semanticLoading: queryResult.loading && isSemanticMode,
+    semanticError: queryResult.semanticError,
   };
 }
