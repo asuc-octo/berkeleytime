@@ -69,11 +69,13 @@ export function CourseAnalyticsLayout({
 interface CourseAnalyticsSidebarProps {
   title: string;
   children: ReactNode;
+  footer?: ReactNode;
 }
 
 export function CourseAnalyticsSidebar({
   title,
   children,
+  footer,
 }: CourseAnalyticsSidebarProps) {
   return (
     <div className={styles.sidebarPanel}>
@@ -81,6 +83,7 @@ export function CourseAnalyticsSidebar({
         <p className={styles.sidebarTitle}>{title}</p>
       </div>
       <div className={styles.sidebarBody}>{children}</div>
+      {footer && <div className={styles.sidebarFooter}>{footer}</div>}
     </div>
   );
 }
