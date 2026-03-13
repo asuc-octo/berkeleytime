@@ -36,30 +36,15 @@ export async function searchSemantic(
     allowed_subjects: allowedSubjects ?? null,
   };
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
 
-    if (!response.ok) {
-      throw new Error(`Semantic search failed: ${response.statusText}`);
-    }
-
-    return (await response.json()) as SemanticSearchResponse;
-  } catch (error) {
-    console.error("Semantic search error:", error);
-    // Return empty results on error, gracefully falling back
-    return {
-      query,
-      threshold,
-      count: 0,
-      year,
-      semester,
-      allowed_subjects: allowedSubjects || null,
-      last_refreshed: new Date().toISOString(),
-      results: [],
-    };
+  if (!response.ok) {
+    throw new Error(`Semantic search service error: ${response.statusText}`);
   }
+
+  return (await response.json()) as SemanticSearchResponse;
 }

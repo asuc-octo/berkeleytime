@@ -23,6 +23,7 @@ export default function Header() {
     setAiSearchActive,
     handleSemanticSearch,
     semanticLoading,
+    semanticError,
   } = useLayoutContext();
 
   const handleAiSearchSubmit = () => {
@@ -56,9 +57,7 @@ export default function Header() {
           autoFocus
           autoComplete="off"
         />
-        {!aiSearchActive && (
-          <div className={styles.label}>{classes.length.toLocaleString()}</div>
-        )}
+
         <IconButton
           className={classNames(styles.sparksButton, {
             [styles.active]: aiSearchActive,
@@ -77,6 +76,9 @@ export default function Header() {
         >
           {semanticLoading ? "Searching..." : "Search with AI (Beta)  →"}
         </Button>
+      )}
+      {aiSearchActive && semanticError && (
+        <div className={styles.semanticError}>{semanticError}</div>
       )}
       {mode !== "full" && (
         <Button
