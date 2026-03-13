@@ -9,6 +9,7 @@ import {
   TermModel,
 } from "@repo/common/models";
 
+import { refreshCatalogClasses } from "../lib/catalog-denormalize";
 import { Config } from "../shared/config";
 
 const BASE_URL = "https://berkeleydecal.com";
@@ -547,10 +548,15 @@ async function scrapeDeCals(config: Config): Promise<void> {
     }
 
     // 3. For each term, intersect with DeCal semesters and perform matching
+    const processedTerms: { year: number; semester: string }[] = [];
+
     for (const term of terms) {
       const [yearStr, semesterName] = term.name.split(" ");
       const year = parseInt(yearStr, 10);
       if (!year || !semesterName) continue;
+
+      // Track this term for catalog refresh later
+      processedTerms.push({ year, semester: semesterName });
 
       const semesterKey = `${semesterName} ${year}`;
       const termDeCals = decalsBySemester.get(semesterKey) ?? [];
@@ -888,6 +894,16 @@ async function scrapeDeCals(config: Config): Promise<void> {
         log.info(
           `Cleared DeCal metadata from ${unmatchedResult.modifiedCount.toLocaleString()} unmatched class(es) in ${semesterKey}.`
         );
+      }
+    }
+
+    // 4. Rebuild catalog for all processed terms to include decal data
+    if (processedTerms.length > 0) {
+      log.info(
+        `Rebuilding catalog for ${processedTerms.length} term(s) to include DeCal data...`
+      );
+      for (const { year, semester } of processedTerms) {
+        await refreshCatalogClasses(log, year, semester);
       }
     }
   } catch (err) {
