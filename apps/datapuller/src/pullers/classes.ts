@@ -1,7 +1,7 @@
 import { connection } from "mongoose";
 
 import { parseTermName } from "@repo/common";
-import { ClassModel, TermModel } from "@repo/common/models";
+import { ClassModel, ITermItem, TermModel } from "@repo/common/models";
 
 import {
   refreshAllCatalogClasses,
@@ -259,6 +259,13 @@ const updateClasses = async (
       await refreshCatalogClasses(log, term.year, term.semester);
     }
   }
+
+  // Refresh semantic search index only for current/future terms
+  // Past terms don't change, so no need to rebuild their indexes
+  const nonPastTerms = terms
+    .filter((term) => term.temporalPosition !== "Past")
+    .map((term) => ({ name: term.name }));
+  await refreshSemanticSearchForTerms(config, nonPastTerms);
 };
 
 const activeTerms = async (config: Config) => {
