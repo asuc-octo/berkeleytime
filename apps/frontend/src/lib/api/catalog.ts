@@ -53,6 +53,9 @@ export const GET_CATALOG_SEARCH = gql`
             weightedAverage
           }
         }
+        decal {
+          title
+        }
       }
       totalCount
     }

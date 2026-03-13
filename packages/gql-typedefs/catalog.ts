@@ -81,6 +81,10 @@ export const catalogTypeDef = gql`
     maxWaitlist: Int
   }
 
+  type CatalogDeCal {
+    title: String
+  }
+
   type CatalogMetric {
     metricName: String!
     count: Int!
@@ -141,6 +145,9 @@ export const catalogTypeDef = gql`
     waitlistedCount: Int
     maxWaitlist: Int
     activeReservedMaxCount: Int
+
+    "DeCal"
+    decal: CatalogDeCal
 
     "Secondary sections"
     sections: [CatalogSection!]
