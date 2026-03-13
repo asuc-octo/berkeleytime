@@ -16,6 +16,8 @@ const BASE_URL = "https://berkeleydecal.com";
 const LIST_URL = `${BASE_URL}/`;
 const APPROVED_COURSES_API = `${BASE_URL}/api/approvedCourses`;
 
+const SYLLABUS_API = `${BASE_URL}/api/downloadSyllabus/`;
+
 // When true, skip remote fetches and just read existing decals.json
 const DEBUG = false;
 
@@ -451,7 +453,7 @@ async function scrapeDeCals(config: Config): Promise<void> {
           detailsUrl: c.detailsUrl ?? `${LIST_URL}courses/${c.id}`,
           applicationUrl: c.application_url ?? undefined,
           applicationDueDate: c.application_due_date ?? undefined,
-          syllabusUrl: c.syllabus_url ?? undefined,
+          syllabusUrl: `${SYLLABUS_API}${c.id}`,
           facilitators:
             c.facilitators?.map<DeCalFacilitator>((f) => ({
               name: f.name,
@@ -478,7 +480,7 @@ async function scrapeDeCals(config: Config): Promise<void> {
           base.applicationUrl = detail.application_url ?? base.applicationUrl;
           base.applicationDueDate =
             detail.application_due_date ?? base.applicationDueDate;
-          base.syllabusUrl = detail.syllabus_url ?? base.syllabusUrl;
+          base.syllabusUrl = `${SYLLABUS_API}${c.id}`;
           base.websiteUrl = detail.website ?? base.websiteUrl;
 
           if (detail.sections && detail.sections.length > 0) {
