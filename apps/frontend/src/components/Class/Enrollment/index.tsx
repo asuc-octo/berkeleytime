@@ -39,6 +39,8 @@ import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useClass from "@/hooks/useClass";
 import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
 
+import { WaitlistProbability } from "@/app/Enrollment/WaitlistProbability";
+
 import styles from "./Enrollment.module.scss";
 
 const timeFormatter = new Intl.DateTimeFormat("en-US", {
@@ -487,6 +489,16 @@ export default function Enrollment() {
         </ChartContainer>
         <p className={styles.axisLabel}>Days since enrollment opened</p>
         {capacityTooltipElement}
+      </div>
+      <div style={{ marginTop: 24 }}>
+        <WaitlistProbability
+          year={_class.year}
+          semester={_class.semester}
+          sessionId={_class.sessionId ?? null}
+          subject={_class.subject}
+          courseNumber={_class.courseNumber}
+          sectionNumber={_class.number}
+        />
       </div>
     </ClassChartBox>
   );
