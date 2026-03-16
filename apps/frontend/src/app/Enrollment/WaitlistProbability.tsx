@@ -4,7 +4,10 @@ import { useQuery } from "@apollo/client/react";
 
 import { Input, Text } from "@repo/theme";
 
-import { CourseAnalyticsField, CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
+import {
+  CourseAnalyticsField,
+  CourseAnalyticsGraphBox,
+} from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { GetWaitlistProbabilityDocument } from "@/lib/generated/graphql";
 import type { Semester } from "@/lib/generated/graphql";
 
@@ -82,7 +85,10 @@ export function WaitlistProbability({
         </CourseAnalyticsField>
       </div>
       {loading && hasValidInput && (
-        <Text size="1" style={{ color: "var(--paragraph-color)", marginTop: 8 }}>
+        <Text
+          size="1"
+          style={{ color: "var(--paragraph-color)", marginTop: 8 }}
+        >
           Calculating…
         </Text>
       )}
@@ -92,7 +98,14 @@ export function WaitlistProbability({
         </Text>
       )}
       {result && !loading && hasValidInput && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            marginTop: 12,
+          }}
+        >
           <Text size="2">
             P(get in) ={" "}
             <strong>{(result.probability * 100).toFixed(1)}%</strong>

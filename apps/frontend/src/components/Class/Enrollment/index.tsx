@@ -26,6 +26,7 @@ import {
   getTimeDeltaKey,
   interpolateEnrollmentPoint,
 } from "@/app/Enrollment/EnrollmentGraph.utils";
+import { WaitlistProbability } from "@/app/Enrollment/WaitlistProbability";
 import {
   CapacityChangeMarker,
   ChartContainer,
@@ -38,8 +39,6 @@ import { useGetClassEnrollment } from "@/hooks/api/classes/useGetClass";
 import { useReadEnrollmentTimeframes } from "@/hooks/api/enrollment";
 import useClass from "@/hooks/useClass";
 import { getEnrollmentInputSearchParam } from "@/lib/enrollmentUrl";
-
-import { WaitlistProbability } from "@/app/Enrollment/WaitlistProbability";
 
 import styles from "./Enrollment.module.scss";
 
