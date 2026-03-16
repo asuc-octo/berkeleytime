@@ -61,6 +61,8 @@ type HistoryEntry = {
  * Find the index to truncate at: once waitlist has been 0 for at least
  * WAITLIST_ZERO_CUTOFF_DAYS, we stop (waitlist phase ended). Returns the last
  * index to include (inclusive), or sorted.length - 1 if no such cutoff.
+ * Includes the first zero bucket so we count the final decrease (e.g. 5 -> 0)
+ * and elapsed time up to that transition.
  */
 function truncateAtWaitlistZeroCutoff(sorted: HistoryEntry[]): number {
   let runStart: number | null = null;
@@ -73,7 +75,7 @@ function truncateAtWaitlistZeroCutoff(sorted: HistoryEntry[]): number {
       const runEndTime = new Date(sorted[i].endTime).getTime();
       const runDays = (runEndTime - runStartTime) / MS_PER_DAY;
       if (runDays >= WAITLIST_ZERO_CUTOFF_DAYS) {
-        return runStart - 1;
+        return runStart;
       }
     } else {
       runStart = null;

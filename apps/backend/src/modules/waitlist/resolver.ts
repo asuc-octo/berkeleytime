@@ -22,6 +22,11 @@ const resolvers: WaitlistModule.Resolvers = {
           extensions: { code: "BAD_USER_INPUT" },
         });
       }
+      if (lambda !== undefined && lambda !== null && lambda < 0) {
+        throw new GraphQLError("lambda must be non-negative", {
+          extensions: { code: "BAD_USER_INPUT" },
+        });
+      }
 
       let lambdaUsed: number | undefined = lambda ?? undefined;
 
