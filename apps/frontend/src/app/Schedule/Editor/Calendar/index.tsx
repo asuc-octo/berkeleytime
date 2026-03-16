@@ -131,11 +131,12 @@ export default function Calendar({
           events: events
             .filter(({ startDate, endDate, date, days }) => {
               if (date) {
-                const examMoment =
-                  /^\d{8}$/.test(date)
-                    ? moment(date, "YYYYMMDD")
-                    : moment(date);
-                return examMoment.isValid() && examMoment.isSame(current, "day");
+                const examMoment = /^\d{8}$/.test(date)
+                  ? moment(date, "YYYYMMDD")
+                  : moment(date);
+                return (
+                  examMoment.isValid() && examMoment.isSame(current, "day")
+                );
               }
               return (
                 current.isSameOrAfter(startDate) &&
