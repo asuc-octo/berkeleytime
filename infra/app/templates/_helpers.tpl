@@ -50,3 +50,12 @@ app.kubernetes.io/name: cleanup
 {{- define "bt-app.datapullerName" -}}
 {{ .Release.Name }}-datapuller
 {{- end -}}
+
+{{- define "bt-app.productionTestsName" -}}
+{{ .Release.Name }}-production-tests
+{{- end -}}
+
+{{- define "bt-app.productionTestsLabels" -}}
+app.kubernetes.io/name: production-tests
+{{ include "bt-app.labels" . }}
+{{- end -}}

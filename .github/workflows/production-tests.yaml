@@ -1,47 +1,47 @@
-name: Production tests
+# name: Production tests
 
-on:
-  schedule:
-    # Run once daily at 02:00 UTC
-    - cron: "0 2 * * *"
-  workflow_dispatch:
-  push:
-    branches:
-      - testing
+# on:
+#   schedule:
+#     # Run once daily at 02:00 UTC
+#     - cron: "0 2 * * *"
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - testing
 
-jobs:
-  test:
-    name: Test production
-    runs-on: ubuntu-latest
+# jobs:
+#   test:
+#     name: Test production
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.12.0"
-          cache: "npm"
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: "22.12.0"
+#           cache: "npm"
 
-      - name: Install Dependencies
-        run: npm ci
+#       - name: Install Dependencies
+#         run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install
+#       - name: Install Playwright Browsers
+#         run: npx playwright install
 
-      - name: Debug production GraphQL response (from GitHub IP)
-        run: |
-          echo "=== Request to https://berkeleytime.com/api/graphql ==="
-          STATUS=$(curl -s -o /tmp/graphql-response.txt -w "%{http_code}" \
-            -X POST https://berkeleytime.com/api/graphql \
-            -H "Content-Type: application/json" \
-            -d '{"query":"{ __typename }"}')
-          echo "HTTP status: $STATUS"
-          echo "Response body (first 500 chars):"
-          head -c 500 /tmp/graphql-response.txt
-          echo ""
-          echo "=== end response ==="
+#       - name: Debug production GraphQL response (from GitHub IP)
+#         run: |
+#           echo "=== Request to https://berkeleytime.com/api/graphql ==="
+#           STATUS=$(curl -s -o /tmp/graphql-response.txt -w "%{http_code}" \
+#             -X POST https://berkeleytime.com/api/graphql \
+#             -H "Content-Type: application/json" \
+#             -d '{"query":"{ __typename }"}')
+#           echo "HTTP status: $STATUS"
+#           echo "Response body (first 500 chars):"
+#           head -c 500 /tmp/graphql-response.txt
+#           echo ""
+#           echo "=== end response ==="
 
-      - name: Run production tests
-        run: TEST_ENV=production npx playwright test --project=sanity --project=api --project=e2e-chromium --project=e2e-firefox
+#       - name: Run production tests
+#         run: TEST_ENV=production npx playwright test --config=apps/tests/playwright.config.ts --project=sanity --project=api --project=e2e-chromium --project=e2e-firefox

@@ -1,6 +1,6 @@
 # Berkeleytime Test Suite
 
-This directory contains end-to-end and API tests for Berkeleytime using Playwright. Tests live under `apps/tests/`.
+This directory contains end-to-end and API tests for Berkeleytime using Playwright.
 
 ## Test Structure
 
@@ -17,23 +17,22 @@ apps/tests/
 
 ### Prerequisites
 
-1. Install Playwright browsers (first time only):
+1. Ensure you have docker-compose running with all services:
+   ```bash
+   docker compose up
+   ```
+
+2. Install Playwright browsers (first time only):
    ```bash
    npx playwright install
    ```
 
-Note: after the initial installation, you may have to run `docker compose down` and restart your docker containers.
-
-2. Ensure you have docker-compose running with all services:
-   ```bash
-   docker compose up --build -d
-   ```
 ### Run All Tests
 
+From repo root (uses config in this app):
+
 ```bash
-# Run all test suites (from repo root)
-npm run test
-# or
+# Run all test suites
 npx playwright test --config=apps/tests/playwright.config.ts
 
 # Run only sanity tests (fast)
@@ -44,6 +43,12 @@ npx playwright test --config=apps/tests/playwright.config.ts --project=api
 
 # Run only e2e tests (all browsers)
 npx playwright test --config=apps/tests/playwright.config.ts --grep e2e
+```
+
+Or from this directory:
+
+```bash
+cd apps/tests && npx playwright test
 ```
 
 ### Run Specific Tests
@@ -87,45 +92,22 @@ npx playwright test --config=apps/tests/playwright.config.ts --debug apps/tests/
 - **Browsers**: Chromium, Firefox, Safari, Mobile (iPhone 12)
 - **When to run**: Can run on PR or separately
 
+## CI/CD Integration
+
+- **Local Development**: Tests run against your running `docker compose` instance
+- **CI (Pull Requests)**: Tests run against the code in the PR (built fresh via docker-compose)
+- **Production**: Use `TEST_ENV=production` to run against live berkeleytime.com
+
+The `TEST_ENV` environment variable controls this:
+- `TEST_ENV=local` (default): Uses your existing docker-compose
+- `TEST_ENV=ci`: Starts fresh docker-compose in CI
+- `TEST_ENV=production`: No local server; tests hit https://berkeleytime.com
+
 ## Test Data & Fixtures
 
-For tests that need specific data (courses, users, ratings), add fixtures in `apps/tests/fixtures/`:
-
-```typescript
-// apps/tests/fixtures/test-data.ts
-export const sampleCourses = [
-  { code: 'CS 61A', name: 'Structure and Interpretation of Computer Programs' },
-  { code: 'CS 61B', name: 'Data Structures' },
-];
-```
-
-## Best Practices
-
-1. **Use data-testid attributes**: Add `data-testid` to important UI elements for stable selectors
-2. **Avoid hardcoded waits**: Use `waitForSelector` instead of `waitForTimeout`
-3. **Keep sanity tests fast**: Only test critical paths
-4. **Test APIs directly**: Use API tests for backend logic, E2E for user workflows
-5. **Use descriptive test names**: `test('can search for course by name')` not `test('test 1')`
-6. **Independent tests**: Each test should work in isolation
-
-## Debugging
-
-```bash
-# View last test run report
-npx playwright show-report
-
-# Run with verbose logging
-DEBUG=pw:api npx playwright test --config=apps/tests/playwright.config.ts
-
-# Record a test (generates test code)
-npx playwright codegen http://localhost:3000
-```
+For tests that need specific data (courses, users, ratings), add fixtures in `apps/tests/fixtures/`.
 
 ## Troubleshooting
-
-### Playwright cannot be found 'MODULE_NOT_FOUND'
-- Follow the steps after (and including) npm install at https://docs.berkeleytime.com/getting-started/local-development.html
-- Manually install at https://playwright.dev/docs/intro
 
 ### Tests fail with "net::ERR_CONNECTION_REFUSED"
 - Ensure `docker compose up` is running
@@ -137,7 +119,7 @@ npx playwright codegen http://localhost:3000
 
 ### Tests timeout
 - Increase timeout in test: `test.setTimeout(60000)`
-- Or in config: Update `timeout` in `apps/tests/playwright.config.ts`
+- Or in config: Update `timeout` in `playwright.config.ts`
 
 ### Docker won't start in CI
 - Check GitHub Actions logs

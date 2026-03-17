@@ -11,9 +11,10 @@ import { defineConfig, devices } from "@playwright/test";
 const TEST_ENV = process.env.TEST_ENV || "local";
 
 /**
- * Determine the base URL based on test environment
+ * Determine the base URL based on test environment.
  */
 const getBaseURL = () => {
+  if (process.env.BASE_URL) return process.env.BASE_URL;
   switch (TEST_ENV) {
     case "production":
       // Test the live production site
@@ -30,8 +31,8 @@ const getBaseURL = () => {
 };
 
 /**
- * Determine if we need to start the local dev server
- * Only needed for 'local' and 'ci' modes, not for 'production'
+ * Determine if we need to start the local dev server.
+ * Only needed for 'local' and 'ci' modes, not for 'production'.
  */
 const getWebServer = () => {
   if (TEST_ENV === "production") {
@@ -50,7 +51,7 @@ const getWebServer = () => {
 };
 
 export default defineConfig({
-  testDir: "./tests",
+  testDir: ".",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -73,24 +74,24 @@ export default defineConfig({
     // Sanity tests - fast, critical path only, single browser
     {
       name: "sanity",
-      testDir: "./tests/sanity",
+      testDir: "./sanity",
       use: { ...devices["Desktop Chrome"] },
     },
     // API tests - GraphQL API unit tests (no browser needed)
     {
       name: "api",
-      testDir: "./tests/api",
+      testDir: "./api",
       use: { ...devices["Desktop Chrome"] },
     },
     // E2E tests - comprehensive flows, multiple browsers and mobile
     {
       name: "e2e-chromium",
-      testDir: "./tests/e2e",
+      testDir: "./e2e",
       use: { ...devices["Desktop Chrome"] },
     },
     {
       name: "e2e-webkit",
-      testDir: "./tests/e2e",
+      testDir: "./e2e",
       use: { ...devices["Desktop Safari"] },
     },
   ],
@@ -102,7 +103,7 @@ export default defineConfig({
       use: { ...devices["Desktop Firefox"] },
     }, {
       name: "e2e-mobile",
-      testDir: "./tests/e2e",
+      testDir: "./e2e",
       use: { ...devices["iPhone 12"] },
     }
   */

@@ -79,3 +79,11 @@ datapuller:
     enrollment-timeframe:
       schedule: "40 4 * * *"
       args: ["--puller=enrollment-timeframe"]
+
+productionTests:
+  suspend: false
+  schedule: "0 * * * *"
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-tests
+    tag: prod

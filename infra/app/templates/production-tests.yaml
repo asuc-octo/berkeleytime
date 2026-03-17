@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "bt-app.productionTestsName" . }}
+  labels:
+    {{- include "bt-app.productionTestsLabels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.productionTests.schedule }}"
+  timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  suspend: {{ .Values.productionTests.suspend }}
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      labels:
+        {{- include "bt-app.productionTestsLabels" . | nindent 8 }}
+    spec:
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            {{- include "bt-app.productionTestsLabels" . | nindent 12 }}
+        spec:
+          containers:
+            - name: production-tests
+              image: {{ printf "%s/%s:%s" .Values.productionTests.image.registry .Values.productionTests.image.repository ( toString .Values.productionTests.image.tag ) }}
+              imagePullPolicy: Always
+              command: ["npx", "playwright", "test", "--config=apps/tests/playwright.config.ts"]
+              env:
+                - name: TEST_ENV
+                  value: "production"
+          restartPolicy: Never

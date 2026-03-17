@@ -25,7 +25,7 @@ repos:
         pass_filenames: false
       - id: playwright-tests
         name: playwright-tests (sanity + api)
-        entry: npx playwright test --project=sanity --project=api
+        entry: npx playwright test --config=apps/tests/playwright.config.ts --project=sanity --project=api
         language: system
         stages: [pre-push]
         fail_fast: true

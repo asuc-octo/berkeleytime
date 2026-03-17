@@ -7,6 +7,7 @@
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "start": "turbo run start",
+    "test": "playwright test --config=apps/tests/playwright.config.ts",
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
     "postinstall": "patch-package"
   },
