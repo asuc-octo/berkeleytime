@@ -1,4 +1,9 @@
-import { deleteAccount, getUser, updateUser } from "./controller";
+import {
+  deleteAccount,
+  getUser,
+  recalculateActivityScores,
+  updateUser,
+} from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
@@ -18,6 +23,9 @@ const resolvers: UserModule.Resolvers = {
     },
     deleteAccount: async (_, __, context) => {
       return await deleteAccount(context);
+    },
+    recalculateActivityScores: async (_, __, context) => {
+      return await recalculateActivityScores(context);
     },
   },
 };

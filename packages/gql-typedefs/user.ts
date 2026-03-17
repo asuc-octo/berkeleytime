@@ -51,5 +51,9 @@ export const userTypeDef = gql`
   type Mutation {
     updateUser(user: UpdateUserInput!): User @auth
     deleteAccount: Boolean @auth
+    """
+    Staff-only: Immediately runs the activity score update job and returns the number of users updated.
+    """
+    recalculateActivityScores: Int @auth
   }
 `;

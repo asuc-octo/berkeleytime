@@ -1,5 +1,10 @@
 import { UserModel } from "@repo/common/models";
 
+import {
+  ACTIVE_FORMULA,
+  ACTIVE_FORMULA_NAME,
+} from "./activity-score-formulas";
+
 // The minimum activityScore for a user to be considered "active".
 export const ACTIVITY_THRESHOLD = 0.5;
 
@@ -8,26 +13,7 @@ const STARTUP_DELAY_MS = 2 * 60 * 1000; // 2 minutes
 
 let isRunning = false;
 
-/**
- * Computes an activity score in the range [0, 1] for a single user.
- *
- * TODO: Replace this placeholder with the real scoring formula once determined.
- * Inputs available on each user document:
- *   - lastSeenAt: Date  — when the user last visited
- *   - createdAt:  Date  — when the account was created
- *
- * Additional signals (e.g. number of schedules, ratings, collections) can be
- * fetched inside this function or pre-aggregated before the bulk update loop.
- */
-const computeActivityScore = (_user: {
-  lastSeenAt: Date;
-  createdAt: Date;
-}): number => {
-  console.log(_user);
-  return 0; // placeholder
-};
-
-const updateActivityScores = async (): Promise<void> => {
+export const updateActivityScores = async (): Promise<number> => {
   const users = await UserModel.find({}).select("lastSeenAt createdAt").lean();
 
   const bulkOps = users.map((user) => ({
@@ -35,8 +21,8 @@ const updateActivityScores = async (): Promise<void> => {
       filter: { _id: user._id },
       update: {
         $set: {
-          activityScore: computeActivityScore({
-            lastSeenAt: user.lastSeenAt,
+          activityScore: ACTIVE_FORMULA({
+            lastSeenAt: user.lastSeenAt ?? new Date(0),
             createdAt: user.createdAt ?? new Date(),
           }),
         },
@@ -48,7 +34,11 @@ const updateActivityScores = async (): Promise<void> => {
     await UserModel.bulkWrite(bulkOps);
   }
 
-  console.log(`[ActivityScore] Updated scores for ${bulkOps.length} users`);
+  console.log(
+    `[ActivityScore] Updated scores for ${bulkOps.length} users (formula: ${ACTIVE_FORMULA_NAME})`
+  );
+
+  return bulkOps.length;
 };
 
 export const startActivityScoreUpdateJob = (): void => {
