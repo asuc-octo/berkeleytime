@@ -71,7 +71,19 @@ export const sigmoid: FormulaFn = ({ lastSeenAt }) => {
   return 1 / (1 + Math.exp(K * (days - MIDPOINT_DAYS)));
 };
 
-// ─── Active formula ────────────────────────────────────────────────────────────
+export type FormulaName =
+  | "exponentialDecay"
+  | "linearDecay"
+  | "tiered"
+  | "sigmoid";
+
+export const FORMULA_MAP: Record<FormulaName, FormulaFn> = {
+  exponentialDecay,
+  linearDecay,
+  tiered,
+  sigmoid,
+};
+
 // Change this line to switch which formula the job uses.
 export const ACTIVE_FORMULA: FormulaFn = exponentialDecay;
-export const ACTIVE_FORMULA_NAME = "exponentialDecay";
+export const ACTIVE_FORMULA_NAME: FormulaName = "exponentialDecay";

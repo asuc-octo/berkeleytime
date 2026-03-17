@@ -14,6 +14,7 @@ import { getSchedulerAnalyticsData } from "./controllers/schedule";
 import { getStats } from "./controllers/stats";
 import {
   getActiveUsersAnalyticsData,
+  getActivityScoreDistribution,
   getUserActivityAnalyticsData,
   getUserCreationAnalyticsData,
 } from "./controllers/user";
@@ -189,6 +190,30 @@ const resolvers = {
     ) => {
       try {
         return await getCollectionAnalyticsData(context);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    // Activity score distribution
+    activityScoreDistribution: async (
+      _: unknown,
+      { formula }: { formula?: string },
+      context: RequestContext
+    ) => {
+      try {
+        return await getActivityScoreDistribution(
+          context,
+          formula as Parameters<typeof getActivityScoreDistribution>[1]
+        );
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

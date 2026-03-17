@@ -19,11 +19,15 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
+import { Select } from "@repo/theme";
+
 import {
+  useActivityScoreDistribution,
   useGeneralActivityAnalyticsData,
   useUserActivityAnalyticsData,
   useUserCreationAnalyticsData,
 } from "@/hooks/api";
+import { FORMULA_OPTIONS, FormulaName } from "@/lib/api/analytics";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
 
@@ -631,6 +635,139 @@ function formatActivityDisplayDate(dateStr: string): string {
   ];
   const [, month, day] = dateStr.split("-");
   return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+}
+
+// Activity Score Distribution Block - histogram of user activity scores (0–1)
+export function ActivityScoreDistributionBlock() {
+  const [formula, setFormula] = useState<FormulaName>("linearDecay");
+  const { data, loading, error } = useActivityScoreDistribution(formula);
+
+  const totalUsers = data.reduce((sum, point) => sum + point.count, 0);
+
+  const activeCount = data.reduce((sum, point) => {
+    const lowerBound = parseFloat(point.bucket.split("–")[0]);
+    return lowerBound >= 0.5 ? sum + point.count : sum;
+  }, 0);
+  const computedActivePercent =
+    totalUsers > 0 ? (activeCount / totalUsers) * 100 : 0;
+
+  const chartConfig = createChartConfig(["count"], {
+    labels: { count: "Users" },
+    colors: { count: "var(--heading-color)" },
+  });
+
+  const formulaSelector = (
+    <>
+      <span style={{ fontSize: 12, color: "var(--label-color)" }}>Formula</span>
+      <Select
+        value={formula}
+        onChange={(val) => setFormula(val as FormulaName)}
+        options={FORMULA_OPTIONS}
+        style={{
+          width: "fit-content",
+          minHeight: 24,
+          height: 24,
+          padding: "0 8px",
+          fontSize: 12,
+        }}
+      />
+    </>
+  );
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Activity Score Distribution"
+        description="Distribution of user activity scores (0–1)"
+        customControls={formulaSelector}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error) {
+    return (
+      <AnalyticsCard
+        title="Activity Score Distribution"
+        description="Distribution of user activity scores (0–1)"
+        customControls={formulaSelector}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Activity Score Distribution"
+      description="Distribution of user activity scores (0–1)"
+      currentValue={totalUsers}
+      currentValueLabel="total users"
+      subtitle={`${computedActivePercent.toFixed(1)}% active (score ≥ 0.5)`}
+      customControls={formulaSelector}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="bucket"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 9 }}
+              interval={0}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={[0, "auto"]}
+            />
+            <ChartTooltip
+              tooltipConfig={{
+                labelFormatter: (_, payload) =>
+                  `Score ${payload?.[0]?.payload?.bucket || ""}`,
+                valueFormatter: (value: number, _name, item) => {
+                  const percent = item?.payload?.percent ?? 0;
+                  return `${value.toLocaleString()} users (${percent.toFixed(1)}%)`;
+                },
+              }}
+            />
+            <Bar
+              dataKey="count"
+              radius={[2, 2, 0, 0]}
+              fill="var(--heading-color)"
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
 }
 
 /** 7-day centered moving average for trend curve */

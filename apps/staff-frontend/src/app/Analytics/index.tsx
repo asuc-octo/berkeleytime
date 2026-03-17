@@ -43,6 +43,7 @@ import {
   TotalSchedulesBlock,
 } from "./components/SchedulerAnalytics";
 import {
+  ActivityScoreDistributionBlock,
   DailyActivityBlock,
   SignupDayHistogramBlock,
   UserActivityRecencyBlock,
@@ -136,6 +137,9 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <DailyActivityBlock />
+            </div>
+            <div className={styles.cell}>
+              <ActivityScoreDistributionBlock />
             </div>
           </>
         )}
