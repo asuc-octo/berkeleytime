@@ -8,9 +8,9 @@ import {
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
-import { updateActivityScores } from "./jobs/update-activity-scores";
-import { formatUser } from "./formatter";
 import { requireStaffAuth } from "../analytics/helpers/staff-auth";
+import { formatUser } from "./formatter";
+import { updateActivityScores } from "./jobs/update-activity-scores";
 
 export const getUser = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");

@@ -1,9 +1,6 @@
 import { UserModel } from "@repo/common/models";
 
-import {
-  ACTIVE_FORMULA,
-  ACTIVE_FORMULA_NAME,
-} from "./activity-score-formulas";
+import { ACTIVE_FORMULA, ACTIVE_FORMULA_NAME } from "./activity-score-formulas";
 
 // The minimum activityScore for a user to be considered "active".
 export const ACTIVITY_THRESHOLD = 0.5;
