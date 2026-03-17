@@ -40,21 +40,21 @@ spec:
                     "$prod_pod" -- mongodump \
                     --db bt \
                     --excludeCollection users \
-                    --excludeCollection plan \
-                    --excludeCollection planTerm \
-                    --excludeCollection label \
-                    --excludeCollection majorReq \
-                    --excludeCollection rating \
-                    --excludeCollection aggregatedMetrics \
+                    --excludeCollection plans \
+                    --excludeCollection planterms \
+                    --excludeCollection labels \
+                    --excludeCollection majorreqs \
+                    --excludeCollection ratings \
+                    --excludeCollection aggregatedmetrics \
                     --excludeCollection schedules \
                     --excludeCollection collections \
                     --excludeCollection pods \
                     --excludeCollection banners \
                     --excludeCollection bannerviewcounts \
                     --excludeCollection classviewcounts \
-                    --excludeCollection CuratedClass \
+                    --excludeCollection curatedclasses \
                     --excludeCollection clickevents \
-                    --excludeCollection routeRedirects \
+                    --excludeCollection routeredirects \
                     --excludeCollection semester-roles \
                     --excludeCollection staff-members \
                     --excludeCollection targetedmessages \
