@@ -70,3 +70,9 @@ export enum EnrollmentFilter {
   OpenApartFromReserved = "Non-reserved Open Seats",
   WaitlistOpen = "Open Seats or Open Waitlist",
 }
+
+export enum DecalFilter {
+  All = "All",
+  OnlyDecals = "Only DeCals",
+  Hide = "Hide",
+}

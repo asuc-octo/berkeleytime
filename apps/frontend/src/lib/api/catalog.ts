@@ -78,6 +78,9 @@ export const GET_CATALOG_FILTER_OPTIONS = gql`
       gradingOptions
       breadthRequirements
       universityRequirements
+      subjects {
+        code
+      }
       timeRange {
         minStartTime
         maxEndTime

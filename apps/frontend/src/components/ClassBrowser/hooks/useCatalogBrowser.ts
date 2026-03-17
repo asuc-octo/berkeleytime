@@ -58,6 +58,8 @@ export default function useCatalogBrowser({
       effectiveOrder: filterState.effectiveOrder,
       enrollmentFilter: filterState.enrollmentFilter,
       online: filterState.online,
+      decalFilter: filterState.decalFilter,
+      subjects: filterState.subjects,
       filterOptions: queryResult.filterOptions,
       updateUnits: filterState.updateUnits,
       updateLevels: filterState.updateLevels,
@@ -69,6 +71,8 @@ export default function useCatalogBrowser({
       updateSortBy: filterState.updateSortBy,
       updateEnrollmentFilter: filterState.updateEnrollmentFilter,
       updateOnline: filterState.updateOnline,
+      updateDecalFilter: filterState.updateDecalFilter,
+      updateSubjects: filterState.updateSubjects,
       updateReverse: filterState.updateReverse,
     }),
     [year, semester, terms, filterState, queryResult.filterOptions]
