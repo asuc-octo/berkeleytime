@@ -3,12 +3,12 @@ import { GraphQLError } from "graphql";
 import { UserModel } from "@repo/common/models";
 
 import { RequestContext } from "../../../types/request-context";
-import { ACTIVITY_THRESHOLD } from "../../user/jobs/update-activity-scores";
 import {
   ACTIVE_FORMULA_NAME,
   FORMULA_MAP,
   FormulaName,
 } from "../../user/jobs/activity-score-formulas";
+import { ACTIVITY_THRESHOLD } from "../../user/jobs/update-activity-scores";
 import { requireStaffAuth } from "../helpers/staff-auth";
 
 export const getUserCreationAnalyticsData = async (context: RequestContext) => {
@@ -58,9 +58,7 @@ export const getActivityScoreDistribution = async (
 
   const formula = FORMULA_MAP[formulaName];
 
-  const users = await UserModel.find({})
-    .select("lastSeenAt createdAt")
-    .lean();
+  const users = await UserModel.find({}).select("lastSeenAt createdAt").lean();
 
   const BUCKET_COUNT = 10;
   const counts = new Array<number>(BUCKET_COUNT).fill(0);

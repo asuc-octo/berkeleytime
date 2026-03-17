@@ -13,14 +13,13 @@ import {
 } from "recharts";
 
 import { LoadingIndicator } from "@repo/theme";
+import { Select } from "@repo/theme";
 
 import {
   ChartContainer,
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-import { Select } from "@repo/theme";
-
 import {
   useActivityScoreDistribution,
   useGeneralActivityAnalyticsData,

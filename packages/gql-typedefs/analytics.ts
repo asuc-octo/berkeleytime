@@ -98,7 +98,9 @@ export const analyticsTypeDef = gql`
     Pass a formula name to compare different scoring approaches without persisting to the DB.
     Valid values: exponentialDecay | linearDecay | tiered | sigmoid
     """
-    activityScoreDistribution(formula: String): [ActivityScoreDistributionPoint!]! @auth
+    activityScoreDistribution(
+      formula: String
+    ): [ActivityScoreDistributionPoint!]! @auth
 
     """
     Staff-only: Active users count grouped by time period.
