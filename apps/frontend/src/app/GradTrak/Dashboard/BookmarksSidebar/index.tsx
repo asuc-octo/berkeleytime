@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Bookmark, NavArrowRight } from "iconoir-react";
+import { Link } from "react-router-dom";
 
 import { Button, Color } from "@repo/theme";
 
@@ -95,24 +95,6 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.topRow}>
-          <button
-            type="button"
-            className={styles.closeSidebarButton}
-            onClick={onClose}
-            aria-label="Close sidebar"
-          >
-            <NavArrowRight className={styles.closeSidebarIcon} />
-          </button>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            className={styles.bookmarksButton}
-          >
-            <Bookmark />
-            Bookmarks
-          </Button>
-        </div>
         <div className={styles.headerRow}>
           <div className={styles.headerLeft}>
           {selectedCollection ? (
@@ -190,6 +172,12 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
                 })}
               </div>
             )}
+            <Link
+              to="/profile/bookmarks"
+              className={styles.addToCollectionLink}
+            >
+              Add to collection →
+            </Link>
           </>
         ) : (
           <>

@@ -15,42 +15,8 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  gap: 2rem;
   padding: 1.2rem var(--bookmarks-padding-x);
   border-bottom: 1px solid var(--border-color);
-}
-
-.topRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.closeSidebarButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  color: var(--heading-color);
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--button-hover-color);
-  }
-}
-
-.bookmarksButton {
-  flex-shrink: 0;
-}
-
-.closeSidebarIcon {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .headerRow {
@@ -136,4 +102,19 @@
   color: var(--paragraph-color);
   padding: 1.2rem 0;
   text-align: center;
+}
+
+.addToCollectionLink {
+  display: block;
+  margin-top: 1rem;
+  font-size: var(--text-14);
+  color: var(--blue-500);
+  text-decoration: none;
+  text-align: right;
+
+  &:hover {
+    color: var(--blue-hover);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
 }
