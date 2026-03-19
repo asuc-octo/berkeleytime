@@ -32,7 +32,6 @@ interface TargetedMessage {
 interface ResolvedMessage {
   message: TargetedMessage;
   courseId: string;
-  courseNumber: string;
 }
 
 interface CourseIdentifier {
@@ -68,6 +67,8 @@ export default function TargetedMessageBanner({
     }
 
     let cancelled = false;
+    setResolved(null);
+    setLocalDismissed(new Set());
 
     const findMessage = async () => {
       // Deduplicate by subject+courseNumber
@@ -79,58 +80,70 @@ export default function TargetedMessageBanner({
         return true;
       });
 
-      for (const course of unique) {
-        if (cancelled) return;
-
-        try {
-          // Resolve courseId from subject+courseNumber
-          const courseResult = await client.query({
-            query: GetCourseTitleDocument,
-            variables: {
-              subject: course.subject,
-              number: course.courseNumber,
-            },
-            fetchPolicy: "cache-first",
-          });
-
-          const courseId = courseResult.data?.course?.courseId;
-          if (!courseId) continue;
-
-          // Query targeted messages for this courseId
-          const { data } =
-            await client.query<GetTargetedMessagesForCourseQuery>({
-              query: GetTargetedMessagesForCourseDocument,
-              variables: { courseId },
+      // Resolve courseIds for all courses in parallel
+      const courseResults = await Promise.all(
+        unique.map(async (course) => {
+          try {
+            const result = await client.query({
+              query: GetCourseTitleDocument,
+              variables: {
+                subject: course.subject,
+                number: course.courseNumber,
+              },
               fetchPolicy: "cache-first",
             });
-
-          const messages = data?.targetedMessagesForCourse;
-          if (!messages?.length) continue;
-
-          syncDismissedTargetedMessages(messages.map((m) => m.id));
-
-          const message = messages.find((m) => {
-            if (!m.persistent && !m.reappearing)
-              return !isTargetedMessageDismissed(m.id);
-            if (m.reappearing) return !isTargetedMessageSessionDismissed(m.id);
-            return true;
-          });
-
-          if (message) {
-            if (!cancelled)
-              setResolved({
-                message,
-                courseId,
-                courseNumber: course.courseNumber,
-              });
-            return;
+            const courseId = result.data?.course?.courseId;
+            return courseId ? { courseId } : null;
+          } catch {
+            return null;
           }
-        } catch {
-          // continue to next course
+        })
+      );
+
+      if (cancelled) return;
+
+      // Fetch targeted messages for all resolved courses in parallel
+      const messageResults = await Promise.all(
+        courseResults.map(async (result) => {
+          if (!result) return null;
+          try {
+            const { data } =
+              await client.query<GetTargetedMessagesForCourseQuery>({
+                query: GetTargetedMessagesForCourseDocument,
+                variables: { courseId: result.courseId },
+                fetchPolicy: "cache-first",
+              });
+            const messages = data?.targetedMessagesForCourse;
+            if (!messages?.length) return null;
+            return { courseId: result.courseId, messages };
+          } catch {
+            return null;
+          }
+        })
+      );
+
+      if (cancelled) return;
+
+      // Find the first visible message across all courses
+      for (const entry of messageResults) {
+        if (!entry) continue;
+
+        syncDismissedTargetedMessages(entry.messages.map((m) => m.id));
+
+        const message = entry.messages.find((m) => {
+          if (!m.persistent && !m.reappearing)
+            return !isTargetedMessageDismissed(m.id);
+          if (m.reappearing) return !isTargetedMessageSessionDismissed(m.id);
+          return true;
+        });
+
+        if (message) {
+          setResolved({ message, courseId: entry.courseId });
+          return;
         }
       }
 
-      if (!cancelled) setResolved(null);
+      setResolved(null);
     };
 
     void findMessage();
@@ -170,7 +183,7 @@ export default function TargetedMessageBanner({
       className={styles.messageBox}
     >
       <div className={styles.messageHeader}>
-        <p className={styles.messageTitle}>Taking {message.courseNumber}?</p>
+        <p className={styles.messageTitle}>{message.message.title}</p>
         {!message.message.persistent && (
           <button
             className={styles.dismissButton}
