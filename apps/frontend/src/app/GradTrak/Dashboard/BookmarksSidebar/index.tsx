@@ -49,8 +49,8 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
             unitsMin: cls.unitsMin ?? 0,
             unitsMax: cls.unitsMax ?? 0,
             hasReservedSeats:
-              (cls.primarySection?.enrollment?.latest
-                ?.activeReservedMaxCount ?? 0) > 0,
+              (cls.primarySection?.enrollment?.latest?.activeReservedMaxCount ??
+                0) > 0,
           });
         }
         return {
@@ -70,7 +70,12 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
         if (!a.isSystem && b.isSystem) return 1;
         if (a.isPinned && !b.isPinned) return -1;
         if (!a.isPinned && b.isPinned) return 1;
-        if (a.isPinned && b.isPinned && a.pinnedAt != null && b.pinnedAt != null) {
+        if (
+          a.isPinned &&
+          b.isPinned &&
+          a.pinnedAt != null &&
+          b.pinnedAt != null
+        ) {
           return b.pinnedAt - a.pinnedAt;
         }
         return b.lastAdd - a.lastAdd;
@@ -83,8 +88,7 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
   );
 
   const selectedCollectionApi = useMemo(
-    () =>
-      apiCollections?.find((c) => c._id === selectedCollectionId) ?? null,
+    () => apiCollections?.find((c) => c._id === selectedCollectionId) ?? null,
     [apiCollections, selectedCollectionId]
   );
 
@@ -97,34 +101,34 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
       <div className={styles.header}>
         <div className={styles.headerRow}>
           <div className={styles.headerLeft}>
-          {selectedCollection ? (
-            <>
-              <Button
-                variant="secondary"
-                onClick={handleBack}
-                className={styles.backButton}
-              >
-                Back
-              </Button>
-              <h2
-                className={`${styles.headerTitle} ${styles.headerTitleRight}`}
-              >
-                {selectedCollection.name}
-              </h2>
-            </>
-          ) : (
-            <h2 className={styles.headerTitle}>Bookmarks</h2>
+            {selectedCollection ? (
+              <>
+                <Button
+                  variant="secondary"
+                  onClick={handleBack}
+                  className={styles.backButton}
+                >
+                  Back
+                </Button>
+                <h2
+                  className={`${styles.headerTitle} ${styles.headerTitleRight}`}
+                >
+                  {selectedCollection.name}
+                </h2>
+              </>
+            ) : (
+              <h2 className={styles.headerTitle}>Bookmarks</h2>
+            )}
+          </div>
+          {!selectedCollection && (
+            <Button
+              variant="secondary"
+              onClick={onClose}
+              className={styles.closeButton}
+            >
+              Close
+            </Button>
           )}
-        </div>
-        {!selectedCollection && (
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            className={styles.closeButton}
-          >
-            Close
-          </Button>
-        )}
         </div>
       </div>
 
@@ -163,10 +167,7 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
                         e.dataTransfer.effectAllowed = "copy";
                       }}
                     >
-                      <ClassCard
-                        class={c}
-                        style={{ cursor: "grab" }}
-                      />
+                      <ClassCard class={c} style={{ cursor: "grab" }} />
                     </div>
                   );
                 })}
