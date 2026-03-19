@@ -34,6 +34,7 @@ import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
 
 import styles from "./Enrollment.module.scss";
 import EnrollmentGraph from "./EnrollmentGraph";
+import { WaitlistProbability } from "./WaitlistProbability";
 
 interface SemesterSelection {
   year: number;
@@ -697,6 +698,16 @@ function EnrollmentVisualization({
         </CourseAnalyticsCardGrid>
       </div>
       <EnrollmentGraph outputs={outputs} hoveredIndex={hoveredIndex} />
+      {outputs.length >= 1 && (
+        <WaitlistProbability
+          year={outputs[0].input.year}
+          semester={outputs[0].input.semester}
+          sessionId={outputs[0].input.sessionId ?? null}
+          subject={outputs[0].input.subject}
+          courseNumber={outputs[0].input.courseNumber}
+          sectionNumber={outputs[0].input.sectionNumber}
+        />
+      )}
     </>
   );
 }

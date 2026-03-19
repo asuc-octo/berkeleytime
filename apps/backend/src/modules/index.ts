@@ -20,6 +20,7 @@ import Staff from "./staff";
 import TargetedMessage from "./targeted-message";
 import Term from "./term";
 import User from "./user";
+import Waitlist from "./waitlist";
 
 const modules = [
   Analytics,
@@ -42,6 +43,7 @@ const modules = [
   RouteRedirect,
   Pod,
   TargetedMessage,
+  Waitlist,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));
