@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
   annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     {{- if .Values.grafana.ingress.annotations }}
     {{- toYaml .Values.grafana.ingress.annotations | nindent 4 }}
     {{- end }}

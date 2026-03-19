@@ -76,6 +76,8 @@ metadata:
     {{- include "bt-observability.tempoLabels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: tempo
@@ -84,7 +86,7 @@ spec:
       labels:
         {{- include "bt-observability.tempoLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/tempo.yaml") . | sha256sum }}
+        checksum/config: {{ .Values.tempo | toJson | sha256sum }}
     spec:
       containers:
         - name: tempo

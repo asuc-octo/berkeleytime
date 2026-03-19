@@ -47,6 +47,8 @@ metadata:
     {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: prometheus
@@ -55,7 +57,7 @@ spec:
       labels:
         {{- include "bt-observability.prometheusLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/prometheus.yaml") . | sha256sum }}
+        checksum/config: {{ .Values.prometheus | toJson | sha256sum }}
     spec:
       securityContext:
         fsGroup: 65534

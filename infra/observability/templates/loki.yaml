@@ -78,6 +78,8 @@ metadata:
     {{- include "bt-observability.lokiLabels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: loki
@@ -86,7 +88,7 @@ spec:
       labels:
         {{- include "bt-observability.lokiLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/loki.yaml") . | sha256sum }}
+        checksum/config: {{ .Values.loki | toJson | sha256sum }}
     spec:
       securityContext:
         fsGroup: 10001

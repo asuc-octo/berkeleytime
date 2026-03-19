@@ -73,6 +73,8 @@ metadata:
     {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: grafana
@@ -81,7 +83,7 @@ spec:
       labels:
         {{- include "bt-observability.grafanaLabels" . | nindent 8 }}
       annotations:
-        checksum/datasources: {{ include (print $.Template.BasePath "/grafana.yaml") . | sha256sum }}
+        checksum/datasources: {{ .Values.grafana | toJson | sha256sum }}
     spec:
       securityContext:
         fsGroup: 472

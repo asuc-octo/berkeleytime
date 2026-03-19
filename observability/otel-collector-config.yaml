@@ -70,6 +70,11 @@ exporters:
   # Send logs to Loki via the native loki exporter
   loki:
     endpoint: http://loki:3100/loki/api/v1/push
+    default_labels_enabled:
+      exporter: false
+      job: true
+      instance: false
+      level: true
 
   # Debug exporter for troubleshooting (logs to collector stdout)
   debug:

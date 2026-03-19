@@ -7,9 +7,9 @@ port: 80
 # OpenTelemetry configuration
 # Set otel.enabled=true to enable tracing, metrics, and log export
 otel:
-  enabled: false
+  enabled: true
   # OTel Collector endpoint (use K8s service DNS)
-  collectorEndpoint: "http://otel-collector.observability.svc.cluster.local:4318"
+  collectorEndpoint: "http://otel-collector.bt.svc.cluster.local:4318"
   # Service name for traces/metrics
   serviceName: "backend"
 

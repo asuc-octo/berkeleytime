@@ -1,8 +1,8 @@
 # Observability stack configuration
-# Deploy with: helm install bt-observability ./infra/observability -n observability --create-namespace
+# Deploy with: helm install bt-observability ./infra/observability -n bt
 
 # Global settings
-namespace: observability
+namespace: bt
 
 # OpenTelemetry Collector
 collector:
@@ -88,4 +88,4 @@ backend:
 
 # MongoDB reference (for collector mongodb receiver)
 mongodb:
-  endpoint: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017
+  endpoint: bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017
