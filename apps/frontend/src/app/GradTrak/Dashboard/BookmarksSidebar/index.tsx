@@ -83,12 +83,18 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
   }, [apiCollections]);
 
   const selectedCollection = useMemo(
-    () => collections.find((c) => c.id === selectedCollectionId) ?? null,
+    () =>
+      selectedCollectionId
+        ? (collections.find((c) => c.id === selectedCollectionId) ?? null)
+        : null,
     [collections, selectedCollectionId]
   );
 
   const selectedCollectionApi = useMemo(
-    () => apiCollections?.find((c) => c._id === selectedCollectionId) ?? null,
+    () =>
+      selectedCollectionId
+        ? (apiCollections?.find((c) => c._id === selectedCollectionId) ?? null)
+        : null,
     [apiCollections, selectedCollectionId]
   );
 
@@ -133,8 +139,8 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
       </div>
 
       <div className={styles.content}>
-        {selectedCollection && selectedCollectionApi ? (
-          <>
+        {selectedCollectionId && selectedCollectionApi ? (
+          <div key="class-list">
             {selectedCollectionApi.classes?.length === 0 ? (
               <div className={styles.classEmpty}>
                 No classes in this collection
@@ -179,9 +185,9 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
             >
               Add to collection →
             </Link>
-          </>
+          </div>
         ) : (
-          <>
+          <div key="collection-list">
             {loading ? (
               <div className={styles.loading}>Loading...</div>
             ) : collections.length === 0 ? (
@@ -205,7 +211,7 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
                 ))}
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
