@@ -14,11 +14,7 @@ on:
           - terms-nearby
           - courses
           - sections-active
-          - sections-l5y
-          - classes-active
-          - classes-l5y
           - grades-recent
-          - grades-l5y
           - enrollments
           - enrollment-timeframe
 
@@ -44,7 +40,7 @@ jobs:
             NAMESPACE="bt"
 
             # set timeout based on job type
-            case "${{ github.event.inputs.job }}" in grades-l5y|sections-l5y|classes-l5y|enrollments|grades-recent)
+            case "${{ github.event.inputs.job }}" in enrollments|grades-recent)
                 TIMEOUT=1800s ;;  # 30 min
               *)
                 TIMEOUT=600s ;;  # 10 min
