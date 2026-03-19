@@ -21,6 +21,8 @@ import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm } from "@/lib/api/plans";
 import { Status, Terms } from "@/lib/generated/graphql";
 
+import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
+
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
@@ -498,8 +500,14 @@ function SemesterBlock({
   };
 
   const [removePlanTermByID] = useRemovePlanTermByID();
+  const [confirmDeleteSemesterOpen, setConfirmDeleteSemesterOpen] =
+    useState(false);
+  const [confirmDeleteClassIndex, setConfirmDeleteClassIndex] = useState<
+    number | null
+  >(null);
 
   return (
+    <>
     <div
       ref={containerRef}
       className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
@@ -646,15 +654,7 @@ function SemesterBlock({
                     Pin
                   </DropdownMenu.Item>
                   <DropdownMenu.Item
-                    onClick={async () => {
-                      try {
-                        await removePlanTermByID(planTerm._id);
-                        handleRemoveTerm();
-                      } catch {
-                        return;
-                      }
-                      onTotalUnitsChange(0, 0, 0);
-                    }}
+                    onClick={() => setConfirmDeleteSemesterOpen(true)}
                     isDelete
                   >
                     <Trash className={styles.menuIcon} /> Delete Column
@@ -705,7 +705,7 @@ function SemesterBlock({
                     handleDragEnd={handleDragEnd}
                     handleDragStart={handleDragStart}
                     handleDetails={handleClassDetails}
-                    handleDelete={handleDeleteClass}
+                    handleDelete={(i) => setConfirmDeleteClassIndex(i)}
                     settings={settings}
                     labels={labels}
                     draggable={!filtersActive}
@@ -757,6 +757,54 @@ function SemesterBlock({
         )}
       </div>
     </div>
+    <DeleteScheduleDialog
+      isOpen={confirmDeleteSemesterOpen}
+      onClose={() => setConfirmDeleteSemesterOpen(false)}
+      title="Delete Semester"
+      message={
+        <>
+          Are you sure you want to delete <strong>{planTerm.name}</strong>?
+          All courses in this semester will be removed.
+        </>
+      }
+      onConfirm={async () => {
+        try {
+          await removePlanTermByID(planTerm._id);
+          handleRemoveTerm();
+        } catch {
+          return;
+        }
+        onTotalUnitsChange(0, 0, 0);
+        setConfirmDeleteSemesterOpen(false);
+      }}
+      confirmText="Yes, delete"
+      cancelText="Cancel"
+    />
+    <DeleteScheduleDialog
+      isOpen={confirmDeleteClassIndex !== null}
+      onClose={() => setConfirmDeleteClassIndex(null)}
+      title="Delete Class"
+      message={
+        <>
+          Are you sure you want to delete{" "}
+          <strong>
+            {confirmDeleteClassIndex !== null
+              ? selectedClasses[confirmDeleteClassIndex]?.courseName
+              : ""}
+          </strong>
+          ?
+        </>
+      }
+      onConfirm={async () => {
+        if (confirmDeleteClassIndex !== null) {
+          handleDeleteClass(confirmDeleteClassIndex);
+          setConfirmDeleteClassIndex(null);
+        }
+      }}
+      confirmText="Yes, delete"
+      cancelText="Cancel"
+    />
+    </>
   );
 }
 
