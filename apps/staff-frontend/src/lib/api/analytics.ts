@@ -224,6 +224,7 @@ export const SCHEDULER_ANALYTICS_DATA = gql`
 
 export interface ActivityScoreDistributionPoint {
   bucket: string;
+  lowerBound: number;
   count: number;
   percent: number;
 }
@@ -245,6 +246,7 @@ export const ACTIVITY_SCORE_DISTRIBUTION = gql`
   query ActivityScoreDistribution($formula: String) {
     activityScoreDistribution(formula: $formula) {
       bucket
+      lowerBound
       count
       percent
     }

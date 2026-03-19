@@ -644,8 +644,7 @@ export function ActivityScoreDistributionBlock() {
   const totalUsers = data.reduce((sum, point) => sum + point.count, 0);
 
   const activeCount = data.reduce((sum, point) => {
-    const lowerBound = parseFloat(point.bucket.split("–")[0]);
-    return lowerBound >= 0.5 ? sum + point.count : sum;
+    return point.lowerBound >= 0.5 ? sum + point.count : sum;
   }, 0);
   const computedActivePercent =
     totalUsers > 0 ? (activeCount / totalUsers) * 100 : 0;
