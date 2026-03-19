@@ -1,0 +1,61 @@
+name: "Datapuller: Manual Trigger"
+run-name: "Datapuller: ${{ github.event.inputs.job }} triggered by ${{ github.actor }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "Select which datapuller job to run"
+        required: true
+        type: choice
+        options:
+          - terms-all 
+          - decals
+          - terms-nearby
+          - courses
+          - sections-active
+          - grades-recent
+          - enrollments
+          - enrollment-timeframe
+
+jobs:
+  trigger:
+    name: Trigger and Stream Logs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH, Trigger Job, and Stream Logs
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          command_timeout: 35m
+          script: |
+            set -e
+
+            # define variables
+            CRONJOB="bt-prod-app-datapuller-${{ github.event.inputs.job }}"
+            JOB_NAME="${CRONJOB}-manual-$(date +%s)"
+            NAMESPACE="bt"
+
+            # set timeout based on job type
+            case "${{ github.event.inputs.job }}" in enrollments|grades-recent)
+                TIMEOUT=1800s ;;  # 30 min
+              *)
+                TIMEOUT=600s ;;  # 10 min
+            esac
+
+            echo "=== Creating job ${JOB_NAME} from cronjob ${CRONJOB} ==="
+            kubectl create job "${JOB_NAME}" --from="cronjob/${CRONJOB}" -n "${NAMESPACE}"
+
+            echo "=== Waiting for pod to start ==="
+            kubectl wait --for=condition=ready pod -l job-name="${JOB_NAME}" -n "${NAMESPACE}" --timeout=180s || true
+
+            echo "=== Streaming logs ==="
+            kubectl logs -n "${NAMESPACE}" -l job-name="${JOB_NAME}" --follow || true
+
+            echo "=== Waiting for job to complete ==="
+            kubectl wait --for=condition=complete job/"${JOB_NAME}" -n "${NAMESPACE}" --timeout="${TIMEOUT}"
+
+            echo "=== Job completed successfully ==="
