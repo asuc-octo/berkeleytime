@@ -50,3 +50,12 @@ app.kubernetes.io/name: cleanup
 {{- define "bt-app.datapullerName" -}}
 {{ .Release.Name }}-datapuller
 {{- end -}}
+
+{{- define "bt-app.semanticSearchLabels" -}}
+app.kubernetes.io/name: semantic-search
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
+{{- define "bt-app.semanticSearchName" -}}
+{{ .Release.Name }}-semantic-search
+{{- end -}}

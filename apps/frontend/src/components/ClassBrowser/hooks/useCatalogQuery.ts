@@ -7,11 +7,10 @@ import type {
   ICatalogFilterOptions,
   ICatalogFilters,
 } from "@/lib/api/catalog";
-import {
-  GetCatalogFilterOptionsDocument,
-  GetCatalogSearchDocument,
-} from "@/lib/generated/graphql";
+import { GET_CATALOG_SEARCH } from "@/lib/api/catalog";
+import { GetCatalogFilterOptionsDocument } from "@/lib/generated/graphql";
 import type {
+  GetCatalogSearchQuery,
   GetCatalogSearchQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
@@ -56,6 +55,7 @@ export interface UseCatalogQueryOptions {
   sortBy: SortBy;
   effectiveOrder: "asc" | "desc";
   filterVariables: ICatalogFilters | undefined;
+  semanticSearch?: boolean;
 }
 
 export interface UseCatalogQueryReturn {
@@ -68,6 +68,7 @@ export interface UseCatalogQueryReturn {
   loadNextPage: () => Promise<void>;
   isLoadingNextPage: boolean;
   filterOptions: ICatalogFilterOptions | null;
+  semanticError: string | null;
 }
 
 export default function useCatalogQuery({
@@ -77,6 +78,7 @@ export default function useCatalogQuery({
   sortBy,
   effectiveOrder,
   filterVariables,
+  semanticSearch = false,
 }: UseCatalogQueryOptions): UseCatalogQueryReturn {
   const [localPage, setLocalPage] = useState(1);
   const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
@@ -84,12 +86,17 @@ export default function useCatalogQuery({
   const isLoadingNextPageRef = useRef(false);
   const queryGenerationRef = useRef(0);
 
-  // Use debounced search for the query
+  // In semantic mode the query is committed externally — no debounce needed.
+  // In normal mode, debounce to avoid firing on every keystroke.
   const [debouncedQuery, setDebouncedQuery] = useState(rawQuery);
   useEffect(() => {
+    if (semanticSearch) {
+      setDebouncedQuery(rawQuery);
+      return;
+    }
     const timer = setTimeout(() => setDebouncedQuery(rawQuery), 300);
     return () => clearTimeout(timer);
-  }, [rawQuery]);
+  }, [rawQuery, semanticSearch]);
 
   // Reset page when filters/search change
   useEffect(() => {
@@ -104,6 +111,7 @@ export default function useCatalogQuery({
     effectiveOrder,
     currentYear,
     currentSemester,
+    semanticSearch,
   ]);
 
   const catalogQueryVariables = useMemo<
@@ -116,6 +124,7 @@ export default function useCatalogQuery({
       filters: filterVariables,
       sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
       sortOrder: debouncedQuery ? undefined : mapSortOrder(effectiveOrder),
+      semanticSearch: semanticSearch || undefined,
     }),
     [
       currentYear,
@@ -124,11 +133,12 @@ export default function useCatalogQuery({
       filterVariables,
       sortBy,
       effectiveOrder,
+      semanticSearch,
     ]
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, fetchMore } = useQuery(GetCatalogSearchDocument, {
+  const { data, loading, error, fetchMore } = useQuery<GetCatalogSearchQuery, GetCatalogSearchQueryVariables>(GET_CATALOG_SEARCH, {
     variables: {
       ...catalogQueryVariables,
       page: 1,
@@ -203,6 +213,11 @@ export default function useCatalogQuery({
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
   const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
+  const semanticError =
+    semanticSearch && error
+      ? (error.graphQLErrors[0]?.message ?? error.message ?? "AI search failed")
+      : null;
+
   return {
     classes,
     loading: isFirstPageLoading,
@@ -213,5 +228,6 @@ export default function useCatalogQuery({
     loadNextPage,
     isLoadingNextPage,
     filterOptions: filterOptionsData?.catalogFilterOptions ?? null,
+    semanticError,
   };
 }
