@@ -16,7 +16,9 @@ export const updateActivityScores = async (): Promise<number> => {
   }
   isRunning = true;
   try {
-    const users = await UserModel.find({}).select("lastSeenAt createdAt").lean();
+    const users = await UserModel.find({})
+      .select("lastSeenAt createdAt")
+      .lean();
 
     const bulkOps = users.map((user) => ({
       updateOne: {

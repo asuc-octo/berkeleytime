@@ -103,6 +103,5 @@ export const analyticsTypeDef = gql`
     activityScoreDistribution(
       formula: String
     ): [ActivityScoreDistributionPoint!]! @auth
-
   }
 `;
