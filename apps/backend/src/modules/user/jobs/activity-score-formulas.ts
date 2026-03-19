@@ -85,5 +85,5 @@ export const FORMULA_MAP: Record<FormulaName, FormulaFn> = {
 };
 
 // Change this line to switch which formula the job uses.
-export const ACTIVE_FORMULA: FormulaFn = exponentialDecay;
 export const ACTIVE_FORMULA_NAME: FormulaName = "exponentialDecay";
+export const ACTIVE_FORMULA: FormulaFn = FORMULA_MAP[ACTIVE_FORMULA_NAME];
