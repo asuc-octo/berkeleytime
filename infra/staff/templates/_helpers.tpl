@@ -15,13 +15,8 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 env: {{ .Values.env }}
 {{- end -}}
 
-{{- define "bt-staff.frontendSelectorLabels" -}}
-app.kubernetes.io/name: frontend
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end -}}
-
 {{- define "bt-staff.frontendLabels" -}}
-{{ include "bt-staff.frontendSelectorLabels" . }}
+app.kubernetes.io/name: frontend
 {{ include "bt-staff.labels" . }}
 {{- end -}}
 

@@ -9,7 +9,8 @@ on:
         required: true
         type: choice
         options:
-          - terms-all
+          - terms-all 
+          - decals
           - terms-nearby
           - courses
           - sections-active
@@ -33,7 +34,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          command_timeout: 25m
+          command_timeout: 35m
           script: |
             set -e
 
@@ -43,8 +44,8 @@ jobs:
             NAMESPACE="bt"
 
             # set timeout based on job type
-            case "${{ github.event.inputs.job }}" in grades-l5y|sections-l5y|classes-l5y)
-                TIMEOUT=1200s ;;  # 20 min
+            case "${{ github.event.inputs.job }}" in grades-l5y|sections-l5y|classes-l5y|enrollments|grades-recent)
+                TIMEOUT=1800s ;;  # 30 min
               *)
                 TIMEOUT=600s ;;  # 10 min
             esac
@@ -53,7 +54,7 @@ jobs:
             kubectl create job "${JOB_NAME}" --from="cronjob/${CRONJOB}" -n "${NAMESPACE}"
 
             echo "=== Waiting for pod to start ==="
-            kubectl wait --for=condition=ready pod -l job-name="${JOB_NAME}" -n "${NAMESPACE}" --timeout=120s || true
+            kubectl wait --for=condition=ready pod -l job-name="${JOB_NAME}" -n "${NAMESPACE}" --timeout=180s || true
 
             echo "=== Streaming logs ==="
             kubectl logs -n "${NAMESPACE}" -l job-name="${JOB_NAME}" --follow || true
