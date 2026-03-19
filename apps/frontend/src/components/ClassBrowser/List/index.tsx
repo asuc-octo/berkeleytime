@@ -34,6 +34,7 @@ const adaptForClassCard = (_class: ICatalogClassServer) => {
     title: _class.title ?? _class.courseTitle,
     unitsMax: _class.unitsMax,
     unitsMin: _class.unitsMin,
+    decal: _class.decal,
     course: {
       title: _class.courseTitle,
       gradeDistribution:

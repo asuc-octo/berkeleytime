@@ -182,7 +182,7 @@ export const buildCatalogClasses = async (
     ClassModel.find({
       year,
       semester,
-      anyPrintInScheduleOfClasses: true,
+      $or: [{ anyPrintInScheduleOfClasses: true }, { decal: { $ne: null } }],
     }).lean(),
   ]);
 
@@ -418,6 +418,9 @@ export const buildCatalogClasses = async (
 
       // Secondary sections
       sections: formattedSections,
+
+      // DeCal data
+      decal: _class.decal ? { title: _class.decal.title } : undefined,
 
       // Ratings/grades
       viewCount: viewCountMap.get(viewCountKey) ?? 0,

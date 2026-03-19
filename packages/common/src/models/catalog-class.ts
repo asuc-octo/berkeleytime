@@ -115,6 +115,11 @@ export interface ICatalogClassItem {
   // Secondary sections
   sections?: ICatalogClassSection[];
 
+  // DeCal data (when set, class is a DeCal)
+  decal?: {
+    title?: string;
+  };
+
   // Pre-computed sort fields
   openSeats?: number;
 
@@ -271,6 +276,12 @@ const catalogClassSchema = new Schema<ICatalogClassItem>(
         maxWaitlist: { type: Number },
       },
     ],
+
+    // DeCal data
+    decal: {
+      _id: false,
+      title: { type: String },
+    },
 
     // Pre-computed sort fields
     openSeats: { type: Number, default: 0 },
