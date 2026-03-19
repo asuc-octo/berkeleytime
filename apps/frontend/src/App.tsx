@@ -10,7 +10,6 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import CatalogSkeleton from "@/app/Catalog/Skeleton";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -29,17 +28,15 @@ const CollectionDetail = lazy(
   () => import("@/app/Profile/Bookmarks/CollectionDetail")
 );
 
-const Class = {
-  Enrollment: lazy(() => import("@/components/Class/Enrollment")),
-  Grades: lazy(() => import("@/components/Class/Grades")),
-  Overview: lazy(() => import("@/components/Class/Overview")),
-  Sections: lazy(() => import("@/components/Class/Sections")),
-  Ratings: lazy(() => import("@/components/Class/Ratings")),
-};
-
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
-const GradeDistributions = lazy(() => import("@/app/GradeDistributions"));
+const Grades = lazy(() => import("@/app/Grades"));
+
+// Legacy pages (preserved for reference during redesign)
+const LegacyEnrollment = lazy(() => import("@/app/_legacy/Enrollment"));
+const LegacyGradeDistributions = lazy(
+  () => import("@/app/_legacy/GradeDistributions")
+);
 const About = lazy(() => import("@/app/About"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
@@ -249,51 +246,24 @@ const router = createBrowserRouter([
             path: "collection/:id/:subject?/:courseNumber?/:number?",
             children: [
               {
-                element: (
-                  <SuspenseBoundary key="overview">
-                    <Class.Overview />
-                  </SuspenseBoundary>
-                ),
-                index: true,
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="sections">
-                    <Class.Sections />
-                  </SuspenseBoundary>
-                ),
-                path: "sections",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="enrollment">
-                    <Class.Enrollment />
-                  </SuspenseBoundary>
-                ),
-                path: "enrollment",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="grades">
-                    <Class.Grades />
-                  </SuspenseBoundary>
-                ),
-                path: "grades",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="ratings">
-                    <Class.Ratings />
-                  </SuspenseBoundary>
-                ),
-                path: "ratings",
+                path: "*",
+                loader: ({ params: { id, subject, courseNumber, number } }) => {
+                  const parts = [
+                    "/collection",
+                    id,
+                    subject,
+                    courseNumber,
+                    number,
+                  ].filter(Boolean);
+                  return redirect(parts.join("/"));
+                },
               },
             ],
           },
           {
             element: (
               <SuspenseBoundary key="grades">
-                <GradeDistributions />
+                <Grades />
               </SuspenseBoundary>
             ),
             path: "grades",
@@ -308,55 +278,31 @@ const router = createBrowserRouter([
           },
           {
             element: (
+              <SuspenseBoundary key="grades-legacy">
+                <LegacyGradeDistributions />
+              </SuspenseBoundary>
+            ),
+            path: "grades-legacy",
+          },
+          {
+            element: (
+              <SuspenseBoundary key="enrollment-legacy">
+                <LegacyEnrollment />
+              </SuspenseBoundary>
+            ),
+            path: "enrollment-legacy",
+          },
+          {
+            element: (
               <SuspenseBoundary
                 key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
-                fallback={<CatalogSkeleton />}
+                fallback={<></>}
               >
                 <Catalog />
               </SuspenseBoundary>
             ),
             path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
             children: [
-              {
-                element: (
-                  <SuspenseBoundary key="overview">
-                    <Class.Overview />
-                  </SuspenseBoundary>
-                ),
-                index: true,
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="sections">
-                    <Class.Sections />
-                  </SuspenseBoundary>
-                ),
-                path: "sections",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="enrollment">
-                    <Class.Enrollment />
-                  </SuspenseBoundary>
-                ),
-                path: "enrollment",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="grades">
-                    <Class.Grades />
-                  </SuspenseBoundary>
-                ),
-                path: "grades",
-              },
-              {
-                element: (
-                  <SuspenseBoundary key="ratings">
-                    <Class.Ratings />
-                  </SuspenseBoundary>
-                ),
-                path: "ratings",
-              },
               {
                 path: "*",
                 loader: ({
@@ -413,9 +359,30 @@ const client = new ApolloClient({
   }),
   cache: new InMemoryCache({
     typePolicies: {
+      Query: {
+        fields: {
+          class: {
+            merge: true,
+          },
+        },
+      },
       PlanTerm: {
         fields: {
           courses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+      Course: {
+        fields: {
+          instructorAggregatedRatings: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+          classes: {
             merge(_, incoming) {
               return incoming;
             },

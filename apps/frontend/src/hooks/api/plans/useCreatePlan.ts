@@ -2,10 +2,18 @@ import { useCallback } from "react";
 
 import { useMutation } from "@apollo/client/react";
 
-import { CREATE_NEW_PLAN, Colleges, CreatePlanResponse } from "@/lib/api";
+import {
+  Colleges,
+  CreateNewPlanDocument,
+  CreateNewPlanMutation,
+  CreateNewPlanMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useCreatePlan = () => {
-  const mutation = useMutation<CreatePlanResponse>(CREATE_NEW_PLAN, {
+  const mutation = useMutation<
+    CreateNewPlanMutation,
+    CreateNewPlanMutationVariables
+  >(CreateNewPlanDocument, {
     update(_, { data }) {
       const plan = data?.createNewPlan;
 

@@ -76,7 +76,7 @@ export default function Ratings() {
     ratings.forEach((rating) => {
       const link = document.createElement("link");
       link.rel = "prefetch";
-      link.href = `/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}/ratings`;
+      link.href = `/catalog/${rating.year}/${rating.semester}/${rating.subject}/${rating.courseNumber}/${rating.classNumber}`;
       document.head.appendChild(link);
     });
 

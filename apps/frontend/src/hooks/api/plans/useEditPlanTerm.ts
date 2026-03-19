@@ -3,13 +3,17 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  EDIT_PLAN_TERM,
+  EditPlanTermDocument,
   EditPlanTermInput,
-  EditPlanTermResponse,
-} from "@/lib/api";
+  EditPlanTermMutation,
+  EditPlanTermMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useEditPlanTerm = () => {
-  const mutation = useMutation<EditPlanTermResponse>(EDIT_PLAN_TERM, {
+  const mutation = useMutation<
+    EditPlanTermMutation,
+    EditPlanTermMutationVariables
+  >(EditPlanTermDocument, {
     update(cache, { data }) {
       const planTerm = data?.editPlanTerm;
 

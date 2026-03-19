@@ -3,48 +3,49 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
-  CREATE_NEW_PLAN_TERM,
-  CreateNewPlanTermResponse,
+  CreateNewPlanTermDocument,
+  CreateNewPlanTermMutation,
+  CreateNewPlanTermMutationVariables,
+  GetPlanDocument,
+  GetPlanQuery,
   PlanTermInput,
-  READ_PLAN,
-  ReadPlanResponse,
-} from "@/lib/api";
+} from "@/lib/generated/graphql";
 
 export const useCreateNewPlanTerm = () => {
-  const mutation = useMutation<CreateNewPlanTermResponse>(
-    CREATE_NEW_PLAN_TERM,
-    {
-      update(cache, { data }) {
-        const planTerm = data?.createNewPlanTerm;
+  const mutation = useMutation<
+    CreateNewPlanTermMutation,
+    CreateNewPlanTermMutationVariables
+  >(CreateNewPlanTermDocument, {
+    update(cache, { data }) {
+      const planTerm = data?.createNewPlanTerm;
 
-        if (!planTerm) return;
+      if (!planTerm) return;
 
-        const planData = cache.readQuery<ReadPlanResponse>({
-          query: READ_PLAN,
-        });
-        if (!planData?.planByUser?.[0]) return;
-        const planCacheId = cache.identify({
-          __typename: "Plan",
-          _id: planData.planByUser[0]._id,
-        });
+      const planData = cache.readQuery<GetPlanQuery>({
+        query: GetPlanDocument,
+      });
+      if (!planData?.planByUser?.[0]) return;
+      const planCacheId = cache.identify({
+        __typename: "Plan",
+        _id: planData.planByUser[0]._id,
+      });
 
-        if (planCacheId) {
-          cache.modify({
-            id: planCacheId,
-            fields: {
-              planTerms: (existingPlanTerms = []) => {
-                const newPlanTermRef = cache.identify({
-                  __typename: "PlanTerm",
-                  _id: planTerm._id,
-                });
-                return [...existingPlanTerms, { __ref: newPlanTermRef }];
-              },
+      if (planCacheId) {
+        cache.modify({
+          id: planCacheId,
+          fields: {
+            planTerms: (existingPlanTerms = []) => {
+              const newPlanTermRef = cache.identify({
+                __typename: "PlanTerm",
+                _id: planTerm._id,
+              });
+              return [...existingPlanTerms, { __ref: newPlanTermRef }];
             },
-          });
-        }
-      },
-    }
-  );
+          },
+        });
+      }
+    },
+  });
 
   const createPlanTerm = useCallback(
     async (planTerm: PlanTermInput) => {

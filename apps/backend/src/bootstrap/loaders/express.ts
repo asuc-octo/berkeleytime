@@ -10,6 +10,7 @@ import { config } from "../../../../../packages/common/src/utils/config";
 import bannerRoutes from "../../modules/banner/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import staffRoutes from "../../modules/staff/routes";
+import targetedMessageRoutes from "../../modules/targeted-message/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -74,6 +75,7 @@ export default async (
   if (root) {
     bannerRoutes(root, redis);
     routeRedirectRoutes(root, redis);
+    targetedMessageRoutes(root, redis);
   }
 
   // load staff routes

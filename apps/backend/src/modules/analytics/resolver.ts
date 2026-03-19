@@ -3,6 +3,7 @@ import { GraphQLError } from "graphql";
 import { RequestContext } from "../../types/request-context";
 import { getCloudflareAnalyticsData } from "./controllers/cloudflare";
 import { getCollectionAnalyticsData } from "./controllers/collection";
+import { getGeneralActivityAnalytics } from "./controllers/generalActivity";
 import { getGradTrakAnalyticsData } from "./controllers/plan";
 import {
   getOptionalResponseAnalyticsData,
@@ -209,6 +210,27 @@ const resolvers = {
       try {
         const gran = granularity === "hour" ? "hour" : "day";
         return await getCloudflareAnalyticsData(context, days, gran);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    // General activity (aggregated daily feature usage)
+    generalActivityAnalytics: async (
+      _: unknown,
+      { days }: { days: number },
+      context: RequestContext
+    ) => {
+      try {
+        return await getGeneralActivityAnalytics(context, days);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

@@ -142,7 +142,7 @@ Use these packages rather than duplicating code across apps.
 ### Frontend (React Components)
 1. Add GraphQL queries/mutations in `lib/api/`
 2. Create components in `app/` (page-specific) or `components/` (reusable)
-3. Use Apollo Client hooks (`useQuery`, `useMutation`)
+3. Use Apollo Client hooks (`useQuery`, `useMutation`). With these, always use the generated `...Document` types, NEVER the raw exported string.
 4. Use SCSS Modules for styling
 5. Use components from `@repo/theme` when possible
 6. Try to use Apollo GraphQL's caching patterns when possible

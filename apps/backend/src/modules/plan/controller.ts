@@ -181,7 +181,7 @@ export async function createPlan(
     year: -1,
     term: "Misc",
     hidden: false,
-    status: "None",
+    status: "Incomplete",
     pinned: false,
   });
 
@@ -195,7 +195,7 @@ export async function createPlan(
       year: startYear,
       term: "Fall",
       hidden: false,
-      status: "None",
+      status: "Incomplete",
       pinned: false,
     })
   );
@@ -208,7 +208,7 @@ export async function createPlan(
         year: i,
         term: "Spring",
         hidden: false,
-        status: "None",
+        status: "Incomplete",
         pinned: false,
       })
     );
@@ -220,7 +220,7 @@ export async function createPlan(
         year: i,
         term: "Fall",
         hidden: false,
-        status: "None",
+        status: "Incomplete",
         pinned: false,
       })
     );
@@ -233,7 +233,7 @@ export async function createPlan(
       year: endYear,
       term: "Spring",
       hidden: false,
-      status: "None",
+      status: "Incomplete",
       pinned: false,
     })
   );

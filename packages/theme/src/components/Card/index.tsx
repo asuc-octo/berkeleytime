@@ -82,9 +82,13 @@ function Description({
   );
 }
 
-function Footer({ children, ...props }: ComponentPropsWithRef<"div">) {
+function Footer({
+  children,
+  className,
+  ...props
+}: ComponentPropsWithRef<"div">) {
   return (
-    <div className={styles.footer} {...props}>
+    <div className={classNames(styles.footer, className)} {...props}>
       {children}
     </div>
   );

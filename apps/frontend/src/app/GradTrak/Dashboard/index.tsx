@@ -5,6 +5,7 @@ import classNames from "classnames";
 import {
   ArrowDown,
   ArrowUp,
+  Bookmark,
   Edit,
   Filter,
   Minus,
@@ -52,6 +53,7 @@ import {
 
 import { DegreeOption } from "../types";
 import AddBlockMenu from "./AddBlockMenu";
+import BookmarksSidebar from "./BookmarksSidebar";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import LabelMenu from "./LabelMenu";
@@ -89,6 +91,8 @@ const SORT_OPTION_COURSE_ICON = {
   "A-Z": <ArrowUp className={styles.menuIcon} />,
   "Z-A": <ArrowDown className={styles.menuIcon} />,
 };
+const EMPTY_LABELS: ILabel[] = [];
+const EMPTY_PLAN_TERMS: IPlanTerm[] = [];
 
 export interface SelectedCourse extends ISelectedCourse {
   courseSubject: string;
@@ -151,9 +155,10 @@ export default function Dashboard() {
   const [showDisplayMenu, setShowDisplayMenu] = useState(false);
   const [showAddBlockMenu, setShowAddBlockMenu] = useState(false);
   const [showLabelMenu, setShowLabelMenu] = useState(false);
+  const [bookmarksSidebarOpen, setBookmarksSidebarOpen] = useState(false);
   const [settings, updateSettings] = useGradTrakSettings();
-  const [localLabels, setLocalLabels] = useState<ILabel[]>([]);
-  const [localPlanTerms, setLocalPlanTerms] = useState<IPlanTerm[]>([]);
+  const labels = gradTrak?.labels ?? EMPTY_LABELS;
+  const planTerms = gradTrak?.planTerms ?? EMPTY_PLAN_TERMS;
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
@@ -195,27 +200,13 @@ export default function Dashboard() {
     }
   }, [gradTrak?.colleges]);
 
-  useEffect(() => {
-    if (gradTrak?.labels) {
-      setLocalLabels(gradTrak.labels);
-    }
-  }, [gradTrak?.labels]);
-
-  useEffect(() => {
-    if (gradTrak?.planTerms) {
-      setLocalPlanTerms(gradTrak.planTerms);
-    } else {
-      setLocalPlanTerms([]);
-    }
-  }, [gradTrak?.planTerms]);
-
   // Update filter options when labels change
   useEffect(() => {
     setFilterOptions((prev) => {
       const newOptions = { ...prev };
 
       // Add new label filters
-      localLabels.forEach((label) => {
+      labels.forEach((label) => {
         const labelKey = `label_${label.name}`;
         if (!(labelKey in newOptions)) {
           newOptions[labelKey] = false;
@@ -226,7 +217,7 @@ export default function Dashboard() {
       Object.keys(newOptions).forEach((key) => {
         if (key.startsWith("label_")) {
           const labelName = key.replace("label_", "");
-          if (!localLabels.some((label) => label.name === labelName)) {
+          if (!labels.some((label) => label.name === labelName)) {
             delete newOptions[key];
           }
         }
@@ -234,7 +225,7 @@ export default function Dashboard() {
 
       return newOptions;
     });
-  }, [localLabels]);
+  }, [labels]);
 
   // helper functions for adding new block in right order
   const getTermOrder = (term: string) => {
@@ -249,95 +240,47 @@ export default function Dashboard() {
         return 0;
     }
   };
-  const insertPlanTerm = (planTerms: IPlanTerm[], newTerm: IPlanTerm) => {
-    const newArray = [...planTerms, newTerm];
-    setLocalPlanTerms(newArray);
-  };
-
   const [createNewPlanTerm] = useCreateNewPlanTerm();
   const handleNewPlanTerm = async (planTerm: PlanTermInput) => {
-    const tmp: IPlanTerm = {
-      _id: "",
-      name: planTerm.name,
-      year: planTerm.year,
-      term: planTerm.term,
-      hidden: planTerm.hidden,
-      status: planTerm.status,
-      pinned: planTerm.pinned,
-      courses: [],
-    };
-    const oldPlanTerms = [...localPlanTerms];
-    insertPlanTerm(oldPlanTerms, tmp);
     try {
       const result = await createNewPlanTerm(planTerm);
-      if (result.data?.createNewPlanTerm?._id) {
-        tmp._id = result.data?.createNewPlanTerm?._id;
-      } else {
+      if (!result.data?.createNewPlanTerm?._id) {
         throw new Error("Cannot find id");
       }
     } catch (error) {
       console.error("Error creating new plan term:", error);
-      setLocalPlanTerms(oldPlanTerms);
     }
   };
 
-  // Helper functions to update both local state and backend
+  // Update backend and let Apollo cache drive UI state.
   const handleUpdateTermName = async (termId: string, name: string) => {
-    const updatedPlanTerms = [...localPlanTerms];
-    const termIndex = localPlanTerms.findIndex((term) => term._id === termId);
-    if (termIndex !== -1) {
-      const updatedTerm = {
-        ...updatedPlanTerms[termIndex],
-        name: name,
-      };
-      updatedPlanTerms[termIndex] = updatedTerm;
-      setLocalPlanTerms(updatedPlanTerms);
-
-      try {
-        await editPlanTerm(termId, { name });
-      } catch (error) {
-        console.error("Error updating term name:", error);
-        // Revert local state on error
-        setLocalPlanTerms(localPlanTerms);
-      }
+    try {
+      await editPlanTerm(termId, { name });
+    } catch (error) {
+      console.error("Error updating term name:", error);
     }
   };
 
   const handleTogglePin = async (termId: string) => {
-    const updatedPlanTerms = [...localPlanTerms];
-    const termIndex = updatedPlanTerms.findIndex((term) => term._id === termId);
-    if (termIndex !== -1) {
-      const newPinned = !updatedPlanTerms[termIndex].pinned;
-      updatedPlanTerms[termIndex].pinned = newPinned;
-      setLocalPlanTerms(updatedPlanTerms);
+    const term = planTerms.find((existingTerm) => existingTerm._id === termId);
+    if (!term) return;
 
-      try {
-        await editPlanTerm(termId, { pinned: newPinned });
-      } catch (error) {
-        console.error("Error toggling pin:", error);
-        // Revert local state on error
-        setLocalPlanTerms(localPlanTerms);
-      }
+    try {
+      await editPlanTerm(termId, { pinned: !term.pinned });
+    } catch (error) {
+      console.error("Error toggling pin:", error);
     }
   };
 
   const handleSetStatus = async (termId: string, status: Status) => {
-    const updatedPlanTerms = localPlanTerms.map((term) =>
-      term._id === termId ? { ...term, status } : term
-    );
-    setLocalPlanTerms(updatedPlanTerms);
-
     try {
       await editPlanTerm(termId, { status });
     } catch (error) {
       console.error("Error setting status:", error);
-      // Revert local state on error
-      setLocalPlanTerms(localPlanTerms);
     }
   };
 
   const updateLabels = (labels: ILabel[]) => {
-    setLocalLabels(labels);
     const plan: PlanInput = {};
     plan.labels = labels;
     editPlan(plan);
@@ -442,7 +385,7 @@ export default function Dashboard() {
   const calculateLabelCounts = () => {
     const counts: Record<string, number> = {};
 
-    localLabels.forEach((label) => {
+    labels.forEach((label) => {
       counts[label.name] = 0;
     });
 
@@ -469,7 +412,7 @@ export default function Dashboard() {
       incomplete: 0,
     };
 
-    localPlanTerms.forEach((planTerm) => {
+    planTerms.forEach((planTerm) => {
       if (planTerm.status === "Complete") {
         counts.completed++;
       } else if (planTerm.status === "InProgress") {
@@ -714,11 +657,13 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    if (localPlanTerms && localPlanTerms.length > 0) {
-      const convertedSemesters = convertPlanTermsToSemesters(localPlanTerms);
+    if (planTerms.length > 0) {
+      const convertedSemesters = convertPlanTermsToSemesters(planTerms);
       setAllSemesters(convertedSemesters);
+    } else {
+      setAllSemesters({});
     }
-  }, [localPlanTerms, convertPlanTermsToSemesters]);
+  }, [planTerms, convertPlanTermsToSemesters]);
 
   const totalUnits = Object.values(semesterTotals).reduce(
     (sum, units) => sum + units,
@@ -768,11 +713,16 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className={styles.view}>
-        <div className={styles.header}>
-          <h1>Semesters</h1>
+      <div
+        className={classNames(styles.viewWrapper, {
+          [styles.bookmarksOpen]: bookmarksSidebarOpen,
+        })}
+      >
+        <div className={styles.view}>
+          <div className={styles.header}>
+            <h1>Semesters</h1>
 
-          <div className={styles.buttonsGroup}>
+            <div className={styles.buttonsGroup}>
             <DropdownMenu.Root
               open={filterMenuOpen}
               onOpenChange={setFilterMenuOpen}
@@ -849,12 +799,12 @@ export default function Dashboard() {
                       );
                     })()}
 
-                    {localLabels.length > 0 && (
+                    {labels.length > 0 && (
                       <>
                         <Text className={styles.sectionTitle}>
                           Custom Labels
                         </Text>
-                        {localLabels.map((label) => {
+                        {labels.map((label) => {
                           const labelKey = `label_${label.name}`;
                           const labelCounts = calculateLabelCounts();
                           return (
@@ -1054,6 +1004,21 @@ export default function Dashboard() {
               }
             />
 
+            {!bookmarksSidebarOpen && (
+              <Tooltip
+                content="Bookmarks"
+                trigger={
+                  <Button
+                    variant="secondary"
+                    onClick={() => setBookmarksSidebarOpen(true)}
+                  >
+                    <Bookmark />
+                    Bookmarks
+                  </Button>
+                }
+              />
+            )}
+
             <Tooltip
               content="Edit Major"
               trigger={
@@ -1186,14 +1151,14 @@ export default function Dashboard() {
             settings={settings}
             onChangeSettings={(patch) => updateSettings(patch)}
             triggerRef={displayMenuTriggerRef}
-            labels={localLabels}
+            labels={labels}
             setShowLabelMenu={setShowLabelMenu}
           />
         )}
         <LabelMenu
           open={showLabelMenu}
           onOpenChange={setShowLabelMenu}
-          labels={localLabels}
+          labels={labels}
           onLabelsChange={updateLabels}
         />
         {showAddBlockMenu && (
@@ -1203,9 +1168,12 @@ export default function Dashboard() {
           />
         )}
         <div className={styles.semesterBlocks}>
-          <div className={styles.semesterLayout} data-layout={settings.layout}>
-            {localPlanTerms &&
-              [...localPlanTerms]
+          <div className={styles.semesterBlocksInner}>
+            <div
+              className={styles.semesterLayout}
+              data-layout={settings.layout}
+            >
+              {[...planTerms]
                 .filter((term) => {
                   if (
                     !(
@@ -1270,7 +1238,7 @@ export default function Dashboard() {
                     allSemesters={allSemesters}
                     updateAllSemesters={updateAllSemesters}
                     settings={settings}
-                    labels={localLabels}
+                    labels={labels}
                     setShowLabelMenu={setShowLabelMenu}
                     catalogCourses={catalogCourses}
                     index={index}
@@ -1283,16 +1251,20 @@ export default function Dashboard() {
                     }
                     sortCourseOption={sortCourseOption}
                     handleRemoveTerm={() => {
-                      const updatedPlanTerms = localPlanTerms.filter(
-                        (t) => t._id !== term._id
-                      );
-                      setLocalPlanTerms(updatedPlanTerms);
+                      const updatedSemesters = { ...allSemesters };
+                      delete updatedSemesters[term._id];
+                      updateAllSemesters(updatedSemesters);
                     }}
                     filtersActive={activeFiltersCount > 0}
                   />
                 ))}
+            </div>
           </div>
         </div>
+      </div>
+        {bookmarksSidebarOpen && (
+          <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />
+        )}
       </div>
     </div>
   );

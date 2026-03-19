@@ -1,55 +1,9 @@
-.root {
-  background-color: var(--background-color);
-  height: 100%;
-}
-
-.wrapper {
-  background-color: var(--foreground-color);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  padding: 24px;
-  min-width: 450px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  position: relative;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.openButton {
-  flex-shrink: 0;
-}
-
-.titleBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.title {
-  margin: 0;
-  font-size: 20px;
-  color: var(--heading-color);
-}
-
-.subtitle {
-  margin: 0;
-  font-size: 13px;
-  color: var(--label-color);
-}
-
 .chart {
-  height: 360px;
+  height: var(--content-box-height);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 }
 
 .chartContainer {
@@ -64,33 +18,56 @@
   color: var(--paragraph-color);
 }
 
-.skeletonTitle {
-  width: 180px;
-  height: 24px;
+.tooltipCard {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
+  padding: 0;
+  max-width: 350px;
+  min-width: 180px;
 }
 
-.skeletonSubtitle {
-  width: 100px;
-  height: 16px;
-  border-radius: 4px;
+.tooltipLabel {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
-.skeletonButton {
-  width: 140px;
-  height: 36px;
-  border-radius: 6px;
+.tooltipItems {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+  line-height: 1.5;
 }
 
-.skeletonChart {
-  flex: 1;
-  min-height: 300px;
-  border-radius: 8px;
+.tooltipItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--text-14);
 }
 
-.skeletonAxisLabel {
-  width: 200px;
-  height: 16px;
-  border-radius: 4px;
-  margin: 0 auto;
+.tooltipItemLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--heading-color);
+  font-weight: var(--font-normal);
+}
+
+.tooltipIndicator {
+  flex-shrink: 0;
+}
+
+.tooltipItemValue {
+  color: var(--heading-color);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }

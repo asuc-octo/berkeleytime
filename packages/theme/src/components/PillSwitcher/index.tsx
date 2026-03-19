@@ -17,6 +17,7 @@ export interface PillSwitcherProps {
   onValueChange?: (value: string) => void;
   fullWidth?: boolean;
   iconOnly?: boolean;
+  variant?: "default" | "tabs";
 }
 
 export function PillSwitcher({
@@ -26,7 +27,10 @@ export function PillSwitcher({
   onValueChange,
   fullWidth = false,
   iconOnly = false,
+  variant = "default",
 }: PillSwitcherProps) {
+  const isTabs = variant === "tabs";
+
   return (
     <Tabs.Root
       defaultValue={defaultValue || items[0]?.value}
@@ -35,7 +39,8 @@ export function PillSwitcher({
     >
       <Tabs.List
         className={classNames(styles.list, {
-          [styles.fullWidthList]: fullWidth,
+          [styles.tabsList]: isTabs,
+          [styles.fullWidthList]: fullWidth && !isTabs,
           [styles.iconOnlyList]: iconOnly,
         })}
       >
@@ -44,7 +49,8 @@ export function PillSwitcher({
             key={item.value}
             value={item.value}
             className={classNames(styles.trigger, {
-              [styles.fullWidthTrigger]: fullWidth,
+              [styles.tabsTrigger]: isTabs,
+              [styles.fullWidthTrigger]: fullWidth && !isTabs,
               [styles.iconOnlyTrigger]: iconOnly,
             })}
           >

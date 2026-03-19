@@ -23,14 +23,52 @@ spec:
                 - |
                   set -e # Exit immediately if a command fails
 
+                  # Cleanup on exit (success or failure)
+                  cleanup() {
+                    rm -f /tmp/prod_backup.gz
+                  }
+                  trap cleanup EXIT
+
                   # Find production MongoDB pod
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
                   # Download production MongoDB backup
                   echo "Downloading backup from s3 bucket..."
                   restore_date=${RESTORE_DATE}
-                  aws s3 cp s3://$BUCKET_NAME/daily/prod_backup-$restore_date.gz /tmp/prod_backup.gz \
-                    --endpoint-url=https://$ACCOUNT_ID.r2.cloudflarestorage.com
+
+                  endpoint_url="https://$ACCOUNT_ID.r2.cloudflarestorage.com"
+
+                  if [ ${#restore_date} -eq 10 ]; then
+                    primary_key="hourly/prod_backup-${restore_date}.gz"
+                  elif [ ${#restore_date} -eq 8 ]; then
+                    date_prefix="${restore_date}"
+                    latest_hourly_obj=$(
+                      aws s3 ls "s3://$BUCKET_NAME/hourly/" \
+                        --endpoint-url="$endpoint_url" | \
+                        awk '{print $4}' | \
+                        grep "^prod_backup-${date_prefix}" | \
+                        sort | \
+                        tail -n 1
+                    )
+
+                    if [ -n "$latest_hourly_obj" ]; then
+                      primary_key="hourly/${latest_hourly_obj}"
+                    else
+                      echo "No hourly backups found for RESTORE_DATE=$restore_date"
+                      exit 1
+                    fi
+                  else
+                    echo "Invalid RESTORE_DATE: expected YYYYMMDD or YYYYMMDDHH"
+                    exit 1
+                  fi
+
+                  if aws s3 cp "s3://$BUCKET_NAME/$primary_key" /tmp/prod_backup.gz \
+                    --endpoint-url="$endpoint_url"; then
+                    echo "Backup downloaded successfully from $primary_key"
+                  else
+                    echo "Backup download failed for key $primary_key"
+                    exit 1
+                  fi
 
                   # Restore dump into production MongoDB
                   echo "Restoring production MongoDB from backup..."
@@ -43,8 +81,6 @@ spec:
                   kubectl exec --namespace=bt \
                     "$prod_pod" -- rm /tmp/prod_backup.gz
 
-                  # Cleanup local files
-                  rm /tmp/prod_backup.gz
                   echo "MongoDB restore completed successfully!"
               env:
                 - name: ACCOUNT_ID
@@ -54,4 +90,16 @@ spec:
               envFrom:
                 - secretRef:
                     name: cloudflare-prod-mongo-secret
+              resources:
+                requests:
+                  ephemeral-storage: "256Mi"
+                limits:
+                  ephemeral-storage: "1Gi"
+              volumeMounts:
+                - name: tmp-storage
+                  mountPath: /tmp
+          volumes:
+            - name: tmp-storage
+              emptyDir:
+                sizeLimit: 5Gi
           restartPolicy: Never

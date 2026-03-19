@@ -37,6 +37,11 @@ spec:
                     name: {{ include "bt-app.datapullerName" $root }}-env
                 - secretRef:
                     name: {{ include "bt-app.datapullerName" $root }}-secret
+              resources:
+                requests:
+                  ephemeral-storage: "512Mi"
+                limits:
+                  ephemeral-storage: "2Gi"
           restartPolicy: OnFailure
 {{ end }}
 

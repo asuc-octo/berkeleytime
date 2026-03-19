@@ -15,6 +15,15 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 env: {{ .Values.env }}
 {{- end -}}
 
+{{/*
+Selector labels for Deployment/Service. Must be immutable (no chart version).
+*/}}
+{{- define "bt-staff.selectorLabels" -}}
+app.kubernetes.io/name: frontend
+app.kubernetes.io/instance: {{ .Release.Name }}
+env: {{ .Values.env }}
+{{- end -}}
+
 {{- define "bt-staff.frontendLabels" -}}
 app.kubernetes.io/name: frontend
 {{ include "bt-staff.labels" . }}

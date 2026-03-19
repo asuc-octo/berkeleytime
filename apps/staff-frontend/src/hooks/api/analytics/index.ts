@@ -7,3 +7,4 @@ export { useUserCreationAnalyticsData } from "./useUserCreationAnalyticsData";
 export { useUserActivityAnalyticsData } from "./useUserActivityAnalyticsData";
 export { useCollectionAnalyticsData } from "./useCollectionAnalyticsData";
 export { useSchedulerAnalyticsData } from "./useSchedulerAnalyticsData";
+export { useGeneralActivityAnalyticsData } from "./useGeneralActivityAnalyticsData";

@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-backup-prod-mongo
   namespace: bt
 spec:
-  schedule: "0 5 * * *" # Daily at 5 AM
+  schedule: "0 * * * *" # Hourly
   timeZone: America/Los_Angeles
   concurrencyPolicy: Forbid
   suspend: false
@@ -23,6 +23,12 @@ spec:
                 - |
                   set -e # Exit immediately if a command fails
 
+                  # Cleanup on exit (success or failure)
+                  cleanup() {
+                    rm -f /tmp/prod_backup.gz
+                  }
+                  trap cleanup EXIT
+
                   # Find production MongoDB pod
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
@@ -37,23 +43,27 @@ spec:
 
                   # Upload production MongoDB backup
                   echo "Uploading backup to s3 bucket..."
-                  backup_date=$(date +%Y%m%d)
-                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/daily/prod_backup-$backup_date.gz \
+                  now=$(date +%Y%m%d%H)
+                  backup_timestamp=$now
+                  backup_date=${now%??}
+                  date_day=${backup_date#??????}
+                  date_hour=${now#????????}
+
+                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/hourly/prod_backup-$backup_timestamp.gz \
                     --endpoint-url=$ENDPOINT_URL \
                     --checksum-algorithm CRC32
 
-                  date_day=$(date +%d)
-                  if [ "$date_day" = "01" ]; then
+                  if [ "$date_day" = "01" ] && [ "$date_hour" = "05" ]; then
                     echo "Also uploading to persistent storage"
                     aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/persistent/prod_backup-$backup_date.gz \
                       --endpoint-url=$ENDPOINT_URL \
                       --checksum-algorithm CRC32
                   fi
 
-                  # Cleanup local files
-                  rm /tmp/prod_backup.gz
                   echo "MongoDB backup completed successfully!"
               env:
+                - name: TZ
+                  value: America/Los_Angeles
                 - name: ENDPOINT_URL
                   value: https://ff660bd2dac18c00551ed509d24ef4d7.r2.cloudflarestorage.com
                 - name: BUCKET_NAME
@@ -61,4 +71,16 @@ spec:
               envFrom:
                 - secretRef:
                     name: cloudflare-prod-mongo-secret
+              resources:
+                requests:
+                  ephemeral-storage: "256Mi"
+                limits:
+                  ephemeral-storage: "1Gi"
+              volumeMounts:
+                - name: tmp-storage
+                  mountPath: /tmp
+          volumes:
+            - name: tmp-storage
+              emptyDir:
+                sizeLimit: 5Gi
           restartPolicy: Never

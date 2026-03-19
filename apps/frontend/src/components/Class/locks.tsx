@@ -13,6 +13,9 @@ import {
 } from "./locks.helpers";
 
 interface RatingsTabClasses {
+  menuItem: string;
+  tabContent: string;
+  lockIcon: string;
   badge: string;
   dot: string;
   tooltipArrow: string;
@@ -22,8 +25,10 @@ interface RatingsTabClasses {
 }
 
 interface RatingsTabLinkProps {
-  to: NavLinkProps["to"];
+  to?: NavLinkProps["to"];
   dialog?: boolean;
+  active?: boolean;
+  onClick?: () => void;
   ratingsCount?: number | false;
   locked?: boolean;
   onLockedClick?: () => void;
@@ -45,6 +50,8 @@ type RatingsTabLinkType = RatingsTabLinkComponent & RatingsTabLinkStatics;
 function RatingsTabLinkBase({
   to,
   dialog = false,
+  active,
+  onClick,
   ratingsCount,
   locked = isRatingsLocked(),
   onLockedClick,
@@ -58,34 +65,57 @@ function RatingsTabLinkBase({
     <div className={classes.dot}></div>
   );
 
-  const handleLockedClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!locked) return;
+  const handleLockedClick = (event: MouseEvent<HTMLElement>) => {
+    if (!locked) {
+      onClick?.();
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     onLockedClick?.();
   };
 
   const renderMenuItem = (isActive = false): ReactNode => (
-    <MenuItem {...(dialog ? { styl: true } : { active: isActive })}>
-      {locked && <Lock style={{ marginRight: 4 }} />}
-      Ratings
-      {badge}
+    <MenuItem
+      active={active ?? isActive}
+      className={classes.menuItem}
+      data-class-tab="ratings"
+    >
+      <span className={classes.tabContent}>
+        {locked && <Lock className={classes.lockIcon} />}
+        <span>Ratings</span>
+        {badge}
+      </span>
     </MenuItem>
   );
 
-  const navLink = (
+  const tabTrigger = to ? (
     <NavLink
       to={to}
-      onClick={locked ? handleLockedClick : undefined}
+      onClick={handleLockedClick}
       aria-disabled={locked || undefined}
       tabIndex={locked ? -1 : undefined}
     >
       {dialog ? renderMenuItem() : ({ isActive }) => renderMenuItem(isActive)}
     </NavLink>
+  ) : (
+    <MenuItem
+      active={active ?? false}
+      className={classes.menuItem}
+      data-class-tab="ratings"
+      aria-disabled={locked || undefined}
+      onClick={(event: MouseEvent<HTMLElement>) => handleLockedClick(event)}
+    >
+      <span className={classes.tabContent}>
+        {locked && <Lock className={classes.lockIcon} />}
+        <span>Ratings</span>
+        {badge}
+      </span>
+    </MenuItem>
   );
 
   if (!locked) {
-    return navLink;
+    return tabTrigger;
   }
 
   const tooltipDescription = loginRequired
@@ -94,7 +124,7 @@ function RatingsTabLinkBase({
 
   return (
     <Tooltip
-      trigger={navLink}
+      trigger={tabTrigger}
       title={!dialog ? "Locked Content" : undefined}
       description={tooltipDescription}
     />

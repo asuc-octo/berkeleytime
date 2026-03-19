@@ -1,6 +1,7 @@
 .root {
   width: 16px;
   height: 16px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   border-radius: 4px;

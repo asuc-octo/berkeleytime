@@ -25,5 +25,5 @@ appVersion: "2.0.0-alpha"
 
 dependencies:
   - name: "mongodb"
-    version: "14.10.0"
+    version: "18.6.0"
     repository: "https://charts.bitnami.com/bitnami"

@@ -7,7 +7,6 @@ import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getCourseAggregatedRatings,
-  getCourseRatingsCount,
   getInstructorAggregatedRatings,
 } from "../rating/controller";
 import {
@@ -20,6 +19,49 @@ import {
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
+
+interface SortableClass {
+  year?: number | null;
+  semester?: string | null;
+  number?: string | null;
+}
+
+const SEMESTER_RECENCY_ORDER: Record<string, number> = {
+  Spring: 0,
+  Summer: 1,
+  Fall: 2,
+  Winter: -1,
+};
+
+const compareNumberDesc = (a?: number | null, b?: number | null): number => {
+  const normalizedA = a ?? Number.NEGATIVE_INFINITY;
+  const normalizedB = b ?? Number.NEGATIVE_INFINITY;
+  return normalizedB - normalizedA;
+};
+
+const compareSemesterDesc = (a?: string | null, b?: string | null): number => {
+  const normalizedA = SEMESTER_RECENCY_ORDER[a ?? ""] ?? -1;
+  const normalizedB = SEMESTER_RECENCY_ORDER[b ?? ""] ?? -1;
+  return normalizedB - normalizedA;
+};
+
+const compareStringDesc = (a?: string | null, b?: string | null): number => {
+  return (b ?? "").localeCompare(a ?? "");
+};
+
+const sortClassesForLimitedResults = <T extends SortableClass>(
+  classes: T[]
+): T[] => {
+  return [...classes].sort((a, b) => {
+    const yearComparison = compareNumberDesc(a.year, b.year);
+    if (yearComparison !== 0) return yearComparison;
+
+    const semesterComparison = compareSemesterDesc(a.semester, b.semester);
+    if (semesterComparison !== 0) return semesterComparison;
+
+    return compareStringDesc(a.number, b.number);
+  });
+};
 
 const resolvers: CourseModule.Resolvers = {
   CourseIdentifier: new GraphQLScalarType({
@@ -71,12 +113,47 @@ const resolvers: CourseModule.Resolvers = {
   },
 
   Course: {
-    classes: async (parent: IntermediateCourse | CourseModule.Course) => {
-      if (parent.classes) return parent.classes;
+    classes: async (
+      parent: IntermediateCourse | CourseModule.Course,
+      { printInScheduleOnly, limit }
+    ) => {
+      const boundedLimit =
+        typeof limit === "number" && Number.isFinite(limit)
+          ? Math.min(Math.max(Math.floor(limit), 1), 200)
+          : undefined;
 
-      const classes = await getClassesByCourse(parent.courseId);
+      // Cross-listed courses share a courseId, so filter to only classes
+      // matching this specific course's subject and number.
+      const matchesCourse = (courseClass: {
+        subject?: string | null;
+        courseNumber?: string | null;
+      }) =>
+        courseClass.subject === parent.subject &&
+        courseClass.courseNumber === parent.number;
 
-      return classes as unknown as CourseModule.Class[];
+      if (parent.classes) {
+        let classes = [...parent.classes];
+        classes = classes.filter(matchesCourse);
+        if (printInScheduleOnly) {
+          classes = classes.filter(
+            (courseClass) => courseClass.anyPrintInScheduleOfClasses !== false
+          );
+        }
+        if (boundedLimit) {
+          classes = sortClassesForLimitedResults(classes).slice(
+            0,
+            boundedLimit
+          );
+        }
+        return classes as unknown as CourseModule.Class[];
+      }
+
+      const classes = await getClassesByCourse(parent.courseId, {
+        printInScheduleOnly: printInScheduleOnly ?? false,
+        limit: boundedLimit,
+      });
+
+      return classes.filter(matchesCourse) as unknown as CourseModule.Class[];
     },
 
     crossListing: async (parent: IntermediateCourse | CourseModule.Course) => {
@@ -180,11 +257,6 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return instructorRatings;
-    },
-
-    ratingsCount: async (parent: IntermediateCourse | CourseModule.Course) => {
-      const count = await getCourseRatingsCount(parent.subject, parent.number);
-      return count;
     },
   },
 

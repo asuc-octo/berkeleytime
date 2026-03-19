@@ -10,9 +10,6 @@ import {
   GetClassGradesDocument,
   GetClassGradesQuery,
   GetClassGradesQueryVariables,
-  GetClassRatingsDocument,
-  GetClassRatingsQuery,
-  GetClassRatingsQueryVariables,
   GetClassSectionsDocument,
   GetClassSectionsQuery,
   GetClassSectionsQueryVariables,
@@ -137,27 +134,5 @@ export const useGetClassEnrollment = (
   return {
     ...query,
     data: query.data?.class,
-  };
-};
-
-export const useGetClassRatings = (
-  subject: string,
-  courseNumber: string,
-  options?: Omit<
-    useQuery.Options<GetClassRatingsQuery, GetClassRatingsQueryVariables>,
-    "variables"
-  >
-) => {
-  const query = useQuery(GetClassRatingsDocument, {
-    ...options,
-    variables: {
-      subject,
-      courseNumber,
-    },
-  });
-
-  return {
-    ...query,
-    data: query.data?.course,
   };
 };

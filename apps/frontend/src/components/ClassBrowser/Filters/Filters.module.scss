@@ -2,10 +2,30 @@
   width: 360px;
   flex-shrink: 0;
   overflow-y: auto;
+  scrollbar-width: none;
   background-color: var(--foreground-color);
 
-  @media (width <= 992px) {
+  /* full mode: 360px, right border, no Header (hidden by parent via display:none logic) */
+  [data-mode='full'] > & {
+    border-right: 1px solid var(--border-color);
+  }
+
+  /* semi-compact mode: 384px, shown/hidden by parent toggle */
+  [data-mode='semi-compact'] > & {
     width: 384px;
+
+    .body {
+      padding-top: 12px;
+    }
+  }
+
+  /* compact mode: full width */
+  [data-mode='compact'] > & {
+    width: 100%;
+
+    .body {
+      padding-top: 12px;
+    }
   }
 
   .body {
@@ -102,36 +122,53 @@
       }
     }
   }
+}
 
-  @media (width > 992px) {
-    border-right: 1px solid var(--border-color);
+.requirementsSelectContent {
+  box-shadow: none;
+}
 
-    &:not(.responsive) > :first-child {
-      display: none;
-    }
-  }
+.requirementsTabs {
+  padding: 0;
+  background-color: var(--foreground-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  border-bottom: none;
 
-  @media (width > 1400px) {
-    > :first-child {
-      display: none;
-    }
-  }
-
-  @media (width <= 992px) {
+  :global([role="tablist"]) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     width: 100%;
-
-    .body {
-      padding-top: 12px;
-    }
+    background-color: var(--button-hover-color);
+    padding: 2px 2px 0 2px;
+    column-gap: 2px;
+    row-gap: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    align-items: stretch;
   }
 
-  @media (992px < width <= 1400px) {
-    &.responsive {
-      width: 384px;
+  :global([role="tab"]) {
+    border-radius: 4px 4px 0 0;
+    padding: 6px 8px;
+    min-height: 28px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--label-color);
+    transition: all 100ms ease-in-out;
+  }
 
-      .body {
-        padding-top: 12px;
-      }
-    }
+  :global([role="tab"]:hover) {
+    background-color: var(--button-hover-color);
+    color: var(--heading-color);
+  }
+
+  :global([role="tab"][data-state="active"]) {
+    background-color: var(--foreground-color);
+    color: var(--heading-color);
+    box-shadow: none;
   }
 }

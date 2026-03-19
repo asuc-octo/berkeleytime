@@ -1,13 +1,9 @@
 import { gql } from "@apollo/client";
 
-import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
-
 import {
   AcademicCareer,
   Component,
-  GetCanonicalCatalogQuery,
   GetClassDetailsQuery,
-  GetClassOverviewQuery,
   GetClassQuery,
 } from "../generated/graphql";
 
@@ -36,6 +32,18 @@ export const GET_CLASS = gql`
       number
       title
       description
+      decal {
+        title
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
+        }
+      }
       unitsMax
       unitsMin
       gradingBasis
@@ -244,6 +252,29 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      decal {
+        title
+      }
+      course {
+        title
+        description
+        requirements
+        aggregatedRatings(metricNames: [Attendance, Recording]) {
+          metrics {
+            metricName
+            count
+            weightedAverage
+            categories {
+              value
+              count
+            }
+          }
+        }
+        gradeDistribution {
+          average
+          pnpPercentage
+        }
+      }
       primarySection {
         sectionId
         component
@@ -286,6 +317,17 @@ export const GET_CLASS_DETAILS = gql`
           }
         }
       }
+      decal {
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
+        }
+      }
     }
   }
 `;
@@ -316,6 +358,10 @@ export const GET_CLASS_SECTIONS = gql`
           location
           endTime
           startTime
+          instructors {
+            familyName
+            givenName
+          }
         }
         enrollment {
           latest {
@@ -394,26 +440,6 @@ export const GET_CLASS_ENROLLMENT = gql`
   }
 `;
 
-export const GET_CLASS_RATINGS = gql`
-  query GetClassRatings($subject: String!, $courseNumber: CourseNumber!) {
-    course(subject: $subject, number: $courseNumber) {
-      subject
-      number
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-          categories {
-            value
-            count
-          }
-        }
-      }
-    }
-  }
-`;
-
 export const TRACK_CLASS_VIEW = gql`
   mutation TrackClassView(
     $year: Int!
@@ -437,27 +463,11 @@ export const TRACK_CLASS_VIEW = gql`
 export type IClass = NonNullable<GetClassQuery["class"]>;
 export type ISection = NonNullable<IClass["sections"]>[number];
 export type IClassDetails = NonNullable<GetClassDetailsQuery["class"]>;
-export type IClassCourse = NonNullable<GetClassOverviewQuery["course"]>;
+export type IClassCourse = NonNullable<IClassDetails["course"]>;
 
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];
 export type IMeeting = ISection["meetings"][number];
-
-/**
- * Canonical catalog query imported from @repo/shared.
- * Ensures parity between frontend and backend cache warming.
- *
- * See: packages/shared/queries.ts for query definition and documentation.
- */
-export const GET_CANONICAL_CATALOG = gql(GET_CANONICAL_CATALOG_QUERY);
-
-export type ICatalogClass = NonNullable<
-  GetCanonicalCatalogQuery["catalog"]
->[number];
-export type ISectionAttriuteInfo = ICatalogClass["requirementDesignation"];
-export type ISectionAttribute = NonNullable<
-  NonNullable<ICatalogClass["primarySection"]>["sectionAttributes"]
->[number];
 
 export const componentMap: Record<Component, string> = {
   [Component.Cln]: "Clinic",

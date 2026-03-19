@@ -2,33 +2,44 @@ import { useCallback } from "react";
 
 import { MutationHookOptions, useMutation } from "@apollo/client/react";
 
-import { EDIT_PLAN, EditPlanResponse, PlanInput } from "@/lib/api";
+import {
+  EditPlanDocument,
+  EditPlanMutation,
+  EditPlanMutationVariables,
+  PlanInput,
+} from "@/lib/generated/graphql";
 
 export const useEditPlan = () => {
-  const mutation = useMutation<EditPlanResponse>(EDIT_PLAN, {
-    update(cache, { data }) {
-      const plan = data?.editPlan;
+  const mutation = useMutation<EditPlanMutation, EditPlanMutationVariables>(
+    EditPlanDocument,
+    {
+      update(cache, { data }) {
+        const plan = data?.editPlan;
 
-      if (!plan) return;
+        if (!plan) return;
 
-      cache.modify({
-        id: `Plan:${plan._id}`,
-        fields: {
-          majors: () => plan.majors,
-          minors: () => plan.minors,
-          colleges: () => plan.colleges,
-          labels: () => plan.labels,
-          uniReqsSatisfied: () => plan.uniReqsSatisfied,
-          collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
-        },
-      });
-    },
-  });
+        cache.modify({
+          id: `Plan:${plan._id}`,
+          fields: {
+            majors: () => plan.majors,
+            minors: () => plan.minors,
+            colleges: () => plan.colleges,
+            labels: () => plan.labels,
+            uniReqsSatisfied: () => plan.uniReqsSatisfied,
+            collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
+          },
+        });
+      },
+    }
+  );
 
   const updatedPlan = useCallback(
     async (
       plan: PlanInput,
-      options?: Omit<MutationHookOptions<EditPlanResponse>, "variables">
+      options?: Omit<
+        MutationHookOptions<EditPlanMutation, EditPlanMutationVariables>,
+        "variables"
+      >
     ) => {
       const mutate = mutation[0];
 
