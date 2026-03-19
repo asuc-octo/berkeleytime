@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS semantic-search-base
+FROM python:3.11-slim AS builder-py
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
@@ -12,10 +12,18 @@ RUN apt-get update \
 COPY requirements.txt .
 
 RUN python -m pip install uv
-RUN uv pip install --system -r requirements.txt
+RUN uv venv /app/.venv && uv pip install --python /app/.venv -r requirements.txt
 
+FROM python:3.11-slim AS semantic-search-prod
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/.venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY --from=builder-py /app/.venv /app/.venv
 
 COPY app ./app
 
-FROM semantic-search-base AS semantic-search-prod
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
