@@ -6,7 +6,7 @@
   background: var(--background-color);
   color: var(--heading-color);
   transition: width 0.3s ease;
-  width: 280px;
+  width: 336px; /* 20% wider than 280px */
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -157,4 +157,5 @@
     height: 1px;
     width: 100%;
   }
+
 }
