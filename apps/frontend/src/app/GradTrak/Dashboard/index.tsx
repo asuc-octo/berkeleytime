@@ -506,7 +506,11 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
-  if (userLoading || gradTrakLoading || courseLoading) {
+  if (
+    !gradTrak &&
+    !courses?.courses &&
+    (userLoading || gradTrakLoading || courseLoading)
+  ) {
     return (
       <Boundary>
         <LoadingIndicator size="lg" />

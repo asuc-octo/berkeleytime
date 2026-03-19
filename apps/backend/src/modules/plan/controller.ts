@@ -480,7 +480,7 @@ export async function updateManualOverride(
   ) {
     // Extend the array if needed
     while (spr.manualOverrides.length <= input.requirementIndex) {
-      spr.manualOverrides.push(undefined);
+      spr.manualOverrides.push(null);
     }
   }
   // Store null when clearing override so it persists correctly in MongoDB

@@ -11,7 +11,6 @@ import { IPlanRequirement } from "@/lib/api/plans";
 import {
   GetCourseRequirementsDocument,
   GetCourseRequirementsQuery,
-  GetPlanDocument,
   UpdateManualOverrideDocument,
 } from "@/lib/generated/graphql";
 
@@ -27,15 +26,92 @@ type RequirementResult = {
   [key: string]: any;
 };
 
+// Evaluate effective met status taking into account nested child overrides
+export function evaluateEffectiveMet(
+  req: RequirementResult,
+  overrides?: (boolean | null)[]
+): { isMet: boolean; isManuallyMet: boolean; isManuallyNotMet: boolean } {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const flatIndex = (req as any).flatIndex;
+  const manualOverride =
+    flatIndex !== undefined ? overrides?.[flatIndex] : undefined;
+
+  if (manualOverride === true)
+    return { isMet: true, isManuallyMet: true, isManuallyNotMet: false };
+  if (manualOverride === false)
+    return { isMet: false, isManuallyMet: false, isManuallyNotMet: true };
+
+  if (
+    req.type?.data === "AndRequirement" ||
+    req.type?.data === "OrRequirement"
+  ) {
+    const subReqs: RequirementResult[] = req.requirements?.data ?? [];
+    if (subReqs.length === 0)
+      return {
+        isMet: req.result?.data ?? false,
+        isManuallyMet: false,
+        isManuallyNotMet: false,
+      };
+
+    if (req.type.data === "AndRequirement") {
+      let allMet = true;
+      let anyManual = false;
+      for (const sub of subReqs) {
+        const subRes = evaluateEffectiveMet(sub, overrides);
+        if (!subRes.isMet) allMet = false;
+        if (subRes.isManuallyMet) anyManual = true;
+      }
+      return {
+        isMet: allMet,
+        isManuallyMet: allMet && anyManual,
+        isManuallyNotMet: false,
+      };
+    } else {
+      // OrRequirement
+      let anyMet = false;
+      let anyManual = false;
+      for (const sub of subReqs) {
+        const subRes = evaluateEffectiveMet(sub, overrides);
+        if (subRes.isMet) {
+          anyMet = true;
+          if (subRes.isManuallyMet) anyManual = true;
+        }
+      }
+      return {
+        isMet: anyMet,
+        isManuallyMet: anyMet && anyManual,
+        isManuallyNotMet: false,
+      };
+    }
+  }
+
+  return {
+    isMet: req.result?.data ?? false,
+    isManuallyMet: false,
+    isManuallyNotMet: false,
+  };
+}
+
 // Render requirement details that appear below the title
-const renderRequirementDetails = (req: RequirementResult, depth: number) => {
+const renderRequirementDetails = (
+  req: RequirementResult,
+  depth: number,
+  allOverrides?: (boolean | null)[],
+  onToggleAny?: (index: number, newOverride: boolean | null) => void
+) => {
   // Align with requirement text (checkbox space 1.25rem = 20px + gap 0.5rem = 8px = 28px total)
   const textIndent = 28;
 
   if (req.type?.data === "NumberRequirement") {
     const courses = req.courses?.data ?? [];
     return (
-      <>
+      <div
+        style={{
+          paddingLeft: `${depth * 24}px`,
+          boxSizing: "border-box",
+          width: "100%",
+        }}
+      >
         <p
           className={styles.metadata}
           style={{ marginLeft: `${textIndent}px` }}
@@ -50,7 +126,7 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
             {courses.map((course: Course, index: number) => (
               <div key={index} className={styles.courseItem}>
                 <div className={styles.checkmarkSpace}>
-                  <Check className={styles.checkmarkIcon} />
+                  <Check className={styles.courseCheckmark} />
                 </div>
                 <p>
                   {course.subject.data} {course.number.data}
@@ -59,7 +135,7 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
             ))}
           </div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -69,7 +145,13 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
     const actualCount = req.actual_count?.data ?? courses.length;
     const satisfyCount = Math.min(actualCount, requiredCount);
     return (
-      <>
+      <div
+        style={{
+          paddingLeft: `${depth * 24}px`,
+          boxSizing: "border-box",
+          width: "100%",
+        }}
+      >
         <p
           className={styles.metadata}
           style={{ marginLeft: `${textIndent}px` }}
@@ -84,7 +166,7 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
             {courses.map((course: Course, index: number) => (
               <div key={index} className={styles.courseItem}>
                 <div className={styles.checkmarkSpace}>
-                  <Check className={styles.checkmarkIcon} />
+                  <Check className={styles.courseCheckmark} />
                 </div>
                 <p>
                   {course.subject.data} {course.number.data}
@@ -93,7 +175,7 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
             ))}
           </div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -102,7 +184,13 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
     const metStatuses = req.met_status.data ?? [];
     const metCount = metStatuses.filter(Boolean).length;
     return (
-      <>
+      <div
+        style={{
+          paddingLeft: `${depth * 24}px`,
+          boxSizing: "border-box",
+          width: "100%",
+        }}
+      >
         <p
           className={styles.metadata}
           style={{ marginLeft: `${textIndent}px` }}
@@ -112,13 +200,13 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
         {requiredCourses.length > 0 && (
           <div
             className={styles.courseList}
-            style={{ marginLeft: `${textIndent}px` }}
+            style={{ paddingLeft: `${textIndent}px`, boxSizing: "border-box" }}
           >
             {requiredCourses.map((course: Course, index: number) => (
               <div key={index} className={styles.courseItem}>
                 <div className={styles.checkmarkSpace}>
                   {metStatuses[index] && (
-                    <Check className={styles.checkmarkIcon} />
+                    <Check className={styles.courseCheckmark} />
                   )}
                 </div>
                 <p>
@@ -128,7 +216,7 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
             ))}
           </div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -151,12 +239,29 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
     ) {
       return (
         <div style={{ marginTop: "0.25rem" }}>
-          {subRequirements.map((subReq, index) => (
-            <div key={`sub-${index}`}>
-              {/* Render domain emphases as standard items without 'OR' connectors */}
-              {renderRequirementItem(subReq, `de-sub-${index}`, depth + 1, -1)}
-            </div>
-          ))}
+          {subRequirements.map((subReq, index) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const flatIndex = (subReq as any).flatIndex;
+            return (
+              <div key={`sub-${index}`}>
+                {/* Render domain emphases as standard items without 'OR' connectors */}
+                {renderRequirementItem(
+                  subReq,
+                  `de-sub-${index}`,
+                  depth + 1,
+                  flatIndex ?? -1,
+                  flatIndex !== undefined
+                    ? allOverrides?.[flatIndex]
+                    : undefined,
+                  onToggleAny && flatIndex !== undefined
+                    ? (newOverride) => onToggleAny(flatIndex, newOverride)
+                    : undefined,
+                  allOverrides,
+                  onToggleAny
+                )}
+              </div>
+            );
+          })}
         </div>
       );
     }
@@ -166,20 +271,40 @@ const renderRequirementDetails = (req: RequirementResult, depth: number) => {
     const connector = isAnd ? "AND" : isOr ? "OR" : null;
 
     return (
-      <div style={{ marginTop: "0.25rem" }}>
-        {subRequirements.map((subReq, index) => (
-          <div key={`sub-${index}`}>
-            {index > 0 && connector && (
-              <div
-                className={styles.connector}
-                style={{ marginLeft: `${textIndent}px` }}
-              >
-                {connector}
-              </div>
-            )}
-            {renderRequirementItem(subReq, `sub-${index}`, depth + 1, -1)}
-          </div>
-        ))}
+      <div
+        style={{ marginTop: "0.25rem", width: "100%", boxSizing: "border-box" }}
+      >
+        {subRequirements.map((subReq, index) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const flatIndex = (subReq as any).flatIndex;
+          return (
+            <div key={`sub-${index}`}>
+              {index > 0 && connector && (
+                <div
+                  className={styles.connector}
+                  style={{
+                    paddingLeft: `${textIndent + depth * 24}px`,
+                    boxSizing: "border-box",
+                  }}
+                >
+                  {connector}
+                </div>
+              )}
+              {renderRequirementItem(
+                subReq,
+                `sub-${index}`,
+                depth + 1,
+                flatIndex ?? -1,
+                flatIndex !== undefined ? allOverrides?.[flatIndex] : undefined,
+                onToggleAny && flatIndex !== undefined
+                  ? (newOverride) => onToggleAny(flatIndex, newOverride)
+                  : undefined,
+                allOverrides,
+                onToggleAny
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   }
@@ -195,26 +320,43 @@ function RequirementItem({
   requirementIndex,
   manualOverride,
   onToggleManualOverride,
+  allOverrides,
+  onToggleAny,
 }: {
   req: RequirementResult;
   key: string;
   depth: number;
   requirementIndex: number; // -1 for nested requirements that don't support manual override
   manualOverride?: boolean | null;
-  onToggleManualOverride?: () => void;
+  onToggleManualOverride?: (newOverride: boolean | null) => void;
+  allOverrides?: (boolean | null)[];
+  onToggleAny?: (index: number, newOverride: boolean | null) => void;
 }) {
   // requirementIndex is used by parent component when calling onToggleManualOverride
   void requirementIndex;
-  const isMet = req.result.data;
-  const isManuallyOverridden =
-    manualOverride !== null && manualOverride !== undefined && manualOverride;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const flatIndex = (req as any).flatIndex;
+
+  const overridesWithoutThis = allOverrides ? [...allOverrides] : [];
+  if (flatIndex !== undefined) {
+    overridesWithoutThis[flatIndex] = null; // pretend it wasn't manually overridden
+  }
+
+  const { isMet: nonOverriddenIsMet } = evaluateEffectiveMet(
+    req,
+    overridesWithoutThis
+  );
+
+  const {
+    isMet: isEffectivelyMet,
+    isManuallyMet: isManuallyOverridden,
+    isManuallyNotMet,
+  } = evaluateEffectiveMet(req, allOverrides);
 
   // Default: expanded if incomplete, collapsed if complete
-  const [isExpanded, setIsExpanded] = useState(
-    !(isMet || isManuallyOverridden)
-  );
+  const [isExpanded, setIsExpanded] = useState(!isEffectivelyMet);
   const [isHovered, setIsHovered] = useState(false);
-  const indentAmount = depth > 0 ? 24 : 0; // Fixed indent per level avoiding quadratic nesting
 
   // Check if this requirement has details to show
   const hasDetails =
@@ -225,10 +367,35 @@ function RequirementItem({
     req.type?.data === "OrRequirement";
 
   const handleCheckClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    setIsExpanded(isManuallyOverridden);
     if (onToggleManualOverride) {
-      onToggleManualOverride();
+      let newOverride: boolean | null;
+      if (nonOverriddenIsMet) {
+        // Natively MET (either automatically or by children). Toggle between Green/Gray (null) and Invisible (false).
+        if (manualOverride === false) {
+          newOverride = null;
+        } else {
+          newOverride = false;
+        }
+      } else {
+        // Natively UNMET. Toggle between Invisible (null/false) and Gray (true).
+        if (manualOverride === true) {
+          newOverride = false;
+        } else {
+          newOverride = true;
+        }
+      }
+
+      onToggleManualOverride(newOverride);
+
+      const newIsManuallyOverridden = newOverride === true;
+      const newIsManuallyNotMet = newOverride === false;
+      const newIsEffectivelyMet =
+        newIsManuallyOverridden || (nonOverriddenIsMet && !newIsManuallyNotMet);
+
+      // Expand if incomplete, collapse if complete
+      setIsExpanded(!newIsEffectivelyMet);
     }
   };
 
@@ -236,37 +403,38 @@ function RequirementItem({
     <div
       key={itemKey}
       className={styles.item}
-      style={{ marginLeft: `${indentAmount}px` }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className={styles.element}>
+      <div
+        className={styles.element}
+        style={{ paddingLeft: `${depth * 24}px`, boxSizing: "border-box" }}
+      >
         <div className={styles.start}>
           <div
             className={classNames(styles.checkmarkSpace, {
-              [styles.clickable]: onToggleManualOverride,
+              [styles.clickable]: !!onToggleManualOverride,
             })}
             onClick={handleCheckClick}
             title={
               onToggleManualOverride
-                ? isManuallyOverridden
+                ? isManuallyOverridden || isManuallyNotMet
                   ? "Click to remove manual override"
-                  : "Click to manually mark as complete"
+                  : "Click to manually toggle status"
                 : undefined
             }
           >
             <Check
-              className={classNames(styles.checkmarkIcon, {
+              className={classNames(styles.reqCheckmark, {
                 [styles.visible]:
-                  isMet ||
-                  isManuallyOverridden ||
-                  (isHovered && onToggleManualOverride),
-                [styles.hoverCheckmark]:
-                  !isMet &&
+                  isEffectivelyMet || (isHovered && !!onToggleManualOverride),
+                [styles.hover]:
+                  !isEffectivelyMet && isHovered && !!onToggleManualOverride,
+                [styles.auto]:
+                  isEffectivelyMet &&
                   !isManuallyOverridden &&
-                  isHovered &&
-                  onToggleManualOverride,
-                [styles.autoCheckmark]: isMet && !isManuallyOverridden,
+                  !isManuallyNotMet,
+                [styles.manual]: isManuallyOverridden,
               })}
             />
           </div>
@@ -286,7 +454,9 @@ function RequirementItem({
           </button>
         )}
       </div>
-      {isExpanded && renderRequirementDetails(req, depth)}
+      {isExpanded &&
+        hasDetails &&
+        renderRequirementDetails(req, depth, allOverrides, onToggleAny)}
     </div>
   );
 }
@@ -298,7 +468,9 @@ const renderRequirementItem = (
   depth: number,
   requirementIndex: number,
   manualOverride?: boolean | null,
-  onToggleManualOverride?: () => void
+  onToggleManualOverride?: (newOverride: boolean | null) => void,
+  allOverrides?: (boolean | null)[],
+  onToggleAny?: (index: number, newOverride: boolean | null) => void
 ) => {
   return (
     <RequirementItem
@@ -308,6 +480,8 @@ const renderRequirementItem = (
       requirementIndex={requirementIndex}
       manualOverride={manualOverride}
       onToggleManualOverride={onToggleManualOverride}
+      allOverrides={allOverrides}
+      onToggleAny={onToggleAny}
     />
   );
 };
@@ -454,12 +628,41 @@ export default function BtLLGradTrakInterface({
           | null;
 
         if (Array.isArray(evaluated) && evaluated.length > 0) {
+          // Flatten nested requirements onto a continuous index track, starting roots at 0
+          // so existing database overrides aren't broken.
+          let counter = evaluated.length;
+
+          evaluated.forEach((req, index) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (req as any).flatIndex = index;
+          });
+
+          const assignChildren = (reqs: RequirementResult[]) => {
+            for (const req of reqs) {
+              if (
+                req.type?.data === "AndRequirement" ||
+                req.type?.data === "OrRequirement"
+              ) {
+                const subReqs = req.requirements?.data ?? [];
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                subReqs.forEach((sub: any) => {
+                  sub.flatIndex = counter++;
+                });
+                assignChildren(subReqs);
+              }
+            }
+          };
+          assignChildren(evaluated);
+          const totalNodes = counter;
+
+          const currentOverrides = spr.manualOverrides ?? [];
+          const paddedOverrides = Array.from({ length: totalNodes }).map(
+            (_, i) => (i < currentOverrides.length ? currentOverrides[i] : null)
+          );
+
           const newSpr = {
             ...spr,
-            manualOverrides:
-              (spr.manualOverrides ?? []).length !== evaluated.length
-                ? new Array(evaluated.length).fill(false)
-                : spr.manualOverrides,
+            manualOverrides: paddedOverrides,
           };
 
           groups.push({
@@ -484,7 +687,7 @@ export default function BtLLGradTrakInterface({
     return null;
   }
 
-  if (isLoading) {
+  if (isLoading && evaluatedGroups.length === 0) {
     return null;
   }
 
@@ -599,28 +802,13 @@ function BtLLRequirementsAccordion({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Check if all requirements are fulfilled (considering manual overrides)
-  const allFulfilled = requirements.every((req, index) => {
-    const manualOverride = selectedPlanRequirement?.manualOverrides?.[index];
-    const evaluatedResult = req.result?.data ?? false;
-    return manualOverride !== null && manualOverride !== undefined
-      ? manualOverride
-      : evaluatedResult;
-  });
+  // Removed allFulfilled checkmark calculation as user preferred manual monitoring
 
-  const handleToggleManualOverride = async (requirementIndex: number) => {
+  const handleToggleManualOverride = async (
+    requirementIndex: number,
+    newOverride: boolean | null
+  ) => {
     if (!selectedPlanRequirement?.planRequirement?._id) return;
-
-    const currentOverride =
-      selectedPlanRequirement.manualOverrides?.[requirementIndex];
-    const evaluatedResult =
-      requirements[requirementIndex]?.result?.data ?? false;
-
-    // Toggle logic: if manually overridden, clear it; otherwise set opposite of evaluated
-    const newOverride =
-      currentOverride !== null && currentOverride !== undefined
-        ? null // Clear manual override
-        : !evaluatedResult; // Set to opposite of evaluated result
 
     try {
       await apolloClient.mutate({
@@ -630,13 +818,32 @@ function BtLLRequirementsAccordion({
             planRequirementId: selectedPlanRequirement.planRequirement._id,
             requirementIndex,
             // Pass null explicitly when clearing so the backend persists "no override"
-            manualOverride:
-              newOverride !== undefined && newOverride !== null
-                ? newOverride
-                : null,
+            manualOverride: newOverride,
           },
         },
-        refetchQueries: [{ query: GetPlanDocument }],
+        optimisticResponse: undefined,
+        update: (cache, { data }) => {
+          if (!data?.updateManualOverride) return;
+
+          // Directly update the cached selectedPlanRequirement
+          cache.modify({
+            id: cache.identify(selectedPlanRequirement),
+            fields: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              manualOverrides: (existingOverrides: any) => {
+                const newOverrides = Array.isArray(existingOverrides)
+                  ? [...existingOverrides]
+                  : [];
+                // Ensure array has enough elements
+                while (newOverrides.length <= requirementIndex) {
+                  newOverrides.push(null);
+                }
+                newOverrides[requirementIndex] = newOverride;
+                return newOverrides;
+              },
+            },
+          });
+        },
       });
     } catch (error) {
       console.error("Failed to update manual override:", error);
@@ -647,11 +854,6 @@ function BtLLRequirementsAccordion({
     <div className={styles.accordion}>
       <div className={styles.header}>
         <div className={styles.titleContainer}>
-          {allFulfilled && (
-            <div className={styles.checkmarkSpace}>
-              <Check className={styles.checkmarkIcon} />
-            </div>
-          )}
           <div className={styles.title}>{title}</div>
         </div>
         <button
@@ -670,15 +872,20 @@ function BtLLRequirementsAccordion({
       {isExpanded && (
         <div className={styles.body}>
           {requirements.map((req, index) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const flatIndex = (req as any).flatIndex ?? index;
             const manualOverride =
-              selectedPlanRequirement?.manualOverrides?.[index];
+              selectedPlanRequirement?.manualOverrides?.[flatIndex];
             return renderRequirementItem(
               req,
-              `req-${index}`,
+              `req-${flatIndex}`,
               0,
-              index,
+              flatIndex,
               manualOverride,
-              () => handleToggleManualOverride(index)
+              (newOverride) =>
+                handleToggleManualOverride(flatIndex, newOverride),
+              selectedPlanRequirement?.manualOverrides,
+              handleToggleManualOverride
             );
           })}
         </div>
