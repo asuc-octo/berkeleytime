@@ -2,6 +2,53 @@
   color: var(--paragraph-color);
 }
 
+.headingWithPrefix {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.headingPrefix {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.titleDescription {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.gradeContainer {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  column-gap: 12px;
+  row-gap: 8px;
+}
+
 .reservedSeating {
   font-size: var(--text-14);
   color: var(--paragraph-color);
@@ -23,8 +70,9 @@
 }
 
 .semester {
+  display: block;
   color: var(--paragraph-color);
-  margin-top: 4px;
+  line-height: 1.5;
 }
 
 .ratingsCount {

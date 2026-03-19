@@ -23,6 +23,13 @@ repos:
         stages: [pre-push]
         fail_fast: true
         pass_filenames: false
+      - id: playwright-tests
+        name: playwright-tests (sanity + api)
+        entry: npx playwright test --project=sanity --project=api
+        language: system
+        stages: [pre-push]
+        fail_fast: true
+        pass_filenames: false
       - id: build
         name: build
         entry: npm run build

@@ -28,3 +28,10 @@ generated-typedefs/
 # others
 *.cert
 *.key
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

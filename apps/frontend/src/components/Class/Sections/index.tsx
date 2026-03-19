@@ -1,17 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
 
 import { FrameAltEmpty } from "iconoir-react";
 
-import {
-  Boundary,
-  Box,
-  Container,
-  LoadingIndicator,
-  PillSwitcher,
-} from "@repo/theme";
+import { Box, Container, PillSwitcher } from "@repo/theme";
 
 import { getEnrollmentColor } from "@/components/Capacity";
 import EmptyState from "@/components/Class/EmptyState";
+import { LocationHoverCard } from "@/components/Location/LocationHoverCard";
 import Time from "@/components/Time";
 import { useGetClassSections } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
@@ -55,6 +50,7 @@ const getLocationLink = (location?: string) => {
   return {
     label: `${building.name} ${room}`,
     href: building.link,
+    coordinates: building.location,
   };
 };
 
@@ -89,6 +85,9 @@ export default function Sections() {
   }, [groups]);
 
   const [activeTab, setActiveTab] = useState(tabItems[0]?.value || "");
+  const [tabsStickyHeight, setTabsStickyHeight] = useState(42);
+  const tabsStickyRef = useRef<HTMLDivElement>(null);
+  const [tableScrollLeft, setTableScrollLeft] = useState(0);
 
   // Get sections for the active tab
   const activeSections = groups[activeTab as Component] || [];
@@ -99,12 +98,23 @@ export default function Sections() {
     }
   }, [tabItems, activeTab]);
 
+  useEffect(() => {
+    const tabsStickyElement = tabsStickyRef.current;
+    if (!tabsStickyElement) return;
+
+    const updateTabsStickyHeight = () => {
+      setTabsStickyHeight(tabsStickyElement.getBoundingClientRect().height);
+    };
+
+    updateTabsStickyHeight();
+    const observer = new ResizeObserver(updateTabsStickyHeight);
+    observer.observe(tabsStickyElement);
+
+    return () => observer.disconnect();
+  }, [tabItems.length]);
+
   if (loading && !data) {
-    return (
-      <Boundary>
-        <LoadingIndicator size="lg" />
-      </Boundary>
-    );
+    return <EmptyState loading />;
   }
 
   if (sections.length === 0) {
@@ -126,140 +136,176 @@ export default function Sections() {
   return (
     <Box p="5">
       <Container size="3">
-        <div className={styles.root}>
-          <PillSwitcher
-            items={tabItems}
-            value={activeTab}
-            onValueChange={setActiveTab}
-          />
-          <table className={styles.table}>
-            <thead className={styles.header}>
-              <tr>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.ccn}`}
-                >
-                  CCN
-                </th>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.number}`}
-                >
-                  Number
-                </th>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.time}`}
-                >
-                  Time
-                </th>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.location}`}
-                >
-                  Location
-                </th>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.waitlist}`}
-                >
-                  Waitlist
-                </th>
-                <th
-                  scope="col"
-                  className={`${styles.headerCell} ${styles.enrolled}`}
-                >
-                  Enrolled
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {activeSections.map((section) => {
-                const enrolledCount = section.enrollment?.latest?.enrolledCount;
-                const maxEnroll = section.enrollment?.latest?.maxEnroll;
-                const waitlistedCount =
-                  section.enrollment?.latest?.waitlistedCount;
-                const firstMeeting = section.meetings[0];
-                const hasTimeData = Boolean(
-                  firstMeeting?.days?.some((day) => day) &&
-                    firstMeeting?.endTime &&
-                    hasValidStartTime(firstMeeting?.startTime)
-                );
-                const locationValue =
-                  typeof firstMeeting?.location === "string"
-                    ? firstMeeting.location.trim()
-                    : "";
-                const locationLink = getLocationLink(locationValue);
-
-                // Calculate enrollment percentage
-                const enrollmentPercentage =
-                  typeof enrolledCount === "number" &&
-                  typeof maxEnroll === "number" &&
-                  maxEnroll > 0
-                    ? Math.round((enrolledCount / maxEnroll) * 100)
-                    : null;
-
-                const enrollmentColor = getEnrollmentColor(
-                  enrolledCount,
-                  maxEnroll
-                );
-
-                return (
-                  <tr key={section.sectionId} className={styles.row}>
-                    <td className={`${styles.cell} ${styles.ccn}`}>
-                      {section.sectionId}
-                    </td>
-                    <td className={`${styles.cell} ${styles.number}`}>
-                      {section.number}
-                    </td>
-                    <td className={`${styles.cell} ${styles.time}`}>
-                      {hasTimeData ? (
-                        <Time
-                          days={firstMeeting?.days}
-                          startTime={firstMeeting?.startTime}
-                          endTime={firstMeeting?.endTime}
-                          className={styles.timeText}
-                        />
-                      ) : (
-                        NO_DATA_LABEL
-                      )}
-                    </td>
-                    <td className={`${styles.cell} ${styles.location}`}>
-                      {locationLink ? (
-                        <a
-                          href={locationLink.href}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className={styles.locationLink}
-                        >
-                          {locationLink.label}
-                        </a>
-                      ) : (
-                        locationValue || NO_DATA_LABEL
-                      )}
-                    </td>
-                    <td className={`${styles.cell} ${styles.waitlist}`}>
-                      {typeof waitlistedCount === "number"
-                        ? waitlistedCount
-                        : NO_DATA_LABEL}
-                    </td>
-                    <td
-                      className={`${styles.cell} ${styles.enrolled}`}
-                      style={
-                        enrollmentPercentage !== null
-                          ? { color: enrollmentColor }
-                          : undefined
-                      }
+        <div
+          className={styles.root}
+          style={
+            {
+              "--sections-tabs-sticky-height": `${tabsStickyHeight}px`,
+            } as CSSProperties
+          }
+        >
+          <div ref={tabsStickyRef} className={styles.tabsSticky}>
+            <PillSwitcher
+              items={tabItems}
+              value={activeTab}
+              onValueChange={setActiveTab}
+            />
+          </div>
+          <div className={styles.headerSticky}>
+            <div
+              className={styles.headerTrack}
+              style={{ transform: `translateX(-${tableScrollLeft}px)` }}
+            >
+              <table className={styles.table}>
+                <thead className={styles.header}>
+                  <tr>
+                    <th
+                      scope="col"
+                      className={`${styles.headerCell} ${styles.number}`}
                     >
-                      {enrollmentPercentage !== null
-                        ? `${enrollmentPercentage}% enrolled`
-                        : NO_DATA_LABEL}
-                    </td>
+                      #
+                    </th>
+                    <th
+                      scope="col"
+                      className={`${styles.headerCell} ${styles.time}`}
+                    >
+                      Time
+                    </th>
+                    <th
+                      scope="col"
+                      className={`${styles.headerCell} ${styles.location}`}
+                    >
+                      Location
+                    </th>
+                    <th
+                      scope="col"
+                      className={`${styles.headerCell} ${styles.instructor}`}
+                    >
+                      Instructor
+                    </th>
+                    <th
+                      scope="col"
+                      className={`${styles.headerCell} ${styles.enrollment}`}
+                    >
+                      Enrollment
+                    </th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                </thead>
+              </table>
+            </div>
+          </div>
+          <div
+            className={styles.tableScroll}
+            onScroll={(event) =>
+              setTableScrollLeft(event.currentTarget.scrollLeft)
+            }
+          >
+            <table className={styles.table}>
+              <tbody>
+                {activeSections.map((section) => {
+                  const enrolledCount =
+                    section.enrollment?.latest?.enrolledCount;
+                  const maxEnroll = section.enrollment?.latest?.maxEnroll;
+                  const waitlistedCount =
+                    section.enrollment?.latest?.waitlistedCount;
+                  const firstMeeting = section.meetings[0];
+                  const hasTimeData = Boolean(
+                    firstMeeting?.days?.some((day) => day) &&
+                      firstMeeting?.endTime &&
+                      hasValidStartTime(firstMeeting?.startTime)
+                  );
+                  const locationValue =
+                    typeof firstMeeting?.location === "string"
+                      ? firstMeeting.location.trim()
+                      : "";
+                  const locationLink = getLocationLink(locationValue);
+                  const instructorNames = section.meetings
+                    .flatMap((meeting) => meeting?.instructors ?? [])
+                    .map((instructor) =>
+                      [instructor?.givenName, instructor?.familyName]
+                        .filter(Boolean)
+                        .join(" ")
+                        .trim()
+                    )
+                    .filter((name) => name.length > 0);
+                  const uniqueInstructorNames = [...new Set(instructorNames)];
+                  const instructorLabel = uniqueInstructorNames.join(", ");
+
+                  // Calculate enrollment percentage
+                  const enrollmentPercentage =
+                    typeof enrolledCount === "number" &&
+                    typeof maxEnroll === "number" &&
+                    maxEnroll > 0
+                      ? Math.round((enrolledCount / maxEnroll) * 100)
+                      : null;
+
+                  const enrollmentColor = getEnrollmentColor(
+                    enrolledCount,
+                    maxEnroll
+                  );
+
+                  return (
+                    <tr key={section.sectionId} className={styles.row}>
+                      <td className={`${styles.cell} ${styles.number}`}>
+                        {section.number}
+                      </td>
+                      <td className={`${styles.cell} ${styles.time}`}>
+                        {hasTimeData ? (
+                          <Time
+                            days={firstMeeting?.days}
+                            startTime={firstMeeting?.startTime}
+                            endTime={firstMeeting?.endTime}
+                            className={styles.timeText}
+                          />
+                        ) : (
+                          NO_DATA_LABEL
+                        )}
+                      </td>
+                      <td className={`${styles.cell} ${styles.location}`}>
+                        {locationLink ? (
+                          <LocationHoverCard
+                            link={locationLink.href}
+                            coordinates={locationLink.coordinates}
+                          >
+                            <a
+                              href={locationLink.href}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                              className={styles.locationLink}
+                            >
+                              {locationLink.label}
+                            </a>
+                          </LocationHoverCard>
+                        ) : (
+                          locationValue || NO_DATA_LABEL
+                        )}
+                      </td>
+                      <td className={`${styles.cell} ${styles.instructor}`}>
+                        {instructorLabel || NO_DATA_LABEL}
+                      </td>
+                      <td
+                        className={`${styles.cell} ${styles.enrollment}`}
+                        style={
+                          enrollmentPercentage !== null
+                            ? { color: enrollmentColor }
+                            : undefined
+                        }
+                      >
+                        {enrollmentPercentage !== null
+                          ? `${enrollmentPercentage}%${
+                              typeof waitlistedCount === "number" &&
+                              waitlistedCount > 0
+                                ? ` (${waitlistedCount} wl.)`
+                                : ""
+                            }`
+                          : NO_DATA_LABEL}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </Container>
     </Box>

@@ -1,8 +1,6 @@
 import { useQuery } from "@apollo/client";
 
-import {
-  CLICK_EVENTS_TIME_SERIES,
-} from "../../../lib/api/click-tracking";
+import { CLICK_EVENTS_TIME_SERIES } from "../../../lib/api/click-tracking";
 
 export interface ClickEventsTimeSeriesPoint {
   date: string;

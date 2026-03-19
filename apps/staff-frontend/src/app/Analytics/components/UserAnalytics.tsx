@@ -616,8 +616,18 @@ export function UserActivityRecencyBlock() {
 
 function formatActivityDisplayDate(dateStr: string): string {
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   const [, month, day] = dateStr.split("-");
   return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
@@ -651,7 +661,10 @@ export function DailyActivityBlock() {
       displayDate: formatActivityDisplayDate(d.date),
       trend: Math.round(trend[i] * 10) / 10,
     }));
-    const totalActivity = chartData.reduce((sum, d) => sum + d.totalActivity, 0);
+    const totalActivity = chartData.reduce(
+      (sum, d) => sum + d.totalActivity,
+      0
+    );
     return { chartData, totalActivity };
   }, [data]);
 

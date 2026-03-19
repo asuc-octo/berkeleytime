@@ -1,3 +1,32 @@
+.scrollable {
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
+
+.menuElevation {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+
+  :global(body[data-theme="dark"]) &,
+  :global([data-theme="dark"]) & {
+    box-shadow:
+      0 12px 24px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+
 .trigger {
   border: solid 1px var(--border-color);
   border-radius: 4px;
@@ -42,6 +71,8 @@
 }
 
 .content {
+  @extend .scrollable;
+  @extend .menuElevation;
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
   border-radius: 4px;
@@ -51,6 +82,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  [data-highlighted] > * {
+    background-color: var(--button-hover-color);
+  }
 }
 
 .sectionLabel {
@@ -87,6 +122,7 @@
 
 /* Searchable Select Styles */
 .searchableContent {
+  @extend .menuElevation;
   background-color: var(--foreground-color);
   border: solid 1px var(--border-color);
   border-radius: 4px;
@@ -125,6 +161,7 @@
 }
 
 .commandList {
+  @extend .scrollable;
   max-height: 300px;
   overflow-y: auto;
   min-height: 0;
@@ -136,6 +173,10 @@
 
     &:last-child {
       margin-bottom: 0;
+    }
+
+    &[data-selected="true"] > * {
+      background-color: var(--button-hover-color);
     }
   }
 }

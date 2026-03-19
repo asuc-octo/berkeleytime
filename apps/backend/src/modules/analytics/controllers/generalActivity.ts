@@ -28,14 +28,26 @@ export async function getGeneralActivityAnalytics(
   await requireStaffAuth(context);
 
   const now = new Date();
-  const rangeEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const rangeEnd = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
   const rangeStart = new Date(rangeEnd);
   rangeStart.setDate(rangeStart.getDate() - days + 1);
   rangeStart.setHours(0, 0, 0, 0);
 
   // Build list of all calendar days in range (YYYY-MM-DD)
   const dayKeys: string[] = [];
-  for (let d = new Date(rangeStart); d <= rangeEnd; d.setDate(d.getDate() + 1)) {
+  for (
+    let d = new Date(rangeStart);
+    d <= rangeEnd;
+    d.setDate(d.getDate() + 1)
+  ) {
     dayKeys.push(
       `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
     );
@@ -46,7 +58,10 @@ export async function getGeneralActivityAnalytics(
 
   // Schedules created per day
   const scheduleCounts = new Map(zeroMap);
-  const scheduleAgg = await ScheduleModel.aggregate<{ _id: string; count: number }>([
+  const scheduleAgg = await ScheduleModel.aggregate<{
+    _id: string;
+    count: number;
+  }>([
     { $match: { createdAt: { $gte: rangeStart, $lte: rangeEnd } } },
     {
       $group: {
@@ -59,32 +74,34 @@ export async function getGeneralActivityAnalytics(
 
   // Unique rating submissions per day (one per user+class+term)
   const ratingCounts = new Map(zeroMap);
-  const ratingAgg = await RatingModel.aggregate<{ _id: string; count: number }>([
-    { $match: { createdAt: { $gte: rangeStart, $lte: rangeEnd } } },
-    {
-      $group: {
-        _id: {
-          date: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } },
-          submissionKey: {
-            $concat: [
-              "$createdBy",
-              "|",
-              "$subject",
-              "|",
-              "$courseNumber",
-              "|",
-              "$semester",
-              "|",
-              { $toString: "$year" },
-              "|",
-              "$classNumber",
-            ],
+  const ratingAgg = await RatingModel.aggregate<{ _id: string; count: number }>(
+    [
+      { $match: { createdAt: { $gte: rangeStart, $lte: rangeEnd } } },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } },
+            submissionKey: {
+              $concat: [
+                "$createdBy",
+                "|",
+                "$subject",
+                "|",
+                "$courseNumber",
+                "|",
+                "$semester",
+                "|",
+                { $toString: "$year" },
+                "|",
+                "$classNumber",
+              ],
+            },
           },
         },
       },
-    },
-    { $group: { _id: "$_id.date", count: { $sum: 1 } } },
-  ]);
+      { $group: { _id: "$_id.date", count: { $sum: 1 } } },
+    ]
+  );
   ratingAgg.forEach((row) => ratingCounts.set(row._id, row.count));
 
   // GradTraks (plans) created per day
@@ -102,7 +119,10 @@ export async function getGeneralActivityAnalytics(
 
   // Bookmarks (class additions) per day
   const bookmarkCounts = new Map(zeroMap);
-  const bookmarkAgg = await CollectionModel.aggregate<{ _id: string; count: number }>([
+  const bookmarkAgg = await CollectionModel.aggregate<{
+    _id: string;
+    count: number;
+  }>([
     { $unwind: "$classes" },
     { $match: { "classes.addedAt": { $gte: rangeStart, $lte: rangeEnd } } },
     {

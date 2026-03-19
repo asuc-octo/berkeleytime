@@ -23,17 +23,6 @@
           font-weight: var(--font-normal);
         }
 
-        .info {
-          color: var(--label-color);
-          font-size: var(--text-14);
-          display: flex;
-          align-items: center;
-          cursor: pointer;
-          padding: 8px;
-          margin: -8px;
-          border-radius: 4px;
-          transition: all 0.2s ease;
-        }
       }
 
       .metricAverage {

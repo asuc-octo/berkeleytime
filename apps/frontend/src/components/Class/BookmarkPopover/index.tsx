@@ -1,11 +1,17 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { Bookmark, BookmarkSolid, PinSolid, Plus } from "iconoir-react";
+import { Bookmark, BookmarkSolid, Folder, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { Button, Color, IconButton } from "@repo/theme";
+import { Button, Color, IconButton, Tooltip } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -16,7 +22,7 @@ import {
 } from "@/hooks/api/collections";
 import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
-import { getColorStyle } from "@/lib/colors";
+import { getColorCSSVar } from "@/lib/colors";
 import { CollectionColor, Semester } from "@/lib/generated/graphql";
 import { ALL_SAVED_COLLECTION_NAME, Collection } from "@/types/collection";
 
@@ -298,6 +304,7 @@ export default function BookmarkPopover({
 
   const isAnyClassSaved = savedCollectionIds.size > 0;
   const allSavedCollection = collections.find((c) => c.isSystem);
+  const bookmarkButtonLabel = "Bookmark class";
 
   const handleQuickAdd = useCallback(() => {
     if (!classInfo || !allSavedCollection) return;
@@ -351,27 +358,33 @@ export default function BookmarkPopover({
         setIsPopoverOpen(open);
       }}
     >
-      <Popover.Trigger asChild>
-        <IconButton
-          className={classNames(styles.bookmark, {
-            [styles.active]: isAnyClassSaved,
-          })}
-          disabled={disabled || !classInfo || collectionsLoading}
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-            if (!user) {
-              e.preventDefault();
-              signIn();
-              return;
-            }
-            if (!isAnyClassSaved && classInfo) {
-              e.preventDefault();
-              handleQuickAdd();
-            }
-          }}
-        >
-          {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
-        </IconButton>
-      </Popover.Trigger>
+      <Tooltip
+        title={bookmarkButtonLabel}
+        trigger={
+          <Popover.Trigger asChild>
+            <IconButton
+              className={classNames(styles.bookmark, {
+                [styles.active]: isAnyClassSaved,
+              })}
+              aria-label={bookmarkButtonLabel}
+              disabled={disabled || !classInfo || collectionsLoading}
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                if (!user) {
+                  e.preventDefault();
+                  signIn();
+                  return;
+                }
+                if (!isAnyClassSaved && classInfo) {
+                  e.preventDefault();
+                  handleQuickAdd();
+                }
+              }}
+            >
+              {isAnyClassSaved ? <BookmarkSolid /> : <Bookmark />}
+            </IconButton>
+          </Popover.Trigger>
+        }
+      />
       <Popover.Portal>
         <Popover.Content
           side="bottom"
@@ -383,9 +396,6 @@ export default function BookmarkPopover({
             className={styles.collectionList}
             onClick={() => isCreateFormOpen && resetForm()}
           >
-            <div className={styles.bookmarkNote}>
-              To view all bookmarks, click on profile -&gt; bookmarks
-            </div>
             <div className={styles.collectionRows}>
               <LayoutGroup>
                 {displayCollections.map((collection) => {
@@ -393,6 +403,12 @@ export default function BookmarkPopover({
                   const isNew = !initialCollectionIds.current.has(
                     collection.id
                   );
+                  const collectionFolderColor = getColorCSSVar(
+                    collection.color
+                  );
+                  const collectionFolderStyle = collectionFolderColor
+                    ? ({ color: collectionFolderColor } as CSSProperties)
+                    : undefined;
                   return (
                     <motion.div
                       key={collection.id}
@@ -407,12 +423,16 @@ export default function BookmarkPopover({
                       className={styles.collectionRow}
                     >
                       <span className={styles.collectionName}>
-                        {collection.color && (
-                          <span
-                            className={styles.colorIndicator}
-                            style={getColorStyle(collection.color)}
-                          />
-                        )}
+                        <Folder
+                          width={16}
+                          height={16}
+                          className={classNames(styles.collectionFolderIcon, {
+                            [styles.collectionFolderIconColored]: Boolean(
+                              collectionFolderColor
+                            ),
+                          })}
+                          style={collectionFolderStyle}
+                        />
                         <span>
                           {collection.name}{" "}
                           <span className={styles.collectionCount}>
@@ -436,11 +456,7 @@ export default function BookmarkPopover({
                           handleToggleCollection(collection.id, isSaved)
                         }
                       >
-                        {isSaved ? (
-                          <BookmarkSolid width={16} height={16} />
-                        ) : (
-                          <Bookmark width={16} height={16} />
-                        )}
+                        <Plus width={16} height={16} />
                       </IconButton>
                     </motion.div>
                   );

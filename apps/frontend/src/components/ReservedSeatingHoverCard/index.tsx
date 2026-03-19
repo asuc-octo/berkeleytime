@@ -1,4 +1,4 @@
-import { InfoCircle } from "iconoir-react";
+import { SleeperChair } from "iconoir-react";
 import { HoverCard } from "radix-ui";
 
 import { Badge, Color } from "@repo/theme";
@@ -39,13 +39,10 @@ export function ReservedSeatingHoverCard({
   return (
     <HoverCard.Root openDelay={200} closeDelay={100}>
       <HoverCard.Trigger asChild>
-        <div className={styles.trigger}>
-          <Badge
-            label="Reserved Seating"
-            color={Color.Orange}
-            icon={<InfoCircle />}
-          />
-        </div>
+        <button type="button" className={styles.trigger}>
+          <SleeperChair width={14} height={14} />
+          <span>Reserved Seating</span>
+        </button>
       </HoverCard.Trigger>
       <HoverCard.Portal>
         <HoverCard.Content
@@ -58,22 +55,17 @@ export function ReservedSeatingHoverCard({
           <div className={styles.content}>
             {validReservations.map((reservation, index) => {
               const isFull = reservation.enrolledCount >= reservation.maxEnroll;
-              const pillClassName = isFull
-                ? styles.pillFull
-                : styles.pillAvailable;
 
               return (
                 <div key={index} className={styles.group}>
                   <span className={styles.description}>
                     {reservation.requirementGroup.description}
                   </span>
-                  <div className={styles.pillContainer}>
-                    <div className={`${styles.pill} ${pillClassName}`}>
-                      <span className={styles.pillText}>
-                        {reservation.enrolledCount}/{reservation.maxEnroll}{" "}
-                        enrolled
-                      </span>
-                    </div>
+                  <div className={styles.badgeContainer}>
+                    <Badge
+                      label={`${reservation.enrolledCount}/${reservation.maxEnroll} enrolled`}
+                      color={isFull ? Color.Red : Color.Gray}
+                    />
                   </div>
                 </div>
               );

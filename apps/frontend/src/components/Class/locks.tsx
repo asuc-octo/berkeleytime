@@ -13,6 +13,9 @@ import {
 } from "./locks.helpers";
 
 interface RatingsTabClasses {
+  menuItem: string;
+  tabContent: string;
+  lockIcon: string;
   badge: string;
   dot: string;
   tooltipArrow: string;
@@ -73,10 +76,16 @@ function RatingsTabLinkBase({
   };
 
   const renderMenuItem = (isActive = false): ReactNode => (
-    <MenuItem active={active ?? isActive}>
-      {locked && <Lock style={{ marginRight: 4 }} />}
-      Ratings
-      {badge}
+    <MenuItem
+      active={active ?? isActive}
+      className={classes.menuItem}
+      data-class-tab="ratings"
+    >
+      <span className={classes.tabContent}>
+        {locked && <Lock className={classes.lockIcon} />}
+        <span>Ratings</span>
+        {badge}
+      </span>
     </MenuItem>
   );
 
@@ -92,12 +101,16 @@ function RatingsTabLinkBase({
   ) : (
     <MenuItem
       active={active ?? false}
+      className={classes.menuItem}
+      data-class-tab="ratings"
       aria-disabled={locked || undefined}
       onClick={(event: MouseEvent<HTMLElement>) => handleLockedClick(event)}
     >
-      {locked && <Lock style={{ marginRight: 4 }} />}
-      Ratings
-      {badge}
+      <span className={classes.tabContent}>
+        {locked && <Lock className={classes.lockIcon} />}
+        <span>Ratings</span>
+        {badge}
+      </span>
     </MenuItem>
   );
 

@@ -263,7 +263,10 @@ export const getClickEventsTimeSeries = async (
     }
   }
 
-  const results = await ClickEventModel.aggregate<{ _id: string; count: number }>([
+  const results = await ClickEventModel.aggregate<{
+    _id: string;
+    count: number;
+  }>([
     { $match: match },
     {
       $group: {

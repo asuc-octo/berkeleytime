@@ -44,13 +44,26 @@ function getTimeRangeDays(timeRange: TimeRange): number {
 function formatDisplayDate(dateKey: string): string {
   const [, m, d] = dateKey.split("-").map(Number);
   const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   return `${monthNames[m - 1]} ${d}`;
 }
 
-function encodeTargetValue(targetType: ClickTargetType, targetId: string): string {
+function encodeTargetValue(
+  targetType: ClickTargetType,
+  targetId: string
+): string {
   return `${targetType}:${targetId}`;
 }
 
@@ -93,7 +106,8 @@ export function OutreachPanelBlock() {
       for (const r of redirects) {
         const value = encodeTargetValue("redirect", r.id);
         const label = r.fromPath;
-        const meta = r.toPath.length > 50 ? `${r.toPath.slice(0, 50)}…` : r.toPath;
+        const meta =
+          r.toPath.length > 50 ? `${r.toPath.slice(0, 50)}…` : r.toPath;
         flat.push({ value, label, meta, typeLabel: "Redirect" });
         options.push({ value, label, meta });
       }
@@ -164,7 +178,11 @@ export function OutreachPanelBlock() {
 
   const chartData = useMemo(() => {
     const countByDate = new Map<string, number>();
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
       const key = d.toISOString().slice(0, 10);
       countByDate.set(key, 0);
     }
@@ -194,7 +212,7 @@ export function OutreachPanelBlock() {
     <Select
       value={selectedValue}
       onChange={(val) =>
-        setSelectedValue(Array.isArray(val) ? val[0] ?? "" : val ?? "")
+        setSelectedValue(Array.isArray(val) ? (val[0] ?? "") : (val ?? ""))
       }
       options={[
         { value: "", label: "Select banner / link / ad…" },

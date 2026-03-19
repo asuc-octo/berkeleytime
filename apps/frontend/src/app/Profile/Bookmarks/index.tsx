@@ -16,6 +16,7 @@ import {
 } from "@/hooks/api/collections";
 import { CollectionColor } from "@/lib/generated/graphql";
 import { Collection, CollectionPreviewClass } from "@/types/collection";
+import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "../Profile.module.scss";
@@ -73,16 +74,7 @@ export default function Bookmarks() {
           previewClasses,
         };
       })
-      .sort((a, b) => {
-        if (a.isSystem && !b.isSystem) return -1;
-        if (!a.isSystem && b.isSystem) return 1;
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        if (a.isPinned && b.isPinned) {
-          return (b.pinnedAt ?? 0) - (a.pinnedAt ?? 0);
-        }
-        return b.lastAdd - a.lastAdd;
-      });
+      .sort(compareCollectionsByBookmarksOrder);
   }, [apiCollections]);
 
   const [collectionToDelete, setCollectionToDelete] =
