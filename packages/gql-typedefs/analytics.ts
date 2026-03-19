@@ -29,6 +29,8 @@ export const analyticsTypeDef = gql`
   type ActivityScoreDistributionPoint {
     "Score range label, e.g. '0.0–0.1'"
     bucket: String!
+    "Lower bound of this bucket (e.g. 0.5 for the 0.5–0.6 bucket)"
+    lowerBound: Float!
     "Number of users in this bucket"
     count: Int!
     "Percentage of total users in this bucket"
@@ -102,11 +104,5 @@ export const analyticsTypeDef = gql`
       formula: String
     ): [ActivityScoreDistributionPoint!]! @auth
 
-    """
-    Staff-only: Active users count grouped by time period.
-    granularity must be "week" or "month".
-    """
-    activeUsersAnalyticsData(granularity: String!): [ActiveUsersDataPoint!]!
-      @auth
   }
 `;

@@ -8,7 +8,6 @@ import {
   FORMULA_MAP,
   FormulaName,
 } from "../../user/jobs/activity-score-formulas";
-import { ACTIVITY_THRESHOLD } from "../../user/jobs/update-activity-scores";
 import { requireStaffAuth } from "../helpers/staff-auth";
 
 export const getUserCreationAnalyticsData = async (context: RequestContext) => {
@@ -81,36 +80,9 @@ export const getActivityScoreDistribution = async (
     const count = counts[i];
     return {
       bucket: `${lowerBound.toFixed(1)}–${upperBound.toFixed(1)}`,
+      lowerBound,
       count,
       percent: totalUsers > 0 ? (count / totalUsers) * 100 : 0,
     };
   });
-};
-
-export const getActiveUsersAnalyticsData = async (
-  context: RequestContext,
-  granularity: "week" | "month"
-) => {
-  await requireStaffAuth(context);
-
-  const buckets = await UserModel.aggregate<{
-    _id: Date;
-    count: number;
-  }>([
-    { $match: { activityScore: { $gte: ACTIVITY_THRESHOLD } } },
-    {
-      $group: {
-        _id: {
-          $dateTrunc: { date: "$lastSeenAt", unit: granularity },
-        },
-        count: { $sum: 1 },
-      },
-    },
-    { $sort: { _id: 1 } },
-  ]);
-
-  return buckets.map((bucket) => ({
-    periodStart: bucket._id.toISOString(),
-    count: bucket.count,
-  }));
 };
