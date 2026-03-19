@@ -11,3 +11,11 @@ Software infrastructure refers to the services and tools that create an underlyi
 
 > [!IMPORTANT]
 > We aim to use a **small** set of **existing** infrastructure solutions with large communities. This philosophy reduces the [cognitive load](https://thevaluable.dev/cognitive-load-theory-software-developer/) on each developer and simplifies the onboarding process, both of which are valuable for creating long-lasting software in a team where developers are typically cycled out after only ~4 years.
+
+## Backups
+
+Mongo backups are served from `https://backups.berkeleytime.com`. Download steps live in [Runbooks](./runbooks.md#fetch-mongo-backups).
+
+## Secrets
+
+Secret management (including `sealed-secrets` and the `json-to-secret.sh` helper script) is documented in [Runbooks](./runbooks.md#secrets).

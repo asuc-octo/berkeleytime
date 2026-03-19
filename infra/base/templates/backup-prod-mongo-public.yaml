@@ -39,13 +39,25 @@ spec:
                   kubectl exec --namespace=bt \
                     "$prod_pod" -- mongodump \
                     --db bt \
-                    --collection courses \
-                    --collection classes \
-                    --collection sections \
-                    --collection terms \
-                    --collection gradeDistributions \
-                    --collection enrollmentHistories \
-                    --collection enrollmenttimeframes \
+                    --excludeCollection users \
+                    --excludeCollection plans \
+                    --excludeCollection planterms \
+                    --excludeCollection labels \
+                    --excludeCollection majorreqs \
+                    --excludeCollection ratings \
+                    --excludeCollection aggregatedmetrics \
+                    --excludeCollection schedules \
+                    --excludeCollection collections \
+                    --excludeCollection pods \
+                    --excludeCollection banners \
+                    --excludeCollection bannerviewcounts \
+                    --excludeCollection classviewcounts \
+                    --excludeCollection curatedclasses \
+                    --excludeCollection clickevents \
+                    --excludeCollection routeredirects \
+                    --excludeCollection semester-roles \
+                    --excludeCollection staff-members \
+                    --excludeCollection targetedmessages \
                     --archive=/tmp/prod_public_backup.gz \
                     --gzip
 

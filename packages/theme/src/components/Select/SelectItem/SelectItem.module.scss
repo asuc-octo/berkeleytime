@@ -54,6 +54,10 @@
   }
 }
 
+.label {
+  white-space: pre-line;
+}
+
 .selected {
   font-weight: var(--font-medium);
 }

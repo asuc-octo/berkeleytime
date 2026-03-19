@@ -29,12 +29,6 @@
       place-items: center;
     }
 
-    .label {
-      font-size: var(--text-12);
-      color: var(--label-color);
-      line-height: 1;
-    }
-
     .input {
       color: var(--heading-color);
       font-size: var(--text-14);
@@ -65,19 +59,4 @@
       background-color: color-mix(in srgb, var(--blue-500) 10%, transparent);
     }
   }
-
-  @media (width > 992px) {
-    &:not(.responsive) .filterButton {
-      display: none;
-    }
-  }
-
-  @media (width > 1400px) {
-    .filterButton {
-      display: none;
-    }
-  }
-}
-
-.responsive {
 }

@@ -25,6 +25,7 @@ interface RecentClass {
   semester: Semester;
   courseNumber: string;
   number: string;
+  sessionId?: string;
 }
 
 interface RecentSchedule {

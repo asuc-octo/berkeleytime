@@ -1145,92 +1145,97 @@ export default function Dashboard() {
           />
         )}
         <div className={styles.semesterBlocks}>
-          <div className={styles.semesterLayout} data-layout={settings.layout}>
-            {[...planTerms]
-              .filter((term) => {
-                if (
-                  !(
-                    filterOptions.completed ||
-                    filterOptions.inProgress ||
-                    filterOptions.incomplete
-                  )
-                )
-                  return true;
-
-                if (filterOptions.completed && term.status === "Complete")
-                  return true;
-                if (filterOptions.inProgress && term.status === "InProgress")
-                  return true;
-                if (filterOptions.incomplete && term.status === "Incomplete")
-                  return true;
-
-                return false;
-              })
-              .filter((term) => {
-                if (
-                  !Object.keys(filterOptions).some(
-                    (key) => key.startsWith("label_") && filterOptions[key]
-                  )
-                ) {
-                  return true;
-                }
-                return filteredAllSemesters[term._id]
-                  ? filteredAllSemesters[term._id].length > 0
-                  : false;
-              })
-              .sort((a, b) => {
-                // Pinned terms first
-                if (a.pinned && !b.pinned) return -1;
-                if (!a.pinned && b.pinned) return 1;
-
-                // misc always comes first
-                if (a.year == -1 || b.year == -1) {
-                  return a.year - b.year;
-                }
-                if (sortSemesterOption === "Oldest") {
-                  if (a.year != b.year) return a.year - b.year;
-                  return getTermOrder(a.term) - getTermOrder(b.term);
-                } else {
-                  if (a.year != b.year) return b.year - a.year;
-                  return getTermOrder(b.term) - getTermOrder(a.term);
-                }
-              })
-              .map((term) => (
-                <SemesterBlock
-                  key={term._id}
-                  planTerm={term}
-                  onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                    updateTotalUnits(
-                      term.name ? term.name : "",
-                      newTotal,
-                      pnpUnits,
-                      transferUnits
+          <div className={styles.semesterBlocksInner}>
+            <div
+              className={styles.semesterLayout}
+              data-layout={settings.layout}
+            >
+              {[...planTerms]
+                .filter((term) => {
+                  if (
+                    !(
+                      filterOptions.completed ||
+                      filterOptions.inProgress ||
+                      filterOptions.incomplete
                     )
+                  )
+                    return true;
+
+                  if (filterOptions.completed && term.status === "Complete")
+                    return true;
+                  if (filterOptions.inProgress && term.status === "InProgress")
+                    return true;
+                  if (filterOptions.incomplete && term.status === "Incomplete")
+                    return true;
+
+                  return false;
+                })
+                .filter((term) => {
+                  if (
+                    !Object.keys(filterOptions).some(
+                      (key) => key.startsWith("label_") && filterOptions[key]
+                    )
+                  ) {
+                    return true;
                   }
-                  filteredSemesters={filteredAllSemesters}
-                  allSemesters={allSemesters}
-                  updateAllSemesters={updateAllSemesters}
-                  settings={settings}
-                  labels={labels}
-                  setShowLabelMenu={setShowLabelMenu}
-                  catalogCourses={catalogCourses}
-                  index={index}
-                  handleUpdateTermName={(name) =>
-                    handleUpdateTermName(term._id, name)
+                  return filteredAllSemesters[term._id]
+                    ? filteredAllSemesters[term._id].length > 0
+                    : false;
+                })
+                .sort((a, b) => {
+                  // Pinned terms first
+                  if (a.pinned && !b.pinned) return -1;
+                  if (!a.pinned && b.pinned) return 1;
+
+                  // misc always comes first
+                  if (a.year == -1 || b.year == -1) {
+                    return a.year - b.year;
                   }
-                  handleTogglePin={() => handleTogglePin(term._id)}
-                  handleSetStatus={(status: Status) =>
-                    handleSetStatus(term._id, status)
+                  if (sortSemesterOption === "Oldest") {
+                    if (a.year != b.year) return a.year - b.year;
+                    return getTermOrder(a.term) - getTermOrder(b.term);
+                  } else {
+                    if (a.year != b.year) return b.year - a.year;
+                    return getTermOrder(b.term) - getTermOrder(a.term);
                   }
-                  sortCourseOption={sortCourseOption}
-                  handleRemoveTerm={() => {
-                    const updatedSemesters = { ...allSemesters };
-                    delete updatedSemesters[term._id];
-                    updateAllSemesters(updatedSemesters);
-                  }}
-                  filtersActive={activeFiltersCount > 0}
-                />
-              ))}
+                })
+                .map((term) => (
+                  <SemesterBlock
+                    key={term._id}
+                    planTerm={term}
+                    onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
+                      updateTotalUnits(
+                        term.name ? term.name : "",
+                        newTotal,
+                        pnpUnits,
+                        transferUnits
+                      )
+                    }
+                    filteredSemesters={filteredAllSemesters}
+                    allSemesters={allSemesters}
+                    updateAllSemesters={updateAllSemesters}
+                    settings={settings}
+                    labels={labels}
+                    setShowLabelMenu={setShowLabelMenu}
+                    catalogCourses={catalogCourses}
+                    index={index}
+                    handleUpdateTermName={(name) =>
+                      handleUpdateTermName(term._id, name)
+                    }
+                    handleTogglePin={() => handleTogglePin(term._id)}
+                    handleSetStatus={(status: Status) =>
+                      handleSetStatus(term._id, status)
+                    }
+                    sortCourseOption={sortCourseOption}
+                    handleRemoveTerm={() => {
+                      const updatedSemesters = { ...allSemesters };
+                      delete updatedSemesters[term._id];
+                      updateAllSemesters(updatedSemesters);
+                    }}
+                    filtersActive={activeFiltersCount > 0}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       </div>
