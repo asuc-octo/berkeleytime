@@ -229,24 +229,24 @@ export default function Overview() {
                   {finalExamLabel && <span>{finalExamLabel}</span>}
                   {hasScheduledExams &&
                     finalExamsWithSchedule.map((exam, i) => {
-                        const dateStr = formatExamDate(exam.date);
-                        const timeStr = formatExamTime(
-                          exam.startTime,
-                          exam.endTime
-                        );
-                        const parts = [
-                          dateStr,
-                          timeStr,
-                          exam.location?.trim(),
-                        ].filter(Boolean);
-                        const line = parts.join(" · ");
-                        return (
-                          <span key={i}>
-                            {i > 0 || finalExamLabel ? <br /> : null}
-                            {line}
-                          </span>
-                        );
-                      })}
+                      const dateStr = formatExamDate(exam.date);
+                      const timeStr = formatExamTime(
+                        exam.startTime,
+                        exam.endTime
+                      );
+                      const parts = [
+                        dateStr,
+                        timeStr,
+                        exam.location?.trim(),
+                      ].filter(Boolean);
+                      const line = parts.join(" · ");
+                      return (
+                        <span key={i}>
+                          {i > 0 || finalExamLabel ? <br /> : null}
+                          {line}
+                        </span>
+                      );
+                    })}
                 </p>
               </Flex>
             );
