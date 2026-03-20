@@ -8,7 +8,9 @@ import {
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
+import { requireStaffAuth } from "../analytics/helpers/staff-auth";
 import { formatUser } from "./formatter";
+import { updateActivityScores } from "./jobs/update-activity-scores";
 
 export const getUser = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");
@@ -35,6 +37,11 @@ export const updateUser = async (
   if (!updatedUser) throw new Error("Invalid");
 
   return formatUser(updatedUser);
+};
+
+export const recalculateActivityScores = async (context: RequestContext) => {
+  await requireStaffAuth(context);
+  return updateActivityScores();
 };
 
 export const deleteAccount = async (context: RequestContext) => {
