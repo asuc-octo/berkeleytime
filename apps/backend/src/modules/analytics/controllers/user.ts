@@ -49,7 +49,7 @@ export const getActivityScoreDistribution = async (
 ) => {
   await requireStaffAuth(context);
 
-  if (!(formulaName in FORMULA_MAP)) {
+  if (!Object.hasOwn(FORMULA_MAP, formulaName)) {
     throw new GraphQLError(`Unknown formula: "${formulaName}"`, {
       extensions: { code: "BAD_USER_INPUT" },
     });
