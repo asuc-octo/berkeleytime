@@ -69,19 +69,21 @@ export default function Calendar({
         });
       }
 
-      const filteredExams = exams.filter(function (exam, index) {
+      const examList = exams ?? [];
+      const filteredExams = examList.filter(function (exam, index) {
         return (
-          exams?.findIndex(
+          examList.findIndex(
             ({ date, startTime, endTime }) =>
               date === exam.date &&
               exam.startTime === startTime &&
               exam.endTime === endTime
-          ) == index
+          ) === index
         );
       });
 
       for (const exam of filteredExams) {
         const { date, startTime, endTime } = exam;
+        if (!date || !startTime || !endTime) continue;
 
         events.push({
           date,
@@ -92,6 +94,7 @@ export default function Calendar({
           endTime,
           startDate,
           endDate,
+          color,
         });
       }
 
@@ -126,13 +129,21 @@ export default function Calendar({
         const day = {
           date: moment(current),
           events: events
-            .filter(({ startDate, endDate, date, days }) =>
-              date
-                ? moment(parseInt(date)).isSame(current, "day")
-                : current.isSameOrAfter(startDate) &&
-                  current.isSameOrBefore(endDate) &&
-                  days?.[current.day()]
-            )
+            .filter(({ startDate, endDate, date, days }) => {
+              if (date) {
+                const examMoment = /^\d{8}$/.test(date)
+                  ? moment(date, "YYYYMMDD")
+                  : moment(date);
+                return (
+                  examMoment.isValid() && examMoment.isSame(current, "day")
+                );
+              }
+              return (
+                current.isSameOrAfter(startDate) &&
+                current.isSameOrBefore(endDate) &&
+                days?.[current.day()]
+              );
+            })
             .sort((a, b) => a.startTime.localeCompare(b.startTime)),
         };
 
