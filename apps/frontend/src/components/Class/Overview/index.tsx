@@ -217,9 +217,10 @@ export default function Overview() {
             const finalExamCode = _class.finalExam;
             const finalExamLabel =
               finalExamCode && FINAL_EXAM_LABELS[finalExamCode];
-            const hasScheduledExams =
-              exams.length > 0 &&
-              exams.some((e) => e.date || e.startTime || e.endTime);
+            const finalExamsWithSchedule = exams
+              .filter((e) => e.type === "FIN")
+              .filter((e) => e.date || e.startTime || e.endTime);
+            const hasScheduledExams = finalExamsWithSchedule.length > 0;
             if (!finalExamLabel && !hasScheduledExams) return null;
             return (
               <Flex direction="column" gap="2">
@@ -227,9 +228,7 @@ export default function Overview() {
                 <p className={styles.description}>
                   {finalExamLabel && <span>{finalExamLabel}</span>}
                   {hasScheduledExams &&
-                    exams
-                      .filter((e) => e.date || e.startTime || e.endTime)
-                      .map((exam, i) => {
+                    finalExamsWithSchedule.map((exam, i) => {
                         const dateStr = formatExamDate(exam.date);
                         const timeStr = formatExamTime(
                           exam.startTime,
