@@ -73,7 +73,7 @@ export default function Catalog({
               semester={semester}
               year={year}
               onSelect={handleSelect}
-              responsive={false}
+              forceMode="semi-compact"
             />
           </div>
         </Dialog.Drawer>

@@ -92,6 +92,7 @@ function SemesterBlock({
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const draggingIndexRef = useRef<number | null>(null);
   const [open, setOpen] = useState(true);
 
   const [setCourses] = useSetSelectedCourses();
@@ -149,6 +150,17 @@ function SemesterBlock({
       setSelectedCourses(filteredSemesters[semesterId]);
     }
   }, [filteredSemesters, semesterId]);
+
+  // if a class was dragged out of this block and unmounted before dragend fired,
+  // draggingIndexRef won't be reset — clear it when selectedClasses shrinks
+  useEffect(() => {
+    if (
+      draggingIndexRef.current !== null &&
+      draggingIndexRef.current >= selectedClasses.length
+    ) {
+      draggingIndexRef.current = null;
+    }
+  }, [selectedClasses.length]);
 
   const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
@@ -340,14 +352,18 @@ function SemesterBlock({
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    // only reset if leaving the entire container (not just moving between children)
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
     if (
-      containerRef.current &&
-      !containerRef.current.contains(e.relatedTarget as Node)
+      e.clientX > rect.left &&
+      e.clientX < rect.right &&
+      e.clientY > rect.top &&
+      e.clientY < rect.bottom
     ) {
-      setIsDropTarget(false);
-      setPlaceholderIndex(null);
+      return; // cursor still inside, ignore bubbled leave from a child
     }
+    setIsDropTarget(false);
+    setPlaceholderIndex(null);
   };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault(); // allow drop
@@ -363,6 +379,7 @@ function SemesterBlock({
   };
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
+    draggingIndexRef.current = classIndex;
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -381,6 +398,7 @@ function SemesterBlock({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    draggingIndexRef.current = null;
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -389,18 +407,73 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   };
 
+  const BOOKMARK_DRAG_TYPE = "application/x-gradtrak-bookmark-class";
+
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
 
     try {
-      // get the dragged class data
+      const insertPos = findInsertPosition(e);
+
+      // Drop from bookmarks sidebar: add class at position
+      if (e.dataTransfer.types.includes(BOOKMARK_DRAG_TYPE)) {
+        const raw = e.dataTransfer.getData(BOOKMARK_DRAG_TYPE);
+        const { class: bookmarkClass } = JSON.parse(raw) as {
+          source: string;
+          class: {
+            subject: string;
+            courseNumber: string;
+            number: string;
+            title: string;
+            unitsMin?: number;
+            unitsMax?: number;
+          };
+        };
+        const { subject, courseNumber, number, title, unitsMin, unitsMax } =
+          bookmarkClass;
+        let courseUnits = unitsMin ?? unitsMax ?? 0;
+        if (courseUnits <= 0) {
+          courseUnits = await getCourseUnits(
+            subject,
+            courseNumber,
+            planTerm.term,
+            planTerm.year
+          );
+        }
+        const courseToAdd: ISelectedCourse = {
+          courseID: `${subject}_${number}`,
+          courseName: `${subject} ${courseNumber}`,
+          courseTitle: title || `${subject} ${courseNumber}`,
+          courseUnits,
+          uniReqs: [],
+          collegeReqs: [],
+          pnp: false,
+          transfer: false,
+          labels: [],
+        };
+        const updatedClasses = [...selectedClasses];
+        updatedClasses.splice(insertPos, 0, courseToAdd);
+        const oldClasses = [...selectedClasses];
+        setSelectedCourses(updatedClasses);
+        try {
+          await setCourses(semesterId, updatedClasses);
+          const updatedSemesters = {
+            ...filteredSemesters,
+            [semesterId]: updatedClasses,
+          };
+          updateAllSemesters(updatedSemesters);
+        } catch (error) {
+          setSelectedCourses(oldClasses);
+          console.error("Failed to add class from bookmarks:", error);
+        }
+        return;
+      }
+
+      // get the dragged class data (from another semester block)
       const data = JSON.parse(e.dataTransfer.getData("application/json"));
       const { sourceSemesterId, classIndex, class: draggedClass } = data;
-
-      // find the insertion position
-      const insertPos = findInsertPosition(e);
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
@@ -471,7 +544,11 @@ function SemesterBlock({
       onDragLeave={filtersActive ? undefined : handleDragLeave}
       onDrop={filtersActive ? undefined : handleDrop}
     >
-      <div className={styles.body} data-layout={settings.layout}>
+      <div
+        className={styles.body}
+        data-layout={settings.layout}
+        data-open={open}
+      >
         <Flex direction="row" justify="between" width="100%">
           <div className={styles.semesterCounter}>
             {planTerm.pinned && (
@@ -653,9 +730,12 @@ function SemesterBlock({
               })
               .map((cls, index) => (
                 <React.Fragment key={`class-group-${index}`}>
-                  {placeholderIndex === index && (
-                    <div className={styles.placeholder} />
-                  )}
+                  {placeholderIndex === index &&
+                    !(
+                      draggingIndexRef.current !== null &&
+                      (placeholderIndex === draggingIndexRef.current ||
+                        placeholderIndex === draggingIndexRef.current + 1)
+                    ) && <div className={styles.placeholder} />}
                   <Class
                     cls={cls}
                     index={index}
@@ -671,9 +751,12 @@ function SemesterBlock({
               ))}
 
             {/* Dragging placeholder */}
-            {placeholderIndex === selectedClasses.length && (
-              <div className={styles.placeholder} />
-            )}
+            {placeholderIndex === selectedClasses.length &&
+              !(
+                draggingIndexRef.current !== null &&
+                (placeholderIndex === draggingIndexRef.current ||
+                  placeholderIndex === draggingIndexRef.current + 1)
+              ) && <div className={styles.placeholder} />}
 
             {/* Dialog Component */}
             <AddClass

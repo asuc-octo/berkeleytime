@@ -1,14 +1,3 @@
-import { FuzzySearch } from "@repo/common";
-
-import {
-  ICatalogClass,
-  ISectionAttribute,
-  ISectionAttriuteInfo,
-  academicCareersMap,
-} from "@/lib/api";
-import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
-import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
-
 export enum SortBy {
   Relevance = "Relevance",
   Units = "Units",
@@ -37,12 +26,6 @@ export type UnitRange = [number, number];
 // TimeRange is [fromTime, toTime] in "HH:MM" format (24-hour)
 // Default [null, null] means no filtering (all times)
 export type TimeRange = [string | null, string | null];
-
-// Helper to parse "HH:MM" time string to minutes since midnight
-const parseTimeToMinutes = (time: string): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};
 
 export enum Day {
   Sunday = "0",

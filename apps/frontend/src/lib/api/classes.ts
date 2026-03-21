@@ -1,11 +1,8 @@
 import { gql } from "@apollo/client";
 
-import { GET_CANONICAL_CATALOG_QUERY } from "@repo/shared";
-
 import {
   AcademicCareer,
   Component,
-  GetCanonicalCatalogQuery,
   GetClassDetailsQuery,
   GetClassQuery,
 } from "../generated/graphql";
@@ -35,6 +32,18 @@ export const GET_CLASS = gql`
       number
       title
       description
+      decal {
+        title
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
+        }
+      }
       unitsMax
       unitsMin
       gradingBasis
@@ -243,11 +252,13 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      decal {
+        title
+      }
       course {
         title
         description
         requirements
-        ratingsCount
         aggregatedRatings(metricNames: [Attendance, Recording]) {
           metrics {
             metricName
@@ -304,6 +315,17 @@ export const GET_CLASS_DETAILS = gql`
             familyName
             givenName
           }
+        }
+      }
+      decal {
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
         }
       }
     }
@@ -446,22 +468,6 @@ export type IClassCourse = NonNullable<IClassDetails["course"]>;
 export type IInstructor = ISection["meetings"][number]["instructors"][number];
 export type IExam = ISection["exams"][number];
 export type IMeeting = ISection["meetings"][number];
-
-/**
- * Canonical catalog query imported from @repo/shared.
- * Ensures parity between frontend and backend cache warming.
- *
- * See: packages/shared/queries.ts for query definition and documentation.
- */
-export const GET_CANONICAL_CATALOG = gql(GET_CANONICAL_CATALOG_QUERY);
-
-export type ICatalogClass = NonNullable<
-  GetCanonicalCatalogQuery["catalog"]
->[number];
-export type ISectionAttriuteInfo = ICatalogClass["requirementDesignation"];
-export type ISectionAttribute = NonNullable<
-  NonNullable<ICatalogClass["primarySection"]>["sectionAttributes"]
->[number];
 
 export const componentMap: Record<Component, string> = {
   [Component.Cln]: "Clinic",

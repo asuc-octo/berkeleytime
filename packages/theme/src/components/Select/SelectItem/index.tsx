@@ -51,7 +51,7 @@ export default function SelectItem({
           ) : (
             <Flex direction="row" align="center" gap="12px">
               {icon && icon}
-              <span>{label}</span>
+              <span className={styles.label}>{label}</span>
             </Flex>
           )}
         </Flex>

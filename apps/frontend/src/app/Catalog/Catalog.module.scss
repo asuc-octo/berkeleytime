@@ -109,11 +109,6 @@
     border-right: 1px solid var(--border-color);
   }
 
-  .skeletonOverlay {
-    position: absolute;
-    inset: 0;
-    z-index: 10;
-  }
 }
 
 .bookmarkDropdown {
@@ -177,14 +172,14 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 3;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
   background-color: var(--background-color);
-  z-index: 999;
+  z-index: 2;
 }
 
 .drawerTrigger {

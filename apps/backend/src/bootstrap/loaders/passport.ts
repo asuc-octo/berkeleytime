@@ -14,9 +14,14 @@ const LOGIN_REDIRECT_ROUTE = "/login/redirect";
 const LOGOUT_ROUTE = "/logout";
 
 // route need to be added as authorized origins/redirect uris in google cloud console
-const LOGIN_REDIRECT = config.backendPath + "/login/redirect";
+// OAuth requires an absolute callback URL (e.g. https://berkeleytime.com/api/login/redirect)
+const backendBase = (config.backendPublicUrl ?? config.backendPath).replace(
+  /\/$/,
+  ""
+);
+const LOGIN_REDIRECT = backendBase + "/login/redirect";
 const SUCCESS_REDIRECT = "/";
-const FAILURE_REDIRECT = config.backendPath + "/fail";
+const FAILURE_REDIRECT = backendBase + "/fail";
 
 const SCOPE = ["profile", "email"];
 
@@ -78,34 +83,59 @@ export default async (app: Application, redis: RedisClientType) => {
 
     authenticator(req, res, next);
   });
-  app.get(
-    LOGIN_REDIRECT_ROUTE,
-    passport.authenticate("google", {
-      failureRedirect: FAILURE_REDIRECT,
-    }),
-    (req, res) => {
-      if (req.session?.cookie) {
-        req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
+  app.get(LOGIN_REDIRECT_ROUTE, (req, res, next) => {
+    passport.authenticate(
+      "google",
+      (err: Error | null, user: Express.User | false) => {
+        if (err) {
+          // Log OAuth token exchange errors (e.g. redirect_uri_mismatch, invalid_grant) for debugging
+          const oauthCode =
+            "oauthError" in err
+              ? String(
+                  (err as { oauthError?: { code?: string } }).oauthError?.code
+                )
+              : "";
+          console.error(
+            "[OAuth] Token exchange failed:",
+            err.message,
+            oauthCode || "",
+            "callbackURL:",
+            LOGIN_REDIRECT
+          );
+          return res.redirect(FAILURE_REDIRECT);
+        }
+        if (!user) {
+          return res.redirect(FAILURE_REDIRECT);
+        }
+        req.login(user, (loginErr) => {
+          if (loginErr) {
+            console.error("[OAuth] req.login failed:", loginErr);
+            return res.redirect(FAILURE_REDIRECT);
+          }
+          if (req.session?.cookie) {
+            req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
+          }
+
+          const { state } = req.query;
+
+          let parsedRedirectURI: string | undefined;
+
+          try {
+            const { redirectURI } = JSON.parse(
+              Buffer.from(state as string, "base64").toString()
+            );
+
+            parsedRedirectURI =
+              typeof redirectURI === "string" ? redirectURI : undefined;
+          } catch {
+            // Do nothing
+          }
+
+          res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
+        });
       }
-
-      const { state } = req.query;
-
-      let parsedRedirectURI;
-
-      try {
-        const { redirectURI } = JSON.parse(
-          Buffer.from(state as string, "base64").toString()
-        );
-
-        parsedRedirectURI =
-          typeof redirectURI === "string" ? redirectURI : undefined;
-      } catch {
-        // Do nothing
-      }
-
-      res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
-    }
-  );
+    )(req, res, next);
+  });
   app.get(LOGOUT_ROUTE, (req, res) => {
     req.logout((err) => {
       if (err) {
@@ -179,14 +209,31 @@ export default async (app: Application, redis: RedisClientType) => {
     app.get(DEV_LOGIN_ROUTE, async (req, res) => {
       const { userId, redirect_uri: redirectURI } = req.query;
 
+      const parsedRedirectURI =
+        typeof redirectURI === "string" ? redirectURI : "/";
+
+      const redirectWithDevAuthError = (reason: string) => {
+        const separator = parsedRedirectURI.includes("?") ? "&" : "?";
+        return `${parsedRedirectURI}${separator}devAuthError=${encodeURIComponent(
+          reason
+        )}`;
+      };
+
+      const failDevLogin = (reason: string) => {
+        if (req.session?.cookie) {
+          req.session.cookie.maxAge = 0;
+        }
+        res.redirect(redirectWithDevAuthError(reason));
+      };
+
       if (!userId || typeof userId !== "string") {
-        res.status(400).json({ error: "userId required" });
+        failDevLogin("invalid_user_id");
         return;
       }
 
       const user = await UserModel.findById(userId);
       if (!user) {
-        res.status(404).json({ error: "User not found" });
+        failDevLogin("user_not_found");
         return;
       }
 
@@ -194,7 +241,7 @@ export default async (app: Application, redis: RedisClientType) => {
 
       req.login(sessionUser, (err) => {
         if (err) {
-          res.status(500).json({ error: "Login failed" });
+          failDevLogin("login_failed");
           return;
         }
 
@@ -202,8 +249,6 @@ export default async (app: Application, redis: RedisClientType) => {
           req.session.cookie.maxAge = AUTHENTICATED_SESSION_TTL;
         }
 
-        const parsedRedirectURI =
-          typeof redirectURI === "string" ? redirectURI : "/";
         res.redirect(parsedRedirectURI);
       });
     });

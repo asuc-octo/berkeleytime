@@ -49,6 +49,12 @@
 
 - [LLM Use & Vibecoding](./tips-and-tricks/llm-and-vibecoding.md)
 
+---
+
+# Features
+
+- [DeCal Classes](./features/decal-classes.md)
+
 <!--
 ---
 
@@ -56,7 +62,7 @@
 
 - [Crowd Sourced Data](./fa24/crowd-sourced-data/README.md)
 
-- [Decals](./fa24/decals/README.md)
+- [DeCals](./fa24/decals/README.md)
 
 - [GradTrak](./fa24/gradtrak/README.md)
 

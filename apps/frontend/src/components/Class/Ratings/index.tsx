@@ -91,6 +91,7 @@ export function RatingsContainer() {
   const [isSubmitRatingPopupOpen, setIsSubmitRatingPopupOpen] = useState(false);
 
   const {
+    data: ratingsQueryData,
     aggregatedRatings: aggregatedRatingsData,
     instructorAggregatedRatings,
     semestersWithRatings,
@@ -464,7 +465,7 @@ export function RatingsContainer() {
   // );
 
   if (
-    loading ||
+    (loading && !ratingsQueryData) ||
     (activeRatingTab === RATING_TABS.Semester &&
       selectedValue !== "all" &&
       selectedSemesterLoading)
