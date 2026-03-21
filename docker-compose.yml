@@ -127,8 +127,8 @@ services:
       start_period: 15s
       retries: 10
     volumes:
-      - ./data/mongodb/db:/data/db
-      - ./data/mongodb/configdb:/data/configdb
+      - mongodb-db:/data/db
+      - mongodb-configdb:/data/configdb
       - ./migrations:/migrations
   mongodb-init:
     image: mongodb/mongodb-atlas-local:8.0
