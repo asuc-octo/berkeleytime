@@ -49,11 +49,7 @@ export const Basic: StoryObj = {
 
     return (
       <ThemeProvider>
-        <ColorPicker
-          value={value}
-          onChange={setValue}
-          colors={allColors}
-        />
+        <ColorPicker value={value} onChange={setValue} colors={allColors} />
       </ThemeProvider>
     );
   },
@@ -65,11 +61,7 @@ export const NoColor: StoryObj = {
 
     return (
       <ThemeProvider>
-        <ColorPicker
-          value={value}
-          onChange={setValue}
-          colors={allColors}
-        />
+        <ColorPicker value={value} onChange={setValue} colors={allColors} />
       </ThemeProvider>
     );
   },
@@ -91,11 +83,7 @@ export const LimitedColors: StoryObj = {
 
     return (
       <ThemeProvider>
-        <ColorPicker
-          value={value}
-          onChange={setValue}
-          colors={limitedColors}
-        />
+        <ColorPicker value={value} onChange={setValue} colors={limitedColors} />
       </ThemeProvider>
     );
   },

@@ -45,10 +45,7 @@ export const WithDefaultValue: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <PillSwitcher
-          items={basicItems}
-          defaultValue="option2"
-        />
+        <PillSwitcher items={basicItems} defaultValue="option2" />
       </ThemeProvider>
     );
   },
@@ -78,9 +75,30 @@ export const WithIcons: StoryObj = {
     const [value, setValue] = useState("grid");
 
     const iconItems = [
-      { value: "grid", label: <><ViewGrid /> Grid</> },
-      { value: "list", label: <><List /> List</> },
-      { value: "table", label: <><Table /> Table</> },
+      {
+        value: "grid",
+        label: (
+          <>
+            <ViewGrid /> Grid
+          </>
+        ),
+      },
+      {
+        value: "list",
+        label: (
+          <>
+            <List /> List
+          </>
+        ),
+      },
+      {
+        value: "table",
+        label: (
+          <>
+            <Table /> Table
+          </>
+        ),
+      },
     ];
 
     return (

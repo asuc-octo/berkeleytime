@@ -18,6 +18,7 @@
     "@repo/common": "*",
     "@repo/shared": "*",
     "@repo/theme": "*",
+    "@repo/BtLL": "*",
     "@shopify/draggable": "^1.1.4",
     "@tanstack/react-virtual": "^3.13.12",
     "@types/suncalc": "^1.9.2",

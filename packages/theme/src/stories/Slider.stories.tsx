@@ -34,7 +34,13 @@ export const Basic: StoryObj = {
             value={value}
             onValueChange={setValue}
           />
-          <div style={{ marginTop: "8px", fontSize: "14px", color: "var(--gray-11)" }}>
+          <div
+            style={{
+              marginTop: "8px",
+              fontSize: "14px",
+              color: "var(--gray-11)",
+            }}
+          >
             Value: [{value[0]}, {value[1]}]
           </div>
         </div>
@@ -48,12 +54,7 @@ export const WithDefaultValue: StoryObj = {
     return (
       <ThemeProvider>
         <div style={{ width: "300px" }}>
-          <Slider
-            min={0}
-            max={100}
-            step={1}
-            defaultValue={[25, 75]}
-          />
+          <Slider min={0} max={100} step={1} defaultValue={[25, 75]} />
         </div>
       </ThemeProvider>
     );
@@ -75,7 +76,13 @@ export const WithLabels: StoryObj = {
             onValueChange={setValue}
             labels={["0", "1", "2", "3", "4", "5"]}
           />
-          <div style={{ marginTop: "24px", fontSize: "14px", color: "var(--gray-11)" }}>
+          <div
+            style={{
+              marginTop: "24px",
+              fontSize: "14px",
+              color: "var(--gray-11)",
+            }}
+          >
             Value: [{value[0]}, {value[1]}]
           </div>
         </div>
@@ -99,7 +106,13 @@ export const RatingScale: StoryObj = {
             onValueChange={setValue}
             labels={["1", "2", "3", "4", "5"]}
           />
-          <div style={{ marginTop: "24px", fontSize: "14px", color: "var(--gray-11)" }}>
+          <div
+            style={{
+              marginTop: "24px",
+              fontSize: "14px",
+              color: "var(--gray-11)",
+            }}
+          >
             Rating range: {value[0]} - {value[1]} stars
           </div>
         </div>
@@ -122,7 +135,13 @@ export const SmallRange: StoryObj = {
             value={value}
             onValueChange={setValue}
           />
-          <div style={{ marginTop: "8px", fontSize: "14px", color: "var(--gray-11)" }}>
+          <div
+            style={{
+              marginTop: "8px",
+              fontSize: "14px",
+              color: "var(--gray-11)",
+            }}
+          >
             Value: [{value[0]}, {value[1]}]
           </div>
         </div>
@@ -136,13 +155,7 @@ export const Disabled: StoryObj = {
     return (
       <ThemeProvider>
         <div style={{ width: "300px" }}>
-          <Slider
-            min={0}
-            max={100}
-            step={1}
-            defaultValue={[30, 70]}
-            disabled
-          />
+          <Slider min={0} max={100} step={1} defaultValue={[30, 70]} disabled />
         </div>
       </ThemeProvider>
     );
@@ -163,7 +176,13 @@ export const DecimalSteps: StoryObj = {
             value={value}
             onValueChange={setValue}
           />
-          <div style={{ marginTop: "8px", fontSize: "14px", color: "var(--gray-11)" }}>
+          <div
+            style={{
+              marginTop: "8px",
+              fontSize: "14px",
+              color: "var(--gray-11)",
+            }}
+          >
             Value: [{value[0].toFixed(1)}, {value[1].toFixed(1)}]
           </div>
         </div>

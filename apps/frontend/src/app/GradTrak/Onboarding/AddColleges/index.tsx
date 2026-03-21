@@ -39,6 +39,31 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
           return Colleges.LnS;
         case "Engineering":
           return Colleges.CoE;
+        case "Chemistry":
+          return Colleges.Chem;
+        case "Computing, Data Science & Society":
+          return Colleges.Cdss;
+        case "Education":
+          return Colleges.Edu;
+        case "Environmental Design":
+          return Colleges.Envdes;
+        case "Information":
+          return Colleges.Info;
+        case "Journalism":
+          return Colleges.Journ;
+        case "Law":
+        case "School of Law":
+          return Colleges.Law;
+        case "Natural Resources":
+          return Colleges.Natres;
+        case "Optometry":
+          return Colleges.Optom;
+        case "Public Health":
+          return Colleges.Pubhealth;
+        case "Public Policy":
+          return Colleges.Pubpolicy;
+        case "Social Welfare":
+          return Colleges.Socwelf;
         default:
           return Colleges.Other;
       }

@@ -1,0 +1,19 @@
+{
+    "name": "@repo/BtLL",
+    "type": "module",
+    "exports": {
+      ".": "./src/index.ts"
+    },
+    "scripts": {
+      "test": "npx tsx src/test.ts",
+      "generate:mongosh": "npx tsx generate-mongosh-commands.ts",
+      "seed:requirements": "npx tsx generate-mongosh-commands.ts > seed-requirements.js && docker cp seed-requirements.js berkeleytime-mongodb-1:/tmp/seed-requirements.js && docker exec berkeleytime-mongodb-1 mongosh --file /tmp/seed-requirements.js && rm seed-requirements.js"
+    },
+    "devDependencies": {
+      "@repo/typescript-config": "*",
+      "@types/node": "^24.7.0",
+      "tsx": "^4.7.0",
+      "typescript": "^5.9.3"
+    }
+  }
+  

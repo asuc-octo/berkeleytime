@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { MutationHookOptions, useMutation } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 
 import {
   EditPlanDocument,
@@ -25,8 +25,9 @@ export const useEditPlan = () => {
             minors: () => plan.minors,
             colleges: () => plan.colleges,
             labels: () => plan.labels,
-            uniReqsSatisfied: () => plan.uniReqsSatisfied,
-            collegeReqsSatisfied: () => plan.collegeReqsSatisfied,
+            ...(plan.selectedPlanRequirements && {
+              selectedPlanRequirements: () => plan.selectedPlanRequirements,
+            }),
           },
         });
       },

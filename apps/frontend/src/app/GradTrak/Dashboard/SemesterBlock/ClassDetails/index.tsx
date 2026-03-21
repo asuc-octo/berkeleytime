@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Barcode,
-  Hashtag,
-  MultiplePages,
-  TaskList,
-  Xmark,
-} from "iconoir-react";
+import { Barcode, Hashtag, MultiplePages, Xmark } from "iconoir-react";
 
 import { Box, Button, Color, Select } from "@repo/theme";
 
@@ -40,7 +34,6 @@ const ClassDetails = ({
   const [className, setClassName] = useState(classData?.courseName || "");
   const [classTitle, setClassTitle] = useState(classData?.courseTitle || "");
   const [units, setUnits] = useState(classData?.courseUnits);
-  const [semester] = useState("Coming Soon");
   const [pnp, setPnp] = useState(classData?.pnp || false);
   const [transfer, setTransfer] = useState(classData?.transfer || false);
   const [labels, setLabels] = useState(
@@ -160,16 +153,6 @@ const ClassDetails = ({
                       : setUnits(Number(e.target.value))
                   }
                 />
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <h3>Requirements Fulfilled</h3>
-              <div className={styles.container}>
-                <div className={styles.icon}>
-                  <TaskList />
-                </div>
-                <input type="text" value={semester} readOnly />
               </div>
             </section>
 

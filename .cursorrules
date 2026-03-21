@@ -95,6 +95,7 @@ src/
 - Use SCSS Modules (`.module.scss`) for component styles
 - Use Bootstrap utility classes (`m-*`, `p-*`) for simple spacing when appropriate
 - Import styles: `import styles from "./Component.module.scss"`
+- Use `classNames` utility (or similar) when combining classes instead of manual string manipulation (e.g., `classNames(styles.base, { [styles.active]: isActive })` instead of `styles.base + (isActive ? ' ' + styles.active : '')`)
 - Use/extend `@repo/theme` components when available instead of building custom ones
 
 ### File Naming

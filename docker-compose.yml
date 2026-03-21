@@ -129,6 +129,7 @@ services:
     volumes:
       - mongodb-db:/data/db
       - mongodb-configdb:/data/configdb
+      - ./migrations:/migrations
   mongodb-init:
     image: mongodb/mongodb-atlas-local:8.0
     depends_on:
