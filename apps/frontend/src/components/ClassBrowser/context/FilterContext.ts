@@ -6,6 +6,7 @@ import { Semester } from "@/lib/generated/graphql";
 
 import {
   Day,
+  DecalFilter,
   EnrollmentFilter,
   GradingFilter,
   Level,
@@ -30,6 +31,8 @@ export interface FilterContextType {
   effectiveOrder: "asc" | "desc";
   enrollmentFilter: EnrollmentFilter | null;
   online: boolean;
+  decalFilter: DecalFilter;
+  subjects: string[];
   filterOptions: ICatalogFilterOptions | null;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
@@ -41,6 +44,8 @@ export interface FilterContextType {
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
+  updateDecalFilter: Dispatch<DecalFilter>;
+  updateSubjects: Dispatch<string[]>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
 }
 

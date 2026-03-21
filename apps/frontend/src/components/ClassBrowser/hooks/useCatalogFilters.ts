@@ -14,6 +14,7 @@ import type { GetCatalogSearchQueryVariables } from "@/lib/generated/graphql";
 
 import {
   Day,
+  DecalFilter,
   EnrollmentFilter,
   GradingFilter,
   Level,
@@ -117,6 +118,8 @@ export interface CatalogFilterState {
   effectiveOrder: "asc" | "desc";
   enrollmentFilter: EnrollmentFilter | null;
   online: boolean;
+  decalFilter: DecalFilter;
+  subjects: string[];
   hasActiveFilters: boolean;
   filterVariables: ICatalogFilters | undefined;
 }
@@ -133,6 +136,8 @@ export interface CatalogFilterUpdaters {
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
+  updateDecalFilter: Dispatch<DecalFilter>;
+  updateSubjects: Dispatch<string[]>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -162,6 +167,10 @@ export default function useCatalogFilters({
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
     useState<EnrollmentFilter | null>(null);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [localDecalFilter, setLocalDecalFilter] = useState<DecalFilter>(
+    DecalFilter.All
+  );
+  const [localSubjects, setLocalSubjects] = useState<string[]>([]);
 
   // Derive state from search params when persistent
   const query = localQuery;
@@ -281,6 +290,25 @@ export default function useCatalogFilters({
     [searchParams, localOnline, persistent]
   );
 
+  const decalFilter = useMemo(() => {
+    if (persistent) {
+      const param = searchParams.get("decalFilter");
+      if (param && Object.values(DecalFilter).includes(param as DecalFilter)) {
+        return param as DecalFilter;
+      }
+      return DecalFilter.All;
+    }
+    return localDecalFilter;
+  }, [searchParams, localDecalFilter, persistent]);
+
+  const subjects = useMemo(
+    () =>
+      persistent
+        ? (searchParams.get("subjects")?.split(",").filter(Boolean) ?? [])
+        : localSubjects,
+    [searchParams, localSubjects, persistent]
+  );
+
   // Build server-side filter variables
   const filterVariables = useMemo<ICatalogFilters | undefined>(() => {
     const filters: NonNullable<ICatalogFilters> = {};
@@ -310,6 +338,18 @@ export default function useCatalogFilters({
 
     if (online) filters.online = true;
 
+    // DeCal filter
+    if (decalFilter === DecalFilter.OnlyDecals) {
+      filters.isDecal = true;
+    } else if (decalFilter === DecalFilter.Hide) {
+      filters.isDecal = false;
+    }
+
+    // Subject filter (shown as "Department" in UI)
+    if (subjects.length > 0) {
+      filters.subjects = subjects;
+    }
+
     return Object.keys(filters).length > 0 ? filters : undefined;
   }, [
     levels,
@@ -321,6 +361,8 @@ export default function useCatalogFilters({
     breadths,
     universityRequirements,
     online,
+    decalFilter,
+    subjects,
   ]);
 
   const hasActiveFilters =
@@ -335,6 +377,8 @@ export default function useCatalogFilters({
     gradingFilters.length > 0 ||
     enrollmentFilter !== null ||
     online ||
+    decalFilter !== DecalFilter.All ||
+    subjects.length > 0 ||
     sortBy !== SortBy.Relevance;
 
   // URL sync updater helpers
@@ -431,6 +475,8 @@ export default function useCatalogFilters({
     effectiveOrder,
     enrollmentFilter,
     online,
+    decalFilter,
+    subjects,
     hasActiveFilters,
     filterVariables,
     // Updaters
@@ -459,6 +505,16 @@ export default function useCatalogFilters({
       setLocalEnrollmentFilter(filter);
     },
     updateOnline: (o) => updateBoolean("online", setLocalOnline, o),
+    updateDecalFilter: (filter) => {
+      if (persistent) {
+        if (filter === DecalFilter.All) searchParams.delete("decalFilter");
+        else searchParams.set("decalFilter", filter);
+        setSearchParams(searchParams);
+        return;
+      }
+      setLocalDecalFilter(filter);
+    },
+    updateSubjects: (s) => updateArray("subjects", setLocalSubjects, s),
     updateReverse: setLocalReverse,
   };
 }

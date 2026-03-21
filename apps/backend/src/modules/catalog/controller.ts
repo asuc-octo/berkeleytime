@@ -40,6 +40,7 @@ export interface CatalogQueryParams {
   filters?: {
     levels?: string[] | null;
     departments?: string[] | null;
+    subjects?: string[] | null;
     unitsMin?: number | null;
     unitsMax?: number | null;
     days?: number[] | null;
@@ -50,6 +51,7 @@ export interface CatalogQueryParams {
     breadths?: string[] | null;
     universityRequirements?: string[] | null;
     online?: boolean | null;
+    isDecal?: boolean | null;
   } | null;
   sortBy?: string | null;
   sortOrder?: string | null;
@@ -180,6 +182,15 @@ const applyInMemoryFilters = (
       return false;
     }
 
+    // Subject filter
+    if (
+      filters.subjects &&
+      filters.subjects.length > 0 &&
+      !filters.subjects.includes(item.subject ?? "")
+    ) {
+      return false;
+    }
+
     // Units range overlap
     if (filters.unitsMin != null || filters.unitsMax != null) {
       const min = filters.unitsMin ?? 0;
@@ -283,6 +294,14 @@ const applyInMemoryFilters = (
       return false;
     }
 
+    // DeCal filter
+    if (filters.isDecal === true && !item.decal?.title) {
+      return false;
+    }
+    if (filters.isDecal === false && item.decal?.title) {
+      return false;
+    }
+
     return true;
   });
 };
@@ -304,6 +323,11 @@ const buildFilterQuery = (
   // Department filter
   if (filters.departments && filters.departments.length > 0) {
     query.academicOrganization = { $in: filters.departments };
+  }
+
+  // Subject filter
+  if (filters.subjects && filters.subjects.length > 0) {
+    query.subject = { $in: filters.subjects };
   }
 
   // Units range overlap
@@ -415,6 +439,15 @@ const buildFilterQuery = (
     query.primaryOnline = true;
   }
 
+  // DeCal filter
+  if (filters.isDecal === true) {
+    query["decal.title"] = { $exists: true, $ne: null };
+  } else if (filters.isDecal === false) {
+    appendAndCondition(query, {
+      $or: [{ "decal.title": { $exists: false } }, { "decal.title": null }],
+    });
+  }
+
   return query;
 };
 
@@ -465,6 +498,7 @@ export const getCatalogFilterOptions = async (
               name: "$academicOrganizationName",
             },
           },
+          subjects: { $addToSet: "$subject" },
           levels: { $addToSet: "$level" },
           gradingOptions: { $addToSet: "$gradingBasis" },
           breadthRequirements: { $addToSet: "$breadthRequirements" },
@@ -515,6 +549,10 @@ export const getCatalogFilterOptions = async (
       .sort((a: { name: string }, b: { name: string }) =>
         a.name.localeCompare(b.name)
       ),
+    subjects: (result?.subjects ?? [])
+      .filter(Boolean)
+      .sort()
+      .map((code: string) => ({ code, name: null })),
     levels: (result?.levels ?? []).filter(Boolean).sort(),
     gradingOptions: (result?.gradingOptions ?? []).filter(Boolean).sort(),
     breadthRequirements: breadths,
