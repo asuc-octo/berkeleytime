@@ -1013,21 +1013,28 @@ export const createRatings = async (
         ]);
       }
 
-      // Step 2: Upsert review if provided
-      if (review) {
-        await ReviewModel.findOneAndUpdate(
-          { createdBy: context.user._id, courseId },
-          {
-            text: review,
-            classId,
-            subject,
-            courseNumber,
-            semester,
-            year,
-            classNumber,
-          },
-          { upsert: true, session }
-        );
+      // Step 2: Upsert or delete review
+      if (review !== undefined) {
+        if (review.trim() === "") {
+          await ReviewModel.deleteOne(
+            { createdBy: context.user._id, courseId },
+            { session }
+          );
+        } else {
+          await ReviewModel.findOneAndUpdate(
+            { createdBy: context.user._id, courseId },
+            {
+              text: review,
+              classId,
+              subject,
+              courseNumber,
+              semester,
+              year,
+              classNumber,
+            },
+            { upsert: true, session }
+          );
+        }
       }
 
       // Step 3: Create all new ratings and increment their aggregated counts
@@ -1104,9 +1111,9 @@ export const deleteRatings = async (
   const session = await connection.startSession();
   try {
     await session.withTransaction(async () => {
-      // Delete review if exists
-      await ReviewModel.deleteOne(
-        { createdBy: context.user._id, courseId: existingRatings[0]?.courseId },
+      // Delete reviews for all affected courseIds
+      await ReviewModel.deleteMany(
+        { createdBy: context.user._id, courseId: { $in: Array.from(affectedCourseIds) } },
         { session }
       );
 

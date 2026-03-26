@@ -46,7 +46,7 @@
 }
 
 .mainSection {
-  border-bottom: 1px solid var(--surface-border-color, rgba(0, 0, 0, 0.1));
+  border-bottom: 1px solid var(--border-color);
   width: 100%;
 }
 
@@ -86,6 +86,10 @@
     color: var(--paragraph-color);
     font-size: var(--text-14);
     white-space: nowrap;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
   }
 }
 
@@ -132,7 +136,7 @@
   font-size: var(--font-sizes-2, 14px);
   font-family: inherit;
 
-  color: var(--text-secondary-color, #404040);
+  color: var(--heading-color);
   background: none;
   resize: vertical;
   box-sizing: border-box;
