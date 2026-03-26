@@ -141,7 +141,7 @@ const resolvers: RatingModule.Resolvers = {
   Mutation: {
     createRatings: async (
       _,
-      { year, semester, subject, courseNumber, classNumber, metrics },
+      { year, semester, subject, courseNumber, classNumber, metrics, review },
       context
     ) => {
       try {
@@ -152,7 +152,8 @@ const resolvers: RatingModule.Resolvers = {
           subject,
           courseNumber,
           classNumber,
-          metrics
+          metrics,
+          review ?? undefined
         );
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is

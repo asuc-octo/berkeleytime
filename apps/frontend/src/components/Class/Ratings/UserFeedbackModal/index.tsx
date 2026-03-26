@@ -38,7 +38,8 @@ interface UserFeedbackModalProps {
   onSubmit: (
     metricData: MetricData,
     termInfo: { semester: Semester; year: number },
-    courseInfo: { subject: string; courseNumber: string; classNumber: string }
+    courseInfo: { subject: string; courseNumber: string; classNumber: string },
+    review?: string
   ) => Promise<void>;
   initialUserClass?: IUserRatingClass | null;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
@@ -130,6 +131,8 @@ export function UserFeedbackModal({
     setIsSubmitting,
     progress,
     reset,
+    review,
+    setReview,
   } = formState;
 
   const overallProgress = useMemo(
@@ -296,7 +299,8 @@ export function UserFeedbackModal({
           subject: selectedCourse.subject,
           courseNumber: selectedCourse.number,
           classNumber,
-        }
+        },
+        review || undefined
       );
 
       const isLastRating = currentRatingIndex >= totalRatings - 1;
@@ -446,6 +450,8 @@ export function UserFeedbackModal({
               questionNumbers={questionNumbers}
               disableRatedCourses={disableRatedCourses}
               lockedCourse={lockedCourse}
+              review={review}
+              setReview={setReview}
             />
           </motion.div>
         </AnimatePresence>

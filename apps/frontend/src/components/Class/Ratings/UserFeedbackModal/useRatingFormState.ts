@@ -21,6 +21,7 @@ export function useRatingFormState({
     initialCourse
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [review, setReview] = useState<string>("");
 
   const isFormValid = useMemo(() => {
     const isClassValid = selectedCourse !== null;
@@ -69,6 +70,7 @@ export function useRatingFormState({
     setSelectedTerm(null);
     setSelectedCourse(newInitialCourse ?? initialCourse ?? null);
     setIsSubmitting(false);
+    setReview("");
   };
 
   return {
@@ -83,5 +85,7 @@ export function useRatingFormState({
     isFormValid,
     progress,
     reset,
+    review,
+    setReview,
   };
 }

@@ -37,7 +37,6 @@ interface RatingScaleProps {
 export function AttendanceForm({
   metricData,
   setMetricData,
-  startQuestionNumber,
 }: AttendanceFormProps) {
   const handleAttendanceClickClick = (
     type: MetricName,
@@ -61,19 +60,15 @@ export function AttendanceForm({
   ];
 
   return (
-    <div>
-      {ATTENDANCE_QUESTIONS.map(({ type, question }, index) => (
-        <div className={styles.formGroup} key={type}>
-          <div className={styles.inlineQuestion}>
-            <h3>
-              {startQuestionNumber + index}. {question}
-            </h3>
-            <BooleanOptions
-              name={type}
-              value={metricData[type] ?? null}
-              onChange={(v) => handleAttendanceClickClick(type, v)}
-            />
-          </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px", padding: "24px 32px" }}>
+      {ATTENDANCE_QUESTIONS.map(({ type, question }) => (
+        <div className={styles.inlineQuestion} key={type}>
+          <h3>{question}</h3>
+          <BooleanOptions
+            name={type}
+            value={metricData[type] ?? null}
+            onChange={(v) => handleAttendanceClickClick(type, v)}
+          />
         </div>
       ))}
     </div>
@@ -114,7 +109,7 @@ export function RatingsForm({
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {RATING_QUESTIONS.map(
         ({ type, question, leftLabel, rightLabel }, index) => (
           <RatingScale
@@ -133,6 +128,31 @@ export function RatingsForm({
   );
 }
 
+interface ReviewFormProps {
+  review: string;
+  setReview: (value: string) => void;
+}
+
+export function ReviewForm({ review, setReview }: ReviewFormProps) {
+  return (
+    <div className={styles.formGroup}>
+      <div className={styles.questionPair}>
+        <h3>Write a Review</h3>
+        <textarea
+          className={styles.reviewTextarea}
+          value={review}
+          onChange={(e) => setReview(e.target.value)}
+          placeholder="Share details of your experience in the course"
+          rows={4}
+        />
+        <p className={styles.reviewDisclaimer}>
+          Your rating could be removed if you use profanity or derogatory terms.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // helper functions
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
@@ -140,7 +160,6 @@ const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 const RatingScale = ({
   type,
   question,
-  questionNumber,
   leftLabel,
   rightLabel,
   metricData,
@@ -149,7 +168,7 @@ const RatingScale = ({
   <div className={styles.formGroup}>
     <div className={styles.questionPair}>
       <h3>
-        {questionNumber}. {question} <RequiredAsterisk />
+        {question} <RequiredAsterisk />
       </h3>
       <div className={styles.ratingScale}>
         <span>{leftLabel}</span>

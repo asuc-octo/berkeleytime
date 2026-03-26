@@ -653,7 +653,7 @@ export function RatingsContainer() {
           courseId: "",
         }}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo, courseInfo) => {
+        onSubmit={async (metricValues, termInfo, courseInfo, review) => {
           await submitRatingMutation({
             metricValues,
             termInfo,
@@ -664,6 +664,7 @@ export function RatingsContainer() {
               number: courseInfo.classNumber,
             },
             refetchQueries: [],
+            review,
           });
           await Promise.all([
             refetchAllRatings(),

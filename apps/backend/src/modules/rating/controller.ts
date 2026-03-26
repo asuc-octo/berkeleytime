@@ -8,6 +8,7 @@ import {
   CourseModel,
   RatingModel,
   RatingType,
+  ReviewModel,
   SectionModel,
 } from "@repo/common/models";
 import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
@@ -934,7 +935,8 @@ export const createRatings = async (
   subject: string,
   courseNumber: string,
   classNumber: string,
-  metrics: MetricInput[]
+  metrics: MetricInput[],
+  review?: string
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -1011,7 +1013,16 @@ export const createRatings = async (
         ]);
       }
 
-      // Step 2: Create all new ratings and increment their aggregated counts
+      // Step 2: Upsert review if provided
+      if (review) {
+        await ReviewModel.findOneAndUpdate(
+          { createdBy: context.user._id, courseId },
+          { text: review, classId, subject, courseNumber, semester, year, classNumber },
+          { upsert: true, session }
+        );
+      }
+
+      // Step 3: Create all new ratings and increment their aggregated counts
       for (const metric of metrics) {
         await Promise.all([
           RatingModel.create(
@@ -1085,6 +1096,12 @@ export const deleteRatings = async (
   const session = await connection.startSession();
   try {
     await session.withTransaction(async () => {
+      // Delete review if exists
+      await ReviewModel.deleteOne(
+        { createdBy: context.user._id, courseId: existingRatings[0]?.courseId },
+        { session }
+      );
+
       // Delete all ratings and decrement their aggregated counts
       for (const existingRating of existingRatings) {
         await Promise.all([

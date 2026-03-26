@@ -65,6 +65,7 @@ export const CREATE_RATINGS = gql`
     $year: Int!
     $classNumber: String!
     $metrics: [RatingMetricInput!]!
+    $review: String
   ) {
     createRatings(
       subject: $subject
@@ -73,6 +74,7 @@ export const CREATE_RATINGS = gql`
       year: $year
       classNumber: $classNumber
       metrics: $metrics
+      review: $review
     )
   }
 `;
