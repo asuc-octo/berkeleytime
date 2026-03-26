@@ -63,9 +63,7 @@ export function RatingFormBody({
 }: RatingFormBodyProps) {
   return (
     <Flex direction="column">
-      <div
-        className={styles.mainSection}
-      >
+      <div className={styles.mainSection}>
         <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
           <div className={styles.formGroup}>
             <div className={styles.questionPair}>

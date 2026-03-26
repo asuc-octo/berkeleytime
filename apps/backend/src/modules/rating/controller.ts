@@ -1017,7 +1017,15 @@ export const createRatings = async (
       if (review) {
         await ReviewModel.findOneAndUpdate(
           { createdBy: context.user._id, courseId },
-          { text: review, classId, subject, courseNumber, semester, year, classNumber },
+          {
+            text: review,
+            classId,
+            subject,
+            courseNumber,
+            semester,
+            year,
+            classNumber,
+          },
           { upsert: true, session }
         );
       }

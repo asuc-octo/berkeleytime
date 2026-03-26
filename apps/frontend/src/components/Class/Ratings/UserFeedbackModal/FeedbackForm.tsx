@@ -60,7 +60,14 @@ export function AttendanceForm({
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "32px", padding: "24px 32px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "32px",
+        padding: "24px 32px",
+      }}
+    >
       {ATTENDANCE_QUESTIONS.map(({ type, question }) => (
         <div className={styles.inlineQuestion} key={type}>
           <h3>{question}</h3>

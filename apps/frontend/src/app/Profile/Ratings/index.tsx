@@ -194,7 +194,11 @@ export default function Ratings() {
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      courseInfo: { subject: string; courseNumber: string; classNumber: string },
+      courseInfo: {
+        subject: string;
+        courseNumber: string;
+        classNumber: string;
+      },
       review?: string
     ) => {
       if (!ratingForEdit) return;
@@ -228,7 +232,11 @@ export default function Ratings() {
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      courseInfo: { subject: string; courseNumber: string; classNumber: string },
+      courseInfo: {
+        subject: string;
+        courseNumber: string;
+        classNumber: string;
+      },
       review?: string
     ) => {
       const refetchTarget = {
