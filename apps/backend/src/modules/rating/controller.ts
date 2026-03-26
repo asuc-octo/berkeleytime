@@ -1113,7 +1113,10 @@ export const deleteRatings = async (
     await session.withTransaction(async () => {
       // Delete reviews for all affected courseIds
       await ReviewModel.deleteMany(
-        { createdBy: context.user._id, courseId: { $in: Array.from(affectedCourseIds) } },
+        {
+          createdBy: context.user._id,
+          courseId: { $in: Array.from(affectedCourseIds) },
+        },
         { session }
       );
 
