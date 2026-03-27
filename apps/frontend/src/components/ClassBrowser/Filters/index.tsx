@@ -10,6 +10,7 @@ import { sortByTermDescending } from "@/lib/classes";
 
 import {
   Day,
+  DecalFilter,
   EMPTY_DAYS,
   EnrollmentFilter,
   GradingFilter,
@@ -45,6 +46,10 @@ export default function Filters() {
     updateGradingFilters,
     enrollmentFilter,
     updateEnrollmentFilter,
+    decalFilter,
+    updateDecalFilter,
+    subjects,
+    updateSubjects,
     sortBy,
     reverse,
     effectiveOrder,
@@ -171,6 +176,15 @@ export default function Filters() {
     }));
   }, []);
 
+  const subjectOptions = useMemo<Option<string>[]>(
+    () =>
+      (filterOptions?.subjects ?? []).map((subj) => ({
+        value: subj.code,
+        label: subj.code,
+      })),
+    [filterOptions]
+  );
+
   const isClassLevelDisabled = Object.values(filteredLevels).every(
     (count) => count === 0
   );
@@ -206,6 +220,8 @@ export default function Filters() {
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
     updateEnrollmentFilter(null);
+    updateDecalFilter(DecalFilter.All);
+    updateSubjects([]);
   };
 
   return (
@@ -270,6 +286,22 @@ export default function Filters() {
               )}
             </IconButton>
           </div>
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Department</p>
+          <Select<string>
+            multi
+            searchable
+            value={subjects}
+            placeholder="Select departments"
+            disabled={subjectOptions.length === 0}
+            onChange={(v) => {
+              if (Array.isArray(v)) updateSubjects(v);
+            }}
+            options={subjectOptions}
+            searchPlaceholder="Search departments..."
+            emptyMessage="No departments found."
+          />
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Class level</p>
@@ -407,6 +439,17 @@ export default function Filters() {
               />
             </div>
           </div>
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>DeCals</p>
+          <Select
+            value={decalFilter}
+            onChange={(value) => updateDecalFilter(value as DecalFilter)}
+            options={Object.values(DecalFilter).map((option) => ({
+              value: option,
+              label: option,
+            }))}
+          />
         </div>
       </div>
     </div>

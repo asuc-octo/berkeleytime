@@ -22,6 +22,7 @@ export const catalogTypeDef = gql`
   input CatalogFilters {
     levels: [String!]
     departments: [String!]
+    subjects: [String!]
     unitsMin: Float
     unitsMax: Float
     days: [Int!]
@@ -32,6 +33,7 @@ export const catalogTypeDef = gql`
     breadths: [String!]
     universityRequirements: [String!]
     online: Boolean
+    isDecal: Boolean
   }
 
   type CatalogMeeting {
@@ -166,6 +168,11 @@ export const catalogTypeDef = gql`
     name: String!
   }
 
+  type CatalogSubject {
+    code: String!
+    name: String
+  }
+
   type CatalogTimeRange {
     minStartTime: String!
     maxEndTime: String!
@@ -173,6 +180,7 @@ export const catalogTypeDef = gql`
 
   type CatalogFilterOptions {
     departments: [CatalogDepartment!]!
+    subjects: [CatalogSubject!]!
     levels: [String!]!
     gradingOptions: [String!]!
     breadthRequirements: [String!]!
