@@ -675,15 +675,11 @@ export function RatingsContainer() {
         initialUserClass={userRatings}
         userRatedClasses={userRatedClasses}
         disableRatedCourses={!userRatings}
-        lockedCourse={
-          userRatings
-            ? {
-                subject: currentClass.subject,
-                number: currentClass.courseNumber,
-                courseId: "",
-              }
-            : null
-        }
+        lockedCourse={{
+          subject: currentClass.subject,
+          number: currentClass.courseNumber,
+          courseId: "",
+        }}
         onSubmitPopupChange={setIsSubmitRatingPopupOpen}
         onError={(error) => {
           const message = getRatingErrorMessage(error);

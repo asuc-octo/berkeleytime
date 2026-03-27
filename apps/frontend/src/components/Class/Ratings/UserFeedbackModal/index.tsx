@@ -60,10 +60,9 @@ export function UserFeedbackModal({
   initialCourse = null,
   onSubmit,
   initialUserClass = null,
-  userRatedClasses,
+
   onSubmitPopupChange,
-  disableRatedCourses = true,
-  lockedCourse = null,
+
   onError,
 }: UserFeedbackModalProps) {
   const { data: termsData, loading: termsLoading } = useReadTerms();
@@ -351,14 +350,12 @@ export function UserFeedbackModal({
   // Calculate question numbers
   const questionNumbers = useMemo(() => {
     let counter = 1;
-    const classQuestion = counter++;
     const semesterQuestion = counter++;
     const ratingsStart = counter;
     counter += 3; // 3 rating questions
     const attendanceStart = counter;
 
     return {
-      classQuestionNumber: classQuestion,
       semesterQuestionNumber: semesterQuestion,
       ratingsStartNumber: ratingsStart,
       attendanceStartNumber: attendanceStart,
@@ -432,24 +429,13 @@ export function UserFeedbackModal({
           >
             <RatingFormBody
               selectedCourse={selectedCourse}
-              onCourseSelect={(course) => {
-                setSelectedCourse(course);
-                setSelectedTerm(null);
-              }}
-              onCourseClear={() => {
-                setSelectedCourse(null);
-                setSelectedTerm(null);
-              }}
               selectedTerm={selectedTerm}
               onTermSelect={setSelectedTerm}
               termOptions={termOptions}
               termOptionsLoading={isTermOptionsLoading}
               metricData={metricData}
               setMetricData={setMetricData}
-              userRatedClasses={userRatedClasses}
               questionNumbers={questionNumbers}
-              disableRatedCourses={disableRatedCourses}
-              lockedCourse={lockedCourse}
               review={review}
               setReview={setReview}
             />

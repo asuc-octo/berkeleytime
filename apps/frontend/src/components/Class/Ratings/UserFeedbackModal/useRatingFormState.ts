@@ -33,34 +33,31 @@ export function useRatingFormState({
     return isClassValid && isTermValid && areRatingsValid;
   }, [selectedCourse, selectedTerm, metricData]);
 
-  // Calculate progress: 7 fields total (class selection + 6 questions)
+  // Calculate progress: 6 fields (semester + 3 ratings + 2 attendance)
   const progress = useMemo(() => {
     let filledFields = 0;
-    const totalFields = 7;
+    const totalFields = 6;
 
-    // Field 1: Class selection
-    if (selectedCourse) filledFields++;
-
-    // Field 2: Semester selection
+    // Field 1: Semester selection
     if (selectedTerm && selectedTerm.length > 0) filledFields++;
 
-    // Field 3: Usefulness
+    // Field 2: Usefulness
     if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
 
-    // Field 4: Difficulty
+    // Field 3: Difficulty
     if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
 
-    // Field 5: Workload
+    // Field 4: Workload
     if (typeof metricData[MetricName.Workload] === "number") filledFields++;
 
-    // Field 6: Attendance
+    // Field 5: Attendance
     if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
 
-    // Field 7: Recording
+    // Field 6: Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
     return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData, selectedCourse]);
+  }, [selectedTerm, metricData]);
 
   const reset = (
     newInitialMetricData?: MetricData,
