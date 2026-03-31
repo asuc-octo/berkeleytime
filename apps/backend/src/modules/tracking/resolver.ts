@@ -1,5 +1,5 @@
-import { GraphQLError } from "graphql";
 import type { Request } from "express";
+import { GraphQLError } from "graphql";
 import type { RedisClientType } from "redis";
 
 import { StaffMemberModel } from "@repo/common/models";
