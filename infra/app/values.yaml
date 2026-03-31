@@ -81,7 +81,7 @@ datapuller:
       args: ["--puller=enrollment-timeframe"]
 
 productionTests:
-  suspend: false
+  suspend: true
   schedule: "0 * * * *"
   image:
     registry: docker.io

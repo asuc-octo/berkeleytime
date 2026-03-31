@@ -41,6 +41,8 @@ jobs:
       version: "1.0.0"
       values: |
         host: berkeleytime.com
+        productionTests:
+          suspend: false
       host: berkeleytime.com
       deploy_staff: ${{ inputs.deploy_staff }}
     secrets: inherit
