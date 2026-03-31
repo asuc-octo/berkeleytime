@@ -546,143 +546,26 @@ export default function Dashboard() {
             <h1>Semesters</h1>
 
             <div className={styles.buttonsGroup}>
-            <DropdownMenu.Root
-              open={filterMenuOpen}
-              onOpenChange={setFilterMenuOpen}
-            >
-              <Tooltip
-                content="Filter"
-                trigger={
-                  <DropdownMenu.Trigger asChild>
-                    <div className={styles.filterButtonContainer}>
-                      <IconButton
-                        className={styles.filterButton}
-                        data-open={filterMenuOpen}
-                      >
-                        <Filter />
-                      </IconButton>
-                      {activeFiltersCount > 0 && (
-                        <div className={styles.filterButtonBadge}>
-                          {activeFiltersCount}
-                        </div>
-                      )}
-                    </div>
-                  </DropdownMenu.Trigger>
-                }
-              />
-              <DropdownMenu.Content
-                sideOffset={5}
-                align="end"
-                className={styles.filtersDropdown}
-              >
-                <Box>
-                  <Flex direction="column" gap="8px">
-                    <Text
-                      className={styles.sectionTitle}
-                      style={{ marginTop: "8px" }}
-                    >
-                      Status
-                    </Text>
-                    {(() => {
-                      const statusCounts = calculateStatusCounts();
-                      return (
-                        <>
-                          {FILTER_OPTIONS.map((option) => (
-                            <Flex
-                              key={option.value}
-                              align="center"
-                              gap="8px"
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                handleFilterOptionChange(option.value)
-                              }
-                            >
-                              <Checkbox
-                                checked={filterOptions[option.value]}
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Text
-                                className={styles.filterOptionText}
-                                data-selected={filterOptions[option.value]}
-                              >
-                                {option.label}
-                              </Text>
-                              <Text className={styles.labelCount}>
-                                (
-                                {
-                                  statusCounts[
-                                    option.value as keyof typeof statusCounts
-                                  ]
-                                }
-                                )
-                              </Text>
-                            </Flex>
-                          ))}
-                        </>
-                      );
-                    })()}
-
-                    {labels.length > 0 && (
-                      <>
-                        <Text className={styles.sectionTitle}>
-                          Custom Labels
-                        </Text>
-                        {labels.map((label) => {
-                          const labelKey = `label_${label.name}`;
-                          const labelCounts = calculateLabelCounts();
-                          return (
-                            <Flex
-                              key={labelKey}
-                              align="center"
-                              gap="8px"
-                              style={{ cursor: "pointer" }}
-                              onClick={() => handleFilterOptionChange(labelKey)}
-                            >
-                              <Checkbox
-                                checked={filterOptions[labelKey] || false}
-                                style={{ cursor: "pointer" }}
-                              />
-                              <Badge
-                                label={label.name}
-                                color={label.color as Color}
-                              />
-                              <Text className={styles.labelCount}>
-                                ({labelCounts[label.name] || 0})
-                              </Text>
-                            </Flex>
-                          );
-                        })}
-                      </>
-                    )}
-                  </Flex>
-                </Box>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
-
-            <div>
               <DropdownMenu.Root
-                open={sortMenuOpen}
-                onOpenChange={setSortMenuOpen}
+                open={filterMenuOpen}
+                onOpenChange={setFilterMenuOpen}
               >
                 <Tooltip
-                  content="Sort"
+                  content="Filter"
                   trigger={
                     <DropdownMenu.Trigger asChild>
-                      <div
-                        style={{
-                          position: "relative",
-                          display: "inline-block",
-                        }}
-                      >
+                      <div className={styles.filterButtonContainer}>
                         <IconButton
-                          style={{
-                            backgroundColor: sortMenuOpen
-                              ? "#52525B"
-                              : undefined,
-                          }}
+                          className={styles.filterButton}
+                          data-open={filterMenuOpen}
                         >
-                          <Sort />
+                          <Filter />
                         </IconButton>
+                        {activeFiltersCount > 0 && (
+                          <div className={styles.filterButtonBadge}>
+                            {activeFiltersCount}
+                          </div>
+                        )}
                       </div>
                     </DropdownMenu.Trigger>
                   }
@@ -690,295 +573,422 @@ export default function Dashboard() {
                 <DropdownMenu.Content
                   sideOffset={5}
                   align="end"
-                  style={{
-                    width: "max-content",
-                    paddingTop: "0px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
-                  }}
+                  className={styles.filtersDropdown}
                 >
-                  <Text
-                    className={styles.sectionTitle}
-                    style={{ marginTop: "8px" }}
-                  >
-                    Sort By
-                  </Text>
-                  {SORT_OPTIONS.map((option) => (
-                    <div
-                      key={option}
-                      className={styles.sortMenu}
-                      onClick={() => {
-                        handleChangeSortPage(option);
-                      }}
-                    >
-                      <div style={{ paddingTop: "3px" }} />
-                      <label className={styles.option}>
-                        <input
-                          type="radio"
-                          name="sortType"
-                          checked={sortPage === option}
-                          onChange={() => handleChangeSortPage(option)}
-                          className={styles.input}
-                        />
-                        <div
-                          className={styles.circle}
-                          style={{
-                            borderColor:
-                              sortPage === option
-                                ? "var(--blue-500)"
-                                : "#C7C7C7",
-                          }}
-                        >
-                          {sortPage === option && (
-                            <div className={styles.dot}></div>
-                          )}
-                        </div>
-                        <Text
-                          style={{
-                            color:
-                              sortPage === option
-                                ? "var(--heading-color)"
-                                : "var(--paragraph-color)",
-                            marginLeft: "-6px",
-                          }}
-                        >
-                          {option}
-                        </Text>
-                      </label>
-                    </div>
-                  ))}
+                  <Box>
+                    <Flex direction="column" gap="8px">
+                      <Text
+                        className={styles.sectionTitle}
+                        style={{ marginTop: "8px" }}
+                      >
+                        Status
+                      </Text>
+                      {(() => {
+                        const statusCounts = calculateStatusCounts();
+                        return (
+                          <>
+                            {FILTER_OPTIONS.map((option) => (
+                              <Flex
+                                key={option.value}
+                                align="center"
+                                gap="8px"
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  handleFilterOptionChange(option.value)
+                                }
+                              >
+                                <Checkbox
+                                  checked={filterOptions[option.value]}
+                                  style={{ cursor: "pointer" }}
+                                />
+                                <Text
+                                  className={styles.filterOptionText}
+                                  data-selected={filterOptions[option.value]}
+                                >
+                                  {option.label}
+                                </Text>
+                                <Text className={styles.labelCount}>
+                                  (
+                                  {
+                                    statusCounts[
+                                      option.value as keyof typeof statusCounts
+                                    ]
+                                  }
+                                  )
+                                </Text>
+                              </Flex>
+                            ))}
+                          </>
+                        );
+                      })()}
 
-                  <div
-                    style={{
-                      height: "1px",
-                      backgroundColor: "var(--border-color)",
-                      margin: "5px 0px",
-                      width: "100%",
-                    }}
-                  />
-
-                  <div>
-                    {sortPage === "Semester" &&
-                      SORT_OPTIONS_SEMESTER.map((option) => (
-                        <DropdownMenu.Item
-                          key={option}
-                          onClick={() => handleSortSemesterOptionChange(option)}
-                          className={classNames(styles.menuItem, {
-                            [styles.selected]: sortSemesterOption === option,
-                          })}
-                        >
-                          {
-                            SORT_OPTION_SEMESTER_ICON[
-                              option as keyof typeof SORT_OPTION_SEMESTER_ICON
-                            ]
-                          }
-                          <Text className={styles.menuText}>
-                            {option} First
+                      {labels.length > 0 && (
+                        <>
+                          <Text className={styles.sectionTitle}>
+                            Custom Labels
                           </Text>
-                        </DropdownMenu.Item>
-                      ))}
-                    {sortPage === "Course" &&
-                      SORT_OPTIONS_COURSE.map((option) => (
-                        <DropdownMenu.Item
-                          key={option}
-                          onClick={() => handleSortCourseOptionChange(option)}
-                          className={classNames(styles.menuItem, {
-                            [styles.selected]: sortCourseOption === option,
+                          {labels.map((label) => {
+                            const labelKey = `label_${label.name}`;
+                            const labelCounts = calculateLabelCounts();
+                            return (
+                              <Flex
+                                key={labelKey}
+                                align="center"
+                                gap="8px"
+                                style={{ cursor: "pointer" }}
+                                onClick={() =>
+                                  handleFilterOptionChange(labelKey)
+                                }
+                              >
+                                <Checkbox
+                                  checked={filterOptions[labelKey] || false}
+                                  style={{ cursor: "pointer" }}
+                                />
+                                <Badge
+                                  label={label.name}
+                                  color={label.color as Color}
+                                />
+                                <Text className={styles.labelCount}>
+                                  ({labelCounts[label.name] || 0})
+                                </Text>
+                              </Flex>
+                            );
                           })}
-                        >
-                          {
-                            SORT_OPTION_COURSE_ICON[
-                              option as keyof typeof SORT_OPTION_COURSE_ICON
-                            ]
-                          }
-                          <Text className={styles.menuText}>{option}</Text>
-                        </DropdownMenu.Item>
-                      ))}
-                  </div>
+                        </>
+                      )}
+                    </Flex>
+                  </Box>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
-            </div>
 
-            <Tooltip
-              content="Add new block"
-              trigger={
-                <IconButton
-                  onClick={() => {
-                    setShowAddBlockMenu(!showAddBlockMenu);
-                  }}
+              <div>
+                <DropdownMenu.Root
+                  open={sortMenuOpen}
+                  onOpenChange={setSortMenuOpen}
                 >
-                  <Plus />
-                </IconButton>
-              }
-            />
+                  <Tooltip
+                    content="Sort"
+                    trigger={
+                      <DropdownMenu.Trigger asChild>
+                        <div
+                          style={{
+                            position: "relative",
+                            display: "inline-block",
+                          }}
+                        >
+                          <IconButton
+                            style={{
+                              backgroundColor: sortMenuOpen
+                                ? "#52525B"
+                                : undefined,
+                            }}
+                          >
+                            <Sort />
+                          </IconButton>
+                        </div>
+                      </DropdownMenu.Trigger>
+                    }
+                  />
+                  <DropdownMenu.Content
+                    sideOffset={5}
+                    align="end"
+                    style={{
+                      width: "max-content",
+                      paddingTop: "0px",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                    }}
+                  >
+                    <Text
+                      className={styles.sectionTitle}
+                      style={{ marginTop: "8px" }}
+                    >
+                      Sort By
+                    </Text>
+                    {SORT_OPTIONS.map((option) => (
+                      <div
+                        key={option}
+                        className={styles.sortMenu}
+                        onClick={() => {
+                          handleChangeSortPage(option);
+                        }}
+                      >
+                        <div style={{ paddingTop: "3px" }} />
+                        <label className={styles.option}>
+                          <input
+                            type="radio"
+                            name="sortType"
+                            checked={sortPage === option}
+                            onChange={() => handleChangeSortPage(option)}
+                            className={styles.input}
+                          />
+                          <div
+                            className={styles.circle}
+                            style={{
+                              borderColor:
+                                sortPage === option
+                                  ? "var(--blue-500)"
+                                  : "#C7C7C7",
+                            }}
+                          >
+                            {sortPage === option && (
+                              <div className={styles.dot}></div>
+                            )}
+                          </div>
+                          <Text
+                            style={{
+                              color:
+                                sortPage === option
+                                  ? "var(--heading-color)"
+                                  : "var(--paragraph-color)",
+                              marginLeft: "-6px",
+                            }}
+                          >
+                            {option}
+                          </Text>
+                        </label>
+                      </div>
+                    ))}
 
-            <Tooltip
-              content="Display settings"
-              trigger={
-                <Button
-                  ref={displayMenuTriggerRef}
-                  variant="secondary"
-                  onClick={() => {
-                    setShowDisplayMenu(!showDisplayMenu);
-                  }}
-                >
-                  Display
-                  <NavArrowDown />
-                </Button>
-              }
-            />
+                    <div
+                      style={{
+                        height: "1px",
+                        backgroundColor: "var(--border-color)",
+                        margin: "5px 0px",
+                        width: "100%",
+                      }}
+                    />
 
-            {!bookmarksSidebarOpen && (
+                    <div>
+                      {sortPage === "Semester" &&
+                        SORT_OPTIONS_SEMESTER.map((option) => (
+                          <DropdownMenu.Item
+                            key={option}
+                            onClick={() =>
+                              handleSortSemesterOptionChange(option)
+                            }
+                            className={classNames(styles.menuItem, {
+                              [styles.selected]: sortSemesterOption === option,
+                            })}
+                          >
+                            {
+                              SORT_OPTION_SEMESTER_ICON[
+                                option as keyof typeof SORT_OPTION_SEMESTER_ICON
+                              ]
+                            }
+                            <Text className={styles.menuText}>
+                              {option} First
+                            </Text>
+                          </DropdownMenu.Item>
+                        ))}
+                      {sortPage === "Course" &&
+                        SORT_OPTIONS_COURSE.map((option) => (
+                          <DropdownMenu.Item
+                            key={option}
+                            onClick={() => handleSortCourseOptionChange(option)}
+                            className={classNames(styles.menuItem, {
+                              [styles.selected]: sortCourseOption === option,
+                            })}
+                          >
+                            {
+                              SORT_OPTION_COURSE_ICON[
+                                option as keyof typeof SORT_OPTION_COURSE_ICON
+                              ]
+                            }
+                            <Text className={styles.menuText}>{option}</Text>
+                          </DropdownMenu.Item>
+                        ))}
+                    </div>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </div>
+
               <Tooltip
-                content="Bookmarks"
+                content="Add new block"
+                trigger={
+                  <IconButton
+                    onClick={() => {
+                      setShowAddBlockMenu(!showAddBlockMenu);
+                    }}
+                  >
+                    <Plus />
+                  </IconButton>
+                }
+              />
+
+              <Tooltip
+                content="Display settings"
                 trigger={
                   <Button
+                    ref={displayMenuTriggerRef}
                     variant="secondary"
-                    onClick={() => setBookmarksSidebarOpen(true)}
+                    onClick={() => {
+                      setShowDisplayMenu(!showDisplayMenu);
+                    }}
                   >
-                    <Bookmark />
-                    Bookmarks
+                    Display
+                    <NavArrowDown />
                   </Button>
                 }
               />
-            )}
 
-            <Tooltip
-              content="Edit Major"
-              trigger={
-                <Button variant="primary" onClick={() => setEditOpen(true)}>
-                  <Edit />
-                  Edit
-                </Button>
-              }
-            />
+              {!bookmarksSidebarOpen && (
+                <Tooltip
+                  content="Bookmarks"
+                  trigger={
+                    <Button
+                      variant="secondary"
+                      onClick={() => setBookmarksSidebarOpen(true)}
+                    >
+                      <Bookmark />
+                      Bookmarks
+                    </Button>
+                  }
+                />
+              )}
 
-            <EditPlanDialog
-              open={editOpen}
-              onOpenChange={setEditOpen}
-              initialMajors={gradTrak?.majors}
-              initialMinors={gradTrak?.minors}
-              initialColleges={gradTrak?.colleges as Colleges[]}
-              onSave={() => refetchGradTrak()}
-            />
+              <Tooltip
+                content="Edit Major"
+                trigger={
+                  <Button variant="primary" onClick={() => setEditOpen(true)}>
+                    <Edit />
+                    Edit
+                  </Button>
+                }
+              />
+
+              <EditPlanDialog
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                initialMajors={gradTrak?.majors}
+                initialMinors={gradTrak?.minors}
+                initialColleges={gradTrak?.colleges as Colleges[]}
+                onSave={() => refetchGradTrak()}
+              />
+            </div>
           </div>
-        </div>
-        {showDisplayMenu && (
-          <DisplayMenu
-            onClose={() => setShowDisplayMenu(false)}
-            settings={settings}
-            onChangeSettings={(patch) => updateSettings(patch)}
-            triggerRef={displayMenuTriggerRef}
+          {showDisplayMenu && (
+            <DisplayMenu
+              onClose={() => setShowDisplayMenu(false)}
+              settings={settings}
+              onChangeSettings={(patch) => updateSettings(patch)}
+              triggerRef={displayMenuTriggerRef}
+              labels={labels}
+              setShowLabelMenu={setShowLabelMenu}
+            />
+          )}
+          <LabelMenu
+            open={showLabelMenu}
+            onOpenChange={setShowLabelMenu}
             labels={labels}
-            setShowLabelMenu={setShowLabelMenu}
+            onLabelsChange={updateLabels}
           />
-        )}
-        <LabelMenu
-          open={showLabelMenu}
-          onOpenChange={setShowLabelMenu}
-          labels={labels}
-          onLabelsChange={updateLabels}
-        />
-        {showAddBlockMenu && (
-          <AddBlockMenu
-            onClose={() => setShowAddBlockMenu(false)}
-            createNewPlanTerm={handleNewPlanTerm}
-          />
-        )}
-        <div className={styles.semesterBlocks}>
-          <div className={styles.semesterBlocksInner}>
-            <div
-              className={styles.semesterLayout}
-              data-layout={settings.layout}
-            >
-              {[...planTerms]
-                .filter((term) => {
-                  if (
-                    !(
-                      filterOptions.completed ||
-                      filterOptions.inProgress ||
-                      filterOptions.incomplete
-                    )
-                  )
-                    return true;
-
-                  if (filterOptions.completed && term.status === "Complete")
-                    return true;
-                  if (filterOptions.inProgress && term.status === "InProgress")
-                    return true;
-                  if (filterOptions.incomplete && term.status === "Incomplete")
-                    return true;
-
-                  return false;
-                })
-                .filter((term) => {
-                  if (
-                    !Object.keys(filterOptions).some(
-                      (key) => key.startsWith("label_") && filterOptions[key]
-                    )
-                  ) {
-                    return true;
-                  }
-                  return filteredAllSemesters[term._id]
-                    ? filteredAllSemesters[term._id].length > 0
-                    : false;
-                })
-                .sort((a, b) => {
-                  // Pinned terms first
-                  if (a.pinned && !b.pinned) return -1;
-                  if (!a.pinned && b.pinned) return 1;
-
-                  // misc always comes first
-                  if (a.year == -1 || b.year == -1) {
-                    return a.year - b.year;
-                  }
-                  if (sortSemesterOption === "Oldest") {
-                    if (a.year != b.year) return a.year - b.year;
-                    return getTermOrder(a.term) - getTermOrder(b.term);
-                  } else {
-                    if (a.year != b.year) return b.year - a.year;
-                    return getTermOrder(b.term) - getTermOrder(a.term);
-                  }
-                })
-                .map((term) => (
-                  <SemesterBlock
-                    key={term._id}
-                    planTerm={term}
-                    onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
-                      updateTotalUnits(
-                        term.name ? term.name : "",
-                        newTotal,
-                        pnpUnits,
-                        transferUnits
+          {showAddBlockMenu && (
+            <AddBlockMenu
+              onClose={() => setShowAddBlockMenu(false)}
+              createNewPlanTerm={handleNewPlanTerm}
+            />
+          )}
+          <div className={styles.semesterBlocks}>
+            <div className={styles.semesterBlocksInner}>
+              <div
+                className={styles.semesterLayout}
+                data-layout={settings.layout}
+              >
+                {[...planTerms]
+                  .filter((term) => {
+                    if (
+                      !(
+                        filterOptions.completed ||
+                        filterOptions.inProgress ||
+                        filterOptions.incomplete
                       )
+                    )
+                      return true;
+
+                    if (filterOptions.completed && term.status === "Complete")
+                      return true;
+                    if (
+                      filterOptions.inProgress &&
+                      term.status === "InProgress"
+                    )
+                      return true;
+                    if (
+                      filterOptions.incomplete &&
+                      term.status === "Incomplete"
+                    )
+                      return true;
+
+                    return false;
+                  })
+                  .filter((term) => {
+                    if (
+                      !Object.keys(filterOptions).some(
+                        (key) => key.startsWith("label_") && filterOptions[key]
+                      )
+                    ) {
+                      return true;
                     }
-                    filteredSemesters={filteredAllSemesters}
-                    allSemesters={allSemesters}
-                    updateAllSemesters={updateAllSemesters}
-                    settings={settings}
-                    labels={labels}
-                    setShowLabelMenu={setShowLabelMenu}
-                    catalogCourses={catalogCourses}
-                    index={index}
-                    handleUpdateTermName={(name) =>
-                      handleUpdateTermName(term._id, name)
+                    return filteredAllSemesters[term._id]
+                      ? filteredAllSemesters[term._id].length > 0
+                      : false;
+                  })
+                  .sort((a, b) => {
+                    // Pinned terms first
+                    if (a.pinned && !b.pinned) return -1;
+                    if (!a.pinned && b.pinned) return 1;
+
+                    // misc always comes first
+                    if (a.year == -1 || b.year == -1) {
+                      return a.year - b.year;
                     }
-                    handleTogglePin={() => handleTogglePin(term._id)}
-                    handleSetStatus={(status: Status) =>
-                      handleSetStatus(term._id, status)
+                    if (sortSemesterOption === "Oldest") {
+                      if (a.year != b.year) return a.year - b.year;
+                      return getTermOrder(a.term) - getTermOrder(b.term);
+                    } else {
+                      if (a.year != b.year) return b.year - a.year;
+                      return getTermOrder(b.term) - getTermOrder(a.term);
                     }
-                    sortCourseOption={sortCourseOption}
-                    handleRemoveTerm={() => {
-                      const updatedSemesters = { ...allSemesters };
-                      delete updatedSemesters[term._id];
-                      updateAllSemesters(updatedSemesters);
-                    }}
-                    filtersActive={activeFiltersCount > 0}
-                  />
-                ))}
+                  })
+                  .map((term) => (
+                    <SemesterBlock
+                      key={term._id}
+                      planTerm={term}
+                      onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
+                        updateTotalUnits(
+                          term.name ? term.name : "",
+                          newTotal,
+                          pnpUnits,
+                          transferUnits
+                        )
+                      }
+                      filteredSemesters={filteredAllSemesters}
+                      allSemesters={allSemesters}
+                      updateAllSemesters={updateAllSemesters}
+                      settings={settings}
+                      labels={labels}
+                      setShowLabelMenu={setShowLabelMenu}
+                      catalogCourses={catalogCourses}
+                      index={index}
+                      handleUpdateTermName={(name) =>
+                        handleUpdateTermName(term._id, name)
+                      }
+                      handleTogglePin={() => handleTogglePin(term._id)}
+                      handleSetStatus={(status: Status) =>
+                        handleSetStatus(term._id, status)
+                      }
+                      sortCourseOption={sortCourseOption}
+                      handleRemoveTerm={() => {
+                        const updatedSemesters = { ...allSemesters };
+                        delete updatedSemesters[term._id];
+                        updateAllSemesters(updatedSemesters);
+                      }}
+                      filtersActive={activeFiltersCount > 0}
+                    />
+                  ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
         {bookmarksSidebarOpen && (
           <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />
         )}

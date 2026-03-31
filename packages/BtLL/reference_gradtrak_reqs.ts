@@ -340,8 +340,84 @@ Function<List<Requirement>>() main (){
 }
 `;
 
-// // R&C, Quantitative Reasoning (different from CDSS), L&S Language Requirement, 7 Breadths
-export const LNS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
+export const LNS_QR_BTLL = `
+Function<List<Requirement>>(List<Course>) lns_qr_requirements (courses){
+  // pulled from https://lsadvising.berkeley.edu/quantitative-reasoning
+  List<Course> qr_courses filter(courses, (c) {
+    List<Course> qr_req [
+      {"COMPSCI C8"},
+      {"COMPSCI 10"},
+      {"COMPSCI W10"},
+      {"COMPSCI 61A"},
+      {"COMPSCI 61B"},
+      {"COMPSCI 61C"},
+      {"COMPSCI 70"},
+      {"DATA C8"},
+      {"INFO C8"},
+      {"STAT C8"},
+      {"MATH 1A"},
+      {"MATH N1A"},
+      {"MATH 1B"},
+      {"MATH N1B"},
+      {"MATH 3"},
+      {"MATH 10A"},
+      {"MATH N10A"},
+      {"MATH 10B"},
+      {"MATH N10B"},
+      {"MATH X11"},
+      {"MATH X12"},
+      {"MATH 16A"},
+      {"MATH N16A"},
+      {"MATH 16B"},
+      {"MATH N16B"},
+      {"MATH 32"},
+      {"MATH N32"},
+      {"MATH 51"},
+      {"MATH 52"},
+      {"MATH 53"},
+      {"MATH H53"},
+      {"MATH N53"},
+      {"MATH W53"},
+      {"MATH 54"},
+      {"MATH H54"},
+      {"MATH N54"},
+      {"MATH W54"},
+      {"MATH 55"},
+      {"MATH N55"},
+      {"MATH 56"},
+      {"MATH 74"},
+      {"STAT 2"},
+      {"STAT X10"},
+      {"STAT 20"},
+      {"STAT 21"},
+      {"STAT W21"}
+    ]
+    boolean return one_common_course([c], qr_req)
+  })
+  NCoursesRequirement quantitative_reasoning {qr_courses, 1, "Quantitative Reasoning"}
+  List<Requirement> return [quantitative_reasoning]
+}
+`;
+
+export const LNS_LANG_BTLL = `
+Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
+  // L&S Language Requirement: second-semester college level or equivalent
+  // pulled from https://lsadvising.berkeley.edu/ls-language-requirement
+  // SIS attribute code "FL" (Foreign Language); value codes: BEG1, BEG2, INT1, INT2, ADV1, ADV2
+  // BEG1 (Beginning 1st semester) does not satisfy; all others do
+  List<Course> language_courses filter(courses, (c) {
+    string lang_level get_attr(c, "languageLevel")
+    boolean has_language not(equal([lang_level, ""]))
+    boolean not_first_semester not(equal([lang_level, "BEG1"]))
+    boolean return and([has_language, not_first_semester])
+  })
+  NCoursesRequirement language_req {language_courses, 1, "L&S Language Requirement"}
+  List<Requirement> return [language_req]
+}
+`;
+
+// R&C, Quantitative Reasoning, L&S Language Requirement, 7 Breadths
+export const LNS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}${LNS_QR_BTLL}${LNS_LANG_BTLL}
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
   List<Requirement> breadth7 seven_breadths_requirements(courses)
@@ -352,7 +428,13 @@ Function<List<Requirement>>() main (){
   Requirement rca get_element(rc_reqs, 0)
   Requirement rcb get_element(rc_reqs, 1)
 
-  List<Requirement> return [seven_breadths, rca, rcb]
+  List<Requirement> qr_reqs lns_qr_requirements(courses)
+  Requirement quantitative_reasoning get_element(qr_reqs, 0)
+
+  List<Requirement> lang_reqs lns_language_requirements(courses)
+  Requirement language_req get_element(lang_reqs, 0)
+
+  List<Requirement> return [seven_breadths, rca, rcb, quantitative_reasoning, language_req]
 }
 `;
 

@@ -8,6 +8,7 @@ export type Course = {
   units: Data<number>;
   breadthRequirements: Data<string[]>;
   universityRequirement: Data<string>;
+  languageLevel: Data<string>;
 };
 
 export const definedFields = [
@@ -16,6 +17,7 @@ export const definedFields = [
   "units",
   "universityRequirement",
   "breadthRequirements",
+  "languageLevel",
 ];
 
 export const constructor = (
@@ -50,6 +52,10 @@ export const constructor = (
         breadthRequirements: {
           data: [],
           type: "List<string>",
+        },
+        languageLevel: {
+          data: "",
+          type: "string",
         },
       },
       type: "Course",

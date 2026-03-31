@@ -14,6 +14,7 @@ export type Course = {
   units: Data<number>;
   breadthRequirements: Data<string[]>;
   universityRequirement: Data<string>;
+  languageLevel: Data<string>;
 };
 
 export type Column = {

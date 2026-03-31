@@ -20,6 +20,13 @@ export function courseAdapter(
     type: "List<string>",
   };
 
+  const languageLevel = {
+    data:
+      primarySection?.sectionAttributes?.find((s) => s.attribute.code === "FL")
+        ?.value?.code ?? "",
+    type: "string",
+  };
+
   return {
     subject: {
       data: course.courseName.split(" ")[0],
@@ -38,6 +45,7 @@ export function courseAdapter(
       type: "string",
     },
     breadthRequirements,
+    languageLevel,
   };
 }
 
