@@ -401,7 +401,7 @@ Function<List<Requirement>>(List<Course>) lns_qr_requirements (courses){
 
 export const LNS_LANG_BTLL = `
 Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
-  // L&S Language Requirement: second-semester college level or equivalent
+  // Language Requirement: second-semester college level or equivalent
   // pulled from https://lsadvising.berkeley.edu/ls-language-requirement
   // SIS attribute code "FL" (Foreign Language); value codes: BEG1, BEG2, INT1, INT2, ADV1, ADV2
   // BEG1 (Beginning 1st semester) does not satisfy; all others do
@@ -411,7 +411,7 @@ Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
     boolean not_first_semester not(equal([lang_level, "BEG1"]))
     boolean return and([has_language, not_first_semester])
   })
-  NCoursesRequirement language_req {language_courses, 1, "L&S Language Requirement"}
+  NCoursesRequirement language_req {language_courses, 1, "Language Requirement"}
   List<Requirement> return [language_req]
 }
 `;
