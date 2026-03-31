@@ -17,7 +17,7 @@ export const trackingTypeDef = gql`
 
     "Arbitrary JSON payload for event-specific context."
     metadata: JSON
-    
+
     "Client-set ISO 8601 timestamp for accurate timing."
     timestamp: String!
   }
