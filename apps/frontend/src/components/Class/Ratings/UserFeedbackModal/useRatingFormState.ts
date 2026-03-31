@@ -36,7 +36,7 @@ export function useRatingFormState({
   // Calculate progress: 6 fields (semester + 3 ratings + 2 attendance)
   const progress = useMemo(() => {
     let filledFields = 0;
-    const totalFields = 6;
+    const totalFields = 7;
 
     // Field 1: Semester selection
     if (selectedTerm && selectedTerm.length > 0) filledFields++;
@@ -56,8 +56,11 @@ export function useRatingFormState({
     // Field 6: Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
+    // Field 7: Review
+    if (review && review.trim().length > 0) filledFields++;
+
     return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData]);
+  }, [selectedTerm, metricData, review]);
 
   const reset = (
     newInitialMetricData?: MetricData,
