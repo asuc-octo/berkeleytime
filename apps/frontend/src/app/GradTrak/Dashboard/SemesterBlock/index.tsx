@@ -16,6 +16,7 @@ import {
 import { FuzzySearch } from "@repo/common";
 import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
+import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
@@ -25,8 +26,6 @@ import {
   Status,
   Terms,
 } from "@/lib/generated/graphql";
-
-import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -545,302 +544,304 @@ function SemesterBlock({
 
   return (
     <>
-    <div
-      ref={containerRef}
-      className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
-      onDragOver={filtersActive ? undefined : handleDragOver}
-      onDragLeave={filtersActive ? undefined : handleDragLeave}
-      onDrop={filtersActive ? undefined : handleDrop}
-    >
       <div
-        className={styles.body}
-        data-layout={settings.layout}
-        data-open={open}
+        ref={containerRef}
+        className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
+        onDragOver={filtersActive ? undefined : handleDragOver}
+        onDragLeave={filtersActive ? undefined : handleDragLeave}
+        onDrop={filtersActive ? undefined : handleDrop}
       >
-        <Flex direction="row" justify="between" width="100%">
-          <div className={styles.semesterCounter}>
-            {planTerm.pinned && (
-              <PinSolid className={styles.pin} onClick={handleTogglePin} />
-            )}
-            <h2>
-              {renameEditActive ? (
-                <Input
-                  ref={inputRef}
-                  value={rename}
-                  onChange={(e) => setRename(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSaveRename();
-                    } else if (e.key === "Escape") {
-                      handleCancelRename();
-                    }
+        <div
+          className={styles.body}
+          data-layout={settings.layout}
+          data-open={open}
+        >
+          <Flex direction="row" justify="between" width="100%">
+            <div className={styles.semesterCounter}>
+              {planTerm.pinned && (
+                <PinSolid className={styles.pin} onClick={handleTogglePin} />
+              )}
+              <h2>
+                {renameEditActive ? (
+                  <Input
+                    ref={inputRef}
+                    value={rename}
+                    onChange={(e) => setRename(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSaveRename();
+                      } else if (e.key === "Escape") {
+                        handleCancelRename();
+                      }
+                    }}
+                    onBlur={handleSaveRename}
+                    style={{ width: "100%", minWidth: "120px" }}
+                  />
+                ) : (
+                  <span
+                    onClick={() => {
+                      setRenameEditActive(true);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {planTerm.name}
+                  </span>
+                )}
+              </h2>
+              <p className={styles.counter}>{totalUnits}</p>
+              <span
+                className={styles.status}
+                style={{
+                  backgroundColor:
+                    planTerm.status === Status.Complete
+                      ? "var(--emerald-500)"
+                      : planTerm.status == Status.InProgress
+                        ? "var(--yellow-500)"
+                        : "var(--gray-500)",
+                }}
+              />
+            </div>
+            <Flex direction="row" gap="6px">
+              <div>
+                <DropdownMenu.Root modal={false}>
+                  <DropdownMenu.Trigger asChild>
+                    <MoreHoriz className={styles.actionButton} />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content
+                    sideOffset={5}
+                    align="end"
+                    style={{ width: "160px" }}
+                  >
+                    {planTerm.term === Terms.Misc && (
+                      <DropdownMenu.Item
+                        onClick={() => setRenameEditActive(true)}
+                      >
+                        <Edit className={styles.menuIcon} /> Rename
+                      </DropdownMenu.Item>
+                    )}
+                    <DropdownMenu.Sub>
+                      <DropdownMenu.SubTrigger>
+                        <List className={styles.menuIcon} /> Status
+                        <NavArrowRight className={styles.rightAlignedIcon} />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.Complete);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{
+                                  backgroundColor: "var(--emerald-500)",
+                                }}
+                              />
+                              Complete
+                            </span>
+                            {planTerm.status === Status.Complete && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.InProgress);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{ backgroundColor: "var(--yellow-500)" }}
+                              />
+                              In Progress
+                            </span>
+                            {planTerm.status === Status.InProgress && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.Incomplete);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{ backgroundColor: "var(--gray-500)" }}
+                              />
+                              Incomplete
+                            </span>
+                            {planTerm.status === Status.Incomplete && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Sub>
+                    <DropdownMenu.Item onClick={handleTogglePin}>
+                      {planTerm.pinned ? (
+                        <PinSolid className={styles.menuIcon} />
+                      ) : (
+                        <Pin className={styles.menuIcon} />
+                      )}{" "}
+                      Pin
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      onClick={() => setConfirmDeleteSemesterOpen(true)}
+                      isDelete
+                    >
+                      <Trash className={styles.menuIcon} /> Delete Column
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </div>
+              {open ? (
+                <NavArrowDown
+                  className={styles.actionButton}
+                  onClick={() => {
+                    setOpen(false);
                   }}
-                  onBlur={handleSaveRename}
-                  style={{ width: "100%", minWidth: "120px" }}
                 />
               ) : (
-                <span
+                <NavArrowRight
+                  className={styles.actionButton}
                   onClick={() => {
-                    setRenameEditActive(true);
+                    setOpen(true);
                   }}
-                  style={{ cursor: "pointer" }}
-                >
-                  {planTerm.name}
-                </span>
+                />
               )}
-            </h2>
-            <p className={styles.counter}>{totalUnits}</p>
-            <span
-              className={styles.status}
-              style={{
-                backgroundColor:
-                  planTerm.status === Status.Complete
-                    ? "var(--emerald-500)"
-                    : planTerm.status == Status.InProgress
-                      ? "var(--yellow-500)"
-                      : "var(--gray-500)",
-              }}
-            />
-          </div>
-          <Flex direction="row" gap="6px">
-            <div>
-              <DropdownMenu.Root modal={false}>
-                <DropdownMenu.Trigger asChild>
-                  <MoreHoriz className={styles.actionButton} />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content
-                  sideOffset={5}
-                  align="end"
-                  style={{ width: "160px" }}
-                >
-                  {planTerm.term === Terms.Misc && (
-                    <DropdownMenu.Item
-                      onClick={() => setRenameEditActive(true)}
-                    >
-                      <Edit className={styles.menuIcon} /> Rename
-                    </DropdownMenu.Item>
-                  )}
-                  <DropdownMenu.Sub>
-                    <DropdownMenu.SubTrigger>
-                      <List className={styles.menuIcon} /> Status
-                      <NavArrowRight className={styles.rightAlignedIcon} />
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.Complete);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--emerald-500)" }}
-                            />
-                            Complete
-                          </span>
-                          {planTerm.status === Status.Complete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.InProgress);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--yellow-500)" }}
-                            />
-                            In Progress
-                          </span>
-                          {planTerm.status === Status.InProgress && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.Incomplete);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--gray-500)" }}
-                            />
-                            Incomplete
-                          </span>
-                          {planTerm.status === Status.Incomplete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                    </DropdownMenu.SubContent>
-                  </DropdownMenu.Sub>
-                  <DropdownMenu.Item onClick={handleTogglePin}>
-                    {planTerm.pinned ? (
-                      <PinSolid className={styles.menuIcon} />
-                    ) : (
-                      <Pin className={styles.menuIcon} />
-                    )}{" "}
-                    Pin
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onClick={() => setConfirmDeleteSemesterOpen(true)}
-                    isDelete
-                  >
-                    <Trash className={styles.menuIcon} /> Delete Column
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </div>
-            {open ? (
-              <NavArrowDown
-                className={styles.actionButton}
-                onClick={() => {
-                  setOpen(false);
-                }}
-              />
-            ) : (
-              <NavArrowRight
-                className={styles.actionButton}
-                onClick={() => {
-                  setOpen(true);
-                }}
-              />
-            )}
+            </Flex>
           </Flex>
-        </Flex>
 
-        {open && (
-          <>
-            {[...selectedClasses]
-              .sort((a, b) => {
-                if (sortCourseOption === "Unsorted") return 0;
-                if (sortCourseOption === "A-Z")
-                  return a.courseName.localeCompare(b.courseName);
-                if (sortCourseOption === "Z-A")
-                  return b.courseName.localeCompare(a.courseName);
-                return 0;
-              })
-              .map((cls, index) => (
-                <React.Fragment key={`class-group-${index}`}>
-                  {placeholderIndex === index &&
-                    !(
-                      draggingIndexRef.current !== null &&
-                      (placeholderIndex === draggingIndexRef.current ||
-                        placeholderIndex === draggingIndexRef.current + 1)
-                    ) && <div className={styles.placeholder} />}
-                  <Class
-                    cls={cls}
-                    index={index}
-                    handleDragEnd={handleDragEnd}
-                    handleDragStart={handleDragStart}
-                    handleDetails={handleClassDetails}
-                    handleDelete={(i) => setConfirmDeleteClassIndex(i)}
-                    settings={settings}
-                    labels={labels}
-                    draggable={!filtersActive}
-                  />
-                </React.Fragment>
-              ))}
+          {open && (
+            <>
+              {[...selectedClasses]
+                .sort((a, b) => {
+                  if (sortCourseOption === "Unsorted") return 0;
+                  if (sortCourseOption === "A-Z")
+                    return a.courseName.localeCompare(b.courseName);
+                  if (sortCourseOption === "Z-A")
+                    return b.courseName.localeCompare(a.courseName);
+                  return 0;
+                })
+                .map((cls, index) => (
+                  <React.Fragment key={`class-group-${index}`}>
+                    {placeholderIndex === index &&
+                      !(
+                        draggingIndexRef.current !== null &&
+                        (placeholderIndex === draggingIndexRef.current ||
+                          placeholderIndex === draggingIndexRef.current + 1)
+                      ) && <div className={styles.placeholder} />}
+                    <Class
+                      cls={cls}
+                      index={index}
+                      handleDragEnd={handleDragEnd}
+                      handleDragStart={handleDragStart}
+                      handleDetails={handleClassDetails}
+                      handleDelete={(i) => setConfirmDeleteClassIndex(i)}
+                      settings={settings}
+                      labels={labels}
+                      draggable={!filtersActive}
+                    />
+                  </React.Fragment>
+                ))}
 
-            {/* Dragging placeholder */}
-            {placeholderIndex === selectedClasses.length &&
-              !(
-                draggingIndexRef.current !== null &&
-                (placeholderIndex === draggingIndexRef.current ||
-                  placeholderIndex === draggingIndexRef.current + 1)
-              ) && <div className={styles.placeholder} />}
+              {/* Dragging placeholder */}
+              {placeholderIndex === selectedClasses.length &&
+                !(
+                  draggingIndexRef.current !== null &&
+                  (placeholderIndex === draggingIndexRef.current ||
+                    placeholderIndex === draggingIndexRef.current + 1)
+                ) && <div className={styles.placeholder} />}
 
-            {/* Dialog Component */}
-            <AddClass
-              isOpen={isAddClassOpen}
-              setIsOpen={setIsAddClassOpen}
-              addClass={addClass}
-              handleOnConfirm={(cls) => {
-                addClass(cls);
-              }}
-              labels={labels}
-              setShowLabelMenu={setShowLabelMenu}
-              catalogCourses={catalogCourses}
-              index={index}
-            />
-
-            {/* Edit Class Details Dialog */}
-            {classToEdit && (
-              <ClassDetails
-                isOpen={isClassDetailsOpen}
-                setIsOpen={setIsClassDetailsOpen}
-                classData={classToEdit}
-                onUpdate={handleUpdateClass}
-                allLabels={labels}
+              {/* Dialog Component */}
+              <AddClass
+                isOpen={isAddClassOpen}
+                setIsOpen={setIsAddClassOpen}
+                addClass={addClass}
+                handleOnConfirm={(cls) => {
+                  addClass(cls);
+                }}
+                labels={labels}
                 setShowLabelMenu={setShowLabelMenu}
+                catalogCourses={catalogCourses}
+                index={index}
               />
-            )}
 
-            <Button
-              onClick={() => setIsAddClassOpen(true)}
-              className={styles.addButton}
-            >
-              + Add Class
-            </Button>
-          </>
-        )}
+              {/* Edit Class Details Dialog */}
+              {classToEdit && (
+                <ClassDetails
+                  isOpen={isClassDetailsOpen}
+                  setIsOpen={setIsClassDetailsOpen}
+                  classData={classToEdit}
+                  onUpdate={handleUpdateClass}
+                  allLabels={labels}
+                  setShowLabelMenu={setShowLabelMenu}
+                />
+              )}
+
+              <Button
+                onClick={() => setIsAddClassOpen(true)}
+                className={styles.addButton}
+              >
+                + Add Class
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
-    <DeleteScheduleDialog
-      isOpen={confirmDeleteSemesterOpen}
-      onClose={() => setConfirmDeleteSemesterOpen(false)}
-      title="Delete Semester"
-      message={
-        <>
-          Are you sure you want to delete <strong>{planTerm.name}</strong>?
-          All courses in this semester will be removed.
-        </>
-      }
-      onConfirm={async () => {
-        try {
-          await removePlanTermByID(planTerm._id);
-          handleRemoveTerm();
-        } catch {
-          return;
+      <DeleteScheduleDialog
+        isOpen={confirmDeleteSemesterOpen}
+        onClose={() => setConfirmDeleteSemesterOpen(false)}
+        title="Delete Semester"
+        message={
+          <>
+            Are you sure you want to delete <strong>{planTerm.name}</strong>?
+            All courses in this semester will be removed.
+          </>
         }
-        onTotalUnitsChange(0, 0, 0);
-        setConfirmDeleteSemesterOpen(false);
-      }}
-      confirmText="Yes, delete"
-      cancelText="Cancel"
-    />
-    <DeleteScheduleDialog
-      isOpen={confirmDeleteClassIndex !== null}
-      onClose={() => setConfirmDeleteClassIndex(null)}
-      title="Delete Class"
-      message={
-        <>
-          Are you sure you want to delete{" "}
-          <strong>
-            {confirmDeleteClassIndex !== null
-              ? selectedClasses[confirmDeleteClassIndex]?.courseName
-              : ""}
-          </strong>
-          ?
-        </>
-      }
-      onConfirm={async () => {
-        if (confirmDeleteClassIndex !== null) {
-          handleDeleteClass(confirmDeleteClassIndex);
-          setConfirmDeleteClassIndex(null);
+        onConfirm={async () => {
+          try {
+            await removePlanTermByID(planTerm._id);
+            handleRemoveTerm();
+          } catch {
+            return;
+          }
+          onTotalUnitsChange(0, 0, 0);
+          setConfirmDeleteSemesterOpen(false);
+        }}
+        confirmText="Yes, delete"
+        cancelText="Cancel"
+      />
+      <DeleteScheduleDialog
+        isOpen={confirmDeleteClassIndex !== null}
+        onClose={() => setConfirmDeleteClassIndex(null)}
+        title="Delete Class"
+        message={
+          <>
+            Are you sure you want to delete{" "}
+            <strong>
+              {confirmDeleteClassIndex !== null
+                ? selectedClasses[confirmDeleteClassIndex]?.courseName
+                : ""}
+            </strong>
+            ?
+          </>
         }
-      }}
-      confirmText="Yes, delete"
-      cancelText="Cancel"
-    />
+        onConfirm={async () => {
+          if (confirmDeleteClassIndex !== null) {
+            handleDeleteClass(confirmDeleteClassIndex);
+            setConfirmDeleteClassIndex(null);
+          }
+        }}
+        confirmText="Yes, delete"
+        cancelText="Cancel"
+      />
     </>
   );
 }
