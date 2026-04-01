@@ -27,6 +27,11 @@ WORKDIR /app
 
 COPY --from=builder-py /app/.venv /app/.venv
 
+# Pre-download the embedding model so it's baked into the image.
+# This avoids runtime download races and filelock deadlocks on container startup.
+RUN /app/.venv/bin/python -c \
+    "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-base-en-v1.5')"
+
 COPY app ./app
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

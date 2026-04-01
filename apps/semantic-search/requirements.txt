@@ -1,7 +1,8 @@
 fastapi
 uvicorn[standard]
 sentence-transformers
-faiss-cpu
+redisvl
+redis
 requests
 numpy
 

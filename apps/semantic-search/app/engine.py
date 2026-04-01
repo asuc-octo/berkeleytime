@@ -1,16 +1,18 @@
+import json
 import logging
 import os
-import pickle
 import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
-import faiss
 import numpy as np
+import redis
 import requests
+from redisvl.index import SearchIndex
+from redisvl.query import VectorQuery
+from redisvl.redis.utils import array_to_buffer
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("semantic-search")
@@ -18,9 +20,11 @@ logger = logging.getLogger("semantic-search")
 # Semester order for comparison
 SEMESTER_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2, "Winter": 3}
 
-# Directory for persisting FAISS indices
-INDEX_STORAGE_DIR = Path(os.getenv("INDEX_STORAGE_DIR", "/app/indexes"))
-INDEX_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+# Redis connection — shared with the rest of the codebase via REDIS_URI
+REDIS_URI = os.getenv("REDIS_URI", "redis://redis:6379")
+
+# Namespace prefix keeps all semantic-search keys isolated in the shared Redis instance
+INDEX_PREFIX = "semantic_search"
 
 COURSE_QUERY = """
 query Catalog($year: Int!, $semester: Semester!) {
@@ -75,11 +79,8 @@ DEFAULT_TERM = resolve_default_term(DEFAULT_YEAR_ENV, DEFAULT_SEMESTER_ENV)
 
 @dataclass
 class TermIndex:
-    index: faiss.IndexFlatIP
-    embeddings: np.ndarray
-    courses: List[Dict]
-    course_texts: List[str]
-    kept_idx: List[int]
+    index: SearchIndex
+    size: int
     last_refreshed: datetime
     year: int
     semester: str
@@ -89,6 +90,7 @@ class TermIndex:
 class SemanticSearchEngine:
     def __init__(self) -> None:
         self.model = SentenceTransformer(MODEL_NAME)
+        self._embedding_dims = self.model.get_sentence_embedding_dimension()
         self.catalog_url = DEFAULT_CATALOG_URL
         self.default_allowed_subjects = set(DEFAULT_ALLOWED_SUBJECTS) if DEFAULT_ALLOWED_SUBJECTS else None
         self._indices: Dict[str, TermIndex] = {}
@@ -98,72 +100,81 @@ class SemanticSearchEngine:
         self._last_error: Optional[str] = None
         self._build_thread: Optional[threading.Thread] = None
         self._build_queue: List[Tuple[int, str]] = []  # Queue of (year, semester) to build
+        self._redis = redis.from_url(REDIS_URI, decode_responses=True)
 
-    def _get_index_path(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Path:
-        """Get filesystem path for persisted index."""
+    def _get_index_name(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
         suffix = ",".join(allowed_subjects) if allowed_subjects else "all"
-        filename = f"{year}_{semester}_{suffix}.index"
-        return INDEX_STORAGE_DIR / filename
+        return f"{INDEX_PREFIX}:{year}:{semester}:{suffix}"
 
-    def _save_index(self, entry: TermIndex) -> None:
-        """Save FAISS index and metadata to disk."""
+    def _meta_key(self, index_name: str) -> str:
+        return f"{INDEX_PREFIX}:meta:{index_name}"
+
+    def _build_schema(self, index_name: str) -> dict:
+        return {
+            "index": {
+                "name": index_name,
+                "prefix": f"{index_name}:doc",
+            },
+            "fields": [
+                {"name": "subject", "type": "tag"},
+                {"name": "course_number", "type": "tag"},
+                {"name": "title", "type": "text"},
+                {"name": "description", "type": "text"},
+                {"name": "course_text", "type": "text"},
+                {
+                    "name": "embedding",
+                    "type": "vector",
+                    "attrs": {
+                        "dims": self._embedding_dims,
+                        "algorithm": "flat",
+                        "datatype": "float32",
+                        "distance_metric": "cosine",
+                    },
+                },
+            ],
+        }
+
+    def _save_index_metadata(self, entry: TermIndex) -> None:
+        index_name = self._get_index_name(entry.year, entry.semester, entry.allowed_subjects)
+        meta = {
+            "last_refreshed": entry.last_refreshed.isoformat(),
+            "size": entry.size,
+            "year": entry.year,
+            "semester": entry.semester,
+            "allowed_subjects": entry.allowed_subjects,
+        }
         try:
-            index_path = self._get_index_path(entry.year, entry.semester, entry.allowed_subjects)
-
-            # Save FAISS index
-            faiss.write_index(entry.index, str(index_path.with_suffix(".faiss")))
-
-            # Save metadata (everything except the FAISS index)
-            metadata = {
-                "embeddings": entry.embeddings,
-                "courses": entry.courses,
-                "course_texts": entry.course_texts,
-                "kept_idx": entry.kept_idx,
-                "last_refreshed": entry.last_refreshed,
-                "year": entry.year,
-                "semester": entry.semester,
-                "allowed_subjects": entry.allowed_subjects,
-            }
-            with open(index_path.with_suffix(".pkl"), "wb") as f:
-                pickle.dump(metadata, f)
-
-            logger.info("Saved to disk: %s", index_path.stem)
+            self._redis.set(self._meta_key(index_name), json.dumps(meta))
         except Exception as exc:
-            logger.warning("Failed to save index to disk: %s", exc)
+            logger.warning("Failed to save index metadata to Redis: %s", exc)
 
-    def _load_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
-        """Load FAISS index and metadata from disk if available."""
+    def _load_redis_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
+        """Load an existing RedisVL index from Redis if it exists."""
         try:
-            index_path = self._get_index_path(year, semester, allowed_subjects)
-            faiss_file = index_path.with_suffix(".faiss")
-            pkl_file = index_path.with_suffix(".pkl")
+            index_name = self._get_index_name(year, semester, allowed_subjects)
+            schema = self._build_schema(index_name)
+            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
 
-            if not faiss_file.exists() or not pkl_file.exists():
+            if not search_index.exists():
                 return None
 
-            # Load FAISS index
-            index = faiss.read_index(str(faiss_file))
+            meta_raw = self._redis.get(self._meta_key(index_name))
+            if not meta_raw:
+                return None
 
-            # Load metadata
-            with open(pkl_file, "rb") as f:
-                metadata = pickle.load(f)
-
+            meta = json.loads(meta_raw)
             entry = TermIndex(
-                index=index,
-                embeddings=metadata["embeddings"],
-                courses=metadata["courses"],
-                course_texts=metadata["course_texts"],
-                kept_idx=metadata["kept_idx"],
-                last_refreshed=metadata["last_refreshed"],
-                year=metadata["year"],
-                semester=metadata["semester"],
-                allowed_subjects=metadata["allowed_subjects"],
+                index=search_index,
+                size=meta["size"],
+                last_refreshed=datetime.fromisoformat(meta["last_refreshed"]),
+                year=meta["year"],
+                semester=meta["semester"],
+                allowed_subjects=meta["allowed_subjects"],
             )
-
-            logger.info("Loaded from disk: %s %s (%d courses)", entry.semester, entry.year, len(entry.course_texts))
+            logger.info("Loaded from Redis: %s %s (%d courses)", entry.semester, entry.year, entry.size)
             return entry
         except Exception as exc:
-            logger.warning("Failed to load index from disk: %s", exc)
+            logger.warning("Failed to load index from Redis: %s", exc)
             return None
 
     def refresh(
@@ -184,43 +195,57 @@ class SemanticSearchEngine:
                 raise RuntimeError("Catalog response did not contain any courses")
 
             course_texts: List[str] = []
-            kept_idx: List[int] = []
+            filtered_courses: List[Dict] = []
 
-            for i, course in enumerate(courses):
+            for course in courses:
                 subj = (course.get("subject") or "").strip()
                 if allowed and subj and subj.upper() not in allowed:
                     continue
                 course_texts.append(self._build_course_text(course))
-                kept_idx.append(i)
+                filtered_courses.append(course)
 
             if not course_texts:
                 logger.warning("Subject filter removed every course; rebuilding without filter")
                 course_texts = [self._build_course_text(course) for course in courses]
-                kept_idx = list(range(len(courses)))
+                filtered_courses = list(courses)
 
             logger.info("Encoding %d courses...", len(course_texts))
             embeddings = np.asarray(self.model.encode(course_texts, convert_to_numpy=True), dtype="float32")
-            faiss.normalize_L2(embeddings)
-            index = faiss.IndexFlatIP(embeddings.shape[1])
-            index.add(embeddings)
+
+            # Create (or overwrite) the RedisVL index
+            sorted_allowed = sorted(allowed) if allowed else None
+            index_name = self._get_index_name(year, term_semester, sorted_allowed)
+            schema = self._build_schema(index_name)
+            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
+            search_index.create(overwrite=True)
+
+            # Load course vectors into Redis
+            data = []
+            for i, (course, text) in enumerate(zip(filtered_courses, course_texts)):
+                course_meta = course.get("course") or {}
+                data.append({
+                    "subject": course.get("subject") or "",
+                    "course_number": course.get("courseNumber") or "",
+                    "title": (course_meta.get("title") or "").strip(),
+                    "description": (course_meta.get("description") or "").strip(),
+                    "course_text": text,
+                    "embedding": array_to_buffer(embeddings[i], dtype="float32"),
+                })
+            search_index.load(data)
 
             entry = TermIndex(
-                index=index,
-                embeddings=embeddings,
-                courses=courses,
-                course_texts=course_texts,
-                kept_idx=kept_idx,
+                index=search_index,
+                size=len(course_texts),
                 last_refreshed=datetime.utcnow(),
                 year=year,
                 semester=term_semester,
-                allowed_subjects=sorted(allowed) if allowed else None,
+                allowed_subjects=sorted_allowed,
             )
 
             with self._lock:
                 self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
 
-            # Save index to disk for persistence
-            self._save_index(entry)
+            self._save_index_metadata(entry)
 
             logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(course_texts))
             return entry
@@ -279,38 +304,39 @@ class SemanticSearchEngine:
         allowed_subjects: Optional[Iterable[str]] = None,
     ) -> Tuple[List[Dict], TermIndex]:
         entry = self._get_or_build_index(year, semester, allowed_subjects)
-        embeddings = entry.embeddings
 
-        # Search top 500 candidates, then filter by threshold
-        # This balances performance vs completeness
-        search_k = min(len(embeddings), 500)
+        search_k = min(entry.size, 500)
         if search_k == 0:
             return [], entry
 
         # BGE models work better with instruction prefix for queries
         prefixed_query = QUERY_PREFIX + query
-        query_vec = np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")
-        faiss.normalize_L2(query_vec)
-        sims, idxs = entry.index.search(query_vec, search_k)
+        query_vec = np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")[0]
 
+        vq = VectorQuery(
+            vector=query_vec.tolist(),
+            vector_field_name="embedding",
+            return_fields=["subject", "course_number", "title", "description", "course_text"],
+            num_results=search_k,
+        )
+
+        raw_results = entry.index.query(vq)
+
+        # RedisVL COSINE distance = 1 - cosine_similarity, so convert threshold accordingly
+        distance_threshold = 1.0 - threshold
         results = []
-        for score, local_idx in zip(sims[0], idxs[0]):
-            # Apply threshold filter
-            if score < threshold:
+        for r in raw_results:
+            dist = float(r.get("vector_distance", 1.0))
+            if dist > distance_threshold:
                 continue
-
-            original = entry.courses[entry.kept_idx[local_idx]]
-            title = ((original.get("course") or {}).get("title") or "")
-            desc = ((original.get("course") or {}).get("description") or "")
-            text = entry.course_texts[local_idx]
             results.append(
                 {
-                    "subject": original.get("subject"),
-                    "courseNumber": original.get("courseNumber"),
-                    "title": title,
-                    "description": desc,
-                    "score": float(score),
-                    "text": text,
+                    "subject": r.get("subject") or None,
+                    "courseNumber": r.get("course_number") or None,
+                    "title": r.get("title") or "",
+                    "description": r.get("description") or "",
+                    "score": 1.0 - dist,
+                    "text": r.get("course_text") or "",
                 }
             )
 
@@ -328,7 +354,7 @@ class SemanticSearchEngine:
                 "year": entry.year,
                 "semester": entry.semester,
                 "allowed_subjects": entry.allowed_subjects,
-                "size": len(entry.course_texts),
+                "size": entry.size,
                 "last_refreshed": entry.last_refreshed.isoformat(),
             }
             for entry in entries
@@ -347,8 +373,8 @@ class SemanticSearchEngine:
         if entry:
             return entry
 
-        # Try loading from disk before building
-        loaded = self._load_index(year, canonical_semester, sorted(allowed) if allowed else None)
+        # Try loading from Redis before building
+        loaded = self._load_redis_index(year, canonical_semester, sorted(allowed) if allowed else None)
         if loaded:
             with self._lock:
                 self._indices[key] = loaded
@@ -466,7 +492,7 @@ class SemanticSearchEngine:
             return []
 
     def build_startup_indexes(self, max_startup_terms: int = 4) -> None:
-        """Load indexes from disk and queue builds for recent terms only.
+        """Load indexes from Redis and queue builds for recent terms only.
 
         Only the most recent *max_startup_terms* terms are built on startup.
         Older terms are built on-demand when actually searched.
@@ -485,10 +511,10 @@ class SemanticSearchEngine:
         # Only consider recent terms for startup (older ones build on-demand)
         startup_terms = available_terms[:max_startup_terms]
 
-        # Load from disk if available, otherwise queue for building
+        # Load from Redis if available, otherwise queue for building
         terms_to_build = []
         for year, semester in startup_terms:
-            loaded = self._load_index(year, semester, None)
+            loaded = self._load_redis_index(year, semester, None)
             if loaded:
                 key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
                 with self._lock:
@@ -496,15 +522,15 @@ class SemanticSearchEngine:
             else:
                 terms_to_build.append((year, semester))
 
-        # Also load any OTHER indexes already on disk (from previous runs)
+        # Also load any OTHER indexes already in Redis (from previous runs)
         for year, semester in available_terms[max_startup_terms:]:
-            loaded = self._load_index(year, semester, None)
+            loaded = self._load_redis_index(year, semester, None)
             if loaded:
                 key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
                 with self._lock:
                     self._indices[key] = loaded
 
-        # Queue only recent terms that weren't found on disk
+        # Queue only recent terms that weren't found in Redis
         self._build_queue = terms_to_build
         if terms_to_build:
             logger.info("Need to build %d indexes: %s",

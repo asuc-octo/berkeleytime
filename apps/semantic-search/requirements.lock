@@ -22,8 +22,6 @@ click==8.3.1
     # via
     #   typer
     #   uvicorn
-faiss-cpu==1.13.2
-    # via -r requirements.txt
 fastapi==0.135.1
     # via -r requirements.txt
 filelock==3.20.0
@@ -60,12 +58,16 @@ jinja2==3.1.6
     # via torch
 joblib==1.5.3
     # via scikit-learn
+jsonpath-ng==1.8.0
+    # via redisvl
 markdown-it-py==4.0.0
     # via rich
 markupsafe==3.0.2
     # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
+ml-dtypes==0.5.4
+    # via redisvl
 mpmath==1.3.0
     # via sympy
 networkx==3.6.1
@@ -73,29 +75,40 @@ networkx==3.6.1
 numpy==2.3.5
     # via
     #   -r requirements.txt
-    #   faiss-cpu
+    #   ml-dtypes
+    #   redisvl
     #   scikit-learn
     #   scipy
     #   sentence-transformers
     #   transformers
 packaging==24.1
     # via
-    #   faiss-cpu
     #   huggingface-hub
     #   transformers
 pydantic==2.12.5
-    # via fastapi
+    # via
+    #   fastapi
+    #   redisvl
 pydantic-core==2.41.5
     # via pydantic
 pygments==2.19.2
     # via rich
 python-dotenv==1.2.2
     # via uvicorn
+python-ulid==3.1.0
+    # via redisvl
 pyyaml==6.0.3
     # via
     #   huggingface-hub
+    #   redisvl
     #   transformers
     #   uvicorn
+redis==7.4.0
+    # via
+    #   -r requirements.txt
+    #   redisvl
+redisvl==0.16.0
+    # via -r requirements.txt
 regex==2026.2.28
     # via transformers
 requests==2.28.1
@@ -120,6 +133,8 @@ starlette==0.52.1
     # via fastapi
 sympy==1.14.0
     # via torch
+tenacity==9.1.4
+    # via redisvl
 threadpoolctl==3.6.0
     # via scikit-learn
 tokenizers==0.22.2
