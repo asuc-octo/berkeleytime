@@ -13,12 +13,12 @@ Backfills `selectedPlanRequirements` for existing plans based on their majors, m
 **Run with mongosh** (from repo root or pass full path to the script):
 
 ```bash
-mongosh "<connection-string>" migrations/add-selected-plan-requirements.js
+mongosh "<connection-string>" infra/mongo/migrations/add-selected-plan-requirements.js
 ```
 
 Or connect first, then load:
 
 ```bash
 mongosh "<connection-string>"
-load("migrations/add-selected-plan-requirements.js")
+load("infra/mongo/migrations/add-selected-plan-requirements.js")
 ```

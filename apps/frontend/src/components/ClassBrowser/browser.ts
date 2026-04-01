@@ -1,3 +1,5 @@
+import { ClassGradingBasis } from "@/lib/generated/graphql";
+
 export enum SortBy {
   Relevance = "Relevance",
   Units = "Units",
