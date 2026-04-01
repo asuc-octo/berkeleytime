@@ -92,9 +92,7 @@
   cursor: pointer;
   color: var(--red-800);
   opacity: 0.5;
-  transition:
-    opacity 100ms ease-in-out,
-    background-color 100ms ease-in-out;
+  transition: opacity 100ms ease-in-out, background-color 100ms ease-in-out;
 
   &:hover {
     opacity: 1;

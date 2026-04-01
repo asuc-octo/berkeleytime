@@ -55,12 +55,12 @@
     white-space: nowrap;
   }
 
-  .bookmarkFolderIcon {
-    path {
-      stroke: var(--bookmark-folder-color, var(--paragraph-color));
-      fill: var(--bookmark-folder-color, var(--paragraph-color));
-    }
+.bookmarkFolderIcon {
+  path {
+    stroke: var(--bookmark-folder-color, var(--paragraph-color));
+    fill: var(--bookmark-folder-color, var(--paragraph-color));
   }
+}
 
   .bookmarkFoldersViewport {
     position: relative;
@@ -108,6 +108,7 @@
     flex-direction: column;
     border-right: 1px solid var(--border-color);
   }
+
 }
 
 .bookmarkDropdown {

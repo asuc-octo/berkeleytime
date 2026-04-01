@@ -1,12 +1,18 @@
-import { useState } from "react";
+// TODO: also import in CoEReqs, HaasReqs
+import { useEffect, useState } from "react";
 
 import { SidebarCollapse, SidebarExpand, WarningCircle } from "iconoir-react";
 
-import { IPlan, IPlanTerm } from "@/lib/api";
+import {
+  CoEReqs,
+  HaasReqs,
+  LnSReqs,
+  RequirementEnum,
+  UniReqs,
+} from "@/lib/course";
 import { Colleges } from "@/lib/generated/graphql";
-import { GetCourseRequirementsQuery } from "@/lib/generated/graphql";
 
-import BtLLGradTrakInterface from "../../BtLLInterface";
+import RequirementsAccordion from "./RequirementsAccordion";
 import styles from "./SidePanel.module.scss";
 
 // TODO(Daniel): Implement proper handling of reqs based on user's college...
@@ -17,12 +23,8 @@ interface SidePanelProps {
   totalUnits: number;
   transferUnits: number;
   pnpTotal: number;
-  plan?: IPlan;
-  planTerms?: (IPlanTerm & {
-    courses: (import("@/lib/api").ISelectedCourse & {
-      course?: NonNullable<GetCourseRequirementsQuery["course"]>;
-    })[];
-  })[];
+  uniReqsFulfilled: RequirementEnum[];
+  collegeReqsFulfilled: RequirementEnum[];
 }
 
 export default function SidePanel({
@@ -32,10 +34,31 @@ export default function SidePanel({
   totalUnits,
   transferUnits,
   pnpTotal,
-  plan,
-  planTerms,
+  uniReqsFulfilled,
+  collegeReqsFulfilled,
 }: SidePanelProps) {
+  const [collegeReqs, setCollegeReqs] = useState<RequirementEnum[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  useEffect(() => {
+    const reqs: RequirementEnum[] = [];
+    colleges.forEach((college) => {
+      if (college == Colleges.Haas) {
+        reqs.push(...Object.values(HaasReqs));
+      } else if (college == Colleges.CoE) {
+        reqs.push(...Object.values(CoEReqs));
+      } else if (college == Colleges.LnS) {
+        reqs.push(...Object.values(LnSReqs));
+      } else {
+        // assuming the OTHER colleges also have the same requirements as LnS
+        if (!colleges.includes(Colleges.LnS)) {
+          // avoids duplication
+          reqs.push(...Object.values(LnSReqs));
+        }
+      }
+    });
+    setCollegeReqs(reqs);
+  }, [colleges]);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -107,15 +130,63 @@ export default function SidePanel({
             check!
           </div>
         </div>
-        <div className={styles.disclaimer}>
-          <WarningCircle className={styles.icon} />
-          <div className={styles.text}>
-            Requirements may not be 100% accurate. Always verify with an
-            academic advisor or CalCentral.
-          </div>
-        </div>
       </div>
     </>
+  );
+
+  const MajorRequirements = (
+    <div>
+      {majors.map((major, index) => (
+        <div key={index}>
+          <div className={styles.separator} />
+          <div className={styles.accordion}>
+            <h2>{major}</h2>
+            <div className={styles.body}>
+              <div className={styles.item}>
+                <p className={styles.label}>Upper Division Units: </p>
+                <p className={styles.units}>0/8</p>
+              </div>
+              <div className={styles.item}>
+                <p className={styles.label}>Lower Division Units: </p>
+                <p className={styles.units}>0/8</p>
+              </div>
+              <div className={styles.item}>
+                <p className={styles.label}>Elective Units: </p>
+                <p className={styles.units}>0/7</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const MinorRequirements = (
+    <div>
+      {minors.map((minor, index) => (
+        <div key={index}>
+          <div className={styles.separator} />
+          <div className={styles.accordion}>
+            <h2>{minor}</h2>
+            <div className={styles.body}>
+              <div className={styles.item}>
+                <p className={styles.label}>Upper Division Units: </p>
+                <p className={styles.units}>0/8</p>
+              </div>
+              <div className={styles.item}>
+                <p className={styles.label}>Lower Division Units: </p>
+                <p className={styles.units}>0/8</p>
+              </div>
+              <div className={styles.item}>
+                <p className={styles.label}>Elective Units: </p>
+                <p className={styles.units}>0/7</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      <div className={styles.separator} />
+    </div>
   );
 
   return (
@@ -124,12 +195,28 @@ export default function SidePanel({
       {!isCollapsed && (
         <>
           {UserInfo}
-          <BtLLGradTrakInterface
-            plan={plan}
-            planTerms={planTerms}
-            majors={majors}
-            minors={minors}
-            colleges={colleges}
+          {MajorRequirements}
+          {MinorRequirements}
+          <RequirementsAccordion
+            title={"University of California"}
+            uni={true}
+            requirements={[
+              UniReqs.AC,
+              UniReqs.AH,
+              UniReqs.AI,
+              UniReqs.CW,
+              UniReqs.QR,
+              UniReqs.RCA,
+              UniReqs.RCB,
+              UniReqs.FL,
+            ]}
+            finishedRequirements={uniReqsFulfilled}
+          />
+          <RequirementsAccordion
+            title={"College Requirements"}
+            uni={false}
+            requirements={collegeReqs}
+            finishedRequirements={collegeReqsFulfilled}
           />
         </>
       )}

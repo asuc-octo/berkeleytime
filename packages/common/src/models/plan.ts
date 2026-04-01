@@ -13,67 +13,6 @@ export const labelSchema = new Schema({
   },
 });
 
-// PlanRequirement: Stores BtLL code for evaluating requirements
-export const planRequirementSchema = new Schema(
-  {
-    code: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
-    isUcReq: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    college: {
-      type: String,
-      required: false,
-      trim: true,
-    },
-    major: {
-      type: String,
-      required: false,
-      trim: true,
-    },
-    minor: {
-      type: String,
-      required: false,
-      trim: true,
-    },
-    createdBy: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    isOfficial: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-  },
-  { timestamps: true }
-);
-
-// SelectedPlanRequirement: Links a PlanRequirement to a Plan with met status tracking
-export const selectedPlanRequirementSchema = new Schema({
-  planRequirementId: {
-    type: Schema.Types.ObjectId,
-    ref: "planRequirement",
-    required: true,
-  },
-  // Manual overrides: when user manually checks off a requirement
-  // true = manually marked as met, false = manually marked as not met, undefined = use evaluated value
-  manualOverrides: {
-    type: [Schema.Types.Mixed],
-    required: true,
-    default: [],
-  },
-});
-
 export const selectedCourseSchema = new Schema({
   courseID: {
     type: String,
@@ -93,6 +32,16 @@ export const selectedCourseSchema = new Schema({
   courseUnits: {
     type: Number,
     required: true,
+  },
+  uniReqs: {
+    type: [String],
+    required: true,
+    trim: true,
+  },
+  collegeReqs: {
+    type: [String],
+    required: true,
+    trim: true,
   },
   pnp: {
     type: Boolean,
@@ -145,6 +94,32 @@ export const planTermSchema = new Schema({
   },
 });
 
+export const majorReqSchema = new Schema({
+  name: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  major: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  numCoursesRequired: {
+    type: Number,
+    required: true,
+  },
+  satisfyingCourseIds: {
+    type: [String],
+    trim: true,
+    required: false,
+  },
+  isMinor: {
+    type: Boolean,
+    required: false,
+  },
+});
+
 export const planSchema = new Schema(
   {
     userEmail: {
@@ -169,14 +144,23 @@ export const planSchema = new Schema(
       type: [String!],
       required: true,
     },
+    majorReqs: {
+      type: [majorReqSchema],
+      required: true,
+    },
     labels: {
       type: [labelSchema],
       required: true,
     },
-    selectedPlanRequirements: {
-      type: [selectedPlanRequirementSchema],
+    uniReqsSatisfied: {
+      type: [String],
       required: true,
-      default: [],
+      trim: true,
+    },
+    collegeReqsSatisfied: {
+      type: [String],
+      required: true,
+      trim: true,
     },
   },
   { timestamps: true }
@@ -189,27 +173,14 @@ export const SelectedCourseModel = mongoose.model<SelectedCourseType>(
   selectedCourseSchema
 );
 
-export type LabelType = InferSchemaType<typeof labelSchema> & Document;
-export const LabelModel = mongoose.model<LabelType>("label", labelSchema);
-
-export type PlanRequirementType = InferSchemaType<
-  typeof planRequirementSchema
-> &
-  Document;
-export const PlanRequirementModel = mongoose.model<PlanRequirementType>(
-  "planRequirement",
-  planRequirementSchema
+export type MajorReqType = Document & InferSchemaType<typeof majorReqSchema>;
+export const MajorReqModel = mongoose.model<MajorReqType>(
+  "majorReq",
+  majorReqSchema
 );
 
-export type SelectedPlanRequirementType = InferSchemaType<
-  typeof selectedPlanRequirementSchema
-> &
-  Document;
-export const SelectedPlanRequirementModel =
-  mongoose.model<SelectedPlanRequirementType>(
-    "selectedPlanRequirement",
-    selectedPlanRequirementSchema
-  );
+export type LabelType = InferSchemaType<typeof labelSchema> & Document;
+export const LabelModel = mongoose.model<LabelType>("label", labelSchema);
 
 export interface PlanTermType extends Document {
   name: string;
@@ -231,10 +202,12 @@ export interface PlanType extends Document {
   planTerms: PlanTermType[];
   majors: string[];
   minors: string[];
+  majorReqs: MajorReqType[];
   createdAt: Date;
   updatedAt: Date;
   colleges: string[];
   labels: LabelType[];
-  selectedPlanRequirements: SelectedPlanRequirementType[];
+  uniReqsSatisfied: string[];
+  collegeReqsSatisfied: string[];
 }
 export const PlanModel = mongoose.model<PlanType>("plan", planSchema);

@@ -3,7 +3,7 @@
   height: 100%;
   display: flex;
 
-  &:not([data-mode="full"]) {
+  &:not([data-mode='full']) {
     &:not(.expanded) > :first-child {
       display: none;
     }
