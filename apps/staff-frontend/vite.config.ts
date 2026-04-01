@@ -1,6 +1,12 @@
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
+import { createRequire } from "node:module";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const reactIsRoot = dirname(require.resolve("react-is/package.json"));
 
 export default defineConfig({
   server: {
@@ -18,7 +24,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
+      "react-is": reactIsRoot,
     },
+  },
+  optimizeDeps: {
+    include: ["react-is", "recharts"],
   },
   plugins: [react()],
   css: {
