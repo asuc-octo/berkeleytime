@@ -5,6 +5,7 @@ import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
+from functools import lru_cache
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
@@ -126,7 +127,7 @@ class SemanticSearchEngine:
                     "type": "vector",
                     "attrs": {
                         "dims": self._embedding_dims,
-                        "algorithm": "flat",
+                        "algorithm": "hnsw",
                         "datatype": "float32",
                         "distance_metric": "cosine",
                     },
@@ -260,40 +261,45 @@ class SemanticSearchEngine:
         term_semester = semester.strip()
         build_key = f"{term_semester} {year}"
 
-        # Check if already building
-        if self._building:
-            return {
-                "status": "already_building",
-                "building": self._building,
-                "message": f"Already building index for {self._building}",
-            }
+        with self._lock:
+            # Check if already building
+            if self._building:
+                return {
+                    "status": "already_building",
+                    "building": self._building,
+                    "message": f"Already building index for {self._building}",
+                }
 
-        # Check if thread is still running
-        if self._build_thread and self._build_thread.is_alive():
-            return {
-                "status": "already_building",
-                "building": self._building,
-                "message": "A build is already in progress",
-            }
+            # Check if thread is still running
+            if self._build_thread and self._build_thread.is_alive():
+                return {
+                    "status": "already_building",
+                    "building": self._building,
+                    "message": "A build is already in progress",
+                }
 
-        # Clear previous error
-        self._last_error = None
+            # Clear previous error
+            self._last_error = None
 
-        def build_in_background():
-            try:
-                self.refresh(year, term_semester, allowed_subjects)
-            except Exception as exc:
-                logger.exception("Background refresh failed: %s", exc)
-                self._last_error = str(exc)
+            def build_in_background():
+                try:
+                    self.refresh(year, term_semester, allowed_subjects)
+                except Exception as exc:
+                    logger.exception("Background refresh failed: %s", exc)
+                    self._last_error = str(exc)
 
-        self._build_thread = threading.Thread(target=build_in_background, daemon=True)
-        self._build_thread.start()
+            self._build_thread = threading.Thread(target=build_in_background, daemon=True)
+            self._build_thread.start()
 
         return {
             "status": "building",
             "building": build_key,
             "message": f"Started building index for {build_key} in background",
         }
+
+    @lru_cache(maxsize=256)
+    def _encode_query(self, prefixed_query: str) -> np.ndarray:
+        return np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")[0]
 
     def search(
         self,
@@ -311,7 +317,7 @@ class SemanticSearchEngine:
 
         # BGE models work better with instruction prefix for queries
         prefixed_query = QUERY_PREFIX + query
-        query_vec = np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")[0]
+        query_vec = self._encode_query(prefixed_query)
 
         vq = VectorQuery(
             vector=query_vec.tolist(),
