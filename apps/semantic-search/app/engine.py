@@ -210,7 +210,7 @@ class SemanticSearchEngine:
                 filtered_courses = list(courses)
 
             logger.info("Encoding %d courses...", len(course_texts))
-            embeddings = np.asarray(self.model.encode(course_texts, convert_to_numpy=True), dtype="float32")
+            embeddings = np.asarray(self.model.encode(course_texts, batch_size=128, convert_to_numpy=True), dtype="float32")
 
             # Create (or overwrite) the RedisVL index
             sorted_allowed = sorted(allowed) if allowed else None
@@ -305,7 +305,7 @@ class SemanticSearchEngine:
     ) -> Tuple[List[Dict], TermIndex]:
         entry = self._get_or_build_index(year, semester, allowed_subjects)
 
-        search_k = min(entry.size, 500)
+        search_k = min(entry.size, 50)
         if search_k == 0:
             return [], entry
 
