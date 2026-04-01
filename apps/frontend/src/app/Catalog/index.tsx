@@ -9,7 +9,7 @@ import {
 
 import { useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Book, Folder, NavArrowRight } from "iconoir-react";
+import { Book, Folder, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
@@ -295,19 +295,31 @@ export default function Catalog() {
       return SEMESTER_ORDER[b.semester] - SEMESTER_ORDER[a.semester];
     })[0];
 
+    // Invalidate cached term if a newer semester has become available since
+    // the user last picked one — this ensures new-term discovery.
+    const isRecentStale =
+      recentTerm &&
+      latestTerm &&
+      (recentTerm.latestYear !== latestTerm.year ||
+        recentTerm.latestSemester !== latestTerm.semester);
+
     const selectedTerm =
       terms?.find((term) => term.year === year && term.semester === semester) ??
-      terms.find(
-        (term) =>
-          term.year === recentTerm?.year &&
-          term.semester === recentTerm?.semester
-      ) ??
+      (!isRecentStale
+        ? terms.find(
+            (term) =>
+              term.year === recentTerm?.year &&
+              term.semester === recentTerm?.semester
+          )
+        : undefined) ??
       latestTerm;
 
-    if (selectedTerm) {
+    if (selectedTerm && latestTerm) {
       addRecent(RecentType.CatalogTerm, {
         year: selectedTerm.year,
         semester: selectedTerm.semester,
+        latestYear: latestTerm.year,
+        latestSemester: latestTerm.semester,
       });
     }
 
@@ -568,6 +580,12 @@ export default function Catalog() {
                 terms={terms ?? undefined}
                 persistent
               />
+              <div
+                className={styles.drawerCloseTrigger}
+                onClick={() => setCatalogDrawerOpen(false)}
+              >
+                <NavArrowLeft />
+              </div>
             </motion.div>
           </>
         )}

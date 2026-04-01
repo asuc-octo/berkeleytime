@@ -123,7 +123,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: var(--z-modal);
   transform: translateX(-100%);
   transition: transform 200ms ease-in-out;
 
@@ -227,7 +227,7 @@
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: var(--z-overlay);
 
   @media (width > 992px) {
     display: none;
@@ -250,7 +250,7 @@
   justify-content: center;
   cursor: pointer;
   transition: left 200ms ease-in-out;
-  z-index: 100;
+  z-index: var(--z-nav);
   color: white;
 
   &.visible {

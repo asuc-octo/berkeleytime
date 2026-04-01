@@ -1,0 +1,120 @@
+.root {
+  --bookmarks-padding-x: 0.9rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-color);
+  color: var(--heading-color);
+  width: 384px; /* 20% wider than 320px */
+  min-width: 384px;
+  overflow: hidden;
+  border-left: 1px solid var(--border-color);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 1.2rem var(--bookmarks-padding-x);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitle {
+  font-size: var(--text-18);
+  font-weight: var(--font-semibold);
+  margin: 0;
+  padding-left: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.headerTitleRight {
+    flex: 1;
+    text-align: right;
+  }
+}
+
+.backButton {
+  flex-shrink: 0;
+}
+
+.closeButton {
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.2rem var(--bookmarks-padding-x);
+  background-color: var(--semesterblock-color);
+  scrollbar-width: thin;
+  scrollbar-color: var(--paragraph-color) var(--border-color);
+}
+
+.collectionCards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 0.3rem 0;
+}
+
+.loading,
+.empty {
+  font-size: 1.05rem;
+  color: var(--paragraph-color);
+  padding: 0.6rem 0;
+}
+
+/* Collection detail view (classes as catalog-style cards) */
+.classList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0.3rem 0;
+}
+
+.draggableClassWrapper {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.classEmpty {
+  font-size: 1.05rem;
+  color: var(--paragraph-color);
+  padding: 1.2rem 0;
+  text-align: center;
+}
+
+.addToCollectionLink {
+  display: block;
+  margin-top: 1rem;
+  font-size: var(--text-14);
+  color: var(--blue-500);
+  text-decoration: none;
+  text-align: right;
+
+  &:hover {
+    color: var(--blue-hover);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

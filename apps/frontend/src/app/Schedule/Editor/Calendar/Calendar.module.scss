@@ -64,7 +64,7 @@
   .monthHeader {
     position: sticky;
     top: 64px; // Below the Calendar header (32px legend + 32px week header)
-    z-index: 10;
+    z-index: 2;
     font-size: var(--text-14);
     line-height: 1;
     height: 32px;

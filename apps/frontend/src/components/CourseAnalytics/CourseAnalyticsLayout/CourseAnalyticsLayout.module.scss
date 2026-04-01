@@ -44,7 +44,7 @@ $analytics-sidebar-width: 248px;
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1000;
+  z-index: 3;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -53,7 +53,7 @@ $analytics-sidebar-width: 248px;
   position: absolute;
   inset: 0;
   background-color: var(--background-color);
-  z-index: 999;
+  z-index: 2;
 }
 
 .drawerTrigger {

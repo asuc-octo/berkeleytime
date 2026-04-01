@@ -45,6 +45,10 @@ interface RecentCatalogTerm {
   semester: Semester;
   year: number;
   timestamp?: number;
+  /** The latest available term when this choice was saved. If a newer term
+   *  appears, the cached choice is invalidated so users discover it. */
+  latestYear?: number;
+  latestSemester?: Semester;
 }
 
 interface RecentPageUrl {

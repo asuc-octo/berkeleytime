@@ -10,7 +10,7 @@
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--red-300);
-  z-index: 9999;
+  z-index: var(--z-dev);
 }
 
 .spacer {
@@ -77,7 +77,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: var(--z-dev);
 }
 
 .expandButton {
@@ -106,7 +106,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  z-index: 10000;
+  z-index: var(--z-dev);
 }
 
 .searchContainer {

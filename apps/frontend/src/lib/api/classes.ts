@@ -252,6 +252,7 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      finalExam
       decal {
         title
       }
@@ -287,6 +288,13 @@ export const GET_CLASS_DETAILS = gql`
             description
             formalDescription
           }
+        }
+        exams {
+          date
+          startTime
+          endTime
+          location
+          type
         }
         enrollment {
           latest {

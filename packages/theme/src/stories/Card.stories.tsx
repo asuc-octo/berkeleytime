@@ -1,7 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import {
-  ArrowRight,
-} from "iconoir-react";
+import { ArrowRight } from "iconoir-react";
 import { fn } from "storybook/test";
 
 import { Button, Card, Color, ThemeProvider } from "@repo/theme";

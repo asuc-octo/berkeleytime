@@ -539,7 +539,7 @@ export default function Class({
                       <span className={styles.sectionNumber}>
                         #{formatClassNumber(_class.number)}
                       </span>
-                      {_class.decal != null && (
+                      {_class.decal != null && _class.decal.title != null && (
                         <Badge
                           label="DeCal"
                           color={Color.Blue}

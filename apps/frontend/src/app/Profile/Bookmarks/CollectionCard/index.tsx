@@ -43,6 +43,11 @@ interface CollectionCardProps {
   onColorChange?: (color: Color | null) => void;
   onDelete?: () => void;
   onClick?: () => void;
+  /** Card dimensions; defaults to 420×230 for full-size (e.g. Bookmarks tab) */
+  width?: number;
+  height?: number;
+  /** When false, hide the pin icon (e.g. for "All Saved" in GradTrak sidebar) */
+  showPin?: boolean;
 }
 
 function formatEnrollment(
@@ -115,6 +120,9 @@ export function CollectionCard({
   onColorChange,
   onDelete,
   onClick,
+  width = 420,
+  height = 230,
+  showPin = true,
 }: CollectionCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -182,7 +190,7 @@ export function CollectionCard({
 
   const title = (
     <>
-      {(isPinned || isSystem) && <PinSolid width={14} height={14} />}
+      {showPin && (isPinned || isSystem) && <PinSolid width={14} height={14} />}
       <span>{name}</span>
     </>
   );
@@ -202,8 +210,8 @@ export function CollectionCard({
       isHovered={isHovered}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      width={420}
-      height={230}
+      width={width}
+      height={height}
     >
       {isSingleCard && topClass ? (
         <motion.div

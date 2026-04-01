@@ -24,6 +24,45 @@ const formatApplicationDeadline = (value: string): string => {
   return value;
 };
 
+const FINAL_EXAM_LABELS: Record<string, string> = {
+  Y: "Written final exam during scheduled final exam period",
+  N: "No final exam",
+  A: "Alternative method of final assessment",
+  C: "Common final exam",
+  L: "Final exam at last class meeting",
+};
+
+const formatExamTime = (startTime?: string | null, endTime?: string | null) => {
+  if (!startTime || !endTime) return null;
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+  if (!Number.isFinite(sh) || !Number.isFinite(eh)) return null;
+  const fmt = (h: number, m: number) =>
+    `${h % 12 || 12}${m > 0 ? `:${m.toString().padStart(2, "0")}` : ""} ${h < 12 ? "AM" : "PM"}`;
+  return `${fmt(sh, sm)} – ${fmt(eh, em)}`;
+};
+
+const formatExamDate = (dateStr?: string | null): string | null => {
+  if (!dateStr) return null;
+  let date: Date;
+  if (/^\d{8}$/.test(dateStr)) {
+    const y = parseInt(dateStr.slice(0, 4), 10);
+    const m = parseInt(dateStr.slice(4, 6), 10) - 1;
+    const d = parseInt(dateStr.slice(6, 8), 10);
+    date = new Date(y, m, d);
+  } else {
+    date = new Date(dateStr);
+  }
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString("en-US", {
+    timeZone: "America/Los_Angeles",
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export default function Overview() {
   const { class: _class, course } = useClass();
   const decal: DeCal | null = _class?.decal ?? null;
@@ -173,6 +212,45 @@ export default function Overview() {
               </p>
             </Flex>
           )}
+          {(() => {
+            const exams = _class.primarySection?.exams ?? [];
+            const finalExamCode = _class.finalExam;
+            const finalExamLabel =
+              finalExamCode && FINAL_EXAM_LABELS[finalExamCode];
+            const finalExamsWithSchedule = exams
+              .filter((e) => e.type === "FIN")
+              .filter((e) => e.date || e.startTime || e.endTime);
+            const hasScheduledExams = finalExamsWithSchedule.length > 0;
+            if (!finalExamLabel && !hasScheduledExams) return null;
+            return (
+              <Flex direction="column" gap="2">
+                <p className={styles.label}>Final Exam</p>
+                <p className={styles.description}>
+                  {finalExamLabel && <span>{finalExamLabel}</span>}
+                  {hasScheduledExams &&
+                    finalExamsWithSchedule.map((exam, i) => {
+                      const dateStr = formatExamDate(exam.date);
+                      const timeStr = formatExamTime(
+                        exam.startTime,
+                        exam.endTime
+                      );
+                      const parts = [
+                        dateStr,
+                        timeStr,
+                        exam.location?.trim(),
+                      ].filter(Boolean);
+                      const line = parts.join(" · ");
+                      return (
+                        <span key={i}>
+                          {i > 0 || finalExamLabel ? <br /> : null}
+                          {line}
+                        </span>
+                      );
+                    })}
+                </p>
+              </Flex>
+            );
+          })()}
           {decal && decal.instructors && decal.instructors.length > 0 && (
             <Flex direction="column" gap="2">
               <p className={styles.label}>Contact Information</p>

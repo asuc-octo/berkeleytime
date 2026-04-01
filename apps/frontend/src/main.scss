@@ -1,5 +1,20 @@
 :root {
   --header-height: 90px; /* Default, overridden by JS */
+
+  /* Z-index layers
+  For elements in the <body> stacking context (position: fixed, Radix portals).
+  For local stacking within a component, use plain integers (1, 2, 3) instead. */
+  --z-fixed: 100;
+  --z-nav: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-popover: 500;
+  --z-toast: 600;
+  --z-tooltip: 700;
+  --z-menu-overlay: 800;  /* Mobile nav menu overlay (above all page content) */
+  --z-nav-header: 900;    /* Sticky navigation header (above menu overlay) */
+  --z-nav-dropdown: 1000; /* Nav bar dropdowns (above nav header) */
+  --z-dev: 9999;
 }
 
 html {

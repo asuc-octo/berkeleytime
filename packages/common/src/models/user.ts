@@ -40,6 +40,13 @@ export const userSchema = new Schema(
       required: true,
       default: new Date(0), // Unix epoch (1970-01-01) indicates legacy user who hasn't visited since tracking started
     },
+    activityScore: {
+      type: Number,
+      required: true,
+      default: 0,
+      min: 0,
+      max: 1,
+    },
   },
   {
     timestamps: {
@@ -51,6 +58,9 @@ export const userSchema = new Schema(
 
 // for login
 userSchema.index({ email: 1 }, { unique: true });
+
+// for active user queries
+userSchema.index({ activityScore: 1 });
 
 export const UserModel = mongoose.model("users", userSchema);
 
