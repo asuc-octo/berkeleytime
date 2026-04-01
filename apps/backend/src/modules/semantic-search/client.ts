@@ -43,7 +43,12 @@ export async function searchSemantic(
   });
 
   if (!response.ok) {
-    throw new Error(`Semantic search service error: ${response.statusText}`);
+    let detail: string | undefined;
+    try {
+      const body = await response.json();
+      detail = body?.detail ?? body?.error;
+    } catch {}
+    throw new Error(detail ?? `Semantic search service error: ${response.statusText}`);
   }
 
   return (await response.json()) as SemanticSearchResponse;

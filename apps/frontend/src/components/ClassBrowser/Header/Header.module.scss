@@ -64,6 +64,12 @@
     }
   }
 
+  .semanticError {
+    text-align: center;
+    font-size: var(--text-14);
+    color: var(--red-500);
+  }
+
   .filterButton {
     width: 100%;
     background-color: var(--foreground-color);

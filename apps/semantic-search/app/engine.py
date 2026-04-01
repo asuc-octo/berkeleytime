@@ -380,7 +380,12 @@ class SemanticSearchEngine:
                 self._indices[key] = loaded
             return loaded
 
-        return self.refresh(year, canonical_semester, allowed)
+        # Index not ready — start a background build if nothing is already running,
+        # then return an error immediately so the request doesn't hang.
+        self.refresh_async(year, canonical_semester, allowed)
+        raise RuntimeError(
+            f"Index for {canonical_semester} {year} is still being built. Please try again in a moment."
+        )
 
     def _key(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
         suffix = ",".join(allowed_subjects) if allowed_subjects else "__all__"

@@ -215,7 +215,7 @@ export default function useCatalogQuery({
   const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
   const semanticError =
     semanticSearch && error
-      ? (error.graphQLErrors[0]?.message ?? error.message ?? "AI search failed")
+      ? (error.graphQLErrors?.[0]?.message ?? error.message ?? "AI search failed")
       : null;
 
   return {
