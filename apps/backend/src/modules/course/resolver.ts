@@ -156,6 +156,24 @@ const resolvers: CourseModule.Resolvers = {
       return classes.filter(matchesCourse) as unknown as CourseModule.Class[];
     },
 
+    mostRecentClass: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      const classes = parent.classes
+        ? null
+        : await getClassesByCourse(parent.courseId);
+
+      return (parent.classes ?? classes)!.toSorted((a, b) => {
+        if (a.year === b.year) {
+          return (
+            (SEMESTER_RECENCY_ORDER[a.semester ?? ""] ?? -1) -
+            (SEMESTER_RECENCY_ORDER[b.semester ?? ""] ?? -1)
+          );
+        }
+        return b.year - a.year;
+      })[0] as unknown as CourseModule.Class;
+    },
+
     crossListing: async (parent: IntermediateCourse | CourseModule.Course) => {
       // cross listings are stored as `${subject} ${number}`
 
