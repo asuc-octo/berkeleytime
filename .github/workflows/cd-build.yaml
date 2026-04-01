@@ -43,6 +43,10 @@ jobs:
           cache-to: |
             type=gha,mode=max
             type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache,mode=max
+          build-args: |
+            VITE_OTEL_ENDPOINT=/otlp
+            VITE_SERVICE_VERSION=${{ inputs.image_tag }}
+            VITE_DEPLOYMENT_ENV=production
           platforms: linux/amd64
           push: true
 

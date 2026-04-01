@@ -20,8 +20,8 @@ const otelEndpoint = import.meta.env.VITE_OTEL_ENDPOINT;
 if (otelEndpoint) {
   const resource = new Resource({
     "service.name": "frontend",
-    "service.version": "0.1.0",
-    "deployment.environment": "local",
+    "service.version": import.meta.env.VITE_SERVICE_VERSION || "unknown",
+    "deployment.environment": import.meta.env.VITE_DEPLOYMENT_ENV || "production",
   });
 
   const provider = new WebTracerProvider({
