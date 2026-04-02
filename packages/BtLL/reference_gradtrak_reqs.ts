@@ -1046,17 +1046,20 @@ Function<List<Requirement>>() main (){
   List<Course> math_1a_51_matches filter(courses, (c) {
     boolean return one_common_course([c], math_1a_51_list)
   })
-  NCoursesRequirement math_1a {math_1a_51_matches, 1, "Calculus I (MATH 1A or 51)"}
+  NCoursesRequirement math_1a {math_1a_51_matches, 1, "Calculus I"}
 
   List<Course> math_1b_52_list [{"MATH 1B"}, {"MATH 52"}]
   List<Course> math_1b_52_matches filter(courses, (c) {
     boolean return one_common_course([c], math_1b_52_list)
   })
-  NCoursesRequirement math_1b {math_1b_52_matches, 1, "Calculus II (MATH 1B or 52)"}
+  NCoursesRequirement math_1b {math_1b_52_matches, 1, "Calculus II"}
 
-  List<Course> math_53_54_list [{"MATH 53"}, {"MATH 54"}]
-  List<boolean> math_53_54_status common_course_matches(math_53_54_list, courses)
-  CourseListRequirement math_53_54 {math_53_54_list, math_53_54_status, "MATH 53 and 54"}
+  // TODO: change this to only accept EECS 16A if taken before Fall 2026
+  List<Course> math_54_56_list [{"MATH 54"}, {"MATH 56"}, {"EECS 16A"}]
+  List<Course> math_54_56_matches filter(courses, (c) {
+    boolean return one_common_course([c], math_54_56_list)
+  })
+  NCoursesRequirement math_54 {math_54_56_matches, 1, "Linear Algebra"}  
 
   // TODO: change this to only accept MATH 55 for Math/CS double majors
   List<Course> math_55_compsci_70_list [{"MATH 55"}, {"COMPSCI 70"}]
@@ -1065,7 +1068,7 @@ Function<List<Requirement>>() main (){
   })
   NCoursesRequirement compsci_70 {math_55_compsci_70_matches, 1, "Discrete Math"}
 
-  AndRequirement math_lower_div {[math_1a, math_1b, math_53_54, compsci_70], "Lower Division Mathematics"}
+  AndRequirement math_lower_div {[math_1a, math_1b, math_54, compsci_70], "Lower Division Mathematics"}
 
   List<Course> cs61b [{"COMPSCI 61A"}, {"COMPSCI 61B"}, {"COMPSCI 61C"}]
   List<Course> cs61bl [{"COMPSCI 61A"}, {"COMPSCI 61BL"}, {"COMPSCI 61C"}]
