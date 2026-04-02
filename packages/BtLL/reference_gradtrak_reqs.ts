@@ -3061,3 +3061,282 @@ Function<List<Requirement>>() main (){
   List<Requirement> return [foundations, calc1, calc2, linalg, prog_structures, data_structures, data_c100, probability, cid_min_units, modeling, human_contexts, upper_div_min_units, domain_emphasis, stat_20_engin_7_conflict, mutex_check, cs_169l_check, econ_140_141_check]
 }
 `;
+
+// Applied Mathematics Major Requirements
+// https://math.berkeley.edu/undergraduate/major/applied
+export const APPLIED_MATH_REQ_BTLL = `
+Function<AndRequirement>() eval_actuarial_science (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: MATH 128B, STAT 134 or 140, STAT 135, STAT 151A, ECON 141
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"MATH 128B"}, {"STAT 134"}, {"STAT 140"}, {"STAT 135"}, {"STAT 151A"}, {"ECON 141"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Actuarial Science")
+}
+
+Function<AndRequirement>() eval_classical_mechanics (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: MATH 123, 189, PHYSICS 105, MECENG 104
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"MATH 123"}, {"MATH 189"}, {"PHYSICS 105"}, {"MECENG 104"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Classical Mechanics")
+}
+
+Function<AndRequirement>() eval_data_science_cluster (){
+  List<Course> courses get_attr(this, "allCourses")
+  // DATA C100 = STAT C100 = COMPSCI C100 (cross-listed)
+  List<Course> pool filter(courses, (c) {
+    string subject get_attr(c, "subject")
+    string number get_attr(c, "number")
+    boolean is_c100 and([or([equal([subject, "COMPSCI"]), equal([subject, "DATA"]), equal([subject, "STAT"])]), equal([number, "C100"])])
+    boolean is_compsci_188 and([equal([subject, "COMPSCI"]), equal([number, "188"])])
+    boolean is_compsci_189 and([equal([subject, "COMPSCI"]), equal([number, "189"])])
+    boolean is_math_170 and([equal([subject, "MATH"]), equal([number, "170"])])
+    boolean is_stat_133 and([equal([subject, "STAT"]), equal([number, "133"])])
+    boolean is_stat_134 and([equal([subject, "STAT"]), equal([number, "134"])])
+    boolean is_stat_140 and([equal([subject, "STAT"]), equal([number, "140"])])
+    boolean is_stat_154 and([equal([subject, "STAT"]), equal([number, "154"])])
+    boolean return or([is_c100, is_compsci_188, is_compsci_189, is_math_170, is_stat_133, is_stat_134, is_stat_140, is_stat_154])
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Data Science")
+}
+
+Function<AndRequirement>() eval_economics_cluster (){
+  List<Course> courses get_attr(this, "allCourses")
+  // MATH C103 = ECON C103 (cross-listed)
+  List<Course> pool filter(courses, (c) {
+    string subject get_attr(c, "subject")
+    string number get_attr(c, "number")
+    boolean is_econ_103 and([equal([subject, "ECON"]), equal([number, "103"])])
+    boolean is_econ_104 and([equal([subject, "ECON"]), equal([number, "104"])])
+    boolean is_econ_141 and([equal([subject, "ECON"]), equal([number, "141"])])
+    boolean is_c103 and([or([equal([subject, "MATH"]), equal([subject, "ECON"])]), equal([number, "C103"])])
+    boolean is_math_170 and([equal([subject, "MATH"]), equal([number, "170"])])
+    boolean is_stat_134 and([equal([subject, "STAT"]), equal([number, "134"])])
+    boolean is_stat_140 and([equal([subject, "STAT"]), equal([number, "140"])])
+    boolean is_stat_155 and([equal([subject, "STAT"]), equal([number, "155"])])
+    boolean return or([is_econ_103, is_econ_104, is_econ_141, is_c103, is_math_170, is_stat_134, is_stat_140, is_stat_155])
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Economics")
+}
+
+Function<AndRequirement>() eval_fluid_mechanics (){
+  List<Course> courses get_attr(this, "allCourses")
+  // MECENG 106 is required
+  List<Course> meceng106_list [{"MECENG 106"}]
+  List<boolean> meceng106_status common_course_matches(meceng106_list, courses)
+  CourseListRequirement meceng106_req {meceng106_list, meceng106_status, "MECENG 106 (Required)"}
+  // Choose 2 from: MECENG 163, CHMENG 141, ENGIN 115, MATH 126, MATH 128B
+  List<Course> elective_pool filter(courses, (c) {
+    List<Course> choices [{"MECENG 163"}, {"CHMENG 141"}, {"ENGIN 115"}, {"MATH 126"}, {"MATH 128B"}]
+    boolean return one_common_course([c], choices)
+  })
+  NCoursesRequirement elective_req {elective_pool, 2, "Choose 2 Electives"}
+  AndRequirement return AndRequirement([meceng106_req, elective_req], "Fluid Mechanics")
+}
+
+Function<AndRequirement>() eval_geophysics (){
+  List<Course> courses get_attr(this, "allCourses")
+  // EPS 108 is required
+  List<Course> eps108_list [{"EPS 108"}]
+  List<boolean> eps108_status common_course_matches(eps108_list, courses)
+  CourseListRequirement eps108_req {eps108_list, eps108_status, "EPS 108 (Required)"}
+  // Choose 2 from: EPS 104, 122, 130
+  List<Course> elective_pool filter(courses, (c) {
+    List<Course> choices [{"EPS 104"}, {"EPS 122"}, {"EPS 130"}]
+    boolean return one_common_course([c], choices)
+  })
+  NCoursesRequirement elective_req {elective_pool, 2, "Choose 2 Electives"}
+  AndRequirement return AndRequirement([eps108_req, elective_req], "Geophysics")
+}
+
+Function<AndRequirement>() eval_life_physical_sciences (){
+  List<Course> courses get_attr(this, "allCourses")
+  // All 3 required: MATH 123, 126, 128B
+  List<Course> cluster_list [{"MATH 123"}, {"MATH 126"}, {"MATH 128B"}]
+  List<boolean> cluster_status common_course_matches(cluster_list, courses)
+  CourseListRequirement cluster_req {cluster_list, cluster_status, "MATH 123, 126, 128B"}
+  AndRequirement return AndRequirement([cluster_req], "Life and Physical Sciences")
+}
+
+Function<AndRequirement>() eval_mathematical_biology (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Required: choose 1 from COMPSCI/CMPBIO C176, MATH 127, MCELLBI 160, MCELLBI 166
+  List<Course> required_pool filter(courses, (c) {
+    string subject get_attr(c, "subject")
+    string number get_attr(c, "number")
+    boolean is_c176 and([or([equal([subject, "COMPSCI"]), equal([subject, "CMPBIO"])]), equal([number, "C176"])])
+    boolean is_math_127 and([equal([subject, "MATH"]), equal([number, "127"])])
+    boolean is_mcellbi_160 and([equal([subject, "MCELLBI"]), equal([number, "160"])])
+    boolean is_mcellbi_166 and([equal([subject, "MCELLBI"]), equal([number, "166"])])
+    boolean return or([is_c176, is_math_127, is_mcellbi_160, is_mcellbi_166])
+  })
+  NCoursesRequirement required_req {required_pool, 1, "Choose 1 Required"}
+  // Choose 2 from: MATH 123, 126, 128B, 170, 172
+  List<Course> elective_pool filter(courses, (c) {
+    List<Course> choices [{"MATH 123"}, {"MATH 126"}, {"MATH 128B"}, {"MATH 170"}, {"MATH 172"}]
+    boolean return one_common_course([c], choices)
+  })
+  NCoursesRequirement elective_req {elective_pool, 2, "Choose 2 Electives"}
+  AndRequirement return AndRequirement([required_req, elective_req], "Mathematical Biology")
+}
+
+Function<AndRequirement>() eval_numerical_analysis (){
+  List<Course> courses get_attr(this, "allCourses")
+  // All 3 required: MATH 123, 126, 128B
+  List<Course> cluster_list [{"MATH 123"}, {"MATH 126"}, {"MATH 128B"}]
+  List<boolean> cluster_status common_course_matches(cluster_list, courses)
+  CourseListRequirement cluster_req {cluster_list, cluster_status, "MATH 123, 126, 128B"}
+  AndRequirement return AndRequirement([cluster_req], "Numerical Analysis")
+}
+
+Function<AndRequirement>() eval_operations_research (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: STAT 134 or 140, INDENG 130, 160, 161, 162
+  List<Course> pool filter(courses, (c) {
+    string subject get_attr(c, "subject")
+    string number get_attr(c, "number")
+    boolean is_stat_134 and([equal([subject, "STAT"]), equal([number, "134"])])
+    boolean is_stat_140 and([equal([subject, "STAT"]), equal([number, "140"])])
+    boolean is_indeng_130 and([equal([subject, "INDENG"]), equal([number, "130"])])
+    boolean is_indeng_160 and([equal([subject, "INDENG"]), equal([number, "160"])])
+    boolean is_indeng_161 and([equal([subject, "INDENG"]), equal([number, "161"])])
+    boolean is_indeng_162 and([equal([subject, "INDENG"]), equal([number, "162"])])
+    boolean return or([is_stat_134, is_stat_140, is_indeng_130, is_indeng_160, is_indeng_161, is_indeng_162])
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Operations Research")
+}
+
+Function<AndRequirement>() eval_probability_theory (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: MATH 105, STAT 134 or 140, STAT 150
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"MATH 105"}, {"STAT 134"}, {"STAT 140"}, {"STAT 150"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Probability Theory")
+}
+
+Function<AndRequirement>() eval_quantum_mechanics (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: MATH 126, 189, PHYSICS 137A, 137B
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"MATH 126"}, {"MATH 189"}, {"PHYSICS 137A"}, {"PHYSICS 137B"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Quantum Mechanics")
+}
+
+Function<AndRequirement>() eval_relativity (){
+  List<Course> courses get_attr(this, "allCourses")
+  // MATH 140 and PHYSICS 139 are required
+  List<Course> required_list [{"MATH 140"}, {"PHYSICS 139"}]
+  List<boolean> required_status common_course_matches(required_list, courses)
+  CourseListRequirement required_req {required_list, required_status, "MATH 140 and PHYSICS 139 (Required)"}
+  // Choose 1 from: MATH 126 or MATH 141
+  List<Course> elective_pool filter(courses, (c) {
+    List<Course> choices [{"MATH 126"}, {"MATH 141"}]
+    boolean return one_common_course([c], choices)
+  })
+  NCoursesRequirement elective_req {elective_pool, 1, "Choose 1 Elective"}
+  AndRequirement return AndRequirement([required_req, elective_req], "Relativity")
+}
+
+Function<AndRequirement>() eval_social_sciences (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: STAT 134 or 140, 135, 150, 151A, 151B, 153
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"STAT 134"}, {"STAT 140"}, {"STAT 135"}, {"STAT 150"}, {"STAT 151A"}, {"STAT 151B"}, {"STAT 153"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Social Sciences")
+}
+
+Function<AndRequirement>() eval_statistics_cluster (){
+  List<Course> courses get_attr(this, "allCourses")
+  // Pool: MATH 128B, STAT 134 or 140, 135, 150, 153, 154, 155, 156
+  List<Course> pool filter(courses, (c) {
+    List<Course> cluster [{"MATH 128B"}, {"STAT 134"}, {"STAT 140"}, {"STAT 135"}, {"STAT 150"}, {"STAT 153"}, {"STAT 154"}, {"STAT 155"}, {"STAT 156"}]
+    boolean return one_common_course([c], cluster)
+  })
+  NCoursesRequirement cluster_req {pool, 3, "Courses"}
+  AndRequirement return AndRequirement([cluster_req], "Statistics")
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Lower Division
+
+  // Calculus I: MATH 1A or MATH 51 (old numbering)
+  List<Course> calc1_list [{"MATH 1A"}, {"MATH 51"}]
+  List<Course> calc1_matches filter(courses, (c) {
+    boolean return one_common_course([c], calc1_list)
+  })
+  NCoursesRequirement calc1 {calc1_matches, 1, "Calculus I (MATH 1A or 51)"}
+
+  // Calculus II: MATH 1B or MATH 52 (old numbering)
+  List<Course> calc2_list [{"MATH 1B"}, {"MATH 52"}]
+  List<Course> calc2_matches filter(courses, (c) {
+    boolean return one_common_course([c], calc2_list)
+  })
+  NCoursesRequirement calc2 {calc2_matches, 1, "Calculus II (MATH 1B or 52)"}
+
+  // Multivariable Calculus: MATH 53
+  List<Course> math53_list [{"MATH 53"}]
+  List<boolean> math53_status common_course_matches(math53_list, courses)
+  CourseListRequirement math53 {math53_list, math53_status, "Multivariable Calculus (MATH 53)"}
+
+  // Linear Algebra & Differential Equations: MATH 54 or MATH 56
+  List<Course> linalg_list [{"MATH 54"}, {"MATH 56"}]
+  List<Course> linalg_matches filter(courses, (c) {
+    boolean return one_common_course([c], linalg_list)
+  })
+  NCoursesRequirement linalg {linalg_matches, 1, "Linear Algebra (MATH 54 or 56)"}
+
+  // Discrete Mathematics: MATH 55 (COMPSCI 70 or PHYSICS 89 for approved double majors)
+  List<Course> discrete_list [{"MATH 55"}, {"COMPSCI 70"}, {"PHYSICS 89"}]
+  List<Course> discrete_matches filter(courses, (c) {
+    boolean return one_common_course([c], discrete_list)
+  })
+  NCoursesRequirement discrete {discrete_matches, 1, "Discrete Mathematics (MATH 55)"}
+
+  AndRequirement lower_div {[calc1, calc2, math53, linalg, discrete], "Lower Division"}
+
+  // Upper Division Required Courses: MATH 104, 110, 113, 128A, 185
+  List<Course> upper_div_req_list [{"MATH 104"}, {"MATH 110"}, {"MATH 113"}, {"MATH 128A"}, {"MATH 185"}]
+  List<boolean> upper_div_req_status common_course_matches(upper_div_req_list, courses)
+  CourseListRequirement upper_div_required {upper_div_req_list, upper_div_req_status, "Upper Division Required Courses"}
+
+  // Cluster Emphases: satisfy any one of the 15 approved clusters
+  AndRequirement de_actuarial_science eval_actuarial_science()
+  AndRequirement de_classical_mechanics eval_classical_mechanics()
+  AndRequirement de_data_science eval_data_science_cluster()
+  AndRequirement de_economics eval_economics_cluster()
+  AndRequirement de_fluid_mechanics eval_fluid_mechanics()
+  AndRequirement de_geophysics eval_geophysics()
+  AndRequirement de_life_physical_sciences eval_life_physical_sciences()
+  AndRequirement de_mathematical_biology eval_mathematical_biology()
+  AndRequirement de_numerical_analysis eval_numerical_analysis()
+  AndRequirement de_operations_research eval_operations_research()
+  AndRequirement de_probability_theory eval_probability_theory()
+  AndRequirement de_quantum_mechanics eval_quantum_mechanics()
+  AndRequirement de_relativity eval_relativity()
+  AndRequirement de_social_sciences eval_social_sciences()
+  AndRequirement de_statistics eval_statistics_cluster()
+  OrRequirement cluster_emphasis {[de_actuarial_science, de_classical_mechanics, de_data_science, de_economics, de_fluid_mechanics, de_geophysics, de_life_physical_sciences, de_mathematical_biology, de_numerical_analysis, de_operations_research, de_probability_theory, de_quantum_mechanics, de_relativity, de_social_sciences, de_statistics], "Cluster Emphasis"}
+
+  List<Requirement> return [lower_div, upper_div_required, cluster_emphasis]
+}
+`;

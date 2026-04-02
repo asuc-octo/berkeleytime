@@ -8,6 +8,7 @@
  *   mongosh <connection-string> --file seed-requirements.js
  */
 import {
+  APPLIED_MATH_REQ_BTLL,
   CDSS_REQ_BTLL,
   COE_REQ_BTLL,
   COMPSCI_REQ_BTLL,
@@ -106,6 +107,16 @@ const requirements: PlanRequirementSeed[] = [
     isUcReq: false,
     college: null,
     major: "Data Science",
+    minor: null,
+    createdBy: "system",
+    isOfficial: true,
+  },
+  {
+    name: "Applied Mathematics Major Requirements",
+    code: APPLIED_MATH_REQ_BTLL,
+    isUcReq: false,
+    college: null,
+    major: "Applied Mathematics",
     minor: null,
     createdBy: "system",
     isOfficial: true,
