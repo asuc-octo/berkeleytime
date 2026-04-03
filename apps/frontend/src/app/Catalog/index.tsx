@@ -29,12 +29,11 @@ import {
   Semester,
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
+import { saveCourseClick } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
 import useCatalogLayoutMode from "./hooks/useCatalogLayoutMode";
-
-import {saveCourseClick} from "@/lib/recent";
 
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
@@ -514,7 +513,7 @@ export default function Catalog() {
       searchQuery: string
     ) => {
       if (!term) return;
-      saveCourseClick(searchQuery, `${subject}${courseNumber}`);  
+      saveCourseClick(searchQuery, `${subject}${courseNumber}`);
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 

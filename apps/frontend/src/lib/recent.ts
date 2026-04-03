@@ -8,7 +8,7 @@ export enum RecentType {
   CatalogTerm = "recent-catalog-term",
   GradesPage = "recent-grades-page",
   EnrollmentPage = "recent-enrollment-page",
-  CourseClick = "recent-course-click"
+  CourseClick = "recent-course-click",
 }
 
 const MaxLength = {

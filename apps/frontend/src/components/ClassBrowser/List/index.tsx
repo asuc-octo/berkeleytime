@@ -64,7 +64,7 @@ interface ListProps {
     courseNumber: string,
     number: string,
     sessionId: string,
-    searchQuery: string,
+    searchQuery: string
   ) => void;
 }
 
@@ -289,7 +289,7 @@ export default function List({ onSelect }: ListProps) {
       selected.courseNumber,
       selected.number,
       selected.sessionId,
-      query,
+      query
     );
   };
 
@@ -341,7 +341,7 @@ export default function List({ onSelect }: ListProps) {
                           recentClass.courseNumber,
                           recentClass.number,
                           recentClass.sessionId,
-                          query,
+                          query
                         );
                       }}
                     >
