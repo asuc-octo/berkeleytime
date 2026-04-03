@@ -18,7 +18,8 @@ interface ClassBrowserProps {
     subject: string,
     courseNumber: string,
     number: string,
-    sessionId: string
+    sessionId: string,
+    searchQuery: string
   ) => void;
   forceMode?: CatalogLayoutMode;
   semester: Semester;

@@ -34,6 +34,8 @@ import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 import styles from "./Catalog.module.scss";
 import useCatalogLayoutMode from "./hooks/useCatalogLayoutMode";
 
+import {saveCourseClick} from "@/lib/recent";
+
 // Semester hierarchy for chronological ordering (latest to earliest in year)
 const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Spring]: 0,
@@ -508,9 +510,11 @@ export default function Catalog() {
       subject: string,
       courseNumber: string,
       number: string,
-      sessionId: string
+      sessionId: string,
+      searchQuery: string
     ) => {
       if (!term) return;
+      saveCourseClick(searchQuery, `${subject}${courseNumber}`);  
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
