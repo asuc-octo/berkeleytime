@@ -54,6 +54,7 @@ export const GET_CATALOG_SEARCH = gql`
         decal {
           title
         }
+        searchScore
       }
       totalCount
     }
