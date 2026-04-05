@@ -420,9 +420,15 @@ Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
 export const LNS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}${LNS_QR_BTLL}${LNS_LANG_BTLL}
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
+  
   List<Requirement> breadth7 seven_breadths_requirements(courses)
-
-  AndRequirement seven_breadths {breadth7, "Seven Breadths"}
+  Requirement arts_and_lit get_element(breadth7, 0)
+  Requirement biological_sciences get_element(breadth7, 1)
+  Requirement historical_studies get_element(breadth7, 2)
+  Requirement international_studies get_element(breadth7, 3)
+  Requirement philosophy_and_values get_element(breadth7, 4)
+  Requirement physical_sciences get_element(breadth7, 5)
+  Requirement social_and_behavioral_sciences get_element(breadth7, 6)
 
   List<Requirement> rc_reqs rc_requirements(courses)
   Requirement rca get_element(rc_reqs, 0)
@@ -434,7 +440,7 @@ Function<List<Requirement>>() main (){
   List<Requirement> lang_reqs lns_language_requirements(courses)
   Requirement language_req get_element(lang_reqs, 0)
 
-  List<Requirement> return [seven_breadths, rca, rcb, quantitative_reasoning, language_req]
+  List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences, rca, rcb, quantitative_reasoning, language_req]
 }
 `;
 
@@ -2831,5 +2837,285 @@ Function<List<Requirement>>() main (){
   OrRequirement cluster_emphasis {[de_actuarial_science, de_classical_mechanics, de_data_science, de_economics, de_fluid_mechanics, de_geophysics, de_life_physical_sciences, de_mathematical_biology, de_numerical_analysis, de_operations_research, de_probability_theory, de_quantum_mechanics, de_relativity, de_social_sciences, de_statistics], "Cluster Emphasis"}
 
   List<Requirement> return [lower_div, upper_div_required, cluster_emphasis]
+}
+`;
+
+export const ECON_REQ_BTLL = `
+Function<boolean>(Course) econ_elective_inside_finder (course){
+  List<Course> list [
+    {"ECON C102"}, {"ENVECON C102"},
+    {"ECON C103"}, {"MATH C103"},
+    {"ECON 104"}, {"ECON 105"}, {"ECON 106"},
+    {"ECON C110"}, {"ECON N110"}, {"POLSCI C135"}, {"POLSCI W135"},
+    {"ECON 111"}, {"ECON 113"}, {"ECON 115"},
+    {"ECON 119"}, {"ECON 121"}, {"ECON 122"}, {"ECON 123"}, {"ECON 124"},
+    {"ECON C125"}, {"ENVECON C101"},
+    {"ECON 127"}, {"ECON 130"}, {"ECON 131"}, {"ECON 132"}, {"ECON 133"},
+    {"ECON 134"}, {"ECON 135"}, {"ECON 136"}, {"ECON 137"}, {"ECON 138"}, {"ECON 139"},
+    {"ECON C142"}, {"PUBPOL C142"}, {"POLSCI C131A"},
+    {"ECON 143"}, {"ECON 144"}, {"ECON 145"},
+    {"ECON C147"}, {"COMPSCI C177"},
+    {"ECON 148"}, {"ECON 151"}, {"ECON 152"}, {"ECON 153"}, {"ECON 154"},
+    {"ECON 155"}, {"ECON 155A"}, {"ECON 157"}, {"ECON 158"},
+    {"ECON 161"}, {"ECON 162"}, {"ECON 165"},
+    {"ECON C171"}, {"ENVECON C151"},
+    {"ECON 172"}, {"ECON 173"}, {"ECON 174"},
+    {"ECON C175"}, {"DEMOG C175"},
+    {"ECON C181"}, {"ENVECON C181"},
+    {"ECON 182"}, {"ECON 183"},
+    {"ECON C184"}, {"ENVECON C132"},
+    {"ECON C188"}, {"ENVECON C188"},
+    {"ECON 190"}, {"ECON 191"}, {"ECON H191"}, {"ECON H195B"}, {"ECON 196"}
+  ]
+  boolean return one_common_course([course], list)
+}
+
+Function<boolean>(Course) econ_elective_outside_finder (course){
+  List<Course> list [
+    {"CYPLAN 113A"}, {"CYPLAN 113B"}, {"CYPLAN 160"},
+    {"ENGIN 120"}, {"INDENG 120"},
+    {"ENVECON 131"}, {"ENVECON 141"}, {"ENVECON 143"}, {"ENVECON 145"},
+    {"ENVECON 152"}, {"ENVECON 153"}, {"ENVECON 162"},
+    {"ENVECON C176"}, {"IAS C176"}, {"ENERES C176"},
+    {"GEOG 110"},
+    {"HISTORY 133A"}, {"HISTORY 159A"},
+    {"HISTORY C159A"}, {"POLECON C160"},
+    {"HISTORY 159B"}, {"HISTORY 160"},
+    {"LEGALST 142"}, {"LEGALST 145"}, {"LEGALST 147"},
+    {"PHILOS 141"}, {"PUBPOL 141"},
+    {"UGBA 118"}, {"UGBA 131"}, {"UGBA 132"}, {"UGBA 133"}, {"UGBA 136F"}, {"UGBA 180"}
+  ]
+  boolean return one_common_course([course], list)
+}
+
+Function<boolean>(Course) econ_any_elective_finder (course){
+  boolean return or([econ_elective_inside_finder(course), econ_elective_outside_finder(course)])
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Lower Division
+
+  // Intro to Economics: ECON 1 or ECON 2
+  List<Course> intro_list [{"ECON 1"}, {"ECON 2"}]
+  List<Course> intro_matches filter(courses, (c) { boolean return one_common_course([c], intro_list) })
+  NCoursesRequirement intro_econ {intro_matches, 1, "Intro to Economics"}
+
+  // Calculus I: MATH 1A or 16A
+  List<Course> calc1_list [{"MATH 1A"}, {"MATH 16A"}]
+  List<Course> calc1_matches filter(courses, (c) { boolean return one_common_course([c], calc1_list) })
+  NCoursesRequirement calc1 {calc1_matches, 1, "Calculus I"}
+
+  // Calculus II: MATH 1B or 16B
+  List<Course> calc2_list [{"MATH 1B"}, {"MATH 16B"}]
+  List<Course> calc2_matches filter(courses, (c) { boolean return one_common_course([c], calc2_list) })
+  NCoursesRequirement calc2 {calc2_matches, 1, "Calculus II"}
+
+  // Statistics
+  List<Course> stats_list [
+    {"STAT 20"}, {"STAT 21"}, {"STAT W21"},
+    {"STAT 88"}, {"DATA C88S"},
+    {"DATA 89"},
+    {"STAT C131A"},
+    {"STAT 135"},
+    {"STAT 140"}, {"STAT C140"}, {"DATA C140"}
+  ]
+  List<Course> stats_matches filter(courses, (c) { boolean return one_common_course([c], stats_list) })
+  NCoursesRequirement stats {stats_matches, 1, "Statistics"}
+
+  AndRequirement lower_div {[intro_econ, calc1, calc2, stats], "Lower Division"}
+
+  // Upper Division Core
+
+  // Microeconomics: ECON 100A or 101A
+  List<Course> micro_list [{"ECON 100A"}, {"ECON 101A"}]
+  List<Course> micro_matches filter(courses, (c) { boolean return one_common_course([c], micro_list) })
+  NCoursesRequirement micro {micro_matches, 1, "Microeconomics"}
+
+  // Macroeconomics: ECON 100B, 101B, or UGBA 101B
+  List<Course> macro_list [{"ECON 100B"}, {"ECON 101B"}, {"UGBA 101B"}]
+  List<Course> macro_matches filter(courses, (c) { boolean return one_common_course([c], macro_list) })
+  NCoursesRequirement macro {macro_matches, 1, "Macroeconomics"}
+
+  // Econometrics: ECON 140 or 141
+  List<Course> metrics_list [{"ECON 140"}, {"ECON 141"}]
+  List<Course> metrics_matches filter(courses, (c) { boolean return one_common_course([c], metrics_list) })
+  NCoursesRequirement econometrics {metrics_matches, 1, "Econometrics"}
+
+  AndRequirement upper_div_core {[micro, macro, econometrics], "Upper Division Core"}
+
+  // Upper Division Electives
+  List<Course> elective_inside_matches filter(courses, econ_elective_inside_finder)
+  List<Course> elective_outside_matches filter(courses, econ_elective_outside_finder)
+  List<Course> elective_all_matches filter(courses, econ_any_elective_finder)
+
+  NCoursesRequirement electives {elective_all_matches, 5, "Upper Division Electives"}
+
+  // Max 2 courses from outside the Economics Department
+  BooleanRequirement outside_dept_limit {not(greater_than(length(elective_outside_matches), 2)), "Max 2: Non-Economics Courses"}
+
+  // Mutex: CYPLAN 113B and CYPLAN 160 (only first counts)
+  List<Course> cyplan_mutex_list [{"CYPLAN 113B"}, {"CYPLAN 160"}]
+  List<Course> cyplan_mutex_matches filter(elective_outside_matches, (c) {
+    boolean return one_common_course([c], cyplan_mutex_list)
+  })
+  BooleanRequirement cyplan_mutex {not(greater_than(length(cyplan_mutex_matches), 1)), "Max 1: CYPLAN 113B, CYPLAN 160"}
+
+  // Mutex: ECON 136 and ENGIN/INDENG 120 (only first counts)
+  List<Course> engin_136_mutex_list [{"ECON 136"}, {"ENGIN 120"}, {"INDENG 120"}]
+  List<Course> engin_136_mutex_matches filter(elective_all_matches, (c) {
+    boolean return one_common_course([c], engin_136_mutex_list)
+  })
+  BooleanRequirement engin_136_mutex {not(greater_than(length(engin_136_mutex_matches), 1)), "Max 1: ECON 136, ENGIN 120"}
+
+  // Mutex: ECON 115 and HISTORY 160 (credit exclusive)
+  List<Course> hist_mutex_list [{"ECON 115"}, {"HISTORY 160"}]
+  List<Course> hist_mutex_matches filter(elective_all_matches, (c) {
+    boolean return one_common_course([c], hist_mutex_list)
+  })
+  BooleanRequirement hist_mutex {not(greater_than(length(hist_mutex_matches), 1)), "Max 1: ECON 115, HISTORY 160"}
+
+  // Mutex: ECON C181/ENVECON C181 and UGBA 118 (credit exclusive)
+  List<Course> c181_mutex_list [{"ECON C181"}, {"ENVECON C181"}, {"UGBA 118"}]
+  List<Course> c181_mutex_matches filter(elective_all_matches, (c) {
+    boolean return one_common_course([c], c181_mutex_list)
+  })
+  BooleanRequirement c181_mutex {not(greater_than(length(c181_mutex_matches), 1)), "Max 1: ECON C181, UGBA 118"}
+
+  List<Requirement> return [lower_div, upper_div_core, electives, outside_dept_limit, cyplan_mutex, engin_136_mutex, hist_mutex, c181_mutex]
+}
+`;
+
+export const HAAS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  List<Requirement> breadth7 seven_breadths_requirements(courses)
+  Requirement arts_and_lit get_element(breadth7, 0)
+  Requirement biological_sciences get_element(breadth7, 1)
+  Requirement historical_studies get_element(breadth7, 2)
+  Requirement international_studies get_element(breadth7, 3)
+  Requirement philosophy_and_values get_element(breadth7, 4)
+  Requirement physical_sciences get_element(breadth7, 5)
+  Requirement social_and_behavioral_sciences get_element(breadth7, 6)
+
+  List<Requirement> rc_reqs rc_requirements(courses)
+  Requirement rca get_element(rc_reqs, 0)
+  Requirement rcb get_element(rc_reqs, 1)
+
+  List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences, rca, rcb]
+}
+`;
+
+export const BUSINESS_REQ_BTLL = `
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Lower Division
+
+  // UGBA 10: required at UC Berkeley
+  List<Course> ugba10_list [{"UGBA 10"}, {"UGBA 10X"}]
+  List<Course> ugba10_matches filter(courses, (c) { boolean return one_common_course([c], ugba10_list) })
+  NCoursesRequirement ugba10 {ugba10_matches, 1, "Principles of Business"}
+
+  // Intro Economics: ECON 1 or ECON 2
+  List<Course> intro_list [{"ECON 1"}, {"ECON 2"}]
+  List<Course> intro_matches filter(courses, (c) { boolean return one_common_course([c], intro_list) })
+  NCoursesRequirement intro_econ {intro_matches, 1, "Intro to Economics"}
+
+  // Statistics: approved solo course, or DATA/CS/STAT/INFO C8 + UGBA 88 / DATA C88S combo
+  // Only show combo courses if both halves are present
+  List<Course> stats8_list [{"COMPSCI C8"}, {"DATA C8"}, {"STAT C8"}, {"INFO C8"}]
+  List<Course> ugba88_list [{"UGBA 88"}, {"DATA C88S"}]
+  List<Course> stats_solo_list [
+    {"STAT 20"}, {"STAT 21"}, {"STAT W21"},
+    {"STAT 131A"}, {"STAT C131A"},
+    {"STAT 134"},
+    {"STAT 140"}, {"STAT C140"}, {"DATA C140"}
+  ]
+  boolean has_stats8 greater_than(length(filter(courses, (c) { boolean return one_common_course([c], stats8_list) })), 0)
+  boolean has_ugba88 greater_than(length(filter(courses, (c) { boolean return one_common_course([c], ugba88_list) })), 0)
+  List<Course> stats_display_matches filter(courses, (c) {
+    boolean is_solo one_common_course([c], stats_solo_list)
+    boolean is_stats8 one_common_course([c], stats8_list)
+    boolean is_ugba88 one_common_course([c], ugba88_list)
+    boolean return or([is_solo, and([is_stats8, has_ugba88]), and([is_ugba88, has_stats8])])
+  })
+  NCoursesRequirement stats {stats_display_matches, 1, "Statistics"}
+
+  // Calculus: valid combo shown only when both semesters present; single courses (53/54/56) always shown
+  List<Course> calc1_only_list [{"MATH 1A"}, {"MATH 16A"}]
+  List<Course> calc2_only_list [{"MATH 1B"}, {"MATH 16B"}]
+  List<Course> calc_single_list [{"MATH 53"}, {"MATH 54"}, {"MATH 56"}]
+  boolean has_calc1 greater_than(length(filter(courses, (c) { boolean return one_common_course([c], calc1_only_list) })), 0)
+  boolean has_calc2 greater_than(length(filter(courses, (c) { boolean return one_common_course([c], calc2_only_list) })), 0)
+  List<Course> calc_display_matches filter(courses, (c) {
+    boolean is_calc1 one_common_course([c], calc1_only_list)
+    boolean is_calc2 one_common_course([c], calc2_only_list)
+    boolean is_single one_common_course([c], calc_single_list)
+    boolean return or([and([is_calc1, has_calc2]), and([is_calc2, has_calc1]), is_single])
+  })
+  NCoursesRequirement calculus {calc_display_matches, 1, "Calculus"}
+
+  AndRequirement lower_div {[ugba10, intro_econ, stats, calculus], "Lower Division"}
+
+
+
+  // Upper Division Core
+
+  // UGBA 100: Business Communications
+  List<Course> ugba100_list [{"UGBA 100"}]
+  List<boolean> ugba100_status common_course_matches(ugba100_list, courses)
+  CourseListRequirement ugba100 {ugba100_list, ugba100_status, "Business Communications"}
+
+  // UGBA 101A: Microeconomic Analysis (or alternatives)
+  List<Course> micro_list [{"UGBA 101A"}, {"ECON 100A"}, {"ECON 101A"}, {"ENVECON 100"}, {"POLECON 106"}]
+  List<Course> micro_matches filter(courses, (c) { boolean return one_common_course([c], micro_list) })
+  NCoursesRequirement micro {micro_matches, 1, "Microeconomic Analysis"}
+
+  // UGBA 101B: Macroeconomic Analysis (or alternatives)
+  List<Course> macro_list [{"UGBA 101B"}, {"ECON 100B"}, {"ECON 101B"}, {"POLECON 107"}]
+  List<Course> macro_matches filter(courses, (c) { boolean return one_common_course([c], macro_list) })
+  NCoursesRequirement macro {macro_matches, 1, "Macroeconomic Analysis"}
+
+  // UGBA 102A: Financial Accounting
+  List<Course> acctg_list [{"UGBA 102A"}]
+  List<boolean> acctg_status common_course_matches(acctg_list, courses)
+  CourseListRequirement acctg {acctg_list, acctg_status, "Financial Accounting"}
+
+  // UGBA 102B: Managerial Accounting
+  List<Course> mgmt_acctg_list [{"UGBA 102B"}]
+  List<boolean> mgmt_acctg_status common_course_matches(mgmt_acctg_list, courses)
+  CourseListRequirement mgmt_acctg {mgmt_acctg_list, mgmt_acctg_status, "Managerial Accounting"}
+
+  // UGBA 103: Introduction to Finance
+  List<Course> finance_list [{"UGBA 103"}]
+  List<boolean> finance_status common_course_matches(finance_list, courses)
+  CourseListRequirement finance {finance_list, finance_status, "Introduction to Finance"}
+
+  // UGBA 104: Introduction to Business Analytics
+  List<Course> analytics_list [{"UGBA 104"}]
+  List<boolean> analytics_status common_course_matches(analytics_list, courses)
+  CourseListRequirement analytics {analytics_list, analytics_status, "Business Analytics"}
+
+  // UGBA 105: Leading People
+  List<Course> leadership_list [{"UGBA 105"}]
+  List<boolean> leadership_status common_course_matches(leadership_list, courses)
+  CourseListRequirement leadership {leadership_list, leadership_status, "Leading People"}
+
+  // UGBA 106: Marketing
+  List<Course> marketing_list [{"UGBA 106"}]
+  List<boolean> marketing_status common_course_matches(marketing_list, courses)
+  CourseListRequirement marketing {marketing_list, marketing_status, "Marketing"}
+
+  // UGBA 107: Social, Political, and Ethical Environment of Business
+  List<Course> ethics_list [{"UGBA 107"}]
+  List<boolean> ethics_status common_course_matches(ethics_list, courses)
+  CourseListRequirement ethics {ethics_list, ethics_status, "Social, Political, and Ethical Environment"}
+
+  AndRequirement upper_div_core {[ugba100, micro, macro, acctg, mgmt_acctg, finance, analytics, leadership, marketing, ethics], "Upper Division Core"}
+
+  List<Requirement> return [lower_div, upper_div_core]
 }
 `;
