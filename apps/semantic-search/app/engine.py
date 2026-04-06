@@ -248,6 +248,9 @@ class SemanticSearchEngine:
 
             self._save_index_metadata(entry)
 
+            # Clean up indexes beyond the 2 most recent terms
+            self._evict_old_indexes()
+
             logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(course_texts))
             return entry
         finally:
@@ -501,6 +504,50 @@ class SemanticSearchEngine:
             return unique_terms
         except Exception:
             return []
+
+    def _evict_old_indexes(self, max_terms: int = 2) -> None:
+        """Delete Redis indexes beyond the most recent max_terms terms."""
+        try:
+            all_meta = []
+            cursor = 0
+            while True:
+                cursor, keys = self._redis.scan(cursor, match=f"{INDEX_PREFIX}:meta:*", count=100)
+                for key in keys:
+                    raw = self._redis.get(key)
+                    if not raw:
+                        continue
+                    try:
+                        meta = json.loads(raw)
+                        meta["_meta_key"] = key
+                        all_meta.append(meta)
+                    except Exception:
+                        pass
+                if cursor == 0:
+                    break
+
+            # Sort newest first
+            all_meta.sort(
+                key=lambda m: (m.get("year", 0), SEMESTER_ORDER.get(m.get("semester", ""), 0)),
+                reverse=True,
+            )
+
+            for meta in all_meta[max_terms:]:
+                try:
+                    index_name = self._get_index_name(meta["year"], meta["semester"], meta.get("allowed_subjects"))
+                    schema = self._build_schema(index_name)
+                    old_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
+                    if old_index.exists():
+                        old_index.delete(drop=True)
+                    self._redis.delete(meta["_meta_key"])
+                    # Also evict from in-memory cache
+                    stale_key = self._key(meta["year"], meta["semester"], meta.get("allowed_subjects"))
+                    with self._lock:
+                        self._indices.pop(stale_key, None)
+                    logger.info("Evicted old index: %s %s", meta.get("semester"), meta.get("year"))
+                except Exception as exc:
+                    logger.warning("Failed to evict index %s %s: %s", meta.get("semester"), meta.get("year"), exc)
+        except Exception as exc:
+            logger.warning("Failed to scan for old indexes: %s", exc)
 
     def build_startup_indexes(self, max_startup_terms: int = 2) -> None:
         """Load indexes from Redis and queue builds for the 2 most recent terms only."""
