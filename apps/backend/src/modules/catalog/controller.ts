@@ -32,7 +32,7 @@ import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
-import { getSearchIndex } from "./catalog-cache";
+import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
   year: number;
@@ -160,14 +160,12 @@ const getCatalogWithSemanticSearch = async ({
   limit: number;
   skip: number;
 }) => {
-  // Throws if the semantic service is unavailable — surfaces as GraphQL error
   const response = await searchSemantic(searchTerm, year, semester);
 
   if (response.results.length === 0) {
     return { results: [], totalCount: 0 };
   }
 
-  // Throws if the semantic service is unavailable — surfaces as GraphQL error
   // Python already returns results sorted by score descending — preserve that order.
   // Build a rank map: "subject-courseNumber" → position in Python's ranked list
   const rankMap = new Map<string, number>();
@@ -175,25 +173,26 @@ const getCatalogWithSemanticSearch = async ({
     rankMap.set(`${subject}-${courseNumber}`, index);
   });
 
-  const query = buildFilterQuery(year, semester, filters);
-  query.$or = response.results.map(({ subject, courseNumber }) => ({
-    subject,
-    courseNumber,
-  })) as unknown as CatalogFilterCondition[];
+  // Reuse the server-side catalog cache (same one fuzzy search uses) to avoid
+  // a redundant MongoDB round-trip.
+  const allCatalog = await getCachedCatalog(year, semester);
 
-  // Fetch all matching docs — semantic result sets are small (bounded by threshold)
-  const allResults = await CatalogClassModel.find(query).lean();
+  const semanticMatches = allCatalog.filter((item) =>
+    rankMap.has(`${item.subject}-${item.courseNumber}`)
+  );
+
+  const filtered = applyInMemoryFilters(semanticMatches, filters);
 
   // Sort by Python's relevance rank, then by section number within the same course
-  allResults.sort((a, b) => {
+  filtered.sort((a, b) => {
     const rankA = rankMap.get(`${a.subject}-${a.courseNumber}`) ?? 999;
     const rankB = rankMap.get(`${b.subject}-${b.courseNumber}`) ?? 999;
     if (rankA !== rankB) return rankA - rankB;
     return a.number.localeCompare(b.number);
   });
 
-  const totalCount = allResults.length;
-  const results = allResults.slice(skip, skip + limit);
+  const totalCount = filtered.length;
+  const results = filtered.slice(skip, skip + limit);
 
   return { results, totalCount };
 };

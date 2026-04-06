@@ -3,10 +3,6 @@ import { config } from "../../../../../packages/common/src/utils/config";
 interface SemanticSearchResult {
   subject: string;
   courseNumber: string;
-  title: string;
-  description: string;
-  score: number;
-  text: string;
 }
 
 interface SemanticSearchResponse {
