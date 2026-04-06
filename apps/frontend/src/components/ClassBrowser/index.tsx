@@ -62,6 +62,7 @@ export default function ClassBrowser({
             handleSemanticSearch: browser.handleSemanticSearch,
             semanticLoading: browser.semanticLoading,
             semanticError: browser.semanticError,
+            semanticSearchAvailable: browser.semanticSearchAvailable,
           }}
         >
           <div

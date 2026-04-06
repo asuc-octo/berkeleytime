@@ -18,6 +18,7 @@ export interface LayoutContextType {
   handleSemanticSearch: () => void;
   semanticLoading: boolean;
   semanticError: string | null;
+  semanticSearchAvailable: boolean;
 }
 
 export const LayoutContext = createContext<LayoutContextType | null>(null);

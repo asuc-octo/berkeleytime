@@ -502,12 +502,8 @@ class SemanticSearchEngine:
         except Exception:
             return []
 
-    def build_startup_indexes(self, max_startup_terms: int = 4) -> None:
-        """Load indexes from Redis and queue builds for recent terms only.
-
-        Only the most recent *max_startup_terms* terms are built on startup.
-        Older terms are built on-demand when actually searched.
-        """
+    def build_startup_indexes(self, max_startup_terms: int = 2) -> None:
+        """Load indexes from Redis and queue builds for the 2 most recent terms only."""
         # Fetch available terms
         available_terms = self.fetch_available_terms()
         if not available_terms:
@@ -519,12 +515,12 @@ class SemanticSearchEngine:
         # Sort terms: newest first
         available_terms.sort(key=lambda t: (t[0], SEMESTER_ORDER.get(t[1], 0)), reverse=True)
 
-        # Only consider recent terms for startup (older ones build on-demand)
-        startup_terms = available_terms[:max_startup_terms]
+        # Only consider the most recent terms
+        keep_terms = available_terms[:max_startup_terms]
 
         # Load from Redis if available, otherwise queue for building
         terms_to_build = []
-        for year, semester in startup_terms:
+        for year, semester in keep_terms:
             loaded = self._load_redis_index(year, semester, None)
             if loaded:
                 key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
@@ -532,14 +528,6 @@ class SemanticSearchEngine:
                     self._indices[key] = loaded
             else:
                 terms_to_build.append((year, semester))
-
-        # Also load any OTHER indexes already in Redis (from previous runs)
-        for year, semester in available_terms[max_startup_terms:]:
-            loaded = self._load_redis_index(year, semester, None)
-            if loaded:
-                key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
-                with self._lock:
-                    self._indices[key] = loaded
 
         # Queue only recent terms that weren't found in Redis
         self._build_queue = terms_to_build

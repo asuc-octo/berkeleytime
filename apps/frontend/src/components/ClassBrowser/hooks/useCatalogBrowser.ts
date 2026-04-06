@@ -27,6 +27,7 @@ export interface UseCatalogBrowserReturn {
   handleSemanticSearch: () => void;
   semanticLoading: boolean;
   semanticError: string | null;
+  semanticSearchAvailable: boolean;
 }
 
 export default function useCatalogBrowser({
@@ -36,6 +37,22 @@ export default function useCatalogBrowser({
   persistent,
 }: UseCatalogBrowserOptions): UseCatalogBrowserReturn {
   const filterState = useCatalogFilters({ persistent });
+
+  // Check if semantic search index is ready for the current term
+  const [semanticSearchAvailable, setSemanticSearchAvailable] = useState(false);
+  useEffect(() => {
+    setSemanticSearchAvailable(false);
+    fetch("/api/semantic-search/health")
+      .then((r) => r.json())
+      .then((data) => {
+        const indexes: { year: number; semester: string }[] = data?.indexes ?? [];
+        const available = indexes.some(
+          (idx) => idx.year === year && idx.semester === semester
+        );
+        setSemanticSearchAvailable(available);
+      })
+      .catch(() => setSemanticSearchAvailable(false));
+  }, [year, semester]);
 
   // Semantic search state
   const [aiSearchActive, setAiSearchActiveState] = useState(false);
@@ -125,5 +142,6 @@ export default function useCatalogBrowser({
     handleSemanticSearch,
     semanticLoading: queryResult.loading && isSemanticMode,
     semanticError: queryResult.semanticError,
+    semanticSearchAvailable,
   };
 }
