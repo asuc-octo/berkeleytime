@@ -205,6 +205,7 @@ export const catalogTypeDef = gql`
       sortOrder: SortOrder
       page: Int
       pageSize: Int
+      recentCourseNumbers: [String]
     ): CatalogResult! @cacheControl(maxAge: 300, scope: PUBLIC)
 
     catalogClassIdentities(

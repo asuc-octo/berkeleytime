@@ -55,6 +55,7 @@ export interface CatalogQueryParams {
   sortOrder?: string | null;
   page?: number | null;
   pageSize?: number | null;
+  recentCourseNumbers?: string[] | null;
 }
 
 type CatalogFilterCondition = Record<string, unknown>;
@@ -108,6 +109,7 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
       filters,
       limit: effectivePageSize,
       skip,
+      recentCourseNumbers: params.recentCourseNumbers,
     });
   }
 
@@ -130,6 +132,17 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
   return { results, totalCount };
 };
 
+const rerank = (
+  items: ICatalogClassItem[],
+  recentCourseNumbers?: string[] | null
+): ICatalogClassItem[] => {
+  if (!recentCourseNumbers || recentCourseNumbers.length === 0) return items;
+  const viewed = new Set(recentCourseNumbers);
+  const tier1 = items.filter((item) => viewed.has(item.courseNumber));
+  const tier2 = items.filter((item) => !viewed.has(item.courseNumber));
+  return [...tier1, ...tier2];
+};
+
 const getCatalogWithSearch = async ({
   year,
   semester,
@@ -137,6 +150,7 @@ const getCatalogWithSearch = async ({
   filters,
   limit,
   skip,
+  recentCourseNumbers
 }: {
   year: number;
   semester: string;
@@ -144,13 +158,15 @@ const getCatalogWithSearch = async ({
   filters: CatalogQueryParams["filters"];
   limit: number;
   skip: number;
+  recentCourseNumbers?: string[] | null;
 }) => {
   const index = await getSearchIndex(year, semester);
   const hits = index.search(searchTerm);
   const items = hits.map((r) => r.item);
   const filtered = applyInMemoryFilters(items, filters);
   const totalCount = filtered.length;
-  const results = filtered.slice(skip, skip + limit);
+  const reranked = rerank(filtered, recentCourseNumbers);
+  const results = reranked.slice(skip, skip + limit);
 
   return { results, totalCount };
 };

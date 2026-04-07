@@ -513,7 +513,7 @@ export default function Catalog() {
       searchQuery: string
     ) => {
       if (!term) return;
-      saveCourseClick(searchQuery, `${subject}${courseNumber}`);
+      saveCourseClick(`${subject}${courseNumber}`, searchQuery);
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 
