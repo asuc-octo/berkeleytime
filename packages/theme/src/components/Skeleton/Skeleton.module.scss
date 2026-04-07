@@ -1,12 +1,12 @@
 @keyframes skeleton-pulse {
   0% {
-    opacity: 0.6;
+    opacity: 1;
   }
   50% {
-    opacity: 0.2;
+    opacity: 0.6;
   }
   100% {
-    opacity: 0.6;
+    opacity: 1;
   }
 }
 
@@ -16,7 +16,6 @@
   border-radius: 4px;
   animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 
-  // Make it visible with minimum dimensions
-  min-height: 1em;
+  height: var(--skeleton-height, 1em);
   min-width: 1em;
 }

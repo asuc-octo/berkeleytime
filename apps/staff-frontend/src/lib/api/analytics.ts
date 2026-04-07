@@ -221,3 +221,56 @@ export const SCHEDULER_ANALYTICS_DATA = gql`
     }
   }
 `;
+
+export interface ActivityScoreDistributionPoint {
+  bucket: string;
+  lowerBound: number;
+  count: number;
+  percent: number;
+}
+
+export type FormulaName =
+  | "exponentialDecay"
+  | "linearDecay"
+  | "tiered"
+  | "sigmoid";
+
+export const FORMULA_OPTIONS: { value: FormulaName; label: string }[] = [
+  { value: "linearDecay", label: "Linear Decay" },
+  { value: "exponentialDecay", label: "Exponential Decay" },
+  { value: "sigmoid", label: "Sigmoid" },
+  { value: "tiered", label: "Tiered" },
+];
+
+export const ACTIVITY_SCORE_DISTRIBUTION = gql`
+  query ActivityScoreDistribution($formula: String) {
+    activityScoreDistribution(formula: $formula) {
+      bucket
+      lowerBound
+      count
+      percent
+    }
+  }
+`;
+
+export interface GeneralActivityDataPoint {
+  date: string;
+  schedulesCreated: number;
+  ratingsSubmitted: number;
+  gradTraksCreated: number;
+  bookmarksAdded: number;
+  totalActivity: number;
+}
+
+export const GENERAL_ACTIVITY_ANALYTICS = gql`
+  query GeneralActivityAnalytics($days: Int!) {
+    generalActivityAnalytics(days: $days) {
+      date
+      schedulesCreated
+      ratingsSubmitted
+      gradTraksCreated
+      bookmarksAdded
+      totalActivity
+    }
+  }
+`;

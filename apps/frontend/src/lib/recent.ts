@@ -25,6 +25,7 @@ interface RecentClass {
   semester: Semester;
   courseNumber: string;
   number: string;
+  sessionId?: string;
 }
 
 interface RecentSchedule {
@@ -44,6 +45,10 @@ interface RecentCatalogTerm {
   semester: Semester;
   year: number;
   timestamp?: number;
+  /** The latest available term when this choice was saved. If a newer term
+   *  appears, the cached choice is invalidated so users discover it. */
+  latestYear?: number;
+  latestSemester?: Semester;
 }
 
 interface RecentPageUrl {
@@ -131,7 +136,20 @@ export const addRecent = <T extends RecentType>(
   type: RecentType,
   recent: Recent<T>
 ) => {
-  const recents = getRecents(type, recent);
+  let recents = getRecents(type, recent);
+
+  if (type === RecentType.Class) {
+    const classRecent = recent as Recent<RecentType.Class>;
+    recents = (recents as Recent<RecentType.Class>[]).filter(
+      (existingRecent) =>
+        !(
+          existingRecent.subject === classRecent.subject &&
+          existingRecent.courseNumber === classRecent.courseNumber &&
+          existingRecent.year === classRecent.year &&
+          existingRecent.semester === classRecent.semester
+        )
+    ) as Recent<T>[];
+  }
 
   if (type === RecentType.CatalogTerm) {
     (recent as RecentCatalogTerm).timestamp = Date.now();

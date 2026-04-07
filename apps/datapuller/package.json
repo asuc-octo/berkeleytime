@@ -16,12 +16,14 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "cheerio": "^1.0.0",
     "@aws-sdk/client-athena": "^3.901.0",
     "@aws-sdk/client-s3": "^3.901.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "luxon": "^3.7.2",
     "papaparse": "^5.5.3",
+    "playwright": "^1.50.1",
     "tslog": "^4.10.2"
   }
 }

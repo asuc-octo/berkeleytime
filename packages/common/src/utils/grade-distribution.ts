@@ -26,6 +26,12 @@ export interface Grade {
   count: number;
 }
 
+export interface AggregatedGradeDistribution {
+  average: number | null;
+  distribution: Grade[];
+  pnpPercentage: number | null;
+}
+
 export type GradeCounts = Pick<
   IGradeDistributionItem,
   | "countA"
@@ -67,25 +73,29 @@ const emptyCounts = (): GradeCounts => ({
   countU: 0,
 });
 
-export const sumGradeCounts = (distributions: GradeCounts[]) => {
-  return distributions.reduce<GradeCounts>((acc, distribution) => {
-    acc.countA += distribution.countA;
-    acc.countAMinus += distribution.countAMinus;
-    acc.countAPlus += distribution.countAPlus;
-    acc.countB += distribution.countB;
-    acc.countBMinus += distribution.countBMinus;
-    acc.countBPlus += distribution.countBPlus;
-    acc.countC += distribution.countC;
-    acc.countCMinus += distribution.countCMinus;
-    acc.countCPlus += distribution.countCPlus;
-    acc.countD += distribution.countD;
-    acc.countDMinus += distribution.countDMinus;
-    acc.countDPlus += distribution.countDPlus;
-    acc.countF += distribution.countF;
-    acc.countNP += distribution.countNP;
-    acc.countP += distribution.countP;
-    acc.countS += distribution.countS;
-    acc.countU += distribution.countU;
+export const sumGradeCounts = (
+  distributions: GradeCounts[],
+  weights?: number[]
+): GradeCounts => {
+  return distributions.reduce<GradeCounts>((acc, distribution, i) => {
+    const w = weights?.[i] ?? 1;
+    acc.countA += distribution.countA * w;
+    acc.countAMinus += distribution.countAMinus * w;
+    acc.countAPlus += distribution.countAPlus * w;
+    acc.countB += distribution.countB * w;
+    acc.countBMinus += distribution.countBMinus * w;
+    acc.countBPlus += distribution.countBPlus * w;
+    acc.countC += distribution.countC * w;
+    acc.countCMinus += distribution.countCMinus * w;
+    acc.countCPlus += distribution.countCPlus * w;
+    acc.countD += distribution.countD * w;
+    acc.countDMinus += distribution.countDMinus * w;
+    acc.countDPlus += distribution.countDPlus * w;
+    acc.countF += distribution.countF * w;
+    acc.countNP += distribution.countNP * w;
+    acc.countP += distribution.countP * w;
+    acc.countS += distribution.countS * w;
+    acc.countU += distribution.countU * w;
     return acc;
   }, emptyCounts());
 };
@@ -126,8 +136,11 @@ export const points: { [key: string]: number } = {
   F: 0,
 };
 
-export const getDistribution = (distributions: GradeCounts[]) => {
-  const counts = sumGradeCounts(distributions);
+export const getDistribution = (
+  distributions: GradeCounts[],
+  weights?: number[]
+) => {
+  const counts = sumGradeCounts(distributions, weights);
 
   const total = Object.values(counts).reduce((acc, count) => acc + count, 0);
 
@@ -136,7 +149,7 @@ export const getDistribution = (distributions: GradeCounts[]) => {
       ({
         letter: letters[field],
         percentage: total > 0 && count > 0 ? count / total : 0,
-        count,
+        count: Math.round(count),
       }) as Grade
   );
 };

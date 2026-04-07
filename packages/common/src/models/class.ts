@@ -28,6 +28,16 @@ export interface IClassItem {
   title?: string;
   // classDescription
   description?: string;
+  // DeCal-specific data (when set, class is a DeCal)
+  decal?: {
+    title?: string;
+    syllabus?: string;
+    description?: string;
+    instructors?: { name: string; email: string }[];
+    applicationUrl?: string;
+    applicationDueDate?: string;
+    syllabusUrl?: string;
+  };
   allowedUnits?: {
     minimum?: number;
     maximum?: number;
@@ -71,6 +81,20 @@ const classSchema = new Schema<IClassItem>({
   offeringNumber: { type: Number },
   title: { type: String }, // classTitle
   description: { type: String }, // classDescription
+  decal: {
+    title: { type: String },
+    syllabus: { type: String },
+    description: { type: String },
+    instructors: [
+      {
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+      },
+    ],
+    applicationUrl: { type: String },
+    applicationDueDate: { type: String },
+    syllabusUrl: { type: String },
+  },
   allowedUnits: {
     minimum: { type: Number },
     maximum: { type: Number },

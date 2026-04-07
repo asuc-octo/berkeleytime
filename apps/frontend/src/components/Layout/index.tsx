@@ -6,6 +6,7 @@ import Banner from "@/components/Banner";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 import { useHeaderHeight } from "@/hooks/useHeaderHeight";
+import useMinWidth from "@/hooks/useMinWidth";
 
 import styles from "./Layout.module.scss";
 
@@ -25,6 +26,8 @@ export default function Layout({
   headerBorder = true,
 }: LayoutProps) {
   const { headerRef } = useHeaderHeight();
+  const isAbovePhone = useMinWidth(768);
+  const showBanner = banner && isAbovePhone;
 
   return (
     <Flex direction="column">
@@ -32,9 +35,9 @@ export default function Layout({
         direction="column"
         className={scrollLock ? styles.viewLocked : styles.view}
       >
-        {(banner || header) && (
+        {(showBanner || header) && (
           <div ref={headerRef} className={styles.stickyHeader}>
-            {banner && <Banner />}
+            {showBanner && <Banner />}
             {header && <NavigationBar noBorder={!headerBorder} />}
           </div>
         )}

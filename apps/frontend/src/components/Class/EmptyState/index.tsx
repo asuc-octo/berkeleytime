@@ -6,7 +6,7 @@ import styles from "./EmptyState.module.scss";
 
 interface EmptyStateProps {
   icon?: ReactNode;
-  heading: string;
+  heading?: string;
   paragraph?: ReactNode;
   children?: ReactNode;
   loading?: boolean;
@@ -22,12 +22,12 @@ export default function EmptyState({
   loading = false,
 }: EmptyStateProps) {
   const displayParagraph =
-    paragraph ?? (loading ? DEFAULT_LOADING_PARAGRAPH : null);
+    paragraph ?? (loading && heading ? DEFAULT_LOADING_PARAGRAPH : null);
 
   return (
     <div className={styles.placeholder}>
       {loading ? <LoadingIndicator size="lg" /> : icon && <div>{icon}</div>}
-      <p className={styles.heading}>{heading}</p>
+      {heading && <p className={styles.heading}>{heading}</p>}
       {displayParagraph && (
         <p className={styles.paragraph}>{displayParagraph}</p>
       )}

@@ -1,7 +1,9 @@
 import { parseArgs } from "node:util";
 
+import { updateCatalogGradeSummaries } from "./lib/catalog-denormalize";
 import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
+import decalsPuller from "./pullers/decals";
 import enrollmentHistoriesPuller from "./pullers/enrollment";
 import enrollmentTimeframePuller from "./pullers/enrollment-timeframe";
 import gradeDistributionsPuller from "./pullers/grade-distributions";
@@ -21,6 +23,7 @@ const pullerMap: {
   [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
 } = {
   courses: coursesPuller.updateCourses,
+  decals: decalsPuller.scrapeDeCals,
   "sections-active": sectionsPuller.activeTerms,
   "sections-last-five-years": sectionsPuller.lastFiveYearsTerms,
   "classes-active": classesPuller.activeTerms,
@@ -33,6 +36,8 @@ const pullerMap: {
   "terms-nearby": termsPuller.nearbyTerms,
   "migrate-aggregated-metrics-classid":
     migrationsPuller.backfillAggregatedMetricsClassId,
+  "catalog-sync-grades": async (config: Config) =>
+    updateCatalogGradeSummaries(config.log),
 } as const;
 
 const runPuller = async () => {

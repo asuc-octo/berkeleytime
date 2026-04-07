@@ -1,12 +1,65 @@
 .root {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   width: 100%;
 }
 
-.table {
+.tableScroll {
   width: 100%;
+  overflow-x: auto;
+}
+
+.headerSticky {
+  position: sticky;
+  top: calc(
+    var(--sections-tabs-sticky-height, 42px) +
+      var(--sections-sticky-top-gap, var(--space-5, 24px))
+  );
+  z-index: 2;
+  background-color: var(--foreground-color);
+  box-shadow: inset 0 -1px 0 var(--border-color);
+  overflow: hidden;
+}
+
+.headerTrack {
+  width: max-content;
+  min-width: 100%;
+}
+
+.tabsSticky {
+  position: sticky;
+  top: var(--sections-sticky-top-gap, var(--space-5, 24px));
+  z-index: 3;
+  background-color: var(--foreground-color);
+  padding: 0 8px 10px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * var(--sections-sticky-top-gap, var(--space-5, 24px)));
+    height: var(--sections-sticky-top-gap, var(--space-5, 24px));
+    background-color: var(--foreground-color);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background-color: var(--foreground-color);
+    pointer-events: none;
+  }
+}
+
+.table {
+  width: 760px;
+  min-width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
@@ -26,6 +79,7 @@
   vertical-align: top;
   white-space: normal;
   word-break: break-word;
+  background-color: var(--foreground-color);
 }
 
 .row {
@@ -50,28 +104,24 @@
   word-break: break-word;
 }
 
-.ccn {
-  width: 50px;
-}
-
 .number {
-  width: 70px;
+  width: 52px;
 }
 
 .time {
-  width: 180px;
+  width: 128px;
 }
 
 .location {
-  width: 120px;
+  width: 130px;
 }
 
-.waitlist {
-  width: 60px;
+.instructor {
+  width: 190px;
 }
 
-.enrolled {
-  width: 90px;
+.enrollment {
+  width: 150px;
 }
 
 .timeText {

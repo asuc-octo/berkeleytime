@@ -2,7 +2,6 @@ import { gql } from "@apollo/client";
 
 import {
   GetAggregatedRatingsQuery,
-  GetClassRatingsDataQuery,
   GetUserRatingsQuery,
 } from "../generated/graphql";
 
@@ -123,30 +122,6 @@ export const GET_COURSE_RATINGS = gql`
   }
 `;
 
-export const GET_ALL_RATINGS_DATA = gql`
-  query GetAllRatingsData($subject: String!, $courseNumber: String!) {
-    semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
-      semester
-      year
-      maxMetricCount
-    }
-    userRatings {
-      classes {
-        subject
-        courseNumber
-        semester
-        year
-        classNumber
-        metrics {
-          metricName
-          value
-        }
-        lastUpdated
-      }
-    }
-  }
-`;
-
 export const GET_CLASS_RATINGS_DATA = gql`
   query GetClassRatingsData(
     $subject: String!
@@ -184,7 +159,7 @@ export const GET_CLASS_RATINGS_DATA = gql`
           }
         }
       }
-      classes {
+      classes(printInScheduleOnly: true) {
         semester
         year
         number
@@ -198,17 +173,6 @@ export const GET_CLASS_RATINGS_DATA = gql`
             }
           }
         }
-        aggregatedRatings {
-          metrics {
-            metricName
-            count
-            weightedAverage
-            categories {
-              value
-              count
-            }
-          }
-        }
       }
     }
     semestersWithRatings(subject: $subject, courseNumber: $courseNumber) {
@@ -216,21 +180,7 @@ export const GET_CLASS_RATINGS_DATA = gql`
       year
       maxMetricCount
     }
-    userRatings {
-      classes {
-        subject
-        courseNumber
-        semester
-        year
-        classNumber
-        metrics {
-          metricName
-          value
-        }
-        lastUpdated
-      }
-    }
   }
 `;
 
-export type IUserRatings = NonNullable<GetClassRatingsDataQuery["userRatings"]>;
+export type IUserRatings = NonNullable<GetUserRatingsQuery["userRatings"]>;

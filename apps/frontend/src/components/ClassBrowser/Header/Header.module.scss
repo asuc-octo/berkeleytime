@@ -19,20 +19,14 @@
     padding: 0 16px;
 
     &:has(.input:focus) {
-      outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
-      border-color: var(--blue-500);
+      border: solid 2px var(--blue-500);
+      padding: 0 15px;
     }
 
     .icon {
       color: var(--label-color);
       display: grid;
       place-items: center;
-    }
-
-    .label {
-      font-size: var(--text-12);
-      color: var(--label-color);
-      line-height: 1;
     }
 
     .input {
@@ -65,19 +59,4 @@
       background-color: color-mix(in srgb, var(--blue-500) 10%, transparent);
     }
   }
-
-  @media (width > 992px) {
-    &:not(.responsive) .filterButton {
-      display: none;
-    }
-  }
-
-  @media (width > 1400px) {
-    .filterButton {
-      display: none;
-    }
-  }
-}
-
-.responsive {
 }

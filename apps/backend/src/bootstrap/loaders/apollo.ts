@@ -8,27 +8,28 @@ import {
 } from "@apollo/utils.keyvaluecache";
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { createHash } from "crypto";
-import { OperationDefinitionNode } from "graphql";
 import { RedisClientType } from "redis";
 import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
 import { buildSchema } from "../graphql/buildSchema";
 
-/**
- * Extracts the first query name from a GraphQL operation.
- * For example, if the query is "query { catalog(...) { ... } }", this returns "catalog".
- *
- * @param operation - The parsed GraphQL operation from the request context
- * @returns The name of the first query field, or null if not found
- */
-function getOperationName(
-  operation: OperationDefinitionNode | undefined
+const SESSION_COOKIE_NAME = "bt.sid";
+
+function getSessionCacheIdFromCookie(
+  cookieHeader: string | null
 ): string | null {
-  const firstSelection = operation?.selectionSet?.selections?.[0];
-  if (firstSelection && "name" in firstSelection)
-    return firstSelection.name.value;
-  return null;
+  if (!cookieHeader) return null;
+
+  const encodedSessionId = cookieHeader
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${SESSION_COOKIE_NAME}=`))
+    ?.slice(SESSION_COOKIE_NAME.length + 1);
+
+  if (!encodedSessionId) return null;
+
+  return createHash("sha256").update(encodedSessionId).digest("hex");
 }
 
 class RedisCache implements KeyValueCache {
@@ -95,65 +96,21 @@ export default async (redis: RedisClientType) => {
     validationRules: [...protection.validationRules],
     plugins: [
       ...protection.plugins,
-      // HTTP caching for catalog query (5 min TTL)
-      {
-        async requestDidStart() {
-          return {
-            async willSendResponse(requestContext) {
-              if (requestContext.operationName === "GetCanonicalCatalog") {
-                requestContext.response.http?.headers.set(
-                  "Cache-Control",
-                  "public, max-age=300"
-                );
-              }
-            },
-          };
-        },
-      },
       ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
       ApolloServerPluginCacheControl({
         calculateHttpHeaders: false,
         defaultMaxAge: 24 * 60 * 60, // 24 hours
       }),
       responseCachePlugin({
-        sessionId: async (req) =>
-          req.request.http?.headers.get("sessionId") || null,
+        sessionId: async (req) => {
+          const explicitSessionId = req.request.http?.headers.get("sessionId");
+          if (explicitSessionId) return explicitSessionId;
 
-        /**
-         * Custom cache key generator for the canonical catalog query only.
-         *
-         * GetCanonicalCatalog query uses deterministic keys:
-         *   Production: catalog:{year}-{semester} (e.g., "catalog:2024-fall")
-         *   Staging: catalog:{year}-{semester}:staging (for pre-warming)
-         *
-         * When warming cache:
-         *   1. executeOperation() with { __warmStaging: true } context
-         *   2. Writes to staging key
-         *   3. RENAME staging → production (atomic swap, zero downtime)
-         *
-         * All other queries use Apollo's default cache key.
-         */
-        generateCacheKey: (requestContext, keyData) => {
-          const variables = requestContext.request.variables;
-          const operation = requestContext.operation;
-          const operationName = getOperationName(operation);
+          const cookieHeader = req.request.http?.headers.get("cookie") ?? null;
+          return getSessionCacheIdFromCookie(cookieHeader);
+        },
 
-          // Only cache the GetCanonicalCatalog query (no search term)
-          if (
-            requestContext.operationName === "GetCanonicalCatalog" &&
-            operationName === "catalog" &&
-            variables?.year &&
-            variables?.semester
-          ) {
-            const semester = String(variables.semester).toLowerCase();
-            const isWarmingStaging =
-              requestContext.contextValue?.__warmStaging === true;
-            const suffix = isWarmingStaging ? ":staging" : "";
-
-            return `catalog:${variables.year}-${semester}${suffix}`;
-          }
-
-          // For all other queries, use default Apollo cache key
+        generateCacheKey: (_requestContext, keyData) => {
           return createHash("sha256")
             .update(JSON.stringify(keyData))
             .digest("hex");

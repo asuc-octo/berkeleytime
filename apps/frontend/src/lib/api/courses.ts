@@ -14,6 +14,13 @@ export const GET_COURSE_TITLE = gql`
       subject
       number
       title
+      aggregatedRatings {
+        metrics {
+          metricName
+          count
+          weightedAverage
+        }
+      }
     }
   }
 `;
@@ -107,7 +114,6 @@ export const GET_COURSE_OVERVIEW_BY_ID = gql`
       title
       description
       requirements
-      ratingsCount
       aggregatedRatings(metricNames: [Attendance, Recording]) {
         metrics {
           metricName
@@ -153,6 +159,9 @@ export const GET_COURSE_WITH_INSTRUCTOR = gql`
         number
         sessionId
         anyPrintInScheduleOfClasses
+        term {
+          temporalPosition
+        }
         primarySection {
           enrollment {
             latest {

@@ -12,6 +12,14 @@
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   width: 100%;
+  box-sizing: border-box;
+}
+
+.tabsList {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: 100%;
   background-color: var(--button-hover-color);
   padding: 2px 2px 0 2px;
   column-gap: 2px;
@@ -67,6 +75,10 @@
 }
 
 .fullWidthTrigger {
+  flex: 1;
+}
+
+.tabsTrigger {
   border-radius: 4px 4px 0 0;
   padding: 6px 8px;
   min-height: 28px;

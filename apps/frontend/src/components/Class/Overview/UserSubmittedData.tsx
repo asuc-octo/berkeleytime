@@ -39,7 +39,7 @@ export function UserSubmittedData() {
     if (!user) {
       e.preventDefault();
       const currentPath = window.location.pathname;
-      const redirectPath = `${currentPath}/ratings?feedbackModal=true`;
+      const redirectPath = `${currentPath}?feedbackModal=true`;
       signIn(redirectPath);
     }
   };
@@ -78,7 +78,7 @@ export function UserSubmittedData() {
             More user-submitted information is required to show this content.
           </p>
           <Link
-            to="ratings?feedbackModal=true"
+            to="?feedbackModal=true"
             className={styles.suggestEdit}
             onClick={handleFeedbackClick}
           >
@@ -123,7 +123,7 @@ export function UserSubmittedData() {
           </div>
           <div>
             <Link
-              to="ratings?feedbackModal=true"
+              to="?feedbackModal=true"
               className={styles.suggestEdit}
               onClick={handleFeedbackClick}
             >

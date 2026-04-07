@@ -3,36 +3,40 @@ import { useCallback } from "react";
 import { MutationHookOptions, useMutation } from "@apollo/client/react";
 
 import {
-  SET_SELECTED_COURSES,
   SelectedCourseInput,
-  SetSelectedCoursesResponse,
-} from "@/lib/api";
+  SetSelectedCoursesDocument,
+  SetSelectedCoursesMutation,
+  SetSelectedCoursesMutationVariables,
+} from "@/lib/generated/graphql";
 
 export const useSetSelectedCourses = () => {
-  const mutation = useMutation<SetSelectedCoursesResponse>(
-    SET_SELECTED_COURSES,
-    {
-      update(cache, { data }, { variables }) {
-        const selectedCourses = data?.setSelectedCourses;
+  const mutation = useMutation<
+    SetSelectedCoursesMutation,
+    SetSelectedCoursesMutationVariables
+  >(SetSelectedCoursesDocument, {
+    update(cache, { data }, { variables }) {
+      const selectedCourses = data?.setSelectedCourses;
 
-        if (!selectedCourses || !variables) return;
+      if (!selectedCourses || !variables) return;
 
-        cache.modify({
-          id: cache.identify({ __typename: "PlanTerm", _id: variables.id }),
-          fields: {
-            courses: () => variables.courses,
-          },
-        });
-      },
-    }
-  );
+      cache.modify({
+        id: cache.identify({ __typename: "PlanTerm", _id: variables.id }),
+        fields: {
+          courses: () => variables.courses,
+        },
+      });
+    },
+  });
 
   const updateSchedule = useCallback(
     async (
       id: string,
       courses: SelectedCourseInput[],
       options?: Omit<
-        MutationHookOptions<SetSelectedCoursesResponse>,
+        MutationHookOptions<
+          SetSelectedCoursesMutation,
+          SetSelectedCoursesMutationVariables
+        >,
         "variables"
       >
     ) => {

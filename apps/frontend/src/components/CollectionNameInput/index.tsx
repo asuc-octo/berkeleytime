@@ -50,11 +50,11 @@ export function CollectionNameInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => {
-          const val = e.target.value;
-          onChange(val.charAt(0).toUpperCase() + val.slice(1));
+          onChange(e.target.value);
         }}
         onKeyDown={handleKeyDown}
         autoFocus={autoFocus}
+        autoCapitalize="none"
         disabled={disabled}
       />
       {showColorPicker && (

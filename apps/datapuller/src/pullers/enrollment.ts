@@ -1,13 +1,15 @@
 import { DateTime } from "luxon";
 
+import { parseTermName } from "@repo/common";
 import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
 } from "@repo/common/models";
 
-import { warmCatalogCacheForTerms } from "../lib/cache-warming";
+import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
+import { computeActiveReservedMaxCount } from "../lib/enrollment-utils";
 import { Config } from "../shared/config";
 
 // duration of time in seconds that can pass before being considered a data gap
@@ -319,8 +321,57 @@ const updateEnrollmentHistories = async (config: Config) => {
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
   );
 
-  // Warm catalog cache for all terms we just updated
-  await warmCatalogCacheForTerms(config, terms);
+  // Update enrollment fields on denormalized catalog_classes.
+  // Re-fetch the latest enrollment snapshot for each term we updated.
+  for (const term of terms) {
+    const parsed = parseTermName(term.name);
+    if (!parsed) continue;
+    const { year, semester } = parsed;
+
+    // Get all enrollment histories for this term
+    const histories = await NewEnrollmentHistoryModel.find({
+      year,
+      semester,
+    })
+      .select({
+        sectionId: 1,
+        seatReservationTypes: 1,
+        history: { $slice: -1 },
+      })
+      .lean();
+
+    const termEnrollments = new Map<
+      string,
+      {
+        status?: string;
+        enrolledCount?: number;
+        maxEnroll?: number;
+        waitlistedCount?: number;
+        maxWaitlist?: number;
+        activeReservedMaxCount?: number;
+      }
+    >();
+
+    for (const hist of histories) {
+      const latest = hist.history?.[0];
+      if (!latest) continue;
+      termEnrollments.set(hist.sectionId, {
+        status: latest.status,
+        enrolledCount: latest.enrolledCount,
+        maxEnroll: latest.maxEnroll,
+        waitlistedCount: latest.waitlistedCount,
+        maxWaitlist: latest.maxWaitlist,
+        activeReservedMaxCount: computeActiveReservedMaxCount(
+          latest.seatReservationCount,
+          hist.seatReservationTypes
+        ),
+      });
+    }
+
+    if (termEnrollments.size > 0) {
+      await updateCatalogEnrollment(log, year, semester, termEnrollments);
+    }
+  }
 };
 
 export default { updateEnrollmentHistories };

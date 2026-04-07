@@ -1,20 +1,10 @@
-import { FuzzySearch } from "@repo/common";
-
-import {
-  ICatalogClass,
-  ISectionAttribute,
-  ISectionAttriuteInfo,
-  academicCareersMap,
-} from "@/lib/api";
-import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
-import { AcademicCareer, ClassGradingBasis } from "@/lib/generated/graphql";
+import { ClassGradingBasis } from "@/lib/generated/graphql";
 
 export enum SortBy {
   Relevance = "Relevance",
   Units = "Units",
   AverageGrade = "Average grade",
   OpenSeats = "Open seats",
-  PercentOpenSeats = "Open seats (%)",
 }
 
 export enum Level {
@@ -39,12 +29,6 @@ export type UnitRange = [number, number];
 // Default [null, null] means no filtering (all times)
 export type TimeRange = [string | null, string | null];
 
-// Helper to parse "HH:MM" time string to minutes since midnight
-const parseTimeToMinutes = (time: string): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};
-
 export enum Day {
   Sunday = "0",
   Monday = "1",
@@ -54,6 +38,16 @@ export enum Day {
   Friday = "5",
   Saturday = "6",
 }
+
+export const EMPTY_DAYS: boolean[] = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
 
 export type Breadth = string;
 export type UniversityRequirement = string;
@@ -74,7 +68,6 @@ export enum GradingFilter {
 }
 
 export enum EnrollmentFilter {
-  All = "All",
   Open = "Open Seats",
   OpenApartFromReserved = "Non-reserved Open Seats",
   WaitlistOpen = "Open Seats or Open Waitlist",
@@ -110,6 +103,8 @@ export const getBreadthRequirements = (
   const geAttributes = sectionAttributes.filter(
     (attr) => attr.attribute?.code === "GE"
   );
+
+  console.log("geAttributes", geAttributes);
 
   const breadths = geAttributes
     .map((attr) => attr.value?.description ?? "")
@@ -161,10 +156,10 @@ export const getFilteredClasses = (
   currentUnits: UnitRange,
   currentLevels: Level[],
   currentDays: Day[],
-  currentEnrollmentFilter: EnrollmentFilter,
+  currentEnrollmentFilter: EnrollmentFilter | null,
   currentOnline: boolean,
   currentBreadths: Breadth[] = [],
-  currentUniversityRequirement: UniversityRequirement | null = null,
+  currentUniversityRequirements: UniversityRequirement[] = [],
   currentGradingFilters: GradingFilter[] = [],
   currentAcademicOrganization: string | null = null,
   currentTimeRange: TimeRange = [null, null]
@@ -172,7 +167,7 @@ export const getFilteredClasses = (
   return classes.reduce(
     (acc, _class) => {
       // Filter by enrollment status
-      if (currentEnrollmentFilter !== EnrollmentFilter.All) {
+      if (currentEnrollmentFilter) {
         const enrollment = _class.primarySection?.enrollment?.latest;
         const isOpen = enrollment?.status === "O";
         const hasWaitlistSpace =
@@ -326,16 +321,16 @@ export const getFilteredClasses = (
         }
       }
 
-      // Filter by university requirement
-      if (currentUniversityRequirement) {
+      // Filter by university requirements
+      if (currentUniversityRequirements.length > 0) {
         const classRequirements = getUniversityRequirements(
           _class.requirementDesignation
         );
-        const hasRequirement = classRequirements.includes(
-          currentUniversityRequirement
+        const matchesAnyRequirement = currentUniversityRequirements.some(
+          (req) => classRequirements.includes(req)
         );
 
-        if (!hasRequirement) {
+        if (!matchesAnyRequirement) {
           acc.excludedClasses.push(_class);
 
           return acc;

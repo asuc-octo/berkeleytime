@@ -22,6 +22,9 @@ const resolvers: GradeDistributionModule.Resolvers = {
         givenName,
       }
     ) => {
+      // Term-scoped: year, semester, and sessionId must all be set.
+      // Instructor only (omit term fields): aggregate grade data for that professor across all terms.
+
       if (year && semester && sessionId && givenName && familyName) {
         return await getGradeDistributionByInstructorAndSemester(
           year,

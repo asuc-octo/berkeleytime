@@ -278,6 +278,10 @@ const resolvers: ClassModule.Resolvers = {
       _args: unknown,
       context: GraphQLContext
     ) => {
+      if (typeof parent.viewCount === "number") {
+        return parent.viewCount;
+      }
+
       return getViewCount(
         parent.year,
         parent.semester,

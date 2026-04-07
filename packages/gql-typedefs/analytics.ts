@@ -11,6 +11,32 @@ import { gql } from "graphql-tag";
  * All queries require staff authentication.
  */
 export const analyticsTypeDef = gql`
+  """
+  Daily aggregated activity across features (schedules, ratings, GradTrak, bookmarks)
+  """
+  type GeneralActivityDataPoint {
+    date: String!
+    schedulesCreated: Int!
+    ratingsSubmitted: Int!
+    gradTraksCreated: Int!
+    bookmarksAdded: Int!
+    totalActivity: Int!
+  }
+
+  """
+  Activity score distribution bucket for analytics
+  """
+  type ActivityScoreDistributionPoint {
+    "Score range label, e.g. '0.0–0.1'"
+    bucket: String!
+    "Lower bound of this bucket (e.g. 0.5 for the 0.5–0.6 bucket)"
+    lowerBound: Float!
+    "Number of users in this bucket"
+    count: Int!
+    "Percentage of total users in this bucket"
+    percent: Float!
+  }
+
   extend type Query {
     """
     Dashboard statistics aggregation
@@ -64,5 +90,18 @@ export const analyticsTypeDef = gql`
       days: Int!
       granularity: String
     ): CloudflareAnalyticsData @auth
+
+    """
+    Staff-only: Daily activity aggregated across all features (schedules, ratings, GradTrak, bookmarks)
+    """
+    generalActivityAnalytics(days: Int!): [GeneralActivityDataPoint!]! @auth
+    """
+    Staff-only: Activity score distribution across all users (10 buckets of 0.1 width).
+    Pass a formula name to compare different scoring approaches without persisting to the DB.
+    Valid values: exponentialDecay | linearDecay | tiered | sigmoid
+    """
+    activityScoreDistribution(
+      formula: String
+    ): [ActivityScoreDistributionPoint!]! @auth
   }
 `;

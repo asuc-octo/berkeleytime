@@ -15,5 +15,11 @@ export default function Units({ unitsMin, unitsMax, children }: UnitsProps) {
       : `${unitsMin} - ${unitsMax} units`;
   }, [unitsMax, unitsMin]);
 
-  return children ? children(units) : <p className={styles.root}>{units}</p>;
+  return children ? (
+    children(units)
+  ) : (
+    <p className={styles.root} draggable={false}>
+      {units}
+    </p>
+  );
 }

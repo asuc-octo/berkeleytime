@@ -30,7 +30,7 @@ export default function EnrollmentDisplay({
     return moment(time).fromNow();
   }, [time]);
 
-  const hasData = enrolledCount !== undefined && maxEnroll !== undefined;
+  const hasData = enrolledCount != null && maxEnroll != null;
 
   if (!hasData) return null;
 

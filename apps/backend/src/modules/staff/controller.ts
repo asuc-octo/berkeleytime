@@ -11,6 +11,11 @@ import {
   UpdateStaffInfoInput,
   UpsertSemesterRoleInput,
 } from "../../generated-types/graphql";
+import {
+  addEmailToStaffGroup,
+  addMissingStaffEmails,
+  removeEmailFromStaffGroup,
+} from "./controllers/cloudflareAccess";
 
 // Context interface for authenticated requests
 export interface StaffRequestContext {
@@ -132,6 +137,19 @@ export const ensureStaffMember = async (
   // Set user.staff = true
   await UserModel.findByIdAndUpdate(userId, { staff: true });
 
+  // Grant Cloudflare Access to private backups
+  if (user.email) {
+    try {
+      await addEmailToStaffGroup(user.email);
+    } catch (err) {
+      console.error(
+        "[Staff] Failed to add email to Cloudflare Access group:",
+        { userId, email: user.email },
+        err
+      );
+    }
+  }
+
   return newMember.toObject();
 };
 
@@ -238,6 +256,22 @@ export const deleteStaffMember = async (
     return false;
   }
 
+  // Revoke Cloudflare Access to private backups
+  if (member.userId) {
+    const user = await UserModel.findById(member.userId).select("email").lean();
+    if (user?.email) {
+      try {
+        await removeEmailFromStaffGroup(user.email);
+      } catch (err) {
+        console.error(
+          "[Staff] Failed to remove email from Cloudflare Access group:",
+          { memberId, email: user.email },
+          err
+        );
+      }
+    }
+  }
+
   // Delete all SemesterRoles for this member
   await SemesterRoleModel.deleteMany({ memberId });
 
@@ -250,4 +284,39 @@ export const deleteStaffMember = async (
   }
 
   return true;
+};
+
+/**
+ * Returns the list of emails for all current staff (users with staff: true).
+ */
+export const getStaffEmailsFromDb = async (): Promise<string[]> => {
+  const users = await UserModel.find({ staff: true }).select("email").lean();
+  return users
+    .map((u) => u.email)
+    .filter((e): e is string => typeof e === "string" && e.length > 0);
+};
+
+export interface SyncCloudflareStaffAccessResult {
+  added: string[];
+  errorMessage?: string;
+}
+
+/**
+ * Add all current Berkeleytime staff emails to the Cloudflare Access group.
+ * Gated by requireStaffMember; call from staff-only mutation.
+ */
+export const syncCloudflareStaffAccess = async (
+  context: StaffRequestContext
+): Promise<SyncCloudflareStaffAccessResult> => {
+  await requireStaffMember(context);
+  const emails = await getStaffEmailsFromDb();
+  try {
+    const { added } = await addMissingStaffEmails(emails);
+    return { added };
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Cloudflare sync failed";
+    console.error("[Staff] syncCloudflareStaffAccess failed:", message, err);
+    return { added: [], errorMessage: message };
+  }
 };

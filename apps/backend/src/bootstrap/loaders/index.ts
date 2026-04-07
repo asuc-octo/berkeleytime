@@ -4,6 +4,7 @@ import { config } from "../../../../../packages/common/src/utils/config";
 import { startBannerViewCountFlushJob } from "../../modules/banner/jobs/flush-view-counts";
 import { startViewCountFlushJob } from "../../modules/class/jobs/flush-view-counts";
 import { startClickEventsFlushJob } from "../../modules/click-tracking/jobs/flush-click-events";
+import { startActivityScoreUpdateJob } from "../../modules/user/jobs/update-activity-scores";
 // loaders
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
@@ -33,21 +34,8 @@ export default async (root: Application): Promise<void> => {
   startViewCountFlushJob(apolloRedis);
   startBannerViewCountFlushJob(apolloRedis);
   startClickEventsFlushJob(apolloRedis);
+  startActivityScoreUpdateJob();
 
   // append backend path to all routes
   root.use(config.backendPath, app);
 };
-
-// loader for cache warming server
-export async function loadCacheWarmingDependencies() {
-  console.log("[Cache Warmer] Booting up mongo...");
-  await mongooseLoader();
-
-  console.log("[Cache Warmer] Booting up redis...");
-  const redis = await redisLoader();
-
-  console.log("[Cache Warmer] Loading apollo...");
-  const { server, redis: apolloRedis } = await apolloLoader(redis);
-
-  return { server, redis: apolloRedis };
-}

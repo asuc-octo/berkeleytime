@@ -53,10 +53,50 @@ export const getCourseById = async (
   return formatCourse(course as ICourseItem);
 };
 
-export const getClassesByCourse = async (courseId: string) => {
-  const classes = await ClassModel.find({
-    courseId,
-  }).lean();
+interface GetClassesByCourseOptions {
+  printInScheduleOnly?: boolean;
+  limit?: number;
+}
+
+const semesterRecencySortExpression = {
+  $switch: {
+    branches: [
+      { case: { $eq: ["$semester", "Spring"] }, then: 0 },
+      { case: { $eq: ["$semester", "Summer"] }, then: 1 },
+      { case: { $eq: ["$semester", "Fall"] }, then: 2 },
+      { case: { $eq: ["$semester", "Winter"] }, then: -1 },
+    ],
+    default: -1,
+  },
+};
+
+export const getClassesByCourse = async (
+  courseId: string,
+  { printInScheduleOnly = false, limit }: GetClassesByCourseOptions = {}
+) => {
+  const query: Record<string, unknown> = { courseId };
+  if (printInScheduleOnly) {
+    query.anyPrintInScheduleOfClasses = { $ne: false };
+  }
+
+  if (typeof limit === "number" && limit > 0) {
+    const classes = await ClassModel.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          __semesterSortOrder: semesterRecencySortExpression,
+        },
+      },
+      { $sort: { year: -1, __semesterSortOrder: -1, number: -1 } },
+      { $limit: limit },
+      { $project: { __semesterSortOrder: 0 } },
+    ]);
+
+    return classes.map((_class) => formatClass(_class as IClassItem));
+  }
+
+  const classQuery = ClassModel.find(query);
+  const classes = await classQuery.lean();
 
   return classes.map((_class) => formatClass(_class as IClassItem));
 };

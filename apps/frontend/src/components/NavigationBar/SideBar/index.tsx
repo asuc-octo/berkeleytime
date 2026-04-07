@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 import { Dialog, IconButton } from "@repo/theme";
 
+import { RecentType, getPageUrl } from "@/lib/recent";
+
 import styles from "./SideBar.module.scss";
 
 interface SideBarProps {
@@ -12,6 +14,13 @@ interface SideBarProps {
 }
 
 export default function SideBar({ children }: SideBarProps) {
+  const savedGradesUrl = getPageUrl(RecentType.GradesPage);
+  const gradesPath = savedGradesUrl ? `/grades${savedGradesUrl}` : "/grades";
+  const savedEnrollmentUrl = getPageUrl(RecentType.EnrollmentPage);
+  const enrollmentPath = savedEnrollmentUrl
+    ? `/enrollment${savedEnrollmentUrl}`
+    : "/enrollment";
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
@@ -56,10 +65,10 @@ export default function SideBar({ children }: SideBarProps) {
             </div>
             <div className={styles.group}>
               <p className={styles.label}>Tools</p>
-              <Link className={styles.item} to="/grades">
+              <Link className={styles.item} to={gradesPath}>
                 Grade distributions
               </Link>
-              <Link className={styles.item} to="/enrollment">
+              <Link className={styles.item} to={enrollmentPath}>
                 Enrollment over time
               </Link>
               {/* <Link className={styles.item} to="/catalog">

@@ -29,6 +29,7 @@ import {
 
 import useUser from "@/hooks/useUser";
 import { signIn, signOut } from "@/lib/api";
+import { RecentType, getPageUrl } from "@/lib/recent";
 
 import styles from "./NavigationBar.module.scss";
 
@@ -112,6 +113,12 @@ export default function NavigationBar({
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
+  const savedGradesUrl = getPageUrl(RecentType.GradesPage);
+  const gradesPath = savedGradesUrl ? `/grades${savedGradesUrl}` : "/grades";
+  const savedEnrollmentUrl = getPageUrl(RecentType.EnrollmentPage);
+  const enrollmentPath = savedEnrollmentUrl
+    ? `/enrollment${savedEnrollmentUrl}`
+    : "/enrollment";
 
   useEffect(() => {
     if (menuOpen) {
@@ -149,8 +156,8 @@ export default function NavigationBar({
                 { to: "/catalog", label: "Catalog" },
                 { to: "/schedules", label: "Scheduler" },
                 { to: "/gradtrak", label: "Gradtrak" },
-                { to: "/grades", label: "Grades" },
-                { to: "/enrollment", label: "Enrollment" },
+                { to: gradesPath, label: "Grades" },
+                { to: enrollmentPath, label: "Enrollment" },
               ].map(({ to, label }) => (
                 <motion.div
                   key={to}
@@ -203,14 +210,14 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
-          <NavLink to="/grades">
+          <NavLink to={gradesPath}>
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>
                 Grades
               </MenuItem>
             )}
           </NavLink>
-          <NavLink to="/enrollment">
+          <NavLink to={enrollmentPath}>
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>
                 Enrollment

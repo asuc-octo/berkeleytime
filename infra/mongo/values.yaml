@@ -1,12 +1,10 @@
 # path in host machine. should depend on environment and be different for each mongo pod.
+# Staging: use -f values-staging.yaml (smaller memory + /data/stage/db) instead of copying this file.
 hostPath: /data/prod/db
 
 mongodb:
   commonLabels:
     env: prod
-
-  image:
-    tag: 7.0.5
 
   architecture: replicaset
   arbiter:
@@ -15,6 +13,23 @@ mongodb:
 
   auth:
     enabled: false
+
+  # MongoDB 8.0 removed storage.journal.enabled; custom config omits it to avoid "Unrecognized option"
+  configuration: |
+    storage:
+      dbPath: /bitnami/mongodb/data/db
+      directoryPerDB: false
+    systemLog:
+      destination: file
+      path: /opt/bitnami/mongodb/logs/mongodb.log
+      logAppend: true
+    net:
+      port: 27017
+      bindIp: 0.0.0.0
+    processManagement:
+      pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+    replication:
+      replSetName: rs0
 
   persistence:
     storageClass: manual
@@ -25,3 +40,22 @@ mongodb:
   # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
+
+  # Prod-oriented defaults; staging uses values-staging.yaml for lower limits.
+  resources:
+    limits:
+      memory: 4Gi
+    requests:
+      memory: 2Gi
+
+  # Mount migrations ConfigMap at /migrations (same path as Docker Compose).
+  # ConfigMap is templates/migrations-configmap.yaml → {{ .Release.Name }}-migrations.
+  # Bitnami renders extraVolumes with tpl, so this tracks the release name without --set.
+  extraVolumes:
+    - name: migrations
+      configMap:
+        name: "{{ .Release.Name }}-migrations"
+  extraVolumeMounts:
+    - name: migrations
+      mountPath: /migrations
+      readOnly: true
