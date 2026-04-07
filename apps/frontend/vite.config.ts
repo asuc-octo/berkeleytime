@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["react-is", "recharts"],
+    include: ["react-is"],
   },
   plugins: [
     react(),

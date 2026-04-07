@@ -6,7 +6,14 @@ import { defineConfig } from "vite";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const reactIsRoot = dirname(require.resolve("react-is/package.json"));
+let reactIsRoot: string | null = null;
+try {
+  // In some Docker + turbo prune installs, `react-is` may not be hoisted to the
+  // app/root node_modules. Only alias it when we can resolve a concrete path.
+  reactIsRoot = dirname(require.resolve("react-is/package.json"));
+} catch {
+  reactIsRoot = null;
+}
 
 export default defineConfig({
   server: {
@@ -24,11 +31,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-      "react-is": reactIsRoot,
+      ...(reactIsRoot ? { "react-is": reactIsRoot } : {}),
     },
   },
   optimizeDeps: {
-    include: ["react-is", "recharts"],
+    include: reactIsRoot ? ["react-is"] : [],
   },
   plugins: [react()],
   css: {
