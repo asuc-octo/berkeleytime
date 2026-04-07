@@ -93,6 +93,9 @@ jobs:
         backend:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
+        semanticSearch:
+          image:
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
           suspend: true
           image:

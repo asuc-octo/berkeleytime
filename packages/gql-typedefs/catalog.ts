@@ -212,6 +212,7 @@ export const catalogTypeDef = gql`
       sortOrder: SortOrder
       page: Int
       pageSize: Int
+      semanticSearch: Boolean
     ): CatalogResult!
 
     catalogClassIdentities(

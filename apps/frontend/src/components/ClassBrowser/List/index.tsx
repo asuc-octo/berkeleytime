@@ -94,7 +94,7 @@ export default function List({ onSelect }: ListProps) {
   const { classes, loading, hasNextPage, loadNextPage, isLoadingNextPage } =
     useListContext();
 
-  const { year, semester } = useLayoutContext();
+  const { year, semester, aiSearchActive } = useLayoutContext();
 
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
@@ -300,7 +300,7 @@ export default function List({ onSelect }: ListProps) {
       >
         <Header />
         <div className={styles.recentlyViewedSection}>
-          {showRecentlyViewed && (
+          {!aiSearchActive && showRecentlyViewed && (
             <div className={styles.recentlyViewed}>
               <div
                 ref={recentlyViewedListRef}
@@ -422,5 +422,5 @@ export default function List({ onSelect }: ListProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

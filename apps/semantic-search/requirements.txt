@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sentence-transformers
+redisvl
+redis
+requests
+numpy
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch

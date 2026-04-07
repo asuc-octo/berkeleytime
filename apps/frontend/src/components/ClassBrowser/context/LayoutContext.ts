@@ -13,6 +13,12 @@ export interface LayoutContextType {
   hasActiveFilters: boolean;
   semester: Semester;
   year: number;
+  aiSearchActive: boolean;
+  setAiSearchActive: (active: boolean) => void;
+  handleSemanticSearch: () => void;
+  semanticLoading: boolean;
+  semanticError: string | null;
+  semanticSearchAvailable: boolean;
 }
 
 export const LayoutContext = createContext<LayoutContextType | null>(null);
