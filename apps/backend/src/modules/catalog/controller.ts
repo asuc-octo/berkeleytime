@@ -150,7 +150,7 @@ const getCatalogWithSearch = async ({
   filters,
   limit,
   skip,
-  recentCourseNumbers
+  recentCourseNumbers,
 }: {
   year: number;
   semester: string;
