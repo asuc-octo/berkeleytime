@@ -85,6 +85,10 @@ export const constructor = (
         data: [],
         type: "List<string>",
       },
+      languageLevel: {
+        data: "",
+        type: "string",
+      },
     },
     type: "Course",
   };
@@ -177,7 +181,7 @@ export const functions: FunctionMapEntry[] = [
           targetUnits: Data<number>
         ) => {
           let sum = 0;
-          const result = [];
+          const result: Course[] = [];
           for (const course of list.data) {
             if (sum >= targetUnits.data) break;
             result.push(course);
