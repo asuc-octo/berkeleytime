@@ -46,7 +46,7 @@ export async function searchSemantic(
         error?: string;
       };
       detail = body?.detail ?? body?.error;
-    } catch {}
+    } catch { /* ignore parse errors */ }
     throw new Error(
       detail ?? `Semantic search service error: ${response.statusText}`
     );
