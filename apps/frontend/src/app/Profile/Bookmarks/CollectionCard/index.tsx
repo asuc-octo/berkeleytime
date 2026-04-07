@@ -149,35 +149,35 @@ export function CollectionCard({
       icon: <BookStack width={18} height={18} />,
       onClick: onRename,
     });
-  }
-
-  // Color submenu
-  const colorSubItems: MenuItem[] = [
-    {
-      name: "No color",
-      icon: <ColorDot color={null} />,
-      onClick: () => onColorChange?.(null),
-    },
-    ...COLLECTION_COLORS.map((c) => ({
-      name: capitalizeColor(c),
-      icon: <ColorDot color={c} />,
-      onClick: () => onColorChange?.(c),
-    })),
-  ];
-
-  menuItems.push({
-    name: "Edit color",
-    icon: <EditPencil width={18} height={18} />,
-    subItems: colorSubItems,
-  });
-
-  if (!isSystem) {
+    
+    // Color submenu
+    const colorSubItems: MenuItem[] = [
+      {
+        name: "No color",
+        icon: <ColorDot color={null} />,
+        onClick: () => onColorChange?.(null),
+      },
+      ...COLLECTION_COLORS.map((c) => ({
+        name: capitalizeColor(c),
+        icon: <ColorDot color={c} />,
+        onClick: () => onColorChange?.(c),
+      })),
+    ];
+    
     menuItems.push({
-      name: "Delete collection",
-      icon: <Trash width={18} height={18} />,
-      onClick: onDelete,
-      isDelete: true,
+      name: "Edit color",
+      icon: <EditPencil width={18} height={18} />,
+      subItems: colorSubItems,
     });
+
+    if (!isSystem) {
+      menuItems.push({
+        name: "Delete collection",
+        icon: <Trash width={18} height={18} />,
+        onClick: onDelete,
+        isDelete: true,
+      });
+    }
   }
 
   const title = (

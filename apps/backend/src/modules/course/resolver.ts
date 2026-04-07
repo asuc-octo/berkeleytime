@@ -1,7 +1,7 @@
 import { GraphQLError, GraphQLScalarType, Kind } from "graphql";
 
 import { getPnpPercentageFromCounts } from "@repo/common";
-
+import { ClassViewCountModel } from "@repo/common/models";
 import { CourseAggregatedRatingsArgs } from "../../generated-types/graphql";
 import { getFields } from "../../utils/graphql";
 import { getGradeDistributionByCourse } from "../grade-distribution/controller";
@@ -258,7 +258,17 @@ const resolvers: CourseModule.Resolvers = {
 
       return instructorRatings;
     },
+    
+    viewCount: async (parent: IntermediateCourse | CourseModule.Course) => {
+    const viewCount = await ClassViewCountModel.aggregate([
+      { $match: { subject: parent.subject, courseNumber: parent.number } },
+      { $group: { _id: null, total: { $sum: "$viewCount" } } },
+    ]);
+    return viewCount[0]?.total ?? 0;
+    },
   },
+  
+  
 
   // Session: {
   //   R: "1",

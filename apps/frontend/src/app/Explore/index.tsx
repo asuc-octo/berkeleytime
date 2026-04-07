@@ -22,6 +22,7 @@ const GET_COURSES_EXPLORE = gql`
       subject
       number
       title
+      viewCount
       gradeDistribution {
         average
         distribution {
@@ -43,6 +44,7 @@ export default function Explore() {
   const navigate = useNavigate();
   const { data: apiCollections } = useGetAllCollectionsWithPreview();
   const allSavedCollection = apiCollections?.find(c => c.isSystem);
+  console.log(allSavedCollection?.classes?.[0]?.class);
   const totalBookmarks = allSavedCollection?.classes?.length ?? 0;
   const { data, loading, error } = useQuery(GET_COURSES_EXPLORE);
   console.log("courses:", data, "error:", error);
@@ -119,11 +121,7 @@ export default function Explore() {
             <div className={styles.courseGridWrapper}>
               <div className={styles.courseGrid}>
                 {[...(data?.courses ?? [])]
-                  .sort((a, b) =>
-                    `${a.subject}${a.number}`.localeCompare(
-                      `${b.subject}${b.number}`
-                    )
-                  )
+                  .sort((a, b) => (b.viewCount ?? 0) - (a.viewCount ?? 0))
                   .slice(0, showAll ? 12 : 8)
                   .map((course) => (
                     <Link
@@ -204,7 +202,7 @@ export default function Explore() {
                     courseNumber: entry.class!.courseNumber,
                     number: entry.class!.number,
                     title: entry.class!.title ?? entry.class!.course?.title ?? null,
-                    gradeAverage: entry.class!.gradeDistribution?.average ?? null,
+                    gradeAverage: entry.class!.gradeDistribution?.average ?? entry.class!.course?.gradeDistribution?.average ?? null,
                     enrolledCount: entry.class!.primarySection?.enrollment?.latest?.enrolledCount ?? null,
                     maxEnroll: entry.class!.primarySection?.enrollment?.latest?.maxEnroll ?? null,
                     unitsMin: entry.class!.unitsMin,
