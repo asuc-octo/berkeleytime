@@ -14,7 +14,7 @@ export const READ_GRADE_DISTRIBUTION = gql`
     $semester: Semester
     $sessionId: SessionIdentifier
     $subject: String!
-    $courseNumber: CourseNumber!
+    $courseId: String!
     $classNumber: ClassNumber
     $familyName: String
     $givenName: String
@@ -24,7 +24,7 @@ export const READ_GRADE_DISTRIBUTION = gql`
       semester: $semester
       sessionId: $sessionId
       subject: $subject
-      courseNumber: $courseNumber
+      courseId: $courseId
       classNumber: $classNumber
       familyName: $familyName
       givenName: $givenName

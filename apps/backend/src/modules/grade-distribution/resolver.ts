@@ -16,7 +16,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
         semester,
         sessionId,
         subject,
-        courseNumber,
+        courseId,
         classNumber,
         familyName,
         givenName,
@@ -31,7 +31,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
           semester,
           sessionId,
           subject,
-          courseNumber,
+          courseId,
           familyName,
           givenName
         );
@@ -43,7 +43,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
           semester,
           sessionId,
           subject,
-          courseNumber,
+          courseId,
           classNumber
         );
       }
@@ -51,7 +51,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
       if (givenName && familyName) {
         return await getGradeDistributionByInstructor(
           subject,
-          courseNumber,
+          courseId,
           familyName,
           givenName
         );
@@ -63,11 +63,11 @@ const resolvers: GradeDistributionModule.Resolvers = {
           semester,
           sessionId,
           subject,
-          courseNumber
+          courseId
         );
       }
 
-      return await getGradeDistributionByCourse(subject, courseNumber);
+      return await getGradeDistributionByCourse(subject, courseId);
     },
   },
 };

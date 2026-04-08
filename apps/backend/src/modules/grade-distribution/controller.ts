@@ -165,13 +165,13 @@ export const getGradeDistributionsByCourseIds = async (courseIds: string[]) => {
 
 export const getGradeDistributionByCourse = async (
   subject: string,
-  number: string
+  courseId: string
 ) => {
   const subjectQuery = buildSubjectQuery(subject);
 
   const sections = await SectionModel.find({
     subject: subjectQuery,
-    courseNumber: number,
+    courseId,
     primary: true,
   })
     .select({ sectionId: 1, termId: 1, sessionId: 1 })
@@ -185,7 +185,7 @@ export const getGradeDistributionByClass = async (
   semester: string,
   sessionId: string,
   subject: string,
-  courseNumber: string,
+  courseId: string,
   sectionNumber: string
 ) => {
   const subjectQuery = buildSubjectQuery(subject);
@@ -195,7 +195,7 @@ export const getGradeDistributionByClass = async (
     semester,
     sessionId,
     subject: subjectQuery,
-    courseNumber,
+    courseId,
     number: sectionNumber,
     primary: true,
   })
@@ -212,7 +212,7 @@ export const getGradeDistributionBySemester = async (
   semester: string,
   sessionId: string,
   subject: string,
-  courseNumber: string
+  courseId: string
 ) => {
   const subjectQuery = buildSubjectQuery(subject);
 
@@ -221,7 +221,7 @@ export const getGradeDistributionBySemester = async (
     semester,
     sessionId,
     subject: subjectQuery,
-    courseNumber,
+    courseId,
     primary: true,
   })
     .select({ sectionId: 1, termId: 1, sessionId: 1 })
@@ -232,7 +232,7 @@ export const getGradeDistributionBySemester = async (
 
 export const getGradeDistributionByInstructor = async (
   subject: string,
-  courseNumber: string,
+  courseId: string,
   familyName: string,
   givenName: string
 ) => {
@@ -240,7 +240,7 @@ export const getGradeDistributionByInstructor = async (
 
   const sections = await SectionModel.find({
     subject: subjectQuery,
-    courseNumber,
+    courseId,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,
     primary: true,
@@ -258,7 +258,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
   semester: string,
   sessionId: string,
   subject: string,
-  courseNumber: string,
+  courseId: string,
   familyName: string,
   givenName: string
 ) => {
@@ -269,7 +269,7 @@ export const getGradeDistributionByInstructorAndSemester = async (
     semester,
     sessionId,
     subject: subjectQuery,
-    courseNumber,
+    courseId,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,
     primary: true,

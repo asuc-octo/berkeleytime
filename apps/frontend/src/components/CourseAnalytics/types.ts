@@ -7,7 +7,8 @@ export enum InputType {
 
 interface BaseInput {
   subject: string;
-  courseNumber: string;
+  courseId: string;
+  courseNumber: string; // For display purposes only
   type?: InputType;
 }
 
@@ -86,38 +87,38 @@ export const MAX_COURSES = 6;
 
 export const getInputSearchParam = (input: Input) => {
   // Course input
-  if (!input.type) return `${input.subject};${input.courseNumber}`;
+  if (!input.type) return `${input.subject};${input.courseId}`;
 
   // Term input
   if (input.type === InputType.Term) {
     const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
     if (!input.givenName && !input.familyName) {
-      return `${input.subject};${input.courseNumber};T;${termSegment}`;
+      return `${input.subject};${input.courseId};T;${termSegment}`;
     }
 
-    return `${input.subject};${input.courseNumber};T;${termSegment};${input.givenName}:${input.familyName}`;
+    return `${input.subject};${input.courseId};T;${termSegment};${input.givenName}:${input.familyName}`;
   }
 
   // Instructor input
   if (!input.year && !input.semester) {
-    return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName}`;
+    return `${input.subject};${input.courseId};P;${input.givenName}:${input.familyName}`;
   }
 
   const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
 
-  return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName};${termSegment}`;
+  return `${input.subject};${input.courseId};P;${input.givenName}:${input.familyName};${termSegment}`;
 };
 
 export const isInputEqual = (a: Input, b: Input) => {
   if (!a.type && !b.type)
-    return b.courseNumber === a.courseNumber && b.subject === a.subject;
+    return b.courseId === a.courseId && b.subject === a.subject;
 
   if (a.type !== b.type) return false;
 
   if (a.type === InputType.Term && b.type === InputType.Term) {
     return (
       b.subject === a.subject &&
-      b.courseNumber === a.courseNumber &&
+      b.courseId === a.courseId &&
       b.givenName === a.givenName &&
       b.familyName === a.familyName &&
       b.year === a.year &&
@@ -129,7 +130,7 @@ export const isInputEqual = (a: Input, b: Input) => {
   if (a.type === InputType.Instructor && b.type === InputType.Instructor) {
     const baseMatch =
       b.subject === a.subject &&
-      b.courseNumber === a.courseNumber &&
+      b.courseId === a.courseId &&
       b.givenName === a.givenName &&
       b.familyName === a.familyName;
     if (a.year && a.semester && b.year && b.semester) {
