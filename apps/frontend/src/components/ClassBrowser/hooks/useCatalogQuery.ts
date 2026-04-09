@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
+import {getCourseClicks} from "@/lib/recent";
 
 import type {
   ICatalogClassServer,
@@ -125,6 +126,7 @@ export default function useCatalogQuery({
       sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
       sortOrder: debouncedQuery ? undefined : mapSortOrder(effectiveOrder),
       semanticSearch: semanticSearch || undefined,
+      recentClicks: debouncedQuery ? getCourseClicks() : undefined,
     }),
     [
       currentYear,
@@ -215,7 +217,7 @@ export default function useCatalogQuery({
   const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
   const semanticError =
     semanticSearch && error
-      ? (error.graphQLErrors?.[0]?.message ?? error.message ?? "AI search failed")
+      ? (error.message ?? "AI search failed") // pre-existing error, not relatd to this pr
       : null;
 
   return {

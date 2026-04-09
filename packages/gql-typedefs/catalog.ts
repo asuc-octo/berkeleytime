@@ -34,6 +34,13 @@ export const catalogTypeDef = gql`
     online: Boolean
   }
 
+  input RecentClick {
+    courseNumber: String!
+    searchTerm: String!
+    timestamp: Float!
+  }
+
+
   type CatalogMeeting {
     days: [Boolean!]
     startTime: String
@@ -213,6 +220,7 @@ export const catalogTypeDef = gql`
       page: Int
       pageSize: Int
       semanticSearch: Boolean
+      recentClicks: [RecentClick]
     ): CatalogResult!
 
     catalogClassIdentities(

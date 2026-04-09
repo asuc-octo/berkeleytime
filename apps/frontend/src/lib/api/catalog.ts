@@ -17,6 +17,7 @@ export const GET_CATALOG_SEARCH = gql`
     $page: Int
     $pageSize: Int
     $semanticSearch: Boolean
+    $recentClicks: [RecentClick]
   ) {
     catalogSearch(
       year: $year
@@ -28,6 +29,7 @@ export const GET_CATALOG_SEARCH = gql`
       page: $page
       pageSize: $pageSize
       semanticSearch: $semanticSearch
+      recentClicks: $recentClicks
     ) {
       results {
         year
