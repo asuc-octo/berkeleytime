@@ -40,7 +40,6 @@ export const catalogTypeDef = gql`
     timestamp: Float!
   }
 
-
   type CatalogMeeting {
     days: [Boolean!]
     startTime: String

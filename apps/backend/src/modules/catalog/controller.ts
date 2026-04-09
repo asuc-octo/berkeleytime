@@ -25,13 +25,13 @@ import {
 } from "@repo/common/models";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
-import { searchSemantic } from "../semantic-search/client";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+import { searchSemantic } from "../semantic-search/client";
 import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
@@ -57,7 +57,9 @@ export interface CatalogQueryParams {
   page?: number | null;
   pageSize?: number | null;
   semanticSearch?: boolean | null;
-  recentClicks?: { courseNumber: string; timestamp: number; searchTerm: string }[] | null;
+  recentClicks?:
+    | { courseNumber: string; timestamp: number; searchTerm: string }[]
+    | null;
 }
 
 type CatalogFilterCondition = Record<string, unknown>;
@@ -210,7 +212,9 @@ const decayWeight = (timestamp: number): number =>
 const scoreAndSort = (
   items: ICatalogClassItem[],
   scoreMap: Map<ICatalogClassItem, number>,
-  recentClicks?: { courseNumber: string; timestamp: number, searchTerm: string }[] | null
+  recentClicks?:
+    | { courseNumber: string; timestamp: number; searchTerm: string }[]
+    | null
 ): ICatalogClassItem[] => {
   const clickWeightMap = new Map<string, number>();
   for (const click of recentClicks ?? []) {
@@ -224,7 +228,8 @@ const scoreAndSort = (
   return [...items].sort((a, b) => {
     const fuzzyA = scoreMap.get(a) ?? 1;
     const fuzzyB = scoreMap.get(b) ?? 1;
-    const key = (item: ICatalogClassItem) => `${item.subject}${item.courseNumber}`;
+    const key = (item: ICatalogClassItem) =>
+      `${item.subject}${item.courseNumber}`;
     const scoreA = fuzzyA - (clickWeightMap.get(key(a)) ?? 0) * MAX_BOOST;
     const scoreB = fuzzyB - (clickWeightMap.get(key(b)) ?? 0) * MAX_BOOST;
     return scoreA - scoreB;
@@ -246,28 +251,34 @@ const getCatalogWithSearch = async ({
   filters: CatalogQueryParams["filters"];
   limit: number;
   skip: number;
-  recentClicks?: { courseNumber: string; timestamp: number, searchTerm: string }[] | null;
+  recentClicks?:
+    | { courseNumber: string; timestamp: number; searchTerm: string }[]
+    | null;
 }) => {
   const index = await getSearchIndex(year, semester);
   const hits = index.search(searchTerm);
   const scoreMap = new Map<ICatalogClassItem, number>();
   for (const hit of hits) scoreMap.set(hit.item, hit.score ?? 1);
   const items = hits.map((r) => r.item);
-  const coveredIds = new Set(items.map((item) => `${item.subject}${item.courseNumber}`));
+  const coveredIds = new Set(
+    items.map((item) => `${item.subject}${item.courseNumber}`)
+  );
   // Check if there are any recently clicked class missing from fuzzy search
   const lowerSearch = searchTerm.toLowerCase();
   const missingClicks = (recentClicks ?? []).filter((click) => {
-  const w = decayWeight(click.timestamp);
-  return (
-    w >= MIN_WEIGHT &&
-    click.courseNumber.toLowerCase().startsWith(lowerSearch) &&
-    !coveredIds.has(click.searchTerm)
+    const w = decayWeight(click.timestamp);
+    return (
+      w >= MIN_WEIGHT &&
+      click.courseNumber.toLowerCase().startsWith(lowerSearch) &&
+      !coveredIds.has(click.searchTerm)
     );
   });
   // do a full catalog search and bring back the missing ones, assign scores
   if (missingClicks.length > 0) {
     const allCatalog = await getCachedCatalog(year, semester);
-    const catalogById = new Map(allCatalog.map((item) => [`${item.subject}${item.courseNumber}`, item]));
+    const catalogById = new Map(
+      allCatalog.map((item) => [`${item.subject}${item.courseNumber}`, item])
+    );
 
     for (const click of missingClicks) {
       const item = catalogById.get(click.searchTerm);
@@ -275,8 +286,7 @@ const getCatalogWithSearch = async ({
       scoreMap.set(item, 0.6);
       items.push(item);
     }
-}
-
+  }
 
   const filtered = applyInMemoryFilters(items, filters);
   const totalCount = filtered.length;

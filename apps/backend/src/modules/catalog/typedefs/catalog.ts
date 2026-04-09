@@ -212,7 +212,6 @@ export const catalogTypeDef = gql`
       page: Int
       pageSize: Int
       recentClicks: [RecentClick]
-
     ): CatalogResult! @cacheControl(maxAge: 300, scope: PUBLIC)
 
     catalogClassIdentities(

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
-import {getCourseClicks} from "@/lib/recent";
 
 import type {
   ICatalogClassServer,
@@ -15,6 +14,7 @@ import type {
   GetCatalogSearchQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
+import { getCourseClicks } from "@/lib/recent";
 
 import { SortBy } from "../browser";
 import { mapSortBy } from "./useCatalogFilters";
@@ -140,7 +140,10 @@ export default function useCatalogQuery({
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, error, fetchMore } = useQuery<GetCatalogSearchQuery, GetCatalogSearchQueryVariables>(GET_CATALOG_SEARCH, {
+  const { data, loading, error, fetchMore } = useQuery<
+    GetCatalogSearchQuery,
+    GetCatalogSearchQueryVariables
+  >(GET_CATALOG_SEARCH, {
     variables: {
       ...catalogQueryVariables,
       page: 1,
