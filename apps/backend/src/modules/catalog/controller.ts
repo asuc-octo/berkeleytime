@@ -220,8 +220,8 @@ const scoreAndSort = (
   for (const click of recentClicks ?? []) {
     const w = decayWeight(click.timestamp);
     if (w >= MIN_WEIGHT) {
-      const existing = clickWeightMap.get(click.searchTerm) ?? 0;
-      clickWeightMap.set(click.searchTerm, Math.max(existing, w));
+      const existing = clickWeightMap.get(click.courseNumber) ?? 0;
+      clickWeightMap.set(click.courseNumber, Math.max(existing, w));
     }
   }
 
@@ -269,8 +269,8 @@ const getCatalogWithSearch = async ({
     const w = decayWeight(click.timestamp);
     return (
       w >= MIN_WEIGHT &&
-      click.courseNumber.toLowerCase().startsWith(lowerSearch) &&
-      !coveredIds.has(click.searchTerm)
+      click.searchTerm.toLowerCase().startsWith(lowerSearch) &&
+      !coveredIds.has(click.courseNumber)
     );
   });
   // do a full catalog search and bring back the missing ones, assign scores
@@ -281,7 +281,7 @@ const getCatalogWithSearch = async ({
     );
 
     for (const click of missingClicks) {
-      const item = catalogById.get(click.searchTerm);
+      const item = catalogById.get(click.courseNumber);
       if (!item) continue;
       scoreMap.set(item, 0.6);
       items.push(item);
