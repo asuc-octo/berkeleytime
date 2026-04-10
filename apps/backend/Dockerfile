@@ -14,7 +14,8 @@ COPY --from=backend-builder /backend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
 
 COPY --from=backend-builder /backend/out/full/ .
-ENTRYPOINT ["turbo", "run", "dev", "--filter=backend"]
+# Loose env mode: Docker Compose injects vars (e.g. SEMANTIC_SEARCH_URL) that must reach tsx; strict mode strips them unless listed in turbo.json.
+ENTRYPOINT ["turbo", "run", "dev", "--filter=backend", "--env-mode=loose"]
 
 FROM backend-dev AS backend-prod
 ENTRYPOINT ["turbo", "run", "start", "--filter=backend", "--env-mode=loose"]

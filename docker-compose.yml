@@ -17,6 +17,10 @@ services:
     networks:
       - bt
     restart: always
+    env_file:
+      - .env
+    environment:
+      SEMANTIC_SEARCH_URL: http://semantic-search:8000
     healthcheck:
       test:
         - CMD
@@ -27,10 +31,11 @@ services:
       timeout: 5s
       start_period: 20s
       retries: 20
+    # Do not mount .env under apps/backend/: a file mount inside another bind mount breaks Docker Desktop (virtiofs / rootfs error).
     volumes:
-      - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
       - ./packages:/backend/packages
+      - ./.env:/backend/.env
   semantic-search:
     build:
       context: ./apps/semantic-search

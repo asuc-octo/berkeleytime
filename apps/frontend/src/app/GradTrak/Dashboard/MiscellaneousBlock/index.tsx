@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import classNames from "classnames";
 import {
   Check,
   Edit,
@@ -60,8 +59,6 @@ interface SemesterBlockProps {
   sortCourseOption: string;
   filtersActive: boolean;
   handleRemoveTerm: () => void;
-  /** Full-width strip layout when rendered in the dashboard miscellaneous bar */
-  isMiscellaneous?: boolean;
 }
 
 function SemesterBlock({
@@ -81,7 +78,6 @@ function SemesterBlock({
   sortCourseOption,
   filtersActive,
   handleRemoveTerm,
-  isMiscellaneous = false,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
@@ -550,27 +546,17 @@ function SemesterBlock({
     <>
       <div
         ref={containerRef}
-        className={classNames(styles.root, isMiscellaneous && styles.rootMisc, {
-          "drop-target": isDropTarget,
-        })}
+        className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
         onDragOver={filtersActive ? undefined : handleDragOver}
         onDragLeave={filtersActive ? undefined : handleDragLeave}
         onDrop={filtersActive ? undefined : handleDrop}
       >
         <div
-          className={classNames(
-            styles.body,
-            isMiscellaneous && styles.bodyMiscellaneous
-          )}
+          className={styles.body}
           data-layout={settings.layout}
           data-open={open}
         >
-          <Flex
-            direction="row"
-            justify="between"
-            width="100%"
-            className={isMiscellaneous ? styles.miscellaneousHeader : undefined}
-          >
+          <Flex direction="row" justify="between" width="100%">
             <div className={styles.semesterCounter}>
               {planTerm.pinned && (
                 <PinSolid className={styles.pin} onClick={handleTogglePin} />
@@ -734,78 +720,44 @@ function SemesterBlock({
 
           {open && (
             <>
-              <div
-                className={
-                  isMiscellaneous
-                    ? styles.miscellaneousCourses
-                    : styles.courseList
-                }
-              >
-                {[...selectedClasses]
-                  .sort((a, b) => {
-                    if (sortCourseOption === "Unsorted") return 0;
-                    if (sortCourseOption === "A-Z")
-                      return a.courseName.localeCompare(b.courseName);
-                    if (sortCourseOption === "Z-A")
-                      return b.courseName.localeCompare(a.courseName);
-                    return 0;
-                  })
-                  .map((cls, index) => (
-                    <React.Fragment key={`class-group-${index}`}>
-                      {placeholderIndex === index &&
-                        !(
-                          draggingIndexRef.current !== null &&
-                          (placeholderIndex === draggingIndexRef.current ||
-                            placeholderIndex === draggingIndexRef.current + 1)
-                        ) && (
-                        <div
-                          className={classNames(
-                            styles.placeholder,
-                            isMiscellaneous && styles.placeholderMisc
-                          )}
-                        />
-                      )}
-                      <Class
-                        cls={cls}
-                        index={index}
-                        handleDragEnd={handleDragEnd}
-                        handleDragStart={handleDragStart}
-                        handleDetails={handleClassDetails}
-                        handleDelete={(i) => setConfirmDeleteClassIndex(i)}
-                        settings={settings}
-                        labels={labels}
-                        draggable={!filtersActive}
-                      />
-                    </React.Fragment>
-                  ))}
+              {[...selectedClasses]
+                .sort((a, b) => {
+                  if (sortCourseOption === "Unsorted") return 0;
+                  if (sortCourseOption === "A-Z")
+                    return a.courseName.localeCompare(b.courseName);
+                  if (sortCourseOption === "Z-A")
+                    return b.courseName.localeCompare(a.courseName);
+                  return 0;
+                })
+                .map((cls, index) => (
+                  <React.Fragment key={`class-group-${index}`}>
+                    {placeholderIndex === index &&
+                      !(
+                        draggingIndexRef.current !== null &&
+                        (placeholderIndex === draggingIndexRef.current ||
+                          placeholderIndex === draggingIndexRef.current + 1)
+                      ) && <div className={styles.placeholder} />}
+                    <Class
+                      cls={cls}
+                      index={index}
+                      handleDragEnd={handleDragEnd}
+                      handleDragStart={handleDragStart}
+                      handleDetails={handleClassDetails}
+                      handleDelete={(i) => setConfirmDeleteClassIndex(i)}
+                      settings={settings}
+                      labels={labels}
+                      draggable={!filtersActive}
+                    />
+                  </React.Fragment>
+                ))}
 
-                {/* Dragging placeholder */}
-                {placeholderIndex === selectedClasses.length &&
-                  !(
-                    draggingIndexRef.current !== null &&
-                    (placeholderIndex === draggingIndexRef.current ||
-                      placeholderIndex === draggingIndexRef.current + 1)
-                  ) && (
-                  <div
-                    className={classNames(
-                      styles.placeholder,
-                      isMiscellaneous && styles.placeholderMisc
-                    )}
-                  />
-                )}
-
-                {isMiscellaneous && (
-                  <Button
-                    onClick={() => setIsAddClassOpen(true)}
-                    className={classNames(
-                      styles.addButton,
-                      styles.addButtonMiscStrip
-                    )}
-                  >
-                    + Add Class
-                  </Button>
-                )}
-              </div>
+              {/* Dragging placeholder */}
+              {placeholderIndex === selectedClasses.length &&
+                !(
+                  draggingIndexRef.current !== null &&
+                  (placeholderIndex === draggingIndexRef.current ||
+                    placeholderIndex === draggingIndexRef.current + 1)
+                ) && <div className={styles.placeholder} />}
 
               {/* Dialog Component */}
               <AddClass
@@ -833,14 +785,12 @@ function SemesterBlock({
                 />
               )}
 
-              {!isMiscellaneous && (
-                <Button
-                  onClick={() => setIsAddClassOpen(true)}
-                  className={styles.addButton}
-                >
-                  + Add Class
-                </Button>
-              )}
+              <Button
+                onClick={() => setIsAddClassOpen(true)}
+                className={styles.addButton}
+              >
+                + Add Class
+              </Button>
             </>
           )}
         </div>

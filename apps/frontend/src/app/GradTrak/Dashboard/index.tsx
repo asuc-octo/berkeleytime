@@ -509,6 +509,68 @@ export default function Dashboard() {
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
 
+  const { regularSemesters, miscellaneousSemester } = useMemo(() => {
+    const filteredTerms = [...planTerms]
+      .filter((term) => {
+        if (
+          !(
+            filterOptions.completed ||
+            filterOptions.inProgress ||
+            filterOptions.incomplete
+          )
+        )
+          return true;
+
+        if (filterOptions.completed && term.status === "Complete") return true;
+        if (filterOptions.inProgress && term.status === "InProgress")
+          return true;
+        if (filterOptions.incomplete && term.status === "Incomplete")
+          return true;
+
+        return false;
+      })
+      .filter((term) => {
+        if (
+          !Object.keys(filterOptions).some(
+            (key) => key.startsWith("label_") && filterOptions[key]
+          )
+        ) {
+          return true;
+        }
+        return filteredAllSemesters[term._id]
+          ? filteredAllSemesters[term._id].length > 0
+          : false;
+      });
+
+    const miscellaneousSemester = filteredTerms.find(
+      (term) => term.name === "Miscellaneous"
+    );
+    const regularSemesters = filteredTerms
+      .filter((term) => term.name !== "Miscellaneous")
+      .sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+
+        if (a.year == -1 || b.year == -1) {
+          return a.year - b.year;
+        }
+        if (sortSemesterOption === "Oldest") {
+          if (a.year != b.year) return a.year - b.year;
+          return getTermOrder(a.term) - getTermOrder(b.term);
+        } else {
+          if (a.year != b.year) return b.year - a.year;
+          return getTermOrder(b.term) - getTermOrder(a.term);
+        }
+      });
+
+    return { regularSemesters, miscellaneousSemester };
+  }, [
+    planTerms,
+    filterOptions,
+    filteredAllSemesters,
+    sortSemesterOption,
+  ]);
+
   if (
     !gradTrak &&
     !courses?.courses &&
@@ -890,72 +952,67 @@ export default function Dashboard() {
           )}
           <div className={styles.semesterBlocks}>
             <div className={styles.semesterBlocksInner}>
-              <div
-                className={styles.semesterLayout}
-                data-layout={settings.layout}
-              >
-                {[...planTerms]
-                  .filter((term) => {
-                    if (
-                      !(
-                        filterOptions.completed ||
-                        filterOptions.inProgress ||
-                        filterOptions.incomplete
-                      )
-                    )
-                      return true;
-
-                    if (filterOptions.completed && term.status === "Complete")
-                      return true;
-                    if (
-                      filterOptions.inProgress &&
-                      term.status === "InProgress"
-                    )
-                      return true;
-                    if (
-                      filterOptions.incomplete &&
-                      term.status === "Incomplete"
-                    )
-                      return true;
-
-                    return false;
-                  })
-                  .filter((term) => {
-                    if (
-                      !Object.keys(filterOptions).some(
-                        (key) => key.startsWith("label_") && filterOptions[key]
-                      )
-                    ) {
-                      return true;
-                    }
-                    return filteredAllSemesters[term._id]
-                      ? filteredAllSemesters[term._id].length > 0
-                      : false;
-                  })
-                  .sort((a, b) => {
-                    // Pinned terms first
-                    if (a.pinned && !b.pinned) return -1;
-                    if (!a.pinned && b.pinned) return 1;
-
-                    // misc always comes first
-                    if (a.year == -1 || b.year == -1) {
-                      return a.year - b.year;
-                    }
-                    if (sortSemesterOption === "Oldest") {
-                      if (a.year != b.year) return a.year - b.year;
-                      return getTermOrder(a.term) - getTermOrder(b.term);
-                    } else {
-                      if (a.year != b.year) return b.year - a.year;
-                      return getTermOrder(b.term) - getTermOrder(a.term);
-                    }
-                  })
-                  .map((term) => (
+              <div className={styles.semestersLayout}>
+                <div className={styles.semestersRow}>
+                  <div
+                    className={styles.semestersRowTrack}
+                    data-layout={settings.layout}
+                  >
+                    {regularSemesters.map((term) => (
+                      <SemesterBlock
+                        key={term._id}
+                        planTerm={term}
+                        onTotalUnitsChange={(
+                          newTotal,
+                          pnpUnits,
+                          transferUnits
+                        ) =>
+                          updateTotalUnits(
+                            term._id,
+                            newTotal,
+                            pnpUnits,
+                            transferUnits
+                          )
+                        }
+                        filteredSemesters={filteredAllSemesters}
+                        allSemesters={allSemesters}
+                        updateAllSemesters={updateAllSemesters}
+                        settings={settings}
+                        labels={labels}
+                        setShowLabelMenu={setShowLabelMenu}
+                        catalogCourses={catalogCourses}
+                        index={index}
+                        handleUpdateTermName={(name) =>
+                          handleUpdateTermName(term._id, name)
+                        }
+                        handleTogglePin={() => handleTogglePin(term._id)}
+                        handleSetStatus={(status: Status) =>
+                          handleSetStatus(term._id, status)
+                        }
+                        sortCourseOption={sortCourseOption}
+                        handleRemoveTerm={() => {
+                          const updatedSemesters = { ...allSemesters };
+                          delete updatedSemesters[term._id];
+                          updateAllSemesters(updatedSemesters);
+                        }}
+                        filtersActive={activeFiltersCount > 0}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {miscellaneousSemester && (
+                  <div className={styles.miscellaneousBar}>
                     <SemesterBlock
-                      key={term._id}
-                      planTerm={term}
-                      onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
+                      key={miscellaneousSemester._id}
+                      planTerm={miscellaneousSemester}
+                      isMiscellaneous
+                      onTotalUnitsChange={(
+                        newTotal,
+                        pnpUnits,
+                        transferUnits
+                      ) =>
                         updateTotalUnits(
-                          term.name ? term.name : "",
+                          miscellaneousSemester._id,
                           newTotal,
                           pnpUnits,
                           transferUnits
@@ -970,21 +1027,27 @@ export default function Dashboard() {
                       catalogCourses={catalogCourses}
                       index={index}
                       handleUpdateTermName={(name) =>
-                        handleUpdateTermName(term._id, name)
+                        handleUpdateTermName(
+                          miscellaneousSemester._id,
+                          name
+                        )
                       }
-                      handleTogglePin={() => handleTogglePin(term._id)}
+                      handleTogglePin={() =>
+                        handleTogglePin(miscellaneousSemester._id)
+                      }
                       handleSetStatus={(status: Status) =>
-                        handleSetStatus(term._id, status)
+                        handleSetStatus(miscellaneousSemester._id, status)
                       }
                       sortCourseOption={sortCourseOption}
                       handleRemoveTerm={() => {
                         const updatedSemesters = { ...allSemesters };
-                        delete updatedSemesters[term._id];
+                        delete updatedSemesters[miscellaneousSemester._id];
                         updateAllSemesters(updatedSemesters);
                       }}
                       filtersActive={activeFiltersCount > 0}
                     />
-                  ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
