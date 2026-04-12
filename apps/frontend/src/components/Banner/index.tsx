@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Xmark } from "iconoir-react";
 import Markdown from "react-markdown";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   useAllBanners,
   useIncrementBannerDismiss,
@@ -23,6 +24,7 @@ export default function Banner() {
   const { data: banners, loading, error } = useAllBanners();
   const { incrementDismiss } = useIncrementBannerDismiss();
   const { trackView } = useTrackBannerView();
+  const { trackView: trackUnifiedView, trackDismiss } = useTracking();
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(
     new Set()
   );
@@ -82,6 +84,7 @@ export default function Banner() {
 
     trackedViewsRef.current.add(activeBanner.id);
     trackView(activeBanner.id);
+    trackUnifiedView("banner", activeBanner.id);
   }, [activeBanner, trackView]);
 
   const handleDismiss = () => {
@@ -89,6 +92,7 @@ export default function Banner() {
 
     // Track dismissal (always on now)
     incrementDismiss(activeBanner.id);
+    trackDismiss("banner", activeBanner.id);
 
     // Mark as dismissed in this session (in-memory state)
     setDismissedBanners((prev) => new Set(prev).add(activeBanner.id));

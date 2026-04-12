@@ -4,6 +4,7 @@ import type { RedisClientType } from "redis";
 import { BannerModel } from "@repo/common/models";
 
 import { trackIntensiveClick } from "../click-tracking/controller";
+import { bufferTrackingEvents } from "../tracking/controller";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Redirect-based click tracking for all banners
@@ -23,10 +24,25 @@ export default (app: Application, redis?: RedisClientType) => {
         return res.redirect("/");
       }
 
-      // Track click event if enabled and redis is available
-      if (banner.clickEventLogging && redis) {
-        trackIntensiveClick(redis, req, bannerId, "banner").catch((error) => {
-          console.error("Error tracking banner click event:", error);
+      if (redis) {
+        // Legacy intensive click tracking (opt-in per banner)
+        if (banner.clickEventLogging) {
+          trackIntensiveClick(redis, req, bannerId, "banner").catch((error) => {
+            console.error("Error tracking banner click event:", error);
+          });
+        }
+
+        // Unified tracking — always emitted
+        bufferTrackingEvents(redis, req, [
+          {
+            eventType: "click",
+            targetType: "banner",
+            targetId: bannerId,
+            metadata: { version: banner.currentVersion },
+            timestamp: new Date().toISOString(),
+          },
+        ]).catch((error) => {
+          console.error("Error buffering banner tracking event:", error);
         });
       }
 
