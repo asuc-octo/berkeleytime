@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 import DevAuthBanner from "@/components/DevAuthBanner";
-import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   useAllRouteRedirects,
   useIncrementRouteRedirectClick,
 } from "@/hooks/api/route-redirect";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 
 // Module-level tracking to prevent duplicate increments
 let lastIncrementedPath: string | null = null;

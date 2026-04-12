@@ -3,12 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Xmark } from "iconoir-react";
 import Markdown from "react-markdown";
 
-import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   useAllBanners,
   useIncrementBannerDismiss,
   useTrackBannerView,
 } from "@/hooks/api/banner";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   isBannerSessionDismissed,
   isBannerViewed,
