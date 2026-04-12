@@ -50,7 +50,10 @@ export default (app: Application, redis?: RedisClientType) => {
           trackIntensiveClick(redis, req, messageId, "targeted-message", {
             additionalInfo: resolvedAdditionalInfo,
           }).catch((error) => {
-            console.error("Error tracking targeted message click event:", error);
+            console.error(
+              "Error tracking targeted message click event:",
+              error
+            );
           });
         }
 
