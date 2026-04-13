@@ -7,7 +7,6 @@
  *   npx ts-node -e "require('./src/scripts/migrate-click-events')"
  *   OR run via the npm script: npm run migrate:click-events
  */
-
 import mongoose from "mongoose";
 
 import { ClickEventModel } from "@repo/common/models";
@@ -44,8 +43,7 @@ async function migrate() {
       ) {
         throw err;
       }
-      skipped += (err as { result?: { nInserted?: number } })?.result
-        ?.nInserted
+      skipped += (err as { result?: { nInserted?: number } })?.result?.nInserted
         ? 0
         : batch.length;
     }
@@ -80,7 +78,9 @@ async function migrate() {
 
   await flush();
 
-  console.log(`\nDone. Migrated ${migrated} events, skipped ${skipped} duplicates.`);
+  console.log(
+    `\nDone. Migrated ${migrated} events, skipped ${skipped} duplicates.`
+  );
   await mongoose.disconnect();
 }
 

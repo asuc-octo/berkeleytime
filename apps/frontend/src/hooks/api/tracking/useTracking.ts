@@ -3,10 +3,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import {
+  TrackEventsDocument,
   TrackEventsMutation,
   TrackEventsMutationVariables,
   TrackingEventInput,
-  TrackEventsDocument,
 } from "@/lib/generated/graphql";
 
 const BATCH_INTERVAL_MS = 5_000;
