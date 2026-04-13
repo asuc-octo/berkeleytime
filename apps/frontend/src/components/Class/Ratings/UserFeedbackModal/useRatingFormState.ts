@@ -21,7 +21,8 @@ export function useRatingFormState({
     initialCourse
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [review, setReview] = useState<string>("");
+  const [reviewTitle, setReviewTitle] = useState<string>("");
+  const [reviewContent, setReviewContent] = useState<string>("");
 
   const isFormValid = useMemo(() => {
     const isClassValid = selectedCourse !== null;
@@ -56,11 +57,16 @@ export function useRatingFormState({
     // Field 6: Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
-    // Field 7: Review
-    if (review && review.trim().length > 0) filledFields++;
+    // Field 7: Review (title and/or body)
+    if (
+      reviewTitle.trim().length > 0 ||
+      reviewContent.trim().length > 0
+    ) {
+      filledFields++;
+    }
 
     return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData, review]);
+  }, [selectedTerm, metricData, reviewTitle, reviewContent]);
 
   const reset = (
     newInitialMetricData?: MetricData,
@@ -70,7 +76,8 @@ export function useRatingFormState({
     setSelectedTerm(null);
     setSelectedCourse(newInitialCourse ?? initialCourse ?? null);
     setIsSubmitting(false);
-    setReview("");
+    setReviewTitle("");
+    setReviewContent("");
   };
 
   return {
@@ -85,7 +92,9 @@ export function useRatingFormState({
     isFormValid,
     progress,
     reset,
-    review,
-    setReview,
+    reviewTitle,
+    setReviewTitle,
+    reviewContent,
+    setReviewContent,
   };
 }

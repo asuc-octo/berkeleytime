@@ -33,8 +33,10 @@ interface RatingFormBodyProps {
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
   questionNumbers: QuestionNumbers;
-  review: string;
-  setReview: (value: string) => void;
+  reviewTitle: string;
+  setReviewTitle: (value: string) => void;
+  reviewContent: string;
+  setReviewContent: (value: string) => void;
 }
 
 export function RatingFormBody({
@@ -46,8 +48,10 @@ export function RatingFormBody({
   metricData,
   setMetricData,
   questionNumbers,
-  review,
-  setReview,
+  reviewTitle,
+  setReviewTitle,
+  reviewContent,
+  setReviewContent,
 }: RatingFormBodyProps) {
   return (
     <Flex direction="column">
@@ -85,7 +89,12 @@ export function RatingFormBody({
             setMetricData={setMetricData}
             startQuestionNumber={questionNumbers.ratingsStartNumber}
           />
-          <ReviewForm review={review} setReview={setReview} />
+          <ReviewForm
+            reviewTitle={reviewTitle}
+            setReviewTitle={setReviewTitle}
+            reviewContent={reviewContent}
+            setReviewContent={setReviewContent}
+          />
         </Flex>
       </div>
 

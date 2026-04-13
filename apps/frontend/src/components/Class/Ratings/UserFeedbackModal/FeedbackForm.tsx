@@ -136,22 +136,40 @@ export function RatingsForm({
 }
 
 interface ReviewFormProps {
-  review: string;
-  setReview: (value: string) => void;
+  reviewTitle: string;
+  setReviewTitle: (value: string) => void;
+  reviewContent: string;
+  setReviewContent: (value: string) => void;
 }
 
-export function ReviewForm({ review, setReview }: ReviewFormProps) {
+export function ReviewForm({
+  reviewTitle,
+  setReviewTitle,
+  reviewContent,
+  setReviewContent,
+}: ReviewFormProps) {
   return (
     <div className={styles.formGroup}>
       <div className={styles.questionPair}>
         <h3>Write a Review</h3>
-        <textarea
-          className={styles.reviewTextarea}
-          value={review}
-          onChange={(e) => setReview(e.target.value)}
-          placeholder="Share details of your experience in the course"
-          rows={4}
-        />
+        <div className={styles.reviewBox} role="group" aria-label="Review">
+          <textarea
+            className={`${styles.reviewTextarea} ${styles.reviewTitleTextarea}`}
+            value={reviewTitle}
+            onChange={(e) => setReviewTitle(e.target.value)}
+            placeholder="Title"
+            rows={1}
+            aria-label="Review title"
+          />
+          <textarea
+            className={`${styles.reviewTextarea} ${styles.reviewBoxContent}`}
+            value={reviewContent}
+            onChange={(e) => setReviewContent(e.target.value)}
+            placeholder="Share details of your experience in the course"
+            rows={4}
+            aria-label="Review details"
+          />
+        </div>
         <p className={styles.reviewDisclaimer}>
           Your rating could be removed if you use profanity or derogatory terms.
         </p>

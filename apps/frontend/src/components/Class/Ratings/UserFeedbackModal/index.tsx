@@ -18,6 +18,19 @@ import styles from "./UserFeedbackModal.module.scss";
 import { useRatingFormState } from "./useRatingFormState";
 import { useTermFiltering } from "./useTermFiltering";
 
+/** Merges title + body for the existing single-string `review` API until backend supports split fields. */
+function buildCombinedReview(
+  reviewTitle: string,
+  reviewContent: string
+): string | undefined {
+  const t = reviewTitle.trim();
+  const c = reviewContent.trim();
+  if (!t && !c) return undefined;
+  if (!t) return c;
+  if (!c) return t;
+  return `${t}\n\n${c}`;
+}
+
 interface Term {
   value: string;
   label: string;
@@ -130,8 +143,10 @@ export function UserFeedbackModal({
     setIsSubmitting,
     progress,
     reset,
-    review,
-    setReview,
+    reviewTitle,
+    setReviewTitle,
+    reviewContent,
+    setReviewContent,
   } = formState;
 
   const overallProgress = useMemo(
@@ -261,8 +276,27 @@ export function UserFeedbackModal({
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
 
-    return isCourseValid && isTermValid && areRatingsValid && hasChanges;
-  }, [selectedTerm, metricData, hasChanges, selectedCourse]);
+    const trimmedTitle = reviewTitle.trim();
+    const trimmedContent = reviewContent.trim();
+    const isReviewPairValid =
+      (trimmedTitle.length === 0 && trimmedContent.length === 0) ||
+      (trimmedTitle.length > 0 && trimmedContent.length > 0);
+
+    return (
+      isCourseValid &&
+      isTermValid &&
+      areRatingsValid &&
+      hasChanges &&
+      isReviewPairValid
+    );
+  }, [
+    selectedTerm,
+    metricData,
+    hasChanges,
+    selectedCourse,
+    reviewTitle,
+    reviewContent,
+  ]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -299,7 +333,7 @@ export function UserFeedbackModal({
           courseNumber: selectedCourse.number,
           classNumber,
         },
-        review || undefined
+        buildCombinedReview(reviewTitle, reviewContent)
       );
 
       const isLastRating = currentRatingIndex >= totalRatings - 1;
@@ -436,8 +470,10 @@ export function UserFeedbackModal({
               metricData={metricData}
               setMetricData={setMetricData}
               questionNumbers={questionNumbers}
-              review={review}
-              setReview={setReview}
+              reviewTitle={reviewTitle}
+              setReviewTitle={setReviewTitle}
+              reviewContent={reviewContent}
+              setReviewContent={setReviewContent}
             />
           </motion.div>
         </AnimatePresence>
