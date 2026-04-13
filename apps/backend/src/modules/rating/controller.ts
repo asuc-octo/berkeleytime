@@ -494,7 +494,42 @@ export const getUserRatings = async (context: RequestContext) => {
       count: 0,
       classes: [],
     };
-  return formatUserRatings(userRatings[0]);
+  const formattedUserRatings = formatUserRatings(userRatings[0]);
+  const activeReviews = await ReviewModel.find({
+    createdBy: context.user._id,
+    $or: [{ valid: true }, { valid: { $exists: false } }],
+  })
+    .select("subject courseNumber reviewTitle reviewContent updatedAt")
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  const reviewByCourse = new Map<
+    string,
+    { reviewTitle?: string | null; reviewContent?: string | null }
+  >();
+  activeReviews.forEach((review) => {
+    const key = `${review.subject}|${review.courseNumber}`;
+    if (!reviewByCourse.has(key)) {
+      reviewByCourse.set(key, {
+        reviewTitle: review.reviewTitle ?? null,
+        reviewContent: review.reviewContent ?? null,
+      });
+    }
+  });
+
+  return {
+    ...formattedUserRatings,
+    classes: formattedUserRatings.classes.map((ratedClass) => {
+      const review = reviewByCourse.get(
+        `${ratedClass.subject}|${ratedClass.courseNumber}`
+      );
+      return {
+        ...ratedClass,
+        reviewTitle: review?.reviewTitle ?? null,
+        reviewContent: review?.reviewContent ?? null,
+      };
+    }),
+  };
 };
 
 const filterAggregatedMetrics = (

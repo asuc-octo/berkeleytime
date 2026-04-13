@@ -37,6 +37,12 @@ export default function UserRatingSummary({
           {userRatings.lastUpdated && (
             <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
           )}
+          {userRatings.reviewTitle && (
+            <p className={styles.reviewTitle}>{userRatings.reviewTitle}</p>
+          )}
+          <p className={styles.reviewContent}>
+            {userRatings.reviewContent || "No written review yet."}
+          </p>
         </div>
         <Flex gap="2">
           <Tooltip

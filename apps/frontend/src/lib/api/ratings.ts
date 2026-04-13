@@ -100,6 +100,8 @@ export const GET_USER_RATINGS = gql`
           metricName
           value
         }
+        reviewTitle
+        reviewContent
         lastUpdated
       }
     }

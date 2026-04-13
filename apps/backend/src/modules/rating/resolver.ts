@@ -140,7 +140,7 @@ const resolvers: RatingModule.Resolvers = {
       }
     },
 
-    // @ts-expect-error Added to SDL; backend codegen needs to be re-run.
+
     classRatings: async (
       _: unknown,
       { subject, courseNumber }: { subject: string; courseNumber: string }

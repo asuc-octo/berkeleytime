@@ -26,6 +26,21 @@
       margin-top: 10px;
       margin-bottom: 20px;
     }
+
+    .reviewTitle {
+      color: var(--heading-color);
+      font-size: var(--text-16);
+      font-weight: var(--font-semibold);
+      line-height: 1.4;
+    }
+
+    .reviewContent {
+      margin-bottom: 20px;
+      color: var(--paragraph-color);
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
+      line-height: 1.5;
+    }
   }
 
   .body {

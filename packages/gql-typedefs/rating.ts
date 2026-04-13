@@ -74,6 +74,8 @@ export const ratingTypeDef = gql`
     classNumber: String!
 
     metrics: [UserMetric!]!
+    reviewTitle: String
+    reviewContent: String
     lastUpdated: String
   }
   type UserMetric {
