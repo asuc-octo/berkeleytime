@@ -936,7 +936,7 @@ export const createRatings = async (
   courseNumber: string,
   classNumber: string,
   metrics: MetricInput[],
-  review?: string
+  review?: string | null
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -1013,27 +1013,85 @@ export const createRatings = async (
         ]);
       }
 
-      // Step 2: Upsert or delete review
+      // Step 2: Soft-delete and create review snapshots
+      // `valid` identifies the latest active review for a user/course.
       if (review !== undefined) {
-        if (review.trim() === "") {
-          await ReviewModel.deleteOne(
-            { createdBy: context.user._id, courseId },
+        const activeReviewFilter = {
+          createdBy: context.user._id,
+          courseId,
+          $or: [{ valid: true }, { valid: { $exists: false } }],
+        };
+
+        if (review === null || review.trim() === "") {
+          await ReviewModel.updateMany(
+            activeReviewFilter,
+            { $set: { valid: false } },
             { session }
           );
         } else {
-          await ReviewModel.findOneAndUpdate(
-            { createdBy: context.user._id, courseId },
-            {
-              text: review,
-              classId,
-              subject,
-              courseNumber,
-              semester,
-              year,
-              classNumber,
-            },
-            { upsert: true, session }
-          );
+          const normalizedReview = review.trim();
+          const allReviews = await ReviewModel.find({
+            createdBy: context.user._id,
+            courseId,
+          }).session(session);
+
+          const reusableReview =
+            allReviews.find(
+              (existingReview) =>
+                (existingReview.text ?? "").trim() === normalizedReview
+            ) ?? null;
+
+          if (reusableReview) {
+            await ReviewModel.updateMany(
+              {
+                ...activeReviewFilter,
+                _id: { $ne: reusableReview._id },
+              },
+              { $set: { valid: false } },
+              { session }
+            );
+
+            await ReviewModel.updateOne(
+              { _id: reusableReview._id },
+              {
+                $set: {
+                  valid: true,
+                  text: review,
+                  classId,
+                  subject,
+                  courseNumber,
+                  semester,
+                  year,
+                  classNumber,
+                },
+              },
+              { session }
+            );
+          } else {
+            await ReviewModel.updateMany(
+              activeReviewFilter,
+              { $set: { valid: false } },
+              { session }
+            );
+
+            await ReviewModel.create(
+              [
+                {
+                  createdBy: context.user._id,
+                  courseId,
+                  text: review,
+                  classId,
+                  subject,
+                  courseNumber,
+                  semester,
+                  year,
+                  classNumber,
+                  valid: true,
+                },
+              ],
+              { session }
+            );
+          }
         }
       }
 

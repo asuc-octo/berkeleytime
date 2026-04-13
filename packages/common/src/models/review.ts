@@ -42,14 +42,23 @@ const reviewSchema = new Schema(
       type: String,
       required: false,
     },
+    valid: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Unique review per user per course
-reviewSchema.index({ createdBy: 1, courseId: 1 }, { unique: true });
+// Only one currently valid review per user per course.
+// Historical invalid reviews are preserved for soft-delete behavior.
+reviewSchema.index(
+  { createdBy: 1, courseId: 1 },
+  { unique: true, partialFilterExpression: { valid: true } }
+);
 
 export const ReviewModel = mongoose.model("review", reviewSchema);
 export type ReviewType = InferSchemaType<typeof reviewSchema>;

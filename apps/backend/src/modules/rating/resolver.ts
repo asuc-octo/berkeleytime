@@ -153,7 +153,7 @@ const resolvers: RatingModule.Resolvers = {
           courseNumber,
           classNumber,
           metrics,
-          review ?? undefined
+          review
         );
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is
