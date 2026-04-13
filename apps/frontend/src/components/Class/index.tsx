@@ -915,6 +915,11 @@ export default function Class({
           onClose={handleUnlockModalClose}
           title="Unlock Ratings"
           subtitle={`Rate ${Math.max(unlockModalGoalCount, 1)} classes to unlock all other ratings.`}
+          initialCourse={{
+            subject: _class.subject,
+            number: _class.courseNumber,
+            courseId: ""
+          }}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}
           requiredRatingsCount={unlockModalGoalCount || 1}
