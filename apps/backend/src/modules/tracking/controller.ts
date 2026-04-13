@@ -104,47 +104,6 @@ export const flushTrackingEvents = async (
   return { flushed, errors };
 };
 
-export const getTrackingEvents = async (
-  eventType?: string,
-  targetType?: string,
-  targetId?: string,
-  startDate?: Date,
-  endDate?: Date,
-  limit: number = 100,
-  offset: number = 0
-) => {
-  const query: Record<string, unknown> = {};
-
-  if (eventType) query.eventType = eventType;
-  if (targetType) query.targetType = targetType;
-  if (targetId) query.targetId = targetId;
-
-  if (startDate || endDate) {
-    query.timestamp = {};
-    if (startDate) {
-      (query.timestamp as Record<string, Date>).$gte = startDate;
-    }
-    if (endDate) {
-      (query.timestamp as Record<string, Date>).$lte = endDate;
-    }
-  }
-
-  const [events, totalCount] = await Promise.all([
-    TrackingEventModel.find(query)
-      .sort({ timestamp: -1 })
-      .skip(offset)
-      .limit(limit)
-      .lean(),
-    TrackingEventModel.countDocuments(query),
-  ]);
-
-  return {
-    events,
-    totalCount,
-    hasMore: offset + events.length < totalCount,
-  };
-};
-
 export interface TrackingEventTimeSeriesPoint {
   date: string;
   count: number;

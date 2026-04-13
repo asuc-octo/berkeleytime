@@ -7,7 +7,6 @@ import { StaffMemberModel } from "@repo/common/models";
 import {
   TrackingEventInput,
   bufferTrackingEvents,
-  getTrackingEvents,
   getTrackingEventsTimeSeries,
 } from "./controller";
 
@@ -61,58 +60,6 @@ const resolvers = {
   },
 
   Query: {
-    trackingEvents: async (
-      _: unknown,
-      {
-        eventType,
-        targetType,
-        targetId,
-        startDate,
-        endDate,
-        limit,
-        offset,
-      }: {
-        eventType?: string;
-        targetType?: string;
-        targetId?: string;
-        startDate?: string;
-        endDate?: string;
-        limit?: number;
-        offset?: number;
-      },
-      context: RequestContext
-    ) => {
-      await requireStaffMember(context);
-
-      const result = await getTrackingEvents(
-        eventType,
-        targetType,
-        targetId,
-        startDate ? new Date(startDate) : undefined,
-        endDate ? new Date(endDate) : undefined,
-        limit ?? 100,
-        offset ?? 0
-      );
-
-      return {
-        events: result.events.map((event) => ({
-          id: event._id.toString(),
-          eventType: event.eventType,
-          targetType: event.targetType,
-          targetId: event.targetId ?? null,
-          metadata: event.metadata ?? null,
-          sessionId: event.sessionId,
-          userId: event.userId ?? null,
-          timestamp: event.timestamp.toISOString(),
-          ipHash: event.ipHash,
-          userAgent: event.userAgent ?? null,
-          referrer: event.referrer ?? null,
-        })),
-        totalCount: result.totalCount,
-        hasMore: result.hasMore,
-      };
-    },
-
     trackingEventsTimeSeries: async (
       _: unknown,
       {
@@ -142,10 +89,6 @@ const resolvers = {
     },
   },
 
-  TrackingEvent: {
-    id: (parent: { _id?: { toString: () => string }; id?: string }) =>
-      parent._id?.toString() ?? parent.id,
-  },
 };
 
 export default resolvers;

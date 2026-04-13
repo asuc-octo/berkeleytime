@@ -2,13 +2,12 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { useMutation } from "@apollo/client/react";
 
-import "@/lib/api/tracking";
 import {
   TrackEventsMutation,
   TrackEventsMutationVariables,
   TrackingEventInput,
+  TrackEventsDocument,
 } from "@/lib/generated/graphql";
-import { TrackEventsDocument } from "@/lib/generated/graphql";
 
 const BATCH_INTERVAL_MS = 5_000;
 const MAX_BATCH_SIZE = 50;
