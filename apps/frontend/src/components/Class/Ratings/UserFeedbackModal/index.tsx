@@ -18,19 +18,6 @@ import styles from "./UserFeedbackModal.module.scss";
 import { useRatingFormState } from "./useRatingFormState";
 import { useTermFiltering } from "./useTermFiltering";
 
-/** Merges title + body for the existing single-string `review` API until backend supports split fields. */
-function buildCombinedReview(
-  reviewTitle: string,
-  reviewContent: string
-): string | undefined {
-  const t = reviewTitle.trim();
-  const c = reviewContent.trim();
-  if (!t && !c) return undefined;
-  if (!t) return c;
-  if (!c) return t;
-  return `${t}\n\n${c}`;
-}
-
 interface Term {
   value: string;
   label: string;
@@ -52,7 +39,8 @@ interface UserFeedbackModalProps {
     metricData: MetricData,
     termInfo: { semester: Semester; year: number },
     courseInfo: { subject: string; courseNumber: string; classNumber: string },
-    review?: string
+    reviewTitle?: string,
+    reviewContent?: string
   ) => Promise<void>;
   initialUserClass?: IUserRatingClass | null;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
@@ -333,7 +321,8 @@ export function UserFeedbackModal({
           courseNumber: selectedCourse.number,
           classNumber,
         },
-        buildCombinedReview(reviewTitle, reviewContent)
+        reviewTitle || undefined,
+        reviewContent || undefined
       );
 
       const isLastRating = currentRatingIndex >= totalRatings - 1;

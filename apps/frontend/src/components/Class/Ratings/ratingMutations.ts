@@ -35,7 +35,8 @@ interface SubmitRatingOptions {
   >;
   classIdentifiers: ClassIdentifiers;
   refetchQueries?: RefetchQuery[];
-  review?: string;
+  reviewTitle?: string;
+  reviewContent?: string;
 }
 
 export async function submitRating({
@@ -44,7 +45,8 @@ export async function submitRating({
   createRatingsMutation,
   classIdentifiers,
   refetchQueries = [],
-  review,
+  reviewTitle,
+  reviewContent,
 }: SubmitRatingOptions) {
   // Validate required metrics are present
   const missingRequiredMetrics = REQUIRED_METRICS.filter(
@@ -77,7 +79,8 @@ export async function submitRating({
       year: termInfo.year,
       classNumber: classIdentifiers.number,
       metrics,
-      review,
+      reviewTitle,
+      reviewContent,
     },
     refetchQueries,
     awaitRefetchQueries: true,

@@ -199,7 +199,8 @@ export default function Ratings() {
         courseNumber: string;
         classNumber: string;
       },
-      review?: string
+      reviewTitle?: string,
+      reviewContent?: string
     ) => {
       if (!ratingForEdit) return;
 
@@ -222,7 +223,8 @@ export default function Ratings() {
           number: courseInfo.classNumber,
         },
         refetchQueries: buildRefetchQueries(refetchTarget),
-        review,
+        reviewTitle,
+        reviewContent,
       });
     },
     [ratingForEdit, createRatingsMutation, buildRefetchQueries]
@@ -237,7 +239,8 @@ export default function Ratings() {
         courseNumber: string;
         classNumber: string;
       },
-      review?: string
+      reviewTitle?: string,
+      reviewContent?: string
     ) => {
       const refetchTarget = {
         subject: courseInfo.subject,
@@ -257,7 +260,8 @@ export default function Ratings() {
           number: courseInfo.classNumber,
         },
         refetchQueries: buildRefetchQueries(refetchTarget),
-        review,
+        reviewTitle,
+        reviewContent,
       });
     },
     [createRatingsMutation, buildRefetchQueries]
@@ -348,8 +352,20 @@ export default function Ratings() {
               : null
           }
           availableTerms={availableTerms}
-          onSubmit={async (metricValues, termInfo, courseInfo, review) => {
-            await handleSubmitEdit(metricValues, termInfo, courseInfo, review);
+          onSubmit={async (
+            metricValues,
+            termInfo,
+            courseInfo,
+            reviewTitle,
+            reviewContent
+          ) => {
+            await handleSubmitEdit(
+              metricValues,
+              termInfo,
+              courseInfo,
+              reviewTitle,
+              reviewContent
+            );
           }}
           initialUserClass={ratingForEdit}
           onSubmitPopupChange={setIsEditThankYouOpen}

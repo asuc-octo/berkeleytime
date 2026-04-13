@@ -199,7 +199,8 @@ export const ratingTypeDef = gql`
       classNumber: String!
 
       metrics: [RatingMetricInput!]!
-      review: String
+      reviewTitle: String
+      reviewContent: String
     ): Boolean! @auth
 
     deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth

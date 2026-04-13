@@ -38,7 +38,11 @@ const reviewSchema = new Schema(
       type: String,
       required: true,
     },
-    text: {
+    reviewTitle: {
+      type: String,
+      required: false,
+    },
+    reviewContent: {
       type: String,
       required: false,
     },

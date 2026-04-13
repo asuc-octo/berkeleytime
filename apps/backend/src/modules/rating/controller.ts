@@ -936,7 +936,8 @@ export const createRatings = async (
   courseNumber: string,
   classNumber: string,
   metrics: MetricInput[],
-  review?: string | null
+  reviewTitle?: string | null,
+  reviewContent?: string | null
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -1015,21 +1016,25 @@ export const createRatings = async (
 
       // Step 2: Soft-delete and create review snapshots
       // `valid` identifies the latest active review for a user/course.
-      if (review !== undefined) {
+      if (reviewTitle !== undefined || reviewContent !== undefined) {
         const activeReviewFilter = {
           createdBy: context.user._id,
           courseId,
           $or: [{ valid: true }, { valid: { $exists: false } }],
         };
 
-        if (review === null || review.trim() === "") {
+        const normalizedTitle = (reviewTitle ?? "").trim();
+        const normalizedContent = (reviewContent ?? "").trim();
+        const hasReviewPayload =
+          normalizedTitle.length > 0 || normalizedContent.length > 0;
+
+        if (!hasReviewPayload) {
           await ReviewModel.updateMany(
             activeReviewFilter,
             { $set: { valid: false } },
             { session }
           );
         } else {
-          const normalizedReview = review.trim();
           const allReviews = await ReviewModel.find({
             createdBy: context.user._id,
             courseId,
@@ -1038,7 +1043,8 @@ export const createRatings = async (
           const reusableReview =
             allReviews.find(
               (existingReview) =>
-                (existingReview.text ?? "").trim() === normalizedReview
+                (existingReview.reviewTitle ?? "").trim() === normalizedTitle &&
+                (existingReview.reviewContent ?? "").trim() === normalizedContent
             ) ?? null;
 
           if (reusableReview) {
@@ -1056,7 +1062,8 @@ export const createRatings = async (
               {
                 $set: {
                   valid: true,
-                  text: review,
+                  reviewTitle: normalizedTitle,
+                  reviewContent: normalizedContent,
                   classId,
                   subject,
                   courseNumber,
@@ -1079,7 +1086,8 @@ export const createRatings = async (
                 {
                   createdBy: context.user._id,
                   courseId,
-                  text: review,
+                  reviewTitle: normalizedTitle,
+                  reviewContent: normalizedContent,
                   classId,
                   subject,
                   courseNumber,
