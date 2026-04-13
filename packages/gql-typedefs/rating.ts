@@ -65,6 +65,16 @@ export const ratingTypeDef = gql`
     count: Int!
     classes: [UserClass!]!
   }
+  type ClassUserReviews {
+    anonymousUserId: String!
+    classes: [UserClass!]!
+  }
+  type ClassReviews @cacheControl(maxAge: 0) {
+    subject: String!
+    courseNumber: String!
+    count: Int!
+    users: [ClassUserReviews!]!
+  }
   type UserClass {
     "Class Identifiers"
     year: Int!
@@ -99,22 +109,6 @@ export const ratingTypeDef = gql`
     metricName: MetricName!
     value: Int!
     createdAt: String!
-  }
-
-  """
-  Public review payload for a course across terms/classes.
-  """
-  type ClassReview @cacheControl(maxAge: 60) {
-    anonymousUserId: String!
-    subject: String!
-    courseNumber: String!
-    semester: Semester!
-    year: Int!
-    classNumber: String!
-    reviewTitle: String
-    reviewContent: String
-    createdAt: String!
-    updatedAt: String!
   }
 
   """
@@ -203,10 +197,9 @@ export const ratingTypeDef = gql`
     "All raw ratings with anonymized user IDs"
     allRatings: [RawRating!]!
 
-    "Raw ratings scoped to a specific course with anonymized user IDs"
-    classRatings(subject: String!, courseNumber: String!): [RawRating!]!
+    "Reviews scoped to a specific course grouped by anonymous user"
+    classReviews(subject: String!, courseNumber: String!): ClassReviews!
 
-    classReviews(subject: String!, courseNumber: String!): [ClassReview!]!
   }
 
   """

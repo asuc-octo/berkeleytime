@@ -189,23 +189,6 @@ export const GET_CLASS_RATINGS_DATA = gql`
   }
 `;
 
-export const GET_CLASS_REVIEWS = gql`
-  query GetClassReviews($subject: String!, $courseNumber: String!) {
-    classReviews(subject: $subject, courseNumber: $courseNumber) {
-      anonymousUserId
-      subject
-      courseNumber
-      semester
-      year
-      classNumber
-      reviewTitle
-      reviewContent
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
 export const GET_ALL_RATINGS = gql`
   query GetAllRatings {
     allRatings {
@@ -222,18 +205,29 @@ export const GET_ALL_RATINGS = gql`
   }
 `;
 
-export const GET_CLASS_RATINGS = gql`
-  query GetClassRatings($subject: String!, $courseNumber: String!) {
-    classRatings(subject: $subject, courseNumber: $courseNumber) {
-      anonymousUserId
+export const GET_CLASS_REVIEWS = gql`
+  query GetClassReviews($subject: String!, $courseNumber: String!) {
+    classReviews(subject: $subject, courseNumber: $courseNumber) {
       subject
       courseNumber
-      semester
-      year
-      classNumber
-      metricName
-      value
-      createdAt
+      count
+      users {
+        anonymousUserId
+        classes {
+          subject
+          courseNumber
+          semester
+          year
+          classNumber
+          metrics {
+            metricName
+            value
+          }
+          reviewTitle
+          reviewContent
+          lastUpdated
+        }
+      }
     }
   }
 `;

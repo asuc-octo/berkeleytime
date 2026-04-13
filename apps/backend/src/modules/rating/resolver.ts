@@ -6,7 +6,6 @@ import {
   getAllRatings,
   getClassAggregatedRatings,
   getClassRatings,
-  getClassReviews,
   getSemestersWithRatings,
   getUserClassRatings,
   getUserRatings,
@@ -140,8 +139,7 @@ const resolvers: RatingModule.Resolvers = {
       }
     },
 
-
-    classRatings: async (
+    classReviews: async (
       _: unknown,
       { subject, courseNumber }: { subject: string; courseNumber: string }
     ) => {
@@ -162,32 +160,6 @@ const resolvers: RatingModule.Resolvers = {
       }
     },
 
-    classReviews: async (
-      _: unknown,
-      {
-        subject,
-        courseNumber,
-      }: {
-        subject: string;
-        courseNumber: string;
-      }
-    ) => {
-      try {
-        return await getClassReviews(subject, courseNumber);
-      } catch (error: unknown) {
-        if (error instanceof GraphQLError) {
-          throw error;
-        }
-        throw new GraphQLError(
-          typeof error === "object" && error !== null && "message" in error
-            ? String(error.message)
-            : "An unexpected error occurred",
-          {
-            extensions: { code: "INTERNAL_SERVER_ERROR" },
-          }
-        );
-      }
-    },
   },
   Mutation: {
     createRatings: async (

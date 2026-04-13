@@ -157,40 +157,10 @@
 
 /* Smaller height for review title field */
 .reviewTitleTextarea {
-  /* Override `reviewTextarea` to look like a single-box title row */
-  border: none;
-  border-radius: 0;
-  border-bottom: 1px solid var(--border-color);
   overflow: hidden;
   resize: none;
   min-height: 44px;
   max-height: 96px;
-
-  &:focus {
-    border-color: var(--border-color);
-  }
-}
-
-/* Single-box wrapper for title + content */
-.reviewBox {
-  width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  overflow: hidden;
-  box-sizing: border-box;
-
-  &:focus-within {
-    border-color: var(--blue-500);
-  }
-}
-
-.reviewBoxContent {
-  border: none;
-  border-radius: 0;
-
-  &:focus {
-    border-color: var(--border-color);
-  }
 }
 
 .reviewDisclaimer.reviewDisclaimer {

@@ -34,7 +34,6 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
         value: userMetric.value,
       })),
 
-      // Added in SDL; available after codegen refresh.
       reviewTitle: (userClass as UserClass & { reviewTitle?: string | null })
         .reviewTitle,
       reviewContent: (userClass as UserClass & { reviewContent?: string | null })

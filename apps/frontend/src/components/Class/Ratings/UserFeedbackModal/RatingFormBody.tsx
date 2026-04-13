@@ -5,7 +5,12 @@ import { Flex, Select } from "@repo/theme";
 import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "../metricsUtil";
-import { AttendanceForm, RatingsForm, ReviewForm } from "./FeedbackForm";
+import {
+  AttendanceForm,
+  RatingsForm,
+  ReviewContentForm,
+  ReviewTitleForm,
+} from "./FeedbackForm";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
 
@@ -57,6 +62,11 @@ export function RatingFormBody({
     <Flex direction="column">
       <div className={styles.mainSection}>
         <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
+          <ReviewContentForm
+            reviewContent={reviewContent}
+            setReviewContent={setReviewContent}
+            showRequiredAsterisk={reviewTitle.trim().length > 0}
+          />
           <div className={styles.formGroup}>
             <div className={styles.questionPair}>
               <h3>
@@ -89,11 +99,10 @@ export function RatingFormBody({
             setMetricData={setMetricData}
             startQuestionNumber={questionNumbers.ratingsStartNumber}
           />
-          <ReviewForm
+          <ReviewTitleForm
             reviewTitle={reviewTitle}
             setReviewTitle={setReviewTitle}
-            reviewContent={reviewContent}
-            setReviewContent={setReviewContent}
+            showRequiredAsterisk={reviewContent.trim().length > 0}
           />
         </Flex>
       </div>

@@ -1312,55 +1312,92 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
 
     return true;
   });
-
-  return visibleRatings.map((rating) => ({
-    anonymousUserId: anonymizeUserId(rating.createdBy),
-    subject: rating.subject,
-    courseNumber: rating.courseNumber,
-    semester: rating.semester as Semester,
-    year: rating.year,
-    classNumber: rating.classNumber,
-    metricName: rating.metricName as MetricName,
-    value: rating.value,
-    createdAt:
-      "createdAt" in rating && rating.createdAt instanceof Date
-        ? rating.createdAt.toISOString()
-        : new Date().toISOString(),
-  }));
-};
-
-export const getClassReviews = async (
-  subject: string,
-  courseNumber: string
-) => {
-  const reviews = await ReviewModel.find({
+  const activeReviews = await ReviewModel.find({
     subject,
     courseNumber,
-    valid: true,
-    $or: [
-      { reviewTitle: { $exists: true, $ne: "" } },
-      { reviewContent: { $exists: true, $ne: "" } },
-    ],
+    $or: [{ valid: true }, { valid: { $exists: false } }],
   })
     .sort({ updatedAt: -1 })
     .lean();
 
-  return reviews.map((review) => ({
-    anonymousUserId: anonymizeUserId(review.createdBy),
-    subject: review.subject,
-    courseNumber: review.courseNumber,
-    semester: review.semester as Semester,
-    year: review.year,
-    classNumber: review.classNumber,
-    reviewTitle: review.reviewTitle ?? null,
-    reviewContent: review.reviewContent ?? null,
-    createdAt:
-      "createdAt" in review && review.createdAt instanceof Date
-        ? review.createdAt.toISOString()
-        : new Date(0).toISOString(),
-    updatedAt:
-      "updatedAt" in review && review.updatedAt instanceof Date
-        ? review.updatedAt.toISOString()
-        : new Date(0).toISOString(),
+  const reviewByUser = new Map<
+    string,
+    { reviewTitle?: string | null; reviewContent?: string | null }
+  >();
+  activeReviews.forEach((review) => {
+    if (reviewByUser.has(review.createdBy)) return;
+    reviewByUser.set(review.createdBy, {
+      reviewTitle: review.reviewTitle ?? null,
+      reviewContent: review.reviewContent ?? null,
+    });
+  });
+
+  type UserClassEntry = {
+    subject: string;
+    courseNumber: string;
+    semester: Semester;
+    year: number;
+    classNumber: string;
+    metrics: { metricName: MetricName; value: number }[];
+    reviewTitle?: string | null;
+    reviewContent?: string | null;
+    lastUpdated: string;
+  };
+
+  const userClassesById = new Map<string, Map<string, UserClassEntry>>();
+  visibleRatings.forEach((rating) => {
+    const userId = rating.createdBy;
+    const classKey = `${rating.semester}|${rating.year}|${rating.classNumber}`;
+    const userClasses = userClassesById.get(userId) ?? new Map();
+    const existingClass = userClasses.get(classKey);
+    const timestamp =
+      "updatedAt" in rating && rating.updatedAt instanceof Date
+        ? rating.updatedAt
+        : "createdAt" in rating && rating.createdAt instanceof Date
+          ? rating.createdAt
+          : new Date(0);
+
+    if (!existingClass) {
+      const review = reviewByUser.get(userId);
+      userClasses.set(classKey, {
+        subject: rating.subject,
+        courseNumber: rating.courseNumber,
+        semester: rating.semester as Semester,
+        year: rating.year,
+        classNumber: rating.classNumber,
+        metrics: [
+          {
+            metricName: rating.metricName as MetricName,
+            value: rating.value,
+          },
+        ],
+        reviewTitle: review?.reviewTitle ?? null,
+        reviewContent: review?.reviewContent ?? null,
+        lastUpdated: timestamp.toISOString(),
+      });
+      userClassesById.set(userId, userClasses);
+      return;
+    }
+
+    existingClass.metrics.push({
+      metricName: rating.metricName as MetricName,
+      value: rating.value,
+    });
+    if (timestamp.toISOString() > existingClass.lastUpdated) {
+      existingClass.lastUpdated = timestamp.toISOString();
+    }
+  });
+
+  const users = Array.from(userClassesById.entries()).map(([userId, classes]) => ({
+    anonymousUserId: anonymizeUserId(userId),
+    classes: Array.from(classes.values()),
   }));
+
+  return {
+    subject,
+    courseNumber,
+    count: users.length,
+    users,
+  };
 };
+

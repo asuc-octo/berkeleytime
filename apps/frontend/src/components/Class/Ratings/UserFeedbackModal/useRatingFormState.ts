@@ -34,10 +34,10 @@ export function useRatingFormState({
     return isClassValid && isTermValid && areRatingsValid;
   }, [selectedCourse, selectedTerm, metricData]);
 
-  // Calculate progress: 6 fields (semester + 3 ratings + 2 attendance)
+  // Calculate progress: 8 fields (semester + 3 ratings + 2 attendance + title + review)
   const progress = useMemo(() => {
     let filledFields = 0;
-    const totalFields = 7;
+    const totalFields = 8;
 
     // Field 1: Semester selection
     if (selectedTerm && selectedTerm.length > 0) filledFields++;
@@ -57,13 +57,11 @@ export function useRatingFormState({
     // Field 6: Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
-    // Field 7: Review (title and/or body)
-    if (
-      reviewTitle.trim().length > 0 ||
-      reviewContent.trim().length > 0
-    ) {
-      filledFields++;
-    }
+    // Field 7: Review title
+    if (reviewTitle.trim().length > 0) filledFields++;
+
+    // Field 8: Review content
+    if (reviewContent.trim().length > 0) filledFields++;
 
     return (filledFields / totalFields) * 100;
   }, [selectedTerm, metricData, reviewTitle, reviewContent]);

@@ -20,6 +20,7 @@ import { useGetClassRatingsData } from "@/hooks/api/ratings/useGetRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
 import { IAggregatedRatings, IMetric } from "@/lib/api";
+import { GET_CLASS_REVIEWS } from "@/lib/api/ratings";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
@@ -111,6 +112,13 @@ export function RatingsContainer() {
       fetchPolicy: "cache-and-network",
     }
   );
+  const { data: classRatingsDebugData } = useQuery(GET_CLASS_REVIEWS, {
+    variables: {
+      subject: currentClass.subject,
+      courseNumber: currentClass.courseNumber,
+    },
+    fetchPolicy: "cache-and-network",
+  });
   const userRatingsData = userRatingsQueryData?.userRatings;
   const userRatings = useMemo(() => {
     if (!userRatingsData?.classes) return null;
@@ -640,6 +648,11 @@ export function RatingsContainer() {
           </Container>
         </div>
       )}
+
+      <div>
+        <h3>ClassReviews raw response</h3>
+        <pre>{JSON.stringify(classRatingsDebugData, null, 2)}</pre>
+      </div>
 
       <UserFeedbackModal
         isOpen={isModalOpen}

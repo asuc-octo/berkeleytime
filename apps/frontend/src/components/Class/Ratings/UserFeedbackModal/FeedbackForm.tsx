@@ -135,41 +135,61 @@ export function RatingsForm({
   );
 }
 
-interface ReviewFormProps {
+interface ReviewTitleFormProps {
   reviewTitle: string;
   setReviewTitle: (value: string) => void;
-  reviewContent: string;
-  setReviewContent: (value: string) => void;
+  showRequiredAsterisk?: boolean;
 }
 
-export function ReviewForm({
+interface ReviewContentFormProps {
+  reviewContent: string;
+  setReviewContent: (value: string) => void;
+  showRequiredAsterisk?: boolean;
+}
+
+export function ReviewTitleForm({
   reviewTitle,
   setReviewTitle,
-  reviewContent,
-  setReviewContent,
-}: ReviewFormProps) {
+  showRequiredAsterisk = false,
+}: ReviewTitleFormProps) {
   return (
     <div className={styles.formGroup}>
       <div className={styles.questionPair}>
-        <h3>Write a Review</h3>
-        <div className={styles.reviewBox} role="group" aria-label="Review">
-          <textarea
-            className={`${styles.reviewTextarea} ${styles.reviewTitleTextarea}`}
-            value={reviewTitle}
-            onChange={(e) => setReviewTitle(e.target.value)}
-            placeholder="Title"
-            rows={1}
-            aria-label="Review title"
-          />
-          <textarea
-            className={`${styles.reviewTextarea} ${styles.reviewBoxContent}`}
-            value={reviewContent}
-            onChange={(e) => setReviewContent(e.target.value)}
-            placeholder="Share details of your experience in the course"
-            rows={4}
-            aria-label="Review details"
-          />
-        </div>
+        <h3>
+          Title your review {showRequiredAsterisk && <RequiredAsterisk />}
+        </h3>
+        <textarea
+          className={`${styles.reviewTextarea} ${styles.reviewTitleTextarea}`}
+          value={reviewTitle}
+          onChange={(e) => setReviewTitle(e.target.value)}
+          placeholder="Title"
+          rows={1}
+          aria-label="Review title"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function ReviewContentForm({
+  reviewContent,
+  setReviewContent,
+  showRequiredAsterisk = false,
+}: ReviewContentFormProps) {
+  return (
+    <div className={styles.formGroup}>
+      <div className={styles.questionPair}>
+        <h3>
+          Write a Review {showRequiredAsterisk && <RequiredAsterisk />}
+        </h3>
+        <textarea
+          className={styles.reviewTextarea}
+          value={reviewContent}
+          onChange={(e) => setReviewContent(e.target.value)}
+          placeholder="Share details of your experience in the course"
+          rows={4}
+          aria-label="Review details"
+        />
         <p className={styles.reviewDisclaimer}>
           Your rating could be removed if you use profanity or derogatory terms.
         </p>
