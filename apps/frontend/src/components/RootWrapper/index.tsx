@@ -49,7 +49,7 @@ export default function RootWrapper() {
       trackClick("redirect", matchingRedirect.id, { fromPath: currentPath });
       window.location.href = matchingRedirect.toPath;
     }
-  }, [location.pathname, redirects, loading, incrementClick]);
+  }, [location.pathname, redirects, loading, incrementClick, trackClick]);
 
   return (
     <>

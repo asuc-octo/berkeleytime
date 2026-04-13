@@ -23,32 +23,6 @@ export const trackingTypeDef = gql`
   }
 
   """
-  A single persisted tracking event.
-  """
-  type TrackingEvent @cacheControl(maxAge: 0) {
-    id: ID!
-    eventType: String!
-    targetType: String!
-    targetId: String
-    metadata: JSON
-    sessionId: String!
-    userId: String
-    timestamp: String!
-    ipHash: String!
-    userAgent: String
-    referrer: String
-  }
-
-  """
-  Paginated response for tracking events.
-  """
-  type TrackingEventConnection {
-    events: [TrackingEvent!]!
-    totalCount: Int!
-    hasMore: Boolean!
-  }
-
-  """
   A single point in a tracking events time series (e.g. one day).
   """
   type TrackingEventTimeSeriesPoint {
@@ -65,19 +39,6 @@ export const trackingTypeDef = gql`
   }
 
   type Query {
-    """
-    Query tracking events with optional filters. Staff only.
-    """
-    trackingEvents(
-      eventType: String
-      targetType: String
-      targetId: String
-      startDate: String
-      endDate: String
-      limit: Int
-      offset: Int
-    ): TrackingEventConnection! @auth
-
     """
     Get event counts per day for a given filter. Staff only.
     """

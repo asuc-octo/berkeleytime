@@ -85,7 +85,7 @@ export default function Banner() {
     trackedViewsRef.current.add(activeBanner.id);
     trackView(activeBanner.id);
     trackUnifiedView("banner", activeBanner.id);
-  }, [activeBanner, trackView]);
+  }, [activeBanner, trackView, trackUnifiedView]);
 
   const handleDismiss = () => {
     if (!activeBanner) return;
