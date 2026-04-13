@@ -61,44 +61,54 @@ export const bufferTrackingEvents = async (
   );
 };
 
+const FLUSH_CHUNK_SIZE = 500;
+
 export const flushTrackingEvents = async (
   redis: RedisClientType
 ): Promise<{ flushed: number; errors: number }> => {
-  const events = await redis.lRange(REDIS_BUFFER_KEY, 0, -1);
-
-  if (events.length === 0) {
-    return { flushed: 0, errors: 0 };
-  }
-
   let flushed = 0;
   let errors = 0;
 
-  try {
-    const documents = events.map((eventJson) => {
-      const event = JSON.parse(eventJson) as BufferedTrackingEvent;
-      return {
-        eventType: event.eventType,
-        targetType: event.targetType,
-        targetId: event.targetId,
-        metadata: event.metadata,
-        sessionId: event.sessionId,
-        userId: event.userId,
-        timestamp: new Date(event.timestamp),
-        ipHash: event.ipHash,
-        userAgent: event.userAgent,
-        referrer: event.referrer,
-      };
-    });
+  while (true) {
+    const raw = await redis.lRange(REDIS_BUFFER_KEY, 0, FLUSH_CHUNK_SIZE - 1);
+    if (raw.length === 0) break;
 
-    await TrackingEventModel.insertMany(documents, { ordered: false });
+    // Parse individually — one malformed entry discarded, not blocking entire chunk
+    const documents: object[] = [];
+    for (const json of raw) {
+      try {
+        const event = JSON.parse(json) as BufferedTrackingEvent;
+        documents.push({
+          eventType: event.eventType,
+          targetType: event.targetType,
+          targetId: event.targetId,
+          metadata: event.metadata,
+          sessionId: event.sessionId,
+          userId: event.userId,
+          timestamp: new Date(event.timestamp),
+          ipHash: event.ipHash,
+          userAgent: event.userAgent,
+          referrer: event.referrer,
+        });
+      } catch {
+        console.warn("[TrackingEvents Flush] Discarding malformed event");
+        errors++;
+      }
+    }
 
-    // Remove only the processed events, preserving any new events added after lRange
-    await redis.lTrim(REDIS_BUFFER_KEY, events.length, -1);
+    if (documents.length > 0) {
+      try {
+        await TrackingEventModel.insertMany(documents, { ordered: false });
+        flushed += documents.length;
+      } catch (error) {
+        console.error("[TrackingEvents Flush] insertMany error:", error);
+        errors++;
+      }
+    }
 
-    flushed = documents.length;
-  } catch (error) {
-    console.error("[TrackingEvents Flush] Error:", error);
-    errors++;
+    await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
+
+    if (raw.length < FLUSH_CHUNK_SIZE) break;
   }
 
   return { flushed, errors };
