@@ -25,7 +25,7 @@ async function migrate() {
 
   let migrated = 0;
   let skipped = 0;
-  let cursor = ClickEventModel.find().lean().cursor();
+  const cursor = ClickEventModel.find().lean().cursor();
 
   const batch: object[] = [];
 
