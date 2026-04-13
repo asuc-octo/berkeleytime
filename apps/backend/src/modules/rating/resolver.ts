@@ -177,9 +177,11 @@ const resolvers: RatingModule.Resolvers = {
           metrics,
           reviewTitle,
           reviewContent,
+          reviewerGrade,
         } = args as typeof args & {
           reviewTitle?: string | null;
           reviewContent?: string | null;
+          reviewerGrade?: string | null;
         };
 
         return await createRatings(
@@ -191,7 +193,8 @@ const resolvers: RatingModule.Resolvers = {
           classNumber,
           metrics,
           reviewTitle,
-          reviewContent
+          reviewContent,
+          reviewerGrade
         );
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is

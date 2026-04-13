@@ -67,6 +67,7 @@ export const CREATE_RATINGS = gql`
     $metrics: [RatingMetricInput!]!
     $reviewTitle: String
     $reviewContent: String
+    $reviewerGrade: String
   ) {
     createRatings(
       subject: $subject
@@ -77,6 +78,7 @@ export const CREATE_RATINGS = gql`
       metrics: $metrics
       reviewTitle: $reviewTitle
       reviewContent: $reviewContent
+      reviewerGrade: $reviewerGrade
     )
   }
 `;
@@ -102,6 +104,7 @@ export const GET_USER_RATINGS = gql`
         }
         reviewTitle
         reviewContent
+        reviewerGrade
         lastUpdated
       }
     }
@@ -225,6 +228,7 @@ export const GET_CLASS_REVIEWS = gql`
           }
           reviewTitle
           reviewContent
+          reviewerGrade
           lastUpdated
         }
       }

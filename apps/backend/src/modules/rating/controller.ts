@@ -499,13 +499,19 @@ export const getUserRatings = async (context: RequestContext) => {
     createdBy: context.user._id,
     $or: [{ valid: true }, { valid: { $exists: false } }],
   })
-    .select("subject courseNumber reviewTitle reviewContent updatedAt")
+    .select(
+      "subject courseNumber reviewTitle reviewContent reviewerGrade updatedAt"
+    )
     .sort({ updatedAt: -1 })
     .lean();
 
   const reviewByCourse = new Map<
     string,
-    { reviewTitle?: string | null; reviewContent?: string | null }
+    {
+      reviewTitle?: string | null;
+      reviewContent?: string | null;
+      reviewerGrade?: string | null;
+    }
   >();
   activeReviews.forEach((review) => {
     const key = `${review.subject}|${review.courseNumber}`;
@@ -513,6 +519,8 @@ export const getUserRatings = async (context: RequestContext) => {
       reviewByCourse.set(key, {
         reviewTitle: review.reviewTitle ?? null,
         reviewContent: review.reviewContent ?? null,
+        reviewerGrade:
+          (review.reviewerGrade as string | null) ?? "n/a",
       });
     }
   });
@@ -527,6 +535,7 @@ export const getUserRatings = async (context: RequestContext) => {
         ...ratedClass,
         reviewTitle: review?.reviewTitle ?? null,
         reviewContent: review?.reviewContent ?? null,
+        reviewerGrade: review?.reviewerGrade ?? "n/a",
       };
     }),
   };
@@ -972,7 +981,8 @@ export const createRatings = async (
   classNumber: string,
   metrics: MetricInput[],
   reviewTitle?: string | null,
-  reviewContent?: string | null
+  reviewContent?: string | null,
+  reviewerGrade?: string | null
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -1051,7 +1061,11 @@ export const createRatings = async (
 
       // Step 2: Soft-delete and create review snapshots
       // `valid` identifies the latest active review for a user/course.
-      if (reviewTitle !== undefined || reviewContent !== undefined) {
+      if (
+        reviewTitle !== undefined ||
+        reviewContent !== undefined ||
+        reviewerGrade !== undefined
+      ) {
         const activeReviewFilter = {
           createdBy: context.user._id,
           courseId,
@@ -1060,6 +1074,7 @@ export const createRatings = async (
 
         const normalizedTitle = (reviewTitle ?? "").trim();
         const normalizedContent = (reviewContent ?? "").trim();
+        const normalizedReviewerGrade = (reviewerGrade ?? "n/a").trim() || "n/a";
         const hasReviewPayload =
           normalizedTitle.length > 0 || normalizedContent.length > 0;
 
@@ -1079,7 +1094,10 @@ export const createRatings = async (
             allReviews.find(
               (existingReview) =>
                 (existingReview.reviewTitle ?? "").trim() === normalizedTitle &&
-                (existingReview.reviewContent ?? "").trim() === normalizedContent
+                (existingReview.reviewContent ?? "").trim() ===
+                  normalizedContent &&
+                (existingReview.reviewerGrade ?? "n/a") ===
+                  normalizedReviewerGrade
             ) ?? null;
 
           if (reusableReview) {
@@ -1099,6 +1117,7 @@ export const createRatings = async (
                   valid: true,
                   reviewTitle: normalizedTitle,
                   reviewContent: normalizedContent,
+                  reviewerGrade: normalizedReviewerGrade,
                   classId,
                   subject,
                   courseNumber,
@@ -1123,6 +1142,7 @@ export const createRatings = async (
                   courseId,
                   reviewTitle: normalizedTitle,
                   reviewContent: normalizedContent,
+                  reviewerGrade: normalizedReviewerGrade,
                   classId,
                   subject,
                   courseNumber,
@@ -1322,13 +1342,19 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
 
   const reviewByUser = new Map<
     string,
-    { reviewTitle?: string | null; reviewContent?: string | null }
+    {
+      reviewTitle?: string | null;
+      reviewContent?: string | null;
+      reviewerGrade?: string | null;
+    }
   >();
   activeReviews.forEach((review) => {
     if (reviewByUser.has(review.createdBy)) return;
     reviewByUser.set(review.createdBy, {
       reviewTitle: review.reviewTitle ?? null,
       reviewContent: review.reviewContent ?? null,
+      reviewerGrade:
+        (review.reviewerGrade as string | null) ?? "n/a",
     });
   });
 
@@ -1341,6 +1367,7 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
     metrics: { metricName: MetricName; value: number }[];
     reviewTitle?: string | null;
     reviewContent?: string | null;
+    reviewerGrade?: string | null;
     lastUpdated: string;
   };
 
@@ -1373,6 +1400,7 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
         ],
         reviewTitle: review?.reviewTitle ?? null,
         reviewContent: review?.reviewContent ?? null,
+        reviewerGrade: review?.reviewerGrade ?? "n/a",
         lastUpdated: timestamp.toISOString(),
       });
       userClassesById.set(userId, userClasses);

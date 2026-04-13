@@ -46,6 +46,11 @@ const reviewSchema = new Schema(
       type: String,
       required: false,
     },
+    reviewerGrade: {
+      type: String,
+      required: false,
+      default: "n/a",
+    },
     valid: {
       type: Boolean,
       required: true,

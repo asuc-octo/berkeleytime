@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
+import { REVIEWER_GRADE_OPTIONS } from "@repo/shared";
 import { Flex, Select } from "@repo/theme";
 
 import { Semester } from "@/lib/generated/graphql";
@@ -42,6 +43,8 @@ interface RatingFormBodyProps {
   setReviewTitle: (value: string) => void;
   reviewContent: string;
   setReviewContent: (value: string) => void;
+  reviewerGrade: string | null;
+  onReviewerGradeChange: (grade: string | null) => void;
 }
 
 export function RatingFormBody({
@@ -57,6 +60,8 @@ export function RatingFormBody({
   setReviewTitle,
   reviewContent,
   setReviewContent,
+  reviewerGrade,
+  onReviewerGradeChange,
 }: RatingFormBodyProps) {
   return (
     <Flex direction="column">
@@ -87,6 +92,30 @@ export function RatingFormBody({
                   }}
                   placeholder="Select semester"
                   emptyMessage="No semesters found."
+                  clearable={true}
+                  searchable={true}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.formGroup}>
+            <div className={styles.questionPair}>
+              <h3>What grade did you receive in this course?</h3>
+              <div style={{ width: "100%" }}>
+                <Select
+                  options={REVIEWER_GRADE_OPTIONS.map((grade) => ({
+                    value: grade,
+                    label: grade,
+                  }))}
+                  disabled={!selectedCourse}
+                  value={reviewerGrade}
+                  onChange={(selectedOption) => {
+                    if (Array.isArray(selectedOption)) onReviewerGradeChange(null);
+                    else onReviewerGradeChange(selectedOption || null);
+                  }}
+                  placeholder="Select grade"
+                  emptyMessage="No grades found."
                   clearable={true}
                   searchable={true}
                 />

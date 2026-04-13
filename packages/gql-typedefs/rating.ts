@@ -86,6 +86,7 @@ export const ratingTypeDef = gql`
     metrics: [UserMetric!]!
     reviewTitle: String
     reviewContent: String
+    reviewerGrade: String
     lastUpdated: String
   }
   type UserMetric {
@@ -217,6 +218,7 @@ export const ratingTypeDef = gql`
       metrics: [RatingMetricInput!]!
       reviewTitle: String
       reviewContent: String
+      reviewerGrade: String = "n/a"
     ): Boolean! @auth
 
     deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth

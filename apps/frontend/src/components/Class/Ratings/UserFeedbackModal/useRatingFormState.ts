@@ -23,6 +23,7 @@ export function useRatingFormState({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reviewTitle, setReviewTitle] = useState<string>("");
   const [reviewContent, setReviewContent] = useState<string>("");
+  const [reviewerGrade, setReviewerGrade] = useState<string | null>(null);
 
   const isFormValid = useMemo(() => {
     const isClassValid = selectedCourse !== null;
@@ -76,6 +77,7 @@ export function useRatingFormState({
     setIsSubmitting(false);
     setReviewTitle("");
     setReviewContent("");
+    setReviewerGrade(null);
   };
 
   return {
@@ -94,5 +96,7 @@ export function useRatingFormState({
     setReviewTitle,
     reviewContent,
     setReviewContent,
+    reviewerGrade,
+    setReviewerGrade,
   };
 }

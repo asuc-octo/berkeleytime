@@ -26,6 +26,20 @@ interface Term {
   classNumber?: string;
 }
 
+function normalizeStoredReviewerGrade(
+  grade: string | null | undefined
+): string | null {
+  if (!grade || grade.toLowerCase() === "n/a") return null;
+  return grade;
+}
+
+function reviewerGradeFromUserClass(
+  userClass: IUserRatingClass | null | undefined
+): string | null | undefined {
+  return (userClass as { reviewerGrade?: string | null } | undefined)
+    ?.reviewerGrade;
+}
+
 interface UserFeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -40,7 +54,8 @@ interface UserFeedbackModalProps {
     termInfo: { semester: Semester; year: number },
     courseInfo: { subject: string; courseNumber: string; classNumber: string },
     reviewTitle?: string,
-    reviewContent?: string
+    reviewContent?: string,
+    reviewerGrade?: string
   ) => Promise<void>;
   initialUserClass?: IUserRatingClass | null;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
@@ -135,6 +150,8 @@ export function UserFeedbackModal({
     setReviewTitle,
     reviewContent,
     setReviewContent,
+    reviewerGrade,
+    setReviewerGrade,
   } = formState;
 
   const overallProgress = useMemo(
@@ -212,6 +229,16 @@ export function UserFeedbackModal({
       // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
+    if (initialUserClass) {
+      setReviewTitle(initialUserClass.reviewTitle ?? "");
+      setReviewContent(initialUserClass.reviewContent ?? "");
+    } else {
+      setReviewTitle("");
+      setReviewContent("");
+    }
+    setReviewerGrade(
+      normalizeStoredReviewerGrade(reviewerGradeFromUserClass(initialUserClass))
+    );
     setSelectedCourse(initialSelectedCourse);
     setCurrentRatingIndex(0);
   }, [
@@ -223,6 +250,9 @@ export function UserFeedbackModal({
     setSelectedTerm,
     setSelectedCourse,
     initialSelectedCourse,
+    setReviewerGrade,
+    setReviewTitle,
+    setReviewContent,
   ]);
 
   const initialCourseKey = initialSelectedCourse
@@ -239,13 +269,23 @@ export function UserFeedbackModal({
     );
     const courseChanged = currentCourseKey !== initialCourseKey;
 
+    const initialTitle = (initialUserClass?.reviewTitle ?? "").trim();
+    const initialContent = (initialUserClass?.reviewContent ?? "").trim();
+    const initialGrade = normalizeStoredReviewerGrade(
+      reviewerGradeFromUserClass(initialUserClass)
+    );
+    const reviewChanged =
+      reviewTitle.trim() !== initialTitle ||
+      reviewContent.trim() !== initialContent ||
+      (reviewerGrade ?? null) !== (initialGrade ?? null);
+
     // Check if all required metrics are filled out
     const allRequiredMetricsFilled = REQUIRED_METRICS.every(
       (metric) => typeof metricData[metric] === "number"
     );
     return (
       allRequiredMetricsFilled &&
-      (termChanged || metricsChanged || courseChanged)
+      (termChanged || metricsChanged || courseChanged || reviewChanged)
     );
   }, [
     selectedTerm,
@@ -254,6 +294,10 @@ export function UserFeedbackModal({
     initialMetricData,
     currentCourseKey,
     initialCourseKey,
+    initialUserClass,
+    reviewTitle,
+    reviewContent,
+    reviewerGrade,
   ]);
 
   const isFormValid = useMemo(() => {
@@ -322,7 +366,8 @@ export function UserFeedbackModal({
           classNumber,
         },
         reviewTitle || undefined,
-        reviewContent || undefined
+        reviewContent || undefined,
+        reviewerGrade ?? undefined
       );
 
       const isLastRating = currentRatingIndex >= totalRatings - 1;
@@ -463,6 +508,8 @@ export function UserFeedbackModal({
               setReviewTitle={setReviewTitle}
               reviewContent={reviewContent}
               setReviewContent={setReviewContent}
+              reviewerGrade={reviewerGrade}
+              onReviewerGradeChange={setReviewerGrade}
             />
           </motion.div>
         </AnimatePresence>

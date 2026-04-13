@@ -671,7 +671,8 @@ export function RatingsContainer() {
           termInfo,
           courseInfo,
           reviewTitle,
-          reviewContent
+          reviewContent,
+          reviewerGrade
         ) => {
           await submitRatingMutation({
             metricValues,
@@ -685,6 +686,7 @@ export function RatingsContainer() {
             refetchQueries: [],
             reviewTitle,
             reviewContent,
+            reviewerGrade,
           });
           await Promise.all([
             refetchAllRatings(),

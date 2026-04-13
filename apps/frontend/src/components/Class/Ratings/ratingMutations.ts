@@ -37,6 +37,7 @@ interface SubmitRatingOptions {
   refetchQueries?: RefetchQuery[];
   reviewTitle?: string;
   reviewContent?: string;
+  reviewerGrade?: string;
 }
 
 export async function submitRating({
@@ -47,6 +48,7 @@ export async function submitRating({
   refetchQueries = [],
   reviewTitle,
   reviewContent,
+  reviewerGrade,
 }: SubmitRatingOptions) {
   // Validate required metrics are present
   const missingRequiredMetrics = REQUIRED_METRICS.filter(
@@ -81,7 +83,8 @@ export async function submitRating({
       metrics,
       reviewTitle,
       reviewContent,
-    },
+      reviewerGrade,
+    } as CreateRatingsMutationVariables,
     refetchQueries,
     awaitRefetchQueries: true,
   });

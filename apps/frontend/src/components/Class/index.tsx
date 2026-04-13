@@ -423,7 +423,10 @@ export default function Class({
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      classInfo: { subject: string; courseNumber: string; classNumber: string }
+      classInfo: { subject: string; courseNumber: string; classNumber: string },
+      _reviewTitle?: string,
+      _reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       const populatedMetrics = METRIC_NAMES.filter(
         (metric) => typeof metricValues[metric] === "number"
@@ -455,7 +458,8 @@ export default function Class({
           year: termInfo.year,
           classNumber: classInfo.classNumber,
           metrics,
-        },
+          reviewerGrade,
+        } as Parameters<typeof createUnlockRatings>[0]["variables"],
         refetchQueries: [{ query: GetUserRatingsDocument }],
         awaitRefetchQueries: true,
       });

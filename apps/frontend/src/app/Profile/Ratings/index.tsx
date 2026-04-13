@@ -200,7 +200,8 @@ export default function Ratings() {
         classNumber: string;
       },
       reviewTitle?: string,
-      reviewContent?: string
+      reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       if (!ratingForEdit) return;
 
@@ -225,6 +226,7 @@ export default function Ratings() {
         refetchQueries: buildRefetchQueries(refetchTarget),
         reviewTitle,
         reviewContent,
+        reviewerGrade,
       });
     },
     [ratingForEdit, createRatingsMutation, buildRefetchQueries]
@@ -240,7 +242,8 @@ export default function Ratings() {
         classNumber: string;
       },
       reviewTitle?: string,
-      reviewContent?: string
+      reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       const refetchTarget = {
         subject: courseInfo.subject,
@@ -262,6 +265,7 @@ export default function Ratings() {
         refetchQueries: buildRefetchQueries(refetchTarget),
         reviewTitle,
         reviewContent,
+        reviewerGrade,
       });
     },
     [createRatingsMutation, buildRefetchQueries]
@@ -357,14 +361,16 @@ export default function Ratings() {
             termInfo,
             courseInfo,
             reviewTitle,
-            reviewContent
+            reviewContent,
+            reviewerGrade
           ) => {
             await handleSubmitEdit(
               metricValues,
               termInfo,
               courseInfo,
               reviewTitle,
-              reviewContent
+              reviewContent,
+              reviewerGrade
             );
           }}
           initialUserClass={ratingForEdit}

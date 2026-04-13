@@ -29,11 +29,21 @@ export default function UserRatingSummary({
       const indexB = METRIC_ORDER.indexOf(MetricName[b.metricName]);
       return indexA - indexB;
     });
+
+  const rawGrade = (
+    userRatings as IUserRatingClass & { reviewerGrade?: string | null }
+  ).reviewerGrade;
+  const displayGrade =
+    rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : null;
+
   return (
     <div className={styles.root}>
       <div className={styles.title}>
         <div>
-          <h3>Your Rating</h3>
+          <h3>
+            Your Rating
+            <span className={styles.headingGrade}>{displayGrade}</span>
+          </h3>
           {userRatings.lastUpdated && (
             <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
           )}
