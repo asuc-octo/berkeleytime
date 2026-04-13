@@ -1256,3 +1256,76 @@ export const getAllRatings = async () => {
         : new Date().toISOString(),
   }));
 };
+
+export const getClassRatings = async (subject: string, courseNumber: string) => {
+  const ratings = await RatingModel.find({ subject, courseNumber }).lean();
+  const shadowBannedCourseIds = await getShadowBannedCourseIds();
+  const crossListedShadowBanEnabled = isShadowBanCrossListedEnabled();
+
+  const visibleRatings = ratings.filter((rating) => {
+    if (isSubjectShadowBanned(rating.subject)) {
+      return false;
+    }
+
+    if (
+      crossListedShadowBanEnabled &&
+      typeof rating.courseId === "string" &&
+      shadowBannedCourseIds.has(rating.courseId)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return visibleRatings.map((rating) => ({
+    anonymousUserId: anonymizeUserId(rating.createdBy),
+    subject: rating.subject,
+    courseNumber: rating.courseNumber,
+    semester: rating.semester as Semester,
+    year: rating.year,
+    classNumber: rating.classNumber,
+    metricName: rating.metricName as MetricName,
+    value: rating.value,
+    createdAt:
+      "createdAt" in rating && rating.createdAt instanceof Date
+        ? rating.createdAt.toISOString()
+        : new Date().toISOString(),
+  }));
+};
+
+export const getClassReviews = async (
+  subject: string,
+  courseNumber: string
+) => {
+  const reviews = await ReviewModel.find({
+    subject,
+    courseNumber,
+    valid: true,
+    $or: [
+      { reviewTitle: { $exists: true, $ne: "" } },
+      { reviewContent: { $exists: true, $ne: "" } },
+    ],
+  })
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  return reviews.map((review) => ({
+    anonymousUserId: anonymizeUserId(review.createdBy),
+    subject: review.subject,
+    courseNumber: review.courseNumber,
+    semester: review.semester as Semester,
+    year: review.year,
+    classNumber: review.classNumber,
+    reviewTitle: review.reviewTitle ?? null,
+    reviewContent: review.reviewContent ?? null,
+    createdAt:
+      "createdAt" in review && review.createdAt instanceof Date
+        ? review.createdAt.toISOString()
+        : new Date(0).toISOString(),
+    updatedAt:
+      "updatedAt" in review && review.updatedAt instanceof Date
+        ? review.updatedAt.toISOString()
+        : new Date(0).toISOString(),
+  }));
+};

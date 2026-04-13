@@ -5,6 +5,8 @@ import {
   deleteRatings,
   getAllRatings,
   getClassAggregatedRatings,
+  getClassRatings,
+  getClassReviews,
   getSemestersWithRatings,
   getUserClassRatings,
   getUserRatings,
@@ -123,6 +125,55 @@ const resolvers: RatingModule.Resolvers = {
     allRatings: async () => {
       try {
         return await getAllRatings();
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+
+    // @ts-expect-error Added to SDL; backend codegen needs to be re-run.
+    classRatings: async (
+      _: unknown,
+      { subject, courseNumber }: { subject: string; courseNumber: string }
+    ) => {
+      try {
+        return await getClassRatings(subject, courseNumber);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+
+    classReviews: async (
+      _: unknown,
+      {
+        subject,
+        courseNumber,
+      }: {
+        subject: string;
+        courseNumber: string;
+      }
+    ) => {
+      try {
+        return await getClassReviews(subject, courseNumber);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

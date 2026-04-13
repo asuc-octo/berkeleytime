@@ -100,6 +100,22 @@ export const ratingTypeDef = gql`
   }
 
   """
+  Public review payload for a course across terms/classes.
+  """
+  type ClassReview @cacheControl(maxAge: 60) {
+    anonymousUserId: String!
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
+    classNumber: String!
+    reviewTitle: String
+    reviewContent: String
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  """
   Minimal rating data point for analytics timeseries
   Contains only the data needed to compute growth metrics
   """
@@ -184,6 +200,11 @@ export const ratingTypeDef = gql`
 
     "All raw ratings with anonymized user IDs"
     allRatings: [RawRating!]!
+
+    "Raw ratings scoped to a specific course with anonymized user IDs"
+    classRatings(subject: String!, courseNumber: String!): [RawRating!]!
+
+    classReviews(subject: String!, courseNumber: String!): [ClassReview!]!
   }
 
   """
