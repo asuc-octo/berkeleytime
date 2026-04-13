@@ -12,12 +12,12 @@ import mongoose from "mongoose";
 import { ClickEventModel } from "@repo/common/models";
 import { TrackingEventModel } from "@repo/common/models";
 
-import { config } from "../../../../packages/common/src/utils/config";
-
 const BATCH_SIZE = 500;
 
 async function migrate() {
-  await mongoose.connect(config.mongoDB.uri);
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error("MONGODB_URI env var is required");
+  await mongoose.connect(uri);
   console.log("Connected to MongoDB");
 
   const total = await ClickEventModel.countDocuments();
@@ -54,6 +54,8 @@ async function migrate() {
 
   for await (const doc of cursor) {
     batch.push({
+      // Preserve original _id so re-runs hit the unique index and skip duplicates
+      _id: doc._id,
       // Map old ClickEvent fields → TrackingEvent fields
       eventType: "click",
       targetType: doc.targetType, // "banner" | "redirect" | "targeted-message"
