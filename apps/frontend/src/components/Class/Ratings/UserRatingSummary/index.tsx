@@ -23,36 +23,37 @@ export default function UserRatingSummary({
     userRatings as IUserRatingClass & { reviewerGrade?: string | null }
   ).reviewerGrade;
   const displayGrade =
-    rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : null;
+    rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : "N/A";
 
   return (
     <div className={styles.root}>
-      <div className={styles.title}>
-        <div>
-          {displayGrade ? (
-            <h3>
-              <span className={styles.headingGrade}>{displayGrade}</span>
-            </h3>
-          ) : null}
-          {userRatings.lastUpdated && (
-            <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
-          )}
-          {userRatings.reviewTitle && (
-            <p className={styles.reviewTitle}>{userRatings.reviewTitle}</p>
-          )}
-          <p className={styles.reviewContent}>
-            {userRatings.reviewContent || "No written review yet."}
-          </p>
+      <div className={styles.body}>
+        <div className={styles.bodyLeft}>
+          <div className={styles.titleDate}>
+            <h3>{userRatings.reviewTitle}</h3>
+            {userRatings.lastUpdated && (
+              <h4>{formatDate(new Date(userRatings.lastUpdated))}</h4>
+            )}
+          </div>
+          
+          <h5>{userRatings.reviewContent || "No written review yet."}</h5>
         </div>
       </div>
       <div className={styles.body}>
-        <div>
+      <div className={styles.bodyRight}>
+        <h2 className={styles.ratingGrade}>Rating</h2>
+        <div className={styles.rating}>
           {metricsAverage != null ? (
             <span>{metricsAverage.toFixed(1)}</span>
           ) : (
-            <span>—</span>
+            <span>N/A</span>
           )}
         </div>
+        <h2 className={styles.ratingGrade}>Grade</h2>
+        <div className={styles.grade}>
+          <span>{displayGrade}</span>
+        </div>
+      </div>
       </div>
     </div>
   );

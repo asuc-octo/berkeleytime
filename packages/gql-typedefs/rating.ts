@@ -82,6 +82,7 @@ export const ratingTypeDef = gql`
     subject: String!
     courseNumber: String!
     classNumber: String!
+    professorName: String
 
     metrics: [UserMetric!]!
     reviewTitle: String

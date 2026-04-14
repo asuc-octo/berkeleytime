@@ -222,6 +222,7 @@ export const GET_CLASS_REVIEWS = gql`
           semester
           year
           classNumber
+          professorName
           metrics {
             metricName
             value

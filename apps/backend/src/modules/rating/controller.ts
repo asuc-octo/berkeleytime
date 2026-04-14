@@ -1314,6 +1314,9 @@ export const getAllRatings = async () => {
 
 export const getClassRatings = async (subject: string, courseNumber: string) => {
   const ratings = await RatingModel.find({ subject, courseNumber }).lean();
+  const sections = await SectionModel.find({ subject, courseNumber })
+    .select("semester year classNumber number meetings")
+    .lean();
   const shadowBannedCourseIds = await getShadowBannedCourseIds();
   const crossListedShadowBanEnabled = isShadowBanCrossListedEnabled();
 
@@ -1358,12 +1361,34 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
     });
   });
 
+  const instructorNamesByClassKey = new Map<string, Set<string>>();
+  sections.forEach((section) => {
+    const classNumber = section.classNumber ?? section.number;
+    if (!classNumber) return;
+    const classKey = `${section.semester}|${section.year}|${classNumber}`;
+
+    const names = instructorNamesByClassKey.get(classKey) ?? new Set<string>();
+    section.meetings?.forEach((meeting) => {
+      meeting.instructors?.forEach((instructor) => {
+        if (
+          instructor.role === "PI" &&
+          instructor.givenName &&
+          instructor.familyName
+        ) {
+          names.add(`${instructor.givenName} ${instructor.familyName}`);
+        }
+      });
+    });
+    instructorNamesByClassKey.set(classKey, names);
+  });
+
   type UserClassEntry = {
     subject: string;
     courseNumber: string;
     semester: Semester;
     year: number;
     classNumber: string;
+    professorName?: string | null;
     metrics: { metricName: MetricName; value: number }[];
     reviewTitle?: string | null;
     reviewContent?: string | null;
@@ -1392,6 +1417,9 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
         semester: rating.semester as Semester,
         year: rating.year,
         classNumber: rating.classNumber,
+        professorName:
+          Array.from(instructorNamesByClassKey.get(classKey) ?? []).join(", ") ||
+          null,
         metrics: [
           {
             metricName: rating.metricName as MetricName,

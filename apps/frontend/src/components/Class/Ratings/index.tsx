@@ -43,6 +43,9 @@ import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 import { clampCount } from "@/utils/ratings";
 
 import { RatingButton } from "./RatingButton";
+import ClassRatingSummary, {
+  type ClassUserReview,
+} from "./ClassRatingSummary";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
@@ -80,7 +83,15 @@ type ClassReviewsMetric = { metricName: MetricName; value: number };
 type ClassReviewsQueryData = {
   classReviews?: {
     users?: Array<{
-      classes?: Array<{ metrics?: ClassReviewsMetric[] }>;
+      anonymousUserId?: string;
+      classes?: Array<{
+        professorName?: string | null;
+        reviewTitle?: string | null;
+        reviewContent?: string | null;
+        reviewerGrade?: string | null;
+        lastUpdated?: string | null;
+        metrics?: ClassReviewsMetric[];
+      }>;
     }>;
   };
 };
@@ -509,6 +520,15 @@ export function RatingsContainer() {
     return { count, average };
   }, [classRatingsData]);
 
+  const classReviewsByUser = useMemo<ClassUserReview[]>(() => {
+    const users = classRatingsData?.classReviews?.users ?? [];
+    return users
+      .map((user) => user.classes?.[0] ?? null)
+      .filter((classReview): classReview is ClassUserReview =>
+        Boolean(classReview)
+      );
+  }, [classRatingsData]);
+
   if (
     (loading && !ratingsQueryData) ||
     (activeRatingTab === RATING_TABS.Semester &&
@@ -683,6 +703,27 @@ export function RatingsContainer() {
                 )}
               </div>
 
+              <div className={styles.ratingsSummary}>
+                <div className={styles.ratingsSummaryTop}>
+                  <p className={styles.ratingsSummaryHeader}>Ratings</p>
+                  {userRatings ? (
+                    <div className={styles.ratingsSummaryHeaderRight}>
+                      <p2>Placeholder</p2>
+                    </div>
+                  ) : null}
+                </div>
+                {classReviewsByUser.length > 0 ? (
+                  classReviewsByUser.map((classReview, index) => (
+                    <ClassRatingSummary
+                      key={`${classReview.lastUpdated ?? "review"}-${index}`}
+                      classReview={classReview}
+                    />
+                  ))
+                ) : (
+                  <div></div>
+                )}
+              </div>
+
               <div className={styles.header}>
                 <div
                   style={{
@@ -792,10 +833,6 @@ export function RatingsContainer() {
         <pre>{JSON.stringify(classRatingsData, null, 2)}</pre>
       </div>
 
-      <div>
-        <h3>Ratings data raw response</h3>
-        <pre>{JSON.stringify(ratingsData, null, 2)}</pre>
-      </div>
 
       <UserFeedbackModal
         isOpen={isModalOpen}
