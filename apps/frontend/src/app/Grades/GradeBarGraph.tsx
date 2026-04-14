@@ -57,6 +57,7 @@ const isSameRange = (
 interface GradeBarGraphOutput {
   input: Input;
   color: string;
+  darkColor: string;
   data: IGradeDistribution;
 }
 
@@ -298,12 +299,13 @@ export default function GradeBarGraph({
           hoveredIndex === null ||
           outputs.length <= 1 ||
           hoveredIndex === keyIndex;
-        return isHoveredCourse && inRange
-          ? `var(--color-${key})`
-          : "var(--border-color)";
+
+        if (!inRange) return "var(--border-color)";
+        if (isHoveredCourse) return `var(--color-${key})`;
+        return outputs[keyIndex]?.darkColor ?? "var(--border-color)";
       })
     );
-  }, [chartData, dataKeys, sliderRange, hoveredIndex, outputs.length]);
+  }, [chartData, dataKeys, sliderRange, hoveredIndex, outputs]);
 
   const chartHeightRatio = horizontal
     ? HORIZONTAL_CHART_HEIGHT_RATIO

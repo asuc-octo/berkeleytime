@@ -31,7 +31,7 @@
 }
 
 .colorDropdown {
-  z-index: var(--z-popover);
+  z-index: 9999; /* Must escape Radix Dialog's internal layers; --z-popover (500) is insufficient */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;

@@ -7,6 +7,7 @@ import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
 import ColorSelector from "@/components/ColorSelector";
 import { ILabel } from "@/lib/api";
 
+import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 import styles from "./LabelMenu.module.scss";
 
 type LabelMenuProps = {
@@ -86,6 +87,9 @@ export default function LabelMenu({
     color: Color.Gray,
   });
   const [duplicateError, setDuplicateError] = useState<boolean>(false);
+  const [confirmDeleteLabelIndex, setConfirmDeleteLabelIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setEditingLabels(labels);
@@ -131,80 +135,108 @@ export default function LabelMenu({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      <Dialog.Overlay />
-      <Dialog.Card className={styles.labelDialog}>
-        <Dialog.Header title="Labels" hasCloseButton />
+    <>
+      <Dialog.Root open={open} onOpenChange={handleOpenChange}>
+        <Dialog.Portal>
+          <Dialog.Overlay />
+          <Dialog.Card className={styles.labelDialog}>
+            <Dialog.Header title="Labels" hasCloseButton />
 
-        <Dialog.Body className={styles.body}>
-          <Flex direction="column" width="100%">
-            {editingLabels.map((label, i) => (
-              <LabelRow
-                key={i}
-                onTextChange={(e) => {
-                  const updatedLabels = [...editingLabels];
-                  updatedLabels[i] = {
-                    ...updatedLabels[i],
-                    name: e.target.value,
-                  };
-                  setEditingLabels(updatedLabels);
-                }}
-                onDelete={() => {
-                  const updatedLabels = editingLabels.filter(
-                    (_, index) => index !== i
-                  );
-                  setEditingLabels(updatedLabels);
-                }}
-                label={label}
-                onColorSelect={(color) => handleColorSelect(i, color)}
-                handleAdd={() => {}}
-              />
-            ))}
-            <LabelRow
-              onTextChange={(e) => {
-                const tmp = { ...tmpLabel, name: e.target.value };
-                setTmpLabel(tmp);
-                setDuplicateError(false); // Clear error when typing
-              }}
-              label={tmpLabel}
-              onColorSelect={(color) => {
-                const tmp = { ...tmpLabel, color };
-                setTmpLabel(tmp);
-              }}
-              handleAdd={() => {
-                if (tmpLabel.name.trim()) {
-                  const labelExists = editingLabels.some(
-                    (label) =>
-                      label.name === tmpLabel.name &&
-                      label.color === tmpLabel.color
-                  );
-
-                  if (!labelExists) {
-                    setEditingLabels((prev) => [...prev, tmpLabel]);
-                    setTmpLabel({ name: "", color: Color.Gray });
+            <Dialog.Body className={styles.body}>
+              <Flex direction="column" width="100%">
+                {editingLabels.map((label, i) => (
+                  <LabelRow
+                    key={i}
+                    onTextChange={(e) => {
+                      const updatedLabels = [...editingLabels];
+                      updatedLabels[i] = {
+                        ...updatedLabels[i],
+                        name: e.target.value,
+                      };
+                      setEditingLabels(updatedLabels);
+                    }}
+                    onDelete={() => setConfirmDeleteLabelIndex(i)}
+                    label={label}
+                    onColorSelect={(color) => handleColorSelect(i, color)}
+                    handleAdd={() => {}}
+                  />
+                ))}
+                <LabelRow
+                  onTextChange={(e) => {
+                    const tmp = { ...tmpLabel, name: e.target.value };
+                    setTmpLabel(tmp);
                     setDuplicateError(false);
-                  } else {
-                    setDuplicateError(true);
-                  }
-                }
-              }}
-            />
-            {duplicateError && (
-              <div style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-                A label with that name and color already exists.
-              </div>
-            )}
-          </Flex>
-        </Dialog.Body>
-        <Dialog.Footer justify="end">
-          <Flex direction="row" gap="2">
-            <Button variant="secondary" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>Save</Button>
-          </Flex>
-        </Dialog.Footer>
-      </Dialog.Card>
-    </Dialog.Root>
+                  }}
+                  label={tmpLabel}
+                  onColorSelect={(color) => {
+                    const tmp = { ...tmpLabel, color };
+                    setTmpLabel(tmp);
+                  }}
+                  handleAdd={() => {
+                    if (tmpLabel.name.trim()) {
+                      const labelExists = editingLabels.some(
+                        (label) =>
+                          label.name === tmpLabel.name &&
+                          label.color === tmpLabel.color
+                      );
+
+                      if (!labelExists) {
+                        setEditingLabels((prev) => [...prev, tmpLabel]);
+                        setTmpLabel({ name: "", color: Color.Gray });
+                        setDuplicateError(false);
+                      } else {
+                        setDuplicateError(true);
+                      }
+                    }
+                  }}
+                />
+                {duplicateError && (
+                  <div
+                    style={{ color: "red", fontSize: "12px", marginTop: "4px" }}
+                  >
+                    A label with that name and color already exists.
+                  </div>
+                )}
+              </Flex>
+            </Dialog.Body>
+            <Dialog.Footer justify="end">
+              <Flex direction="row" gap="2">
+                <Button variant="secondary" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSave}>Save</Button>
+              </Flex>
+            </Dialog.Footer>
+          </Dialog.Card>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      <DeleteScheduleDialog
+        isOpen={confirmDeleteLabelIndex !== null}
+        onClose={() => setConfirmDeleteLabelIndex(null)}
+        title="Delete Label"
+        message={
+          <>
+            Are you sure you want to delete the label{" "}
+            <strong>
+              {confirmDeleteLabelIndex !== null
+                ? editingLabels[confirmDeleteLabelIndex]?.name
+                : ""}
+            </strong>
+            ?
+          </>
+        }
+        onConfirm={async () => {
+          if (confirmDeleteLabelIndex !== null) {
+            setEditingLabels((prev) =>
+              prev.filter((_, idx) => idx !== confirmDeleteLabelIndex)
+            );
+            setConfirmDeleteLabelIndex(null);
+          }
+        }}
+        confirmText="Yes, delete"
+        cancelText="Cancel"
+      />
+    </>
   );
 }

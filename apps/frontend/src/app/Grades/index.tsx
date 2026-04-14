@@ -14,10 +14,12 @@ import {
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
 import {
-  BAR_CHART_COLORS,
   type CourseOutput,
+  DARK_COLORS,
   type Input,
   InputType,
+  LIGHT_COLORS,
+  MAX_COURSES,
   getInputSearchParam,
   isInputEqual,
 } from "@/components/CourseAnalytics/types";
@@ -27,10 +29,12 @@ import { useReadCourseWithInstructor } from "@/hooks/api";
 import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import { type IGradeDistribution } from "@/lib/api";
+import { type ICourseWithInstructorClass } from "@/lib/api/courses";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   GetGradeDistributionDocument,
   Semester,
+  TemporalPosition,
 } from "@/lib/generated/graphql";
 import { LETTER_GRADES } from "@/lib/grades";
 import { RecentType, addRecent, getPageUrl, savePageUrl } from "@/lib/recent";
@@ -50,7 +54,7 @@ const loadOutputsFromInputs = async (
       (input, index, arr) =>
         arr.findIndex((candidate) => isInputEqual(candidate, input)) === index
     )
-    .slice(0, BAR_CHART_COLORS.length);
+    .slice(0, MAX_COURSES);
 
   const results = await Promise.all(
     dedupedInputs.map(async (input) => {
@@ -79,7 +83,8 @@ const loadOutputsFromInputs = async (
     .map((result, index) => ({
       hidden: false,
       active: false,
-      color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
+      color: LIGHT_COLORS[index] ?? LIGHT_COLORS[0],
+      darkColor: DARK_COLORS[index] ?? DARK_COLORS[0],
       data: result.data,
       input: result.input,
     }));
@@ -97,6 +102,9 @@ const TYPE_ITEMS = [
   { value: InputType.Term, label: "Semester" },
 ];
 const LETTER_GRADE_SET = new Set<string>(LETTER_GRADES);
+
+const isPastTermClass = (c: ICourseWithInstructorClass) =>
+  c.term.temporalPosition === TemporalPosition.Past;
 
 const getMetadata = (input: Input): string => {
   const instructor =
@@ -190,6 +198,11 @@ function FilterPanel({
     }
   );
 
+  const classesWithGradesTerms = useMemo(
+    () => (course?.classes ?? []).filter(isPastTermClass),
+    [course]
+  );
+
   const [selectedType, setSelectedType] = useState(DEFAULT_BY_OPTION.value);
 
   const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
@@ -262,7 +275,7 @@ function FilterPanel({
         : null;
     const instructorSet = new Set();
 
-    course?.classes.forEach((c) => {
+    classesWithGradesTerms.forEach((c) => {
       if (!c.gradeDistribution.average) return;
       if (selectedTerm) {
         if (
@@ -291,7 +304,7 @@ function FilterPanel({
     }
 
     return { options: [...list, ...opts], autoSelectValue: null };
-  }, [course, selectedSemester, selectedType]);
+  }, [classesWithGradesTerms, selectedSemester, selectedType]);
 
   const instructorOptions = instructorOptionsData.options;
 
@@ -314,14 +327,14 @@ function FilterPanel({
       selectedInstructor &&
       selectedInstructor !== "all";
     const filteredClasses = shouldFilterByInstructor
-      ? course.classes.filter((c) =>
+      ? classesWithGradesTerms.filter((c) =>
           c.primarySection?.meetings.find((m) =>
             m.instructors.find(
               (i) => selectedInstructor === `${i.familyName}, ${i.givenName}`
             )
           )
         )
-      : course.classes;
+      : classesWithGradesTerms;
 
     const seen = new Set<string>();
     const uniqueClasses = filteredClasses
@@ -348,7 +361,7 @@ function FilterPanel({
     }
 
     return { options: [...list, ...filteredOptions], autoSelectValue: null };
-  }, [course, selectedInstructor, selectedType]);
+  }, [course, classesWithGradesTerms, selectedInstructor, selectedType]);
 
   const semesterOptions = semesterOptionsData.options;
 
@@ -375,6 +388,7 @@ function FilterPanel({
     if (!hasInstructor && !hasSemester) {
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
       };
     }
@@ -385,6 +399,7 @@ function FilterPanel({
       if (selectedType === InputType.Term) {
         return {
           subject: selectedCourse.subject,
+          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
           year: parsedTerm.year,
@@ -396,6 +411,7 @@ function FilterPanel({
       }
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
         type: InputType.Instructor,
         familyName,
@@ -410,6 +426,7 @@ function FilterPanel({
     if (hasSemester) {
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
         type: InputType.Term,
         year: parsedTerm.year,
@@ -422,6 +439,7 @@ function FilterPanel({
     const [familyName, givenName] = instructor.split(", ");
     return {
       subject: selectedCourse.subject,
+      courseId: selectedCourse.courseId,
       courseNumber: selectedCourse.number,
       type: InputType.Instructor,
       familyName,
@@ -468,7 +486,7 @@ function FilterPanel({
     };
   }, [client, currentInput]);
 
-  const isFull = outputs.length >= BAR_CHART_COLORS.length;
+  const isFull = outputs.length >= MAX_COURSES;
   const isAlreadyAdded =
     currentInput !== null &&
     outputs.some((o) => isInputEqual(o.input, currentInput));
@@ -494,14 +512,16 @@ function FilterPanel({
       }
 
       const usedColors = new Set(outputs.map((output) => output.color));
-      const availableColor =
-        BAR_CHART_COLORS.find((color) => !usedColors.has(color)) ??
-        BAR_CHART_COLORS[0];
+      const availableIndex = LIGHT_COLORS.findIndex(
+        (color) => !usedColors.has(color)
+      );
+      const colorIndex = availableIndex !== -1 ? availableIndex : 0;
 
       const output: Output = {
         hidden: false,
         active: false,
-        color: availableColor,
+        color: LIGHT_COLORS[colorIndex],
+        darkColor: DARK_COLORS[colorIndex],
         data: response.data!.grade,
         input: currentInput,
       };
@@ -731,6 +751,7 @@ function OutputList({
                 >
                   <CourseSelectionCard
                     color={output.color}
+                    darkColor={output.darkColor}
                     subject={output.input.subject}
                     number={output.input.courseNumber}
                     subtitle={getMetadata(output.input)}
@@ -848,7 +869,7 @@ export default function Grades() {
     let cancelled = false;
     const parsedInputs = parseInputsFromUrl(
       new URLSearchParams(searchParamsString)
-    ).slice(0, BAR_CHART_COLORS.length);
+    ).slice(0, MAX_COURSES);
 
     if (parsedInputs.length === 0) {
       setOutputs((prev) => (prev.length === 0 ? prev : []));
@@ -920,7 +941,7 @@ export default function Grades() {
         setEditDraft({
           subject: input.subject,
           courseNumber: input.courseNumber,
-          courseId: `${input.subject}-${input.courseNumber}`,
+          courseId: input.courseId,
           type: input.type,
           givenName: "givenName" in input ? input.givenName : undefined,
           familyName: "familyName" in input ? input.familyName : undefined,

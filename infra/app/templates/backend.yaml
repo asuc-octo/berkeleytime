@@ -36,7 +36,9 @@ spec:
               path: /healthz
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
-            periodSeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
 
 ---
 
@@ -68,6 +70,7 @@ data:
   OTEL_SERVICE_NAME: {{ .Values.otel.serviceName | quote }}
   OTEL_RESOURCE_ATTRIBUTES: "service.version={{ .Values.backend.image.tag }},deployment.environment={{ .Values.env }}"
   {{- end }}
+  SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
 
 ---
 

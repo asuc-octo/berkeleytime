@@ -16,19 +16,22 @@ const resolvers: GradeDistributionModule.Resolvers = {
         semester,
         sessionId,
         subject,
-        courseNumber,
+        courseId,
         classNumber,
         familyName,
         givenName,
       }
     ) => {
+      // Term-scoped: year, semester, and sessionId must all be set.
+      // Instructor only (omit term fields): aggregate grade data for that professor across all terms.
+
       if (year && semester && sessionId && givenName && familyName) {
         return await getGradeDistributionByInstructorAndSemester(
           year,
           semester,
           sessionId,
           subject,
-          courseNumber,
+          courseId,
           familyName,
           givenName
         );
@@ -40,7 +43,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
           semester,
           sessionId,
           subject,
-          courseNumber,
+          courseId,
           classNumber
         );
       }
@@ -48,7 +51,7 @@ const resolvers: GradeDistributionModule.Resolvers = {
       if (givenName && familyName) {
         return await getGradeDistributionByInstructor(
           subject,
-          courseNumber,
+          courseId,
           familyName,
           givenName
         );
@@ -60,11 +63,11 @@ const resolvers: GradeDistributionModule.Resolvers = {
           semester,
           sessionId,
           subject,
-          courseNumber
+          courseId
         );
       }
 
-      return await getGradeDistributionByCourse(subject, courseNumber);
+      return await getGradeDistributionByCourse(subject, courseId);
     },
   },
 };

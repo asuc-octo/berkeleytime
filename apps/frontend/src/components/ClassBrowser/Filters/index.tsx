@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { SortDown, SortUp } from "iconoir-react";
+import { Filter, SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import { DaySelect, IconButton, Input, Select, Slider } from "@repo/theme";
+import {
+  Button,
+  DaySelect,
+  IconButton,
+  Input,
+  Select,
+  Slider,
+} from "@repo/theme";
 import type { Option, SelectTab } from "@repo/theme";
 
 import { sortByTermDescending } from "@/lib/classes";
@@ -17,6 +24,7 @@ import {
   SortBy,
 } from "../browser";
 import { useFilterContext } from "../context/FilterContext";
+import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Filters.module.scss";
 
 type RequirementSelection =
@@ -29,6 +37,8 @@ const REQUIREMENT_TABS = {
 } as const;
 
 export default function Filters() {
+  const { mode, setExpanded } = useLayoutContext();
+
   const {
     units,
     updateUnits,
@@ -221,6 +231,15 @@ export default function Filters() {
             Clear
           </button>
         </div>
+        {mode !== "full" && (
+          <Button
+            className={styles.closeFiltersButton}
+            onClick={() => setExpanded(false)}
+          >
+            <Filter />
+            <span>Close Filters</span>
+          </Button>
+        )}
         <div className={styles.formControl}>
           <p className={styles.label}>Semester</p>
           <Select

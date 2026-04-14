@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import { gql, useQuery } from "@apollo/client";
 import {
@@ -24,6 +24,8 @@ import {
   PillSwitcher,
   Select,
 } from "@repo/theme";
+
+import { BASE } from "@/helper";
 
 import { useAllPods, useCreatePod, useDeletePod } from "../../hooks/api/pod";
 import {
@@ -136,6 +138,8 @@ export default function Dashboard() {
     email?: string;
   } | null>(null);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const altPhotoInputRef = useRef<HTMLInputElement>(null);
 
   // API hooks
   const { data: currentUser } = useReadUser();
@@ -259,14 +263,11 @@ export default function Dashboard() {
               const formData = new FormData();
               formData.append("image", blob, file.name);
 
-              const response = await fetch(
-                `${window.location.origin}/api/uploadStaffImage`,
-                {
-                  method: "POST",
-                  credentials: "include",
-                  body: formData,
-                }
-              );
+              const response = await fetch(`${BASE}/api/uploadStaffImage`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+              });
 
               if (!response.ok) {
                 const errorData = await response.json();
@@ -1011,10 +1012,12 @@ export default function Dashboard() {
                       </button>
                     )}
                   </div>
-                  <label
+                  <div
                     className={`${styles.photoUpload} ${roleForm.photo ? styles.hasPhoto : ""}`}
+                    onClick={() => photoInputRef.current?.click()}
                   >
                     <input
+                      ref={photoInputRef}
                       type="file"
                       accept="image/*"
                       onChange={(e) => handlePhotoUpload(e, "photo")}
@@ -1032,7 +1035,7 @@ export default function Dashboard() {
                         <span>Upload photo</span>
                       </div>
                     )}
-                  </label>
+                  </div>
                 </div>
                 <div className={styles.photoUploadContainer}>
                   <div className={styles.photoUploadLabel}>
@@ -1047,10 +1050,12 @@ export default function Dashboard() {
                       </button>
                     )}
                   </div>
-                  <label
+                  <div
                     className={`${styles.photoUpload} ${roleForm.altPhoto ? styles.hasPhoto : ""}`}
+                    onClick={() => altPhotoInputRef.current?.click()}
                   >
                     <input
+                      ref={altPhotoInputRef}
                       type="file"
                       accept="image/*"
                       onChange={(e) => handlePhotoUpload(e, "altPhoto")}
@@ -1068,7 +1073,7 @@ export default function Dashboard() {
                         <span>Upload photo</span>
                       </div>
                     )}
-                  </label>
+                  </div>
                 </div>
               </div>
               <div className={styles.formField}>

@@ -60,23 +60,27 @@ function parseInstructor(
  * Parses a single input string from URL parameters
  *
  * Format examples:
- * - Basic: "COMPSCI;61B"
- * - Term: "COMPSCI;61B;T;2024:Spring:001"
- * - Instructor: "COMPSCI;61B;P;John:DeNero"
- * - Full: "COMPSCI;61B;T;2024:Spring:001;John:DeNero"
+ * - Basic: "COMPSCI;courseId123" (subject;courseId)
+ * - Term: "COMPSCI;courseId123;T;2024:Spring:001"
+ * - Instructor: "COMPSCI;courseId123;P;John:DeNero"
+ * - Full: "COMPSCI;courseId123;T;2024:Spring:001;John:DeNero"
+ *
+ * Note: courseId is used instead of courseNumber to support renamed courses.
+ * courseNumber is derived from the course lookup.
  */
 function parseInputString(inputString: string): Input | null {
   const parts = inputString.split(";");
 
-  // Minimum required: subject and course number
+  // Minimum required: subject and courseId
   if (parts.length < 2) return null;
 
-  const [subject, courseNumber] = parts;
-  if (!subject || !courseNumber) return null;
+  const [subject, courseId] = parts;
+  if (!subject || !courseId) return null;
 
-  // Basic format: just subject and course number
+  // Basic format: just subject and courseId
+  // courseNumber is set to empty string - will be resolved by the component
   if (parts.length < 4) {
-    return { subject, courseNumber };
+    return { subject, courseId, courseNumber: "" };
   }
 
   const typeToken = parts[2];
@@ -97,7 +101,8 @@ function parseInputString(inputString: string): Input | null {
 
     const baseInput: Input = {
       subject,
-      courseNumber,
+      courseId,
+      courseNumber: "",
       type: InputType.Term,
       ...term,
     };
@@ -115,7 +120,8 @@ function parseInputString(inputString: string): Input | null {
 
     const baseInput: Input = {
       subject,
-      courseNumber,
+      courseId,
+      courseNumber: "",
       type: InputType.Instructor,
       ...instructor,
     };

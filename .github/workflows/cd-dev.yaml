@@ -83,6 +83,7 @@ jobs:
       environment: development
       name: bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
       version: 0.1.0-dev-${{ needs.compute-sha.outputs.sha_short }}
+      deploy_staff: false
       values: |
         env: dev
         ttl: ${{ inputs.ttl }}
@@ -90,6 +91,9 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         backend:
+          image:
+            tag: '${{ needs.compute-sha.outputs.sha_short }}'
+        semanticSearch:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:

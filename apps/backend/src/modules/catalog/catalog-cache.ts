@@ -31,7 +31,7 @@ const evictOldest = () => {
   }
 };
 
-const getCachedCatalog = async (
+export const getCachedCatalog = async (
   year: number,
   semester: string
 ): Promise<ICatalogClassItem[]> => {

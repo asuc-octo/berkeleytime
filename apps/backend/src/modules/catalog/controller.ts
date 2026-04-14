@@ -25,13 +25,14 @@ import {
 } from "@repo/common/models";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
+import { searchSemantic } from "../semantic-search/client";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
-import { getSearchIndex } from "./catalog-cache";
+import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
   year: number;
@@ -55,6 +56,7 @@ export interface CatalogQueryParams {
   sortOrder?: string | null;
   page?: number | null;
   pageSize?: number | null;
+  semanticSearch?: boolean | null;
 }
 
 type CatalogFilterCondition = Record<string, unknown>;
@@ -93,13 +95,26 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
     sortOrder,
     page = 1,
     pageSize = 25,
+    semanticSearch,
   } = params;
 
   const effectivePage = Math.max(1, page ?? 1);
   const effectivePageSize = Math.min(100, Math.max(1, pageSize ?? 25));
   const skip = (effectivePage - 1) * effectivePageSize;
 
-  // If search is provided, use Atlas Search aggregation
+  // Semantic search branch — calls Python FAISS service
+  if (semanticSearch && search && search.trim().length > 0) {
+    return getCatalogWithSemanticSearch({
+      year,
+      semester,
+      searchTerm: search.trim(),
+      filters,
+      limit: effectivePageSize,
+      skip,
+    });
+  }
+
+  // If search is provided, use in-memory Fuse.js index
   if (search && search.trim().length > 0) {
     return getCatalogWithSearch({
       year,
@@ -126,6 +141,58 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
       .limit(effectivePageSize)
       .lean(),
   ]);
+
+  return { results, totalCount };
+};
+
+const getCatalogWithSemanticSearch = async ({
+  year,
+  semester,
+  searchTerm,
+  filters,
+  limit,
+  skip,
+}: {
+  year: number;
+  semester: string;
+  searchTerm: string;
+  filters: CatalogQueryParams["filters"];
+  limit: number;
+  skip: number;
+}) => {
+  const response = await searchSemantic(searchTerm, year, semester);
+
+  if (response.results.length === 0) {
+    return { results: [], totalCount: 0 };
+  }
+
+  // Python already returns results sorted by score descending — preserve that order.
+  // Build a rank map: "subject-courseNumber" → position in Python's ranked list
+  const rankMap = new Map<string, number>();
+  response.results.forEach(({ subject, courseNumber }, index) => {
+    rankMap.set(`${subject}-${courseNumber}`, index);
+  });
+
+  // Reuse the server-side catalog cache (same one fuzzy search uses) to avoid
+  // a redundant MongoDB round-trip.
+  const allCatalog = await getCachedCatalog(year, semester);
+
+  const semanticMatches = allCatalog.filter((item) =>
+    rankMap.has(`${item.subject}-${item.courseNumber}`)
+  );
+
+  const filtered = applyInMemoryFilters(semanticMatches, filters);
+
+  // Sort by Python's relevance rank, then by section number within the same course
+  filtered.sort((a, b) => {
+    const rankA = rankMap.get(`${a.subject}-${a.courseNumber}`) ?? 999;
+    const rankB = rankMap.get(`${b.subject}-${b.courseNumber}`) ?? 999;
+    if (rankA !== rankB) return rankA - rankB;
+    return a.number.localeCompare(b.number);
+  });
+
+  const totalCount = filtered.length;
+  const results = filtered.slice(skip, skip + limit);
 
   return { results, totalCount };
 };

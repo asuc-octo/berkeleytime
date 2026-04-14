@@ -2,6 +2,8 @@ import { CSSProperties } from "react";
 
 import classNames from "classnames";
 
+import { Color } from "@/lib/generated/graphql";
+
 import { IDay } from "../../calendar";
 import styles from "./Day.module.scss";
 
@@ -28,7 +30,7 @@ export default function Day({ date, events, active }: DayProps) {
         </div>
       )}
       {events.map((event, index) => {
-        const color = event.color!;
+        const color = event.color ?? Color.Gray;
 
         return (
           <div
