@@ -1,34 +1,23 @@
-import { EditPencil, Trash } from "iconoir-react";
-
-import { METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Color, Flex, IconButton, Tooltip } from "@repo/theme";
+import { MetricName } from "@repo/shared";
 
 import { IUserRatingClass } from "@/lib/api";
 
-import {
-  formatDate,
-  getMetricStatus,
-  getStatusColor,
-  isMetricRating,
-} from "../metricsUtil";
+import { formatDate, isMetricRating } from "../metricsUtil";
 import styles from "./UserRatingSummary.module.scss";
 
 export default function UserRatingSummary({
   userRatings,
-  onOpenModal,
-  ratingDelete,
 }: {
   userRatings: IUserRatingClass;
-  onOpenModal: (open: boolean) => void;
-  ratingDelete: () => void;
 }) {
-  const sortedMetrics = userRatings.metrics
-    .filter((metric) => isMetricRating(MetricName[metric.metricName]))
-    .sort((a, b) => {
-      const indexA = METRIC_ORDER.indexOf(MetricName[a.metricName]);
-      const indexB = METRIC_ORDER.indexOf(MetricName[b.metricName]);
-      return indexA - indexB;
-    });
+  const ratingMetrics = userRatings.metrics.filter((metric) =>
+    isMetricRating(MetricName[metric.metricName])
+  );
+  const metricsAverage =
+    ratingMetrics.length > 0
+      ? ratingMetrics.reduce((sum, m) => sum + m.value, 0) /
+        ratingMetrics.length
+      : null;
 
   const rawGrade = (
     userRatings as IUserRatingClass & { reviewerGrade?: string | null }
@@ -40,10 +29,11 @@ export default function UserRatingSummary({
     <div className={styles.root}>
       <div className={styles.title}>
         <div>
-          <h3>
-            Your Rating
-            <span className={styles.headingGrade}>{displayGrade}</span>
-          </h3>
+          {displayGrade ? (
+            <h3>
+              <span className={styles.headingGrade}>{displayGrade}</span>
+            </h3>
+          ) : null}
           {userRatings.lastUpdated && (
             <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
           )}
@@ -54,45 +44,14 @@ export default function UserRatingSummary({
             {userRatings.reviewContent || "No written review yet."}
           </p>
         </div>
-        <Flex gap="2">
-          <Tooltip
-            trigger={
-              <IconButton onClick={() => onOpenModal(true)}>
-                <EditPencil />
-              </IconButton>
-            }
-            title="Edit rating"
-          />
-          <Tooltip
-            trigger={
-              <IconButton onClick={() => ratingDelete()}>
-                <Trash />
-              </IconButton>
-            }
-            title="Delete rating"
-          />
-        </Flex>
       </div>
       <div className={styles.body}>
         <div>
-          {sortedMetrics.map((metric) => (
-            <div key={metric.metricName} className={styles.section}>
-              <div className={styles.metrics}>
-                <div className={styles.titleSection}>
-                  <h3 className={styles.metric}>{metric.metricName}</h3>
-                </div>
-                <Badge
-                  color={
-                    getStatusColor(metric.metricName, metric.value) as Color
-                  }
-                  label={getMetricStatus(metric.metricName, metric.value)}
-                />
-                <span
-                  className={styles.metricAverage}
-                >{`${metric.value}.0 / 5.0`}</span>
-              </div>
-            </div>
-          ))}
+          {metricsAverage != null ? (
+            <span>{metricsAverage.toFixed(1)}</span>
+          ) : (
+            <span>—</span>
+          )}
         </div>
       </div>
     </div>
