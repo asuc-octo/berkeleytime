@@ -20,3 +20,4 @@ export * from "./staff";
 export * from "./stats";
 export * from "./click-tracking";
 export * from "./targeted-message";
+export * from "./waitlist";

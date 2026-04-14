@@ -26,6 +26,7 @@ import {
   getTimeDeltaKey,
   interpolateEnrollmentPoint,
 } from "@/app/Enrollment/EnrollmentGraph.utils";
+import { WaitlistProbability } from "@/app/Enrollment/WaitlistProbability";
 import {
   CapacityChangeMarker,
   ChartContainer,
@@ -487,6 +488,16 @@ export default function Enrollment() {
         </ChartContainer>
         <p className={styles.axisLabel}>Days since enrollment opened</p>
         {capacityTooltipElement}
+      </div>
+      <div style={{ marginTop: 24 }}>
+        <WaitlistProbability
+          year={_class.year}
+          semester={_class.semester}
+          sessionId={_class.sessionId ?? null}
+          subject={_class.subject}
+          courseNumber={_class.courseNumber}
+          sectionNumber={_class.number}
+        />
       </div>
     </ClassChartBox>
   );
