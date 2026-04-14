@@ -18,9 +18,31 @@
   margin-bottom: 16px;
 }
 
+.ratingsHeaderToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
 .termSelectWrapper {
-  margin-left: auto;
-  width: 250px;
+  width: 300px;
+  flex-shrink: 0;
+  > div[tabindex="0"] {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 0;
+    height: 32px;
+    padding: 0 8px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+
+    > div:last-of-type > div:last-child {
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+  }
 }
 
 .ratingsSelectContent {

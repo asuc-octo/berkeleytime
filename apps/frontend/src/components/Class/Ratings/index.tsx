@@ -28,13 +28,12 @@ import { useReadTerms } from "@/hooks/api";
 import { useGetClassRatingsData } from "@/hooks/api/ratings/useGetRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { IAggregatedRatings, IMetric } from "@/lib/api";
+import { IMetric } from "@/lib/api";
 import { GET_CLASS_REVIEWS } from "@/lib/api/ratings";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
   DeleteRatingsDocument,
-  GetAggregatedRatingsDocument,
   GetUserRatingsDocument,
   Semester,
   TemporalPosition,
@@ -63,11 +62,6 @@ import {
 
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
-
-const isSemester = (value: string): boolean => {
-  const firstWord = value.split(" ")[0];
-  return Object.values(Semester).includes(firstWord as Semester);
-};
 
 interface Term {
   semester: Semester;
@@ -112,9 +106,10 @@ export function RatingsContainer() {
     RATING_TABS.Instructor
   );
   const [selectedValue, setSelectedValue] = useState("all");
-  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
-    null
-  );
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [allChosen, setAllChosen] = useState(true);
+  const [instructorChosen, setInstructorChosen] = useState(false);
+  const [semesterChosen, setSemesterChosen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
@@ -191,8 +186,11 @@ export function RatingsContainer() {
   useEffect(() => {
     // Reset to "all" if aggregated ratings change (e.g., course switch)
     setSelectedValue("all");
-    setTermRatings(null);
     setActiveRatingTab(RATING_TABS.Instructor);
+    setSortBy(null);
+    setAllChosen(true);
+    setInstructorChosen(false);
+    setSemesterChosen(false);
   }, [aggregatedRatingsData]);
 
   const handleModalStateChange = useCallback(
@@ -262,17 +260,10 @@ export function RatingsContainer() {
   }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
-    const metricsSource =
-      (activeRatingTab === RATING_TABS.Semester ||
-        activeRatingTab === RATING_TABS.Instructor) &&
-      selectedValue !== "all" &&
-      termRatings?.metrics
-        ? termRatings.metrics
-        : aggregatedRatingsData?.metrics;
-
     const metrics =
-      metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ??
-      [];
+      aggregatedRatingsData?.metrics?.filter(
+        (metric): metric is IMetric => Boolean(metric)
+      ) ?? [];
 
     if (
       !metrics.some(
@@ -321,7 +312,7 @@ export function RatingsContainer() {
         weightedAverage: metric.weightedAverage,
       } satisfies RatingDetailProps;
     });
-  }, [activeRatingTab, aggregatedRatingsData, selectedValue, termRatings]);
+  }, [aggregatedRatingsData]);
 
   const formatRatingCount = useCallback((count?: number | null) => {
     const normalizedCount = clampCount(count);
@@ -410,56 +401,6 @@ export function RatingsContainer() {
     termsData,
   ]);
 
-  const selectedSemesterClass = useMemo(() => {
-    if (
-      activeRatingTab !== RATING_TABS.Semester ||
-      selectedValue === "all" ||
-      !isSemester(selectedValue)
-    ) {
-      return null;
-    }
-
-    const [semesterValue, yearValue] = selectedValue.split(" ");
-    const selectedOption = termSelectOptions.find(
-      (option) => option.value === selectedValue
-    );
-    const year = Number.parseInt(yearValue ?? "", 10);
-    if (!selectedOption?.classNumber || Number.isNaN(year)) {
-      return null;
-    }
-
-    return {
-      semester: semesterValue as Semester,
-      year,
-      classNumber: selectedOption.classNumber,
-    };
-  }, [activeRatingTab, selectedValue, termSelectOptions]);
-
-  const {
-    data: selectedSemesterRatingsData,
-    loading: selectedSemesterLoading,
-  } = useQuery(GetAggregatedRatingsDocument, {
-    variables: {
-      subject: currentClass.subject,
-      courseNumber: currentClass.courseNumber,
-      semester: selectedSemesterClass?.semester ?? Semester.Fall,
-      year: selectedSemesterClass?.year ?? 0,
-      classNumber: selectedSemesterClass?.classNumber,
-    },
-    skip: !selectedSemesterClass,
-    fetchPolicy: "cache-and-network",
-  });
-
-  useEffect(() => {
-    if (activeRatingTab !== RATING_TABS.Semester) return;
-    if (selectedValue === "all") {
-      setTermRatings(null);
-      return;
-    }
-
-    setTermRatings(selectedSemesterRatingsData?.aggregatedRatings ?? null);
-  }, [activeRatingTab, selectedSemesterRatingsData, selectedValue]);
-
   const instructorSelectOptions = useMemo(() => {
     const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
     const instructorOptions =
@@ -529,12 +470,7 @@ export function RatingsContainer() {
       );
   }, [classRatingsData]);
 
-  if (
-    (loading && !ratingsQueryData) ||
-    (activeRatingTab === RATING_TABS.Semester &&
-      selectedValue !== "all" &&
-      selectedSemesterLoading)
-  ) {
+  if (loading && !ratingsQueryData) {
     return <EmptyState loading />;
   }
 
@@ -706,11 +642,97 @@ export function RatingsContainer() {
               <div className={styles.ratingsSummary}>
                 <div className={styles.ratingsSummaryTop}>
                   <p className={styles.ratingsSummaryHeader}>Ratings</p>
-                  {userRatings ? (
-                    <div className={styles.ratingsSummaryHeaderRight}>
-                      <p2>Placeholder</p2>
-                    </div>
-                  ) : null}
+                  <div className={styles.ratingsSummaryHeaderRight}>
+                    {hasRatings ? (
+                      <div className={styles.ratingsHeaderToolbar}>
+                        {!userRatings && (
+                          <RatingButton
+                            user={user}
+                            onOpenModal={handleModalStateChange}
+                            userRatingData={userRatingsData}
+                            currentClass={currentClass}
+                          />
+                        )}
+                        <div className={styles.termSelectWrapper}>
+                          <Select
+                            variant="foreground"
+                            searchable
+                            searchPlaceholder={
+                              activeRatingTab === RATING_TABS.Instructor
+                                ? "Search instructors"
+                                : "Search semesters"
+                            }
+                            emptyMessage={
+                              activeRatingTab === RATING_TABS.Instructor
+                                ? "No instructors found"
+                                : "No semesters found"
+                            }
+                            tabs={[
+                              {
+                                value: RATING_TABS.Instructor,
+                                label: "By Instructor",
+                                options: instructorSelectOptions,
+                              },
+                              {
+                                value: RATING_TABS.Semester,
+                                label: "By Semester",
+                                options: termSelectOptions,
+                              },
+                            ]}
+                            contentClassName={styles.ratingsSelectContent}
+                            tabsWrapperClassName={styles.ratingsSelectTabs}
+                            value={selectedValue}
+                            defaultTab={RATING_TABS.Instructor}
+                            onTabChange={(tabValue) => {
+                              setActiveRatingTab(tabValue);
+                              setSelectedValue("all");
+                              setSortBy(null);
+                              setAllChosen(true);
+                              setInstructorChosen(false);
+                              setSemesterChosen(false);
+                            }}
+                            onChange={(newValue) => {
+                              if (Array.isArray(newValue) || !newValue) return;
+
+                              setSelectedValue(newValue);
+
+                              if (newValue === "all") {
+                                setSortBy(null);
+                                setAllChosen(true);
+                                setInstructorChosen(false);
+                                setSemesterChosen(false);
+                                return;
+                              }
+
+                              if (activeRatingTab === RATING_TABS.Semester) {
+                                setAllChosen(false);
+                                setInstructorChosen(false);
+                                setSemesterChosen(true);
+                                setSortBy(newValue);
+                                return;
+                              }
+
+                              const selectedInstructorOption =
+                                instructorSelectOptions.find(
+                                  (o) => o.value === newValue
+                                );
+                              setAllChosen(false);
+                              setInstructorChosen(true);
+                              setSemesterChosen(false);
+                              setSortBy(
+                                selectedInstructorOption?.label ?? newValue
+                              );
+                            }}
+                            placeholder={
+                              activeRatingTab === RATING_TABS.Instructor
+                                ? "Select instructor"
+                                : "Select term"
+                            }
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 {classReviewsByUser.length > 0 ? (
                   classReviewsByUser.map((classReview, index) => (
@@ -724,104 +746,6 @@ export function RatingsContainer() {
                 )}
               </div>
 
-              <div className={styles.header}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    alignItems: "center",
-                  }}
-                >
-                  {hasRatings && !userRatings && (
-                    <RatingButton
-                      user={user}
-                      onOpenModal={handleModalStateChange}
-                      userRatingData={userRatingsData}
-                      currentClass={currentClass}
-                    />
-                  )}
-                  <div className={styles.termSelectWrapper}>
-                    {hasRatings && (
-                      <Select
-                        variant="foreground"
-                        searchable
-                        searchPlaceholder={
-                          activeRatingTab === RATING_TABS.Instructor
-                            ? "Search instructors"
-                            : "Search semesters"
-                        }
-                        emptyMessage={
-                          activeRatingTab === RATING_TABS.Instructor
-                            ? "No instructors found"
-                            : "No semesters found"
-                        }
-                        tabs={[
-                          {
-                            value: RATING_TABS.Instructor,
-                            label: "By Instructor",
-                            options: instructorSelectOptions,
-                          },
-                          {
-                            value: RATING_TABS.Semester,
-                            label: "By Semester",
-                            options: termSelectOptions,
-                          },
-                        ]}
-                        contentClassName={styles.ratingsSelectContent}
-                        tabsWrapperClassName={styles.ratingsSelectTabs}
-                        value={selectedValue}
-                        defaultTab={RATING_TABS.Instructor}
-                        onTabChange={(tabValue) => {
-                          setActiveRatingTab(tabValue);
-                          // Clear displayed ratings data when browsing tabs, but preserve selection
-                          setTermRatings(null);
-                        }}
-                        onChange={(newValue) => {
-                          if (Array.isArray(newValue) || !newValue) return; // ensure it is string
-
-                          setSelectedValue(newValue);
-
-                          // Handle tab-specific data fetching
-                          if (activeRatingTab === RATING_TABS.Semester) {
-                            if (newValue === "all") {
-                              setTermRatings(null);
-                            } else if (isSemester(newValue)) {
-                              // Ratings are fetched by selected semester through query state.
-                              setTermRatings(null);
-                            }
-                          } else {
-                            // Instructor tab
-                            if (newValue === "all") {
-                              setTermRatings(null);
-                            } else {
-                              const selectedInstructor =
-                                instructorAggregatedRatings?.find((rating) => {
-                                  if (!rating) return false;
-                                  const key = `${rating.instructor.givenName}_${rating.instructor.familyName}`;
-                                  return key === newValue;
-                                });
-                              if (
-                                selectedInstructor &&
-                                selectedInstructor.aggregatedRatings
-                              ) {
-                                setTermRatings(
-                                  selectedInstructor.aggregatedRatings
-                                );
-                              }
-                            }
-                          }
-                        }}
-                        placeholder={
-                          activeRatingTab === RATING_TABS.Instructor
-                            ? "Select instructor"
-                            : "Select term"
-                        }
-                      />
-                    )}
-                  </div>
-                </div>
-              </div>
-
               </div>
             </Container>
           </Box>
@@ -829,8 +753,14 @@ export function RatingsContainer() {
       )}
 
       <div>
+        <p>allChosen: {String(allChosen)}</p>
+        <p>instructorChosen: {String(instructorChosen)}</p>
+        <p>semesterChosen: {String(semesterChosen)}</p>
+        <p>sortBy: {sortBy === null ? "null" : sortBy}</p>
         <h3>ClassReviews raw response</h3>
         <pre>{JSON.stringify(classRatingsData, null, 2)}</pre>
+        <h3>Ratings Data (not correctly showing the counts)</h3>
+        <pre>{JSON.stringify(ratingsData, null, 2)}</pre>
       </div>
 
 
