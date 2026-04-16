@@ -4,7 +4,11 @@ import { METRIC_ORDER, MetricName } from "@repo/shared";
 
 import { IUserRatingClass } from "@/lib/api";
 
-import { formatDate, getAverageRatingColor, isMetricRating } from "../metricsUtil";
+import {
+  formatDate,
+  getAverageRatingColor,
+  isMetricRating,
+} from "../metricsUtil";
 import styles from "./UserRatingSummary.module.scss";
 
 export default function UserRatingSummary({
@@ -33,7 +37,8 @@ export default function UserRatingSummary({
   const displayGrade =
     rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : "N/A";
 
-  const ratingColor = metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
+  const ratingColor =
+    metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -47,7 +52,13 @@ export default function UserRatingSummary({
               <h4>{formatDate(new Date(userRatings.lastUpdated))}</h4>
             )}
           </div>
-          <div className={isExpanded ? styles.contentWrapper : `${styles.contentWrapper} ${styles.clamped}`}>
+          <div
+            className={
+              isExpanded
+                ? styles.contentWrapper
+                : `${styles.contentWrapper} ${styles.clamped}`
+            }
+          >
             {userRatings.reviewContent || "No written review yet."}
             {!isExpanded && (
               <button
@@ -83,11 +94,15 @@ export default function UserRatingSummary({
           <h2 className={styles.ratingGrade}>Rating</h2>
           <div
             className={styles.rating}
-            style={ratingColor ? {
-              borderColor: ratingColor.badge,
-              backgroundColor: ratingColor.bg,
-              color: ratingColor.badge,
-            } : undefined}
+            style={
+              ratingColor
+                ? {
+                    borderColor: ratingColor.badge,
+                    backgroundColor: ratingColor.bg,
+                    color: ratingColor.badge,
+                  }
+                : undefined
+            }
           >
             {metricsAverage != null ? (
               <span>{metricsAverage.toFixed(1)}</span>
@@ -96,7 +111,9 @@ export default function UserRatingSummary({
             )}
           </div>
           <h2 className={styles.ratingGrade}>Grade</h2>
-          <div className={`${styles.grade}${displayGrade === "N/A" ? ` ${styles.naGrade}` : ""}`}>
+          <div
+            className={`${styles.grade}${displayGrade === "N/A" ? ` ${styles.naGrade}` : ""}`}
+          >
             <span>{displayGrade}</span>
           </div>
         </div>
