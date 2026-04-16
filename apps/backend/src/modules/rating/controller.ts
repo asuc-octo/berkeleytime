@@ -519,8 +519,7 @@ export const getUserRatings = async (context: RequestContext) => {
       reviewByCourse.set(key, {
         reviewTitle: review.reviewTitle ?? null,
         reviewContent: review.reviewContent ?? null,
-        reviewerGrade:
-          (review.reviewerGrade as string | null) ?? "n/a",
+        reviewerGrade: (review.reviewerGrade as string | null) ?? "n/a",
       });
     }
   });
@@ -1068,7 +1067,8 @@ export const createRatings = async (
       ) {
         const normalizedTitle = (reviewTitle ?? "").trim();
         const normalizedContent = (reviewContent ?? "").trim();
-        const normalizedReviewerGrade = (reviewerGrade ?? "n/a").trim() || "n/a";
+        const normalizedReviewerGrade =
+          (reviewerGrade ?? "n/a").trim() || "n/a";
         const hasReviewPayload =
           normalizedTitle.length > 0 || normalizedContent.length > 0;
 
@@ -1263,7 +1263,8 @@ export const voteReviewHelpful = async (
   }
 
   const userId = context.user._id;
-  const alreadyVoted = (review.helpfulVoters as string[] | undefined)?.includes(userId) ?? false;
+  const alreadyVoted =
+    (review.helpfulVoters as string[] | undefined)?.includes(userId) ?? false;
 
   if (alreadyVoted) {
     await ReviewModel.updateOne(
@@ -1317,7 +1318,10 @@ export const getAllRatings = async () => {
   }));
 };
 
-export const getClassRatings = async (subject: string, courseNumber: string) => {
+export const getClassRatings = async (
+  subject: string,
+  courseNumber: string
+) => {
   const ratings = await RatingModel.find({ subject, courseNumber }).lean();
   const sections = await SectionModel.find({ subject, courseNumber })
     .select("semester year classNumber number meetings")
@@ -1364,8 +1368,7 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
       reviewId: review._id?.toString() ?? "",
       reviewTitle: review.reviewTitle ?? null,
       reviewContent: review.reviewContent ?? null,
-      reviewerGrade:
-        (review.reviewerGrade as string | null) ?? "n/a",
+      reviewerGrade: (review.reviewerGrade as string | null) ?? "n/a",
       helpfulCount: (review.helpfulCount as number | undefined) ?? 0,
     });
   });
@@ -1429,8 +1432,9 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
         year: rating.year,
         classNumber: rating.classNumber,
         professorName:
-          Array.from(instructorNamesByClassKey.get(classKey) ?? []).join(", ") ||
-          null,
+          Array.from(instructorNamesByClassKey.get(classKey) ?? []).join(
+            ", "
+          ) || null,
         metrics: [
           {
             metricName: rating.metricName as MetricName,
@@ -1457,10 +1461,12 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
     }
   });
 
-  const users = Array.from(userClassesById.entries()).map(([userId, classes]) => ({
-    anonymousUserId: anonymizeUserId(userId),
-    classes: Array.from(classes.values()),
-  }));
+  const users = Array.from(userClassesById.entries()).map(
+    ([userId, classes]) => ({
+      anonymousUserId: anonymizeUserId(userId),
+      classes: Array.from(classes.values()),
+    })
+  );
 
   return {
     subject,
@@ -1469,4 +1475,3 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
     users,
   };
 };
-

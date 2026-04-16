@@ -180,9 +180,7 @@ export function ReviewContentForm({
   return (
     <div className={styles.formGroup}>
       <div className={styles.questionPair}>
-        <h3>
-          Write a Review {showRequiredAsterisk && <RequiredAsterisk />}
-        </h3>
+        <h3>Write a Review {showRequiredAsterisk && <RequiredAsterisk />}</h3>
         <textarea
           className={styles.reviewTextarea}
           value={reviewContent}

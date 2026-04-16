@@ -160,14 +160,9 @@ const resolvers: RatingModule.Resolvers = {
         );
       }
     },
-
   },
   Mutation: {
-    createRatings: async (
-      _,
-      args,
-      context
-    ) => {
+    createRatings: async (_, args, context) => {
       try {
         const {
           year,

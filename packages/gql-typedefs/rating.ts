@@ -203,7 +203,6 @@ export const ratingTypeDef = gql`
 
     "Reviews scoped to a specific course grouped by anonymous user"
     classReviews(subject: String!, courseNumber: String!): ClassReviews!
-
   }
 
   """
