@@ -41,10 +41,8 @@ import {
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 import { clampCount } from "@/utils/ratings";
 
+import ClassRatingSummary, { type ClassUserReview } from "./ClassRatingSummary";
 import { RatingButton } from "./RatingButton";
-import ClassRatingSummary, {
-  type ClassUserReview,
-} from "./ClassRatingSummary";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
 import UserRatingSummary from "./UserRatingSummary";
@@ -79,6 +77,8 @@ type ClassReviewsQueryData = {
     users?: Array<{
       anonymousUserId?: string;
       classes?: Array<{
+        semester?: string | null;
+        year?: number | null;
         professorName?: string | null;
         reviewTitle?: string | null;
         reviewContent?: string | null;
@@ -107,7 +107,6 @@ export function RatingsContainer() {
   );
   const [selectedValue, setSelectedValue] = useState("all");
   const [sortBy, setSortBy] = useState<string | null>(null);
-  const [allChosen, setAllChosen] = useState(true);
   const [instructorChosen, setInstructorChosen] = useState(false);
   const [semesterChosen, setSemesterChosen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -177,8 +176,6 @@ export function RatingsContainer() {
       return true;
     });
   }, [userRatingsData]);
-  const showUserOnlyRatings = Boolean(userRatings) && !hasRatings;
-
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
   });
@@ -188,7 +185,6 @@ export function RatingsContainer() {
     setSelectedValue("all");
     setActiveRatingTab(RATING_TABS.Instructor);
     setSortBy(null);
-    setAllChosen(true);
     setInstructorChosen(false);
     setSemesterChosen(false);
   }, [aggregatedRatingsData]);
@@ -261,8 +257,8 @@ export function RatingsContainer() {
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
     const metrics =
-      aggregatedRatingsData?.metrics?.filter(
-        (metric): metric is IMetric => Boolean(metric)
+      aggregatedRatingsData?.metrics?.filter((metric): metric is IMetric =>
+        Boolean(metric)
       ) ?? [];
 
     if (
@@ -450,10 +446,18 @@ export function RatingsContainer() {
     let totalPoints = 0;
     for (const cls of users.flatMap((u) => u.classes ?? [])) {
       const metrics = cls.metrics ?? [];
-      if (!metrics.some((m) => m.metricName === MetricName.Usefulness)) continue;
+      if (!metrics.some((m) => m.metricName === MetricName.Usefulness))
+        continue;
       count += 1;
       for (const m of metrics) {
-        if (isMetricRating(m.metricName)) totalPoints += m.value;
+        if (isMetricRating(m.metricName)) {
+          const value =
+            m.metricName === MetricName.Difficulty ||
+            m.metricName === MetricName.Workload
+              ? 5 - m.value
+              : m.value;
+          totalPoints += value;
+        }
       }
     }
 
@@ -465,10 +469,28 @@ export function RatingsContainer() {
     const users = classRatingsData?.classReviews?.users ?? [];
     return users
       .map((user) => user.classes?.[0] ?? null)
-      .filter((classReview): classReview is ClassUserReview =>
+      .filter((classReview): classReview is NonNullable<typeof classReview> =>
         Boolean(classReview)
-      );
-  }, [classRatingsData]);
+      )
+      .filter((classReview) => Boolean(classReview.reviewContent?.trim()))
+      .filter((classReview) => {
+        if (semesterChosen && selectedValue !== "all") {
+          return (
+            `${classReview.semester} ${classReview.year}` === selectedValue
+          );
+        }
+        if (instructorChosen && sortBy) {
+          return classReview.professorName === sortBy;
+        }
+        return true;
+      });
+  }, [
+    classRatingsData,
+    semesterChosen,
+    instructorChosen,
+    selectedValue,
+    sortBy,
+  ]);
 
   if (loading && !ratingsQueryData) {
     return <EmptyState loading />;
@@ -476,51 +498,7 @@ export function RatingsContainer() {
 
   return (
     <>
-      {showUserOnlyRatings ? (
-        <div className={styles.root}>
-          <Box p="5">
-            <Container size="3">
-              {userRatings && (
-                <div className={styles.ratingsSummary}>
-                  <div className={styles.ratingsSummaryTop}>
-                    <p className={styles.ratingsSummaryHeader}>Your Rating</p>
-                    <div className={styles.ratingsSummaryHeaderRight}>
-                      <Flex gap="2">
-                        <Tooltip
-                          trigger={
-                            <Button
-                              variant="secondary"
-                              onClick={() => handleModalStateChange(true)}
-                            >
-                              Edit your rating
-                              <EditPencil width={18} height={18} />
-                            </Button>
-                          }
-                          title="Edit rating"
-                        />
-                        <Tooltip
-                          trigger={
-                            <IconButton
-                              onClick={() => setIsDeleteModalOpen(true)}
-                            >
-                              <Trash />
-                            </IconButton>
-                          }
-                          title="Delete rating"
-                        />
-                      </Flex>
-                    </div>
-                  </div>
-                  <UserRatingSummary userRatings={userRatings} />
-                </div>
-              )}
-              <p className={styles.userOnlyMessage}>
-                Only your rating is shown for this course.
-              </p>
-            </Container>
-          </Box>
-        </div>
-      ) : !hasRatings ? (
+      {!hasRatings ? (
         <EmptyState
           icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
           heading="No Course Ratings"
@@ -541,68 +519,78 @@ export function RatingsContainer() {
         </EmptyState>
       ) : (
         <div className={styles.root}>
-          <Box p="5">
+          <Box className={styles.ratingsBox}>
             <Container size="3">
               <div className={styles.containerContents}>
-              <div className={styles.ratingsSummary}>
-                <div className={styles.ratingsSummaryTop}>
-                  <p className={styles.ratingsSummaryHeader}>Rating Summary</p>
-                </div>
-                <div className={styles.ratingsSummaryBottom}>
-                  <div className={styles.ratingsSummaryBottomLeft}>
-                    <p className={styles.ratingsSummaryAverage}>
-                      {classReviewsSummary.average != null
-                        ? classReviewsSummary.average.toFixed(1)
-                        : "—"}
-                    </p>
-                    <p className={styles.ratingsSummaryCount}>
-                      {classReviewsSummary.count === 0
-                        ? "No ratings"
-                        : classReviewsSummary.count === 1
-                          ? "1 rating"
-                          : `${classReviewsSummary.count} ratings`}
-                    </p>
+                <div className={styles.ratingsSummary}>
+                  <div className={styles.ratingsSummaryTop}>
+                    <p className={styles.ratingsSummaryHeader}>Overview</p>
+                    {!userRatings && (
+                      <div className={styles.ratingsSummaryHeaderRight}>
+                        <RatingButton
+                          user={user}
+                          onOpenModal={handleModalStateChange}
+                          userRatingData={userRatingsData}
+                          currentClass={currentClass}
+                        />
+                      </div>
+                    )}
                   </div>
-                  <div className={styles.ratingsSummaryBottomRight}>
-                    <div
-                      className={styles.ratingsBody}
-                      style={{
-                        backgroundColor: !hasRatings
-                          ? "transparent"
-                          : "var(--foreground-color)",
-                        boxShadow: !hasRatings
-                          ? "none"
-                          : "0 1px 2px rgb(0 0 0 / 5%)",
-                        border: !hasRatings
-                          ? "none"
-                          : "1px solid var(--border-color)",
-                      }}
-                    >
-                      {ratingsData
-                        ?.filter((ratingData) =>
-                          isMetricRating(ratingData.metric)
-                        )
-                        .sort((a, b) => {
-                          const indexA = METRIC_ORDER.indexOf(a.metric);
-                          const indexB = METRIC_ORDER.indexOf(b.metric);
-                          return indexA - indexB;
-                        })
-                        .map((ratingData) => (
-                          <div
-                            className={styles.ratingSection}
-                            key={ratingData.metric}
-                          >
-                            <RatingDetailView {...ratingData} />
-                          </div>
-                        ))}
+                  <div className={styles.ratingsSummaryBottom}>
+                    <div className={styles.ratingsSummaryBottomLeft}>
+                      <p className={styles.ratingsSummaryAverage}>
+                        {classReviewsSummary.average != null
+                          ? classReviewsSummary.average.toFixed(1)
+                          : "—"}
+                      </p>
+                      <p className={styles.ratingsSummaryCount}>
+                        {classReviewsSummary.count === 0
+                          ? "No ratings"
+                          : classReviewsSummary.count === 1
+                            ? "1 rating"
+                            : `${classReviewsSummary.count} ratings`}
+                      </p>
+                    </div>
+                    <div className={styles.ratingsSummaryBottomRight}>
+                      <div
+                        className={styles.ratingsBody}
+                        style={{
+                          backgroundColor: !hasRatings
+                            ? "transparent"
+                            : "var(--foreground-color)",
+                          boxShadow: !hasRatings
+                            ? "none"
+                            : "0 1px 2px rgb(0 0 0 / 5%)",
+                          border: !hasRatings
+                            ? "none"
+                            : "1px solid var(--border-color)",
+                        }}
+                      >
+                        {ratingsData
+                          ?.filter((ratingData) =>
+                            isMetricRating(ratingData.metric)
+                          )
+                          .sort((a, b) => {
+                            const indexA = METRIC_ORDER.indexOf(a.metric);
+                            const indexB = METRIC_ORDER.indexOf(b.metric);
+                            return indexA - indexB;
+                          })
+                          .map((ratingData) => (
+                            <div
+                              className={styles.ratingSection}
+                              key={ratingData.metric}
+                            >
+                              <RatingDetailView {...ratingData} />
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className={styles.ratingsSummary}>
-                <div className={styles.ratingsSummaryTop}>
-                  <p className={styles.ratingsSummaryHeader}>Your Rating</p>
+
+                <div className={styles.ratingsSummary}>
+                  {/* <div className={styles.ratingsSummaryTop}> */}
+                  {/* <p className={styles.ratingsSummaryHeader}>Your Rating</p> */}
                   {userRatings ? (
                     <div className={styles.ratingsSummaryHeaderRight}>
                       <Flex gap="2">
@@ -631,138 +619,119 @@ export function RatingsContainer() {
                       </Flex>
                     </div>
                   ) : null}
+                  {/* </div> */}
+                  {userRatings ? (
+                    <UserRatingSummary userRatings={userRatings} />
+                  ) : (
+                    <div></div>
+                  )}
                 </div>
-                {userRatings ? (
-                  <UserRatingSummary userRatings={userRatings} />
-                ) : (
-                  <div></div>
-                )}
-              </div>
 
-              <div className={styles.ratingsSummary}>
-                <div className={styles.ratingsSummaryTop}>
-                  <p className={styles.ratingsSummaryHeader}>Ratings</p>
-                  <div className={styles.ratingsSummaryHeaderRight}>
-                    {hasRatings ? (
-                      <div className={styles.ratingsHeaderToolbar}>
-                        {!userRatings && (
-                          <RatingButton
-                            user={user}
-                            onOpenModal={handleModalStateChange}
-                            userRatingData={userRatingsData}
-                            currentClass={currentClass}
-                          />
-                        )}
-                        <div className={styles.termSelectWrapper}>
-                          <Select
-                            variant="foreground"
-                            searchable
-                            searchPlaceholder={
-                              activeRatingTab === RATING_TABS.Instructor
-                                ? "Search instructors"
-                                : "Search semesters"
-                            }
-                            emptyMessage={
-                              activeRatingTab === RATING_TABS.Instructor
-                                ? "No instructors found"
-                                : "No semesters found"
-                            }
-                            tabs={[
-                              {
-                                value: RATING_TABS.Instructor,
-                                label: "By Instructor",
-                                options: instructorSelectOptions,
-                              },
-                              {
-                                value: RATING_TABS.Semester,
-                                label: "By Semester",
-                                options: termSelectOptions,
-                              },
-                            ]}
-                            contentClassName={styles.ratingsSelectContent}
-                            tabsWrapperClassName={styles.ratingsSelectTabs}
-                            value={selectedValue}
-                            defaultTab={RATING_TABS.Instructor}
-                            onTabChange={(tabValue) => {
-                              setActiveRatingTab(tabValue);
-                              setSelectedValue("all");
-                              setSortBy(null);
-                              setAllChosen(true);
-                              setInstructorChosen(false);
-                              setSemesterChosen(false);
-                            }}
-                            onChange={(newValue) => {
-                              if (Array.isArray(newValue) || !newValue) return;
-
-                              setSelectedValue(newValue);
-
-                              if (newValue === "all") {
+                <div className={styles.ratingsSummary}>
+                  <div className={styles.ratingsSummaryTop}>
+                    <p className={styles.ratingsSummaryHeader}>Ratings</p>
+                    <div className={styles.ratingsSummaryHeaderRight}>
+                      {hasRatings ? (
+                        <div className={styles.ratingsHeaderToolbar}>
+                          <div className={styles.termSelectWrapper}>
+                            <Select
+                              variant="foreground"
+                              searchable
+                              searchPlaceholder={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "Search instructors"
+                                  : "Search semesters"
+                              }
+                              emptyMessage={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "No instructors found"
+                                  : "No semesters found"
+                              }
+                              tabs={[
+                                {
+                                  value: RATING_TABS.Instructor,
+                                  label: "By Instructor",
+                                  options: instructorSelectOptions,
+                                },
+                                {
+                                  value: RATING_TABS.Semester,
+                                  label: "By Semester",
+                                  options: termSelectOptions,
+                                },
+                              ]}
+                              contentClassName={styles.ratingsSelectContent}
+                              tabsWrapperClassName={styles.ratingsSelectTabs}
+                              value={selectedValue}
+                              defaultTab={RATING_TABS.Instructor}
+                              onTabChange={(tabValue) => {
+                                setActiveRatingTab(tabValue);
+                                setSelectedValue("all");
                                 setSortBy(null);
-                                setAllChosen(true);
                                 setInstructorChosen(false);
                                 setSemesterChosen(false);
-                                return;
-                              }
+                              }}
+                              onChange={(newValue) => {
+                                if (Array.isArray(newValue) || !newValue)
+                                  return;
 
-                              if (activeRatingTab === RATING_TABS.Semester) {
-                                setAllChosen(false);
-                                setInstructorChosen(false);
-                                setSemesterChosen(true);
-                                setSortBy(newValue);
-                                return;
-                              }
+                                setSelectedValue(newValue);
 
-                              const selectedInstructorOption =
-                                instructorSelectOptions.find(
-                                  (o) => o.value === newValue
+                                if (newValue === "all") {
+                                  setSortBy(null);
+                                  setInstructorChosen(false);
+                                  setSemesterChosen(false);
+                                  return;
+                                }
+
+                                if (activeRatingTab === RATING_TABS.Semester) {
+                                  setInstructorChosen(false);
+                                  setSemesterChosen(true);
+                                  setSortBy(newValue);
+                                  return;
+                                }
+
+                                const selectedInstructorOption =
+                                  instructorSelectOptions.find(
+                                    (o) => o.value === newValue
+                                  );
+                                setInstructorChosen(true);
+                                setSemesterChosen(false);
+                                setSortBy(
+                                  selectedInstructorOption?.label ?? newValue
                                 );
-                              setAllChosen(false);
-                              setInstructorChosen(true);
-                              setSemesterChosen(false);
-                              setSortBy(
-                                selectedInstructorOption?.label ?? newValue
-                              );
-                            }}
-                            placeholder={
-                              activeRatingTab === RATING_TABS.Instructor
-                                ? "Select instructor"
-                                : "Select term"
-                            }
-                          />
+                              }}
+                              placeholder={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "Select instructor"
+                                  : "Select term"
+                              }
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </div>
+                  {classReviewsByUser.length === 0 ? (
+                    <div className={styles.noWrittenReviews}>
+                      <p className={styles.noWrittenReviewsText}>
+                        No written ratings yet. Be the first to share your
+                        experience!
+                      </p>
+                    </div>
+                  ) : (
+                    classReviewsByUser.map((classReview, index) => (
+                      <ClassRatingSummary
+                        key={`${classReview.lastUpdated ?? "review"}-${index}`}
+                        classReview={classReview}
+                      />
+                    ))
+                  )}
                 </div>
-                {classReviewsByUser.length > 0 ? (
-                  classReviewsByUser.map((classReview, index) => (
-                    <ClassRatingSummary
-                      key={`${classReview.lastUpdated ?? "review"}-${index}`}
-                      classReview={classReview}
-                    />
-                  ))
-                ) : (
-                  <div></div>
-                )}
-              </div>
-
               </div>
             </Container>
           </Box>
         </div>
       )}
-
-      <div>
-        <p>allChosen: {String(allChosen)}</p>
-        <p>instructorChosen: {String(instructorChosen)}</p>
-        <p>semesterChosen: {String(semesterChosen)}</p>
-        <p>sortBy: {sortBy === null ? "null" : sortBy}</p>
-        <h3>ClassReviews raw response</h3>
-        <pre>{JSON.stringify(classRatingsData, null, 2)}</pre>
-        <h3>Ratings Data (not correctly showing the counts)</h3>
-        <pre>{JSON.stringify(ratingsData, null, 2)}</pre>
-      </div>
-
 
       <UserFeedbackModal
         isOpen={isModalOpen}

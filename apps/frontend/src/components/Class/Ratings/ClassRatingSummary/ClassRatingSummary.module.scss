@@ -17,8 +17,13 @@
     align-self: stretch;
   }
 
+  .body:first-child {
+    flex: 1;
+  }
+
   .body + .body {
     margin-left: auto;
+    align-self: flex-start;
   }
   .bodyLeft {
     display: flex;
@@ -44,31 +49,136 @@
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
       font-weight: 600;
-      line-height: 20px; /* 142.857% */
+      line-height: 20px;
       letter-spacing: -0.1px;
     }
     h4 {
       color: var(--text-paragraph-color, #737373);
       font-feature-settings: 'liga' off;
-
-      /* Web UI (Desktop)/Body/Body Small */
       font-family: Inter;
       font-size: var(--font-sizes-1, 12px);
       font-style: normal;
       font-weight: var(--font-weight-regular, 400);
-      line-height: 16px; /* 133.333% */
+      line-height: 16px;
     }
     h5 {
       color: var(--text-secondary-color, #404040);
       font-feature-settings: 'liga' off;
-
-      /* Web UI (Desktop)/Body/Body Medium */
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
       font-weight: 400;
-      line-height: 20px; /* 142.857% */
+      line-height: 20px;
       letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .contentWrapper {
+      position: relative;
+      color: var(--text-secondary-color, #404040);
+      font-feature-settings: 'liga' off;
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      align-self: stretch;
+
+      &.clamped {
+        max-height: 80px; // 4 lines × 20px
+        overflow: hidden;
+      }
+
+      .moreButton {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--foreground-color);
+        border: none;
+        padding: 0 0 0 6px;
+        color: rgb(59, 130, 246);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        line-height: 20px;
+        cursor: pointer;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: var(--space-3, 12px);
+    }
+
+    .helpfulButton {
+      background: none;
+      border: 1px solid var(--surface-border-color, rgba(0, 0, 0, 0.10));
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-weight: 400;
+      color: var(--text-secondary-color, #404040);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--button-hover-color);
+      }
+    }
+
+    .reportButton {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-weight: 400;
+      color: var(--text-paragraph-color, #737373);
+      cursor: pointer;
+
+      &:hover {
+        color: var(--text-secondary-color, #404040);
+      }
+    }
+
+    .metricsRow {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4, 16px);
+      align-self: stretch;
+      margin-top: var(--space-2, 8px);
+
+      .metricItem {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        flex: 1 0 0;
+        padding-right: var(--space-4, 16px);
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
+        }
+      }
+
+      .metricLabel {
+        color: var(--text-secondary-color, #404040);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: -0.1px;
+      }
+
+      .metricValue {
+        color: var(--text-paragraph-color, #737373);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        font-weight: 400;
+        line-height: 20px;
+      }
     }
   }
   .bodyRight {
@@ -76,7 +186,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0;
-    align-self: flex-end;
+    align-self: flex-start;
 
     > * {
       margin: 0;
@@ -98,7 +208,7 @@
       background: var(--green-500-20);
       color: var(--green-badge);
     }
-    
+
     .grade {
       display: flex;
       min-width: 22px;
@@ -109,6 +219,10 @@
       align-self: center;
       text-align: center;
       color: var(--green-badge);
+
+      &.naGrade {
+        color: var(--text-paragraph-color, #737373);
+      }
     }
   }
 }
@@ -116,12 +230,10 @@
 .ratingGrade {
   color: var(--text-secondary-color, #404040);
   font-feature-settings: 'liga' off;
-  
-  /* Web UI (Desktop)/Title/Title Medium */
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
   letter-spacing: -0.1px;
 }

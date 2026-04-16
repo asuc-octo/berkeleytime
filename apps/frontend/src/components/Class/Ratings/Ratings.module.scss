@@ -1,21 +1,19 @@
 .root {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
   align-self: stretch;
+}
+
+.ratingsBox {
+  padding: 20px 24px;
 }
 
 .containerContents {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8, 48px);
+  gap: var(--space-5, 24px);
   align-self: stretch;
   min-width: 0;
-}
-
-.header {
-  margin-bottom: 16px;
 }
 
 .ratingsHeaderToolbar {
@@ -143,7 +141,7 @@
 
 .ratingsSummaryHeader {
   color: var(--text-secondary-color, #404040);
-  font-feature-settings: 'liga' off;
+  font-feature-settings: "liga" off;
 
   /* Web UI (Desktop)/Heading/Heading Medium */
   font-family: Inter;
@@ -162,7 +160,7 @@
 .ratingsSummaryAverage {
   color: var(--text-secondary-color, #404040);
   text-align: center;
-  font-feature-settings: 'liga' off;
+  font-feature-settings: "liga" off;
   font-family: Inter;
   font-size: var(--font-sizes-8, 35px);
   font-style: normal;
@@ -173,7 +171,7 @@
 
 .ratingsSummaryCount {
   color: var(--text-secondary-color, #404040);
-  font-feature-settings: 'liga' off;
+  font-feature-settings: "liga" off;
 
   /* Web UI (Desktop)/Title/Title Small */
   font-family: Inter;
@@ -183,6 +181,23 @@
   line-height: 16px; /* 133.333% */
 }
 
+.noWrittenReviews {
+  display: flex;
+  padding: 80px var(--space-4, 16px);
+  justify-content: center;
+  align-items: center;
+}
+
+.noWrittenReviewsText {
+  color: var(--text-paragraph-color, #737373);
+  font-family: Inter;
+  font-size: var(--font-sizes-2, 14px);
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  margin: 0;
+}
+
 .ratingSection {
   padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
@@ -190,10 +205,4 @@
   &:last-child {
     border-bottom: none;
   }
-}
-
-.userOnlyMessage {
-  margin-top: 12px;
-  margin-bottom: 0;
-  color: var(--label-color);
 }

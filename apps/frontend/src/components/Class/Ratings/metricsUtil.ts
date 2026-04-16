@@ -31,6 +31,20 @@ const COLOR_THRESHOLDS = [
   { min: 0, inverse: "green", normal: "red" },
 ];
 
+export function getAverageRatingColor(average: number): {
+  badge: string;
+  bg: string;
+} {
+  const threshold =
+    COLOR_THRESHOLDS.find((t) => average >= t.min) ??
+    COLOR_THRESHOLDS[COLOR_THRESHOLDS.length - 1];
+  const color = threshold.normal;
+  return {
+    badge: `var(--${color}-badge)`,
+    bg: `var(--${color}-500-20)`,
+  };
+}
+
 export function getStatusColor(
   metricName: MetricName,
   weightedAverage: number
