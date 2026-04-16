@@ -10,3 +10,5 @@ redis:
   master:
     persistence:
       enabled: false
+    configuration: |
+      maxmemory-policy volatile-lru
