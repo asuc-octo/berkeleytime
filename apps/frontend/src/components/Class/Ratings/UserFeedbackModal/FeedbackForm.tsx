@@ -185,7 +185,7 @@ export function ReviewContentForm({
           className={styles.reviewTextarea}
           value={reviewContent}
           onChange={(e) => setReviewContent(e.target.value)}
-          placeholder="Share details of your experience in the course"
+          placeholder="What was your experience like?"
           rows={4}
           aria-label="Review details"
         />

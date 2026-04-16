@@ -101,7 +101,7 @@ export function RatingFormBody({
 
           <div className={styles.formGroup}>
             <div className={styles.questionPair}>
-              <h3>What grade did you receive in this course?</h3>
+              <h3>Select grade received</h3>
               <div style={{ width: "100%" }}>
                 <Select
                   options={REVIEWER_GRADE_OPTIONS.map((grade) => ({
@@ -111,7 +111,8 @@ export function RatingFormBody({
                   disabled={!selectedCourse}
                   value={reviewerGrade}
                   onChange={(selectedOption) => {
-                    if (Array.isArray(selectedOption)) onReviewerGradeChange(null);
+                    if (Array.isArray(selectedOption))
+                      onReviewerGradeChange(null);
                     else onReviewerGradeChange(selectedOption || null);
                   }}
                   placeholder="Select grade"
