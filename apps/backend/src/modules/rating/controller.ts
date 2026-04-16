@@ -1060,101 +1060,71 @@ export const createRatings = async (
       }
 
       // Step 2: Soft-delete and create review snapshots
-      // `valid` identifies the latest active review for a user/course.
+      // Update or create the review for this user/course.
       if (
         reviewTitle !== undefined ||
         reviewContent !== undefined ||
         reviewerGrade !== undefined
       ) {
-        const activeReviewFilter = {
-          createdBy: context.user._id,
-          courseId,
-          $or: [{ valid: true }, { valid: { $exists: false } }],
-        };
-
         const normalizedTitle = (reviewTitle ?? "").trim();
         const normalizedContent = (reviewContent ?? "").trim();
         const normalizedReviewerGrade = (reviewerGrade ?? "n/a").trim() || "n/a";
         const hasReviewPayload =
           normalizedTitle.length > 0 || normalizedContent.length > 0;
 
+        const existingReview = await ReviewModel.findOne({
+          createdBy: context.user._id,
+          courseId,
+          $or: [{ valid: true }, { valid: { $exists: false } }],
+        }).session(session);
+
         if (!hasReviewPayload) {
-          await ReviewModel.updateMany(
-            activeReviewFilter,
-            { $set: { valid: false } },
-            { session }
-          );
-        } else {
-          const allReviews = await ReviewModel.find({
-            createdBy: context.user._id,
-            courseId,
-          }).session(session);
-
-          const reusableReview =
-            allReviews.find(
-              (existingReview) =>
-                (existingReview.reviewTitle ?? "").trim() === normalizedTitle &&
-                (existingReview.reviewContent ?? "").trim() ===
-                  normalizedContent &&
-                (existingReview.reviewerGrade ?? "n/a") ===
-                  normalizedReviewerGrade
-            ) ?? null;
-
-          if (reusableReview) {
-            await ReviewModel.updateMany(
-              {
-                ...activeReviewFilter,
-                _id: { $ne: reusableReview._id },
-              },
-              { $set: { valid: false } },
-              { session }
-            );
-
+          if (existingReview) {
             await ReviewModel.updateOne(
-              { _id: reusableReview._id },
-              {
-                $set: {
-                  valid: true,
-                  reviewTitle: normalizedTitle,
-                  reviewContent: normalizedContent,
-                  reviewerGrade: normalizedReviewerGrade,
-                  classId,
-                  subject,
-                  courseNumber,
-                  semester,
-                  year,
-                  classNumber,
-                },
-              },
-              { session }
-            );
-          } else {
-            await ReviewModel.updateMany(
-              activeReviewFilter,
+              { _id: existingReview._id },
               { $set: { valid: false } },
-              { session }
-            );
-
-            await ReviewModel.create(
-              [
-                {
-                  createdBy: context.user._id,
-                  courseId,
-                  reviewTitle: normalizedTitle,
-                  reviewContent: normalizedContent,
-                  reviewerGrade: normalizedReviewerGrade,
-                  classId,
-                  subject,
-                  courseNumber,
-                  semester,
-                  year,
-                  classNumber,
-                  valid: true,
-                },
-              ],
               { session }
             );
           }
+        } else if (existingReview) {
+          await ReviewModel.updateOne(
+            { _id: existingReview._id },
+            {
+              $set: {
+                reviewTitle: normalizedTitle,
+                reviewContent: normalizedContent,
+                reviewerGrade: normalizedReviewerGrade,
+                classId,
+                subject,
+                courseNumber,
+                semester,
+                year,
+                classNumber,
+                valid: true,
+              },
+            },
+            { session }
+          );
+        } else {
+          await ReviewModel.create(
+            [
+              {
+                createdBy: context.user._id,
+                courseId,
+                reviewTitle: normalizedTitle,
+                reviewContent: normalizedContent,
+                reviewerGrade: normalizedReviewerGrade,
+                classId,
+                subject,
+                courseNumber,
+                semester,
+                year,
+                classNumber,
+                valid: true,
+              },
+            ],
+            { session }
+          );
         }
       }
 
@@ -1275,6 +1245,41 @@ const anonymizeUserId = (userId: string): string => {
   return createHash("sha256").update(userId).digest("hex").slice(0, 16);
 };
 
+export const voteReviewHelpful = async (
+  context: RequestContext,
+  reviewId: string
+): Promise<number> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const review = await ReviewModel.findById(reviewId);
+  if (!review) {
+    throw new GraphQLError("Review not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  const userId = context.user._id;
+  const alreadyVoted = (review.helpfulVoters as string[] | undefined)?.includes(userId) ?? false;
+
+  if (alreadyVoted) {
+    await ReviewModel.updateOne(
+      { _id: review._id },
+      { $pull: { helpfulVoters: userId }, $inc: { helpfulCount: -1 } }
+    );
+    return Math.max(0, ((review.helpfulCount as number | undefined) ?? 0) - 1);
+  } else {
+    await ReviewModel.updateOne(
+      { _id: review._id },
+      { $addToSet: { helpfulVoters: userId }, $inc: { helpfulCount: 1 } }
+    );
+    return ((review.helpfulCount as number | undefined) ?? 0) + 1;
+  }
+};
+
 export const getAllRatings = async () => {
   const ratings = await RatingModel.find({}).lean();
   const shadowBannedCourseIds = await getShadowBannedCourseIds();
@@ -1346,18 +1351,22 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
   const reviewByUser = new Map<
     string,
     {
+      reviewId: string;
       reviewTitle?: string | null;
       reviewContent?: string | null;
       reviewerGrade?: string | null;
+      helpfulCount: number;
     }
   >();
   activeReviews.forEach((review) => {
     if (reviewByUser.has(review.createdBy)) return;
     reviewByUser.set(review.createdBy, {
+      reviewId: review._id?.toString() ?? "",
       reviewTitle: review.reviewTitle ?? null,
       reviewContent: review.reviewContent ?? null,
       reviewerGrade:
         (review.reviewerGrade as string | null) ?? "n/a",
+      helpfulCount: (review.helpfulCount as number | undefined) ?? 0,
     });
   });
 
@@ -1394,6 +1403,8 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
     reviewContent?: string | null;
     reviewerGrade?: string | null;
     lastUpdated: string;
+    reviewId?: string | null;
+    helpfulCount: number;
   };
 
   const userClassesById = new Map<string, Map<string, UserClassEntry>>();
@@ -1430,6 +1441,8 @@ export const getClassRatings = async (subject: string, courseNumber: string) => 
         reviewContent: review?.reviewContent ?? null,
         reviewerGrade: review?.reviewerGrade ?? "n/a",
         lastUpdated: timestamp.toISOString(),
+        reviewId: review?.reviewId ?? null,
+        helpfulCount: review?.helpfulCount ?? 0,
       });
       userClassesById.set(userId, userClasses);
       return;

@@ -56,6 +56,14 @@ const reviewSchema = new Schema(
       required: true,
       default: true,
     },
+    helpfulCount: {
+      type: Number,
+      default: 0,
+    },
+    helpfulVoters: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

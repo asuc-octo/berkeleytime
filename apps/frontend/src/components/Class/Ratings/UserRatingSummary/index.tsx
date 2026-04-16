@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { METRIC_ORDER, MetricName } from "@repo/shared";
 
@@ -41,6 +41,14 @@ export default function UserRatingSummary({
     metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollHeight > el.clientHeight);
+  }, [userRatings.reviewContent]);
 
   return (
     <div className={styles.root}>
@@ -53,6 +61,7 @@ export default function UserRatingSummary({
             )}
           </div>
           <div
+            ref={contentRef}
             className={
               isExpanded
                 ? styles.contentWrapper
@@ -60,9 +69,17 @@ export default function UserRatingSummary({
             }
           >
             {userRatings.reviewContent || "No written review yet."}
-            {!isExpanded && (
+            {!isExpanded && isOverflowing && (
               <button
                 className={styles.moreButton}
+                onClick={() => setIsExpanded(true)}
+              >
+                More
+              </button>
+            )}
+            {!isExpanded && !isOverflowing && (
+              <button
+                className={styles.moreButtonInline}
                 onClick={() => setIsExpanded(true)}
               >
                 More

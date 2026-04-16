@@ -402,7 +402,8 @@ export function UserFeedbackModal({
     setSelectedTerm(initialTermValue);
     setCurrentRatingIndex(0);
     prevRatingIndexRef.current = 0;
-    hasAutoSelected.current = false; // Reset the auto-selection flag when closing
+    hasAutoSelected.current = false;
+    hasHydratedRef.current = false; // Allow re-hydration from initialUserClass on next open
     onClose();
   };
 

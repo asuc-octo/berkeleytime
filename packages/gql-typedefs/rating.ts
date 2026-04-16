@@ -89,6 +89,8 @@ export const ratingTypeDef = gql`
     reviewContent: String
     reviewerGrade: String
     lastUpdated: String
+    reviewId: String
+    helpfulCount: Int
   }
   type UserMetric {
     metricName: MetricName!
@@ -223,5 +225,7 @@ export const ratingTypeDef = gql`
     ): Boolean! @auth
 
     deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth
+
+    voteReviewHelpful(reviewId: String!): Int! @auth
   }
 `;

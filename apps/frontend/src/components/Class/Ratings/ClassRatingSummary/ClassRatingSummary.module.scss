@@ -29,7 +29,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-2, 8px);
+    gap: var(--space-4, 16px);
     align-self: stretch;
 
     .titleDate {
@@ -51,6 +51,8 @@
       font-weight: 600;
       line-height: 20px;
       letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     h4 {
       color: var(--text-paragraph-color, #737373);
@@ -92,6 +94,18 @@
         overflow: hidden;
       }
 
+      .moreButtonInline {
+        display: inline;
+        background: none;
+        border: none;
+        padding: 0 0 0 4px;
+        color: rgb(59, 130, 246);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        line-height: 20px;
+        cursor: pointer;
+      }
+
       .moreButton {
         position: absolute;
         bottom: 0;
@@ -113,10 +127,15 @@
     }
 
     .helpfulButton {
+      display: flex;
+      height: 32px;
+      padding: var(--space-1, 4px) var(--space-3, 12px);
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-2, 8px);
       background: none;
       border: 1px solid var(--surface-border-color, rgba(0, 0, 0, 0.10));
       border-radius: 4px;
-      padding: 4px 12px;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-weight: 400;
@@ -125,6 +144,11 @@
 
       &:hover {
         background-color: var(--button-hover-color);
+      }
+
+      &.helpfulButtonActive {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: rgb(59, 130, 246);
       }
     }
 

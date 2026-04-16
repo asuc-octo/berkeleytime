@@ -49,6 +49,8 @@
       font-weight: 600;
       line-height: 20px; /* 142.857% */
       letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     h4 {
       color: var(--text-paragraph-color, #737373);
@@ -92,6 +94,18 @@
       &.clamped {
         max-height: 80px; // 4 lines × 20px
         overflow: hidden;
+      }
+
+      .moreButtonInline {
+        display: inline;
+        background: none;
+        border: none;
+        padding: 0 0 0 4px;
+        color: rgb(59, 130, 246);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        line-height: 20px;
+        cursor: pointer;
       }
 
       .moreButton {

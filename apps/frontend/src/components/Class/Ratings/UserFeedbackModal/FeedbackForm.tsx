@@ -164,6 +164,7 @@ export function ReviewTitleForm({
           onChange={(e) => setReviewTitle(e.target.value)}
           placeholder="Title"
           rows={1}
+          maxLength={100}
           aria-label="Review title"
         />
       </div>

@@ -231,9 +231,17 @@ export const GET_CLASS_REVIEWS = gql`
           reviewContent
           reviewerGrade
           lastUpdated
+          reviewId
+          helpfulCount
         }
       }
     }
+  }
+`;
+
+export const VOTE_REVIEW_HELPFUL = gql`
+  mutation VoteReviewHelpful($reviewId: String!) {
+    voteReviewHelpful(reviewId: $reviewId)
   }
 `;
 

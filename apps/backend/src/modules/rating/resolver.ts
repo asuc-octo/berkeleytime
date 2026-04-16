@@ -9,6 +9,7 @@ import {
   getSemestersWithRatings,
   getUserClassRatings,
   getUserRatings,
+  voteReviewHelpful,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
@@ -202,6 +203,24 @@ const resolvers: RatingModule.Resolvers = {
           throw error;
         }
         // Convert any other errors to GraphQLError
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+
+    voteReviewHelpful: async (_, { reviewId }, context) => {
+      try {
+        return await voteReviewHelpful(context, reviewId);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
         throw new GraphQLError(
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)

@@ -85,6 +85,8 @@ type ClassReviewsQueryData = {
         reviewerGrade?: string | null;
         lastUpdated?: string | null;
         metrics?: ClassReviewsMetric[];
+        reviewId?: string | null;
+        helpfulCount?: number | null;
       }>;
     }>;
   };
@@ -483,7 +485,8 @@ export function RatingsContainer() {
           return classReview.professorName === sortBy;
         }
         return true;
-      });
+      })
+      .sort((a, b) => (b.helpfulCount ?? 0) - (a.helpfulCount ?? 0));
   }, [
     classRatingsData,
     semesterChosen,

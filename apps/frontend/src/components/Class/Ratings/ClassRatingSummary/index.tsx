@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
+import { useMutation } from "@apollo/client/react";
 import { METRIC_ORDER, MetricName } from "@repo/shared";
+
+import { VOTE_REVIEW_HELPFUL } from "@/lib/api/ratings";
+import {
+  VoteReviewHelpfulMutation,
+  VoteReviewHelpfulMutationVariables,
+} from "@/lib/generated/graphql";
 
 import {
   formatDate,
@@ -16,6 +23,8 @@ export interface ClassUserReview {
   reviewContent?: string | null;
   reviewerGrade?: string | null;
   lastUpdated?: string | null;
+  reviewId?: string | null;
+  helpfulCount?: number | null;
 }
 
 export default function ClassRatingSummary({
@@ -23,6 +32,27 @@ export default function ClassRatingSummary({
 }: {
   classReview: ClassUserReview;
 }) {
+  const [voteHelpful] = useMutation<
+    VoteReviewHelpfulMutation,
+    VoteReviewHelpfulMutationVariables
+  >(VOTE_REVIEW_HELPFUL);
+
+  const storageKey = classReview.reviewId
+    ? `bt_helpful_${classReview.reviewId}`
+    : null;
+
+  const [hasVoted, setHasVoted] = useState(() =>
+    storageKey ? localStorage.getItem(storageKey) === "true" : false
+  );
+
+  const handleHelpful = async () => {
+    if (!classReview.reviewId || !storageKey) return;
+    const next = !hasVoted;
+    setHasVoted(next);
+    localStorage.setItem(storageKey, String(next));
+    await voteHelpful({ variables: { reviewId: classReview.reviewId } });
+  };
+
   const ratingMetrics = (classReview.metrics ?? []).filter((metric) =>
     isMetricRating(MetricName[metric.metricName])
   );
@@ -46,6 +76,14 @@ export default function ClassRatingSummary({
     metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollHeight > el.clientHeight);
+  }, [classReview.reviewContent]);
 
   return (
     <div className={styles.root}>
@@ -58,6 +96,7 @@ export default function ClassRatingSummary({
             )}
           </div>
           <div
+            ref={contentRef}
             className={
               isExpanded
                 ? styles.contentWrapper
@@ -65,9 +104,17 @@ export default function ClassRatingSummary({
             }
           >
             {classReview.reviewContent || "No written review yet."}
-            {!isExpanded && (
+            {!isExpanded && isOverflowing && (
               <button
                 className={styles.moreButton}
+                onClick={() => setIsExpanded(true)}
+              >
+                More
+              </button>
+            )}
+            {!isExpanded && !isOverflowing && (
+              <button
+                className={styles.moreButtonInline}
                 onClick={() => setIsExpanded(true)}
               >
                 More
@@ -93,7 +140,12 @@ export default function ClassRatingSummary({
             </div>
           )}
           <div className={styles.actions}>
-            <button className={styles.helpfulButton}>Helpful</button>
+            <button
+              className={`${styles.helpfulButton}${hasVoted ? ` ${styles.helpfulButtonActive}` : ""}`}
+              onClick={handleHelpful}
+            >
+              Helpful
+            </button>
             <button className={styles.reportButton}>Report</button>
           </div>
         </div>
