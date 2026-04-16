@@ -190,7 +190,8 @@ export function ReviewContentForm({
           aria-label="Review details"
         />
         <p className={styles.reviewDisclaimer}>
-          Your rating could be removed if you use profanity or derogatory terms.
+          Please be respectful in your reviews!
+          {/* Your rating could be removed if you use profanity or derogatory terms. */}
         </p>
       </div>
     </div>
