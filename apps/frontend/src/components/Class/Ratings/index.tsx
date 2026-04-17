@@ -102,7 +102,14 @@ function RatingCountWithButton({
   const countLabel =
     count === 0 ? "No ratings" : count === 1 ? "1 rating" : `${count} ratings`;
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3, 12px)" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "var(--space-3, 12px)",
+      }}
+    >
       <p className={styles.ratingsSummaryCount}>{countLabel}</p>
       {addRatingButton}
     </div>

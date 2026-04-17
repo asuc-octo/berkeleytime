@@ -96,9 +96,7 @@ export default function UserRatingSummary({
                 return (
                   <div key={metricName} className={styles.metricItem}>
                     <span className={styles.metricLabel}>{metricName}</span>
-                    <span className={styles.metricValue}>
-                      {metric.value}
-                    </span>
+                    <span className={styles.metricValue}>{metric.value}</span>
                   </div>
                 );
               })}
