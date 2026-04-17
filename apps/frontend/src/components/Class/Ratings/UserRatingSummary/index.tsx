@@ -97,7 +97,7 @@ export default function UserRatingSummary({
                   <div key={metricName} className={styles.metricItem}>
                     <span className={styles.metricLabel}>{metricName}</span>
                     <span className={styles.metricValue}>
-                      {metric.value.toFixed(1)}
+                      {metric.value}
                     </span>
                   </div>
                 );

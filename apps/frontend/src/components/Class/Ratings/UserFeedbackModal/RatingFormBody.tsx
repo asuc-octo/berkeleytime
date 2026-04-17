@@ -72,6 +72,11 @@ export function RatingFormBody({
             setReviewContent={setReviewContent}
             showRequiredAsterisk={reviewTitle.trim().length > 0}
           />
+          <ReviewTitleForm
+            reviewTitle={reviewTitle}
+            setReviewTitle={setReviewTitle}
+            showRequiredAsterisk={reviewContent.trim().length > 0}
+          />
           <div className={styles.formGroup}>
             <div className={styles.questionPair}>
               <h3>
@@ -128,11 +133,6 @@ export function RatingFormBody({
             metricData={metricData}
             setMetricData={setMetricData}
             startQuestionNumber={questionNumbers.ratingsStartNumber}
-          />
-          <ReviewTitleForm
-            reviewTitle={reviewTitle}
-            setReviewTitle={setReviewTitle}
-            showRequiredAsterisk={reviewContent.trim().length > 0}
           />
         </Flex>
       </div>

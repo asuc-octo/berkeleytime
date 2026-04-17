@@ -140,7 +140,7 @@
 }
 
 .ratingsSummaryHeader {
-  color: var(--text-secondary-color, #404040);
+  color: var(--secondary-color);
   font-feature-settings: "liga" off;
 
   /* Web UI (Desktop)/Heading/Heading Medium */
@@ -158,7 +158,7 @@
 }
 
 .ratingsSummaryAverage {
-  color: var(--text-secondary-color, #404040);
+  color: var(--secondary-color);
   text-align: center;
   font-feature-settings: "liga" off;
   font-family: Inter;
@@ -170,7 +170,7 @@
 }
 
 .ratingsSummaryCount {
-  color: var(--text-secondary-color, #404040);
+  color: var(--paragraph-color);
   font-feature-settings: "liga" off;
 
   /* Web UI (Desktop)/Title/Title Small */
@@ -189,7 +189,7 @@
 }
 
 .noWrittenReviewsText {
-  color: var(--text-paragraph-color, #737373);
+  color: var(--paragraph-color);
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);
   font-weight: 400;

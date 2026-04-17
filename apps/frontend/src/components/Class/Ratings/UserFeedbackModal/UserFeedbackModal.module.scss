@@ -142,7 +142,7 @@
   box-sizing: border-box;
 
   &::placeholder {
-    color: var(--text-label-color, #a3a3a3);
+    color: var(--label-color);
     font-size: var(--font-sizes-2, 14px);
 
     line-height: 20px;
@@ -155,16 +155,12 @@
   }
 }
 
-/* Smaller height for review title field */
 .reviewTitleTextarea {
-  overflow: hidden;
-  resize: none;
-  min-height: 44px;
-  max-height: 96px;
+  height: 44px;
 }
 
 .reviewDisclaimer.reviewDisclaimer {
-  color: var(--text-paragraph-color, #737373);
+  color: var(--paragraph-color);
   font-feature-settings: "liga" off;
   font-family: Inter, sans-serif;
   font-size: var(--font-sizes-1, 12px);

@@ -15,6 +15,7 @@ import {
   getAverageRatingColor,
   isMetricRating,
 } from "../metricsUtil";
+// eslint-disable-next-line css-modules/no-unused-class
 import styles from "./ClassRatingSummary.module.scss";
 
 export interface ClassUserReview {
@@ -132,9 +133,7 @@ export default function ClassRatingSummary({
                 return (
                   <div key={metricName} className={styles.metricItem}>
                     <span className={styles.metricLabel}>{metricName}</span>
-                    <span className={styles.metricValue}>
-                      {metric.value.toFixed(1)}
-                    </span>
+                    <span className={styles.metricValue}>{metric.value}</span>
                   </div>
                 );
               })}
@@ -147,7 +146,7 @@ export default function ClassRatingSummary({
             >
               Helpful
             </button>
-            <button className={styles.reportButton}>Report</button>
+            {/* <button className={styles.reportButton}>Report</button> */}
           </div>
         </div>
       </div>

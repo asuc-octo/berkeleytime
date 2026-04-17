@@ -158,12 +158,12 @@ export function ReviewTitleForm({
         <h3>
           Title your review {showRequiredAsterisk && <RequiredAsterisk />}
         </h3>
-        <textarea
+        <input
+          type="text"
           className={`${styles.reviewTextarea} ${styles.reviewTitleTextarea}`}
           value={reviewTitle}
           onChange={(e) => setReviewTitle(e.target.value)}
           placeholder="Title"
-          rows={1}
           maxLength={100}
           aria-label="Review title"
         />
@@ -190,7 +190,7 @@ export function ReviewContentForm({
           aria-label="Review details"
         />
         <p className={styles.reviewDisclaimer}>
-          Please be respectful in your reviews!
+          Please be respectful in your reviews.
           {/* Your rating could be removed if you use profanity or derogatory terms. */}
         </p>
       </div>

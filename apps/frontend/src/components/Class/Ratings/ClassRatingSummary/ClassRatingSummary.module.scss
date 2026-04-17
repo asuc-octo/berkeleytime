@@ -39,12 +39,14 @@
       gap: 4px;
       flex: 1 0 0;
     }
-    h3, h4, h5 {
+    h3,
+    h4,
+    h5 {
       margin: 0;
     }
     h3 {
-      color: var(--text-secondary-color, #404040);
-      font-feature-settings: 'liga' off;
+      color: var(--secondary-color);
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
@@ -55,8 +57,8 @@
       overflow-wrap: break-word;
     }
     h4 {
-      color: var(--text-paragraph-color, #737373);
-      font-feature-settings: 'liga' off;
+      color: var(--paragraph-color);
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-1, 12px);
       font-style: normal;
@@ -64,8 +66,8 @@
       line-height: 16px;
     }
     h5 {
-      color: var(--text-secondary-color, #404040);
-      font-feature-settings: 'liga' off;
+      color: var(--secondary-color);
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
@@ -78,8 +80,8 @@
 
     .contentWrapper {
       position: relative;
-      color: var(--text-secondary-color, #404040);
-      font-feature-settings: 'liga' off;
+      color: var(--secondary-color);
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-weight: 400;
@@ -99,7 +101,7 @@
         background: none;
         border: none;
         padding: 0 0 0 4px;
-        color: rgb(59, 130, 246);
+        color: var(--blue-badge);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         line-height: 20px;
@@ -113,7 +115,7 @@
         background: var(--foreground-color);
         border: none;
         padding: 0 0 0 6px;
-        color: rgb(59, 130, 246);
+        color: var(--blue-badge);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         line-height: 20px;
@@ -134,12 +136,12 @@
       align-items: center;
       gap: var(--space-2, 8px);
       background: none;
-      border: 1px solid var(--surface-border-color, rgba(0, 0, 0, 0.10));
+      border: 1px solid var(--border-color);
       border-radius: 4px;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-weight: 400;
-      color: var(--text-secondary-color, #404040);
+      color: var(--secondary-color);
       cursor: pointer;
 
       &:hover {
@@ -147,8 +149,8 @@
       }
 
       &.helpfulButtonActive {
-        background-color: rgba(59, 130, 246, 0.1);
-        color: rgb(59, 130, 246);
+        background-color: var(--blue-500-20);
+        color: var(--blue-badge);
       }
     }
 
@@ -159,11 +161,11 @@
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-weight: 400;
-      color: var(--text-paragraph-color, #737373);
+      color: var(--paragraph-color);
       cursor: pointer;
 
       &:hover {
-        color: var(--text-secondary-color, #404040);
+        color: var(--secondary-color);
       }
     }
 
@@ -188,7 +190,7 @@
       }
 
       .metricLabel {
-        color: var(--text-secondary-color, #404040);
+        color: var(--secondary-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         font-weight: 500;
@@ -197,7 +199,7 @@
       }
 
       .metricValue {
-        color: var(--text-paragraph-color, #737373);
+        color: var(--paragraph-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         font-weight: 400;
@@ -228,7 +230,6 @@
       align-self: center;
       text-align: center;
       border-radius: 4px;
-      border: 1px solid var(--green-badge);
       background: var(--green-500-20);
       color: var(--green-badge);
     }
@@ -245,15 +246,15 @@
       color: var(--green-badge);
 
       &.naGrade {
-        color: var(--text-paragraph-color, #737373);
+        color: var(--paragraph-color);
       }
     }
   }
 }
 
 .ratingGrade {
-  color: var(--text-secondary-color, #404040);
-  font-feature-settings: 'liga' off;
+  color: var(--secondary-color);
+  font-feature-settings: "liga" off;
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);
   font-style: normal;

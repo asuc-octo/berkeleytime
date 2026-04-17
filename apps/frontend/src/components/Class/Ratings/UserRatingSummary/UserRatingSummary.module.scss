@@ -41,7 +41,7 @@
       margin: 0;
     }
     h3 {
-      color: var(--text-secondary-color, #404040);
+      color: var(--secondary-color);
       font-feature-settings: 'liga' off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
@@ -53,7 +53,7 @@
       overflow-wrap: break-word;
     }
     h4 {
-      color: var(--text-paragraph-color, #737373);
+      color: var(--paragraph-color);
       font-feature-settings: 'liga' off;
 
       /* Web UI (Desktop)/Body/Body Small */
@@ -64,7 +64,7 @@
       line-height: 16px; /* 133.333% */
     }
     h5 {
-      color: var(--text-secondary-color, #404040);
+      color: var(--secondary-color);
       font-feature-settings: 'liga' off;
 
       /* Web UI (Desktop)/Body/Body Medium */
@@ -80,7 +80,7 @@
 
     .contentWrapper {
       position: relative;
-      color: var(--text-secondary-color, #404040);
+      color: var(--secondary-color);
       font-feature-settings: 'liga' off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
@@ -101,7 +101,7 @@
         background: none;
         border: none;
         padding: 0 0 0 4px;
-        color: rgb(59, 130, 246);
+        color: var(--blue-badge);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         line-height: 20px;
@@ -115,7 +115,7 @@
         background: var(--foreground-color);
         border: none;
         padding: 0 0 0 6px;
-        color: rgb(59, 130, 246);
+        color: var(--blue-badge);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         line-height: 20px;
@@ -144,7 +144,7 @@
       }
 
       .metricLabel {
-        color: var(--text-secondary-color, #404040);
+        color: var(--secondary-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         font-weight: 500;
@@ -153,7 +153,7 @@
       }
 
       .metricValue {
-        color: var(--text-paragraph-color, #737373);
+        color: var(--paragraph-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
         font-weight: 400;
@@ -184,7 +184,6 @@
       align-self: center;
       text-align: center;
       border-radius: 4px;
-      border: 1px solid var(--green-badge);
       background: var(--green-500-20);
       color: var(--green-badge);
     }
@@ -201,14 +200,14 @@
       color: var(--green-badge);
 
       &.naGrade {
-        color: var(--text-paragraph-color, #737373);
+        color: var(--paragraph-color);
       }
     }
   }
 }
 
 .ratingGrade {
-  color: var(--text-secondary-color, #404040);
+  color: var(--secondary-color);
   font-feature-settings: 'liga' off;
   
   /* Web UI (Desktop)/Title/Title Medium */
