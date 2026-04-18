@@ -9,7 +9,7 @@ export const USER_MAX_SEMESTER_RATINGS = 8;
 // ratings required from a user before unlocking ratings tab
 export const USER_REQUIRED_RATINGS_TO_UNLOCK = 0;
 
-// optional self-reported course grade in the rating form 
+// optional self-reported course grade in the rating form
 export const REVIEWER_GRADE_OPTIONS = [
   "A+",
   "A",
