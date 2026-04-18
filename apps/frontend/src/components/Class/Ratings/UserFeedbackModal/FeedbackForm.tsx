@@ -156,7 +156,7 @@ export function ReviewTitleForm({
     <div className={styles.formGroup}>
       <div className={styles.questionPair}>
         <h3>
-          Title your review {showRequiredAsterisk && <RequiredAsterisk />}
+          Title of your review? {showRequiredAsterisk && <RequiredAsterisk />}
         </h3>
         <input
           type="text"

@@ -2,6 +2,8 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
+import { MINIMUM_RESPONSES_THRESHOLD } from "@repo/shared";
+
 import {
   GetClassRatingsDataDocument,
   GetClassRatingsDataQuery,
@@ -50,7 +52,7 @@ export const useGetClassRatingsData = ({
       (total, metric) => total + (metric.count ?? 0),
       0
     );
-    return totalRatings > 0;
+    return totalRatings >= MINIMUM_RESPONSES_THRESHOLD;
   }, [data?.course?.aggregatedRatings?.metrics]);
 
   const instructorAggregatedRatings = useMemo(() => {
