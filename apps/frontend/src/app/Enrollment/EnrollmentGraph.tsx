@@ -845,9 +845,7 @@ export default function EnrollmentGraph({
                 />
                 <Line
                   dataKey={getWaitlistSeriesKey(outputIndex)}
-                  stroke={
-                    isDimmed ? "var(--border-color)" : output.color
-                  }
+                  stroke={isDimmed ? "var(--border-color)" : output.color}
                   strokeOpacity={isDimmed ? 1 : 0.75}
                   strokeWidth={isDimmed ? 1.5 : 2}
                   strokeDasharray="6 4"

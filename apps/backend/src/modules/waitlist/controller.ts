@@ -127,9 +127,7 @@ function waitlistDecreasesAndDaysFromHistory(
 
   // Trim the leading zero-waitlist run: those are pre-waitlist-period days
   // and dilute the per-day drop rate if counted.
-  const firstActiveIdx = sorted.findIndex(
-    (e) => (e.waitlistedCount ?? 0) > 0
-  );
+  const firstActiveIdx = sorted.findIndex((e) => (e.waitlistedCount ?? 0) > 0);
   if (firstActiveIdx === -1) {
     return { waitlistDecreases: 0, days: 0 };
   }
@@ -163,9 +161,7 @@ async function fetchAdjustmentStartMsByTerm(
   if (terms.length === 0) return result;
 
   const uniqueTerms = Array.from(
-    new Map(
-      terms.map((t) => [`${t.year}-${t.semester}`, t] as const)
-    ).values()
+    new Map(terms.map((t) => [`${t.year}-${t.semester}`, t] as const)).values()
   );
 
   const timeframes = await EnrollmentTimeframeModel.find({
