@@ -92,7 +92,6 @@ type ClassReviewsQueryData = {
   };
 };
 
-
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 const RATING_TABS = {
   Instructor: "instructor",
@@ -527,7 +526,15 @@ export function RatingsContainer() {
             <Container size="3">
               <div className={styles.containerContents}>
                 <div className={styles.ratingsSummary}>
-                  <div className={styles.ratingsSummaryTop} style={{ justifyContent: "space-between", display: "flex", alignItems: "center", marginBottom: "var(--space-3, 12px)" }}>
+                  <div
+                    className={styles.ratingsSummaryTop}
+                    style={{
+                      justifyContent: "space-between",
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: "var(--space-3, 12px)",
+                    }}
+                  >
                     <p className={styles.ratingsSummaryCount}>
                       {classReviewsSummary.count === 0
                         ? "No ratings"
@@ -545,7 +552,10 @@ export function RatingsContainer() {
                     )}
                   </div>
                   <div className={styles.ratingsSummaryBottom}>
-                    <div className={styles.ratingsSummaryBottomRight} style={{ flex: 1 }}>
+                    <div
+                      className={styles.ratingsSummaryBottomRight}
+                      style={{ flex: 1 }}
+                    >
                       <div
                         className={styles.ratingsBody}
                         style={{
