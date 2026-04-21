@@ -212,6 +212,8 @@ describe("areOutputsFromSameSemester", () => {
 const ep = (enrolled: number, capacity: number): EnrollmentPoint => ({
   enrolledCount: enrolled,
   enrolledPercent: null,
+  waitlistedCount: 0,
+  waitlistedPercent: null,
   capacityCount: capacity,
   capacityPercent: null,
 });

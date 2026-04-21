@@ -115,6 +115,8 @@ export const getCapacityChangeTimeDeltas = (
 export interface EnrollmentPoint {
   enrolledCount: number | null;
   enrolledPercent: number | null;
+  waitlistedCount: number | null;
+  waitlistedPercent: number | null;
   capacityCount: number | null;
   capacityPercent: number | null;
 }
@@ -210,6 +212,8 @@ export const interpolateEnrollmentPoint = (
   return {
     enrolledCount: lerp(prev.enrolledCount, next.enrolledCount),
     enrolledPercent: lerp(prev.enrolledPercent, next.enrolledPercent),
+    waitlistedCount: lerp(prev.waitlistedCount, next.waitlistedCount),
+    waitlistedPercent: lerp(prev.waitlistedPercent, next.waitlistedPercent),
     capacityCount: lerp(prev.capacityCount, next.capacityCount),
     capacityPercent: lerp(prev.capacityPercent, next.capacityPercent),
   };
@@ -219,7 +223,9 @@ const enrollmentPointsEqual = (
   a: EnrollmentPoint,
   b: EnrollmentPoint
 ): boolean =>
-  a.enrolledCount === b.enrolledCount && a.capacityCount === b.capacityCount;
+  a.enrolledCount === b.enrolledCount &&
+  a.waitlistedCount === b.waitlistedCount &&
+  a.capacityCount === b.capacityCount;
 
 /**
  * Remove interior points of constant-value runs, keeping only boundary points.

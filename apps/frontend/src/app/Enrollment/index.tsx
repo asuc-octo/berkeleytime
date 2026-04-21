@@ -638,6 +638,19 @@ function EnrollmentVisualization({
   const { hoveredIndex, hoverCard, clearHover, shiftAfterRemoval } =
     useRafHoverIndex();
   const shouldDimOthers = hoveredIndex !== null && outputs.length > 1;
+  const currentWaitlistedCount = useMemo(() => {
+    const history = outputs[0]?.data?.history ?? [];
+    if (history.length === 0) return null;
+
+    const latestEntry = history.reduce((latest, entry) => {
+      if (!latest) return entry;
+      return Date.parse(entry.endTime) > Date.parse(latest.endTime)
+        ? entry
+        : latest;
+    }, history[0]);
+
+    return latestEntry?.waitlistedCount ?? null;
+  }, [outputs]);
 
   const handleRemove = useCallback(
     (index: number) => {
@@ -706,6 +719,8 @@ function EnrollmentVisualization({
           subject={outputs[0].input.subject}
           courseNumber={outputs[0].input.courseNumber}
           sectionNumber={outputs[0].input.sectionNumber}
+          currentWaitlistedCount={currentWaitlistedCount}
+          courseLabel={`${outputs[0].course.subject} ${outputs[0].course.number} (Section ${outputs[0].input.sectionNumber})`}
         />
       )}
     </>

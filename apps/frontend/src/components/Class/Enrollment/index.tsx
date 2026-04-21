@@ -107,6 +107,13 @@ export default function Enrollment() {
   } = useCapacityChangeTooltip(chartRef);
 
   const history = enrollmentData?.primarySection?.enrollment?.history ?? [];
+  const currentWaitlistedCount = useMemo(() => {
+    if (history.length === 0) return null;
+    const latestEntry = history.reduce((latest, entry) =>
+      Date.parse(entry.endTime) > Date.parse(latest.endTime) ? entry : latest
+    );
+    return latestEntry.waitlistedCount ?? null;
+  }, [history]);
 
   const data = useMemo(() => {
     if (history.length === 0) return [];
@@ -136,6 +143,11 @@ export default function Enrollment() {
           enrolledPercent:
             maxEnrollDenominator > 0
               ? ((entry.enrolledCount ?? 0) / maxEnrollDenominator) * 100
+              : null,
+          waitlistedCount: entry.waitlistedCount ?? 0,
+          waitlistedPercent:
+            maxEnrollDenominator > 0
+              ? ((entry.waitlistedCount ?? 0) / maxEnrollDenominator) * 100
               : null,
           capacityCount: maxEnroll,
           capacityPercent:
@@ -489,16 +501,16 @@ export default function Enrollment() {
         <p className={styles.axisLabel}>Days since enrollment opened</p>
         {capacityTooltipElement}
       </div>
-      <div style={{ marginTop: 24 }}>
-        <WaitlistProbability
-          year={_class.year}
-          semester={_class.semester}
-          sessionId={_class.sessionId ?? null}
-          subject={_class.subject}
-          courseNumber={_class.courseNumber}
-          sectionNumber={_class.number}
-        />
-      </div>
+      <WaitlistProbability
+        year={_class.year}
+        semester={_class.semester}
+        sessionId={_class.sessionId ?? null}
+        subject={_class.subject}
+        courseNumber={_class.courseNumber}
+        sectionNumber={_class.number}
+        currentWaitlistedCount={currentWaitlistedCount}
+        courseLabel={`${_class.subject} ${_class.courseNumber} (Section ${_class.number})`}
+      />
     </ClassChartBox>
   );
 }

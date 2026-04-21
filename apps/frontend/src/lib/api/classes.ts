@@ -406,6 +406,31 @@ export const GET_CLASS_GRADES = gql`
   }
 `;
 
+export const GET_CLASS_PRIMARY_SECTION_DATES = gql`
+  query GetClassPrimarySectionDates(
+    $year: Int!
+    $semester: Semester!
+    $sessionId: SessionIdentifier!
+    $subject: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
+  ) {
+    class(
+      year: $year
+      semester: $semester
+      sessionId: $sessionId
+      subject: $subject
+      courseNumber: $courseNumber
+      number: $number
+    ) {
+      primarySection {
+        startDate
+        endDate
+      }
+    }
+  }
+`;
+
 export const GET_CLASS_ENROLLMENT = gql`
   query GetClassEnrollment(
     $year: Int!

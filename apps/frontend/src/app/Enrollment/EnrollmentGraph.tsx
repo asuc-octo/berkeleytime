@@ -76,6 +76,7 @@ const TOOLTIP_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
 });
 
 const getSeriesKey = (index: number) => `enroll_${index}`;
+const getWaitlistSeriesKey = (index: number) => `waitlist_${index}`;
 const getCapacityKey = (index: number) => `capacity_${index}`;
 
 const getGradientId = (outputId: string) =>
@@ -187,6 +188,11 @@ export default function EnrollmentGraph({
               maxEnrollDenominator > 0
                 ? ((entry.enrolledCount ?? 0) / maxEnrollDenominator) * 100
                 : null,
+            waitlistedCount: entry.waitlistedCount ?? 0,
+            waitlistedPercent:
+              maxEnrollDenominator > 0
+                ? ((entry.waitlistedCount ?? 0) / maxEnrollDenominator) * 100
+                : null,
             capacityCount: maxEnroll,
             capacityPercent:
               maxEnrollDenominator > 0
@@ -245,6 +251,9 @@ export default function EnrollmentGraph({
           datum[getSeriesKey(outputIndex)] = showRawNumbers
             ? (point?.enrolledCount ?? null)
             : (point?.enrolledPercent ?? null);
+          datum[getWaitlistSeriesKey(outputIndex)] = showRawNumbers
+            ? (point?.waitlistedCount ?? null)
+            : (point?.waitlistedPercent ?? null);
           datum[getCapacityKey(outputIndex)] = showRawNumbers
             ? (point?.capacityCount ?? null)
             : (point?.capacityPercent ?? null);
@@ -258,6 +267,23 @@ export default function EnrollmentGraph({
     () =>
       outputs.map((_, outputIndex) => {
         const seriesKey = getSeriesKey(outputIndex);
+        return chartData.reduce<SeriesPoint[]>((points, datum) => {
+          const value = datum[seriesKey];
+          if (typeof value === "number") {
+            points.push({
+              timeDelta: datum.timeDelta,
+              value,
+            });
+          }
+          return points;
+        }, []);
+      }),
+    [chartData, outputs]
+  );
+  const waitlistSeriesPointsByOutput = useMemo(
+    () =>
+      outputs.map((_, outputIndex) => {
+        const seriesKey = getWaitlistSeriesKey(outputIndex);
         return chartData.reduce<SeriesPoint[]>((points, datum) => {
           const value = datum[seriesKey];
           if (typeof value === "number") {
@@ -612,8 +638,9 @@ export default function EnrollmentGraph({
               });
 
               const rows = outputs
-                .map((output, outputIndex) => {
+                .flatMap((output, outputIndex) => {
                   const seriesKey = getSeriesKey(outputIndex);
+                  const waitlistSeriesKey = getWaitlistSeriesKey(outputIndex);
                   const exactValue = payloadValuesBySeriesKey.get(seriesKey);
                   const interpolatedValue =
                     typeof exactValue === "number"
@@ -622,15 +649,42 @@ export default function EnrollmentGraph({
                           seriesPointsByOutput[outputIndex] ?? [],
                           labelMinutes
                         );
+                  const exactWaitlistValue =
+                    payloadValuesBySeriesKey.get(waitlistSeriesKey);
+                  const interpolatedWaitlistValue =
+                    typeof exactWaitlistValue === "number"
+                      ? exactWaitlistValue
+                      : estimateSeriesValueAtTime(
+                          waitlistSeriesPointsByOutput[outputIndex] ?? [],
+                          labelMinutes
+                        );
 
-                  if (typeof interpolatedValue !== "number") return null;
+                  const outputRows: Array<{
+                    key: string;
+                    label: string;
+                    value: number;
+                    color: string;
+                  }> = [];
 
-                  return {
-                    key: `${seriesKey}-${output.id}`,
-                    label: getDisplayLabel(output),
-                    value: interpolatedValue,
-                    color: output.color,
-                  };
+                  if (typeof interpolatedValue === "number") {
+                    outputRows.push({
+                      key: `${seriesKey}-${output.id}`,
+                      label: getDisplayLabel(output),
+                      value: interpolatedValue,
+                      color: output.color,
+                    });
+                  }
+
+                  if (typeof interpolatedWaitlistValue === "number") {
+                    outputRows.push({
+                      key: `${waitlistSeriesKey}-${output.id}`,
+                      label: `${getDisplayLabel(output)} (waitlist)`,
+                      value: interpolatedWaitlistValue,
+                      color: output.color,
+                    });
+                  }
+
+                  return outputRows;
                 })
                 .filter(
                   (
@@ -789,6 +843,28 @@ export default function EnrollmentGraph({
                   animationDuration={SERIES_ANIMATION_DURATION_MS}
                   animationEasing="ease-out"
                 />
+                <Line
+                  dataKey={getWaitlistSeriesKey(outputIndex)}
+                  stroke={
+                    isDimmed ? "var(--border-color)" : output.color
+                  }
+                  strokeOpacity={isDimmed ? 1 : 0.75}
+                  strokeWidth={isDimmed ? 1.5 : 2}
+                  strokeDasharray="6 4"
+                  dot={false}
+                  activeDot={{
+                    r: 4,
+                    fill: dotColor,
+                    stroke: "var(--foreground-color)",
+                    strokeWidth: 1.25,
+                  }}
+                  type="monotone"
+                  connectNulls
+                  isAnimationActive={shouldAnimateSeries}
+                  animationBegin={0}
+                  animationDuration={SERIES_ANIMATION_DURATION_MS}
+                  animationEasing="ease-out"
+                />
               </Fragment>
             );
           })}
@@ -809,6 +885,7 @@ export default function EnrollmentGraph({
       firstTime,
       capacityChangeEventsByOutput,
       seriesPointsByOutput,
+      waitlistSeriesPointsByOutput,
       showCapacityTooltip,
       hideCapacityTooltip,
     ]
