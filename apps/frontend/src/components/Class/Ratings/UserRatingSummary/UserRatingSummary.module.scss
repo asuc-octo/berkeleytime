@@ -37,12 +37,14 @@
       gap: 4px;
       flex: 1 0 0;
     }
-    h3, h4, h5 {
+    h3,
+    h4,
+    h5 {
       margin: 0;
     }
     h3 {
       color: var(--secondary-color);
-      font-feature-settings: 'liga' off;
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
@@ -54,7 +56,7 @@
     }
     h4 {
       color: var(--paragraph-color);
-      font-feature-settings: 'liga' off;
+      font-feature-settings: "liga" off;
 
       /* Web UI (Desktop)/Body/Body Small */
       font-family: Inter;
@@ -65,7 +67,7 @@
     }
     h5 {
       color: var(--secondary-color);
-      font-feature-settings: 'liga' off;
+      font-feature-settings: "liga" off;
 
       /* Web UI (Desktop)/Body/Body Medium */
       font-family: Inter;
@@ -81,7 +83,7 @@
     .contentWrapper {
       position: relative;
       color: var(--secondary-color);
-      font-feature-settings: 'liga' off;
+      font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-weight: 400;
@@ -165,7 +167,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
+    gap: 4px;
     align-self: flex-start;
 
     > * {
@@ -208,8 +210,8 @@
 
 .ratingGrade {
   color: var(--secondary-color);
-  font-feature-settings: 'liga' off;
-  
+  font-feature-settings: "liga" off;
+
   /* Web UI (Desktop)/Title/Title Medium */
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);
