@@ -1,6 +1,43 @@
 import dotenv from "dotenv";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-dotenv.config();
+/** Resolve monorepo root (directory containing turbo.json). */
+function monorepoRoot(): string | undefined {
+  let dir = path.dirname(fileURLToPath(import.meta.url));
+  for (;;) {
+    if (existsSync(path.join(dir, "turbo.json"))) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      return undefined;
+    }
+    dir = parent;
+  }
+}
+
+/**
+ * Load .env without relying on process.cwd(): Turbo may run with cwd /backend.
+ * Docker mounts repo .env at <monorepo>/.env (e.g. /backend/.env), not under apps/backend/ (avoids nested bind issues on Docker Desktop).
+ */
+function loadEnvFiles(): void {
+  const root = monorepoRoot();
+  if (root) {
+    const rootEnv = path.join(root, ".env");
+    const backendEnv = path.join(root, "apps", "backend", ".env");
+    if (existsSync(rootEnv)) {
+      dotenv.config({ path: rootEnv });
+    }
+    if (existsSync(backendEnv)) {
+      dotenv.config({ path: backendEnv });
+    }
+  }
+  dotenv.config();
+}
+
+loadEnvFiles();
 
 // Safely get the environment variable in the process
 const env = (name: string): string => {

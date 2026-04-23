@@ -113,7 +113,194 @@ body:not([data-theme]) {
         color: var(--heading-color);
       }
     }
+
+    /* Bottom tray (GradTrak miscellaneous bar): full-width strip, not a narrow column card */
+    &.bodyMiscellaneous {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      flex-shrink: 1;
+      align-items: stretch;
+      align-self: stretch;
+      padding: 0;
+      gap: 6px; /* resting: compact shelf; drag-active restores larger gap via .rootMisc[data-drag-active] */
+      background-color: transparent;
+      border-radius: 0;
+      box-shadow: none;
+
+      &[data-open="true"] {
+        background-color: transparent;
+      }
+
+      &[data-layout="grid"] {
+        width: 100%;
+      }
+    }
   }
+
+  &.rootMisc {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    /* Collapsed entry: header only; course strip clipped (drag-active rules unchanged) */
+    &:not([data-drag-active="true"]):not(:hover) .body.bodyMiscellaneous {
+      max-height: 42px;
+      min-height: 0;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    &:not([data-drag-active="true"]):not(:hover) .miscellaneous-header {
+      padding-bottom: 2px;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
+    &:is(:hover, [data-drag-active="true"]) .body.bodyMiscellaneous {
+      gap: 12px;
+    }
+
+    &:is(:hover, [data-drag-active="true"]) .miscellaneous-header {
+      padding-bottom: 10px;
+      margin-bottom: 2px;
+      border-bottom-color: var(--border-color, rgba(0, 0, 0, 0.08));
+    }
+
+    &:is(:hover, [data-drag-active="true"]) .miscellaneous-courses {
+      gap: 12px;
+      padding-bottom: 4px;
+    }
+
+    &:is(:hover, [data-drag-active="true"]) .add-button-misc-strip {
+      min-height: 120px;
+      padding: 12px 10px;
+    }
+  }
+}
+
+.miscellaneous-header {
+  position: relative;
+  flex-shrink: 0;
+  padding-bottom: 6px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+  align-items: center;
+}
+
+/* Center “+Miscellaneous” across the full header; menu stays on the right (Figma) */
+.miscellaneous-header > *:last-child {
+  position: relative;
+  z-index: 1;
+  margin-left: auto;
+}
+
+/* Figma: "+Miscellaneous" (no unit count in the bar header) */
+.miscellaneous-header .misc-header-title-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 48px; /* keep label clear of right-side actions without changing their layout */
+  pointer-events: none;
+}
+
+.miscellaneous-header .misc-header-title-row .misc-plus-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  pointer-events: auto;
+  text-align: center;
+}
+
+.misc-plus-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--heading-color);
+}
+
+.misc-plus-title-label {
+  display: inline-flex;
+  align-items: baseline;
+  cursor: pointer;
+  user-select: none;
+}
+
+.misc-plus-sign {
+  margin-right: 0.1em;
+  color: var(--heading-color);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.course-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+.miscellaneous-courses {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-bottom: 2px;
+  overscroll-behavior-x: contain;
+  scrollbar-gutter: stable;
+
+  [data-class-container] {
+    flex: 0 0 auto;
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+    align-self: stretch;
+  }
+}
+
+/* Explicit export paired with `styles.body` in TS */
+.bodyMiscellaneous {
+  min-width: 0;
+}
+
+.placeholder-misc {
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+  flex-shrink: 0;
+}
+
+.add-button-misc-strip {
+  flex: 0 0 auto;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  min-height: 72px;
+  padding: 8px 8px;
+  border-radius: 8px;
+  border: 1px dashed var(--border-color, rgba(0, 0, 0, 0.1));
+  background-color: var(--foreground-color, rgba(0, 0, 0, 0.02));
 }
 
 .menu-icon {

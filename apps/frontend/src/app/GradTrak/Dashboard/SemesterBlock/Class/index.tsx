@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { BookStack, MoreHoriz, Trash } from "iconoir-react";
 
 import { Badge, Button, Color, DropdownMenu, Flex } from "@repo/theme";
@@ -17,6 +18,8 @@ interface ClassProps {
   settings: GradTrakSettings;
   labels: ILabel[];
   draggable?: boolean;
+  /** Compact horizontal card for the bottom Miscellaneous dock (Figma: CODE | N Units - grade) */
+  variant?: "default" | "strip";
 }
 
 export default function Class({
@@ -29,8 +32,76 @@ export default function Class({
   settings,
   labels,
   draggable = true,
+  variant = "default",
 }: ClassProps) {
   const gradingLabel = cls.pnp ? "PNP" : "GRD";
+
+  if (variant === "strip") {
+    const showUnits = settings.show[ShowSetting.units];
+    const showGrading = settings.show[ShowSetting.grading];
+    const showLabels =
+      settings.show[ShowSetting.labels] && cls.labels.length > 0;
+    return (
+      <div
+        key={index}
+        data-class-container
+        className={classNames(
+          styles.classContainer,
+          styles.classContainerStrip
+        )}
+        draggable={draggable}
+        onDragStart={(e) => handleDragStart(e, index)}
+        onDragEnd={handleDragEnd}
+      >
+        <div className={styles.stripRow}>
+          <div className={styles.stripMain}>
+            <h3 className={styles.stripTitle}>{cls.courseName}</h3>
+            {(showUnits || showGrading) && (
+              <span className={styles.stripSep} aria-hidden>
+                |
+              </span>
+            )}
+            <span className={styles.stripMeta}>
+              {showUnits && <>{cls.courseUnits} Units</>}
+              {showUnits && showGrading && " - "}
+              {showGrading && <>{gradingLabel}</>}
+            </span>
+          </div>
+          <div className={classNames(styles.dropdown, styles.stripDropdown)}>
+            <DropdownMenu.Root modal={false}>
+              <DropdownMenu.Trigger asChild>
+                <Button className={styles.trigger}>
+                  <MoreHoriz className={styles.moreHoriz} />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content sideOffset={5} align="end">
+                <DropdownMenu.Item onClick={() => handleDetails(index)}>
+                  <BookStack className={styles.menuIcon} /> Edit Details
+                </DropdownMenu.Item>
+                <DropdownMenu.Item onClick={() => handleDelete(index)} isDelete>
+                  <Trash className={styles.menuIcon} /> Delete Class
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </div>
+        </div>
+        {showLabels && (
+          <div className={styles.stripLabels}>
+            {cls.labels
+              .filter((l) =>
+                labels.some(
+                  (label) => label.name === l.name && label.color === l.color
+                )
+              )
+              .map((l, idx) => (
+                <Badge key={idx} label={l.name} color={l.color as Color} />
+              ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       key={index}

@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -52,6 +60,7 @@ import BookmarksSidebar from "./BookmarksSidebar";
 import styles from "./Dashboard.module.scss";
 import DisplayMenu from "./DisplayMenu";
 import EditPlanDialog from "./EditPlanDialog";
+import { GradTrakDndProvider, useGradTrakDnd } from "./GradTrakDndContext";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
@@ -92,6 +101,25 @@ const EMPTY_PLAN_TERMS: IPlanTerm[] = [];
 export interface SelectedCourse extends ISelectedCourse {
   courseSubject: string;
   courseNumber: string;
+}
+
+function GradTrakMiscDock({
+  miscBarRef,
+  children,
+}: {
+  miscBarRef: RefObject<HTMLDivElement | null>;
+  children: ReactNode;
+}) {
+  const { isDraggingPlanCourse } = useGradTrakDnd();
+  return (
+    <div
+      ref={miscBarRef}
+      className={styles.miscDock}
+      data-drag-active={isDraggingPlanCourse ? "true" : undefined}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -151,6 +179,7 @@ export default function Dashboard() {
   const labels = gradTrak?.labels ?? EMPTY_LABELS;
   const planTerms = gradTrak?.planTerms ?? EMPTY_PLAN_TERMS;
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const miscBarRef = useRef<HTMLDivElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const [filterOptions, setFilterOptions] = useState<{
@@ -488,8 +517,14 @@ export default function Dashboard() {
     }
   }, [planTerms, convertPlanTermsToSemesters]);
 
-  const totalUnits = Object.values(semesterTotals).reduce(
-    (sum, units) => sum + units,
+  const miscellaneousTermIds = new Set(
+    planTerms
+      .filter((term) => term.name === "Miscellaneous")
+      .map((term) => term._id)
+  );
+  const totalUnits = Object.entries(semesterTotals).reduce(
+    (sum, [semesterId, units]) =>
+      miscellaneousTermIds.has(semesterId) ? sum : sum + units,
     0
   );
 
@@ -508,6 +543,63 @@ export default function Dashboard() {
       navigate("/gradtrak", { replace: true });
     }
   }, [currentUserInfo, userLoading, gradTrakLoading, navigate]);
+
+  const { regularSemesters, miscellaneousSemester } = useMemo(() => {
+    const filteredTerms = [...planTerms]
+      .filter((term) => {
+        if (
+          !(
+            filterOptions.completed ||
+            filterOptions.inProgress ||
+            filterOptions.incomplete
+          )
+        )
+          return true;
+
+        if (filterOptions.completed && term.status === "Complete") return true;
+        if (filterOptions.inProgress && term.status === "InProgress")
+          return true;
+        if (filterOptions.incomplete && term.status === "Incomplete")
+          return true;
+
+        return false;
+      })
+      .filter((term) => {
+        if (
+          !Object.keys(filterOptions).some(
+            (key) => key.startsWith("label_") && filterOptions[key]
+          )
+        ) {
+          return true;
+        }
+        return filteredAllSemesters[term._id]
+          ? filteredAllSemesters[term._id].length > 0
+          : false;
+      });
+
+    const miscellaneousSemester = filteredTerms.find(
+      (term) => term.name === "Miscellaneous"
+    );
+    const regularSemesters = filteredTerms
+      .filter((term) => term.name !== "Miscellaneous")
+      .sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+
+        if (a.year == -1 || b.year == -1) {
+          return a.year - b.year;
+        }
+        if (sortSemesterOption === "Oldest") {
+          if (a.year != b.year) return a.year - b.year;
+          return getTermOrder(a.term) - getTermOrder(b.term);
+        } else {
+          if (a.year != b.year) return b.year - a.year;
+          return getTermOrder(b.term) - getTermOrder(a.term);
+        }
+      });
+
+    return { regularSemesters, miscellaneousSemester };
+  }, [planTerms, filterOptions, filteredAllSemesters, sortSemesterOption]);
 
   if (
     !gradTrak &&
@@ -815,6 +907,20 @@ export default function Dashboard() {
                 }
               />
 
+              {miscellaneousSemester && (
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    miscBarRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "end",
+                    })
+                  }
+                >
+                  +{miscellaneousSemester.name}
+                </Button>
+              )}
+
               <Tooltip
                 content="Display settings"
                 trigger={
@@ -888,74 +994,71 @@ export default function Dashboard() {
               createNewPlanTerm={handleNewPlanTerm}
             />
           )}
-          <div className={styles.semesterBlocks}>
-            <div className={styles.semesterBlocksInner}>
-              <div
-                className={styles.semesterLayout}
-                data-layout={settings.layout}
-              >
-                {[...planTerms]
-                  .filter((term) => {
-                    if (
-                      !(
-                        filterOptions.completed ||
-                        filterOptions.inProgress ||
-                        filterOptions.incomplete
-                      )
-                    )
-                      return true;
-
-                    if (filterOptions.completed && term.status === "Complete")
-                      return true;
-                    if (
-                      filterOptions.inProgress &&
-                      term.status === "InProgress"
-                    )
-                      return true;
-                    if (
-                      filterOptions.incomplete &&
-                      term.status === "Incomplete"
-                    )
-                      return true;
-
-                    return false;
-                  })
-                  .filter((term) => {
-                    if (
-                      !Object.keys(filterOptions).some(
-                        (key) => key.startsWith("label_") && filterOptions[key]
-                      )
-                    ) {
-                      return true;
-                    }
-                    return filteredAllSemesters[term._id]
-                      ? filteredAllSemesters[term._id].length > 0
-                      : false;
-                  })
-                  .sort((a, b) => {
-                    // Pinned terms first
-                    if (a.pinned && !b.pinned) return -1;
-                    if (!a.pinned && b.pinned) return 1;
-
-                    // misc always comes first
-                    if (a.year == -1 || b.year == -1) {
-                      return a.year - b.year;
-                    }
-                    if (sortSemesterOption === "Oldest") {
-                      if (a.year != b.year) return a.year - b.year;
-                      return getTermOrder(a.term) - getTermOrder(b.term);
-                    } else {
-                      if (a.year != b.year) return b.year - a.year;
-                      return getTermOrder(b.term) - getTermOrder(a.term);
-                    }
-                  })
-                  .map((term) => (
+          <GradTrakDndProvider>
+            <div className={styles.viewBody}>
+              <div className={styles.semesterBlocks}>
+                <div className={styles.semesterBlocksInner}>
+                  <div className={styles.semestersLayout}>
+                    <div className={styles.semestersRow}>
+                      <div
+                        className={styles.semestersRowTrack}
+                        data-layout={settings.layout}
+                      >
+                        {regularSemesters.map((term) => (
+                          <SemesterBlock
+                            key={term._id}
+                            planTerm={term}
+                            onTotalUnitsChange={(
+                              newTotal,
+                              pnpUnits,
+                              transferUnits
+                            ) =>
+                              updateTotalUnits(
+                                term._id,
+                                newTotal,
+                                pnpUnits,
+                                transferUnits
+                              )
+                            }
+                            filteredSemesters={filteredAllSemesters}
+                            allSemesters={allSemesters}
+                            updateAllSemesters={updateAllSemesters}
+                            settings={settings}
+                            labels={labels}
+                            setShowLabelMenu={setShowLabelMenu}
+                            catalogCourses={catalogCourses}
+                            index={index}
+                            handleUpdateTermName={(name) =>
+                              handleUpdateTermName(term._id, name)
+                            }
+                            handleTogglePin={() => handleTogglePin(term._id)}
+                            handleSetStatus={(status: Status) =>
+                              handleSetStatus(term._id, status)
+                            }
+                            sortCourseOption={sortCourseOption}
+                            handleRemoveTerm={() => {
+                              const updatedSemesters = { ...allSemesters };
+                              delete updatedSemesters[term._id];
+                              updateAllSemesters(updatedSemesters);
+                            }}
+                            filtersActive={activeFiltersCount > 0}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {miscellaneousSemester && (
+                <GradTrakMiscDock miscBarRef={miscBarRef}>
+                  <div className={styles.miscellaneousBar}>
                     <SemesterBlock
-                      key={term._id}
-                      planTerm={term}
+                      key={miscellaneousSemester._id}
+                      planTerm={miscellaneousSemester}
+                      isMiscellaneous
                       onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
                         updateTotalUnits(
-                          term.name ? term.name : "",
+                          miscellaneousSemester._id,
                           newTotal,
                           pnpUnits,
                           transferUnits
@@ -970,24 +1073,27 @@ export default function Dashboard() {
                       catalogCourses={catalogCourses}
                       index={index}
                       handleUpdateTermName={(name) =>
-                        handleUpdateTermName(term._id, name)
+                        handleUpdateTermName(miscellaneousSemester._id, name)
                       }
-                      handleTogglePin={() => handleTogglePin(term._id)}
+                      handleTogglePin={() =>
+                        handleTogglePin(miscellaneousSemester._id)
+                      }
                       handleSetStatus={(status: Status) =>
-                        handleSetStatus(term._id, status)
+                        handleSetStatus(miscellaneousSemester._id, status)
                       }
                       sortCourseOption={sortCourseOption}
                       handleRemoveTerm={() => {
                         const updatedSemesters = { ...allSemesters };
-                        delete updatedSemesters[term._id];
+                        delete updatedSemesters[miscellaneousSemester._id];
                         updateAllSemesters(updatedSemesters);
                       }}
                       filtersActive={activeFiltersCount > 0}
                     />
-                  ))}
-              </div>
+                  </div>
+                </GradTrakMiscDock>
+              )}
             </div>
-          </div>
+          </GradTrakDndProvider>
         </div>
         {bookmarksSidebarOpen && (
           <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client/react";
-import classNames from "classnames";
 import {
   Check,
   Edit,
@@ -28,13 +27,12 @@ import {
   Terms,
 } from "@/lib/generated/graphql";
 
-import { useGradTrakDnd } from "../GradTrakDndContext";
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
 import ClassDetails from "./ClassDetails";
-import styles from "./SemesterBlock.module.scss";
+import styles from "./MiscellaneousBlock.module.scss";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
@@ -61,8 +59,6 @@ interface SemesterBlockProps {
   sortCourseOption: string;
   filtersActive: boolean;
   handleRemoveTerm: () => void;
-  /** Full-width strip layout when rendered in the dashboard miscellaneous bar */
-  isMiscellaneous?: boolean;
 }
 
 function SemesterBlock({
@@ -82,10 +78,8 @@ function SemesterBlock({
   sortCourseOption,
   filtersActive,
   handleRemoveTerm,
-  isMiscellaneous = false,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
-  const { isDraggingPlanCourse, setDraggingPlanCourse } = useGradTrakDnd();
 
   const apolloClient = useApolloClient();
 
@@ -101,9 +95,6 @@ function SemesterBlock({
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingIndexRef = useRef<number | null>(null);
   const [open, setOpen] = useState(true);
-  const [isMiscHovered, setIsMiscHovered] = useState(false);
-  const isExpanded = isMiscellaneous && (isMiscHovered || isDraggingPlanCourse);
-  const isContentOpen = isMiscellaneous ? isExpanded : open;
 
   const [setCourses] = useSetSelectedCourses();
   const [getCourseUnits] = useReadCourseUnits();
@@ -390,7 +381,6 @@ function SemesterBlock({
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
     draggingIndexRef.current = classIndex;
-    setDraggingPlanCourse(true);
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -408,27 +398,8 @@ function SemesterBlock({
     e.dataTransfer.effectAllowed = "move";
   };
 
-  const syncMiscHoverFromPointer = (clientX: number, clientY: number) => {
-    if (!isMiscellaneous || !containerRef.current) return;
-    if (clientX < 0 || clientY < 0) {
-      setIsMiscHovered(false);
-      return;
-    }
-    const rect = containerRef.current.getBoundingClientRect();
-    const pointerInside =
-      clientX >= rect.left &&
-      clientX <= rect.right &&
-      clientY >= rect.top &&
-      clientY <= rect.bottom;
-    setIsMiscHovered(pointerInside);
-  };
-
   const handleDragEnd = (e: React.DragEvent) => {
     draggingIndexRef.current = null;
-    setDraggingPlanCourse(false);
-    // Clear any stale expanded state from drag, then reopen only if pointer is truly inside.
-    setIsMiscHovered(false);
-    syncMiscHoverFromPointer(e.clientX, e.clientY);
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -498,9 +469,6 @@ function SemesterBlock({
           setSelectedCourses(oldClasses);
           console.error("Failed to add class from bookmarks:", error);
         }
-        setDraggingPlanCourse(false);
-        setIsMiscHovered(false);
-        syncMiscHoverFromPointer(e.clientX, e.clientY);
         return;
       }
 
@@ -564,11 +532,6 @@ function SemesterBlock({
       }
     } catch (error) {
       console.error("Error handling drop:", error);
-    } finally {
-      // Drop completion must not keep stale drag-open state.
-      setDraggingPlanCourse(false);
-      setIsMiscHovered(false);
-      syncMiscHoverFromPointer(e.clientX, e.clientY);
     }
   };
 
@@ -583,119 +546,61 @@ function SemesterBlock({
     <>
       <div
         ref={containerRef}
-        className={classNames(styles.root, isMiscellaneous && styles.rootMisc, {
-          "drop-target": isDropTarget,
-        })}
-        data-drag-active={
-          isMiscellaneous && isDraggingPlanCourse ? "true" : undefined
-        }
-        onMouseEnter={
-          isMiscellaneous ? () => setIsMiscHovered(true) : undefined
-        }
-        onMouseLeave={
-          isMiscellaneous ? () => setIsMiscHovered(false) : undefined
-        }
+        className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
         onDragOver={filtersActive ? undefined : handleDragOver}
         onDragLeave={filtersActive ? undefined : handleDragLeave}
         onDrop={filtersActive ? undefined : handleDrop}
       >
         <div
-          className={classNames(
-            styles.body,
-            isMiscellaneous && styles.bodyMiscellaneous
-          )}
+          className={styles.body}
           data-layout={settings.layout}
-          data-open={isContentOpen}
+          data-open={open}
         >
-          <Flex
-            direction="row"
-            justify="between"
-            width="100%"
-            className={isMiscellaneous ? styles.miscellaneousHeader : undefined}
-          >
-            {isMiscellaneous ? (
-              <div
-                className={classNames(
-                  styles.semesterCounter,
-                  styles.miscHeaderTitleRow
+          <Flex direction="row" justify="between" width="100%">
+            <div className={styles.semesterCounter}>
+              {planTerm.pinned && (
+                <PinSolid className={styles.pin} onClick={handleTogglePin} />
+              )}
+              <h2>
+                {renameEditActive ? (
+                  <Input
+                    ref={inputRef}
+                    value={rename}
+                    onChange={(e) => setRename(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSaveRename();
+                      } else if (e.key === "Escape") {
+                        handleCancelRename();
+                      }
+                    }}
+                    onBlur={handleSaveRename}
+                    style={{ width: "100%", minWidth: "120px" }}
+                  />
+                ) : (
+                  <span
+                    onClick={() => {
+                      setRenameEditActive(true);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {planTerm.name}
+                  </span>
                 )}
-              >
-                <h2 className={styles.miscPlusTitle}>
-                  {renameEditActive ? (
-                    <Input
-                      ref={inputRef}
-                      value={rename}
-                      onChange={(e) => setRename(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSaveRename();
-                        } else if (e.key === "Escape") {
-                          handleCancelRename();
-                        }
-                      }}
-                      onBlur={handleSaveRename}
-                      style={{ width: "100%", minWidth: "140px" }}
-                      placeholder="Name"
-                    />
-                  ) : (
-                    <span
-                      onClick={() => {
-                        setRenameEditActive(true);
-                      }}
-                      className={styles.miscPlusTitleLabel}
-                    >
-                      <span className={styles.miscPlusSign}>+</span>
-                      {planTerm.name}
-                    </span>
-                  )}
-                </h2>
-              </div>
-            ) : (
-              <div className={styles.semesterCounter}>
-                {planTerm.pinned && (
-                  <PinSolid className={styles.pin} onClick={handleTogglePin} />
-                )}
-                <h2>
-                  {renameEditActive ? (
-                    <Input
-                      ref={inputRef}
-                      value={rename}
-                      onChange={(e) => setRename(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSaveRename();
-                        } else if (e.key === "Escape") {
-                          handleCancelRename();
-                        }
-                      }}
-                      onBlur={handleSaveRename}
-                      style={{ width: "100%", minWidth: "120px" }}
-                    />
-                  ) : (
-                    <span
-                      onClick={() => {
-                        setRenameEditActive(true);
-                      }}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {planTerm.name}
-                    </span>
-                  )}
-                </h2>
-                <p className={styles.counter}>{totalUnits}</p>
-                <span
-                  className={styles.status}
-                  style={{
-                    backgroundColor:
-                      planTerm.status === Status.Complete
-                        ? "var(--emerald-500)"
-                        : planTerm.status == Status.InProgress
-                          ? "var(--yellow-500)"
-                          : "var(--gray-500)",
-                  }}
-                />
-              </div>
-            )}
+              </h2>
+              <p className={styles.counter}>{totalUnits}</p>
+              <span
+                className={styles.status}
+                style={{
+                  backgroundColor:
+                    planTerm.status === Status.Complete
+                      ? "var(--emerald-500)"
+                      : planTerm.status == Status.InProgress
+                        ? "var(--yellow-500)"
+                        : "var(--gray-500)",
+                }}
+              />
+            </div>
             <Flex direction="row" gap="6px">
               <div>
                 <DropdownMenu.Root modal={false}>
@@ -795,103 +700,64 @@ function SemesterBlock({
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </div>
-              {isContentOpen ? (
+              {open ? (
                 <NavArrowDown
                   className={styles.actionButton}
                   onClick={() => {
-                    if (!isMiscellaneous) {
-                      setOpen(false);
-                    }
+                    setOpen(false);
                   }}
                 />
               ) : (
                 <NavArrowRight
                   className={styles.actionButton}
                   onClick={() => {
-                    if (!isMiscellaneous) {
-                      setOpen(true);
-                    }
+                    setOpen(true);
                   }}
                 />
               )}
             </Flex>
           </Flex>
 
-          {isContentOpen && (
+          {open && (
             <>
-              <div
-                className={
-                  isMiscellaneous
-                    ? styles.miscellaneousCourses
-                    : styles.courseList
-                }
-              >
-                {[...selectedClasses]
-                  .sort((a, b) => {
-                    if (sortCourseOption === "Unsorted") return 0;
-                    if (sortCourseOption === "A-Z")
-                      return a.courseName.localeCompare(b.courseName);
-                    if (sortCourseOption === "Z-A")
-                      return b.courseName.localeCompare(a.courseName);
-                    return 0;
-                  })
-                  .map((cls, index) => (
-                    <React.Fragment key={`class-group-${index}`}>
-                      {placeholderIndex === index &&
-                        !(
-                          draggingIndexRef.current !== null &&
-                          (placeholderIndex === draggingIndexRef.current ||
-                            placeholderIndex === draggingIndexRef.current + 1)
-                        ) && (
-                          <div
-                            className={classNames(
-                              styles.placeholder,
-                              isMiscellaneous && styles.placeholderMisc
-                            )}
-                          />
-                        )}
-                      <Class
-                        cls={cls}
-                        index={index}
-                        handleDragEnd={handleDragEnd}
-                        handleDragStart={handleDragStart}
-                        handleDetails={handleClassDetails}
-                        handleDelete={(i) => setConfirmDeleteClassIndex(i)}
-                        settings={settings}
-                        labels={labels}
-                        draggable={!filtersActive}
-                        variant={isMiscellaneous ? "strip" : "default"}
-                      />
-                    </React.Fragment>
-                  ))}
-
-                {/* Dragging placeholder */}
-                {placeholderIndex === selectedClasses.length &&
-                  !(
-                    draggingIndexRef.current !== null &&
-                    (placeholderIndex === draggingIndexRef.current ||
-                      placeholderIndex === draggingIndexRef.current + 1)
-                  ) && (
-                    <div
-                      className={classNames(
-                        styles.placeholder,
-                        isMiscellaneous && styles.placeholderMisc
-                      )}
+              {[...selectedClasses]
+                .sort((a, b) => {
+                  if (sortCourseOption === "Unsorted") return 0;
+                  if (sortCourseOption === "A-Z")
+                    return a.courseName.localeCompare(b.courseName);
+                  if (sortCourseOption === "Z-A")
+                    return b.courseName.localeCompare(a.courseName);
+                  return 0;
+                })
+                .map((cls, index) => (
+                  <React.Fragment key={`class-group-${index}`}>
+                    {placeholderIndex === index &&
+                      !(
+                        draggingIndexRef.current !== null &&
+                        (placeholderIndex === draggingIndexRef.current ||
+                          placeholderIndex === draggingIndexRef.current + 1)
+                      ) && <div className={styles.placeholder} />}
+                    <Class
+                      cls={cls}
+                      index={index}
+                      handleDragEnd={handleDragEnd}
+                      handleDragStart={handleDragStart}
+                      handleDetails={handleClassDetails}
+                      handleDelete={(i) => setConfirmDeleteClassIndex(i)}
+                      settings={settings}
+                      labels={labels}
+                      draggable={!filtersActive}
                     />
-                  )}
+                  </React.Fragment>
+                ))}
 
-                {isMiscellaneous && (
-                  <Button
-                    onClick={() => setIsAddClassOpen(true)}
-                    className={classNames(
-                      styles.addButton,
-                      styles.addButtonMiscStrip
-                    )}
-                  >
-                    + Add Class
-                  </Button>
-                )}
-              </div>
+              {/* Dragging placeholder */}
+              {placeholderIndex === selectedClasses.length &&
+                !(
+                  draggingIndexRef.current !== null &&
+                  (placeholderIndex === draggingIndexRef.current ||
+                    placeholderIndex === draggingIndexRef.current + 1)
+                ) && <div className={styles.placeholder} />}
 
               {/* Dialog Component */}
               <AddClass
@@ -919,14 +785,12 @@ function SemesterBlock({
                 />
               )}
 
-              {!isMiscellaneous && (
-                <Button
-                  onClick={() => setIsAddClassOpen(true)}
-                  className={styles.addButton}
-                >
-                  + Add Class
-                </Button>
-              )}
+              <Button
+                onClick={() => setIsAddClassOpen(true)}
+                className={styles.addButton}
+              >
+                + Add Class
+              </Button>
             </>
           )}
         </div>

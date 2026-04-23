@@ -3,6 +3,14 @@ networks:
   bt:
 services:
   backend:
+    env_file:
+      - .env
+    # Override host-only `.env` URLs so the container reaches Mongo/Redis/semantic-search on the Docker network.
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/bt?replicaSet=rs0
+      REDIS_URI: redis://redis:6379
+      SEMANTIC_SEARCH_URL: http://semantic-search:8000
+      PORT: "5001"
     build:
       context: .
       dockerfile: ./apps/backend/Dockerfile
@@ -17,6 +25,10 @@ services:
     networks:
       - bt
     restart: always
+    env_file:
+      - .env
+    environment:
+      SEMANTIC_SEARCH_URL: http://semantic-search:8000
     healthcheck:
       test:
         - CMD
@@ -27,10 +39,11 @@ services:
       timeout: 5s
       start_period: 20s
       retries: 20
+    # Do not mount .env under apps/backend/: a file mount inside another bind mount breaks Docker Desktop (virtiofs / rootfs error).
     volumes:
-      - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
       - ./packages:/backend/packages
+      - ./.env:/backend/.env
   semantic-search:
     profiles:
       - semantic-search

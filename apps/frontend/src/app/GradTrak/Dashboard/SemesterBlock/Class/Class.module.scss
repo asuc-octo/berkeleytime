@@ -132,3 +132,84 @@
   height: 12px;
   margin-right: 6px;
 }
+
+/* Bottom Miscellaneous dock: compact horizontal card (Figma) */
+.class-container-strip {
+  flex: 0 0 auto;
+  min-width: 200px;
+  max-width: 240px;
+  width: 220px;
+  padding: 10px 12px;
+  gap: 6px;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 8px;
+}
+
+.strip-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.strip-main {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+  line-height: 1.3;
+}
+
+.strip-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--heading-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.strip-sep {
+  color: var(--paragraph-color);
+  font-weight: 400;
+  font-size: 0.875rem;
+}
+
+.strip-meta {
+  color: var(--paragraph-color);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.strip-labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+.strip-dropdown {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.class-container-strip .strip-dropdown .trigger {
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
+
+.class-container-strip:hover .strip-dropdown .trigger,
+.class-container-strip .strip-dropdown [data-state="open"] {
+  opacity: 1;
+}
