@@ -325,7 +325,7 @@ class SemanticSearchEngine:
         vq = VectorQuery(
             vector=query_vec.tolist(),
             vector_field_name="embedding",
-            return_fields=["subject", "course_number", "title", "description", "course_text"],
+            return_fields=["subject", "course_number"],
             num_results=search_k,
         )
 
@@ -333,26 +333,17 @@ class SemanticSearchEngine:
 
         # RedisVL COSINE distance = 1 - cosine_similarity, so convert threshold accordingly
         distance_threshold = 1.0 - threshold
-        results = []
+        scored = []
         for r in raw_results:
             dist = float(r.get("vector_distance", 1.0))
             if dist > distance_threshold:
                 continue
-            results.append(
-                {
-                    "subject": r.get("subject") or None,
-                    "courseNumber": r.get("course_number") or None,
-                    "title": r.get("title") or "",
-                    "description": r.get("description") or "",
-                    "score": 1.0 - dist,
-                    "text": r.get("course_text") or "",
-                }
-            )
+            scored.append((1.0 - dist, r.get("subject") or None, r.get("course_number") or None))
 
-        # Sort by score only - semantic similarity is more accurate than keyword matching
-        results.sort(key=lambda r: r["score"], reverse=True)
+        # Sort by score descending — backend preserves this order for ranking
+        scored.sort(key=lambda x: x[0], reverse=True)
 
-        # Return all results above threshold
+        results = [{"subject": subj, "courseNumber": cn} for _, subj, cn in scored]
         return results, entry
 
     def describe_indices(self) -> List[Dict]:

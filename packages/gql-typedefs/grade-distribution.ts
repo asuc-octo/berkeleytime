@@ -19,7 +19,7 @@ export const gradeDistributionTypeDef = gql`
       semester: Semester
       sessionId: SessionIdentifier
       subject: String!
-      courseNumber: CourseNumber!
+      courseId: String!
       classNumber: ClassNumber
       familyName: String
       givenName: String

@@ -26,11 +26,9 @@ export async function searchCourses(req: Request, res: Response) {
       thresholdNum
     );
 
-    // Return lightweight response: only subject + courseNumber + score
     const courseIds = results.results.map((r) => ({
       subject: r.subject,
       courseNumber: r.courseNumber,
-      score: r.score,
     }));
 
     return res.json({

@@ -95,7 +95,7 @@ export const constructor = (
 };
 
 // Helper function to check if two courses are equal (by subject and number)
-const coursesEqual = (course1: Course, course2: Course): boolean => {
+export const coursesEqual = (course1: Course, course2: Course): boolean => {
   return (
     course1.subject.data === course2.subject.data &&
     course1.number.data === course2.number.data
@@ -167,6 +167,19 @@ export const functions: FunctionMapEntry[] = [
           };
         },
         args: ["List<Course>", "List<Course>"],
+      },
+    },
+  ],
+  [
+    "sum_units",
+    {
+      type: "Function<number>(List<Course>)",
+      data: {
+        eval: (_: Variables, courses: Data<Array<Course>>) => ({
+          data: courses.data.reduce((acc, c) => acc + (c.units?.data ?? 0), 0),
+          type: "number" as const,
+        }),
+        args: ["List<Course>"],
       },
     },
   ],

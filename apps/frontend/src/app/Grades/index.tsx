@@ -388,6 +388,7 @@ function FilterPanel({
     if (!hasInstructor && !hasSemester) {
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
       };
     }
@@ -398,6 +399,7 @@ function FilterPanel({
       if (selectedType === InputType.Term) {
         return {
           subject: selectedCourse.subject,
+          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
           year: parsedTerm.year,
@@ -409,6 +411,7 @@ function FilterPanel({
       }
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
         type: InputType.Instructor,
         familyName,
@@ -423,6 +426,7 @@ function FilterPanel({
     if (hasSemester) {
       return {
         subject: selectedCourse.subject,
+        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
         type: InputType.Term,
         year: parsedTerm.year,
@@ -435,6 +439,7 @@ function FilterPanel({
     const [familyName, givenName] = instructor.split(", ");
     return {
       subject: selectedCourse.subject,
+      courseId: selectedCourse.courseId,
       courseNumber: selectedCourse.number,
       type: InputType.Instructor,
       familyName,
@@ -936,7 +941,7 @@ export default function Grades() {
         setEditDraft({
           subject: input.subject,
           courseNumber: input.courseNumber,
-          courseId: `${input.subject}-${input.courseNumber}`,
+          courseId: input.courseId,
           type: input.type,
           givenName: "givenName" in input ? input.givenName : undefined,
           familyName: "familyName" in input ? input.familyName : undefined,
