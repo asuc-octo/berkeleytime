@@ -143,6 +143,20 @@ body:not([data-theme]) {
     max-width: 100%;
     min-width: 0;
 
+    /* Collapsed entry: header only; course strip clipped (drag-active rules unchanged) */
+    &:not([data-drag-active="true"]) .body.bodyMiscellaneous {
+      max-height: 42px;
+      min-height: 0;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    &:not([data-drag-active="true"]) .miscellaneous-header {
+      padding-bottom: 2px;
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+
     &[data-drag-active="true"] .body.bodyMiscellaneous {
       gap: 12px;
     }
