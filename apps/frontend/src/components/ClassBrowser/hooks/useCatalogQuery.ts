@@ -87,6 +87,13 @@ export default function useCatalogQuery({
   const isLoadingNextPageRef = useRef(false);
   const queryGenerationRef = useRef(0);
 
+  const [recentClicksSnapshot, setRecentClicksSnapshot] = useState(getCourseClicks);
+  useEffect(() => {
+    const refresh = () => setRecentClicksSnapshot(getCourseClicks());
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, []);
+
   // In semantic mode the query is committed externally — no debounce needed.
   // In normal mode, debounce to avoid firing on every keystroke.
   const [debouncedQuery, setDebouncedQuery] = useState(rawQuery);
@@ -126,7 +133,7 @@ export default function useCatalogQuery({
       sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
       sortOrder: debouncedQuery ? undefined : mapSortOrder(effectiveOrder),
       semanticSearch: semanticSearch || undefined,
-      recentClicks: debouncedQuery ? getCourseClicks() : undefined,
+      recentClicks: debouncedQuery ? recentClicksSnapshot : undefined,
     }),
     [
       currentYear,
@@ -136,6 +143,7 @@ export default function useCatalogQuery({
       sortBy,
       effectiveOrder,
       semanticSearch,
+      recentClicksSnapshot,
     ]
   );
 

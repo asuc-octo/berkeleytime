@@ -18,7 +18,10 @@ const resolvers = {
     ) => {
       return await getCatalogLegacy(year, semester, info);
     },
-    catalogSearch: async (_: unknown, args: CatalogQueryParams) => {
+    catalogSearch: async (_: unknown, args: CatalogQueryParams, __: unknown, info: GraphQLResolveInfo) => {
+      if (args.recentClicks && args.recentClicks.length > 0) {
+        (info as any).cacheControl.setCacheHint({maxAge: 0, scope: "PRIVATE" });
+      }
       return await getCatalogSearch(args);
     },
     catalogClassIdentities: async (
@@ -33,6 +36,7 @@ const resolvers = {
     ) => {
       return await getCatalogFilterOptions(year, semester);
     },
+  
   },
 };
 
