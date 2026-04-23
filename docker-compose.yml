@@ -3,6 +3,14 @@ networks:
   bt:
 services:
   backend:
+    env_file:
+      - .env
+    # Override host-only `.env` URLs so the container reaches Mongo/Redis/semantic-search on the Docker network.
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/bt?replicaSet=rs0
+      REDIS_URI: redis://redis:6379
+      SEMANTIC_SEARCH_URL: http://semantic-search:8000
+      PORT: "5001"
     build:
       context: .
       dockerfile: ./apps/backend/Dockerfile
