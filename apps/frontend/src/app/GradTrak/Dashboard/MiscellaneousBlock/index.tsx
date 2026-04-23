@@ -32,7 +32,7 @@ import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
 import Class from "./Class";
 import ClassDetails from "./ClassDetails";
-import styles from "./SemesterBlock.module.scss";
+import styles from "./MiscellaneousBlock.module.scss";
 
 interface SemesterBlockProps {
   planTerm: IPlanTerm;
