@@ -123,7 +123,7 @@ body:not([data-theme]) {
       align-items: stretch;
       align-self: stretch;
       padding: 0;
-      gap: 12px;
+      gap: 6px; /* resting: compact shelf; drag-active restores larger gap via .rootMisc[data-drag-active] */
       background-color: transparent;
       border-radius: 0;
       box-shadow: none;
@@ -142,15 +142,35 @@ body:not([data-theme]) {
     width: 100%;
     max-width: 100%;
     min-width: 0;
+
+    &[data-drag-active="true"] .body.bodyMiscellaneous {
+      gap: 12px;
+    }
+
+    &[data-drag-active="true"] .miscellaneous-header {
+      padding-bottom: 10px;
+      margin-bottom: 2px;
+      border-bottom-color: var(--border-color, rgba(0, 0, 0, 0.08));
+    }
+
+    &[data-drag-active="true"] .miscellaneous-courses {
+      gap: 12px;
+      padding-bottom: 4px;
+    }
+
+    &[data-drag-active="true"] .add-button-misc-strip {
+      min-height: 120px;
+      padding: 12px 10px;
+    }
   }
 }
 
 .miscellaneous-header {
   position: relative;
   flex-shrink: 0;
-  padding-bottom: 10px;
-  margin-bottom: 2px;
-  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  padding-bottom: 6px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
   align-items: center;
 }
 
@@ -224,13 +244,13 @@ body:not([data-theme]) {
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: stretch;
-  gap: 12px;
+  gap: 8px;
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
   overscroll-behavior-x: contain;
   scrollbar-gutter: stable;
 
@@ -262,10 +282,10 @@ body:not([data-theme]) {
   align-items: center;
   justify-content: center;
   min-width: 112px;
-  min-height: 120px;
-  padding: 12px 10px;
+  min-height: 72px;
+  padding: 8px 8px;
   border-radius: 8px;
-  border: 1px dashed var(--border-color, rgba(0, 0, 0, 0.12));
+  border: 1px dashed var(--border-color, rgba(0, 0, 0, 0.1));
   background-color: var(--foreground-color, rgba(0, 0, 0, 0.02));
 }
 

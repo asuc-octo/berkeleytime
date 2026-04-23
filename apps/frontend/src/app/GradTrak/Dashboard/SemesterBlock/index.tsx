@@ -85,7 +85,7 @@ function SemesterBlock({
   isMiscellaneous = false,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
-  const { setDraggingPlanCourse } = useGradTrakDnd();
+  const { isDraggingPlanCourse, setDraggingPlanCourse } = useGradTrakDnd();
 
   const apolloClient = useApolloClient();
 
@@ -387,9 +387,7 @@ function SemesterBlock({
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
     draggingIndexRef.current = classIndex;
-    if (!isMiscellaneous) {
-      setDraggingPlanCourse(true);
-    }
+    setDraggingPlanCourse(true);
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -409,9 +407,7 @@ function SemesterBlock({
 
   const handleDragEnd = (e: React.DragEvent) => {
     draggingIndexRef.current = null;
-    if (!isMiscellaneous) {
-      setDraggingPlanCourse(false);
-    }
+    setDraggingPlanCourse(false);
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -561,6 +557,9 @@ function SemesterBlock({
         className={classNames(styles.root, isMiscellaneous && styles.rootMisc, {
           "drop-target": isDropTarget,
         })}
+        data-drag-active={
+          isMiscellaneous && isDraggingPlanCourse ? "true" : undefined
+        }
         onDragOver={filtersActive ? undefined : handleDragOver}
         onDragLeave={filtersActive ? undefined : handleDragLeave}
         onDrop={filtersActive ? undefined : handleDrop}
