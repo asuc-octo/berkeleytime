@@ -144,35 +144,35 @@ body:not([data-theme]) {
     min-width: 0;
 
     /* Collapsed entry: header only; course strip clipped (drag-active rules unchanged) */
-    &:not([data-drag-active="true"]) .body.bodyMiscellaneous {
+    &:not([data-drag-active="true"]):not(:hover) .body.bodyMiscellaneous {
       max-height: 42px;
       min-height: 0;
       overflow: hidden;
       gap: 0;
     }
 
-    &:not([data-drag-active="true"]) .miscellaneous-header {
+    &:not([data-drag-active="true"]):not(:hover) .miscellaneous-header {
       padding-bottom: 2px;
       margin-bottom: 0;
       border-bottom: none;
     }
 
-    &[data-drag-active="true"] .body.bodyMiscellaneous {
+    &:is(:hover, [data-drag-active="true"]) .body.bodyMiscellaneous {
       gap: 12px;
     }
 
-    &[data-drag-active="true"] .miscellaneous-header {
+    &:is(:hover, [data-drag-active="true"]) .miscellaneous-header {
       padding-bottom: 10px;
       margin-bottom: 2px;
       border-bottom-color: var(--border-color, rgba(0, 0, 0, 0.08));
     }
 
-    &[data-drag-active="true"] .miscellaneous-courses {
+    &:is(:hover, [data-drag-active="true"]) .miscellaneous-courses {
       gap: 12px;
       padding-bottom: 4px;
     }
 
-    &[data-drag-active="true"] .add-button-misc-strip {
+    &:is(:hover, [data-drag-active="true"]) .add-button-misc-strip {
       min-height: 120px;
       padding: 12px 10px;
     }

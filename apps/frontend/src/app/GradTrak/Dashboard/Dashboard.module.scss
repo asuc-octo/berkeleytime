@@ -203,7 +203,7 @@
     padding-bottom 0.2s ease,
     border-color 0.2s ease;
 
-  &[data-drag-active="true"] {
+  &:is(:hover, [data-drag-active="true"]) {
     padding: 0 2rem 1rem;
     border-top-color: var(--border-color, rgba(0, 0, 0, 0.08));
     background: var(--background-color, var(--background-secondary, var(--backdrop-color)));
@@ -236,7 +236,7 @@
     opacity 0.2s ease;
 }
 
-.misc-dock[data-drag-active="true"] .miscellaneous-bar {
+.misc-dock:is(:hover, [data-drag-active="true"]) .miscellaneous-bar {
   border-radius: 12px;
   border-color: var(--border-color, rgba(0, 0, 0, 0.08));
   padding: 12px 16px 14px;

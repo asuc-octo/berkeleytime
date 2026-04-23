@@ -101,6 +101,9 @@ function SemesterBlock({
   const containerRef = useRef<HTMLDivElement>(null);
   const draggingIndexRef = useRef<number | null>(null);
   const [open, setOpen] = useState(true);
+  const [isMiscHovered, setIsMiscHovered] = useState(false);
+  const isExpanded = isMiscellaneous && (isMiscHovered || isDraggingPlanCourse);
+  const isContentOpen = isMiscellaneous ? isExpanded : open;
 
   const [setCourses] = useSetSelectedCourses();
   const [getCourseUnits] = useReadCourseUnits();
@@ -560,6 +563,12 @@ function SemesterBlock({
         data-drag-active={
           isMiscellaneous && isDraggingPlanCourse ? "true" : undefined
         }
+        onMouseEnter={
+          isMiscellaneous ? () => setIsMiscHovered(true) : undefined
+        }
+        onMouseLeave={
+          isMiscellaneous ? () => setIsMiscHovered(false) : undefined
+        }
         onDragOver={filtersActive ? undefined : handleDragOver}
         onDragLeave={filtersActive ? undefined : handleDragLeave}
         onDrop={filtersActive ? undefined : handleDrop}
@@ -570,7 +579,7 @@ function SemesterBlock({
             isMiscellaneous && styles.bodyMiscellaneous
           )}
           data-layout={settings.layout}
-          data-open={open}
+          data-open={isContentOpen}
         >
           <Flex
             direction="row"
@@ -760,25 +769,29 @@ function SemesterBlock({
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
               </div>
-              {open ? (
+              {isContentOpen ? (
                 <NavArrowDown
                   className={styles.actionButton}
                   onClick={() => {
-                    setOpen(false);
+                    if (!isMiscellaneous) {
+                      setOpen(false);
+                    }
                   }}
                 />
               ) : (
                 <NavArrowRight
                   className={styles.actionButton}
                   onClick={() => {
-                    setOpen(true);
+                    if (!isMiscellaneous) {
+                      setOpen(true);
+                    }
                   }}
                 />
               )}
             </Flex>
           </Flex>
 
-          {open && (
+          {isContentOpen && (
             <>
               <div
                 className={
