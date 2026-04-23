@@ -408,9 +408,27 @@ function SemesterBlock({
     e.dataTransfer.effectAllowed = "move";
   };
 
+  const syncMiscHoverFromPointer = (clientX: number, clientY: number) => {
+    if (!isMiscellaneous || !containerRef.current) return;
+    if (clientX < 0 || clientY < 0) {
+      setIsMiscHovered(false);
+      return;
+    }
+    const rect = containerRef.current.getBoundingClientRect();
+    const pointerInside =
+      clientX >= rect.left &&
+      clientX <= rect.right &&
+      clientY >= rect.top &&
+      clientY <= rect.bottom;
+    setIsMiscHovered(pointerInside);
+  };
+
   const handleDragEnd = (e: React.DragEvent) => {
     draggingIndexRef.current = null;
     setDraggingPlanCourse(false);
+    // Clear any stale expanded state from drag, then reopen only if pointer is truly inside.
+    setIsMiscHovered(false);
+    syncMiscHoverFromPointer(e.clientX, e.clientY);
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -480,6 +498,9 @@ function SemesterBlock({
           setSelectedCourses(oldClasses);
           console.error("Failed to add class from bookmarks:", error);
         }
+        setDraggingPlanCourse(false);
+        setIsMiscHovered(false);
+        syncMiscHoverFromPointer(e.clientX, e.clientY);
         return;
       }
 
@@ -543,6 +564,11 @@ function SemesterBlock({
       }
     } catch (error) {
       console.error("Error handling drop:", error);
+    } finally {
+      // Drop completion must not keep stale drag-open state.
+      setDraggingPlanCourse(false);
+      setIsMiscHovered(false);
+      syncMiscHoverFromPointer(e.clientX, e.clientY);
     }
   };
 
