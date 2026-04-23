@@ -517,8 +517,14 @@ export default function Dashboard() {
     }
   }, [planTerms, convertPlanTermsToSemesters]);
 
-  const totalUnits = Object.values(semesterTotals).reduce(
-    (sum, units) => sum + units,
+  const miscellaneousTermIds = new Set(
+    planTerms
+      .filter((term) => term.name === "Miscellaneous")
+      .map((term) => term._id)
+  );
+  const totalUnits = Object.entries(semesterTotals).reduce(
+    (sum, [semesterId, units]) =>
+      miscellaneousTermIds.has(semesterId) ? sum : sum + units,
     0
   );
 
