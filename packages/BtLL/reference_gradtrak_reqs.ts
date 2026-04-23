@@ -444,6 +444,55 @@ Function<List<Requirement>>() main (){
 }
 `;
 
+export const RCNR_REQ_BTLL = `${RNC_BTLL}
+Function<boolean>(Course) is_upper_div_course (course){
+  string number get_attr(course, "number")
+  boolean return or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9]"), regex_match(number, "^W[0-9][0-9]"), regex_match(number, "^N[0-9][0-9]")])
+}
+
+Function<boolean>(Course) is_rcnr_dept_course (course){
+  string subject get_attr(course, "subject")
+  boolean is_envecon equal([subject, "ENVECON"])
+  boolean is_espm equal([subject, "ESPM"])
+  boolean is_eneres equal([subject, "ENERES"])
+  boolean is_nusctx equal([subject, "NUSCTX"])
+  boolean is_plantbi equal([subject, "PLANTBI"])
+  boolean return or([is_envecon, is_espm, is_eneres, is_nusctx, is_plantbi])
+}
+
+Function<number>(number, Course) add_course_units (acc, course){
+  number units get_attr(course, "units")
+  number return add([acc, units])
+}
+
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+
+  // Reading & Composition
+  List<Requirement> rc_reqs rc_requirements(courses)
+  Requirement rca get_element(rc_reqs, 0)
+  Requirement rcb get_element(rc_reqs, 1)
+
+  // At least 36 upper-division units total
+  List<Course> upper_div_courses filter(courses, (c) {
+    boolean return is_upper_div_course(c)
+  })
+  number upper_div_units reduce(upper_div_courses, add_course_units, 0)
+  NumberRequirement upper_div_total {upper_div_units, 36, "Total Upper Division Units"}
+
+  // At least 15 of those 36 upper division units must be in Rausser departments
+  List<Course> rcnr_upper_div_courses filter(courses, (c) {
+    boolean is_upper is_upper_div_course(c)
+    boolean is_rcnr is_rcnr_dept_course(c)
+    boolean return and([is_upper, is_rcnr])
+  })
+  number rcnr_upper_div_units reduce(rcnr_upper_div_courses, add_course_units, 0)
+  NumberRequirement rcnr_upper_div {rcnr_upper_div_units, 15, "Rausser Upper Division Units"}
+
+  List<Requirement> return [rca, rcb, upper_div_total, rcnr_upper_div]
+}
+`;
+
 export const EECS_REQ_BTLL = `
 Function<boolean>(Course) eecs_upper_div_finder (course){
   string subject get_attr(course, "subject")

@@ -19,6 +19,7 @@ import {
   HAAS_REQ_BTLL,
   LNS_REQ_BTLL,
   MECHE_REQ_BTLL,
+  RCNR_REQ_BTLL,
   UC_REQ_BTLL,
 } from "./reference_gradtrak_reqs";
 
@@ -59,6 +60,16 @@ const requirements: PlanRequirementSeed[] = [
     code: LNS_REQ_BTLL,
     isUcReq: false,
     college: "LnS",
+    major: null,
+    minor: null,
+    createdBy: "system",
+    isOfficial: true,
+  },
+  {
+    name: "Rausser College of Natural Resources Requirements",
+    code: RCNR_REQ_BTLL,
+    isUcReq: false,
+    college: "RCNR",
     major: null,
     minor: null,
     createdBy: "system",
