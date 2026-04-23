@@ -78,10 +78,7 @@ export default function Class({
                 <DropdownMenu.Item onClick={() => handleDetails(index)}>
                   <BookStack className={styles.menuIcon} /> Edit Details
                 </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onClick={() => handleDelete(index)}
-                  isDelete
-                >
+                <DropdownMenu.Item onClick={() => handleDelete(index)} isDelete>
                   <Trash className={styles.menuIcon} /> Delete Class
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
@@ -93,16 +90,11 @@ export default function Class({
             {cls.labels
               .filter((l) =>
                 labels.some(
-                  (label) =>
-                    label.name === l.name && label.color === l.color
+                  (label) => label.name === l.name && label.color === l.color
                 )
               )
               .map((l, idx) => (
-                <Badge
-                  key={idx}
-                  label={l.name}
-                  color={l.color as Color}
-                />
+                <Badge key={idx} label={l.name} color={l.color as Color} />
               ))}
           </div>
         )}

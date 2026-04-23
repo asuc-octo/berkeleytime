@@ -843,13 +843,13 @@ function SemesterBlock({
                           (placeholderIndex === draggingIndexRef.current ||
                             placeholderIndex === draggingIndexRef.current + 1)
                         ) && (
-                        <div
-                          className={classNames(
-                            styles.placeholder,
-                            isMiscellaneous && styles.placeholderMisc
-                          )}
-                        />
-                      )}
+                          <div
+                            className={classNames(
+                              styles.placeholder,
+                              isMiscellaneous && styles.placeholderMisc
+                            )}
+                          />
+                        )}
                       <Class
                         cls={cls}
                         index={index}
@@ -872,13 +872,13 @@ function SemesterBlock({
                     (placeholderIndex === draggingIndexRef.current ||
                       placeholderIndex === draggingIndexRef.current + 1)
                   ) && (
-                  <div
-                    className={classNames(
-                      styles.placeholder,
-                      isMiscellaneous && styles.placeholderMisc
-                    )}
-                  />
-                )}
+                    <div
+                      className={classNames(
+                        styles.placeholder,
+                        isMiscellaneous && styles.placeholderMisc
+                      )}
+                    />
+                  )}
 
                 {isMiscellaneous && (
                   <Button

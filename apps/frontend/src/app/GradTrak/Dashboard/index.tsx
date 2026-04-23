@@ -1,11 +1,11 @@
 import {
+  type ReactNode,
+  type RefObject,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ReactNode,
-  type RefObject,
 } from "react";
 
 import { useQuery } from "@apollo/client/react";
@@ -58,9 +58,9 @@ import {
 import AddBlockMenu from "./AddBlockMenu";
 import BookmarksSidebar from "./BookmarksSidebar";
 import styles from "./Dashboard.module.scss";
-import { GradTrakDndProvider, useGradTrakDnd } from "./GradTrakDndContext";
 import DisplayMenu from "./DisplayMenu";
 import EditPlanDialog from "./EditPlanDialog";
+import { GradTrakDndProvider, useGradTrakDnd } from "./GradTrakDndContext";
 import LabelMenu from "./LabelMenu";
 import SemesterBlock from "./SemesterBlock";
 import SidePanel from "./SidePanel";
@@ -599,12 +599,7 @@ export default function Dashboard() {
       });
 
     return { regularSemesters, miscellaneousSemester };
-  }, [
-    planTerms,
-    filterOptions,
-    filteredAllSemesters,
-    sortSemesterOption,
-  ]);
+  }, [planTerms, filterOptions, filteredAllSemesters, sortSemesterOption]);
 
   if (
     !gradTrak &&
@@ -1061,11 +1056,7 @@ export default function Dashboard() {
                       key={miscellaneousSemester._id}
                       planTerm={miscellaneousSemester}
                       isMiscellaneous
-                      onTotalUnitsChange={(
-                        newTotal,
-                        pnpUnits,
-                        transferUnits
-                      ) =>
+                      onTotalUnitsChange={(newTotal, pnpUnits, transferUnits) =>
                         updateTotalUnits(
                           miscellaneousSemester._id,
                           newTotal,
@@ -1082,10 +1073,7 @@ export default function Dashboard() {
                       catalogCourses={catalogCourses}
                       index={index}
                       handleUpdateTermName={(name) =>
-                        handleUpdateTermName(
-                          miscellaneousSemester._id,
-                          name
-                        )
+                        handleUpdateTermName(miscellaneousSemester._id, name)
                       }
                       handleTogglePin={() =>
                         handleTogglePin(miscellaneousSemester._id)
