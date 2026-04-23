@@ -25,7 +25,13 @@ const resolvers = {
       info: GraphQLResolveInfo
     ) => {
       if (args.recentClicks && args.recentClicks.length > 0) {
-        (info as GraphQLResolveInfo & { cacheControl: { setCacheHint: (hint: { maxAge: number; scope: string }) => void } }).cacheControl.setCacheHint({
+        (
+          info as GraphQLResolveInfo & {
+            cacheControl: {
+              setCacheHint: (hint: { maxAge: number; scope: string }) => void;
+            };
+          }
+        ).cacheControl.setCacheHint({
           maxAge: 0,
           scope: "PRIVATE",
         });
