@@ -194,7 +194,7 @@
   flex-shrink: 0;
   min-width: 0;
   width: 100%;
-  padding: 0 2rem 0.25rem;
+  padding: 0 0 0.25rem;
   box-sizing: border-box;
   border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
   background: var(--background-color, var(--backdrop-color));
@@ -204,7 +204,7 @@
     border-color 0.2s ease;
 
   &:is(:hover, [data-drag-active="true"]) {
-    padding: 0 2rem 1rem;
+    padding: 0 0 1rem;
     border-top-color: var(--border-color, rgba(0, 0, 0, 0.08));
     background: var(--background-color, var(--background-secondary, var(--backdrop-color)));
     box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.1);
