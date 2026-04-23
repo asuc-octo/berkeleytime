@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
@@ -50,6 +58,7 @@ import {
 import AddBlockMenu from "./AddBlockMenu";
 import BookmarksSidebar from "./BookmarksSidebar";
 import styles from "./Dashboard.module.scss";
+import { GradTrakDndProvider, useGradTrakDnd } from "./GradTrakDndContext";
 import DisplayMenu from "./DisplayMenu";
 import EditPlanDialog from "./EditPlanDialog";
 import LabelMenu from "./LabelMenu";
@@ -92,6 +101,25 @@ const EMPTY_PLAN_TERMS: IPlanTerm[] = [];
 export interface SelectedCourse extends ISelectedCourse {
   courseSubject: string;
   courseNumber: string;
+}
+
+function GradTrakMiscDock({
+  miscBarRef,
+  children,
+}: {
+  miscBarRef: RefObject<HTMLDivElement | null>;
+  children: ReactNode;
+}) {
+  const { isDraggingPlanCourse } = useGradTrakDnd();
+  return (
+    <div
+      ref={miscBarRef}
+      className={styles.miscDock}
+      data-drag-active={isDraggingPlanCourse ? "true" : undefined}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -151,6 +179,7 @@ export default function Dashboard() {
   const labels = gradTrak?.labels ?? EMPTY_LABELS;
   const planTerms = gradTrak?.planTerms ?? EMPTY_PLAN_TERMS;
   const displayMenuTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const miscBarRef = useRef<HTMLDivElement | null>(null);
   const [colleges, setColleges] = useState<Colleges[]>([]);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const [filterOptions, setFilterOptions] = useState<{
@@ -877,6 +906,20 @@ export default function Dashboard() {
                 }
               />
 
+              {miscellaneousSemester && (
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    miscBarRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "end",
+                    })
+                  }
+                >
+                  +{miscellaneousSemester.name}
+                </Button>
+              )}
+
               <Tooltip
                 content="Display settings"
                 trigger={
@@ -950,57 +993,63 @@ export default function Dashboard() {
               createNewPlanTerm={handleNewPlanTerm}
             />
           )}
-          <div className={styles.semesterBlocks}>
-            <div className={styles.semesterBlocksInner}>
-              <div className={styles.semestersLayout}>
-                <div className={styles.semestersRow}>
-                  <div
-                    className={styles.semestersRowTrack}
-                    data-layout={settings.layout}
-                  >
-                    {regularSemesters.map((term) => (
-                      <SemesterBlock
-                        key={term._id}
-                        planTerm={term}
-                        onTotalUnitsChange={(
-                          newTotal,
-                          pnpUnits,
-                          transferUnits
-                        ) =>
-                          updateTotalUnits(
-                            term._id,
-                            newTotal,
-                            pnpUnits,
-                            transferUnits
-                          )
-                        }
-                        filteredSemesters={filteredAllSemesters}
-                        allSemesters={allSemesters}
-                        updateAllSemesters={updateAllSemesters}
-                        settings={settings}
-                        labels={labels}
-                        setShowLabelMenu={setShowLabelMenu}
-                        catalogCourses={catalogCourses}
-                        index={index}
-                        handleUpdateTermName={(name) =>
-                          handleUpdateTermName(term._id, name)
-                        }
-                        handleTogglePin={() => handleTogglePin(term._id)}
-                        handleSetStatus={(status: Status) =>
-                          handleSetStatus(term._id, status)
-                        }
-                        sortCourseOption={sortCourseOption}
-                        handleRemoveTerm={() => {
-                          const updatedSemesters = { ...allSemesters };
-                          delete updatedSemesters[term._id];
-                          updateAllSemesters(updatedSemesters);
-                        }}
-                        filtersActive={activeFiltersCount > 0}
-                      />
-                    ))}
+          <GradTrakDndProvider>
+            <div className={styles.viewBody}>
+              <div className={styles.semesterBlocks}>
+                <div className={styles.semesterBlocksInner}>
+                  <div className={styles.semestersLayout}>
+                    <div className={styles.semestersRow}>
+                      <div
+                        className={styles.semestersRowTrack}
+                        data-layout={settings.layout}
+                      >
+                        {regularSemesters.map((term) => (
+                          <SemesterBlock
+                            key={term._id}
+                            planTerm={term}
+                            onTotalUnitsChange={(
+                              newTotal,
+                              pnpUnits,
+                              transferUnits
+                            ) =>
+                              updateTotalUnits(
+                                term._id,
+                                newTotal,
+                                pnpUnits,
+                                transferUnits
+                              )
+                            }
+                            filteredSemesters={filteredAllSemesters}
+                            allSemesters={allSemesters}
+                            updateAllSemesters={updateAllSemesters}
+                            settings={settings}
+                            labels={labels}
+                            setShowLabelMenu={setShowLabelMenu}
+                            catalogCourses={catalogCourses}
+                            index={index}
+                            handleUpdateTermName={(name) =>
+                              handleUpdateTermName(term._id, name)
+                            }
+                            handleTogglePin={() => handleTogglePin(term._id)}
+                            handleSetStatus={(status: Status) =>
+                              handleSetStatus(term._id, status)
+                            }
+                            sortCourseOption={sortCourseOption}
+                            handleRemoveTerm={() => {
+                              const updatedSemesters = { ...allSemesters };
+                              delete updatedSemesters[term._id];
+                              updateAllSemesters(updatedSemesters);
+                            }}
+                            filtersActive={activeFiltersCount > 0}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {miscellaneousSemester && (
+              </div>
+              {miscellaneousSemester && (
+                <GradTrakMiscDock miscBarRef={miscBarRef}>
                   <div className={styles.miscellaneousBar}>
                     <SemesterBlock
                       key={miscellaneousSemester._id}
@@ -1047,10 +1096,10 @@ export default function Dashboard() {
                       filtersActive={activeFiltersCount > 0}
                     />
                   </div>
-                )}
-              </div>
+                </GradTrakMiscDock>
+              )}
             </div>
-          </div>
+          </GradTrakDndProvider>
         </div>
         {bookmarksSidebarOpen && (
           <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />

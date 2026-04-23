@@ -146,10 +146,69 @@ body:not([data-theme]) {
 }
 
 .miscellaneous-header {
+  position: relative;
   flex-shrink: 0;
   padding-bottom: 10px;
   margin-bottom: 2px;
   border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  align-items: center;
+}
+
+/* Center “+Miscellaneous” across the full header; menu stays on the right (Figma) */
+.miscellaneous-header > *:last-child {
+  position: relative;
+  z-index: 1;
+  margin-left: auto;
+}
+
+/* Figma: "+Miscellaneous" (no unit count in the bar header) */
+.miscellaneous-header .misc-header-title-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 48px; /* keep label clear of right-side actions without changing their layout */
+  pointer-events: none;
+}
+
+.miscellaneous-header .misc-header-title-row .misc-plus-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  pointer-events: auto;
+  text-align: center;
+}
+
+.misc-plus-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--heading-color);
+}
+
+.misc-plus-title-label {
+  display: inline-flex;
+  align-items: baseline;
+  cursor: pointer;
+  user-select: none;
+}
+
+.misc-plus-sign {
+  margin-right: 0.1em;
+  color: var(--heading-color);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .course-list {

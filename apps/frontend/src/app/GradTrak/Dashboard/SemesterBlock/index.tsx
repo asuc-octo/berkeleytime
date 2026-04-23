@@ -28,6 +28,7 @@ import {
   Terms,
 } from "@/lib/generated/graphql";
 
+import { useGradTrakDnd } from "../GradTrakDndContext";
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
 import AddClass from "./AddClass";
@@ -84,6 +85,7 @@ function SemesterBlock({
   isMiscellaneous = false,
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
+  const { setDraggingPlanCourse } = useGradTrakDnd();
 
   const apolloClient = useApolloClient();
 
@@ -385,6 +387,9 @@ function SemesterBlock({
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
     draggingIndexRef.current = classIndex;
+    if (!isMiscellaneous) {
+      setDraggingPlanCourse(true);
+    }
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -404,6 +409,9 @@ function SemesterBlock({
 
   const handleDragEnd = (e: React.DragEvent) => {
     draggingIndexRef.current = null;
+    if (!isMiscellaneous) {
+      setDraggingPlanCourse(false);
+    }
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -571,50 +579,89 @@ function SemesterBlock({
             width="100%"
             className={isMiscellaneous ? styles.miscellaneousHeader : undefined}
           >
-            <div className={styles.semesterCounter}>
-              {planTerm.pinned && (
-                <PinSolid className={styles.pin} onClick={handleTogglePin} />
-              )}
-              <h2>
-                {renameEditActive ? (
-                  <Input
-                    ref={inputRef}
-                    value={rename}
-                    onChange={(e) => setRename(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSaveRename();
-                      } else if (e.key === "Escape") {
-                        handleCancelRename();
-                      }
-                    }}
-                    onBlur={handleSaveRename}
-                    style={{ width: "100%", minWidth: "120px" }}
-                  />
-                ) : (
-                  <span
-                    onClick={() => {
-                      setRenameEditActive(true);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {planTerm.name}
-                  </span>
+            {isMiscellaneous ? (
+              <div
+                className={classNames(
+                  styles.semesterCounter,
+                  styles.miscHeaderTitleRow
                 )}
-              </h2>
-              <p className={styles.counter}>{totalUnits}</p>
-              <span
-                className={styles.status}
-                style={{
-                  backgroundColor:
-                    planTerm.status === Status.Complete
-                      ? "var(--emerald-500)"
-                      : planTerm.status == Status.InProgress
-                        ? "var(--yellow-500)"
-                        : "var(--gray-500)",
-                }}
-              />
-            </div>
+              >
+                <h2 className={styles.miscPlusTitle}>
+                  {renameEditActive ? (
+                    <Input
+                      ref={inputRef}
+                      value={rename}
+                      onChange={(e) => setRename(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSaveRename();
+                        } else if (e.key === "Escape") {
+                          handleCancelRename();
+                        }
+                      }}
+                      onBlur={handleSaveRename}
+                      style={{ width: "100%", minWidth: "140px" }}
+                      placeholder="Name"
+                    />
+                  ) : (
+                    <span
+                      onClick={() => {
+                        setRenameEditActive(true);
+                      }}
+                      className={styles.miscPlusTitleLabel}
+                    >
+                      <span className={styles.miscPlusSign}>+</span>
+                      {planTerm.name}
+                    </span>
+                  )}
+                </h2>
+              </div>
+            ) : (
+              <div className={styles.semesterCounter}>
+                {planTerm.pinned && (
+                  <PinSolid className={styles.pin} onClick={handleTogglePin} />
+                )}
+                <h2>
+                  {renameEditActive ? (
+                    <Input
+                      ref={inputRef}
+                      value={rename}
+                      onChange={(e) => setRename(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleSaveRename();
+                        } else if (e.key === "Escape") {
+                          handleCancelRename();
+                        }
+                      }}
+                      onBlur={handleSaveRename}
+                      style={{ width: "100%", minWidth: "120px" }}
+                    />
+                  ) : (
+                    <span
+                      onClick={() => {
+                        setRenameEditActive(true);
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {planTerm.name}
+                    </span>
+                  )}
+                </h2>
+                <p className={styles.counter}>{totalUnits}</p>
+                <span
+                  className={styles.status}
+                  style={{
+                    backgroundColor:
+                      planTerm.status === Status.Complete
+                        ? "var(--emerald-500)"
+                        : planTerm.status == Status.InProgress
+                          ? "var(--yellow-500)"
+                          : "var(--gray-500)",
+                  }}
+                />
+              </div>
+            )}
             <Flex direction="row" gap="6px">
               <div>
                 <DropdownMenu.Root modal={false}>
@@ -775,6 +822,7 @@ function SemesterBlock({
                         settings={settings}
                         labels={labels}
                         draggable={!filtersActive}
+                        variant={isMiscellaneous ? "strip" : "default"}
                       />
                     </React.Fragment>
                   ))}
