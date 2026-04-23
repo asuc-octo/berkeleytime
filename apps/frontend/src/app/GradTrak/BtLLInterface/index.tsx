@@ -707,6 +707,25 @@ export default function BtLLGradTrakInterface({
 
   return (
     <>
+      {/* Color-code legend */}
+      <div className={styles.legend}>
+        <div className={styles.legendItem}>
+          <Check className={classNames(styles.legendCheck, styles.auto)} />
+          <span>Fulfilled</span>
+        </div>
+        <div className={styles.legendItem}>
+          <Check className={classNames(styles.legendCheck, styles.manual)} />
+          <span>Manually marked</span>
+        </div>
+        <div className={styles.legendItem}>
+          <div className={styles.legendEmpty} />
+          <span>Not fulfilled</span>
+        </div>
+        <div className={classNames(styles.legendItem, styles.legendHint)}>
+          Click ✓ to toggle
+        </div>
+      </div>
+
       {evaluatedGroups.map((group, index) => (
         <BtLLRequirementsAccordion
           key={`group-${index}`}
