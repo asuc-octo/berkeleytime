@@ -87,7 +87,8 @@ export default function useCatalogQuery({
   const isLoadingNextPageRef = useRef(false);
   const queryGenerationRef = useRef(0);
 
-  const [recentClicksSnapshot, setRecentClicksSnapshot] = useState(getCourseClicks);
+  const [recentClicksSnapshot, setRecentClicksSnapshot] =
+    useState(getCourseClicks);
   useEffect(() => {
     const refresh = () => setRecentClicksSnapshot(getCourseClicks());
     window.addEventListener("focus", refresh);
