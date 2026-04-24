@@ -14,6 +14,7 @@ import type {
   GetCatalogSearchQueryVariables,
   Semester,
 } from "@/lib/generated/graphql";
+
 import { SortBy } from "../browser";
 import { mapSortBy } from "./useCatalogFilters";
 

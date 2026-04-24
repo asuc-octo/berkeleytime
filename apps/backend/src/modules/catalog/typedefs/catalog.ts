@@ -34,7 +34,7 @@ export const catalogTypeDef = gql`
     online: Boolean
   }
 
-type CatalogMeeting {
+  type CatalogMeeting {
     days: [Boolean!]
     startTime: String
     endTime: String
