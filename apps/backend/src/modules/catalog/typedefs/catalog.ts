@@ -34,13 +34,7 @@ export const catalogTypeDef = gql`
     online: Boolean
   }
 
-  input RecentClick {
-    courseNumber: String!
-    searchTerm: String!
-    timestamp: Float!
-  }
-
-  type CatalogMeeting {
+type CatalogMeeting {
     days: [Boolean!]
     startTime: String
     endTime: String
@@ -211,7 +205,6 @@ export const catalogTypeDef = gql`
       sortOrder: SortOrder
       page: Int
       pageSize: Int
-      recentClicks: [RecentClick]
     ): CatalogResult! @cacheControl(maxAge: 300, scope: PUBLIC)
 
     catalogClassIdentities(

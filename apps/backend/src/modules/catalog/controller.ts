@@ -57,9 +57,6 @@ export interface CatalogQueryParams {
   page?: number | null;
   pageSize?: number | null;
   semanticSearch?: boolean | null;
-  recentClicks?:
-    | { courseNumber: string; timestamp: number; searchTerm: string }[]
-    | null;
 }
 
 type CatalogFilterCondition = Record<string, unknown>;
@@ -126,7 +123,6 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
       filters,
       limit: effectivePageSize,
       skip,
-      recentClicks: params.recentClicks,
     });
   }
 
@@ -201,37 +197,26 @@ const getCatalogWithSemanticSearch = async ({
   return { results, totalCount };
 };
 
-const HALF_LIFE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-const MIN_WEIGHT = 0.1;
-const MAX_BOOST = 0.6;
+const VIEWCOUNT_BOOST = 0.05;
 
-const decayWeight = (timestamp: number): number =>
-  Math.exp((-Math.LN2 * (Date.now() - timestamp)) / HALF_LIFE_MS);
-
-// Given fuzzy search returns, assign a score to each item and sort by decay
+// Given fuzzy search returns, assign a score to each item and sort by viewCount
 const scoreAndSort = (
   items: ICatalogClassItem[],
-  scoreMap: Map<ICatalogClassItem, number>,
-  recentClicks?:
-    | { courseNumber: string; timestamp: number; searchTerm: string }[]
-    | null
+  scoreMap: Map<ICatalogClassItem, number>
 ): ICatalogClassItem[] => {
-  const clickWeightMap = new Map<string, number>();
-  for (const click of recentClicks ?? []) {
-    const w = decayWeight(click.timestamp);
-    if (w >= MIN_WEIGHT) {
-      const existing = clickWeightMap.get(click.courseNumber) ?? 0;
-      clickWeightMap.set(click.courseNumber, Math.max(existing, w));
-    }
-  }
+  const maxViewCount = Math.max(...items.map((i) => i.viewCount ?? 0), 1);
 
   return [...items].sort((a, b) => {
     const fuzzyA = scoreMap.get(a) ?? 1;
     const fuzzyB = scoreMap.get(b) ?? 1;
-    const key = (item: ICatalogClassItem) =>
-      `${item.subject}${item.courseNumber}`;
-    const scoreA = fuzzyA - (clickWeightMap.get(key(a)) ?? 0) * MAX_BOOST;
-    const scoreB = fuzzyB - (clickWeightMap.get(key(b)) ?? 0) * MAX_BOOST;
+    const viewA =
+      (Math.log((a.viewCount ?? 0) + 1) / Math.log(maxViewCount + 1)) *
+      VIEWCOUNT_BOOST;
+    const viewB =
+      (Math.log((b.viewCount ?? 0) + 1) / Math.log(maxViewCount + 1)) *
+      VIEWCOUNT_BOOST;
+    const scoreA = fuzzyA - viewA;
+    const scoreB = fuzzyB - viewB;
     return scoreA - scoreB;
   });
 };
@@ -243,7 +228,6 @@ const getCatalogWithSearch = async ({
   filters,
   limit,
   skip,
-  recentClicks,
 }: {
   year: number;
   semester: string;
@@ -251,46 +235,16 @@ const getCatalogWithSearch = async ({
   filters: CatalogQueryParams["filters"];
   limit: number;
   skip: number;
-  recentClicks?:
-    | { courseNumber: string; timestamp: number; searchTerm: string }[]
-    | null;
 }) => {
   const index = await getSearchIndex(year, semester);
   const hits = index.search(searchTerm);
   const scoreMap = new Map<ICatalogClassItem, number>();
   for (const hit of hits) scoreMap.set(hit.item, hit.score ?? 1);
   const items = hits.map((r) => r.item);
-  const coveredIds = new Set(
-    items.map((item) => `${item.subject}${item.courseNumber}`)
-  );
-  // Check if there are any recently clicked class missing from fuzzy search
-  const lowerSearch = searchTerm.toLowerCase();
-  const missingClicks = (recentClicks ?? []).filter((click) => {
-    const w = decayWeight(click.timestamp);
-    return (
-      w >= MIN_WEIGHT &&
-      click.searchTerm.toLowerCase().startsWith(lowerSearch) &&
-      !coveredIds.has(click.courseNumber)
-    );
-  });
-  // do a full catalog search and bring back the missing ones, assign scores
-  if (missingClicks.length > 0) {
-    const allCatalog = await getCachedCatalog(year, semester);
-    const catalogById = new Map(
-      allCatalog.map((item) => [`${item.subject}${item.courseNumber}`, item])
-    );
-
-    for (const click of missingClicks) {
-      const item = catalogById.get(click.courseNumber);
-      if (!item) continue;
-      scoreMap.set(item, 0.6);
-      items.push(item);
-    }
-  }
 
   const filtered = applyInMemoryFilters(items, filters);
   const totalCount = filtered.length;
-  const reranked = scoreAndSort(filtered, scoreMap, recentClicks);
+  const reranked = scoreAndSort(filtered, scoreMap);
   const results = reranked.slice(skip, skip + limit);
 
   return { results, totalCount };
