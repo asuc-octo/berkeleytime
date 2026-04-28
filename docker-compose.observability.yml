@@ -95,7 +95,7 @@ services:
   grafana:
     image: grafana/grafana:10.4.0
     ports:
-      - "${DEV_PORT_PREFIX:-30}10:3000"
+      - "${DEV_PORT_PREFIX:-30}13:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin

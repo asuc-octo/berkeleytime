@@ -10,14 +10,14 @@ export default async (config: Config) => {
   const app = express();
   app.set("trust proxy", 1);
 
-  // Request logging middleware (skips health checks)
+  // log http requests
   app.use((req, res, next) => {
     if (req.path === "/healthz" || req.path === "/health" || req.path === "/ready") {
       return next();
     }
-    const start = performance.now();
+    const start = performance.now(); //start time
     res.on("finish", () => {
-      const duration = Math.round(performance.now() - start);
+      const duration = Math.round(performance.now() - start); //duration (end time - start time)
       log.info(
         {
           method: req.method,
