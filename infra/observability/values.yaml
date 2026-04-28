@@ -71,7 +71,7 @@ grafana:
       cpu: 100m
   # Optional ingress for external access
   ingress:
-    enabled: false
+    enabled: True
     # className: nginx
     host: grafana.berkeleytime.com
     annotations: {}
