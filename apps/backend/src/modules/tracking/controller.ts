@@ -8,6 +8,17 @@ import { getClientIP } from "../../utils/ip";
 
 const REDIS_BUFFER_KEY = "tracking-events-buffer";
 const MAX_BATCH_SIZE = 50;
+const MAX_BUFFER_SIZE = 100_000;
+
+// Rate limiting: max 30 calls per IP per minute
+const RATE_LIMIT_WINDOW_S = 60;
+const RATE_LIMIT_MAX_CALLS = 30;
+
+// Per-event field limits
+const MAX_STRING_FIELD_LEN = 128;
+const MAX_METADATA_BYTES = 1_024;
+const MAX_METADATA_KEYS = 20;
+const MAX_METADATA_DEPTH = 2;
 
 export interface TrackingEventInput {
   eventType: string;
@@ -29,6 +40,57 @@ const hashIP = (ip: string): string => {
   return createHash("sha256").update(ip).digest("hex");
 };
 
+// Allow alphanumeric, underscore, hyphen, dot, colon, slash — covers all real event/target type values
+const sanitizeToken = (s: string, maxLen: number): string =>
+  s.replace(/[^\w\-.:/]/g, "").slice(0, maxLen);
+
+const sanitizeMetadata = (
+  obj: Record<string, unknown>,
+  depth = 0
+): Record<string, unknown> => {
+  if (depth >= MAX_METADATA_DEPTH) return {};
+  const result: Record<string, unknown> = {};
+  let keyCount = 0;
+  for (const [k, v] of Object.entries(obj)) {
+    if (keyCount >= MAX_METADATA_KEYS) break;
+    // Strip MongoDB operator prefix ($) and dot notation to prevent query injection
+    const safeKey = k.replace(/[$.]/g, "_").slice(0, 64);
+    if (typeof v === "string") {
+      result[safeKey] = v.slice(0, 256);
+    } else if (typeof v === "number" || typeof v === "boolean" || v === null) {
+      result[safeKey] = v;
+    } else if (typeof v === "object" && !Array.isArray(v) && v !== null) {
+      result[safeKey] = sanitizeMetadata(v as Record<string, unknown>, depth + 1);
+    } else {
+      result[safeKey] = String(v).slice(0, 256);
+    }
+    keyCount++;
+  }
+  return result;
+};
+
+const sanitizeEvent = (event: TrackingEventInput): TrackingEventInput => {
+  const sanitized: TrackingEventInput = {
+    eventType: sanitizeToken(event.eventType, MAX_STRING_FIELD_LEN),
+    targetType: sanitizeToken(event.targetType, MAX_STRING_FIELD_LEN),
+    targetId: event.targetId
+      ? sanitizeToken(event.targetId, MAX_STRING_FIELD_LEN)
+      : undefined,
+    timestamp: event.timestamp,
+    metadata: undefined,
+  };
+
+  if (event.metadata) {
+    const sanitizedMeta = sanitizeMetadata(event.metadata);
+    if (JSON.stringify(sanitizedMeta).length <= MAX_METADATA_BYTES) {
+      sanitized.metadata = sanitizedMeta;
+    }
+    // Metadata exceeding 1KB after sanitization is dropped entirely
+  }
+
+  return sanitized;
+};
+
 export const bufferTrackingEvents = async (
   redis: RedisClientType,
   req: Request,
@@ -38,15 +100,29 @@ export const bufferTrackingEvents = async (
     throw new Error(`Batch size exceeds maximum of ${MAX_BATCH_SIZE}`);
   }
 
+  const currentLen = await redis.lLen(REDIS_BUFFER_KEY);
+  if (currentLen >= MAX_BUFFER_SIZE) {
+    console.warn(
+      `[TrackingEvents] Buffer at capacity (${currentLen}), dropping batch of ${events.length}`
+    );
+    return;
+  }
+
   const ip = getClientIP(req);
   const ipHash = hashIP(ip);
+
+  const rateLimitKey = `tracking:ratelimit:${ipHash}`;
+  const callCount = await redis.incr(rateLimitKey);
+  if (callCount === 1) await redis.expire(rateLimitKey, RATE_LIMIT_WINDOW_S);
+  if (callCount > RATE_LIMIT_MAX_CALLS) return;
+
   const userAgent = (req.get("user-agent") || "").slice(0, 500) || undefined;
   const referrer = req.get("referer") || req.get("referrer") || undefined;
   const sessionId = req.sessionID || "anonymous";
   const userId = (req.user as { _id?: string } | undefined)?._id;
 
   const buffered: BufferedTrackingEvent[] = events.map((event) => ({
-    ...event,
+    ...sanitizeEvent(event),
     sessionId,
     userId,
     ipHash,
@@ -100,13 +176,15 @@ export const flushTrackingEvents = async (
       try {
         await TrackingEventModel.insertMany(documents, { ordered: false });
         flushed += documents.length;
+        await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
       } catch (error) {
         console.error("[TrackingEvents Flush] insertMany error:", error);
         errors++;
+        break;
       }
+    } else {
+      await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
     }
-
-    await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
 
     if (raw.length < FLUSH_CHUNK_SIZE) break;
   }
