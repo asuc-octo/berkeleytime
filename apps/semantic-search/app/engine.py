@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import threading
@@ -9,11 +8,8 @@ from functools import lru_cache
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
-import redis
 import requests
-from redisvl.index import SearchIndex
-from redisvl.query import VectorQuery
-from redisvl.redis.utils import array_to_buffer
+from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("semantic-search")
@@ -21,11 +17,11 @@ logger = logging.getLogger("semantic-search")
 # Semester order for comparison
 SEMESTER_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2, "Winter": 3}
 
-# Redis connection — shared with the rest of the codebase via REDIS_URI
-REDIS_URI = os.getenv("REDIS_URI", "redis://redis:6379")
+# MongoDB connection — uses the same MONGODB_URI as the rest of the codebase
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://mongodb:27017/bt")
 
-# Namespace prefix keeps all semantic-search keys isolated in the shared Redis instance
-INDEX_PREFIX = "semantic_search"
+# Atlas Vector Search index name on the courseEmbeddings collection
+VECTOR_SEARCH_INDEX_NAME = "course_embeddings_vector_search"
 
 COURSE_QUERY = """
 query Catalog($year: Int!, $semester: Semester!) {
@@ -80,7 +76,6 @@ DEFAULT_TERM = resolve_default_term(DEFAULT_YEAR_ENV, DEFAULT_SEMESTER_ENV)
 
 @dataclass
 class TermIndex:
-    index: SearchIndex
     size: int
     last_refreshed: datetime
     year: int
@@ -100,89 +95,42 @@ class SemanticSearchEngine:
         self._build_started: Optional[datetime] = None
         self._last_error: Optional[str] = None
         self._build_thread: Optional[threading.Thread] = None
-        self._build_queue: List[Tuple[int, str]] = []  # Queue of (year, semester) to build
-        self._redis = redis.from_url(REDIS_URI, decode_responses=True)
+        self._build_queue: List[Tuple[int, str]] = []
+        self._mongo_client = MongoClient(MONGODB_URI)
+        self._embeddings_col = self._mongo_client.get_default_database()["courseEmbeddings"]
 
-    def _get_index_name(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
-        suffix = ",".join(allowed_subjects) if allowed_subjects else "all"
-        return f"{INDEX_PREFIX}:{year}:{semester}:{suffix}"
+    def _key(self, year: int, semester: str) -> str:
+        return f"{year}:{semester}"
 
-    def _meta_key(self, index_name: str) -> str:
-        return f"{INDEX_PREFIX}:meta:{index_name}"
-
-    def _build_schema(self, index_name: str) -> dict:
-        return {
-            "index": {
-                "name": index_name,
-                "prefix": f"{index_name}:doc",
-            },
-            "fields": [
-                {"name": "subject", "type": "tag"},
-                {"name": "course_number", "type": "tag"},
-                {"name": "title", "type": "text"},
-                {"name": "description", "type": "text"},
-                {"name": "course_text", "type": "text"},
-                {
-                    "name": "embedding",
-                    "type": "vector",
-                    "attrs": {
-                        "dims": self._embedding_dims,
-                        "algorithm": "hnsw",
-                        "datatype": "float32",
-                        "distance_metric": "cosine",
-                    },
-                },
-            ],
-        }
-
-    def _save_index_metadata(self, entry: TermIndex) -> None:
-        index_name = self._get_index_name(entry.year, entry.semester, entry.allowed_subjects)
-        meta = {
-            "last_refreshed": entry.last_refreshed.isoformat(),
-            "size": entry.size,
-            "year": entry.year,
-            "semester": entry.semester,
-            "allowed_subjects": entry.allowed_subjects,
-        }
+    def _load_mongo_index(self, year: int, semester: str) -> Optional[TermIndex]:
+        """Check if embeddings exist in MongoDB for this term and return metadata."""
         try:
-            self._redis.set(self._meta_key(index_name), json.dumps(meta))
-        except Exception as exc:
-            logger.warning("Failed to save index metadata to Redis: %s", exc)
-
-    def _load_redis_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
-        """Load an existing RedisVL index from Redis if it exists."""
-        try:
-            index_name = self._get_index_name(year, semester, allowed_subjects)
-            schema = self._build_schema(index_name)
-            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-
-            if not search_index.exists():
+            count = self._embeddings_col.count_documents({"year": year, "semester": semester})
+            if count == 0:
                 return None
-
-            meta_raw = self._redis.get(self._meta_key(index_name))
-            if not meta_raw:
-                return None
-
-            meta = json.loads(meta_raw)
-            entry = TermIndex(
-                index=search_index,
-                size=meta["size"],
-                last_refreshed=datetime.fromisoformat(meta["last_refreshed"]),
-                year=meta["year"],
-                semester=meta["semester"],
-                allowed_subjects=meta["allowed_subjects"],
+            doc = self._embeddings_col.find_one(
+                {"year": year, "semester": semester},
+                sort=[("refreshedAt", -1)],
             )
-            logger.info("Loaded from Redis: %s %s (%d courses)", entry.semester, entry.year, entry.size)
+            if not doc:
+                return None
+            entry = TermIndex(
+                size=count,
+                last_refreshed=doc["refreshedAt"],
+                year=year,
+                semester=semester,
+                allowed_subjects=None,
+            )
+            logger.info("Loaded from MongoDB: %s %s (%d courses)", semester, year, count)
             return entry
         except Exception as exc:
-            logger.warning("Failed to load index from Redis: %s", exc)
+            logger.warning("Failed to load index from MongoDB: %s", exc)
             return None
 
     def refresh(
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]] = None
     ) -> TermIndex:
         term_semester = semester.strip()
-        allowed = self._resolve_allowed_subjects(allowed_subjects)
         build_key = f"{term_semester} {year}"
 
         logger.info("Building index for %s %s", term_semester, year)
@@ -195,63 +143,43 @@ class SemanticSearchEngine:
             if not courses:
                 raise RuntimeError("Catalog response did not contain any courses")
 
-            course_texts: List[str] = []
-            filtered_courses: List[Dict] = []
-
-            for course in courses:
-                subj = (course.get("subject") or "").strip()
-                if allowed and subj and subj.upper() not in allowed:
-                    continue
-                course_texts.append(self._build_course_text(course))
-                filtered_courses.append(course)
-
-            if not course_texts:
-                logger.warning("Subject filter removed every course; rebuilding without filter")
-                course_texts = [self._build_course_text(course) for course in courses]
-                filtered_courses = list(courses)
+            course_texts = [self._build_course_text(course) for course in courses]
 
             logger.info("Encoding %d courses...", len(course_texts))
             embeddings = np.asarray(self.model.encode(course_texts, batch_size=128, convert_to_numpy=True), dtype="float32")
 
-            # Create (or overwrite) the RedisVL index
-            sorted_allowed = sorted(allowed) if allowed else None
-            index_name = self._get_index_name(year, term_semester, sorted_allowed)
-            schema = self._build_schema(index_name)
-            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-            search_index.create(overwrite=True)
+            refreshed_at = datetime.utcnow()
 
-            # Load course vectors into Redis
-            data = []
-            for i, (course, text) in enumerate(zip(filtered_courses, course_texts)):
-                course_meta = course.get("course") or {}
-                data.append({
+            # Replace all embeddings for this term atomically
+            self._embeddings_col.delete_many({"year": year, "semester": term_semester})
+
+            docs = []
+            for i, course in enumerate(courses):
+                docs.append({
+                    "courseId": course.get("courseNumber") or "",
                     "subject": course.get("subject") or "",
-                    "course_number": course.get("courseNumber") or "",
-                    "title": (course_meta.get("title") or "").strip(),
-                    "description": (course_meta.get("description") or "").strip(),
-                    "course_text": text,
-                    "embedding": array_to_buffer(embeddings[i], dtype="float32"),
+                    "year": year,
+                    "semester": term_semester,
+                    "embedding": embeddings[i].tolist(),
+                    "refreshedAt": refreshed_at,
                 })
-            search_index.load(data)
+            self._embeddings_col.insert_many(docs, ordered=False)
 
             entry = TermIndex(
-                index=search_index,
-                size=len(course_texts),
-                last_refreshed=datetime.utcnow(),
+                size=len(docs),
+                last_refreshed=refreshed_at,
                 year=year,
                 semester=term_semester,
-                allowed_subjects=sorted_allowed,
+                allowed_subjects=None,
             )
 
+            key = self._key(year, term_semester)
             with self._lock:
-                self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
+                self._indices[key] = entry
 
-            self._save_index_metadata(entry)
-
-            # Clean up indexes beyond the 2 most recent terms
             self._evict_old_indexes()
 
-            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(course_texts))
+            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(docs))
             return entry
         finally:
             self._building = None
@@ -265,7 +193,6 @@ class SemanticSearchEngine:
         build_key = f"{term_semester} {year}"
 
         with self._lock:
-            # Check if already building
             if self._building:
                 return {
                     "status": "already_building",
@@ -273,7 +200,6 @@ class SemanticSearchEngine:
                     "message": f"Already building index for {self._building}",
                 }
 
-            # Check if thread is still running
             if self._build_thread and self._build_thread.is_alive():
                 return {
                     "status": "already_building",
@@ -281,7 +207,6 @@ class SemanticSearchEngine:
                     "message": "A build is already in progress",
                 }
 
-            # Clear previous error
             self._last_error = None
 
             def build_in_background():
@@ -322,23 +247,47 @@ class SemanticSearchEngine:
         prefixed_query = QUERY_PREFIX + query
         query_vec = self._encode_query(prefixed_query)
 
-        vq = VectorQuery(
-            vector=query_vec.tolist(),
-            vector_field_name="embedding",
-            return_fields=["subject", "course_number"],
-            num_results=search_k,
-        )
+        allowed = self._resolve_allowed_subjects(allowed_subjects)
+        vs_filter: Dict = {"year": year, "semester": semester}
+        if allowed:
+            vs_filter["subject"] = {"$in": list(allowed)}
 
-        raw_results = entry.index.query(vq)
+        num_candidates = min(entry.size, max(search_k * 10, search_k))
 
-        # RedisVL COSINE distance = 1 - cosine_similarity, so convert threshold accordingly
-        distance_threshold = 1.0 - threshold
-        scored = []
-        for r in raw_results:
-            dist = float(r.get("vector_distance", 1.0))
-            if dist > distance_threshold:
-                continue
-            scored.append((1.0 - dist, r.get("subject") or None, r.get("course_number") or None))
+        pipeline = [
+            {
+                "$vectorSearch": {
+                    "index": VECTOR_SEARCH_INDEX_NAME,
+                    "path": "embedding",
+                    "queryVector": query_vec.tolist(),
+                    "numCandidates": num_candidates,
+                    "limit": search_k,
+                    "filter": vs_filter,
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "courseId": 1,
+                    "subject": 1,
+                    "score": {"$meta": "vectorSearchScore"},
+                }
+            },
+        ]
+
+        try:
+            raw_results = list(self._embeddings_col.aggregate(pipeline))
+        except Exception as exc:
+            raise RuntimeError(
+                f"Vector search failed for {semester} {year}. "
+                "The search index may still be building. Please try again shortly."
+            ) from exc
+
+        scored = [
+            (r["score"], r.get("subject"), r.get("courseId"))
+            for r in raw_results
+            if r.get("score", 0.0) >= threshold
+        ]
 
         # Sort by score descending — backend preserves this order for ranking
         scored.sort(key=lambda x: x[0], reverse=True)
@@ -364,8 +313,7 @@ class SemanticSearchEngine:
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]]
     ) -> TermIndex:
         canonical_semester = semester.strip()
-        allowed = self._resolve_allowed_subjects(allowed_subjects)
-        key = self._key(year, canonical_semester, sorted(allowed) if allowed else None)
+        key = self._key(year, canonical_semester)
 
         with self._lock:
             entry = self._indices.get(key)
@@ -373,8 +321,8 @@ class SemanticSearchEngine:
         if entry:
             return entry
 
-        # Try loading from Redis before building
-        loaded = self._load_redis_index(year, canonical_semester, sorted(allowed) if allowed else None)
+        # Try loading from MongoDB before building
+        loaded = self._load_mongo_index(year, canonical_semester)
         if loaded:
             with self._lock:
                 self._indices[key] = loaded
@@ -382,14 +330,10 @@ class SemanticSearchEngine:
 
         # Index not ready — start a background build if nothing is already running,
         # then return an error immediately so the request doesn't hang.
-        self.refresh_async(year, canonical_semester, allowed)
+        self.refresh_async(year, canonical_semester, allowed_subjects)
         raise RuntimeError(
             f"Index for {canonical_semester} {year} is still being built. Please try again in a moment."
         )
-
-    def _key(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
-        suffix = ",".join(allowed_subjects) if allowed_subjects else "__all__"
-        return f"{year}:{semester}:{suffix}"
 
     def _resolve_allowed_subjects(
         self, allowed_subjects: Optional[Iterable[str]]
@@ -413,7 +357,7 @@ class SemanticSearchEngine:
                 resp = requests.post(
                     self.catalog_url,
                     json={"query": COURSE_QUERY, "variables": {"year": year, "semester": semester}},
-                    timeout=30,  # Reduced timeout per request, rely on retries instead
+                    timeout=30,
                 )
                 resp.raise_for_status()
                 payload = resp.json()
@@ -424,7 +368,6 @@ class SemanticSearchEngine:
                 last_error = e
                 if attempt < max_retries - 1:
                     wait_time = min(2 ** attempt, 30)
-                    # Only log first attempt and every 4th retry to reduce noise
                     if attempt == 0 or attempt % 4 == 0:
                         logger.warning("Fetch failed (attempt %d/%d), retrying...", attempt + 1, max_retries)
                     time.sleep(wait_time)
@@ -483,7 +426,6 @@ class SemanticSearchEngine:
             if "errors" in payload:
                 return []
             terms_data = payload.get("data", {}).get("terms") or []
-            # Deduplicate terms
             seen = set()
             unique_terms = []
             for t in terms_data:
@@ -497,77 +439,49 @@ class SemanticSearchEngine:
             return []
 
     def _evict_old_indexes(self, max_terms: int = 2) -> None:
-        """Delete Redis indexes beyond the most recent max_terms terms."""
+        """Delete MongoDB embeddings beyond the most recent max_terms terms."""
         try:
-            all_meta = []
-            cursor = 0
-            while True:
-                cursor, keys = self._redis.scan(cursor, match=f"{INDEX_PREFIX}:meta:*", count=100)
-                for key in keys:
-                    raw = self._redis.get(key)
-                    if not raw:
-                        continue
-                    try:
-                        meta = json.loads(raw)
-                        meta["_meta_key"] = key
-                        all_meta.append(meta)
-                    except Exception:
-                        pass
-                if cursor == 0:
-                    break
+            pipeline = [{"$group": {"_id": {"year": "$year", "semester": "$semester"}}}]
+            all_terms = [
+                (t["_id"]["year"], t["_id"]["semester"])
+                for t in self._embeddings_col.aggregate(pipeline)
+            ]
 
-            # Sort newest first
-            all_meta.sort(
-                key=lambda m: (m.get("year", 0), SEMESTER_ORDER.get(m.get("semester", ""), 0)),
+            all_terms.sort(
+                key=lambda t: (t[0], SEMESTER_ORDER.get(t[1], 0)),
                 reverse=True,
             )
 
-            for meta in all_meta[max_terms:]:
-                try:
-                    index_name = self._get_index_name(meta["year"], meta["semester"], meta.get("allowed_subjects"))
-                    schema = self._build_schema(index_name)
-                    old_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-                    if old_index.exists():
-                        old_index.delete(drop=True)
-                    self._redis.delete(meta["_meta_key"])
-                    # Also evict from in-memory cache
-                    stale_key = self._key(meta["year"], meta["semester"], meta.get("allowed_subjects"))
-                    with self._lock:
-                        self._indices.pop(stale_key, None)
-                    logger.info("Evicted old index: %s %s", meta.get("semester"), meta.get("year"))
-                except Exception as exc:
-                    logger.warning("Failed to evict index %s %s: %s", meta.get("semester"), meta.get("year"), exc)
+            for year, semester in all_terms[max_terms:]:
+                self._embeddings_col.delete_many({"year": year, "semester": semester})
+                stale_key = self._key(year, semester)
+                with self._lock:
+                    self._indices.pop(stale_key, None)
+                logger.info("Evicted old index: %s %s", semester, year)
         except Exception as exc:
-            logger.warning("Failed to scan for old indexes: %s", exc)
+            logger.warning("Failed to evict old indexes: %s", exc)
 
     def build_startup_indexes(self, max_startup_terms: int = 2) -> None:
-        """Load indexes from Redis and queue builds for the 2 most recent terms only."""
-        # Fetch available terms
+        """Load indexes from MongoDB and queue builds for the 2 most recent terms only."""
         available_terms = self.fetch_available_terms()
         if not available_terms:
-            # Fallback to default term if can't fetch
             if DEFAULT_TERM:
                 self._build_queue = [DEFAULT_TERM]
             return
 
-        # Sort terms: newest first
         available_terms.sort(key=lambda t: (t[0], SEMESTER_ORDER.get(t[1], 0)), reverse=True)
-
-        # Only consider the most recent terms
         keep_terms = available_terms[:max_startup_terms]
 
-        # Load from Redis if available, otherwise queue for building
         terms_to_build = []
         for year, semester in keep_terms:
-            loaded = self._load_redis_index(year, semester, None)
+            loaded = self._load_mongo_index(year, semester)
             if loaded:
-                key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
+                key = self._key(loaded.year, loaded.semester)
                 with self._lock:
                     self._indices[key] = loaded
             else:
                 terms_to_build.append((year, semester))
 
-        # Queue only recent terms that weren't found in Redis
         self._build_queue = terms_to_build
         if terms_to_build:
             logger.info("Need to build %d indexes: %s",
@@ -575,11 +489,7 @@ class SemanticSearchEngine:
                        ", ".join(f"{s} {y}" for y, s in terms_to_build))
 
     def process_build_queue(self, max_rounds: int = 10, base_delay: int = 30) -> None:
-        """Process the build queue, building each term in sequence with retries.
-
-        Failed builds (e.g. backend not ready) are re-queued and retried up to
-        *max_rounds* times with increasing delays between rounds.
-        """
+        """Process the build queue, building each term in sequence with retries."""
         for round_num in range(max_rounds):
             if not self._build_queue:
                 break
@@ -588,14 +498,12 @@ class SemanticSearchEngine:
             while self._build_queue:
                 year, semester = self._build_queue.pop(0)
                 try:
-                    # Check if already loaded
-                    key = self._key(year, semester, None)
+                    key = self._key(year, semester)
                     with self._lock:
                         if key in self._indices:
                             continue
                     self.refresh(year, semester)
                 except RuntimeError as exc:
-                    # Skip terms with no courses (e.g., future semesters not yet available)
                     if "did not contain any courses" in str(exc):
                         logger.info("Skipping %s %s (no courses)", semester, year)
                     else:
@@ -610,7 +518,6 @@ class SemanticSearchEngine:
             if not failed:
                 break
 
-            # Re-queue failed items and wait before retrying
             self._build_queue = failed
             wait = min(base_delay * (round_num + 1), 120)
             logger.info(

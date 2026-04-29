@@ -37,6 +37,9 @@ services:
     build:
       context: ./apps/semantic-search
       dockerfile: Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
       - bt
     ports:
@@ -48,7 +51,7 @@ services:
       - SEMANTIC_SEARCH_YEAR=2026
       - SEMANTIC_SEARCH_SEMESTER=Spring
       - BACKEND_URL=http://backend:5001
-      - REDIS_URI=redis://redis:6379
+      - MONGODB_URI=mongodb://mongodb:27017/bt?replicaSet=rs0
   frontend:
     build:
       context: .
