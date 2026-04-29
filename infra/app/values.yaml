@@ -33,6 +33,18 @@ backend:
     repository: octoberkeleytime/bt-backend
     tag: prod
 
+semanticSearch:
+  replicas: 1
+  port: 8000
+  logLevel: INFO
+  defaultYear: 2026
+  defaultSemester: "Spring"
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-semantic-search
+    tag: prod
+
 datapuller:
   suspend: false
   image:

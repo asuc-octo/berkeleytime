@@ -23,6 +23,7 @@
     "@repo/sis-api": "*",
     "luxon": "^3.7.2",
     "papaparse": "^5.5.3",
+    "playwright": "^1.50.1",
     "tslog": "^4.10.2"
   }
 }

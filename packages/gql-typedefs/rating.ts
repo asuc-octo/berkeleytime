@@ -65,6 +65,16 @@ export const ratingTypeDef = gql`
     count: Int!
     classes: [UserClass!]!
   }
+  type ClassUserReviews {
+    anonymousUserId: String!
+    classes: [UserClass!]!
+  }
+  type ClassReviews @cacheControl(maxAge: 0) {
+    subject: String!
+    courseNumber: String!
+    count: Int!
+    users: [ClassUserReviews!]!
+  }
   type UserClass {
     "Class Identifiers"
     year: Int!
@@ -72,9 +82,15 @@ export const ratingTypeDef = gql`
     subject: String!
     courseNumber: String!
     classNumber: String!
+    professorName: String
 
     metrics: [UserMetric!]!
+    reviewTitle: String
+    reviewContent: String
+    reviewerGrade: String
     lastUpdated: String
+    reviewId: String
+    helpfulCount: Int
   }
   type UserMetric {
     metricName: MetricName!
@@ -184,6 +200,9 @@ export const ratingTypeDef = gql`
 
     "All raw ratings with anonymized user IDs"
     allRatings: [RawRating!]!
+
+    "Reviews scoped to a specific course grouped by anonymous user"
+    classReviews(subject: String!, courseNumber: String!): ClassReviews!
   }
 
   """
@@ -199,8 +218,13 @@ export const ratingTypeDef = gql`
       classNumber: String!
 
       metrics: [RatingMetricInput!]!
+      reviewTitle: String
+      reviewContent: String
+      reviewerGrade: String = "n/a"
     ): Boolean! @auth
 
     deleteRatings(subject: String!, courseNumber: String!): Boolean! @auth
+
+    voteReviewHelpful(reviewId: String!): Int! @auth
   }
 `;

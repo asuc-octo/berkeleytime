@@ -1,16 +1,19 @@
 .button {
-  color: var(--blue-500) !important;
-  background-color: var(--foreground-color);
-  height: 38px;
+  display: flex;
+  height: 32px;
+  padding: var(--space-1, 4px) var(--space-3, 12px);
+  align-items: center;
+  gap: var(--space-2, 8px);
+  color: white !important;
+  background-color: var(--blue-500) !important;
+
+  &:hover {
+    background-color: var(--blue-hover) !important;
+  }
 
   &.invalid {
-    background: var(--background-color);
+    background: var(--background-color) !important;
     cursor: default;
     color: var(--paragraph-color) !important;
-
-    &:hover {
-      background: var(--background-color);
-      color: var(--paragraph-color) !important;
-    }
   }
 }

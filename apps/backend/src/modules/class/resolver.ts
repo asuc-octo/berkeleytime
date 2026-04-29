@@ -252,7 +252,7 @@ const resolvers: ClassModule.Resolvers = {
         parent.semester,
         parent.sessionId,
         parent.subject,
-        parent.courseNumber,
+        parent.courseId,
         parent.number
       );
 

@@ -13,7 +13,11 @@ import {
   CourseAnalyticsSidebar,
 } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import { useCourseAnalyticsIsDesktop } from "@/components/CourseAnalytics/CourseAnalyticsLayout/useCourseAnalyticsIsDesktop";
-import { BAR_CHART_COLORS } from "@/components/CourseAnalytics/types";
+import {
+  DARK_COLORS,
+  LIGHT_COLORS,
+  MAX_COURSES,
+} from "@/components/CourseAnalytics/types";
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
@@ -51,6 +55,7 @@ interface EnrollmentDraft {
 export interface EnrollmentOutput extends EnrollmentDraft {
   subtitle: string;
   color: string;
+  darkColor: string;
   data: IEnrollment;
 }
 
@@ -170,7 +175,7 @@ const loadOutputsFromInputs = async (
           isEnrollmentInputEqual(candidate, input)
         ) === index
     )
-    .slice(0, BAR_CHART_COLORS.length);
+    .slice(0, MAX_COURSES);
 
   const results = await Promise.all(
     dedupedInputs.map(async (input) => {
@@ -221,7 +226,8 @@ const loadOutputsFromInputs = async (
       },
       subtitle: getOutputMetadataFromInput(result.input),
       input: result.input,
-      color: BAR_CHART_COLORS[index] ?? BAR_CHART_COLORS[0],
+      color: LIGHT_COLORS[index] ?? LIGHT_COLORS[0],
+      darkColor: DARK_COLORS[index] ?? DARK_COLORS[0],
       data: result.data,
     }));
 };
@@ -395,7 +401,7 @@ function EnrollmentSidebar({
   const shouldShowSemesterSelect = !!selectedCourse;
   const shouldShowAddButton = !!selectedCourse && !!selectedSemester;
   const hasSelectableClass = Boolean(selectedClass?.primarySection?.number);
-  const isFull = outputs.length >= BAR_CHART_COLORS.length;
+  const isFull = outputs.length >= MAX_COURSES;
   const selectionInput = useMemo((): EnrollmentInput | null => {
     if (
       !selectedCourse ||
@@ -675,6 +681,7 @@ function EnrollmentVisualization({
                   >
                     <CourseSelectionCard
                       color={output.color}
+                      darkColor={output.darkColor}
                       subject={output.course.subject}
                       number={output.course.number}
                       subtitle={output.subtitle}
@@ -753,7 +760,7 @@ export default function Enrollment() {
     let cancelled = false;
     const parsedInputs = parseEnrollmentInputsFromUrl(
       new URLSearchParams(searchParamsString)
-    ).slice(0, BAR_CHART_COLORS.length);
+    ).slice(0, MAX_COURSES);
 
     if (parsedInputs.length === 0) {
       setOutputs((prev) => (prev.length === 0 ? prev : []));
@@ -838,15 +845,17 @@ export default function Enrollment() {
         if (prev.some((output) => output.id === draft.id)) return prev;
 
         const usedColors = new Set(prev.map((output) => output.color));
-        const color =
-          BAR_CHART_COLORS.find((candidate) => !usedColors.has(candidate)) ??
-          BAR_CHART_COLORS[0];
+        const availableIndex = LIGHT_COLORS.findIndex(
+          (candidate) => !usedColors.has(candidate)
+        );
+        const colorIndex = availableIndex !== -1 ? availableIndex : 0;
 
         return [
           {
             ...draft,
             subtitle: getOutputMetadataFromInput(draft.input),
-            color,
+            color: LIGHT_COLORS[colorIndex],
+            darkColor: DARK_COLORS[colorIndex],
             data: enrollmentData,
           },
           ...prev,

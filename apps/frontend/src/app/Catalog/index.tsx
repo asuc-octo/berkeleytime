@@ -9,7 +9,7 @@ import {
 
 import { useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Book, Folder, NavArrowRight } from "iconoir-react";
+import { Book, Folder, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { Color, DropdownMenu, Flex, Tooltip } from "@repo/theme";
@@ -580,6 +580,12 @@ export default function Catalog() {
                 terms={terms ?? undefined}
                 persistent
               />
+              <div
+                className={styles.drawerCloseTrigger}
+                onClick={() => setCatalogDrawerOpen(false)}
+              >
+                <NavArrowLeft />
+              </div>
             </motion.div>
           </>
         )}

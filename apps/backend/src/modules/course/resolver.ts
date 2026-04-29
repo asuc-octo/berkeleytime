@@ -123,13 +123,10 @@ const resolvers: CourseModule.Resolvers = {
           : undefined;
 
       // Cross-listed courses share a courseId, so filter to only classes
-      // matching this specific course's subject and number.
-      const matchesCourse = (courseClass: {
-        subject?: string | null;
-        courseNumber?: string | null;
-      }) =>
-        courseClass.subject === parent.subject &&
-        courseClass.courseNumber === parent.number;
+      // matching this specific course's subject. We don't filter by number
+      // to allow renamed courses (same subject, different number) to match.
+      const matchesCourse = (courseClass: { subject?: string | null }) =>
+        courseClass.subject === parent.subject;
 
       if (parent.classes) {
         let classes = [...parent.classes];
@@ -154,6 +151,24 @@ const resolvers: CourseModule.Resolvers = {
       });
 
       return classes.filter(matchesCourse) as unknown as CourseModule.Class[];
+    },
+
+    mostRecentClass: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      const classes = parent.classes
+        ? null
+        : await getClassesByCourse(parent.courseId);
+
+      return (parent.classes ?? classes)!.toSorted((a, b) => {
+        if (a.year === b.year) {
+          return (
+            (SEMESTER_RECENCY_ORDER[a.semester ?? ""] ?? -1) -
+            (SEMESTER_RECENCY_ORDER[b.semester ?? ""] ?? -1)
+          );
+        }
+        return b.year - a.year;
+      })[0] as unknown as CourseModule.Class;
     },
 
     crossListing: async (parent: IntermediateCourse | CourseModule.Course) => {
@@ -229,7 +244,7 @@ const resolvers: CourseModule.Resolvers = {
 
       const gradeDistribution = await getGradeDistributionByCourse(
         parent.subject,
-        parent.number
+        parent.courseId
       );
 
       return gradeDistribution;

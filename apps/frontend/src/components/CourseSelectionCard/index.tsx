@@ -13,6 +13,7 @@ import styles from "./CourseSelectionCard.module.scss";
 
 interface CourseSelectionCardProps {
   color: string;
+  darkColor?: string;
   subject: string;
   number: string;
   title?: string;
@@ -36,6 +37,7 @@ interface CourseSelectionCardProps {
 
 export default function CourseSelectionCard({
   color,
+  darkColor,
   subject,
   number,
   title,
@@ -56,6 +58,7 @@ export default function CourseSelectionCard({
   onMouseEnter,
   onMouseLeave,
 }: CourseSelectionCardProps) {
+  const displayColor = dimmed && darkColor ? darkColor : color;
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
   });
@@ -162,7 +165,7 @@ export default function CourseSelectionCard({
       headingPrefix={
         <span
           className={styles.colorBlock}
-          style={{ backgroundColor: color }}
+          style={{ backgroundColor: displayColor }}
           aria-hidden
         />
       }

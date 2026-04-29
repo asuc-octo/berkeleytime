@@ -33,6 +33,7 @@
  - [API Sandbox](./core/api-sandbox/README.md)
 
 - [Packages](./core/packages/README.md)
+  - [@repo/BtLL](./core/BtLL/README.md)
   - [@repo/common](./core/packages/common.md)
   - [@repo/theme](./core/packages/theme.md)
   - [@repo/shared](./core/packages/shared.md)

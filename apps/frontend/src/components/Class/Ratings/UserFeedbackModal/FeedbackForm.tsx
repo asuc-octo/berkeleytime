@@ -37,7 +37,6 @@ interface RatingScaleProps {
 export function AttendanceForm({
   metricData,
   setMetricData,
-  startQuestionNumber,
 }: AttendanceFormProps) {
   const handleAttendanceClickClick = (
     type: MetricName,
@@ -61,19 +60,22 @@ export function AttendanceForm({
   ];
 
   return (
-    <div>
-      {ATTENDANCE_QUESTIONS.map(({ type, question }, index) => (
-        <div className={styles.formGroup} key={type}>
-          <div className={styles.inlineQuestion}>
-            <h3>
-              {startQuestionNumber + index}. {question}
-            </h3>
-            <BooleanOptions
-              name={type}
-              value={metricData[type] ?? null}
-              onChange={(v) => handleAttendanceClickClick(type, v)}
-            />
-          </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "32px",
+        padding: "24px 32px",
+      }}
+    >
+      {ATTENDANCE_QUESTIONS.map(({ type, question }) => (
+        <div className={styles.inlineQuestion} key={type}>
+          <h3>{question}</h3>
+          <BooleanOptions
+            name={type}
+            value={metricData[type] ?? null}
+            onChange={(v) => handleAttendanceClickClick(type, v)}
+          />
         </div>
       ))}
     </div>
@@ -114,7 +116,7 @@ export function RatingsForm({
   ];
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {RATING_QUESTIONS.map(
         ({ type, question, leftLabel, rightLabel }, index) => (
           <RatingScale
@@ -133,6 +135,69 @@ export function RatingsForm({
   );
 }
 
+interface ReviewTitleFormProps {
+  reviewTitle: string;
+  setReviewTitle: (value: string) => void;
+  showRequiredAsterisk?: boolean;
+}
+
+interface ReviewContentFormProps {
+  reviewContent: string;
+  setReviewContent: (value: string) => void;
+  showRequiredAsterisk?: boolean;
+}
+
+export function ReviewTitleForm({
+  reviewTitle,
+  setReviewTitle,
+  showRequiredAsterisk = false,
+}: ReviewTitleFormProps) {
+  return (
+    <div className={styles.formGroup}>
+      <div className={styles.questionPair}>
+        <h3>
+          Title of your review? {showRequiredAsterisk && <RequiredAsterisk />}
+        </h3>
+        <input
+          type="text"
+          className={`${styles.reviewTextarea} ${styles.reviewTitleTextarea}`}
+          value={reviewTitle}
+          onChange={(e) => setReviewTitle(e.target.value)}
+          placeholder="Title"
+          maxLength={100}
+          aria-label="Review title"
+        />
+      </div>
+    </div>
+  );
+}
+
+export function ReviewContentForm({
+  reviewContent,
+  setReviewContent,
+  showRequiredAsterisk = false,
+}: ReviewContentFormProps) {
+  return (
+    <div className={styles.formGroup}>
+      <div className={styles.questionPair}>
+        <h3>Write a Review {showRequiredAsterisk && <RequiredAsterisk />}</h3>
+        <textarea
+          className={styles.reviewTextarea}
+          value={reviewContent}
+          onChange={(e) => setReviewContent(e.target.value)}
+          placeholder="What was your experience like?"
+          rows={4}
+          aria-label="Review details"
+        />
+        <p className={styles.reviewDisclaimer}>
+          Please be respectful in your reviews.
+          {/* Your rating could be removed if you use profanity or derogatory terms. */}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // helper functions
 
 const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
@@ -140,7 +205,6 @@ const RequiredAsterisk = () => <span style={{ color: "red" }}>*</span>;
 const RatingScale = ({
   type,
   question,
-  questionNumber,
   leftLabel,
   rightLabel,
   metricData,
@@ -149,7 +213,7 @@ const RatingScale = ({
   <div className={styles.formGroup}>
     <div className={styles.questionPair}>
       <h3>
-        {questionNumber}. {question} <RequiredAsterisk />
+        {question} <RequiredAsterisk />
       </h3>
       <div className={styles.ratingScale}>
         <span>{leftLabel}</span>

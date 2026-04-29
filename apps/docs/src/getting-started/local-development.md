@@ -81,6 +81,35 @@ docker compose down
 docker compose up --build -d
 ```
 
+## Docker Compose Profiles
+
+By default, running `docker compose up -d` starts only the **core stack** (backend, frontend, MongoDB, Redis). Additional services are **opt-in** and can be enabled using Docker Compose profiles.
+
+Profiles allow you to start only the services you need for your workflow, keeping local development less resource-intensive.
+
+- `ag` — AG frontend  
+  → http://localhost:3001  
+
+- `staff` — Staff dashboard  
+  → http://localhost:3002  
+
+- `semantic-search` — Semantic course search  
+  → http://localhost:3010  
+
+- `docs` — Docs + Storybook  
+  → http://localhost:3003 / http://localhost:3005  
+
+- `dev` — MinIO (staff photo uploads)  
+  → http://localhost:3006  
+
+```sh
+# Start core + staff dashboard
+docker compose --profile staff up -d
+
+# Start multiple profiles
+docker compose --profile ag --profile staff up -d
+```
+
 ## Ports
 `docker compose up` will automatically setup certain services on your localhost ports. By default, `DEV_PORT_PREFIX` is set to `30`, which means services will be available on ports starting with `30XX`. You can adjust this by setting the `DEV_PORT_PREFIX` environment variable if you need to run multiple instances of the repository in parallel (e.g., for git worktree setups).
 

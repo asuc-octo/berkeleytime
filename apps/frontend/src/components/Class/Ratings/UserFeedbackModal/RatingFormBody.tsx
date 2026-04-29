@@ -1,12 +1,17 @@
 import { Dispatch, SetStateAction } from "react";
 
+import { REVIEWER_GRADE_OPTIONS } from "@repo/shared";
 import { Flex, Select } from "@repo/theme";
 
-import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "../metricsUtil";
-import { AttendanceForm, RatingsForm } from "./FeedbackForm";
+import {
+  AttendanceForm,
+  RatingsForm,
+  ReviewContentForm,
+  ReviewTitleForm,
+} from "./FeedbackForm";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./UserFeedbackModal.module.scss";
 
@@ -20,112 +25,118 @@ interface Term {
 }
 
 interface QuestionNumbers {
-  classQuestionNumber: number;
   semesterQuestionNumber: number;
   ratingsStartNumber: number;
   attendanceStartNumber: number;
 }
 
 interface RatingFormBodyProps {
-  selectedCourse: CourseOption | null;
-  onCourseSelect: (course: CourseOption | null) => void;
-  onCourseClear: () => void;
+  selectedCourse: { subject: string; number: string } | null;
   selectedTerm: string | null;
   onTermSelect: (term: string | null) => void;
   termOptions: Term[];
   termOptionsLoading?: boolean;
   metricData: MetricData;
   setMetricData: Dispatch<SetStateAction<MetricData>>;
-  userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
   questionNumbers: QuestionNumbers;
-  disableRatedCourses?: boolean;
-  lockedCourse?: CourseOption | null;
+  reviewTitle: string;
+  setReviewTitle: (value: string) => void;
+  reviewContent: string;
+  setReviewContent: (value: string) => void;
+  reviewerGrade: string | null;
+  onReviewerGradeChange: (grade: string | null) => void;
 }
 
 export function RatingFormBody({
   selectedCourse,
-  onCourseSelect,
-  onCourseClear,
   selectedTerm,
   onTermSelect,
   termOptions,
   termOptionsLoading = false,
   metricData,
   setMetricData,
-  userRatedClasses = [],
   questionNumbers,
-  disableRatedCourses = false,
-  lockedCourse = null,
+  reviewTitle,
+  setReviewTitle,
+  reviewContent,
+  setReviewContent,
+  reviewerGrade,
+  onReviewerGradeChange,
 }: RatingFormBodyProps) {
   return (
     <Flex direction="column">
-      <div className={styles.formGroup}>
-        <div className={styles.questionPair}>
-          <h3>
-            {questionNumbers.classQuestionNumber}. Which class are you rating?{" "}
-            <RequiredAsterisk />
-          </h3>
-          <div
-            style={{
-              width: 350,
-              margin: "0 auto",
-            }}
-          >
-            <CourseSelect
-              selectedCourse={selectedCourse}
-              onSelect={(course) => {
-                onCourseSelect(course);
-              }}
-              onClear={onCourseClear}
-              minimal={true}
-              ratedCourses={userRatedClasses}
-              disableRatedCourses={disableRatedCourses}
-              lockedCourse={lockedCourse}
-            />
+      <div className={styles.mainSection}>
+        <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
+          <ReviewContentForm
+            reviewContent={reviewContent}
+            setReviewContent={setReviewContent}
+            showRequiredAsterisk={reviewTitle.trim().length > 0}
+          />
+          <ReviewTitleForm
+            reviewTitle={reviewTitle}
+            setReviewTitle={setReviewTitle}
+            showRequiredAsterisk={reviewContent.trim().length > 0}
+          />
+          <div className={styles.formGroup}>
+            <div className={styles.questionPair}>
+              <h3>
+                What semester did you take this course? <RequiredAsterisk />
+              </h3>
+              <div style={{ width: "100%" }}>
+                <Select
+                  options={termOptions.map((term) => ({
+                    value: term.value,
+                    label: term.label,
+                  }))}
+                  disabled={!selectedCourse || termOptionsLoading}
+                  loading={termOptionsLoading}
+                  value={selectedTerm}
+                  onChange={(selectedOption) => {
+                    if (Array.isArray(selectedOption)) onTermSelect(null);
+                    else onTermSelect(selectedOption || null);
+                  }}
+                  placeholder="Select semester"
+                  emptyMessage="No semesters found."
+                  clearable={true}
+                  searchable={true}
+                />
+              </div>
+            </div>
           </div>
-        </div>
+
+          <div className={styles.formGroup}>
+            <div className={styles.questionPair}>
+              <h3>Select grade received</h3>
+              <div style={{ width: "100%" }}>
+                <Select
+                  options={REVIEWER_GRADE_OPTIONS.map((grade) => ({
+                    value: grade,
+                    label: grade,
+                  }))}
+                  disabled={!selectedCourse}
+                  value={reviewerGrade}
+                  onChange={(selectedOption) => {
+                    if (Array.isArray(selectedOption))
+                      onReviewerGradeChange(null);
+                    else onReviewerGradeChange(selectedOption || null);
+                  }}
+                  placeholder="Select grade"
+                  emptyMessage="No grades found."
+                  clearable={true}
+                  searchable={true}
+                />
+              </div>
+            </div>
+          </div>
+
+          <RatingsForm
+            metricData={metricData}
+            setMetricData={setMetricData}
+            startQuestionNumber={questionNumbers.ratingsStartNumber}
+          />
+        </Flex>
       </div>
 
-      <div className={styles.formGroup}>
-        <div className={styles.questionPair}>
-          <h3>
-            {questionNumbers.semesterQuestionNumber}. What semester did you take
-            this course? <RequiredAsterisk />
-          </h3>
-          <div
-            style={{
-              width: 350,
-              margin: "0 auto",
-            }}
-          >
-            <Select
-              options={termOptions.map((term) => ({
-                value: term.value,
-                label: term.label,
-              }))}
-              disabled={!selectedCourse || termOptionsLoading}
-              loading={termOptionsLoading}
-              value={selectedTerm}
-              onChange={(selectedOption) => {
-                if (Array.isArray(selectedOption)) onTermSelect(null);
-                else onTermSelect(selectedOption || null);
-              }}
-              placeholder={
-                selectedCourse ? "Select semester" : "Select a class first"
-              }
-              emptyMessage="No semesters found."
-              clearable={true}
-              searchable={true}
-            />
-          </div>
-        </div>
-      </div>
-
-      <RatingsForm
-        metricData={metricData}
-        setMetricData={setMetricData}
-        startQuestionNumber={questionNumbers.ratingsStartNumber}
-      />
       <AttendanceForm
         metricData={metricData}
         setMetricData={setMetricData}

@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMutation, useQuery } from "@apollo/client/react";
-import { UserStar } from "iconoir-react";
+import { EditPencil, Trash, UserStar } from "iconoir-react";
 import _ from "lodash";
 import { useSearchParams } from "react-router-dom";
 
-import { METRIC_ORDER } from "@repo/shared";
-import { Color, Container, Select } from "@repo/theme";
+import { METRIC_ORDER, MetricName } from "@repo/shared";
+import {
+  Box,
+  Button,
+  Color,
+  Container,
+  Flex,
+  IconButton,
+  Select,
+  Tooltip,
+} from "@repo/theme";
 
 import EmptyState from "@/components/Class/EmptyState";
 import {
@@ -19,12 +28,12 @@ import { useReadTerms } from "@/hooks/api";
 import { useGetClassRatingsData } from "@/hooks/api/ratings/useGetRatings";
 import useClass from "@/hooks/useClass";
 import useUser from "@/hooks/useUser";
-import { IAggregatedRatings, IMetric } from "@/lib/api";
+import { IMetric } from "@/lib/api";
+import { GET_CLASS_REVIEWS } from "@/lib/api/ratings";
 import { sortByTermDescending } from "@/lib/classes";
 import {
   CreateRatingsDocument,
   DeleteRatingsDocument,
-  GetAggregatedRatingsDocument,
   GetUserRatingsDocument,
   Semester,
   TemporalPosition,
@@ -32,6 +41,7 @@ import {
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 import { clampCount } from "@/utils/ratings";
 
+import ClassRatingSummary, { type ClassUserReview } from "./ClassRatingSummary";
 import { RatingButton } from "./RatingButton";
 import { RatingDetailProps, RatingDetailView } from "./RatingDetail";
 import styles from "./Ratings.module.scss";
@@ -51,11 +61,6 @@ import {
 // TODO: [CROWD-SOURCED-DATA] rejected mutations are not communicated to the frontend
 // TODO: [CROWD-SOURCED-DATA] use multipleClassAggregatedRatings endpoint to get aggregated ratings for a professor
 
-const isSemester = (value: string): boolean => {
-  const firstWord = value.split(" ")[0];
-  return Object.values(Semester).includes(firstWord as Semester);
-};
-
 interface Term {
   semester: Semester;
   year: number;
@@ -65,6 +70,51 @@ interface Term {
 }
 
 type MetricCategory = NonNullable<NonNullable<IMetric["categories"]>[number]>;
+
+type ClassReviewsMetric = { metricName: MetricName; value: number };
+type ClassReviewsQueryData = {
+  classReviews?: {
+    users?: Array<{
+      anonymousUserId?: string;
+      classes?: Array<{
+        semester?: string | null;
+        year?: number | null;
+        professorName?: string | null;
+        reviewTitle?: string | null;
+        reviewContent?: string | null;
+        reviewerGrade?: string | null;
+        lastUpdated?: string | null;
+        metrics?: ClassReviewsMetric[];
+        reviewId?: string | null;
+        helpfulCount?: number | null;
+      }>;
+    }>;
+  };
+};
+
+function RatingCountWithButton({
+  count,
+  addRatingButton,
+}: {
+  count: number;
+  addRatingButton?: React.ReactNode;
+}) {
+  const countLabel =
+    count === 0 ? "No ratings" : count === 1 ? "1 rating" : `${count} ratings`;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "var(--space-3, 12px)",
+      }}
+    >
+      <p className={styles.ratingsSummaryCount}>{countLabel}</p>
+      {addRatingButton}
+    </div>
+  );
+}
 
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 const RATING_TABS = {
@@ -82,9 +132,9 @@ export function RatingsContainer() {
     RATING_TABS.Instructor
   );
   const [selectedValue, setSelectedValue] = useState("all");
-  const [termRatings, setTermRatings] = useState<IAggregatedRatings | null>(
-    null
-  );
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [instructorChosen, setInstructorChosen] = useState(false);
+  const [semesterChosen, setSemesterChosen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
@@ -108,6 +158,16 @@ export function RatingsContainer() {
     GetUserRatingsDocument,
     {
       skip: !user,
+      fetchPolicy: "cache-and-network",
+    }
+  );
+  const { data: classRatingsData } = useQuery<ClassReviewsQueryData>(
+    GET_CLASS_REVIEWS,
+    {
+      variables: {
+        subject: currentClass.subject,
+        courseNumber: currentClass.courseNumber,
+      },
       fetchPolicy: "cache-and-network",
     }
   );
@@ -142,8 +202,6 @@ export function RatingsContainer() {
       return true;
     });
   }, [userRatingsData]);
-  const showUserOnlyRatings = Boolean(userRatings) && !hasRatings;
-
   const [isModalOpen, setIsModalOpen] = useState(() => {
     return searchParams.get("feedbackModal") === "true";
   });
@@ -151,8 +209,10 @@ export function RatingsContainer() {
   useEffect(() => {
     // Reset to "all" if aggregated ratings change (e.g., course switch)
     setSelectedValue("all");
-    setTermRatings(null);
     setActiveRatingTab(RATING_TABS.Instructor);
+    setSortBy(null);
+    setInstructorChosen(false);
+    setSemesterChosen(false);
   }, [aggregatedRatingsData]);
 
   const handleModalStateChange = useCallback(
@@ -222,17 +282,10 @@ export function RatingsContainer() {
   }, [courseClasses]);
 
   const ratingsData = useMemo<RatingDetailProps[] | null>(() => {
-    const metricsSource =
-      (activeRatingTab === RATING_TABS.Semester ||
-        activeRatingTab === RATING_TABS.Instructor) &&
-      selectedValue !== "all" &&
-      termRatings?.metrics
-        ? termRatings.metrics
-        : aggregatedRatingsData?.metrics;
-
     const metrics =
-      metricsSource?.filter((metric): metric is IMetric => Boolean(metric)) ??
-      [];
+      aggregatedRatingsData?.metrics?.filter((metric): metric is IMetric =>
+        Boolean(metric)
+      ) ?? [];
 
     if (
       !metrics.some(
@@ -281,7 +334,7 @@ export function RatingsContainer() {
         weightedAverage: metric.weightedAverage,
       } satisfies RatingDetailProps;
     });
-  }, [activeRatingTab, aggregatedRatingsData, selectedValue, termRatings]);
+  }, [aggregatedRatingsData]);
 
   const formatRatingCount = useCallback((count?: number | null) => {
     const normalizedCount = clampCount(count);
@@ -370,56 +423,6 @@ export function RatingsContainer() {
     termsData,
   ]);
 
-  const selectedSemesterClass = useMemo(() => {
-    if (
-      activeRatingTab !== RATING_TABS.Semester ||
-      selectedValue === "all" ||
-      !isSemester(selectedValue)
-    ) {
-      return null;
-    }
-
-    const [semesterValue, yearValue] = selectedValue.split(" ");
-    const selectedOption = termSelectOptions.find(
-      (option) => option.value === selectedValue
-    );
-    const year = Number.parseInt(yearValue ?? "", 10);
-    if (!selectedOption?.classNumber || Number.isNaN(year)) {
-      return null;
-    }
-
-    return {
-      semester: semesterValue as Semester,
-      year,
-      classNumber: selectedOption.classNumber,
-    };
-  }, [activeRatingTab, selectedValue, termSelectOptions]);
-
-  const {
-    data: selectedSemesterRatingsData,
-    loading: selectedSemesterLoading,
-  } = useQuery(GetAggregatedRatingsDocument, {
-    variables: {
-      subject: currentClass.subject,
-      courseNumber: currentClass.courseNumber,
-      semester: selectedSemesterClass?.semester ?? Semester.Fall,
-      year: selectedSemesterClass?.year ?? 0,
-      classNumber: selectedSemesterClass?.classNumber,
-    },
-    skip: !selectedSemesterClass,
-    fetchPolicy: "cache-and-network",
-  });
-
-  useEffect(() => {
-    if (activeRatingTab !== RATING_TABS.Semester) return;
-    if (selectedValue === "all") {
-      setTermRatings(null);
-      return;
-    }
-
-    setTermRatings(selectedSemesterRatingsData?.aggregatedRatings ?? null);
-  }, [activeRatingTab, selectedSemesterRatingsData, selectedValue]);
-
   const instructorSelectOptions = useMemo(() => {
     const courseRatingCount = getMaxMetricCount(aggregatedRatingsData?.metrics);
     const instructorOptions =
@@ -459,38 +462,70 @@ export function RatingsContainer() {
     instructorAggregatedRatings,
   ]);
 
-  // const ratingsCount = useMemo(
-  //   () => (ratingsData ? ratingsData.reduce((acc, v) => acc + v.reviewCount, 0) : 0),
-  //   [ratingsData]
-  // );
+  const classReviewsSummary = useMemo(() => {
+    const users = classRatingsData?.classReviews?.users;
+    if (!users?.length) {
+      return { count: 0, average: null as number | null };
+    }
 
-  if (
-    (loading && !ratingsQueryData) ||
-    (activeRatingTab === RATING_TABS.Semester &&
-      selectedValue !== "all" &&
-      selectedSemesterLoading)
-  ) {
+    let count = 0;
+    let totalPoints = 0;
+    for (const cls of users.flatMap((u) => u.classes ?? [])) {
+      const metrics = cls.metrics ?? [];
+      if (!metrics.some((m) => m.metricName === MetricName.Usefulness))
+        continue;
+      count += 1;
+      for (const m of metrics) {
+        if (isMetricRating(m.metricName)) {
+          const value =
+            m.metricName === MetricName.Difficulty ||
+            m.metricName === MetricName.Workload
+              ? 5 - m.value
+              : m.value;
+          totalPoints += value;
+        }
+      }
+    }
+
+    const average = count > 0 ? totalPoints / (3 * count) : null;
+    return { count, average };
+  }, [classRatingsData]);
+
+  const classReviewsByUser = useMemo<ClassUserReview[]>(() => {
+    const users = classRatingsData?.classReviews?.users ?? [];
+    return users
+      .map((user) => user.classes?.[0] ?? null)
+      .filter((classReview): classReview is NonNullable<typeof classReview> =>
+        Boolean(classReview)
+      )
+      .filter((classReview) => Boolean(classReview.reviewContent?.trim()))
+      .filter((classReview) => {
+        if (semesterChosen && selectedValue !== "all") {
+          return (
+            `${classReview.semester} ${classReview.year}` === selectedValue
+          );
+        }
+        if (instructorChosen && sortBy) {
+          return classReview.professorName === sortBy;
+        }
+        return true;
+      })
+      .sort((a, b) => (b.helpfulCount ?? 0) - (a.helpfulCount ?? 0));
+  }, [
+    classRatingsData,
+    semesterChosen,
+    instructorChosen,
+    selectedValue,
+    sortBy,
+  ]);
+
+  if (loading && !ratingsQueryData) {
     return <EmptyState loading />;
   }
 
   return (
     <>
-      {showUserOnlyRatings ? (
-        <div className={styles.root}>
-          <Container size="3">
-            {userRatings && (
-              <UserRatingSummary
-                userRatings={userRatings}
-                onOpenModal={handleModalStateChange}
-                ratingDelete={() => setIsDeleteModalOpen(true)}
-              />
-            )}
-            <p className={styles.userOnlyMessage}>
-              Only your rating is shown for this course.
-            </p>
-          </Container>
-        </div>
-      ) : !hasRatings ? (
+      {!hasRatings ? (
         <EmptyState
           icon={<UserStar width={32} height={32} strokeWidth={1.5} />}
           heading="No Course Ratings"
@@ -511,133 +546,210 @@ export function RatingsContainer() {
         </EmptyState>
       ) : (
         <div className={styles.root}>
-          <Container size="3">
-            {userRatings ? (
-              <UserRatingSummary
-                userRatings={userRatings}
-                onOpenModal={handleModalStateChange}
-                ratingDelete={() => setIsDeleteModalOpen(true)}
-              />
-            ) : (
-              <div></div>
-            )}
-            <div className={styles.header}>
-              <div
-                style={{ display: "flex", gap: "12px", alignItems: "center" }}
-              >
-                {hasRatings && !userRatings && (
-                  <RatingButton
-                    user={user}
-                    onOpenModal={handleModalStateChange}
-                    userRatingData={userRatingsData}
-                    currentClass={currentClass}
-                  />
-                )}
-                <div className={styles.termSelectWrapper}>
-                  {hasRatings && (
-                    <Select
-                      variant="foreground"
-                      searchable
-                      searchPlaceholder={
-                        activeRatingTab === RATING_TABS.Instructor
-                          ? "Search instructors"
-                          : "Search semesters"
-                      }
-                      emptyMessage={
-                        activeRatingTab === RATING_TABS.Instructor
-                          ? "No instructors found"
-                          : "No semesters found"
-                      }
-                      tabs={[
-                        {
-                          value: RATING_TABS.Instructor,
-                          label: "By Instructor",
-                          options: instructorSelectOptions,
-                        },
-                        {
-                          value: RATING_TABS.Semester,
-                          label: "By Semester",
-                          options: termSelectOptions,
-                        },
-                      ]}
-                      contentClassName={styles.ratingsSelectContent}
-                      tabsWrapperClassName={styles.ratingsSelectTabs}
-                      value={selectedValue}
-                      defaultTab={RATING_TABS.Instructor}
-                      onTabChange={(tabValue) => {
-                        setActiveRatingTab(tabValue);
-                        // Clear displayed ratings data when browsing tabs, but preserve selection
-                        setTermRatings(null);
-                      }}
-                      onChange={(newValue) => {
-                        if (Array.isArray(newValue) || !newValue) return; // ensure it is string
-
-                        setSelectedValue(newValue);
-
-                        // Handle tab-specific data fetching
-                        if (activeRatingTab === RATING_TABS.Semester) {
-                          if (newValue === "all") {
-                            setTermRatings(null);
-                          } else if (isSemester(newValue)) {
-                            // Ratings are fetched by selected semester through query state.
-                            setTermRatings(null);
-                          }
-                        } else {
-                          // Instructor tab
-                          if (newValue === "all") {
-                            setTermRatings(null);
-                          } else {
-                            const selectedInstructor =
-                              instructorAggregatedRatings?.find((rating) => {
-                                if (!rating) return false;
-                                const key = `${rating.instructor.givenName}_${rating.instructor.familyName}`;
-                                return key === newValue;
-                              });
-                            if (
-                              selectedInstructor &&
-                              selectedInstructor.aggregatedRatings
-                            ) {
-                              setTermRatings(
-                                selectedInstructor.aggregatedRatings
-                              );
-                            }
-                          }
+          <Box className={styles.ratingsBox}>
+            <Container size="3">
+              <div className={styles.containerContents}>
+                <div className={styles.ratingsSummary}>
+                  <div className={styles.ratingsSummaryBottom}>
+                    <div className={styles.ratingsSummaryBottomLeft}>
+                      <p className={styles.ratingsSummaryAverage}>
+                        {classReviewsSummary.average != null
+                          ? classReviewsSummary.average.toFixed(1)
+                          : "—"}
+                      </p>
+                      <RatingCountWithButton
+                        count={classReviewsSummary.count}
+                        addRatingButton={
+                          !userRatings ? (
+                            <RatingButton
+                              user={user}
+                              onOpenModal={handleModalStateChange}
+                              userRatingData={userRatingsData}
+                              currentClass={currentClass}
+                            />
+                          ) : undefined
                         }
-                      }}
-                      placeholder={
-                        activeRatingTab === RATING_TABS.Instructor
-                          ? "Select instructor"
-                          : "Select term"
-                      }
-                    />
+                      />
+                    </div>
+                    <div className={styles.ratingsSummaryBottomRight}>
+                      <div
+                        className={styles.ratingsBody}
+                        style={{
+                          backgroundColor: !hasRatings
+                            ? "transparent"
+                            : "var(--foreground-color)",
+                          boxShadow: !hasRatings
+                            ? "none"
+                            : "0 1px 2px rgb(0 0 0 / 5%)",
+                          border: !hasRatings
+                            ? "none"
+                            : "1px solid var(--border-color)",
+                        }}
+                      >
+                        {ratingsData
+                          ?.filter((ratingData) =>
+                            isMetricRating(ratingData.metric)
+                          )
+                          .sort((a, b) => {
+                            const indexA = METRIC_ORDER.indexOf(a.metric);
+                            const indexB = METRIC_ORDER.indexOf(b.metric);
+                            return indexA - indexB;
+                          })
+                          .map((ratingData) => (
+                            <div
+                              className={styles.ratingSection}
+                              key={ratingData.metric}
+                            >
+                              <RatingDetailView {...ratingData} />
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.ratingsSummary}>
+                  {/* <div className={styles.ratingsSummaryTop}> */}
+                  {/* <p className={styles.ratingsSummaryHeader}>Your Rating</p> */}
+                  {userRatings ? (
+                    <div className={styles.ratingsSummaryHeaderRight}>
+                      <Flex gap="2">
+                        <Tooltip
+                          trigger={
+                            <Button
+                              variant="secondary"
+                              onClick={() => handleModalStateChange(true)}
+                            >
+                              Edit your rating
+                              <EditPencil width={18} height={18} />
+                            </Button>
+                          }
+                          title="Edit rating"
+                        />
+                        <Tooltip
+                          trigger={
+                            <IconButton
+                              onClick={() => setIsDeleteModalOpen(true)}
+                            >
+                              <Trash />
+                            </IconButton>
+                          }
+                          title="Delete rating"
+                        />
+                      </Flex>
+                    </div>
+                  ) : null}
+                  {/* </div> */}
+                  {userRatings ? (
+                    <UserRatingSummary userRatings={userRatings} />
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+
+                <div className={styles.ratingsSummary}>
+                  <div className={styles.ratingsSummaryTop}>
+                    <p className={styles.ratingsSummaryHeader}>Ratings</p>
+                    <div className={styles.ratingsSummaryHeaderRight}>
+                      {hasRatings ? (
+                        <div className={styles.ratingsHeaderToolbar}>
+                          <div className={styles.termSelectWrapper}>
+                            <Select
+                              variant="foreground"
+                              searchable
+                              searchPlaceholder={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "Search instructors"
+                                  : "Search semesters"
+                              }
+                              emptyMessage={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "No instructors found"
+                                  : "No semesters found"
+                              }
+                              tabs={[
+                                {
+                                  value: RATING_TABS.Instructor,
+                                  label: "By Instructor",
+                                  options: instructorSelectOptions,
+                                },
+                                {
+                                  value: RATING_TABS.Semester,
+                                  label: "By Semester",
+                                  options: termSelectOptions,
+                                },
+                              ]}
+                              contentClassName={styles.ratingsSelectContent}
+                              tabsWrapperClassName={styles.ratingsSelectTabs}
+                              value={selectedValue}
+                              defaultTab={RATING_TABS.Instructor}
+                              onTabChange={(tabValue) => {
+                                setActiveRatingTab(tabValue);
+                                setSelectedValue("all");
+                                setSortBy(null);
+                                setInstructorChosen(false);
+                                setSemesterChosen(false);
+                              }}
+                              onChange={(newValue) => {
+                                if (Array.isArray(newValue) || !newValue)
+                                  return;
+
+                                setSelectedValue(newValue);
+
+                                if (newValue === "all") {
+                                  setSortBy(null);
+                                  setInstructorChosen(false);
+                                  setSemesterChosen(false);
+                                  return;
+                                }
+
+                                if (activeRatingTab === RATING_TABS.Semester) {
+                                  setInstructorChosen(false);
+                                  setSemesterChosen(true);
+                                  setSortBy(newValue);
+                                  return;
+                                }
+
+                                const selectedInstructorOption =
+                                  instructorSelectOptions.find(
+                                    (o) => o.value === newValue
+                                  );
+                                setInstructorChosen(true);
+                                setSemesterChosen(false);
+                                setSortBy(
+                                  selectedInstructorOption?.label ?? newValue
+                                );
+                              }}
+                              placeholder={
+                                activeRatingTab === RATING_TABS.Instructor
+                                  ? "Select instructor"
+                                  : "Select term"
+                              }
+                            />
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  {classReviewsByUser.length === 0 ? (
+                    <div className={styles.noWrittenReviews}>
+                      <p className={styles.noWrittenReviewsText}>
+                        No written ratings yet. Be the first to share your
+                        experience!
+                      </p>
+                    </div>
+                  ) : (
+                    classReviewsByUser.map((classReview, index) => (
+                      <ClassRatingSummary
+                        key={`${classReview.lastUpdated ?? "review"}-${index}`}
+                        classReview={classReview}
+                      />
+                    ))
                   )}
                 </div>
               </div>
-            </div>
-            <div
-              className={styles.ratingsBody}
-              style={{
-                backgroundColor: !hasRatings
-                  ? "transparent"
-                  : "var(--foreground-color)",
-                boxShadow: !hasRatings ? "none" : "0 1px 2px rgb(0 0 0 / 5%)",
-                border: !hasRatings ? "none" : "1px solid var(--border-color)",
-              }}
-            >
-              {ratingsData
-                ?.filter((ratingData) => isMetricRating(ratingData.metric))
-                .sort((a, b) => {
-                  const indexA = METRIC_ORDER.indexOf(a.metric);
-                  const indexB = METRIC_ORDER.indexOf(b.metric);
-                  return indexA - indexB;
-                })
-                .map((ratingData) => (
-                  <div className={styles.ratingSection} key={ratingData.metric}>
-                    <RatingDetailView {...ratingData} />
-                  </div>
-                ))}
-            </div>
-          </Container>
+            </Container>
+          </Box>
         </div>
       )}
 
@@ -653,7 +765,14 @@ export function RatingsContainer() {
           courseId: "",
         }}
         availableTerms={availableTerms}
-        onSubmit={async (metricValues, termInfo, courseInfo) => {
+        onSubmit={async (
+          metricValues,
+          termInfo,
+          courseInfo,
+          reviewTitle,
+          reviewContent,
+          reviewerGrade
+        ) => {
           await submitRatingMutation({
             metricValues,
             termInfo,
@@ -664,6 +783,9 @@ export function RatingsContainer() {
               number: courseInfo.classNumber,
             },
             refetchQueries: [],
+            reviewTitle,
+            reviewContent,
+            reviewerGrade,
           });
           await Promise.all([
             refetchAllRatings(),
@@ -674,15 +796,11 @@ export function RatingsContainer() {
         initialUserClass={userRatings}
         userRatedClasses={userRatedClasses}
         disableRatedCourses={!userRatings}
-        lockedCourse={
-          userRatings
-            ? {
-                subject: currentClass.subject,
-                number: currentClass.courseNumber,
-                courseId: "",
-              }
-            : null
-        }
+        lockedCourse={{
+          subject: currentClass.subject,
+          number: currentClass.courseNumber,
+          courseId: "",
+        }}
         onSubmitPopupChange={setIsSubmitRatingPopupOpen}
         onError={(error) => {
           const message = getRatingErrorMessage(error);

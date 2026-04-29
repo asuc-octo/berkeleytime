@@ -7,7 +7,8 @@ export enum InputType {
 
 interface BaseInput {
   subject: string;
-  courseNumber: string;
+  courseId: string;
+  courseNumber: string; // For display purposes only
   type?: InputType;
 }
 
@@ -61,54 +62,63 @@ export interface CourseOutput<I, T> {
   data: T;
   input: I;
   color: string;
+  darkColor: string;
   hidden: boolean;
   active: boolean;
 }
 
-// Ranked color palette for bar charts (max 3 classes).
-export const BAR_CHART_COLORS = [
-  "var(--blue-500)",
-  "var(--blue-300)",
-  "var(--blue-800)",
-] as const;
-
-export const LIGHT_COLORS = ["#4e79a7", "#76b7b2", "#af7aa1", "#ff9da7"];
-export const DARK_COLORS = ["#1a2a3b", "#1f3332", "#2e2233", "#3b2227"];
+export const LIGHT_COLORS = [
+  "#4EA6FA", // Blue
+  "#6ADF86", // Green
+  "#EC5186", // Pink
+  "#F9E151", // Yellow
+  "#FF8C42", // Orange
+  "#A855F7", // Purple
+];
+export const DARK_COLORS = [
+  "#132a3e", // Blue (dimmed)
+  "#1a3721", // Green (dimmed)
+  "#3b1621", // Pink (dimmed)
+  "#3e3844", // Yellow (dimmed)
+  "#3d2a1a", // Orange (dimmed)
+  "#2d1f3d", // Purple (dimmed)
+];
+export const MAX_COURSES = 6;
 
 export const getInputSearchParam = (input: Input) => {
   // Course input
-  if (!input.type) return `${input.subject};${input.courseNumber}`;
+  if (!input.type) return `${input.subject};${input.courseId}`;
 
   // Term input
   if (input.type === InputType.Term) {
     const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
     if (!input.givenName && !input.familyName) {
-      return `${input.subject};${input.courseNumber};T;${termSegment}`;
+      return `${input.subject};${input.courseId};T;${termSegment}`;
     }
 
-    return `${input.subject};${input.courseNumber};T;${termSegment};${input.givenName}:${input.familyName}`;
+    return `${input.subject};${input.courseId};T;${termSegment};${input.givenName}:${input.familyName}`;
   }
 
   // Instructor input
   if (!input.year && !input.semester) {
-    return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName}`;
+    return `${input.subject};${input.courseId};P;${input.givenName}:${input.familyName}`;
   }
 
   const termSegment = `${input.year}:${input.semester}:${input.sessionId}`;
 
-  return `${input.subject};${input.courseNumber};P;${input.givenName}:${input.familyName};${termSegment}`;
+  return `${input.subject};${input.courseId};P;${input.givenName}:${input.familyName};${termSegment}`;
 };
 
 export const isInputEqual = (a: Input, b: Input) => {
   if (!a.type && !b.type)
-    return b.courseNumber === a.courseNumber && b.subject === a.subject;
+    return b.courseId === a.courseId && b.subject === a.subject;
 
   if (a.type !== b.type) return false;
 
   if (a.type === InputType.Term && b.type === InputType.Term) {
     return (
       b.subject === a.subject &&
-      b.courseNumber === a.courseNumber &&
+      b.courseId === a.courseId &&
       b.givenName === a.givenName &&
       b.familyName === a.familyName &&
       b.year === a.year &&
@@ -120,7 +130,7 @@ export const isInputEqual = (a: Input, b: Input) => {
   if (a.type === InputType.Instructor && b.type === InputType.Instructor) {
     const baseMatch =
       b.subject === a.subject &&
-      b.courseNumber === a.courseNumber &&
+      b.courseId === a.courseId &&
       b.givenName === a.givenName &&
       b.familyName === a.familyName;
     if (a.year && a.semester && b.year && b.semester) {

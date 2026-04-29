@@ -194,7 +194,14 @@ export default function Ratings() {
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      courseInfo: { subject: string; courseNumber: string; classNumber: string }
+      courseInfo: {
+        subject: string;
+        courseNumber: string;
+        classNumber: string;
+      },
+      reviewTitle?: string,
+      reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       if (!ratingForEdit) return;
 
@@ -217,6 +224,9 @@ export default function Ratings() {
           number: courseInfo.classNumber,
         },
         refetchQueries: buildRefetchQueries(refetchTarget),
+        reviewTitle,
+        reviewContent,
+        reviewerGrade,
       });
     },
     [ratingForEdit, createRatingsMutation, buildRefetchQueries]
@@ -226,7 +236,14 @@ export default function Ratings() {
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      courseInfo: { subject: string; courseNumber: string; classNumber: string }
+      courseInfo: {
+        subject: string;
+        courseNumber: string;
+        classNumber: string;
+      },
+      reviewTitle?: string,
+      reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       const refetchTarget = {
         subject: courseInfo.subject,
@@ -246,6 +263,9 @@ export default function Ratings() {
           number: courseInfo.classNumber,
         },
         refetchQueries: buildRefetchQueries(refetchTarget),
+        reviewTitle,
+        reviewContent,
+        reviewerGrade,
       });
     },
     [createRatingsMutation, buildRefetchQueries]
@@ -336,8 +356,22 @@ export default function Ratings() {
               : null
           }
           availableTerms={availableTerms}
-          onSubmit={async (metricValues, termInfo, courseInfo) => {
-            await handleSubmitEdit(metricValues, termInfo, courseInfo);
+          onSubmit={async (
+            metricValues,
+            termInfo,
+            courseInfo,
+            reviewTitle,
+            reviewContent,
+            reviewerGrade
+          ) => {
+            await handleSubmitEdit(
+              metricValues,
+              termInfo,
+              courseInfo,
+              reviewTitle,
+              reviewContent,
+              reviewerGrade
+            );
           }}
           initialUserClass={ratingForEdit}
           onSubmitPopupChange={setIsEditThankYouOpen}

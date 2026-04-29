@@ -34,6 +34,10 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
         value: userMetric.value,
       })),
 
+      reviewTitle: (userClass as UserClass & { reviewTitle?: string | null })
+        .reviewTitle,
+      reviewContent: (userClass as UserClass & { reviewContent?: string | null })
+        .reviewContent,
       lastUpdated: userClass.lastUpdated?.toString(),
     })),
   };
@@ -91,6 +95,10 @@ export const formatUserClassRatings = (ratings: UserClass): UserClass => {
       metricName: metric.metricName as MetricName,
       value: metric.value,
     })),
+    reviewTitle: (ratings as UserClass & { reviewTitle?: string | null })
+      .reviewTitle,
+    reviewContent: (ratings as UserClass & { reviewContent?: string | null })
+      .reviewContent,
     lastUpdated: ratings.lastUpdated,
   };
 };

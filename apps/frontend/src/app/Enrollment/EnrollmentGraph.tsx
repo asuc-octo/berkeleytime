@@ -42,6 +42,7 @@ import {
 interface EnrollmentGraphOutput {
   id: string;
   color: string;
+  darkColor: string;
   input: {
     year: number;
     semester: Semester;
@@ -718,11 +719,11 @@ export default function EnrollmentGraph({
               capacityChangeEventsByOutput[outputIndex] ??
               EMPTY_CAPACITY_CHANGE_EVENTS;
             const lineStroke = isDimmed
-              ? "var(--border-color)"
+              ? output.darkColor
               : isFlatSeries
                 ? output.color
                 : `url(#${getGradientId(output.id)})`;
-            const dotColor = isDimmed ? "var(--border-color)" : output.color;
+            const dotColor = isDimmed ? output.darkColor : output.color;
 
             return (
               <Fragment key={output.id}>

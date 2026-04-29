@@ -45,7 +45,6 @@
         color: var(--heading-color);
       }
     }
-
   }
 
   .group {
@@ -126,5 +125,4 @@
   &[data-status="UNDERMAINTENANCE"] .statusDot {
     background-color: var(--blue-500);
   }
-
 }

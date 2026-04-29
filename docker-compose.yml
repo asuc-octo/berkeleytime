@@ -31,6 +31,24 @@ services:
       - ./.env:/backend/apps/backend/.env
       - ./apps/backend:/backend/apps/backend
       - ./packages:/backend/packages
+  semantic-search:
+    profiles:
+      - semantic-search
+    build:
+      context: ./apps/semantic-search
+      dockerfile: Dockerfile
+    networks:
+      - bt
+    ports:
+      - "${DEV_PORT_PREFIX:-30}10:8000"
+    restart: always
+    volumes:
+      - ./apps/semantic-search/app:/app/app
+    environment:
+      - SEMANTIC_SEARCH_YEAR=2026
+      - SEMANTIC_SEARCH_SEMESTER=Spring
+      - BACKEND_URL=http://backend:5001
+      - REDIS_URI=redis://redis:6379
   frontend:
     build:
       context: .
@@ -43,6 +61,8 @@ services:
       - ./apps/frontend:/frontend/apps/frontend
       - ./packages:/frontend/packages
   ag-frontend:
+    profiles:
+      - ag
     build:
       context: .
       dockerfile: ./apps/ag-frontend/Dockerfile
@@ -54,6 +74,8 @@ services:
       - ./apps/ag-frontend:/ag-frontend/apps/ag-frontend
       - ./packages:/ag-frontend/packages
   staff-frontend:
+    profiles:
+      - staff
     build:
       context: .
       dockerfile: ./apps/staff-frontend/Dockerfile
@@ -129,6 +151,7 @@ services:
     volumes:
       - mongodb-db:/data/db
       - mongodb-configdb:/data/configdb
+      - ./infra/mongo/migrations:/migrations
   mongodb-init:
     image: mongodb/mongodb-atlas-local:8.0
     depends_on:
@@ -160,10 +183,6 @@ services:
         condition: service_healthy
       frontend:
         condition: service_started
-      ag-frontend:
-        condition: service_started
-      staff-frontend:
-        condition: service_started
     image: nginx:1.21
     networks:
       - bt
@@ -175,14 +194,14 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
   redis:
-    image: redis:7.2.4
+    image: redis/redis-stack-server:7.2.0-v14
     ports:
       - "${DEV_PORT_PREFIX:-30}04:6379"
     networks:
       - bt
     restart: always
   redis-preflight:
-    image: redis:7.2.4
+    image: redis/redis-stack-server:7.2.0-v14
     depends_on:
       redis:
         condition: service_started
@@ -207,6 +226,8 @@ services:
         redis-cli -h redis FLUSHALL
         echo "Flushed redis cache on startup."
   storybook:
+    profiles:
+      - docs
     build:
       context: .
       dockerfile: ./apps/storybook/Dockerfile
@@ -220,6 +241,8 @@ services:
       - ./packages/theme:/storybook/packages/theme
       - ./apps/storybook:/storybook/apps/storybook
   docs:
+    profiles:
+      - docs
     build:
       context: .
       dockerfile: ./apps/docs/Dockerfile

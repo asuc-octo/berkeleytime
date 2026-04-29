@@ -416,7 +416,17 @@ export function Select<T>({
             }}
           />
         )}
-        <NavArrowDown />
+        <div
+          style={{
+            borderLeft: "1px solid var(--border-color)",
+            paddingLeft: "12px",
+            display: "flex",
+            alignItems: "center",
+            height: "24px",
+          }}
+        >
+          <NavArrowDown />
+        </div>
       </Flex>
     </>
   );

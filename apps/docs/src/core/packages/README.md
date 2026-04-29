@@ -8,6 +8,7 @@ Berkeleytime uses a monorepo architecture managed by [Turborepo](https://turbo.b
 
 | Package | Description |
 |---------|-------------|
+| [@repo/BtLL](../BtLL/README.md) | Berkeleytime Logical Language: interpreted DSL for academic requirements (GradTrak) |
 | [@repo/common](./common.md) | Shared database models, TypeScript types, and utilities |
 | [@repo/theme](./theme.md) | React design system with Radix UI components |
 | [@repo/shared](./shared.md) | Shared utilities, metrics, and rating configurations |
