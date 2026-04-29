@@ -21,7 +21,7 @@ export default function RootWrapper() {
   const location = useLocation();
   const { data: redirects, loading } = useAllRouteRedirects();
   const { incrementClick } = useIncrementRouteRedirectClick();
-  const { trackClick } = useTracking();
+  const { trackClick, flushBeacon } = useTracking();
 
   // Check for redirects immediately on route change
   useEffect(() => {
@@ -47,9 +47,10 @@ export default function RootWrapper() {
       lastIncrementTime = now;
       incrementClick(matchingRedirect.id);
       trackClick("redirect", matchingRedirect.id, { fromPath: currentPath });
+      flushBeacon();
       window.location.href = matchingRedirect.toPath;
     }
-  }, [location.pathname, redirects, loading, incrementClick, trackClick]);
+  }, [location.pathname, redirects, loading, incrementClick, trackClick, flushBeacon]);
 
   return (
     <>
