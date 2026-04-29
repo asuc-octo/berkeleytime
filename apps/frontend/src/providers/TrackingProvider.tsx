@@ -1,10 +1,10 @@
 import {
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
   useEffect,
   useRef,
-  type ReactNode,
 } from "react";
 
 import { useMutation } from "@apollo/client/react";
@@ -184,6 +184,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
 
 export function useTrackingContext(): TrackingContextValue {
   const ctx = useContext(TrackingContext);
-  if (!ctx) throw new Error("useTrackingContext must be used within TrackingProvider");
+  if (!ctx)
+    throw new Error("useTrackingContext must be used within TrackingProvider");
   return ctx;
 }

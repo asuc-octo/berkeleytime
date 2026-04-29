@@ -45,7 +45,8 @@ export default function useCatalogBrowser({
     fetch("/api/semantic-search/health")
       .then((r) => r.json())
       .then((data) => {
-        const indexes: { year: number; semester: string }[] = data?.indexes ?? [];
+        const indexes: { year: number; semester: string }[] =
+          data?.indexes ?? [];
         const available = indexes.some(
           (idx) => idx.year === year && idx.semester === semester
         );

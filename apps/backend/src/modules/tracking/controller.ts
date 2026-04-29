@@ -60,7 +60,10 @@ const sanitizeMetadata = (
     } else if (typeof v === "number" || typeof v === "boolean" || v === null) {
       result[safeKey] = v;
     } else if (typeof v === "object" && !Array.isArray(v) && v !== null) {
-      result[safeKey] = sanitizeMetadata(v as Record<string, unknown>, depth + 1);
+      result[safeKey] = sanitizeMetadata(
+        v as Record<string, unknown>,
+        depth + 1
+      );
     } else {
       result[safeKey] = String(v).slice(0, 256);
     }

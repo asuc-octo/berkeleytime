@@ -932,7 +932,7 @@ export default function Class({
           initialCourse={{
             subject: _class.subject,
             number: _class.courseNumber,
-            courseId: ""
+            courseId: "",
           }}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}

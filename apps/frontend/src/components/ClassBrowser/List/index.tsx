@@ -417,5 +417,5 @@ export default function List({ onSelect }: ListProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
