@@ -4,7 +4,6 @@ import threading
 import time
 from dataclasses import dataclass
 from datetime import datetime
-from functools import lru_cache
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
@@ -225,10 +224,6 @@ class SemanticSearchEngine:
             "message": f"Started building index for {build_key} in background",
         }
 
-    @lru_cache(maxsize=256)
-    def _encode_query(self, prefixed_query: str) -> np.ndarray:
-        return np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")[0]
-
     def search(
         self,
         query: str,
@@ -245,7 +240,7 @@ class SemanticSearchEngine:
 
         # BGE models work better with instruction prefix for queries
         prefixed_query = QUERY_PREFIX + query
-        query_vec = self._encode_query(prefixed_query)
+        query_vec = np.asarray(self.model.encode([prefixed_query], convert_to_numpy=True), dtype="float32")[0]
 
         allowed = self._resolve_allowed_subjects(allowed_subjects)
         vs_filter: Dict = {"year": year, "semester": semester}
