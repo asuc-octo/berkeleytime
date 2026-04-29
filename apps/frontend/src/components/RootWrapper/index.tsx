@@ -51,7 +51,14 @@ export default function RootWrapper() {
       flushBeacon();
       window.location.href = matchingRedirect.toPath;
     }
-  }, [location.pathname, redirects, loading, incrementClick, trackClick, flushBeacon]);
+  }, [
+    location.pathname,
+    redirects,
+    loading,
+    incrementClick,
+    trackClick,
+    flushBeacon,
+  ]);
 
   return (
     <>

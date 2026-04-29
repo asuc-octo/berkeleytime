@@ -9,7 +9,10 @@ const LOCK_TTL_S = 10 * 60; // 10 minutes — long enough to cover a slow flush
 
 export const startTrackingEventsFlushJob = (redis: RedisClientType) => {
   const runFlush = async () => {
-    const acquired = await redis.set(LOCK_KEY, "1", { NX: true, EX: LOCK_TTL_S });
+    const acquired = await redis.set(LOCK_KEY, "1", {
+      NX: true,
+      EX: LOCK_TTL_S,
+    });
     if (!acquired) return;
 
     try {
