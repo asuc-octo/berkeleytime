@@ -444,6 +444,12 @@ Function<List<Requirement>>() main (){
 }
 `;
 
+export const ENVDES_REQ_BTLL = `
+`;
+
+export const CHEMISTRY_REQ_BTLL = `
+`;
+
 export const RCNR_REQ_BTLL = `${RNC_BTLL}
 Function<boolean>(Course) is_upper_div_course (course){
   string number get_attr(course, "number")
