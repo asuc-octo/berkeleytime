@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import threading
@@ -8,7 +9,7 @@ from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
 import requests
-from pymongo import MongoClient
+from pymongo import DeleteOne, MongoClient, ReplaceOne
 from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("semantic-search")
@@ -143,29 +144,81 @@ class SemanticSearchEngine:
                 raise RuntimeError("Catalog response did not contain any courses")
 
             course_texts = [self._build_course_text(course) for course in courses]
+            course_hashes = [self._hash_course_text(text) for text in course_texts]
 
-            logger.info("Encoding %d courses...", len(course_texts))
-            embeddings = np.asarray(self.model.encode(course_texts, batch_size=128, convert_to_numpy=True), dtype="float32")
+            existing_hashes = self._load_existing_hashes(year, term_semester)
+
+            changed_indices = []
+            for i, course in enumerate(courses):
+                course_id = course.get("courseNumber") or ""
+                subject = course.get("subject") or ""
+                if existing_hashes.get((subject, course_id)) != course_hashes[i]:
+                    changed_indices.append(i)
+
+            logger.info(
+                "Incremental refresh: %d changed/new, %d unchanged (out of %d total)",
+                len(changed_indices), len(courses) - len(changed_indices), len(courses),
+            )
 
             refreshed_at = datetime.utcnow()
+            ops = []
 
-            # Replace all embeddings for this term atomically
-            self._embeddings_col.delete_many({"year": year, "semester": term_semester})
+            if changed_indices:
+                changed_texts = [course_texts[i] for i in changed_indices]
+                logger.info("Encoding %d courses...", len(changed_texts))
+                embeddings = np.asarray(
+                    self.model.encode(changed_texts, batch_size=128, convert_to_numpy=True),
+                    dtype="float32",
+                )
+                for rank, i in enumerate(changed_indices):
+                    course = courses[i]
+                    course_id = course.get("courseNumber") or ""
+                    subject = course.get("subject") or ""
+                    ops.append(ReplaceOne(
+                        filter={
+                            "courseId": course_id,
+                            "subject": subject,
+                            "year": year,
+                            "semester": term_semester,
+                        },
+                        replacement={
+                            "courseId": course_id,
+                            "subject": subject,
+                            "year": year,
+                            "semester": term_semester,
+                            "embedding": embeddings[rank].tolist(),
+                            "refreshedAt": refreshed_at,
+                            "contentHash": course_hashes[i],
+                        },
+                        upsert=True,
+                    ))
 
-            docs = []
-            for i, course in enumerate(courses):
-                docs.append({
-                    "courseId": course.get("courseNumber") or "",
-                    "subject": course.get("subject") or "",
-                    "year": year,
-                    "semester": term_semester,
-                    "embedding": embeddings[i].tolist(),
-                    "refreshedAt": refreshed_at,
-                })
-            self._embeddings_col.insert_many(docs, ordered=False)
+            # Delete courses removed from catalog
+            current_keys = {
+                (course.get("subject") or "", course.get("courseNumber") or "")
+                for course in courses
+            }
+            removed_keys = set(existing_hashes.keys()) - current_keys
+            if removed_keys:
+                logger.info("Removing %d courses no longer in catalog", len(removed_keys))
+                self._embeddings_col.bulk_write(
+                    [
+                        DeleteOne({
+                            "courseId": course_id,
+                            "subject": subject,
+                            "year": year,
+                            "semester": term_semester,
+                        })
+                        for subject, course_id in removed_keys
+                    ],
+                    ordered=False,
+                )
+
+            if ops:
+                self._embeddings_col.bulk_write(ops, ordered=False)
 
             entry = TermIndex(
-                size=len(docs),
+                size=len(courses),
                 last_refreshed=refreshed_at,
                 year=year,
                 semester=term_semester,
@@ -178,7 +231,7 @@ class SemanticSearchEngine:
 
             self._evict_old_indexes()
 
-            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(docs))
+            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(courses))
             return entry
         finally:
             self._building = None
@@ -375,6 +428,24 @@ class SemanticSearchEngine:
         title = ((course.get("course") or {}).get("title") or "").strip()
         desc = ((course.get("course") or {}).get("description") or "").strip()
         return f"SUBJECT: {subj} NUMBER: {num}\nTITLE: {title}\nDESCRIPTION: {desc}\n"
+
+    @staticmethod
+    def _hash_course_text(text: str) -> str:
+        return hashlib.sha256(text.encode()).hexdigest()
+
+    def _load_existing_hashes(self, year: int, semester: str) -> Dict[Tuple[str, str], str]:
+        try:
+            cursor = self._embeddings_col.find(
+                {"year": year, "semester": semester},
+                {"courseId": 1, "subject": 1, "contentHash": 1, "_id": 0},
+            )
+            return {
+                (doc.get("subject") or "", doc["courseId"]): (doc.get("contentHash") or "")
+                for doc in cursor
+            }
+        except Exception as exc:
+            logger.warning("Failed to load existing hashes from MongoDB: %s", exc)
+            return {}
 
     def _deduplicate_courses(self, courses: List[Dict]) -> List[Dict]:
         seen = set()
