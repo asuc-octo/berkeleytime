@@ -444,6 +444,23 @@ Function<List<Requirement>>() main (){
 }
 `;
 
+export const EDU_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}
+Function<List<Requirement>>() main (){
+  List<Course> courses get_attr(this, "allCourses")
+  
+  List<Requirement> breadth7 seven_breadths_requirements(courses)
+  Requirement arts_and_lit get_element(breadth7, 0)
+  Requirement biological_sciences get_element(breadth7, 1)
+  Requirement historical_studies get_element(breadth7, 2)
+  Requirement international_studies get_element(breadth7, 3)
+  Requirement philosophy_and_values get_element(breadth7, 4)
+  Requirement physical_sciences get_element(breadth7, 5)
+  Requirement social_and_behavioral_sciences get_element(breadth7, 6)
+
+  List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences]
+}
+`;
+
 export const ENVDES_REQ_BTLL = `
 `;
 
