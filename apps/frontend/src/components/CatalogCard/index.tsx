@@ -1,4 +1,5 @@
 import { ComponentPropsWithRef } from "react";
+
 import { Bookmark } from "iconoir-react";
 
 import { AverageGrade } from "@/components/AverageGrade";
@@ -15,7 +16,8 @@ const PLACEHOLDER_IMAGES = [
   "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=300&fit=crop",
 ];
 
-interface CatalogCardProps extends Omit<ComponentPropsWithRef<"div">, "className"> {
+interface CatalogCardProps
+  extends Omit<ComponentPropsWithRef<"div">, "className"> {
   subject: string;
   courseNumber: string;
   number?: string;
@@ -44,12 +46,13 @@ export default function CatalogCard({
   hasOpenSeats = false,
   ...props
 }: CatalogCardProps) {
-  const backgroundImage = imageUrl || PLACEHOLDER_IMAGES[imageIndex % PLACEHOLDER_IMAGES.length];
+  const backgroundImage =
+    imageUrl || PLACEHOLDER_IMAGES[imageIndex % PLACEHOLDER_IMAGES.length];
   const formattedNumber = number ? `#${number.padStart(3, "0")}` : "";
 
   return (
     <div className={styles.card} {...props}>
-      <div 
+      <div
         className={styles.imageContainer}
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >

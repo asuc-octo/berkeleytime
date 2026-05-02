@@ -1,4 +1,5 @@
-import { ReactNode, useRef, useState, useEffect, useCallback } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+
 import { NavArrowLeft, NavArrowRight } from "iconoir-react";
 
 import styles from "./ScrollableRow.module.scss";
@@ -8,7 +9,10 @@ interface ScrollableRowProps {
   className?: string;
 }
 
-export default function ScrollableRow({ children, className }: ScrollableRowProps) {
+export default function ScrollableRow({
+  children,
+  className,
+}: ScrollableRowProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);

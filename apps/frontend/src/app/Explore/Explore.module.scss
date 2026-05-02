@@ -28,22 +28,6 @@
   }
 }
 
-.heading {
-  font-weight: var(--font-bold);
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: var(--heading-color);
-
-  :global(body[data-theme="dark"]) & {
-    color: var(--slate-100);
-  }
-
-  :global(body:not([data-theme])) & {
-    @media (prefers-color-scheme: dark) {
-      color: var(--slate-100);
-    }
-  }
-}
 .heroBanner {
   border-radius: 12px;
   padding: 1.5rem;
@@ -89,68 +73,6 @@
   margin: 0;
 }
 
-.activeTab {
-  border-radius: 999px !important;
-  background-color: var(--button-active-color) !important;
-  color: var(--heading-color) !important;
-  border: 1px solid var(--button-active-color) !important;
-}
-
-.inactiveTab {
-  border-radius: 999px;
-}
-.courseGridWrapper {
-  position: relative;
-}
-
-.fadeOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(transparent, var(--background-color));
-  pointer-events: none;
-}
-
-.courseGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.showMoreWrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--border-color);
-  }
-}
-
-.showMoreButton {
-  position: relative;
-  z-index: 1;
-  padding: 0 24px !important;
-  background: var(--background-color) !important;
-}
-
 .signInBanner {
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -175,60 +97,11 @@
   margin: 0;
 }
 
-.bookmarksBox {
-  width: 560px;
-  min-width: 260px;
-  max-width: 560px;
-  border: 1px solid var(--border-color);  
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: box-shadow 0.2s;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.bookmarksImageArea {
-  height: 130px;
-  background: var(--button-hover-color);
-  border-radius: 8px 8px 0 0;
-}
-
-.bookmarksTitle {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 4px;
-  color: var(--heading-color);
-}
-
-.bookmarksSubtitle {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin: 0;
-  color: var(--heading-color);
-}
-
 .subheading {
   font-size: 15px;
   font-weight: 600;
   margin: 0;
   color: var(--heading-color);
-}
-
-.recentGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
 }
 
 // Category Tabs
@@ -299,37 +172,6 @@
     @media (prefers-color-scheme: dark) {
       color: var(--slate-100);
     }
-  }
-}
-
-// Horizontal scroll container for course cards
-.horizontalScroll {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  scroll-snap-type: x mandatory;
-
-  // Hide scrollbar but keep functionality
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color) transparent;
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-  }
-
-  > a {
-    flex-shrink: 0;
-    scroll-snap-align: start;
   }
 }
 

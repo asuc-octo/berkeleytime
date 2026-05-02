@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { gql } from "@apollo/client";
 import { useQuery } from "@apollo/client/react";
@@ -6,16 +6,17 @@ import { User } from "iconoir-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Box, Button, Flex, LoadingIndicator } from "@repo/theme";
+
 import { CollectionCard } from "@/app/Profile/Bookmarks/CollectionCard";
 import CatalogCard from "@/components/CatalogCard";
-import ScrollableRow from "@/components/ScrollableRow";
 import ClassDrawer from "@/components/ClassDrawer";
-import useUser from "@/hooks/useUser";
+import ScrollableRow from "@/components/ScrollableRow";
+import { useReadCuratedClasses, useReadTerms } from "@/hooks/api";
 import { useGetAllCollectionsWithPreview } from "@/hooks/api/collections";
-import { useReadTerms, useReadCuratedClasses } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
+import { EnrollmentFilterType, Semester } from "@/lib/generated/graphql";
 import { RecentType, getRecents } from "@/lib/recent";
-import { Semester, EnrollmentFilterType } from "@/lib/generated/graphql";
 
 import styles from "./Explore.module.scss";
 
@@ -138,7 +139,15 @@ const CATEGORIES = [
   {
     id: "arts-literature",
     label: "Arts and Literature",
-    subjects: ["ENGLISH", "COMLIT", "THEATER", "ART", "MUSIC", "FILM", "RHETORIC"],
+    subjects: [
+      "ENGLISH",
+      "COMLIT",
+      "THEATER",
+      "ART",
+      "MUSIC",
+      "FILM",
+      "RHETORIC",
+    ],
   },
   {
     id: "eecs",
@@ -166,8 +175,10 @@ export default function Explore() {
   const { data: apiCollections } = useGetAllCollectionsWithPreview();
   const allSavedCollection = apiCollections?.find((c) => c.isSystem);
   const totalBookmarks = allSavedCollection?.classes?.length ?? 0;
-  const { data: coursesData, loading: coursesLoading } = useQuery<CoursesQueryData>(GET_COURSES_EXPLORE);
-  const { data: curatedClassesData, loading: curatedClassesLoading } = useReadCuratedClasses();
+  const { data: coursesData, loading: coursesLoading } =
+    useQuery<CoursesQueryData>(GET_COURSES_EXPLORE);
+  const { data: curatedClassesData, loading: curatedClassesLoading } =
+    useReadCuratedClasses();
   const { data: terms } = useReadTerms();
 
   // Get the latest term for queries
@@ -181,9 +192,8 @@ export default function Explore() {
   }, [terms]);
 
   // Query for classes with open seats using catalogSearch
-  const { data: openSeatsData, loading: openSeatsLoading } = useQuery<CatalogSearchResult>(
-    GET_CLASSES_WITH_OPEN_SEATS,
-    {
+  const { data: openSeatsData, loading: openSeatsLoading } =
+    useQuery<CatalogSearchResult>(GET_CLASSES_WITH_OPEN_SEATS, {
       variables: {
         year: currentTerm.year,
         semester: currentTerm.semester,
@@ -192,8 +202,7 @@ export default function Explore() {
         pageSize: 4,
       },
       skip: !terms,
-    }
-  );
+    });
 
   const recentCourseKeys = getRecents(RecentType.Course);
   const recentCoursesData = recentCourseKeys
@@ -232,7 +241,9 @@ export default function Explore() {
   const recommendedCourses = useMemo((): Course[] => {
     if (!coursesData?.courses || recentCoursesData.length === 0) return [];
     // Placeholder: recommend courses from the same subject as recently viewed
-    const recentSubjects = new Set(recentCoursesData.map((c) => c?.subject).filter(Boolean));
+    const recentSubjects = new Set(
+      recentCoursesData.map((c) => c?.subject).filter(Boolean)
+    );
     return coursesData.courses
       .filter(
         (course) =>
@@ -261,12 +272,15 @@ export default function Explore() {
 
   // Calculate initial visible count based on viewport
   const calculateInitialCount = useCallback(() => {
-    const viewportHeight = typeof window !== "undefined" ? window.innerHeight : 800;
+    const viewportHeight =
+      typeof window !== "undefined" ? window.innerHeight : 800;
     const rowsToFill = Math.ceil(viewportHeight / CARD_HEIGHT) + 1; // +1 for buffer
     return rowsToFill * COLUMNS;
   }, []);
 
-  const [visibleCount, setVisibleCount] = useState(() => calculateInitialCount());
+  const [visibleCount, setVisibleCount] = useState(() =>
+    calculateInitialCount()
+  );
 
   // Reset visible count when category changes
   useEffect(() => {
@@ -283,8 +297,13 @@ export default function Explore() {
       const documentHeight = document.documentElement.scrollHeight;
       const distanceToBottom = documentHeight - (scrollTop + windowHeight);
 
-      if (distanceToBottom <= LOAD_MORE_THRESHOLD && visibleCount < filteredCourses.length) {
-        setVisibleCount((prev) => Math.min(prev + COLUMNS * 2, filteredCourses.length));
+      if (
+        distanceToBottom <= LOAD_MORE_THRESHOLD &&
+        visibleCount < filteredCourses.length
+      ) {
+        setVisibleCount((prev) =>
+          Math.min(prev + COLUMNS * 2, filteredCourses.length)
+        );
       }
     };
 
@@ -431,7 +450,9 @@ export default function Explore() {
                                 subject={course.subject}
                                 courseNumber={course.number}
                                 title={course.title}
-                                gradeDistribution={course.gradeDistribution ?? undefined}
+                                gradeDistribution={
+                                  course.gradeDistribution ?? undefined
+                                }
                                 imageIndex={index}
                               />
                             </Link>
@@ -456,7 +477,9 @@ export default function Explore() {
                           subject={course.subject}
                           courseNumber={course.number}
                           title={course.title}
-                          gradeDistribution={course.gradeDistribution ?? undefined}
+                          gradeDistribution={
+                            course.gradeDistribution ?? undefined
+                          }
                           imageIndex={index + 4}
                         />
                       </Link>
@@ -488,7 +511,8 @@ export default function Explore() {
                               curatedClass.class?.course?.title
                             }
                             gradeDistribution={
-                              curatedClass.class?.course?.gradeDistribution ?? undefined
+                              curatedClass.class?.course?.gradeDistribution ??
+                              undefined
                             }
                             imageIndex={index + 8}
                           />
@@ -516,7 +540,9 @@ export default function Explore() {
                             subject={course.subject}
                             courseNumber={course.number}
                             title={course.title}
-                            gradeDistribution={course.gradeDistribution ?? undefined}
+                            gradeDistribution={
+                              course.gradeDistribution ?? undefined
+                            }
                             imageIndex={index + 12}
                           />
                         </Link>
@@ -527,7 +553,9 @@ export default function Explore() {
 
                 {/* Row 5: Courses with open seats */}
                 <section className={styles.section}>
-                  <h2 className={styles.sectionHeading}>Courses with open seats</h2>
+                  <h2 className={styles.sectionHeading}>
+                    Courses with open seats
+                  </h2>
                   <ScrollableRow>
                     {coursesWithOpenSeats.map((cls, index) => (
                       <ClassDrawer
