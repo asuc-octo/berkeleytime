@@ -230,3 +230,155 @@
     grid-template-columns: 1fr;
   }
 }
+
+// Category Tabs
+.categoryTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.categoryTab {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--paragraph-color);
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--button-hover-color);
+    color: var(--heading-color);
+  }
+}
+
+.categoryTabActive {
+  background: var(--blue-500);
+  color: white;
+  border-color: var(--blue-500);
+
+  &:hover {
+    background: var(--blue-600);
+    border-color: var(--blue-600);
+    color: white;
+  }
+}
+
+// Sections
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: -20px;
+  margin-right: -20px;
+}
+
+.sectionHeading {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  color: var(--heading-color);
+  margin: 0;
+  letter-spacing: -0.2px;
+
+  :global(body[data-theme="dark"]) & {
+    color: var(--slate-100);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      color: var(--slate-100);
+    }
+  }
+}
+
+// Horizontal scroll container for course cards
+.horizontalScroll {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+
+  // Hide scrollbar but keep functionality
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+
+  > a {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+}
+
+.emptyMessage {
+  color: var(--paragraph-color);
+  font-size: 14px;
+  margin: 0;
+  padding: 24px 0;
+}
+
+// Full-page catalog grid for subject tabs
+.catalogGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+
+  > a {
+    display: flex;
+  }
+}
+
+// Bookmarks + Recently Viewed row
+.bookmarksRow {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  overflow: visible;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: -20px;
+  margin-right: -20px;
+
+  @media (max-width: 900px) {
+    flex-wrap: wrap;
+  }
+}
+
+.recentlyViewedColumn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: visible;
+}
+
+// Bookmarks card in the For You row - stretch to match recently viewed height
+.bookmarksCardWrapper {
+  display: flex;
+  flex-shrink: 0;
+}

@@ -1,0 +1,113 @@
+.card {
+  width: 100%;
+  flex: 1 1 0;
+  min-width: 240px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  background: var(--card-background);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.imageContainer {
+  height: 168px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--slate-200);
+  position: relative;
+}
+
+.openSeatsBadge {
+  position: absolute;
+  top: 11px;
+  right: 16px;
+  width: 45px;
+  height: 45px;
+  background: var(--emerald-500);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbsUp {
+  font-size: 20px;
+}
+
+.content {
+  padding: 14px 16px;
+  background: var(--card-background);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.courseName {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--heading-color);
+  letter-spacing: -0.16px;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.bookmarkButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--paragraph-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--heading-color);
+  }
+
+  &.bookmarked {
+    color: var(--blue-500);
+  }
+}
+
+.description {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--paragraph-color);
+  letter-spacing: -0.1px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
