@@ -15,3 +15,7 @@ Software infrastructure refers to the services and tools that create an underlyi
 ## Backups
 
 Mongo backups are served from `https://backups.berkeleytime.com`. Download steps live in [Runbooks](./runbooks.md#fetch-mongo-backups).
+
+## Secrets
+
+Secret management (including `sealed-secrets` and the `json-to-secret.sh` helper script) is documented in [Runbooks](./runbooks.md#secrets).

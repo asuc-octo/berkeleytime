@@ -1,82 +1,136 @@
-import { EditPencil, Trash } from "iconoir-react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { METRIC_ORDER, MetricName } from "@repo/shared";
-import { Badge, Color, Flex, IconButton, Tooltip } from "@repo/theme";
 
 import { IUserRatingClass } from "@/lib/api";
 
 import {
   formatDate,
-  getMetricStatus,
-  getStatusColor,
+  getAverageRatingColor,
   isMetricRating,
 } from "../metricsUtil";
 import styles from "./UserRatingSummary.module.scss";
 
 export default function UserRatingSummary({
   userRatings,
-  onOpenModal,
-  ratingDelete,
 }: {
   userRatings: IUserRatingClass;
-  onOpenModal: (open: boolean) => void;
-  ratingDelete: () => void;
 }) {
-  const sortedMetrics = userRatings.metrics
-    .filter((metric) => isMetricRating(MetricName[metric.metricName]))
-    .sort((a, b) => {
-      const indexA = METRIC_ORDER.indexOf(MetricName[a.metricName]);
-      const indexB = METRIC_ORDER.indexOf(MetricName[b.metricName]);
-      return indexA - indexB;
-    });
+  const ratingMetrics = userRatings.metrics.filter((metric) =>
+    isMetricRating(MetricName[metric.metricName])
+  );
+  const metricsAverage =
+    ratingMetrics.length > 0
+      ? ratingMetrics.reduce((sum, m) => {
+          const value =
+            m.metricName === MetricName.Difficulty ||
+            m.metricName === MetricName.Workload
+              ? 5 - m.value
+              : m.value;
+          return sum + value;
+        }, 0) / ratingMetrics.length
+      : null;
+
+  const rawGrade = (
+    userRatings as IUserRatingClass & { reviewerGrade?: string | null }
+  ).reviewerGrade;
+  const displayGrade =
+    rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : "N/A";
+
+  const ratingColor =
+    metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    setIsOverflowing(el.scrollHeight > el.clientHeight);
+  }, [userRatings.reviewContent]);
+
   return (
     <div className={styles.root}>
-      <div className={styles.title}>
-        <div>
-          <h3>Your Rating</h3>
-          {userRatings.lastUpdated && (
-            <h5>{formatDate(new Date(userRatings.lastUpdated))}</h5>
+      <div className={styles.body}>
+        <div className={styles.bodyLeft}>
+          <div className={styles.titleDate}>
+            <h3>{userRatings.reviewTitle}</h3>
+            {userRatings.lastUpdated && (
+              <h4>{formatDate(new Date(userRatings.lastUpdated))}</h4>
+            )}
+          </div>
+          <div
+            ref={contentRef}
+            className={
+              isExpanded
+                ? styles.contentWrapper
+                : `${styles.contentWrapper} ${styles.clamped}`
+            }
+          >
+            {userRatings.reviewContent || "No written review yet."}
+            {!isExpanded && isOverflowing && (
+              <button
+                className={styles.moreButton}
+                onClick={() => setIsExpanded(true)}
+              >
+                More
+              </button>
+            )}
+            {!isExpanded && !isOverflowing && (
+              <button
+                className={styles.moreButtonInline}
+                onClick={() => setIsExpanded(true)}
+              >
+                More
+              </button>
+            )}
+          </div>
+          {isExpanded && (
+            <div className={styles.metricsRow}>
+              {METRIC_ORDER.map((metricName) => {
+                const metric = userRatings.metrics.find(
+                  (m) => m.metricName === metricName
+                );
+                if (!metric) return null;
+                return (
+                  <div key={metricName} className={styles.metricItem}>
+                    <span className={styles.metricLabel}>{metricName}</span>
+                    <span className={styles.metricValue}>{metric.value}</span>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
-        <Flex gap="2">
-          <Tooltip
-            trigger={
-              <IconButton onClick={() => onOpenModal(true)}>
-                <EditPencil />
-              </IconButton>
-            }
-            title="Edit rating"
-          />
-          <Tooltip
-            trigger={
-              <IconButton onClick={() => ratingDelete()}>
-                <Trash />
-              </IconButton>
-            }
-            title="Delete rating"
-          />
-        </Flex>
       </div>
       <div className={styles.body}>
-        <div>
-          {sortedMetrics.map((metric) => (
-            <div key={metric.metricName} className={styles.section}>
-              <div className={styles.metrics}>
-                <div className={styles.titleSection}>
-                  <h3 className={styles.metric}>{metric.metricName}</h3>
-                </div>
-                <Badge
-                  color={
-                    getStatusColor(metric.metricName, metric.value) as Color
+        <div className={styles.bodyRight}>
+          <h2 className={styles.ratingGrade}>Rating</h2>
+          <div
+            className={styles.rating}
+            style={
+              ratingColor
+                ? {
+                    borderColor: ratingColor.badge,
+                    backgroundColor: ratingColor.bg,
+                    color: ratingColor.badge,
                   }
-                  label={getMetricStatus(metric.metricName, metric.value)}
-                />
-                <span
-                  className={styles.metricAverage}
-                >{`${metric.value}.0 / 5.0`}</span>
-              </div>
-            </div>
-          ))}
+                : undefined
+            }
+          >
+            {metricsAverage != null ? (
+              <span>{metricsAverage.toFixed(1)}</span>
+            ) : (
+              <span>N/A</span>
+            )}
+          </div>
+          <h2 className={styles.ratingGrade}>Grade</h2>
+          <div
+            className={`${styles.grade}${displayGrade === "N/A" ? ` ${styles.naGrade}` : ""}`}
+          >
+            <span>{displayGrade}</span>
+          </div>
         </div>
       </div>
     </div>

@@ -37,6 +37,7 @@
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
+  padding: 0 !important;
 }
 
 .formContentWrapper {
@@ -44,24 +45,29 @@
   width: 100%;
 }
 
-.formGroup {
-  padding: 0 84px;
+.mainSection {
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+}
 
-  h3,
-  p {
-    color: var(--secondary-color);
-    font-size: var(--text-14);
-    font-weight: var(--font-normal);
-    margin: 0;
-    padding: 0;
-  }
+.formGroup {
+  padding: 0 32px;
+}
+
+.formGroup h3,
+.formGroup p,
+.inlineQuestion h3 {
+  color: var(--secondary-color);
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
+  margin: 0;
+  padding: 0;
 }
 
 .questionPair {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 0;
 }
 
 .inlineQuestion {
@@ -69,36 +75,27 @@
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  padding: 20px 0;
 }
 
 .ratingScale {
   display: flex;
   align-items: center;
-  gap: 16px;
-  max-width: 500px;
-  margin: 0 auto;
+  gap: 24px;
 
   span {
     color: var(--paragraph-color);
     font-size: var(--text-14);
-    min-width: 80px;
+    white-space: nowrap;
 
-    &:first-child {
-      text-align: right;
-    }
-
-    &:last-child {
-      text-align: left;
+    @media (max-width: 480px) {
+      display: none;
     }
   }
 }
 
 .ratingButtons {
   display: flex;
-  gap: 8px;
-  flex-grow: 1;
-  justify-content: center;
+  gap: 16px;
 }
 
 .ratingButton {
@@ -129,6 +126,48 @@
   &:focus-visible {
     outline: none;
   }
+}
+
+.reviewTextarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--font-sizes-2, 14px);
+  font-family: inherit;
+
+  color: var(--heading-color);
+  background: none;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--label-color);
+    font-size: var(--font-sizes-2, 14px);
+
+    line-height: 20px;
+    letter-spacing: -0.1px;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-500);
+  }
+}
+
+.reviewTitleTextarea {
+  height: 44px;
+}
+
+.reviewDisclaimer.reviewDisclaimer {
+  color: var(--paragraph-color);
+  font-feature-settings: "liga" off;
+  font-family: Inter, sans-serif;
+  font-size: var(--font-sizes-1, 12px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 0;
 }
 
 .booleanBadges {

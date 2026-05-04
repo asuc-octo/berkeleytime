@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
+import { useApolloClient } from "@apollo/client/react";
 import {
   Check,
   Edit,
@@ -15,11 +16,16 @@ import {
 import { FuzzySearch } from "@repo/common";
 import { Button, DropdownMenu, Flex, Input } from "@repo/theme";
 
+import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 import { useReadCourseUnits, useSetSelectedCourses } from "@/hooks/api";
 import { useRemovePlanTermByID } from "@/hooks/api/plans/useRemovePlanTermById";
 import { ISelectedCourse } from "@/lib/api";
 import { ILabel, IPlanTerm } from "@/lib/api/plans";
-import { Status, Terms } from "@/lib/generated/graphql";
+import {
+  GetCourseRequirementsDocument,
+  Status,
+  Terms,
+} from "@/lib/generated/graphql";
 
 import { SelectedCourse } from "../index";
 import { GradTrakSettings } from "../settings";
@@ -75,6 +81,8 @@ function SemesterBlock({
 }: SemesterBlockProps) {
   const semesterId = planTerm._id ? planTerm._id.trim() : "";
 
+  const apolloClient = useApolloClient();
+
   const [isClassDetailsOpen, setIsClassDetailsOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ISelectedCourse | null>(null);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
@@ -85,6 +93,7 @@ function SemesterBlock({
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const draggingIndexRef = useRef<number | null>(null);
   const [open, setOpen] = useState(true);
 
   const [setCourses] = useSetSelectedCourses();
@@ -143,6 +152,17 @@ function SemesterBlock({
     }
   }, [filteredSemesters, semesterId]);
 
+  // if a class was dragged out of this block and unmounted before dragend fired,
+  // draggingIndexRef won't be reset — clear it when selectedClasses shrinks
+  useEffect(() => {
+    if (
+      draggingIndexRef.current !== null &&
+      draggingIndexRef.current >= selectedClasses.length
+    ) {
+      draggingIndexRef.current = null;
+    }
+  }, [selectedClasses.length]);
+
   const handleDeleteClass = async (indexToDelete: number) => {
     const updatedClasses = selectedClasses.filter(
       (_, index) => index !== indexToDelete
@@ -161,9 +181,12 @@ function SemesterBlock({
     const newTotalUnits = totalUnits - deletedClassUnits;
 
     const oldClasses = [...selectedClasses];
-    const newClasses = selectedClasses.filter(
-      (_, index) => index !== indexToDelete
-    );
+    const newClasses = selectedClasses
+      .filter((_, index) => index !== indexToDelete)
+      .map((cls) => ({
+        ...cls,
+        course: undefined,
+      }));
     setSelectedCourses(newClasses);
     try {
       await setCourses(semesterId, newClasses);
@@ -204,25 +227,41 @@ function SemesterBlock({
       );
       cls.courseUnits = data;
     }
+
+    const courseReqs =
+      "courseSubject" in cls && "courseNumber" in cls
+        ? await apolloClient.query({
+            query: GetCourseRequirementsDocument,
+            variables: {
+              number: cls.courseNumber,
+              subject: cls.courseSubject,
+            },
+          })
+        : undefined;
     // Ensure all required fields are present
     const courseToAdd: ISelectedCourse = {
       courseID: cls.courseID || "custom-" + cls.courseName,
       courseName: cls.courseName || cls.courseID,
       courseTitle: cls.courseTitle || cls.courseName || cls.courseID,
       courseUnits: cls.courseUnits || 0,
-      uniReqs: cls.uniReqs || [],
-      collegeReqs: cls.collegeReqs || [],
       pnp: cls.pnp || false,
       transfer: cls.transfer || false,
       labels: cls.labels || [],
+      course: courseReqs?.data?.course || undefined,
     };
+
+    console.log(courseToAdd);
 
     const oldClasses = [...selectedClasses];
     const updatedClasses = [...selectedClasses, courseToAdd];
     setSelectedCourses(updatedClasses);
 
     try {
-      await setCourses(semesterId, updatedClasses);
+      await setCourses(
+        semesterId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        updatedClasses.map(({ course: _course, ...cls }) => cls)
+      );
     } catch (error) {
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
@@ -271,7 +310,11 @@ function SemesterBlock({
     );
     setSelectedCourses(newClasses);
     try {
-      await setCourses(semesterId, newClasses);
+      await setCourses(
+        semesterId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        newClasses.map(({ course: _course, ...cls }) => cls)
+      );
     } catch (error) {
       setSelectedCourses(oldClasses);
       console.error("Failed to save class:", error);
@@ -310,14 +353,18 @@ function SemesterBlock({
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
-    // only reset if leaving the entire container (not just moving between children)
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
     if (
-      containerRef.current &&
-      !containerRef.current.contains(e.relatedTarget as Node)
+      e.clientX > rect.left &&
+      e.clientX < rect.right &&
+      e.clientY > rect.top &&
+      e.clientY < rect.bottom
     ) {
-      setIsDropTarget(false);
-      setPlaceholderIndex(null);
+      return; // cursor still inside, ignore bubbled leave from a child
     }
+    setIsDropTarget(false);
+    setPlaceholderIndex(null);
   };
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault(); // allow drop
@@ -333,6 +380,7 @@ function SemesterBlock({
   };
 
   const handleDragStart = (e: React.DragEvent, classIndex: number) => {
+    draggingIndexRef.current = classIndex;
     // add visual indication for the dragged item
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.add("dragging");
@@ -351,6 +399,7 @@ function SemesterBlock({
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    draggingIndexRef.current = null;
     // remove visual styling
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.classList.remove("dragging");
@@ -359,18 +408,73 @@ function SemesterBlock({
     setPlaceholderIndex(null);
   };
 
+  const BOOKMARK_DRAG_TYPE = "application/x-gradtrak-bookmark-class";
+
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDropTarget(false);
     setPlaceholderIndex(null);
 
     try {
-      // get the dragged class data
+      const insertPos = findInsertPosition(e);
+
+      // Drop from bookmarks sidebar: add class at position
+      if (e.dataTransfer.types.includes(BOOKMARK_DRAG_TYPE)) {
+        const raw = e.dataTransfer.getData(BOOKMARK_DRAG_TYPE);
+        const { class: bookmarkClass } = JSON.parse(raw) as {
+          source: string;
+          class: {
+            subject: string;
+            courseNumber: string;
+            number: string;
+            title: string;
+            unitsMin?: number;
+            unitsMax?: number;
+          };
+        };
+        const { subject, courseNumber, number, title, unitsMin, unitsMax } =
+          bookmarkClass;
+        let courseUnits = unitsMin ?? unitsMax ?? 0;
+        if (courseUnits <= 0) {
+          courseUnits = await getCourseUnits(
+            subject,
+            courseNumber,
+            planTerm.term,
+            planTerm.year
+          );
+        }
+        const courseToAdd: ISelectedCourse = {
+          courseID: `${subject}_${number}`,
+          courseName: `${subject} ${courseNumber}`,
+          courseTitle: title || `${subject} ${courseNumber}`,
+          courseUnits,
+          uniReqs: [],
+          collegeReqs: [],
+          pnp: false,
+          transfer: false,
+          labels: [],
+        };
+        const updatedClasses = [...selectedClasses];
+        updatedClasses.splice(insertPos, 0, courseToAdd);
+        const oldClasses = [...selectedClasses];
+        setSelectedCourses(updatedClasses);
+        try {
+          await setCourses(semesterId, updatedClasses);
+          const updatedSemesters = {
+            ...filteredSemesters,
+            [semesterId]: updatedClasses,
+          };
+          updateAllSemesters(updatedSemesters);
+        } catch (error) {
+          setSelectedCourses(oldClasses);
+          console.error("Failed to add class from bookmarks:", error);
+        }
+        return;
+      }
+
+      // get the dragged class data (from another semester block)
       const data = JSON.parse(e.dataTransfer.getData("application/json"));
       const { sourceSemesterId, classIndex, class: draggedClass } = data;
-
-      // find the insertion position
-      const insertPos = findInsertPosition(e);
 
       // create updated semesters object
       const updatedSemesters = { ...allSemesters };
@@ -411,9 +515,16 @@ function SemesterBlock({
       updateAllSemesters(updatedSemesters);
       try {
         for (const semesterId of semestersToUpdate) {
-          await setCourses(semesterId, updatedSemesters[semesterId], {
-            fetchPolicy: "no-cache",
-          });
+          await setCourses(
+            semesterId,
+            updatedSemesters[semesterId].map(
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              ({ course: _course, ...cls }) => cls
+            ),
+            {
+              fetchPolicy: "no-cache",
+            }
+          );
         }
       } catch (error) {
         updateAllSemesters(oldSemesters);
@@ -425,255 +536,313 @@ function SemesterBlock({
   };
 
   const [removePlanTermByID] = useRemovePlanTermByID();
+  const [confirmDeleteSemesterOpen, setConfirmDeleteSemesterOpen] =
+    useState(false);
+  const [confirmDeleteClassIndex, setConfirmDeleteClassIndex] = useState<
+    number | null
+  >(null);
 
   return (
-    <div
-      ref={containerRef}
-      className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
-      onDragOver={filtersActive ? undefined : handleDragOver}
-      onDragLeave={filtersActive ? undefined : handleDragLeave}
-      onDrop={filtersActive ? undefined : handleDrop}
-    >
-      <div className={styles.body} data-layout={settings.layout}>
-        <Flex direction="row" justify="between" width="100%">
-          <div className={styles.semesterCounter}>
-            {planTerm.pinned && (
-              <PinSolid className={styles.pin} onClick={handleTogglePin} />
-            )}
-            <h2>
-              {renameEditActive ? (
-                <Input
-                  ref={inputRef}
-                  value={rename}
-                  onChange={(e) => setRename(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSaveRename();
-                    } else if (e.key === "Escape") {
-                      handleCancelRename();
-                    }
+    <>
+      <div
+        ref={containerRef}
+        className={`${styles.root} ${isDropTarget ? "drop-target" : ""}`}
+        onDragOver={filtersActive ? undefined : handleDragOver}
+        onDragLeave={filtersActive ? undefined : handleDragLeave}
+        onDrop={filtersActive ? undefined : handleDrop}
+      >
+        <div
+          className={styles.body}
+          data-layout={settings.layout}
+          data-open={open}
+        >
+          <Flex direction="row" justify="between" width="100%">
+            <div className={styles.semesterCounter}>
+              {planTerm.pinned && (
+                <PinSolid className={styles.pin} onClick={handleTogglePin} />
+              )}
+              <h2>
+                {renameEditActive ? (
+                  <Input
+                    ref={inputRef}
+                    value={rename}
+                    onChange={(e) => setRename(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSaveRename();
+                      } else if (e.key === "Escape") {
+                        handleCancelRename();
+                      }
+                    }}
+                    onBlur={handleSaveRename}
+                    style={{ width: "100%", minWidth: "120px" }}
+                  />
+                ) : (
+                  <span
+                    onClick={() => {
+                      setRenameEditActive(true);
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {planTerm.name}
+                  </span>
+                )}
+              </h2>
+              <p className={styles.counter}>{totalUnits}</p>
+              <span
+                className={styles.status}
+                style={{
+                  backgroundColor:
+                    planTerm.status === Status.Complete
+                      ? "var(--emerald-500)"
+                      : planTerm.status == Status.InProgress
+                        ? "var(--yellow-500)"
+                        : "var(--gray-500)",
+                }}
+              />
+            </div>
+            <Flex direction="row" gap="6px">
+              <div>
+                <DropdownMenu.Root modal={false}>
+                  <DropdownMenu.Trigger asChild>
+                    <MoreHoriz className={styles.actionButton} />
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content
+                    sideOffset={5}
+                    align="end"
+                    style={{ width: "160px" }}
+                  >
+                    {planTerm.term === Terms.Misc && (
+                      <DropdownMenu.Item
+                        onClick={() => setRenameEditActive(true)}
+                      >
+                        <Edit className={styles.menuIcon} /> Rename
+                      </DropdownMenu.Item>
+                    )}
+                    <DropdownMenu.Sub>
+                      <DropdownMenu.SubTrigger>
+                        <List className={styles.menuIcon} /> Status
+                        <NavArrowRight className={styles.rightAlignedIcon} />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.Complete);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{
+                                  backgroundColor: "var(--emerald-500)",
+                                }}
+                              />
+                              Complete
+                            </span>
+                            {planTerm.status === Status.Complete && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.InProgress);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{ backgroundColor: "var(--yellow-500)" }}
+                              />
+                              In Progress
+                            </span>
+                            {planTerm.status === Status.InProgress && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          onClick={() => {
+                            handleSetStatus(Status.Incomplete);
+                          }}
+                        >
+                          <Flex direction="row" justify="between" width="100%">
+                            <span>
+                              <span
+                                className={styles.menuStatusColor}
+                                style={{ backgroundColor: "var(--gray-500)" }}
+                              />
+                              Incomplete
+                            </span>
+                            {planTerm.status === Status.Incomplete && (
+                              <Check className={styles.statusSelected} />
+                            )}
+                          </Flex>
+                        </DropdownMenu.Item>
+                      </DropdownMenu.SubContent>
+                    </DropdownMenu.Sub>
+                    <DropdownMenu.Item onClick={handleTogglePin}>
+                      {planTerm.pinned ? (
+                        <PinSolid className={styles.menuIcon} />
+                      ) : (
+                        <Pin className={styles.menuIcon} />
+                      )}{" "}
+                      Pin
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      onClick={() => setConfirmDeleteSemesterOpen(true)}
+                      isDelete
+                    >
+                      <Trash className={styles.menuIcon} /> Delete Column
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </div>
+              {open ? (
+                <NavArrowDown
+                  className={styles.actionButton}
+                  onClick={() => {
+                    setOpen(false);
                   }}
-                  onBlur={handleSaveRename}
-                  style={{ width: "100%", minWidth: "120px" }}
                 />
               ) : (
-                <span
+                <NavArrowRight
+                  className={styles.actionButton}
                   onClick={() => {
-                    setRenameEditActive(true);
+                    setOpen(true);
                   }}
-                  style={{ cursor: "pointer" }}
-                >
-                  {planTerm.name}
-                </span>
+                />
               )}
-            </h2>
-            <p className={styles.counter}>{totalUnits}</p>
-            <span
-              className={styles.status}
-              style={{
-                backgroundColor:
-                  planTerm.status === Status.Complete
-                    ? "var(--emerald-500)"
-                    : planTerm.status == Status.InProgress
-                      ? "var(--yellow-500)"
-                      : "var(--gray-500)",
-              }}
-            />
-          </div>
-          <Flex direction="row" gap="6px">
-            <div>
-              <DropdownMenu.Root modal={false}>
-                <DropdownMenu.Trigger asChild>
-                  <MoreHoriz className={styles.actionButton} />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content
-                  sideOffset={5}
-                  align="end"
-                  style={{ width: "160px" }}
-                >
-                  {planTerm.term === Terms.Misc && (
-                    <DropdownMenu.Item
-                      onClick={() => setRenameEditActive(true)}
-                    >
-                      <Edit className={styles.menuIcon} /> Rename
-                    </DropdownMenu.Item>
-                  )}
-                  <DropdownMenu.Sub>
-                    <DropdownMenu.SubTrigger>
-                      <List className={styles.menuIcon} /> Status
-                      <NavArrowRight className={styles.rightAlignedIcon} />
-                    </DropdownMenu.SubTrigger>
-                    <DropdownMenu.SubContent sideOffset={2} alignOffset={-5}>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.Complete);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--emerald-500)" }}
-                            />
-                            Complete
-                          </span>
-                          {planTerm.status === Status.Complete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.InProgress);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--yellow-500)" }}
-                            />
-                            In Progress
-                          </span>
-                          {planTerm.status === Status.InProgress && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                      <DropdownMenu.Item
-                        onClick={() => {
-                          handleSetStatus(Status.Incomplete);
-                        }}
-                      >
-                        <Flex direction="row" justify="between" width="100%">
-                          <span>
-                            <span
-                              className={styles.menuStatusColor}
-                              style={{ backgroundColor: "var(--gray-500)" }}
-                            />
-                            Incomplete
-                          </span>
-                          {planTerm.status === Status.Incomplete && (
-                            <Check className={styles.statusSelected} />
-                          )}
-                        </Flex>
-                      </DropdownMenu.Item>
-                    </DropdownMenu.SubContent>
-                  </DropdownMenu.Sub>
-                  <DropdownMenu.Item onClick={handleTogglePin}>
-                    {planTerm.pinned ? (
-                      <PinSolid className={styles.menuIcon} />
-                    ) : (
-                      <Pin className={styles.menuIcon} />
-                    )}{" "}
-                    Pin
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onClick={async () => {
-                      try {
-                        await removePlanTermByID(planTerm._id);
-                        handleRemoveTerm();
-                      } catch {
-                        return;
-                      }
-                      onTotalUnitsChange(0, 0, 0);
-                    }}
-                    isDelete
-                  >
-                    <Trash className={styles.menuIcon} /> Delete Column
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </div>
-            {open ? (
-              <NavArrowDown
-                className={styles.actionButton}
-                onClick={() => {
-                  setOpen(false);
-                }}
-              />
-            ) : (
-              <NavArrowRight
-                className={styles.actionButton}
-                onClick={() => {
-                  setOpen(true);
-                }}
-              />
-            )}
+            </Flex>
           </Flex>
-        </Flex>
 
-        {open && (
-          <>
-            {[...selectedClasses]
-              .sort((a, b) => {
-                if (sortCourseOption === "Unsorted") return 0;
-                if (sortCourseOption === "A-Z")
-                  return a.courseName.localeCompare(b.courseName);
-                if (sortCourseOption === "Z-A")
-                  return b.courseName.localeCompare(a.courseName);
-                return 0;
-              })
-              .map((cls, index) => (
-                <React.Fragment key={`class-group-${index}`}>
-                  {placeholderIndex === index && (
-                    <div className={styles.placeholder} />
-                  )}
-                  <Class
-                    cls={cls}
-                    index={index}
-                    handleDragEnd={handleDragEnd}
-                    handleDragStart={handleDragStart}
-                    handleDetails={handleClassDetails}
-                    handleDelete={handleDeleteClass}
-                    settings={settings}
-                    labels={labels}
-                    draggable={!filtersActive}
-                  />
-                </React.Fragment>
-              ))}
+          {open && (
+            <>
+              {[...selectedClasses]
+                .sort((a, b) => {
+                  if (sortCourseOption === "Unsorted") return 0;
+                  if (sortCourseOption === "A-Z")
+                    return a.courseName.localeCompare(b.courseName);
+                  if (sortCourseOption === "Z-A")
+                    return b.courseName.localeCompare(a.courseName);
+                  return 0;
+                })
+                .map((cls, index) => (
+                  <React.Fragment key={`class-group-${index}`}>
+                    {placeholderIndex === index &&
+                      !(
+                        draggingIndexRef.current !== null &&
+                        (placeholderIndex === draggingIndexRef.current ||
+                          placeholderIndex === draggingIndexRef.current + 1)
+                      ) && <div className={styles.placeholder} />}
+                    <Class
+                      cls={cls}
+                      index={index}
+                      handleDragEnd={handleDragEnd}
+                      handleDragStart={handleDragStart}
+                      handleDetails={handleClassDetails}
+                      handleDelete={(i) => setConfirmDeleteClassIndex(i)}
+                      settings={settings}
+                      labels={labels}
+                      draggable={!filtersActive}
+                    />
+                  </React.Fragment>
+                ))}
 
-            {/* Dragging placeholder */}
-            {placeholderIndex === selectedClasses.length && (
-              <div className={styles.placeholder} />
-            )}
+              {/* Dragging placeholder */}
+              {placeholderIndex === selectedClasses.length &&
+                !(
+                  draggingIndexRef.current !== null &&
+                  (placeholderIndex === draggingIndexRef.current ||
+                    placeholderIndex === draggingIndexRef.current + 1)
+                ) && <div className={styles.placeholder} />}
 
-            {/* Dialog Component */}
-            <AddClass
-              isOpen={isAddClassOpen}
-              setIsOpen={setIsAddClassOpen}
-              addClass={addClass}
-              handleOnConfirm={(cls) => {
-                addClass(cls);
-              }}
-              labels={labels}
-              setShowLabelMenu={setShowLabelMenu}
-              catalogCourses={catalogCourses}
-              index={index}
-            />
-
-            {/* Edit Class Details Dialog */}
-            {classToEdit && (
-              <ClassDetails
-                isOpen={isClassDetailsOpen}
-                setIsOpen={setIsClassDetailsOpen}
-                classData={classToEdit}
-                onUpdate={handleUpdateClass}
-                allLabels={labels}
+              {/* Dialog Component */}
+              <AddClass
+                isOpen={isAddClassOpen}
+                setIsOpen={setIsAddClassOpen}
+                addClass={addClass}
+                handleOnConfirm={(cls) => {
+                  addClass(cls);
+                }}
+                labels={labels}
                 setShowLabelMenu={setShowLabelMenu}
+                catalogCourses={catalogCourses}
+                index={index}
               />
-            )}
 
-            <Button
-              onClick={() => setIsAddClassOpen(true)}
-              className={styles.addButton}
-            >
-              + Add Class
-            </Button>
-          </>
-        )}
+              {/* Edit Class Details Dialog */}
+              {classToEdit && (
+                <ClassDetails
+                  isOpen={isClassDetailsOpen}
+                  setIsOpen={setIsClassDetailsOpen}
+                  classData={classToEdit}
+                  onUpdate={handleUpdateClass}
+                  allLabels={labels}
+                  setShowLabelMenu={setShowLabelMenu}
+                />
+              )}
+
+              <Button
+                onClick={() => setIsAddClassOpen(true)}
+                className={styles.addButton}
+              >
+                + Add Class
+              </Button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+      <DeleteScheduleDialog
+        isOpen={confirmDeleteSemesterOpen}
+        onClose={() => setConfirmDeleteSemesterOpen(false)}
+        title="Delete Semester"
+        message={
+          <>
+            Are you sure you want to delete <strong>{planTerm.name}</strong>?
+            All courses in this semester will be removed.
+          </>
+        }
+        onConfirm={async () => {
+          try {
+            await removePlanTermByID(planTerm._id);
+            handleRemoveTerm();
+          } catch {
+            return;
+          }
+          onTotalUnitsChange(0, 0, 0);
+          setConfirmDeleteSemesterOpen(false);
+        }}
+        confirmText="Yes, delete"
+        cancelText="Cancel"
+      />
+      <DeleteScheduleDialog
+        isOpen={confirmDeleteClassIndex !== null}
+        onClose={() => setConfirmDeleteClassIndex(null)}
+        title="Delete Class"
+        message={
+          <>
+            Are you sure you want to delete{" "}
+            <strong>
+              {confirmDeleteClassIndex !== null
+                ? selectedClasses[confirmDeleteClassIndex]?.courseName
+                : ""}
+            </strong>
+            ?
+          </>
+        }
+        onConfirm={async () => {
+          if (confirmDeleteClassIndex !== null) {
+            handleDeleteClass(confirmDeleteClassIndex);
+            setConfirmDeleteClassIndex(null);
+          }
+        }}
+        confirmText="Yes, delete"
+        cancelText="Cancel"
+      />
+    </>
   );
 }
 

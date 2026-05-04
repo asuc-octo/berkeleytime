@@ -21,6 +21,9 @@ export function useRatingFormState({
     initialCourse
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviewTitle, setReviewTitle] = useState<string>("");
+  const [reviewContent, setReviewContent] = useState<string>("");
+  const [reviewerGrade, setReviewerGrade] = useState<string | null>(null);
 
   const isFormValid = useMemo(() => {
     const isClassValid = selectedCourse !== null;
@@ -32,34 +35,37 @@ export function useRatingFormState({
     return isClassValid && isTermValid && areRatingsValid;
   }, [selectedCourse, selectedTerm, metricData]);
 
-  // Calculate progress: 7 fields total (class selection + 6 questions)
+  // Calculate progress: 8 fields (semester + 3 ratings + 2 attendance + title + review)
   const progress = useMemo(() => {
     let filledFields = 0;
-    const totalFields = 7;
+    const totalFields = 8;
 
-    // Field 1: Class selection
-    if (selectedCourse) filledFields++;
-
-    // Field 2: Semester selection
+    // Field 1: Semester selection
     if (selectedTerm && selectedTerm.length > 0) filledFields++;
 
-    // Field 3: Usefulness
+    // Field 2: Usefulness
     if (typeof metricData[MetricName.Usefulness] === "number") filledFields++;
 
-    // Field 4: Difficulty
+    // Field 3: Difficulty
     if (typeof metricData[MetricName.Difficulty] === "number") filledFields++;
 
-    // Field 5: Workload
+    // Field 4: Workload
     if (typeof metricData[MetricName.Workload] === "number") filledFields++;
 
-    // Field 6: Attendance
+    // Field 5: Attendance
     if (typeof metricData[MetricName.Attendance] === "number") filledFields++;
 
-    // Field 7: Recording
+    // Field 6: Recording
     if (typeof metricData[MetricName.Recording] === "number") filledFields++;
 
+    // Field 7: Review title
+    if (reviewTitle.trim().length > 0) filledFields++;
+
+    // Field 8: Review content
+    if (reviewContent.trim().length > 0) filledFields++;
+
     return (filledFields / totalFields) * 100;
-  }, [selectedTerm, metricData, selectedCourse]);
+  }, [selectedTerm, metricData, reviewTitle, reviewContent]);
 
   const reset = (
     newInitialMetricData?: MetricData,
@@ -69,6 +75,9 @@ export function useRatingFormState({
     setSelectedTerm(null);
     setSelectedCourse(newInitialCourse ?? initialCourse ?? null);
     setIsSubmitting(false);
+    setReviewTitle("");
+    setReviewContent("");
+    setReviewerGrade(null);
   };
 
   return {
@@ -83,5 +92,11 @@ export function useRatingFormState({
     isFormValid,
     progress,
     reset,
+    reviewTitle,
+    setReviewTitle,
+    reviewContent,
+    setReviewContent,
+    reviewerGrade,
+    setReviewerGrade,
   };
 }

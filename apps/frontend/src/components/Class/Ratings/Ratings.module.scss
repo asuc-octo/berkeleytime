@@ -1,16 +1,46 @@
 .root {
-  background-color: var(--background-color);
-  padding: 20px;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
 }
 
-.header {
-  margin-bottom: 16px;
+.ratingsBox {
+  padding: 20px 24px;
+}
+
+.containerContents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5, 24px);
+  align-self: stretch;
+  min-width: 0;
+}
+
+.ratingsHeaderToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
 }
 
 .termSelectWrapper {
-  margin-left: auto;
-  width: 250px;
+  width: 300px;
+  flex-shrink: 0;
+  > div[tabindex="0"] {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 0;
+    height: 32px;
+    padding: 0 8px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+
+    > div:last-of-type > div:last-child {
+      border-left: none !important;
+      padding-left: 0 !important;
+    }
+  }
 }
 
 .ratingsSelectContent {
@@ -67,20 +97,113 @@
   border-radius: 8px;
   padding: 0 24px;
   border: 1px solid var(--border-color);
-  min-width: 450px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ratingsSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3, 12px);
+  align-self: stretch;
+}
+
+.ratingsSummaryTop {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+}
+
+.ratingsSummaryBottom {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5, 24px);
+  align-self: stretch;
+}
+
+.ratingsSummaryBottomLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 0 var(--space-2);
+}
+
+.ratingsSummaryBottomRight {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+.ratingsSummaryHeader {
+  color: var(--secondary-color);
+  font-feature-settings: "liga" off;
+
+  /* Web UI (Desktop)/Heading/Heading Medium */
+  font-family: Inter;
+  font-size: var(--font-sizes-5, 20px);
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 120% */
+  letter-spacing: -0.2px;
+}
+
+.ratingsSummaryHeaderRight {
+  margin-left: auto;
+  text-align: right;
+}
+
+.ratingsSummaryAverage {
+  color: var(--secondary-color);
+  text-align: center;
+  font-feature-settings: "liga" off;
+  font-family: Inter;
+  font-size: var(--font-sizes-8, 35px);
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px; /* 102.857% */
+  letter-spacing: -0.35px;
+}
+
+.ratingsSummaryCount {
+  color: var(--paragraph-color);
+  font-feature-settings: "liga" off;
+
+  /* Web UI (Desktop)/Title/Title Small */
+  font-family: Inter;
+  font-size: var(--font-sizes-1, 12px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+}
+
+.noWrittenReviews {
+  display: flex;
+  padding: 80px var(--space-4, 16px);
+  justify-content: center;
+  align-items: center;
+}
+
+.noWrittenReviewsText {
+  color: var(--paragraph-color);
+  font-family: Inter;
+  font-size: var(--font-sizes-2, 14px);
+  font-weight: 400;
+  line-height: 20px;
+  text-align: center;
+  margin: 0;
 }
 
 .ratingSection {
-  padding: 24px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
 
   &:last-child {
     border-bottom: none;
   }
-}
-
-.userOnlyMessage {
-  margin-top: 12px;
-  margin-bottom: 0;
-  color: var(--label-color);
 }

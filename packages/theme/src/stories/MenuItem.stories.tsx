@@ -22,7 +22,14 @@ export const Basic: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "200px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            minWidth: "200px",
+          }}
+        >
           <MenuItem onClick={fn()}>Menu Item 1</MenuItem>
           <MenuItem onClick={fn()}>Menu Item 2</MenuItem>
           <MenuItem onClick={fn()}>Menu Item 3</MenuItem>
@@ -36,7 +43,14 @@ export const Active: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "200px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            minWidth: "200px",
+          }}
+        >
           <MenuItem onClick={fn()}>Inactive Item</MenuItem>
           <MenuItem active onClick={fn()}>
             Active Item
@@ -52,7 +66,14 @@ export const Disabled: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "200px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            minWidth: "200px",
+          }}
+        >
           <MenuItem onClick={fn()}>Enabled Item</MenuItem>
           <MenuItem disabled onClick={fn()}>
             Disabled Item
@@ -68,7 +89,14 @@ export const AsLink: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "200px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            minWidth: "200px",
+          }}
+        >
           <MenuItem as="a" href="#">
             Link Item 1
           </MenuItem>
@@ -88,7 +116,14 @@ export const AsDiv: StoryObj = {
   render: () => {
     return (
       <ThemeProvider>
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "200px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
+            minWidth: "200px",
+          }}
+        >
           <MenuItem as="div">Div Item 1</MenuItem>
           <MenuItem as="div" active>
             Active Div Item

@@ -3,7 +3,7 @@
 
   &:global(.draggable-mirror) {
     border-color: var(--blue-500);
-    z-index: 999;
+    z-index: var(--z-modal);
     box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
   }
 

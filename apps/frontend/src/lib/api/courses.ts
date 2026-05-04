@@ -159,6 +159,9 @@ export const GET_COURSE_WITH_INSTRUCTOR = gql`
         number
         sessionId
         anyPrintInScheduleOfClasses
+        term {
+          temporalPosition
+        }
         primarySection {
           enrollment {
             latest {

@@ -65,6 +65,9 @@ export const CREATE_RATINGS = gql`
     $year: Int!
     $classNumber: String!
     $metrics: [RatingMetricInput!]!
+    $reviewTitle: String
+    $reviewContent: String
+    $reviewerGrade: String
   ) {
     createRatings(
       subject: $subject
@@ -73,6 +76,9 @@ export const CREATE_RATINGS = gql`
       year: $year
       classNumber: $classNumber
       metrics: $metrics
+      reviewTitle: $reviewTitle
+      reviewContent: $reviewContent
+      reviewerGrade: $reviewerGrade
     )
   }
 `;
@@ -96,6 +102,9 @@ export const GET_USER_RATINGS = gql`
           metricName
           value
         }
+        reviewTitle
+        reviewContent
+        reviewerGrade
         lastUpdated
       }
     }
@@ -180,6 +189,59 @@ export const GET_CLASS_RATINGS_DATA = gql`
       year
       maxMetricCount
     }
+  }
+`;
+
+export const GET_ALL_RATINGS = gql`
+  query GetAllRatings {
+    allRatings {
+      anonymousUserId
+      subject
+      courseNumber
+      semester
+      year
+      classNumber
+      metricName
+      value
+      createdAt
+    }
+  }
+`;
+
+export const GET_CLASS_REVIEWS = gql`
+  query GetClassReviews($subject: String!, $courseNumber: String!) {
+    classReviews(subject: $subject, courseNumber: $courseNumber) {
+      subject
+      courseNumber
+      count
+      users {
+        anonymousUserId
+        classes {
+          subject
+          courseNumber
+          semester
+          year
+          classNumber
+          professorName
+          metrics {
+            metricName
+            value
+          }
+          reviewTitle
+          reviewContent
+          reviewerGrade
+          lastUpdated
+          reviewId
+          helpfulCount
+        }
+      }
+    }
+  }
+`;
+
+export const VOTE_REVIEW_HELPFUL = gql`
+  mutation VoteReviewHelpful($reviewId: String!) {
+    voteReviewHelpful(reviewId: $reviewId)
   }
 `;
 

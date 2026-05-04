@@ -33,6 +33,7 @@
  - [API Sandbox](./core/api-sandbox/README.md)
 
 - [Packages](./core/packages/README.md)
+  - [@repo/BtLL](./core/BtLL/README.md)
   - [@repo/common](./core/packages/common.md)
   - [@repo/theme](./core/packages/theme.md)
   - [@repo/shared](./core/packages/shared.md)
@@ -47,6 +48,12 @@
 
 - [LLM Use & Vibecoding](./tips-and-tricks/llm-and-vibecoding.md)
 
+---
+
+# Features
+
+- [DeCal Classes](./features/decal-classes.md)
+
 <!--
 ---
 
@@ -54,7 +61,7 @@
 
 - [Crowd Sourced Data](./fa24/crowd-sourced-data/README.md)
 
-- [Decals](./fa24/decals/README.md)
+- [DeCals](./fa24/decals/README.md)
 
 - [GradTrak](./fa24/gradtrak/README.md)
 

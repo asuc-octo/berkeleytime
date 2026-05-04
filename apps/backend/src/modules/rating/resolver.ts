@@ -5,9 +5,11 @@ import {
   deleteRatings,
   getAllRatings,
   getClassAggregatedRatings,
+  getClassRatings,
   getSemestersWithRatings,
   getUserClassRatings,
   getUserRatings,
+  voteReviewHelpful,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
@@ -137,14 +139,47 @@ const resolvers: RatingModule.Resolvers = {
         );
       }
     },
-  },
-  Mutation: {
-    createRatings: async (
-      _,
-      { year, semester, subject, courseNumber, classNumber, metrics },
-      context
+
+    classReviews: async (
+      _: unknown,
+      { subject, courseNumber }: { subject: string; courseNumber: string }
     ) => {
       try {
+        return await getClassRatings(subject, courseNumber);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+  },
+  Mutation: {
+    createRatings: async (_, args, context) => {
+      try {
+        const {
+          year,
+          semester,
+          subject,
+          courseNumber,
+          classNumber,
+          metrics,
+          reviewTitle,
+          reviewContent,
+          reviewerGrade,
+        } = args as typeof args & {
+          reviewTitle?: string | null;
+          reviewContent?: string | null;
+          reviewerGrade?: string | null;
+        };
+
         return await createRatings(
           context,
           Number(year),
@@ -152,7 +187,10 @@ const resolvers: RatingModule.Resolvers = {
           subject,
           courseNumber,
           classNumber,
-          metrics
+          metrics,
+          reviewTitle,
+          reviewContent,
+          reviewerGrade
         );
       } catch (error: unknown) {
         // Re-throw GraphQLErrors as is
@@ -160,6 +198,24 @@ const resolvers: RatingModule.Resolvers = {
           throw error;
         }
         // Convert any other errors to GraphQLError
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          {
+            extensions: { code: "INTERNAL_SERVER_ERROR" },
+          }
+        );
+      }
+    },
+
+    voteReviewHelpful: async (_, { reviewId }, context) => {
+      try {
+        return await voteReviewHelpful(context, reviewId);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
         throw new GraphQLError(
           typeof error === "object" && error !== null && "message" in error
             ? String(error.message)

@@ -1,0 +1,16 @@
+# Staging overrides. Install with:
+#   helm upgrade bt-stage-mongo ./infra/mongo -n <ns> -f values-staging.yaml
+#
+# Default values.yaml is aimed at prod (hostPath, memory). This file keeps smaller limits for stage.
+
+hostPath: /data/stage/db
+
+mongodb:
+  commonLabels:
+    env: stage
+
+  resources:
+    limits:
+      memory: 2Gi
+    requests:
+      memory: 1Gi

@@ -401,6 +401,9 @@ export const GET_CATALOG = gql`
         }
         academicCareer
       }
+      decal {
+        title
+      }
     }
   }
 `;

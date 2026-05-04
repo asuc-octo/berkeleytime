@@ -26,6 +26,20 @@ interface Term {
   classNumber?: string;
 }
 
+function normalizeStoredReviewerGrade(
+  grade: string | null | undefined
+): string | null {
+  if (!grade || grade.toLowerCase() === "n/a") return null;
+  return grade;
+}
+
+function reviewerGradeFromUserClass(
+  userClass: IUserRatingClass | null | undefined
+): string | null | undefined {
+  return (userClass as { reviewerGrade?: string | null } | undefined)
+    ?.reviewerGrade;
+}
+
 interface UserFeedbackModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,7 +52,10 @@ interface UserFeedbackModalProps {
   onSubmit: (
     metricData: MetricData,
     termInfo: { semester: Semester; year: number },
-    courseInfo: { subject: string; courseNumber: string; classNumber: string }
+    courseInfo: { subject: string; courseNumber: string; classNumber: string },
+    reviewTitle?: string,
+    reviewContent?: string,
+    reviewerGrade?: string
   ) => Promise<void>;
   initialUserClass?: IUserRatingClass | null;
   userRatedClasses?: Array<{ subject: string; courseNumber: string }>;
@@ -59,10 +76,9 @@ export function UserFeedbackModal({
   initialCourse = null,
   onSubmit,
   initialUserClass = null,
-  userRatedClasses,
+
   onSubmitPopupChange,
-  disableRatedCourses = true,
-  lockedCourse = null,
+
   onError,
 }: UserFeedbackModalProps) {
   const { data: termsData, loading: termsLoading } = useReadTerms();
@@ -130,6 +146,12 @@ export function UserFeedbackModal({
     setIsSubmitting,
     progress,
     reset,
+    reviewTitle,
+    setReviewTitle,
+    reviewContent,
+    setReviewContent,
+    reviewerGrade,
+    setReviewerGrade,
   } = formState;
 
   const overallProgress = useMemo(
@@ -207,6 +229,16 @@ export function UserFeedbackModal({
       // Reset to initial empty state when initialUserClass is null (after deletion)
       setMetricData(initialMetricData);
     }
+    if (initialUserClass) {
+      setReviewTitle(initialUserClass.reviewTitle ?? "");
+      setReviewContent(initialUserClass.reviewContent ?? "");
+    } else {
+      setReviewTitle("");
+      setReviewContent("");
+    }
+    setReviewerGrade(
+      normalizeStoredReviewerGrade(reviewerGradeFromUserClass(initialUserClass))
+    );
     setSelectedCourse(initialSelectedCourse);
     setCurrentRatingIndex(0);
   }, [
@@ -218,6 +250,9 @@ export function UserFeedbackModal({
     setSelectedTerm,
     setSelectedCourse,
     initialSelectedCourse,
+    setReviewerGrade,
+    setReviewTitle,
+    setReviewContent,
   ]);
 
   const initialCourseKey = initialSelectedCourse
@@ -234,13 +269,23 @@ export function UserFeedbackModal({
     );
     const courseChanged = currentCourseKey !== initialCourseKey;
 
+    const initialTitle = (initialUserClass?.reviewTitle ?? "").trim();
+    const initialContent = (initialUserClass?.reviewContent ?? "").trim();
+    const initialGrade = normalizeStoredReviewerGrade(
+      reviewerGradeFromUserClass(initialUserClass)
+    );
+    const reviewChanged =
+      reviewTitle.trim() !== initialTitle ||
+      reviewContent.trim() !== initialContent ||
+      (reviewerGrade ?? null) !== (initialGrade ?? null);
+
     // Check if all required metrics are filled out
     const allRequiredMetricsFilled = REQUIRED_METRICS.every(
       (metric) => typeof metricData[metric] === "number"
     );
     return (
       allRequiredMetricsFilled &&
-      (termChanged || metricsChanged || courseChanged)
+      (termChanged || metricsChanged || courseChanged || reviewChanged)
     );
   }, [
     selectedTerm,
@@ -249,6 +294,10 @@ export function UserFeedbackModal({
     initialMetricData,
     currentCourseKey,
     initialCourseKey,
+    initialUserClass,
+    reviewTitle,
+    reviewContent,
+    reviewerGrade,
   ]);
 
   const isFormValid = useMemo(() => {
@@ -259,8 +308,27 @@ export function UserFeedbackModal({
       typeof metricData[MetricName.Difficulty] === "number" &&
       typeof metricData[MetricName.Workload] === "number";
 
-    return isCourseValid && isTermValid && areRatingsValid && hasChanges;
-  }, [selectedTerm, metricData, hasChanges, selectedCourse]);
+    const trimmedTitle = reviewTitle.trim();
+    const trimmedContent = reviewContent.trim();
+    const isReviewPairValid =
+      (trimmedTitle.length === 0 && trimmedContent.length === 0) ||
+      (trimmedTitle.length > 0 && trimmedContent.length > 0);
+
+    return (
+      isCourseValid &&
+      isTermValid &&
+      areRatingsValid &&
+      hasChanges &&
+      isReviewPairValid
+    );
+  }, [
+    selectedTerm,
+    metricData,
+    hasChanges,
+    selectedCourse,
+    reviewTitle,
+    reviewContent,
+  ]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -296,7 +364,10 @@ export function UserFeedbackModal({
           subject: selectedCourse.subject,
           courseNumber: selectedCourse.number,
           classNumber,
-        }
+        },
+        reviewTitle || undefined,
+        reviewContent || undefined,
+        reviewerGrade ?? undefined
       );
 
       const isLastRating = currentRatingIndex >= totalRatings - 1;
@@ -331,7 +402,8 @@ export function UserFeedbackModal({
     setSelectedTerm(initialTermValue);
     setCurrentRatingIndex(0);
     prevRatingIndexRef.current = 0;
-    hasAutoSelected.current = false; // Reset the auto-selection flag when closing
+    hasAutoSelected.current = false;
+    hasHydratedRef.current = false; // Allow re-hydration from initialUserClass on next open
     onClose();
   };
 
@@ -347,14 +419,12 @@ export function UserFeedbackModal({
   // Calculate question numbers
   const questionNumbers = useMemo(() => {
     let counter = 1;
-    const classQuestion = counter++;
     const semesterQuestion = counter++;
     const ratingsStart = counter;
     counter += 3; // 3 rating questions
     const attendanceStart = counter;
 
     return {
-      classQuestionNumber: classQuestion,
       semesterQuestionNumber: semesterQuestion,
       ratingsStartNumber: ratingsStart,
       attendanceStartNumber: attendanceStart,
@@ -428,24 +498,19 @@ export function UserFeedbackModal({
           >
             <RatingFormBody
               selectedCourse={selectedCourse}
-              onCourseSelect={(course) => {
-                setSelectedCourse(course);
-                setSelectedTerm(null);
-              }}
-              onCourseClear={() => {
-                setSelectedCourse(null);
-                setSelectedTerm(null);
-              }}
               selectedTerm={selectedTerm}
               onTermSelect={setSelectedTerm}
               termOptions={termOptions}
               termOptionsLoading={isTermOptionsLoading}
               metricData={metricData}
               setMetricData={setMetricData}
-              userRatedClasses={userRatedClasses}
               questionNumbers={questionNumbers}
-              disableRatedCourses={disableRatedCourses}
-              lockedCourse={lockedCourse}
+              reviewTitle={reviewTitle}
+              setReviewTitle={setReviewTitle}
+              reviewContent={reviewContent}
+              setReviewContent={setReviewContent}
+              reviewerGrade={reviewerGrade}
+              onReviewerGradeChange={setReviewerGrade}
             />
           </motion.div>
         </AnimatePresence>

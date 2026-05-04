@@ -16,6 +16,7 @@ export const GET_CATALOG_SEARCH = gql`
     $sortOrder: SortOrder
     $page: Int
     $pageSize: Int
+    $semanticSearch: Boolean
   ) {
     catalogSearch(
       year: $year
@@ -26,6 +27,7 @@ export const GET_CATALOG_SEARCH = gql`
       sortOrder: $sortOrder
       page: $page
       pageSize: $pageSize
+      semanticSearch: $semanticSearch
     ) {
       results {
         year
@@ -50,6 +52,9 @@ export const GET_CATALOG_SEARCH = gql`
             count
             weightedAverage
           }
+        }
+        decal {
+          title
         }
       }
       totalCount

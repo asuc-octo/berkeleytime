@@ -32,6 +32,18 @@ export const GET_CLASS = gql`
       number
       title
       description
+      decal {
+        title
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
+        }
+      }
       unitsMax
       unitsMin
       gradingBasis
@@ -240,6 +252,10 @@ export const GET_CLASS_DETAILS = gql`
       number
       unitsMax
       unitsMin
+      finalExam
+      decal {
+        title
+      }
       course {
         title
         description
@@ -273,6 +289,13 @@ export const GET_CLASS_DETAILS = gql`
             formalDescription
           }
         }
+        exams {
+          date
+          startTime
+          endTime
+          location
+          type
+        }
         enrollment {
           latest {
             endTime
@@ -300,6 +323,17 @@ export const GET_CLASS_DETAILS = gql`
             familyName
             givenName
           }
+        }
+      }
+      decal {
+        syllabus
+        description
+        syllabusUrl
+        applicationUrl
+        applicationDueDate
+        instructors {
+          name
+          email
         }
       }
     }

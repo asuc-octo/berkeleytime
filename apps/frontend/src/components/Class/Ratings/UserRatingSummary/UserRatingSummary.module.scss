@@ -4,69 +4,217 @@
   border-radius: 8px;
   display: flex;
   align-items: top;
-  padding: 0px 24px;
-  margin-bottom: 16px;
+  // padding: 0px 24px;
   min-width: 450px;
 
-  .title {
-    display: inline-block;
-    margin-top: 40px;
-    width: 40%;
-    vertical-align: center;
-    h3 {
-      margin: 0;
-      font-size: var(--text-18);
-      color: var(--heading-color);
-      font-weight: var(--font-semibold);
-    }
-    h5 {
-      color: var(--paragraph-color);
-      font-size: var(--text-14);
-      font-weight: var(--font-normal);
-      margin-top: 10px;
-      margin-bottom: 20px;
-    }
+  .body {
+    display: flex;
+    padding: var(--space-4, 16px) var(--space-5, 24px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6, 32px);
+    align-self: stretch;
   }
 
-  .body {
-    display: inline-block;
-    width: 60%;
+  .body:first-child {
+    flex: 1;
+  }
 
-    .section {
-      box-sizing: border-box;
-      padding: 24px 0;
+  .body + .body {
+    margin-left: auto;
+  }
+  .bodyLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2, 8px);
+    align-self: stretch;
+
+    .titleDate {
       display: flex;
-      align-items: middle;
-      border-bottom: 1px solid var(--border-color);
-      &:last-child {
-        border-bottom: none;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      flex: 1 0 0;
+    }
+    h3, h4, h5 {
+      margin: 0;
+    }
+    h3 {
+      color: var(--secondary-color);
+      font-feature-settings: 'liga' off;
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-style: normal;
+      font-weight: 600;
+      line-height: 20px; /* 142.857% */
+      letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    h4 {
+      color: var(--paragraph-color);
+      font-feature-settings: 'liga' off;
+
+      /* Web UI (Desktop)/Body/Body Small */
+      font-family: Inter;
+      font-size: var(--font-sizes-1, 12px);
+      font-style: normal;
+      font-weight: var(--font-weight-regular, 400);
+      line-height: 16px; /* 133.333% */
+    }
+    h5 {
+      color: var(--secondary-color);
+      font-feature-settings: 'liga' off;
+
+      /* Web UI (Desktop)/Body/Body Medium */
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px; /* 142.857% */
+      letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .contentWrapper {
+      position: relative;
+      color: var(--secondary-color);
+      font-feature-settings: 'liga' off;
+      font-family: Inter;
+      font-size: var(--font-sizes-2, 14px);
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: -0.1px;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      align-self: stretch;
+
+      &.clamped {
+        max-height: 80px; // 4 lines × 20px
+        overflow: hidden;
       }
 
-      .metrics {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        align-self: stretch;
+      .moreButtonInline {
+        display: inline;
+        background: none;
+        border: none;
+        padding: 0 0 0 4px;
+        color: var(--blue-badge);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        line-height: 20px;
+        cursor: pointer;
       }
 
-      .titleSection {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        width: 140px;
+      .moreButton {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--foreground-color);
+        border: none;
+        padding: 0 0 0 6px;
+        color: var(--blue-badge);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        line-height: 20px;
+        cursor: pointer;
+      }
+    }
 
-        .metric {
-          color: var(--paragraph-color);
-          font-size: var(--text-16);
-          font-weight: var(--font-normal);
+    .metricsRow {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4, 16px);
+      align-self: stretch;
+      margin-top: var(--space-2, 8px);
+
+      .metricItem {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        flex: 1 0 0;
+        padding-right: var(--space-4, 16px);
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
         }
       }
 
-      .metricAverage {
-        color: var(--label-color);
-        padding-left: 14px;
-        font-size: var(--text-14);
+      .metricLabel {
+        color: var(--secondary-color);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: -0.1px;
+      }
+
+      .metricValue {
+        color: var(--paragraph-color);
+        font-family: Inter;
+        font-size: var(--font-sizes-2, 14px);
+        font-weight: 400;
+        line-height: 20px;
       }
     }
   }
+  .bodyRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    align-self: flex-start;
+
+    > * {
+      margin: 0;
+    }
+
+    > :nth-child(3) {
+      margin-top: var(--space-5, 24px);
+    }
+
+    .rating {
+      display: flex;
+      padding: 2px var(--space-2, 8px);
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      text-align: center;
+      border-radius: 4px;
+      background: var(--green-500-20);
+      color: var(--green-badge);
+    }
+
+    .grade {
+      display: flex;
+      min-width: 22px;
+      min-height: 22px;
+      padding: 0 5px;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      text-align: center;
+      color: var(--green-badge);
+
+      &.naGrade {
+        color: var(--paragraph-color);
+      }
+    }
+  }
+}
+
+.ratingGrade {
+  color: var(--secondary-color);
+  font-feature-settings: 'liga' off;
+  
+  /* Web UI (Desktop)/Title/Title Medium */
+  font-family: Inter;
+  font-size: var(--font-sizes-2, 14px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: -0.1px;
 }

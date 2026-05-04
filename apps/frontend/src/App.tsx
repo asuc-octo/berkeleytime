@@ -384,6 +384,20 @@ const client = new ApolloClient({
           },
         },
       },
+      Course: {
+        fields: {
+          instructorAggregatedRatings: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+          classes: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
       Schedule: {
         fields: {
           events: {

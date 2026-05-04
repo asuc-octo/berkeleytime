@@ -8,6 +8,7 @@ import {
   CourseModel,
   RatingModel,
   RatingType,
+  ReviewModel,
   SectionModel,
 } from "@repo/common/models";
 import { METRIC_MAPPINGS, REQUIRED_METRICS } from "@repo/shared";
@@ -493,7 +494,50 @@ export const getUserRatings = async (context: RequestContext) => {
       count: 0,
       classes: [],
     };
-  return formatUserRatings(userRatings[0]);
+  const formattedUserRatings = formatUserRatings(userRatings[0]);
+  const activeReviews = await ReviewModel.find({
+    createdBy: context.user._id,
+    $or: [{ valid: true }, { valid: { $exists: false } }],
+  })
+    .select(
+      "subject courseNumber reviewTitle reviewContent reviewerGrade updatedAt"
+    )
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  const reviewByCourse = new Map<
+    string,
+    {
+      reviewTitle?: string | null;
+      reviewContent?: string | null;
+      reviewerGrade?: string | null;
+    }
+  >();
+  activeReviews.forEach((review) => {
+    const key = `${review.subject}|${review.courseNumber}`;
+    if (!reviewByCourse.has(key)) {
+      reviewByCourse.set(key, {
+        reviewTitle: review.reviewTitle ?? null,
+        reviewContent: review.reviewContent ?? null,
+        reviewerGrade: (review.reviewerGrade as string | null) ?? "n/a",
+      });
+    }
+  });
+
+  return {
+    ...formattedUserRatings,
+    classes: formattedUserRatings.classes.map((ratedClass) => {
+      const review = reviewByCourse.get(
+        `${ratedClass.subject}|${ratedClass.courseNumber}`
+      );
+      return {
+        ...ratedClass,
+        reviewTitle: review?.reviewTitle ?? null,
+        reviewContent: review?.reviewContent ?? null,
+        reviewerGrade: review?.reviewerGrade ?? "n/a",
+      };
+    }),
+  };
 };
 
 const filterAggregatedMetrics = (
@@ -934,7 +978,10 @@ export const createRatings = async (
   subject: string,
   courseNumber: string,
   classNumber: string,
-  metrics: MetricInput[]
+  metrics: MetricInput[],
+  reviewTitle?: string | null,
+  reviewContent?: string | null,
+  reviewerGrade?: string | null
 ) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -1011,7 +1058,77 @@ export const createRatings = async (
         ]);
       }
 
-      // Step 2: Create all new ratings and increment their aggregated counts
+      // Step 2: Soft-delete and create review snapshots
+      // Update or create the review for this user/course.
+      if (
+        reviewTitle !== undefined ||
+        reviewContent !== undefined ||
+        reviewerGrade !== undefined
+      ) {
+        const normalizedTitle = (reviewTitle ?? "").trim();
+        const normalizedContent = (reviewContent ?? "").trim();
+        const normalizedReviewerGrade =
+          (reviewerGrade ?? "n/a").trim() || "n/a";
+        const hasReviewPayload =
+          normalizedTitle.length > 0 || normalizedContent.length > 0;
+
+        const existingReview = await ReviewModel.findOne({
+          createdBy: context.user._id,
+          courseId,
+          $or: [{ valid: true }, { valid: { $exists: false } }],
+        }).session(session);
+
+        if (!hasReviewPayload) {
+          if (existingReview) {
+            await ReviewModel.updateOne(
+              { _id: existingReview._id },
+              { $set: { valid: false } },
+              { session }
+            );
+          }
+        } else if (existingReview) {
+          await ReviewModel.updateOne(
+            { _id: existingReview._id },
+            {
+              $set: {
+                reviewTitle: normalizedTitle,
+                reviewContent: normalizedContent,
+                reviewerGrade: normalizedReviewerGrade,
+                classId,
+                subject,
+                courseNumber,
+                semester,
+                year,
+                classNumber,
+                valid: true,
+              },
+            },
+            { session }
+          );
+        } else {
+          await ReviewModel.create(
+            [
+              {
+                createdBy: context.user._id,
+                courseId,
+                reviewTitle: normalizedTitle,
+                reviewContent: normalizedContent,
+                reviewerGrade: normalizedReviewerGrade,
+                classId,
+                subject,
+                courseNumber,
+                semester,
+                year,
+                classNumber,
+                valid: true,
+              },
+            ],
+            { session }
+          );
+        }
+      }
+
+      // Step 3: Create all new ratings and increment their aggregated counts
       for (const metric of metrics) {
         await Promise.all([
           RatingModel.create(
@@ -1085,6 +1202,15 @@ export const deleteRatings = async (
   const session = await connection.startSession();
   try {
     await session.withTransaction(async () => {
+      // Delete reviews for all affected courseIds
+      await ReviewModel.deleteMany(
+        {
+          createdBy: context.user._id,
+          courseId: { $in: Array.from(affectedCourseIds) },
+        },
+        { session }
+      );
+
       // Delete all ratings and decrement their aggregated counts
       for (const existingRating of existingRatings) {
         await Promise.all([
@@ -1117,6 +1243,42 @@ export const deleteRatings = async (
 
 const anonymizeUserId = (userId: string): string => {
   return createHash("sha256").update(userId).digest("hex").slice(0, 16);
+};
+
+export const voteReviewHelpful = async (
+  context: RequestContext,
+  reviewId: string
+): Promise<number> => {
+  if (!context.user._id) {
+    throw new GraphQLError("Unauthorized", {
+      extensions: { code: "UNAUTHENTICATED" },
+    });
+  }
+
+  const review = await ReviewModel.findById(reviewId);
+  if (!review) {
+    throw new GraphQLError("Review not found", {
+      extensions: { code: "NOT_FOUND" },
+    });
+  }
+
+  const userId = context.user._id;
+  const alreadyVoted =
+    (review.helpfulVoters as string[] | undefined)?.includes(userId) ?? false;
+
+  if (alreadyVoted) {
+    await ReviewModel.updateOne(
+      { _id: review._id },
+      { $pull: { helpfulVoters: userId }, $inc: { helpfulCount: -1 } }
+    );
+    return Math.max(0, ((review.helpfulCount as number | undefined) ?? 0) - 1);
+  } else {
+    await ReviewModel.updateOne(
+      { _id: review._id },
+      { $addToSet: { helpfulVoters: userId }, $inc: { helpfulCount: 1 } }
+    );
+    return ((review.helpfulCount as number | undefined) ?? 0) + 1;
+  }
 };
 
 export const getAllRatings = async () => {
@@ -1154,4 +1316,162 @@ export const getAllRatings = async () => {
         ? rating.createdAt.toISOString()
         : new Date().toISOString(),
   }));
+};
+
+export const getClassRatings = async (
+  subject: string,
+  courseNumber: string
+) => {
+  const ratings = await RatingModel.find({ subject, courseNumber }).lean();
+  const sections = await SectionModel.find({ subject, courseNumber })
+    .select("semester year classNumber number meetings")
+    .lean();
+  const shadowBannedCourseIds = await getShadowBannedCourseIds();
+  const crossListedShadowBanEnabled = isShadowBanCrossListedEnabled();
+
+  const visibleRatings = ratings.filter((rating) => {
+    if (isSubjectShadowBanned(rating.subject)) {
+      return false;
+    }
+
+    if (
+      crossListedShadowBanEnabled &&
+      typeof rating.courseId === "string" &&
+      shadowBannedCourseIds.has(rating.courseId)
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+  const activeReviews = await ReviewModel.find({
+    subject,
+    courseNumber,
+    $or: [{ valid: true }, { valid: { $exists: false } }],
+  })
+    .sort({ updatedAt: -1 })
+    .lean();
+
+  const reviewByUser = new Map<
+    string,
+    {
+      reviewId: string;
+      reviewTitle?: string | null;
+      reviewContent?: string | null;
+      reviewerGrade?: string | null;
+      helpfulCount: number;
+    }
+  >();
+  activeReviews.forEach((review) => {
+    if (reviewByUser.has(review.createdBy)) return;
+    reviewByUser.set(review.createdBy, {
+      reviewId: review._id?.toString() ?? "",
+      reviewTitle: review.reviewTitle ?? null,
+      reviewContent: review.reviewContent ?? null,
+      reviewerGrade: (review.reviewerGrade as string | null) ?? "n/a",
+      helpfulCount: (review.helpfulCount as number | undefined) ?? 0,
+    });
+  });
+
+  const instructorNamesByClassKey = new Map<string, Set<string>>();
+  sections.forEach((section) => {
+    const classNumber = section.classNumber ?? section.number;
+    if (!classNumber) return;
+    const classKey = `${section.semester}|${section.year}|${classNumber}`;
+
+    const names = instructorNamesByClassKey.get(classKey) ?? new Set<string>();
+    section.meetings?.forEach((meeting) => {
+      meeting.instructors?.forEach((instructor) => {
+        if (
+          instructor.role === "PI" &&
+          instructor.givenName &&
+          instructor.familyName
+        ) {
+          names.add(`${instructor.givenName} ${instructor.familyName}`);
+        }
+      });
+    });
+    instructorNamesByClassKey.set(classKey, names);
+  });
+
+  type UserClassEntry = {
+    subject: string;
+    courseNumber: string;
+    semester: Semester;
+    year: number;
+    classNumber: string;
+    professorName?: string | null;
+    metrics: { metricName: MetricName; value: number }[];
+    reviewTitle?: string | null;
+    reviewContent?: string | null;
+    reviewerGrade?: string | null;
+    lastUpdated: string;
+    reviewId?: string | null;
+    helpfulCount: number;
+  };
+
+  const userClassesById = new Map<string, Map<string, UserClassEntry>>();
+  visibleRatings.forEach((rating) => {
+    const userId = rating.createdBy;
+    const classKey = `${rating.semester}|${rating.year}|${rating.classNumber}`;
+    const userClasses = userClassesById.get(userId) ?? new Map();
+    const existingClass = userClasses.get(classKey);
+    const timestamp =
+      "updatedAt" in rating && rating.updatedAt instanceof Date
+        ? rating.updatedAt
+        : "createdAt" in rating && rating.createdAt instanceof Date
+          ? rating.createdAt
+          : new Date(0);
+
+    if (!existingClass) {
+      const review = reviewByUser.get(userId);
+      userClasses.set(classKey, {
+        subject: rating.subject,
+        courseNumber: rating.courseNumber,
+        semester: rating.semester as Semester,
+        year: rating.year,
+        classNumber: rating.classNumber,
+        professorName:
+          Array.from(instructorNamesByClassKey.get(classKey) ?? []).join(
+            ", "
+          ) || null,
+        metrics: [
+          {
+            metricName: rating.metricName as MetricName,
+            value: rating.value,
+          },
+        ],
+        reviewTitle: review?.reviewTitle ?? null,
+        reviewContent: review?.reviewContent ?? null,
+        reviewerGrade: review?.reviewerGrade ?? "n/a",
+        lastUpdated: timestamp.toISOString(),
+        reviewId: review?.reviewId ?? null,
+        helpfulCount: review?.helpfulCount ?? 0,
+      });
+      userClassesById.set(userId, userClasses);
+      return;
+    }
+
+    existingClass.metrics.push({
+      metricName: rating.metricName as MetricName,
+      value: rating.value,
+    });
+    if (timestamp.toISOString() > existingClass.lastUpdated) {
+      existingClass.lastUpdated = timestamp.toISOString();
+    }
+  });
+
+  const users = Array.from(userClassesById.entries()).map(
+    ([userId, classes]) => ({
+      anonymousUserId: anonymizeUserId(userId),
+      classes: Array.from(classes.values()),
+    })
+  );
+
+  return {
+    subject,
+    courseNumber,
+    count: users.length,
+    users,
+  };
 };

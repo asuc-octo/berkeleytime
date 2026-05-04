@@ -5,11 +5,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 36px;
+    padding: 4px 0;
     cursor: pointer;
 
     .titleAndStatusSection {
       display: flex;
       align-items: center;
+      gap: 8px;
+      min-height: 0;
 
       .titleSection {
         display: flex;
@@ -18,17 +22,19 @@
         width: 140px;
 
         .title {
+          margin: 0;
           color: var(--paragraph-color);
-          font-size: var(--text-16);
+          font-size: var(--text-14);
           font-weight: var(--font-normal);
+          line-height: 1.25;
         }
-
       }
 
       .metricAverage {
         color: var(--label-color);
-        padding-left: 14px;
-        font-size: var(--text-14);
+        padding-left: 8px;
+        font-size: var(--text-12);
+        line-height: 1.25;
       }
     }
     .statusSection {

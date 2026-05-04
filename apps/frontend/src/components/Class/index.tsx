@@ -18,7 +18,9 @@ import { Link, useLocation } from "react-router-dom";
 import { MetricName, REQUIRED_METRICS } from "@repo/shared";
 import { USER_REQUIRED_RATINGS_TO_UNLOCK } from "@repo/shared";
 import {
+  Badge,
   Box,
+  Color,
   Container,
   Flex,
   IconButton,
@@ -270,12 +272,20 @@ export default function Class({
   );
 
   const classTitle = useMemo(() => {
+    if (_class?.decal?.title) {
+      return _class.decal.title;
+    }
+
     if (specialTitleAttribute?.value?.formalDescription) {
       return specialTitleAttribute.value.formalDescription;
     }
 
     return _course?.title ?? "";
-  }, [specialTitleAttribute?.value?.formalDescription, _course?.title]);
+  }, [
+    _class?.decal?.title,
+    specialTitleAttribute?.value?.formalDescription,
+    _course?.title,
+  ]);
 
   const userRatingsCount = useMemo(
     () => userRatingsData?.userRatings?.classes?.length ?? 0,
@@ -413,7 +423,10 @@ export default function Class({
     async (
       metricValues: MetricData,
       termInfo: { semester: Semester; year: number },
-      classInfo: { subject: string; courseNumber: string; classNumber: string }
+      classInfo: { subject: string; courseNumber: string; classNumber: string },
+      _reviewTitle?: string,
+      _reviewContent?: string,
+      reviewerGrade?: string
     ) => {
       const populatedMetrics = METRIC_NAMES.filter(
         (metric) => typeof metricValues[metric] === "number"
@@ -445,7 +458,8 @@ export default function Class({
           year: termInfo.year,
           classNumber: classInfo.classNumber,
           metrics,
-        },
+          reviewerGrade,
+        } as Parameters<typeof createUnlockRatings>[0]["variables"],
         refetchQueries: [{ query: GetUserRatingsDocument }],
         awaitRefetchQueries: true,
       });
@@ -529,6 +543,18 @@ export default function Class({
                       <span className={styles.sectionNumber}>
                         #{formatClassNumber(_class.number)}
                       </span>
+                      {_class.decal != null && _class.decal.title != null && (
+                        <Badge
+                          label="DeCal"
+                          color={Color.Blue}
+                          variant="filled"
+                          style={{
+                            marginLeft: 12,
+                            position: "relative",
+                            bottom: 4,
+                          }}
+                        />
+                      )}
                     </h1>
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
@@ -893,6 +919,11 @@ export default function Class({
           onClose={handleUnlockModalClose}
           title="Unlock Ratings"
           subtitle={`Rate ${Math.max(unlockModalGoalCount, 1)} classes to unlock all other ratings.`}
+          initialCourse={{
+            subject: _class.subject,
+            number: _class.courseNumber,
+            courseId: ""
+          }}
           onSubmit={handleUnlockRatingSubmit}
           userRatedClasses={userRatedClasses}
           requiredRatingsCount={unlockModalGoalCount || 1}
