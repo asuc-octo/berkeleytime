@@ -10,6 +10,7 @@ import Common from "./common";
 import Course from "./course";
 import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
+import Explore from "./explore";
 import GradeDistribution from "./grade-distribution";
 import Plan from "./plan";
 import Pod from "./pod";
@@ -37,6 +38,7 @@ const modules = [
   Course,
   Class,
   Enrollment,
+  Explore,
   Plan,
   Rating,
   RouteRedirect,

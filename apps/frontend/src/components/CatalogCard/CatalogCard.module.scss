@@ -6,12 +6,11 @@
   border: 1px solid var(--border-color);
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: background-color 0.2s;
   background: var(--card-background);
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+    background-color: var(--button-hover-color);
   }
 }
 
@@ -20,29 +19,15 @@
   background-size: cover;
   background-position: center;
   background-color: var(--slate-200);
-  position: relative;
-}
-
-.openSeatsBadge {
-  position: absolute;
-  top: 11px;
-  right: 16px;
-  width: 45px;
-  height: 45px;
-  background: var(--emerald-500);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.thumbsUp {
-  font-size: 20px;
 }
 
 .content {
   padding: 14px 16px;
   background: var(--card-background);
+}
+
+.card:hover .content {
+  background-color: var(--button-hover-color);
 }
 
 .header {
@@ -72,31 +57,10 @@
   text-overflow: ellipsis;
 }
 
-.actions {
+.gradeContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-shrink: 0;
-}
-
-.bookmarkButton {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: var(--paragraph-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-
-  &:hover {
-    color: var(--heading-color);
-  }
-
-  &.bookmarked {
-    color: var(--blue-500);
-  }
 }
 
 .description {

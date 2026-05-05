@@ -45,6 +45,13 @@ services:
     ports:
       - "${DEV_PORT_PREFIX:-30}10:8000"
     restart: always
+    command:
+      - uvicorn
+      - app.semantic_search_api:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
     volumes:
       - ./apps/semantic-search/app:/app/app
     environment:
@@ -257,22 +264,22 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
-      
+
   # if using staff photos in dev, use --profile dev
   minio:
-    image: 'minio/minio:latest'
+    image: "minio/minio:latest"
     profiles:
       - dev
     ports:
       - "${DEV_PORT_PREFIX:-30}06:9000"
       - "${DEV_PORT_PREFIX:-30}07:9090"
     environment:
-      MINIO_ROOT_USER: 'root'
-      MINIO_ROOT_PASSWORD: 'password'
+      MINIO_ROOT_USER: "root"
+      MINIO_ROOT_PASSWORD: "password"
     networks:
       - bt
     volumes:
-      - 'minio:/data/minio'
+      - "minio:/data/minio"
     command: minio server /data/minio --console-address ":9090"
   createbuckets:
     image: minio/mc
@@ -294,4 +301,3 @@ volumes:
     driver: local
   mongodb-configdb:
     driver: local
-

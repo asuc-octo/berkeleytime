@@ -8,6 +8,7 @@ export * from "./course";
 export * from "./curated-classes";
 export * from "./collection";
 export * from "./enrollment";
+export * from "./explore";
 export * from "./grade-distribution";
 export * from "./plan";
 export * from "./pod";
