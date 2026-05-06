@@ -470,7 +470,7 @@ export const CHEMISTRY_REQ_BTLL = `
 export const RCNR_REQ_BTLL = `${RNC_BTLL}
 Function<boolean>(Course) is_upper_div_course (course){
   string number get_attr(course, "number")
-  boolean return or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9]"), regex_match(number, "^W[0-9][0-9]"), regex_match(number, "^N[0-9][0-9]")])
+  boolean return or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]"), regex_match(number, "^N2[0-9][0-9]")])
 }
 
 Function<boolean>(Course) is_rcnr_dept_course (course){
@@ -572,7 +572,7 @@ Function<boolean>(Course) natural_science_upper_div_finder (course){
   number units get_attr(course, "units")
 
   // Must be 3 units or more and upper division (100+)
-  boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9]")])
+  boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]"), regex_match(number, "^N2[0-9][0-9]")])  
   boolean has_enough_units or([greater_than(units, 3), equal([units, 3])])
   boolean is_valid_units and([is_upper_div, has_enough_units])
 
@@ -929,7 +929,7 @@ Function<boolean>(Course) technical_elective_finder (course){
   number units get_attr(course, "units")
 
   // Must be upper division (100+) or C### and NOT 195–199
-  boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C[0-9][0-9]"), regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]")])
+  boolean is_upper_div or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]"), regex_match(number, "^N2[0-9][0-9]")])
   boolean is_excluded_seminar regex_match(number, "^19[5-9]")
   boolean is_valid_number and([is_upper_div, not(is_excluded_seminar)])
 
