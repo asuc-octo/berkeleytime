@@ -56,7 +56,7 @@ Function<boolean>() main (){
   List<Column> pre_senior_columns slice(columns, 0, add([index, 1]))
   number pre_senior_units reduce(pre_senior_columns, add_units, 0)
   number senior_units reduce(slice(columns, add([index, 1]), length(columns)), add_units, 0)
-  NumberRequirement pre_senior_units_req {pre_senior_units, 90, "Minimum 17 units in pre-senior columns"}
+  NumberRequirement pre_senior_units_req {pre_senior_units, 90, "Minimum 90 units in pre-senior columns"}
   NumberRequirement senior_units_req {senior_units, 24, "Minimum 24 units in senior columns"}
   AndRequirement senior_residence {[pre_senior_units_req, senior_units_req], "Senior Residence"}
 
