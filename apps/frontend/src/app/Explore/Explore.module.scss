@@ -51,23 +51,44 @@
   margin: 0;
 }
 
-.signInDescription {
-  color: var(--paragraph-color);
-  margin: 0;
+.bookmarksRow {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(0, 2fr);
+  gap: 1rem;
+  align-items: stretch;
 }
 
-.subheading {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0;
+.bookmarksCardWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.recentlyViewedColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recentlyViewedTitle {
+  margin: 0 0 0.8rem;
+  font-size: var(--text-18);
   color: var(--heading-color);
 }
 
-.signInStrip {
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  background: var(--background-color-elevated, transparent);
+.recentlyViewedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.recentClassLink {
+  text-decoration: none;
+}
+
+.recentMetaPill {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
 }
 
 .cardLink {
@@ -116,4 +137,20 @@
 
 .skeletonSubtitle {
   width: 78%;
+}
+
+@media (max-width: 1080px) {
+  .bookmarksRow {
+    grid-template-columns: 1fr;
+  }
+
+  .recentlyViewedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .recentlyViewedGrid {
+    grid-template-columns: 1fr;
+  }
 }

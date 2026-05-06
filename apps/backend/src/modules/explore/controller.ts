@@ -34,7 +34,7 @@ const FETCH_HEADROOM = 6;
 const BAYESIAN_PRIOR_STRENGTH = 20;
 const RATING_METRICS = ["usefulness", "difficulty", "workload"] as const;
 const POPULAR_SCORE_TEMPERATURE = 0.5;
-const RECOMMEND_SCORE_TEMPERATURE = 0.2;
+const RECOMMEND_SCORE_TEMPERATURE = 0.05;
 
 function capLimit(limit: number | undefined | null): number {
   if (limit == null || Number.isNaN(limit)) return 20;
@@ -77,8 +77,7 @@ function imageForSubject(subject: string): string {
 }
 
 async function attachCourseImageUrls(
-  snapshots: ExploreCourseSnapshot[],
-  _term: { year: number; semester: string }
+  snapshots: ExploreCourseSnapshot[]
 ): Promise<ExploreCourseSnapshot[]> {
   if (snapshots.length === 0) return snapshots;
   return snapshots.map((s) => ({ ...s, imageUrl: imageForSubject(s.subject) }));
@@ -467,7 +466,7 @@ async function aggregatePopularWithSubjectFilter(
     };
   });
 
-  return attachCourseImageUrls(snapshots, latestCatalogTerm);
+  return attachCourseImageUrls(snapshots);
 }
 
 export async function getExplorePopularCourseSnapshots(
@@ -584,7 +583,7 @@ export async function getExploreCuratedHandpickedCourses(): Promise<
     })
     .filter((c): c is ExploreCourseSnapshot => c !== null);
 
-  return attachCourseImageUrls(snapshots, catalogTerm);
+  return attachCourseImageUrls(snapshots);
 }
 
 /**
@@ -720,8 +719,7 @@ async function getExploreSnapshotsForCourseIds(
         (rankMap.get(a.courseId) ?? 999) - (rankMap.get(b.courseId) ?? 999)
     );
 
-  if (!catalogTerm) return snapshots;
-  return attachCourseImageUrls(snapshots, catalogTerm);
+  return attachCourseImageUrls(snapshots);
 }
 
 async function resolveNumericCourseId(

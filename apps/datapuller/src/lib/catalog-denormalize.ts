@@ -422,7 +422,6 @@ export const buildCatalogClasses = async (
       // DeCal data
       decal: _class.decal ? { title: _class.decal.title } : undefined,
 
-
       // Ratings/grades
       viewCount: viewCountMap.get(viewCountKey) ?? 0,
       aggregatedRatings: ratingsMap.has(_class.courseId)

@@ -104,6 +104,7 @@ interface ClassProps {
   headingPrefix?: ReactNode;
   subtitle?: ReactNode;
   gradeInFooter?: boolean;
+  mutedDescription?: boolean;
 }
 
 export default function ClassCard({
@@ -125,6 +126,7 @@ export default function ClassCard({
   headingPrefix,
   subtitle,
   gradeInFooter = false,
+  mutedDescription = false,
   ...props
 }: ClassProps & Omit<ComponentPropsWithRef<"div">, keyof ClassProps>) {
   // bookmarked is part of the interface but not used in this component
@@ -214,7 +216,10 @@ export default function ClassCard({
                     />
                   )}
                 </Card.Heading>
-                <Card.Description wrapDescription={wrapDescription}>
+                <Card.Description
+                  wrapDescription={wrapDescription}
+                  className={mutedDescription ? styles.mutedDescription : undefined}
+                >
                   {_class?.decal?.title ??
                     _class?.title ??
                     _class?.course?.title}

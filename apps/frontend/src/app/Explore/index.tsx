@@ -2,13 +2,19 @@ import { useEffect, useMemo, useState } from "react";
 
 import { gql } from "@apollo/client";
 import { useApolloClient, useQuery } from "@apollo/client/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Box, Button, Flex, Skeleton } from "@repo/theme";
 
 import CatalogCard from "@/components/CatalogCard";
+import ClassCard from "@/components/ClassCard";
+import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
 import ScrollableRow from "@/components/ScrollableRow";
 import { useReadTerms } from "@/hooks/api";
+import { useGetAllCollectionsWithPreview } from "@/hooks/api/collections";
+import useUser from "@/hooks/useUser";
+import { signIn } from "@/lib/api";
+import { GET_CLASS } from "@/lib/api/classes";
 import { EXPLORE_SNAPSHOT_ROW_LIMIT } from "@/lib/api/explore";
 import {
   GetExploreBecauseYouViewedDocument,
@@ -20,6 +26,7 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, getRecents } from "@/lib/recent";
 
+import { CollectionCard } from "../Profile/Bookmarks/CollectionCard";
 import styles from "./Explore.module.scss";
 import placeholderStyles from "./ExplorePlaceholder.module.scss";
 import { ExploreRail } from "./ExploreRail";
@@ -33,6 +40,36 @@ type CourseCrossListingQuery = {
     courseId: string;
     title?: string;
     crossListing: Array<{ subject: string; number: string }>;
+  };
+};
+type RecentClassCardQuery = {
+  class: null | {
+    subject: string;
+    courseNumber: string;
+    number: string;
+    title?: string | null;
+    unitsMin?: number | null;
+    unitsMax?: number | null;
+    course?: {
+      title?: string | null;
+      gradeDistribution?: { average?: number | null; pnpPercentage?: number | null };
+      aggregatedRatings?: {
+        metrics: Array<{
+          metricName: string;
+          count?: number | null;
+          weightedAverage: number;
+        }>;
+      } | null;
+    } | null;
+    primarySection?: {
+      enrollment?: {
+        latest?: {
+          enrolledCount?: number | null;
+          maxEnroll?: number | null;
+          activeReservedMaxCount?: number | null;
+        } | null;
+      } | null;
+    } | null;
   };
 };
 
@@ -69,6 +106,45 @@ function buildCatalogClassPath(
   return `/catalog/${term.year}/${semester}/${subject}/${catalogCourseNumber}/${DEFAULT_CATALOG_CLASS_NUMBER}/${DEFAULT_CATALOG_SESSION_ID}`;
 }
 
+function buildCatalogSpecificClassPath(recentClass: {
+  year: number;
+  semester: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sessionId?: string;
+}) {
+  return `/catalog/${recentClass.year}/${recentClass.semester}/${recentClass.subject}/${recentClass.courseNumber}/${recentClass.number}/${recentClass.sessionId ?? DEFAULT_CATALOG_SESSION_ID}`;
+}
+
+function formatEnrollmentPercent(
+  enrolled: number | null | undefined,
+  max: number | null | undefined
+): string | null {
+  if (enrolled == null || max == null || max <= 0) return null;
+  return `${Math.round((enrolled / max) * 100)}% enrolled`;
+}
+
+function getEnrollmentPercentColor(
+  enrolled: number | null | undefined,
+  max: number | null | undefined
+): string | null {
+  if (enrolled == null || max == null || max <= 0) return null;
+  const pct = Math.round((enrolled / max) * 100);
+  if (pct >= 90) return "var(--rose-500)";
+  if (pct >= 70) return "var(--yellow-500)";
+  return "var(--emerald-500)";
+}
+
+function formatUnits(
+  unitsMin: number | null | undefined,
+  unitsMax: number | null | undefined
+): string | null {
+  if (unitsMin == null || unitsMax == null) return null;
+  if (unitsMin === unitsMax) return `${unitsMin} ${unitsMin === 1 ? "unit" : "units"}`;
+  return `${unitsMin}-${unitsMax} units`;
+}
+
 const IMG = { popular: 22, curated: 44 } as const;
 const EXPLORE_SKELETON_CARD_COUNT = 6;
 
@@ -81,7 +157,6 @@ function SnapshotCarouselSkeleton({
     <ScrollableRow>
       {Array.from({ length: count }).map((_, index) => (
         <div
-          // eslint-disable-next-line react/no-array-index-key
           key={`explore-skeleton-${index}`}
           className={styles.cardLink}
           aria-hidden
@@ -163,7 +238,7 @@ function BecauseYouViewedRail({
 
   return (
     <ExploreRail
-      title={`Because you viewed ${anchor.subject} ${anchor.number}: ${anchor.title ?? "Untitled Course"}`}
+      title={`Because you viewed ${anchor.subject} ${anchor.number}${anchor.title ? `: ${anchor.title}` : ""}`}
     >
       {loading ? (
         <SnapshotCarouselSkeleton />
@@ -263,8 +338,15 @@ function pickBecauseAnchors(
 
 export default function Explore() {
   const apolloClient = useApolloClient();
+  const navigate = useNavigate();
+  const { user } = useUser();
   const { data: terms } = useReadTerms();
+  const { data: apiCollections } = useGetAllCollectionsWithPreview();
   const [becauseAnchors, setBecauseAnchors] = useState<CourseAnchor[]>([]);
+  const [recentClassMeta, setRecentClassMeta] = useState<
+    Record<string, NonNullable<RecentClassCardQuery["class"]>>
+  >({});
+  const [recentClassesLoading, setRecentClassesLoading] = useState(false);
 
   const latestCatalogTerm = useMemo(() => {
     if (!terms?.length) return null;
@@ -306,6 +388,41 @@ export default function Explore() {
     [handpickPool]
   );
   const topPicksHistory = useMemo(() => getRecents(RecentType.Course), []);
+  const recentClasses = useMemo(
+    () => getRecents(RecentType.Class).slice(0, 6),
+    []
+  );
+  const allSavedCollection = useMemo(
+    () => apiCollections?.find((collection) => collection.isSystem),
+    [apiCollections]
+  );
+  const bookmarkPreviewClasses = useMemo(
+    () =>
+      (allSavedCollection?.classes ?? [])
+        .filter((entry) => entry.class != null)
+        .slice(0, 2)
+        .map((entry) => ({
+          subject: entry.class!.subject,
+          courseNumber: entry.class!.courseNumber,
+          number: entry.class!.number,
+          title: entry.class!.title ?? entry.class!.course?.title ?? null,
+          gradeAverage:
+            entry.class!.gradeDistribution?.average ??
+            entry.class!.course?.gradeDistribution?.average ??
+            null,
+          enrolledCount:
+            entry.class!.primarySection?.enrollment?.latest?.enrolledCount ??
+            null,
+          maxEnroll:
+            entry.class!.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+          unitsMin: entry.class!.unitsMin,
+          unitsMax: entry.class!.unitsMax,
+          hasReservedSeats:
+            (entry.class!.primarySection?.enrollment?.latest
+              ?.activeReservedMaxCount ?? 0) > 0,
+        })),
+    [allSavedCollection?.classes]
+  );
 
   useEffect(() => {
     const pool = getRecents(RecentType.Course).slice(
@@ -370,6 +487,54 @@ export default function Explore() {
     };
   }, [apolloClient]);
 
+  useEffect(() => {
+    if (recentClasses.length === 0) {
+      setRecentClassMeta({});
+      setRecentClassesLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const loadRecentClassMeta = async () => {
+      setRecentClassesLoading(true);
+      const entries = await Promise.all(
+        recentClasses.map(async (recentClass) => {
+          const key = `${recentClass.year}::${recentClass.semester}::${recentClass.subject}::${recentClass.courseNumber}::${recentClass.number}::${recentClass.sessionId ?? ""}`;
+          if (!recentClass.sessionId) return [key, null] as const;
+          try {
+            const { data } = await apolloClient.query<RecentClassCardQuery>({
+              query: GET_CLASS,
+              variables: {
+                year: recentClass.year,
+                semester: recentClass.semester,
+                sessionId: recentClass.sessionId,
+                subject: recentClass.subject,
+                courseNumber: recentClass.courseNumber,
+                number: recentClass.number,
+              },
+              fetchPolicy: "network-only",
+            });
+            return [key, data?.class ?? null] as const;
+          } catch {
+            return [key, null] as const;
+          }
+        })
+      );
+      if (cancelled) return;
+      setRecentClassMeta(
+        Object.fromEntries(
+          entries.filter((entry): entry is [string, NonNullable<RecentClassCardQuery["class"]>] => entry[1] !== null)
+        )
+      );
+      setRecentClassesLoading(false);
+    };
+
+    void loadRecentClassMeta();
+    return () => {
+      cancelled = true;
+    };
+  }, [apolloClient, recentClasses]);
+
   return (
     <Box p="6">
       <Flex direction="column" gap="6">
@@ -399,10 +564,114 @@ export default function Explore() {
           </Flex>
         </Flex>
 
+        <div className={styles.bookmarksRow}>
+          <div className={styles.bookmarksCardWrapper}>
+            <CollectionCard
+              name="Bookmarks"
+              classCount={allSavedCollection?.classes?.length ?? 0}
+              isSystem
+              previewClasses={bookmarkPreviewClasses}
+              onClick={() => {
+                if (!user) {
+                  signIn();
+                  return;
+                }
+                navigate("/profile/bookmarks");
+              }}
+            />
+          </div>
+          <div className={styles.recentlyViewedColumn}>
+            <h3 className={styles.recentlyViewedTitle}>
+              Classes you recently viewed
+            </h3>
+            {recentClasses.length === 0 ? (
+              <p className={placeholderStyles.placeholderBlurb}>
+                View some courses in the catalog to see them here.
+              </p>
+            ) : recentClassesLoading ? (
+              <div className={styles.recentlyViewedGrid}>
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <ClassCardSkeleton key={`recent-class-skeleton-${index}`} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.recentlyViewedGrid}>
+                {recentClasses.map((recentClass, index) => {
+                  const key = `${recentClass.year}::${recentClass.semester}::${recentClass.subject}::${recentClass.courseNumber}::${recentClass.number}::${recentClass.sessionId ?? ""}`;
+                  const meta = recentClassMeta[key];
+                  if (!meta) return null;
+                  const enrollmentLabel = formatEnrollmentPercent(
+                    meta.primarySection?.enrollment?.latest?.enrolledCount,
+                    meta.primarySection?.enrollment?.latest?.maxEnroll
+                  );
+                  const enrollmentColor = getEnrollmentPercentColor(
+                    meta.primarySection?.enrollment?.latest?.enrolledCount,
+                    meta.primarySection?.enrollment?.latest?.maxEnroll
+                  );
+                  const unitsLabel = formatUnits(meta.unitsMin, meta.unitsMax);
+                  return (
+                  <Link
+                    key={`${recentClass.subject}-${recentClass.courseNumber}-${recentClass.number}-${index}`}
+                    to={buildCatalogSpecificClassPath(recentClass)}
+                    className={styles.recentClassLink}
+                  >
+                    <ClassCard
+                      class={{
+                        subject: meta.subject,
+                        courseNumber: meta.courseNumber,
+                        title: meta.title ?? undefined,
+                        unitsMin: meta.unitsMin ?? undefined,
+                        unitsMax: meta.unitsMax ?? undefined,
+                        primarySection: meta.primarySection ?? undefined,
+                        course: {
+                          title: meta.course?.title ?? undefined,
+                          gradeDistribution:
+                            meta.course?.gradeDistribution ?? undefined,
+                          aggregatedRatings:
+                            meta.course?.aggregatedRatings ?? undefined,
+                        },
+                      }}
+                      mutedDescription
+                      replaceInfoContent
+                      infoContent={
+                        <>
+                          {enrollmentLabel && (
+                            <span
+                              className={styles.recentMetaPill}
+                              style={{ color: enrollmentColor ?? undefined }}
+                            >
+                              {enrollmentLabel}
+                            </span>
+                          )}
+                          {unitsLabel && (
+                            <span className={styles.recentMetaPill}>
+                              {unitsLabel}
+                            </span>
+                          )}
+                        </>
+                      }
+                    />
+                  </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
         <TopPicksRail
           history={topPicksHistory}
           catalogTerm={catalogRouteTerm}
         />
+
+        {becauseAnchors.map((anchor, slot) => (
+          <BecauseYouViewedRail
+            key={`${anchor.subject}-${anchor.number}-${slot}`}
+            anchor={anchor}
+            catalogTerm={catalogRouteTerm}
+            imageSeed={100 + slot * 20}
+          />
+        ))}
 
         <ExploreRail title="Highly rated on Berkeleytime">
           {popularLoading ? (
@@ -459,14 +728,6 @@ export default function Explore() {
           </ExploreRail>
         )}
 
-        {becauseAnchors.map((anchor, slot) => (
-          <BecauseYouViewedRail
-            key={`${anchor.subject}-${anchor.number}-${slot}`}
-            anchor={anchor}
-            catalogTerm={catalogRouteTerm}
-            imageSeed={100 + slot * 20}
-          />
-        ))}
       </Flex>
     </Box>
   );

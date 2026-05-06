@@ -85,7 +85,6 @@ export const catalogTypeDef = gql`
     title: String
   }
 
-
   type CatalogMetric {
     metricName: String!
     count: Int!
@@ -149,7 +148,6 @@ export const catalogTypeDef = gql`
 
     "DeCal"
     decal: CatalogDeCal
-
 
     "Secondary sections"
     sections: [CatalogSection!]

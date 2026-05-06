@@ -3,9 +3,14 @@ export const DEFAULT_EXPLORE_IMAGE =
 
 export const SUBJECT_CLUSTER_IMAGE: Record<string, string> = {
   // Math
-  MATH: "/course-card-images/stem.jpg",
-  PHYSICS: "/course-card-images/stem.jpg",
-  STAT: "/course-card-images/stem.jpg",
+  MATH: "/course-card-images/math.jpg",
+  STAT: "/course-card-images/math.jpg",
+
+  // Physics
+  PHYSICS: "/course-card-images/physics.jpg",
+
+  // Chemistry:
+  CHEM: "/course-card-images/chemistry.jpg",
 
   // Engineering
   AEROENG: "/course-card-images/engineering.jpg",
@@ -20,12 +25,13 @@ export const SUBJECT_CLUSTER_IMAGE: Record<string, string> = {
 
   // Technology / computing
   COMPSCI: "/course-card-images/technology.jpg",
+  EECS: "/course-card-images/technology.jpg",
   DATA: "/course-card-images/technology.jpg",
   INFO: "/course-card-images/technology.jpg",
 
   // Health / life sciences
+  BIOLOGY: "/course-card-images/health.jpg",
   ASTRON: "/course-card-images/health.jpg",
-  CHEM: "/course-card-images/health.jpg",
   INTEGBI: "/course-card-images/health.jpg",
   MCELLBI: "/course-card-images/health.jpg",
   PBHLTH: "/course-card-images/health.jpg",
@@ -52,11 +58,13 @@ export const SUBJECT_CLUSTER_IMAGE: Record<string, string> = {
 
   // Arts
   ART: "/course-card-images/arts.jpg",
-  MUSIC: "/course-card-images/arts.jpg",
   THEATER: "/course-card-images/arts.jpg",
   FILM: "/course-card-images/arts.jpg",
   DANCE: "/course-card-images/arts.jpg",
   HISTART: "/course-card-images/arts.jpg",
+
+  // Music
+  MUSIC: "/course-card-images/music.jpg",
 
   // Business / law
   ECON: "/course-card-images/businesslaw.jpg",

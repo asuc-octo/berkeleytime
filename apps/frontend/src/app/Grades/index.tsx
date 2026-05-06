@@ -106,7 +106,6 @@ const LETTER_GRADE_SET = new Set<string>(LETTER_GRADES);
 const isPastTermClass = (c: ICourseWithInstructorClass) =>
   c.term.temporalPosition === TemporalPosition.Past;
 
-
 const getMetadata = (input: Input): string => {
   const instructor =
     input.type && input.familyName && input.givenName
@@ -203,7 +202,6 @@ function FilterPanel({
     () => (course?.classes ?? []).filter(isPastTermClass),
     [course]
   );
-
 
   const [selectedType, setSelectedType] = useState(DEFAULT_BY_OPTION.value);
 

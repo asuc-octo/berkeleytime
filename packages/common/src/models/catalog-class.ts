@@ -120,7 +120,6 @@ export interface ICatalogClassItem {
     title?: string;
   };
 
-
   // Pre-computed sort fields
   openSeats?: number;
 
@@ -283,7 +282,6 @@ const catalogClassSchema = new Schema<ICatalogClassItem>(
       _id: false,
       title: { type: String },
     },
-
 
     // Pre-computed sort fields
     openSeats: { type: Number, default: 0 },

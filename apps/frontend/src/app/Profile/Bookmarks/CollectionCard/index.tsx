@@ -59,6 +59,24 @@ function formatEnrollment(
   return `${pct}% enrolled`;
 }
 
+function getGradeColor(grade: string): string {
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--yellow-500)";
+  return "var(--rose-500)";
+}
+
+function getEnrollmentColor(
+  enrolled: number | null,
+  max: number | null
+): string | null {
+  if (enrolled === null || max === null || max <= 0) return null;
+  const pct = Math.max(0, Math.min(100, Math.round((enrolled / max) * 100)));
+  if (pct >= 90) return "var(--rose-500)";
+  if (pct >= 70) return "var(--yellow-500)";
+  return "var(--emerald-500)";
+}
+
 function formatUnits(min: number, max: number): string {
   if (min === max) {
     return `${min} ${min === 1 ? "unit" : "units"}`;
@@ -79,6 +97,11 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
     classData.enrolledCount,
     classData.maxEnroll
   );
+  const gradeColor = grade ? getGradeColor(grade) : null;
+  const enrollmentColor = getEnrollmentColor(
+    classData.enrolledCount,
+    classData.maxEnroll
+  );
   const units = formatUnits(classData.unitsMin, classData.unitsMax);
 
   return (
@@ -87,12 +110,19 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
         <span className={styles.cardTitle}>
           {classData.subject} {classData.courseNumber}
         </span>
-        {grade && <span className={styles.cardGrade}>{grade}</span>}
+        {grade && (
+          <span className={styles.cardGrade} style={{ color: gradeColor ?? undefined }}>
+            {grade}
+          </span>
+        )}
       </div>
       <p className={styles.cardDescription}>{classData.title || "Untitled"}</p>
       <div className={styles.cardFooter}>
         {enrollment && (
-          <span className={`${styles.cardPill} ${styles.enrolled}`}>
+          <span
+            className={`${styles.cardPill} ${styles.enrolled}`}
+            style={{ color: enrollmentColor ?? undefined }}
+          >
             {enrollment}
           </span>
         )}
@@ -157,7 +187,7 @@ export function CollectionCard({
       icon: <BookStack width={18} height={18} />,
       onClick: onRename,
     });
-    
+
     // Color submenu
     const colorSubItems: MenuItem[] = [
       {
@@ -171,7 +201,7 @@ export function CollectionCard({
         onClick: () => onColorChange?.(c),
       })),
     ];
-    
+
     menuItems.push({
       name: "Edit color",
       icon: <EditPencil width={18} height={18} />,

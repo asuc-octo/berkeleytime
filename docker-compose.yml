@@ -45,13 +45,6 @@ services:
     ports:
       - "${DEV_PORT_PREFIX:-30}10:8000"
     restart: always
-    command:
-      - uvicorn
-      - app.semantic_search_api:app
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8000"
     volumes:
       - ./apps/semantic-search/app:/app/app
     environment:

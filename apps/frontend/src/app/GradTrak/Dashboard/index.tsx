@@ -988,7 +988,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          </div>
         </div>
         {bookmarksSidebarOpen && (
           <BookmarksSidebar onClose={() => setBookmarksSidebarOpen(false)} />

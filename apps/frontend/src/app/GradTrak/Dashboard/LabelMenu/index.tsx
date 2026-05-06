@@ -5,9 +5,9 @@ import { Plus, Trash } from "iconoir-react";
 import { Button, Color, Dialog, Flex, IconButton, Input } from "@repo/theme";
 
 import ColorSelector from "@/components/ColorSelector";
+import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 import { ILabel } from "@/lib/api";
 
-import { DeleteScheduleDialog } from "@/components/ScheduleCard/DeleteScheduleDialog";
 import styles from "./LabelMenu.module.scss";
 
 type LabelMenuProps = {
