@@ -218,7 +218,9 @@ export default function ClassCard({
                 </Card.Heading>
                 <Card.Description
                   wrapDescription={wrapDescription}
-                  className={mutedDescription ? styles.mutedDescription : undefined}
+                  className={
+                    mutedDescription ? styles.mutedDescription : undefined
+                  }
                 >
                   {_class?.decal?.title ??
                     _class?.title ??

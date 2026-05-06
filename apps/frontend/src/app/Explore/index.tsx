@@ -52,7 +52,10 @@ type RecentClassCardQuery = {
     unitsMax?: number | null;
     course?: {
       title?: string | null;
-      gradeDistribution?: { average?: number | null; pnpPercentage?: number | null };
+      gradeDistribution?: {
+        average?: number | null;
+        pnpPercentage?: number | null;
+      };
       aggregatedRatings?: {
         metrics: Array<{
           metricName: string;
@@ -141,7 +144,8 @@ function formatUnits(
   unitsMax: number | null | undefined
 ): string | null {
   if (unitsMin == null || unitsMax == null) return null;
-  if (unitsMin === unitsMax) return `${unitsMin} ${unitsMin === 1 ? "unit" : "units"}`;
+  if (unitsMin === unitsMax)
+    return `${unitsMin} ${unitsMin === 1 ? "unit" : "units"}`;
   return `${unitsMin}-${unitsMax} units`;
 }
 
@@ -523,7 +527,12 @@ export default function Explore() {
       if (cancelled) return;
       setRecentClassMeta(
         Object.fromEntries(
-          entries.filter((entry): entry is [string, NonNullable<RecentClassCardQuery["class"]>] => entry[1] !== null)
+          entries.filter(
+            (
+              entry
+            ): entry is [string, NonNullable<RecentClassCardQuery["class"]>] =>
+              entry[1] !== null
+          )
         )
       );
       setRecentClassesLoading(false);
@@ -610,48 +619,48 @@ export default function Explore() {
                   );
                   const unitsLabel = formatUnits(meta.unitsMin, meta.unitsMax);
                   return (
-                  <Link
-                    key={`${recentClass.subject}-${recentClass.courseNumber}-${recentClass.number}-${index}`}
-                    to={buildCatalogSpecificClassPath(recentClass)}
-                    className={styles.recentClassLink}
-                  >
-                    <ClassCard
-                      class={{
-                        subject: meta.subject,
-                        courseNumber: meta.courseNumber,
-                        title: meta.title ?? undefined,
-                        unitsMin: meta.unitsMin ?? undefined,
-                        unitsMax: meta.unitsMax ?? undefined,
-                        primarySection: meta.primarySection ?? undefined,
-                        course: {
-                          title: meta.course?.title ?? undefined,
-                          gradeDistribution:
-                            meta.course?.gradeDistribution ?? undefined,
-                          aggregatedRatings:
-                            meta.course?.aggregatedRatings ?? undefined,
-                        },
-                      }}
-                      mutedDescription
-                      replaceInfoContent
-                      infoContent={
-                        <>
-                          {enrollmentLabel && (
-                            <span
-                              className={styles.recentMetaPill}
-                              style={{ color: enrollmentColor ?? undefined }}
-                            >
-                              {enrollmentLabel}
-                            </span>
-                          )}
-                          {unitsLabel && (
-                            <span className={styles.recentMetaPill}>
-                              {unitsLabel}
-                            </span>
-                          )}
-                        </>
-                      }
-                    />
-                  </Link>
+                    <Link
+                      key={`${recentClass.subject}-${recentClass.courseNumber}-${recentClass.number}-${index}`}
+                      to={buildCatalogSpecificClassPath(recentClass)}
+                      className={styles.recentClassLink}
+                    >
+                      <ClassCard
+                        class={{
+                          subject: meta.subject,
+                          courseNumber: meta.courseNumber,
+                          title: meta.title ?? undefined,
+                          unitsMin: meta.unitsMin ?? undefined,
+                          unitsMax: meta.unitsMax ?? undefined,
+                          primarySection: meta.primarySection ?? undefined,
+                          course: {
+                            title: meta.course?.title ?? undefined,
+                            gradeDistribution:
+                              meta.course?.gradeDistribution ?? undefined,
+                            aggregatedRatings:
+                              meta.course?.aggregatedRatings ?? undefined,
+                          },
+                        }}
+                        mutedDescription
+                        replaceInfoContent
+                        infoContent={
+                          <>
+                            {enrollmentLabel && (
+                              <span
+                                className={styles.recentMetaPill}
+                                style={{ color: enrollmentColor ?? undefined }}
+                              >
+                                {enrollmentLabel}
+                              </span>
+                            )}
+                            {unitsLabel && (
+                              <span className={styles.recentMetaPill}>
+                                {unitsLabel}
+                              </span>
+                            )}
+                          </>
+                        }
+                      />
+                    </Link>
                   );
                 })}
               </div>
@@ -727,7 +736,6 @@ export default function Explore() {
             </p>
           </ExploreRail>
         )}
-
       </Flex>
     </Box>
   );

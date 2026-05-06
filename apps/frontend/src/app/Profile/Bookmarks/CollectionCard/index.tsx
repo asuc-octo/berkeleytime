@@ -111,7 +111,10 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
           {classData.subject} {classData.courseNumber}
         </span>
         {grade && (
-          <span className={styles.cardGrade} style={{ color: gradeColor ?? undefined }}>
+          <span
+            className={styles.cardGrade}
+            style={{ color: gradeColor ?? undefined }}
+          >
             {grade}
           </span>
         )}
