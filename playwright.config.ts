@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
+import dotenv from "dotenv";
+
+dotenv.config();
+dotenv.config({ path: ".env.local", override: false });
+
 /**
  * Test environment modes:
  * - 'local': Developer testing against their local docker-compose setup (default)

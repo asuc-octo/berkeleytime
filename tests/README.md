@@ -9,7 +9,7 @@ tests/
 ├── sanity/       # Fast smoke tests (run on every PR)
 ├── api/          # GraphQL API unit tests
 ├── e2e/          # Comprehensive end-to-end user flows
-├── fixtures/     # Shared test data and fixtures
+├── fixtures/     # Playwright fixtures (e.g. authenticated session)
 └── utils/        # Test utilities and helpers
 ```
 
@@ -115,6 +115,41 @@ test('can search and view course details', async ({ page }) => {
   await expect(page).toHaveURL(/course/);
 });
 ```
+
+### Authenticated E2E (dev login, any feature)
+
+Use the same pattern for **any** flow that needs a signed-in user (scheduler, profile, saved lists, etc.):
+
+1. **Dev user in Mongo:** The app does not create `dev@berkeleytime.local` by itself on an empty DB. If you already ran the one-time upsert from [`apps/docs` local development](../apps/docs/src/getting-started/local-development.md) (or `bootstrap-local.sh`), that user already exists.
+2. Set **`E2E_DEV_EMAIL`** (recommended) to the dev account email, e.g. `dev@berkeleytime.local`. Test auth resolves the current `_id` at runtime via `/api/dev/users`, so this works across different local databases.
+3. Optional fallback: set **`E2E_DEV_USER_ID`** directly to bypass lookup (useful in locked-down CI).
+4. Backend must run in **development** (`NODE_ENV=development`) so **`GET /api/dev/login`** exists (not available on production).
+
+**Option A — shared fixture (starts at `/` after login):** import `test` / `expect` from `tests/fixtures/authenticated.ts`. Each test gets a session before it runs; use `page.goto('/your-route')` for the screen under test.
+
+```typescript
+import { test, expect } from "../fixtures/authenticated";
+
+test("signed-in smoke", async ({ page, devAuthenticatedUserId }) => {
+  await page.goto("/catalog");
+  // devAuthenticatedUserId is the Mongo id (useful for teardown helpers)
+  await expect(page).toHaveURL(/catalog/);
+});
+```
+
+**Option B — manual login (pick landing path):** keep `import { test, expect } from "@playwright/test"` and call `loginAsDevUser` from `tests/utils/dev-auth.ts` in `beforeEach` (e.g. `redirectPath: "/scheduler"`).
+
+Production / smoke jobs without secrets: those tests skip automatically when `TEST_ENV=production`.
+
+If several tests **mutate the same user’s data**, use `test.describe.configure({ mode: "serial" })` for that file or describe block so workers do not clobber each other.
+
+**Example (scheduler):** with `docker compose up`, `E2E_DEV_EMAIL` set (or defaulting to `dev@berkeleytime.local`), and `TEST_ENV=local` (default):
+
+```bash
+npx playwright test tests/e2e/schedule-create.spec.ts --project=e2e-chromium
+```
+
+That spec uses the authenticated fixture, creates a schedule in the UI, asserts navigation to the editor, then deletes all schedules for the session user in `afterEach` via `tests/utils/graphql-session.ts`. Copy that pattern for other logged-in flows.
 
 ## CI/CD Integration
 
