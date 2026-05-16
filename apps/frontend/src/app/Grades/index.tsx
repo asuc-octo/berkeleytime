@@ -412,7 +412,6 @@ function FilterPanel({
           year: parsedTerm.year,
           semester: parsedTerm.semester as Semester,
           sessionId: parsedTerm.sessionId,
-          classNumber: parsedTerm.classNumber,
           givenName,
           familyName,
         };
@@ -427,7 +426,6 @@ function FilterPanel({
         year: parsedTerm.year,
         semester: parsedTerm.semester as Semester,
         sessionId: parsedTerm.sessionId,
-        classNumber: parsedTerm.classNumber,
       };
     }
 
@@ -441,7 +439,6 @@ function FilterPanel({
         year: parsedTerm.year,
         semester: parsedTerm.semester as Semester,
         sessionId: parsedTerm.sessionId,
-        classNumber: parsedTerm.classNumber,
       };
     }
 
@@ -505,6 +502,9 @@ function FilterPanel({
     currentInput !== null &&
     (isCheckingLetterGrades || hasLetterGrades === null);
 
+  const currentCatalogClassNumber =
+    parseSemesterValue(selectedSemester)?.classNumber;
+
   const add = async () => {
     if (!currentInput || isFull || isAlreadyAdded || hasLetterGrades !== true)
       return;
@@ -534,6 +534,7 @@ function FilterPanel({
         darkColor: DARK_COLORS[colorIndex],
         data: response.data!.grade,
         input: currentInput,
+        catalogClassNumber: currentCatalogClassNumber,
       };
 
       setOutputs((prev) =>
@@ -779,11 +780,7 @@ function OutputList({
                         ? output.input.sessionId
                         : undefined
                     }
-                    sectionNumber={
-                      "classNumber" in output.input
-                        ? output.input.classNumber
-                        : undefined
-                    }
+                    sectionNumber={output.catalogClassNumber}
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
                     onMouseEnter={() => onHoverCard(index)}
