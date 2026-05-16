@@ -21,6 +21,7 @@ interface BaseTermInput extends BaseInput {
   semester: Semester;
   type: InputType.Term;
   sessionId: string;
+  classNumber?: string;
 }
 
 export interface InstructorTermInput extends BaseTermInput {
@@ -45,6 +46,7 @@ export interface TermInstructorInput extends BaseInstructorInput {
   year: number;
   semester: Semester;
   sessionId: string;
+  classNumber?: string;
 }
 
 export interface NoTermInstructorInput extends BaseInstructorInput {

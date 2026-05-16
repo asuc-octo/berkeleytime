@@ -2,7 +2,8 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import classNames from "classnames";
-import { EditPencil, Eye, EyeClosed, Trash } from "iconoir-react";
+import { EditPencil, Eye, EyeClosed, OpenNewWindow, Trash } from "iconoir-react";
+import { useNavigate } from "react-router-dom";
 
 import ClassCard from "@/components/ClassCard";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
@@ -58,6 +59,7 @@ export default function CourseSelectionCard({
   onMouseEnter,
   onMouseLeave,
 }: CourseSelectionCardProps) {
+  const navigate = useNavigate();
   const displayColor = dimmed && darkColor ? darkColor : color;
   const { data: titleData } = useReadCourseTitle(subject, number, {
     skip: !!title,
@@ -88,9 +90,28 @@ export default function CourseSelectionCard({
   }, [courseUnitsData]);
 
   const displayTitle = title ?? titleData?.title ?? "N/A";
-  const hasActions = onClickHide || onClickEdit || onClickDelete;
+  const canNavigateToCatalog = !!(year && semester && sessionId);
+  const hasActions =
+    onClickHide || onClickEdit || onClickDelete || canNavigateToCatalog;
   const topRightContent = hasActions ? (
     <>
+      {canNavigateToCatalog && (
+        <button
+          type="button"
+          aria-label="View in catalog"
+          className={styles.iconButton}
+          onClick={(event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            const path = sectionNumber
+              ? `/catalog/${year}/${semester}/${subject}/${number}/${sectionNumber}/${sessionId}`
+              : `/catalog/${year}/${semester}/${subject}/${number}`;
+            navigate(path);
+          }}
+        >
+          <OpenNewWindow />
+        </button>
+      )}
       {onClickHide && (
         <button
           type="button"

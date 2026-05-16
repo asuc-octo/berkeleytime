@@ -127,8 +127,9 @@ const getMetadata = (input: Input): string => {
 const buildSemesterValue = (
   year: number,
   semester: string,
-  sessionId: string
-) => JSON.stringify({ year, semester, sessionId });
+  sessionId: string,
+  classNumber?: string
+) => JSON.stringify({ year, semester, sessionId, classNumber });
 
 const parseSemesterValue = (
   value: string | null
@@ -136,6 +137,7 @@ const parseSemesterValue = (
   year: number;
   semester: string;
   sessionId: string;
+  classNumber?: string;
 } | null => {
   if (!value || value === "all") return null;
 
@@ -146,7 +148,12 @@ const parseSemesterValue = (
       typeof parsed.semester === "string" &&
       typeof parsed.sessionId === "string"
     ) {
-      return parsed;
+      return {
+        year: parsed.year,
+        semester: parsed.semester,
+        sessionId: parsed.sessionId,
+        classNumber: parsed.classNumber ?? undefined,
+      };
     }
     return null;
   } catch {
@@ -349,7 +356,7 @@ function FilterPanel({
       .toSorted(sortByTermDescending);
 
     const filteredOptions = uniqueClasses.map((t) => ({
-      value: buildSemesterValue(t.year, t.semester, t.sessionId),
+      value: buildSemesterValue(t.year, t.semester, t.sessionId, t.number),
       label: formatSemesterLabel(t.semester, t.year),
     }));
 
@@ -405,6 +412,7 @@ function FilterPanel({
           year: parsedTerm.year,
           semester: parsedTerm.semester as Semester,
           sessionId: parsedTerm.sessionId,
+          classNumber: parsedTerm.classNumber,
           givenName,
           familyName,
         };
@@ -419,6 +427,7 @@ function FilterPanel({
         year: parsedTerm.year,
         semester: parsedTerm.semester as Semester,
         sessionId: parsedTerm.sessionId,
+        classNumber: parsedTerm.classNumber,
       };
     }
 
@@ -432,6 +441,7 @@ function FilterPanel({
         year: parsedTerm.year,
         semester: parsedTerm.semester as Semester,
         sessionId: parsedTerm.sessionId,
+        classNumber: parsedTerm.classNumber,
       };
     }
 
@@ -756,6 +766,24 @@ function OutputList({
                     number={output.input.courseNumber}
                     subtitle={getMetadata(output.input)}
                     gradeDistribution={output.data}
+                    year={
+                      "year" in output.input ? output.input.year : undefined
+                    }
+                    semester={
+                      "semester" in output.input
+                        ? output.input.semester
+                        : undefined
+                    }
+                    sessionId={
+                      "sessionId" in output.input
+                        ? output.input.sessionId
+                        : undefined
+                    }
+                    sectionNumber={
+                      "classNumber" in output.input
+                        ? output.input.classNumber
+                        : undefined
+                    }
                     dimmed={shouldDimOthers && hoveredIndex !== index}
                     fluid
                     onMouseEnter={() => onHoverCard(index)}
