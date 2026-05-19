@@ -293,7 +293,6 @@ export function Select<T>({
     }
   }, [open, isSearchable]);
 
-
   // Manage tab state
   useEffect(() => {
     if (!tabs?.length) {
