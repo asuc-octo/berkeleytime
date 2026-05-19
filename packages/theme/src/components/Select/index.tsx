@@ -293,6 +293,7 @@ export function Select<T>({
     }
   }, [open, isSearchable]);
 
+
   // Manage tab state
   useEffect(() => {
     if (!tabs?.length) {
@@ -610,6 +611,10 @@ export function Select<T>({
                   style={
                     maxListHeight ? { maxHeight: maxListHeight } : undefined
                   }
+                  onWheelCapture={(e) => {
+                    e.stopPropagation();
+                    e.currentTarget.scrollTop += e.deltaY;
+                  }}
                 >
                   {renderGroupedOptions()}
                 </Command.List>

@@ -23,7 +23,7 @@ export const REVIEWER_GRADE_OPTIONS = [
   "D+",
   "D",
   "D-",
-  "F+",
   "F",
-  "F-",
+  "P",
+  "NP",
 ] as const;
