@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import http from "http";
 
 import { Config } from "../../../../packages/common/src/utils/config";
@@ -57,8 +57,8 @@ export async function bootstrapCacheWarmingServer(config: Config) {
   const app = express();
   app.use(json());
 
-  const { server, redis } = await loadCacheWarmingDependencies();
-  cacheRoutes(app, server, redis);
+  const { redis } = await loadCacheWarmingDependencies();
+  cacheRoutes(app, redis);
 
   const httpServer = http.createServer(app);
   httpServer.listen(config.cacheWarmingPort);
