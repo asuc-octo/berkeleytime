@@ -93,14 +93,18 @@ export default function useCatalogBrowser({
     skip: !user || !filterState.scheduleConflictFilter,
   });
 
-  // Find the selected schedule
+  // Find the selected schedule - must match current term to be active
   const selectedSchedule = useMemo(() => {
     if (!filterState.scheduleConflictFilter || !schedules) return null;
-    return (
-      schedules.find((s) => s?._id === filterState.scheduleConflictFilter) ??
-      null
+    const schedule = schedules.find(
+      (s) => s?._id === filterState.scheduleConflictFilter
     );
-  }, [filterState.scheduleConflictFilter, schedules]);
+    // Only use the schedule if it matches the current term
+    if (!schedule || schedule.year !== year || schedule.semester !== semester) {
+      return null;
+    }
+    return schedule;
+  }, [filterState.scheduleConflictFilter, schedules, year, semester]);
 
   // Filter classes based on schedule conflicts
   const filteredClasses = useMemo(() => {
@@ -157,12 +161,14 @@ export default function useCatalogBrowser({
     () => ({
       classes: filteredClasses,
       loading: queryResult.loading,
+      // When schedule filter is active, show filtered count but keep pagination working
+      // so all pages can be loaded and filtered
       totalCount: selectedSchedule
         ? filteredClasses.length
         : queryResult.totalCount,
       page: queryResult.page,
       pageSize: queryResult.pageSize,
-      hasNextPage: selectedSchedule ? false : queryResult.hasNextPage,
+      hasNextPage: queryResult.hasNextPage,
       loadNextPage: queryResult.loadNextPage,
       isLoadingNextPage: queryResult.isLoadingNextPage,
     }),
