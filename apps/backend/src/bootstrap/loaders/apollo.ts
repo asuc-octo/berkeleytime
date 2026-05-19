@@ -25,6 +25,7 @@ import { gunzipSync, gzipSync } from "zlib";
 
 import { timeToNextPull } from "../../utils/cache";
 import { buildSchema } from "../graphql/buildSchema";
+import { OperationDefinitionNode } from "graphql";
 
 /** Map GraphQL operation names → high-level feature names for usage metrics. */
 const OPERATION_FEATURE: Record<string, string> = {

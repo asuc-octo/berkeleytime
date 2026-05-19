@@ -31,6 +31,7 @@ metadata:
   labels:
     {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

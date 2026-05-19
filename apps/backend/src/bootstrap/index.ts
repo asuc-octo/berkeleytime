@@ -52,6 +52,7 @@ export default async (config: Config) => {
   );
 };
 
+/** 
 // Cache warming server bootstrap
 export async function bootstrapCacheWarmingServer(config: Config) {
   const app = express();
@@ -68,3 +69,4 @@ export async function bootstrapCacheWarmingServer(config: Config) {
     "Cache warming server ready"
   );
 }
+**/
