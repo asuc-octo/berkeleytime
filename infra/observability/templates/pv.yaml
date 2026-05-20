@@ -3,7 +3,10 @@ kind: PersistentVolume
 metadata: 
   name: prometheus-pv
 spec:
-  storageClassName: manual
+  storageClassName:  manual
+  claimRef:
+    name: prometheus-data
+    namespace: bt
   capacity: 
     storage: {{.Values.prometheus.storage.size}}
   accessModes: 
@@ -18,7 +21,10 @@ kind: PersistentVolume
 metadata: 
   name: tempo-pv
 spec:
-  storageClassName: manual
+  storageClassName:  manual
+  claimRef:
+    name: tempo-data
+    namespace: bt
   capacity: 
     storage: {{.Values.tempo.storage.size}}
   accessModes: 
@@ -33,7 +39,10 @@ kind: PersistentVolume
 metadata: 
   name: loki-pv
 spec:
-  storageClassName: manual
+  storageClassName:  manual
+  claimRef:
+    name: loki-data
+    namespace: bt
   capacity: 
     storage: {{.Values.loki.storage.size}}
   accessModes: 
@@ -49,7 +58,10 @@ kind: PersistentVolume
 metadata: 
   name: grafana-pv
 spec:
-  storageClassName: manual
+  storageClassName:  manual
+  claimRef:
+    name: grafana-data
+    namespace: bt
   capacity: 
     storage: {{.Values.grafana.storage.size}}
   accessModes: 
