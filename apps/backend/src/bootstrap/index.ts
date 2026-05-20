@@ -3,8 +3,7 @@ import http from "http";
 
 import { Config } from "../../../../packages/common/src/utils/config";
 import log from "../lib/logger";
-import cacheRoutes from "../modules/cache/routes";
-import loaders, { loadCacheWarmingDependencies } from "./loaders";
+import loaders from "./loaders";
 
 export default async (config: Config) => {
   const app = express();
