@@ -53,3 +53,12 @@ spec:
                 name: {{ include "bt-app.backendName" . }}-svc
                 port:
                   number: {{ .Values.port }}
+          {{- if .Values.otel.enabled }}
+          - path: /otlp
+            pathType: Prefix
+            backend:
+              service:
+                name: otel-collector
+                port:
+                  number: 4318
+          {{- end }}

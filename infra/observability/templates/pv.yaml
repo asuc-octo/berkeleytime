@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: prometheus-pv
+spec:
+  storageClassName:  manual
+  claimRef:
+    name: prometheus-data
+    namespace: bt
+  capacity: 
+    storage: {{.Values.prometheus.storage.size}}
+  accessModes: 
+    - ReadWriteOnce
+  hostPath: 
+    path: /data/prometheus
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: tempo-pv
+spec:
+  storageClassName:  manual
+  claimRef:
+    name: tempo-data
+    namespace: bt
+  capacity: 
+    storage: {{.Values.tempo.storage.size}}
+  accessModes: 
+    - ReadWriteOnce
+  hostPath: 
+    path: /data/tempo
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: loki-pv
+spec:
+  storageClassName:  manual
+  claimRef:
+    name: loki-data
+    namespace: bt
+  capacity: 
+    storage: {{.Values.loki.storage.size}}
+  accessModes: 
+    - ReadWriteOnce
+  hostPath: 
+    path: /data/loki
+
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata: 
+  name: grafana-pv
+spec:
+  storageClassName:  manual
+  claimRef:
+    name: grafana-data
+    namespace: bt
+  capacity: 
+    storage: {{.Values.grafana.storage.size}}
+  accessModes: 
+    - ReadWriteOnce
+  hostPath: 
+    path: /data/grafana

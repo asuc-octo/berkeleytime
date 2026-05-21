@@ -27,6 +27,10 @@ on:
         description: "Deploy staff dashboard (prod only)"
         type: boolean
         default: false
+      deploy_observability:
+        description: "Deploy observability stack (prod only)"
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -62,6 +66,14 @@ jobs:
               kubectl rollout restart deployment ${{ inputs.name }}-backend
               kubectl rollout restart deployment ${{ inputs.name }}-frontend
               kubectl rollout restart deployment ${{ inputs.name }}-semantic-search 2>/dev/null || true
+            fi
+
+            # Deploy observability stack if requested
+            if [ "${{ inputs.deploy_observability }}" = "true" ]; then
+              helm upgrade bt-observability oci://registry-1.docker.io/octoberkeleytime/bt-observability \
+                --install \
+                --version=${{ inputs.version }} \
+                --namespace=bt
             fi
 
             # Deploy staff dashboard if requested

@@ -58,6 +58,7 @@ import { getExternalLink } from "@/lib/section";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import SuspenseBoundary from "../SuspenseBoundary";
+import AddToSchedulePopover from "./AddToSchedulePopover";
 import BookmarkPopover from "./BookmarkPopover";
 import styles from "./Class.module.scss";
 import EmptyState from "./EmptyState";
@@ -569,6 +570,21 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
+                    <AddToSchedulePopover
+                      disabled={userLoading}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              classNumber: _class.number,
+                            }
+                          : undefined
+                      }
+                    />
                     <BookmarkPopover
                       disabled={userLoading}
                       classInfo={

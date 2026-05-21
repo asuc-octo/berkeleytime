@@ -117,6 +117,7 @@ export interface CatalogFilterState {
   effectiveOrder: "asc" | "desc";
   enrollmentFilter: EnrollmentFilter | null;
   online: boolean;
+  scheduleConflictFilter: string | null;
   hasActiveFilters: boolean;
   filterVariables: ICatalogFilters | undefined;
 }
@@ -134,6 +135,7 @@ export interface CatalogFilterUpdaters {
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
+  updateScheduleConflictFilter: Dispatch<string | null>;
 }
 
 export type UseCatalogFiltersReturn = CatalogFilterState &
@@ -162,6 +164,8 @@ export default function useCatalogFilters({
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
     useState<EnrollmentFilter | null>(null);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
+  const [localScheduleConflictFilter, setLocalScheduleConflictFilter] =
+    useState<string | null>(null);
 
   // Derive state from search params when persistent
   const query = localQuery;
@@ -335,7 +339,8 @@ export default function useCatalogFilters({
     gradingFilters.length > 0 ||
     enrollmentFilter !== null ||
     online ||
-    sortBy !== SortBy.Relevance;
+    sortBy !== SortBy.Relevance ||
+    localScheduleConflictFilter !== null;
 
   // URL sync updater helpers
   const updateArray = <T>(
@@ -460,5 +465,7 @@ export default function useCatalogFilters({
     },
     updateOnline: (o) => updateBoolean("online", setLocalOnline, o),
     updateReverse: setLocalReverse,
+    scheduleConflictFilter: localScheduleConflictFilter,
+    updateScheduleConflictFilter: setLocalScheduleConflictFilter,
   };
 }

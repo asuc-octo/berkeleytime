@@ -11,6 +11,11 @@ on:
         required: true
         type: boolean
         default: false
+      deploy_observability:
+        description: "Deploy observability stack"
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   branch-check:
@@ -43,4 +48,5 @@ jobs:
         host: berkeleytime.com
       host: berkeleytime.com
       deploy_staff: ${{ inputs.deploy_staff }}
+      deploy_observability: ${{ inputs.deploy_observability }}
     secrets: inherit
