@@ -56,6 +56,11 @@ export const GET_CATALOG_SEARCH = gql`
         decal {
           title
         }
+        meetings {
+          days
+          startTime
+          endTime
+        }
       }
       totalCount
     }

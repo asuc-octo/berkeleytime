@@ -31,6 +31,7 @@ export interface FilterContextType {
   enrollmentFilter: EnrollmentFilter | null;
   online: boolean;
   filterOptions: ICatalogFilterOptions | null;
+  scheduleConflictFilter: string | null;
   updateUnits: Dispatch<UnitRange>;
   updateLevels: Dispatch<Level[]>;
   updateDays: Dispatch<Day[]>;
@@ -42,6 +43,7 @@ export interface FilterContextType {
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
   updateReverse: Dispatch<SetStateAction<boolean>>;
+  updateScheduleConflictFilter: Dispatch<string | null>;
 }
 
 export const FilterContext = createContext<FilterContextType | null>(null);
