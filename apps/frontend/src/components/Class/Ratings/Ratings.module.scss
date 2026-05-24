@@ -101,6 +101,13 @@
   min-width: 0;
 }
 
+.ratingsBodyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
 .ratingsSummary {
   display: flex;
   flex-direction: column;
@@ -122,14 +129,6 @@
   align-items: center;
   gap: var(--space-5, 24px);
   align-self: stretch;
-}
-
-.ratingsSummaryBottomLeft {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2, 8px);
-  padding: 0 var(--space-2);
 }
 
 .ratingsSummaryBottomRight {
@@ -158,28 +157,14 @@
   text-align: right;
 }
 
-.ratingsSummaryAverage {
-  color: var(--secondary-color);
-  text-align: center;
-  font-feature-settings: "liga" off;
-  font-family: Inter;
-  font-size: var(--font-sizes-8, 35px);
-  font-style: normal;
-  font-weight: 600;
-  line-height: 36px; /* 102.857% */
-  letter-spacing: -0.35px;
-}
-
 .ratingsSummaryCount {
-  color: var(--paragraph-color);
+  color: rgb(64, 64, 64);
   font-feature-settings: "liga" off;
-
-  /* Web UI (Desktop)/Title/Title Small */
   font-family: Inter;
-  font-size: var(--font-sizes-1, 12px);
+  font-size: var(--font-sizes-2, 14px);
   font-style: normal;
   font-weight: 500;
-  line-height: 16px; /* 133.333% */
+  line-height: 1.25;
 }
 
 .noWrittenReviews {

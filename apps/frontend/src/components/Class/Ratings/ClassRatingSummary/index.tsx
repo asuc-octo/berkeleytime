@@ -10,16 +10,14 @@ import {
   VoteReviewHelpfulMutationVariables,
 } from "@/lib/generated/graphql";
 
-import {
-  formatDate,
-  getAverageRatingColor,
-  isMetricRating,
-} from "../metricsUtil";
+import { formatDate } from "../metricsUtil";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./ClassRatingSummary.module.scss";
 
 export interface ClassUserReview {
   professorName?: string | null;
+  semester?: string | null;
+  year?: number | null;
   metrics?: Array<{ metricName: MetricName; value: number }>;
   reviewTitle?: string | null;
   reviewContent?: string | null;
@@ -55,27 +53,9 @@ export default function ClassRatingSummary({
     await voteHelpful({ variables: { reviewId: classReview.reviewId } });
   };
 
-  const ratingMetrics = (classReview.metrics ?? []).filter((metric) =>
-    isMetricRating(MetricName[metric.metricName])
-  );
-  const metricsAverage =
-    ratingMetrics.length > 0
-      ? ratingMetrics.reduce((sum, m) => {
-          const value =
-            m.metricName === MetricName.Difficulty ||
-            m.metricName === MetricName.Workload
-              ? 5 - m.value
-              : m.value;
-          return sum + value;
-        }, 0) / ratingMetrics.length
-      : null;
-
   const rawGrade = classReview.reviewerGrade;
   const displayGrade =
     rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : "N/A";
-
-  const ratingColor =
-    metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -93,9 +73,11 @@ export default function ClassRatingSummary({
         <div className={styles.bodyLeft}>
           <div className={styles.titleDate}>
             <h3>{classReview.reviewTitle || "No title"}</h3>
-            {classReview.lastUpdated && (
-              <h4>{formatDate(new Date(classReview.lastUpdated))}</h4>
-            )}
+            <h4>
+              {classReview.lastUpdated && `${formatDate(new Date(classReview.lastUpdated))} | `}
+              {classReview.semester} {classReview.year}
+              {classReview.professorName && `, ${classReview.professorName}`}
+            </h4>
           </div>
           <div
             ref={contentRef}
@@ -152,25 +134,6 @@ export default function ClassRatingSummary({
       </div>
       <div className={styles.body}>
         <div className={styles.bodyRight}>
-          <h2 className={styles.ratingGrade}>Rating</h2>
-          <div
-            className={styles.rating}
-            style={
-              ratingColor
-                ? {
-                    borderColor: ratingColor.badge,
-                    backgroundColor: ratingColor.bg,
-                    color: ratingColor.badge,
-                  }
-                : undefined
-            }
-          >
-            {metricsAverage != null ? (
-              <span>{metricsAverage.toFixed(1)}</span>
-            ) : (
-              <span>N/A</span>
-            )}
-          </div>
           <h2 className={styles.ratingGrade}>Grade</h2>
           <div
             className={`${styles.grade}${displayGrade === "N/A" ? ` ${styles.naGrade}` : ""}`}

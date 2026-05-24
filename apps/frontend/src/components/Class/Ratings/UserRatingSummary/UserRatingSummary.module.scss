@@ -172,22 +172,6 @@
       margin: 0;
     }
 
-    > :nth-child(3) {
-      margin-top: var(--space-5, 24px);
-    }
-
-    .rating {
-      display: flex;
-      padding: 2px var(--space-2, 8px);
-      justify-content: center;
-      align-items: center;
-      align-self: center;
-      text-align: center;
-      border-radius: 4px;
-      background: var(--green-500-20);
-      color: var(--green-badge);
-    }
-
     .grade {
       display: flex;
       min-width: 22px;

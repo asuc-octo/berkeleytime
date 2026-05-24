@@ -28,6 +28,7 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
       subject: userClass.subject,
       courseNumber: userClass.courseNumber,
       classNumber: userClass.classNumber,
+      professorName: userClass.professorName ?? null,
 
       metrics: userClass.metrics.map((userMetric: UserMetric) => ({
         metricName: userMetric.metricName as MetricName,

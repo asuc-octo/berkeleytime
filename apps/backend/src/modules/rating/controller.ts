@@ -524,14 +524,39 @@ export const getUserRatings = async (context: RequestContext) => {
     }
   });
 
+  const classNumbers = formattedUserRatings.classes.map((c) => c.classNumber);
+  const sections = await SectionModel.find({
+    classNumber: { $in: classNumbers },
+  }).select("semester year classNumber meetings");
+
+  const instructorNamesByClassKey = new Map<string, string>();
+  sections.forEach((section) => {
+    const classKey = `${section.semester}|${section.year}|${section.classNumber}`;
+    const names: string[] = [];
+    section.meetings?.forEach((meeting) => {
+      meeting.instructors?.forEach((instructor) => {
+        if (
+          instructor.role === "PI" &&
+          instructor.givenName &&
+          instructor.familyName
+        ) {
+          names.push(`${instructor.givenName} ${instructor.familyName}`);
+        }
+      });
+    });
+    if (names.length) instructorNamesByClassKey.set(classKey, names.join(", "));
+  });
+
   return {
     ...formattedUserRatings,
     classes: formattedUserRatings.classes.map((ratedClass) => {
       const review = reviewByCourse.get(
         `${ratedClass.subject}|${ratedClass.courseNumber}`
       );
+      const classKey = `${ratedClass.semester}|${ratedClass.year}|${ratedClass.classNumber}`;
       return {
         ...ratedClass,
+        professorName: instructorNamesByClassKey.get(classKey) ?? null,
         reviewTitle: review?.reviewTitle ?? null,
         reviewContent: review?.reviewContent ?? null,
         reviewerGrade: review?.reviewerGrade ?? "n/a",

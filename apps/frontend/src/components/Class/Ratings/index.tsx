@@ -92,29 +92,6 @@ type ClassReviewsQueryData = {
   };
 };
 
-function RatingCountWithButton({
-  count,
-  addRatingButton,
-}: {
-  count: number;
-  addRatingButton?: React.ReactNode;
-}) {
-  const countLabel =
-    count === 0 ? "No ratings" : count === 1 ? "1 rating" : `${count} ratings`;
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "var(--space-3, 12px)",
-      }}
-    >
-      <p className={styles.ratingsSummaryCount}>{countLabel}</p>
-      {addRatingButton}
-    </div>
-  );
-}
 
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 const RATING_TABS = {
@@ -551,27 +528,24 @@ export function RatingsContainer() {
               <div className={styles.containerContents}>
                 <div className={styles.ratingsSummary}>
                   <div className={styles.ratingsSummaryBottom}>
-                    <div className={styles.ratingsSummaryBottomLeft}>
-                      <p className={styles.ratingsSummaryAverage}>
-                        {classReviewsSummary.average != null
-                          ? classReviewsSummary.average.toFixed(1)
-                          : "—"}
-                      </p>
-                      <RatingCountWithButton
-                        count={classReviewsSummary.count}
-                        addRatingButton={
-                          !userRatings ? (
-                            <RatingButton
-                              user={user}
-                              onOpenModal={handleModalStateChange}
-                              userRatingData={userRatingsData}
-                              currentClass={currentClass}
-                            />
-                          ) : undefined
-                        }
-                      />
-                    </div>
                     <div className={styles.ratingsSummaryBottomRight}>
+                      <div className={styles.ratingsBodyHeader}>
+                        <p className={styles.ratingsSummaryCount}>
+                          {classReviewsSummary.count === 0
+                            ? "No ratings"
+                            : classReviewsSummary.count === 1
+                              ? "1 rating"
+                              : `${classReviewsSummary.count} ratings`}
+                        </p>
+                        {!userRatings && (
+                          <RatingButton
+                            user={user}
+                            onOpenModal={handleModalStateChange}
+                            userRatingData={userRatingsData}
+                            currentClass={currentClass}
+                          />
+                        )}
+                      </div>
                       <div
                         className={styles.ratingsBody}
                         style={{
