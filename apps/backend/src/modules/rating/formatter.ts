@@ -37,8 +37,9 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
 
       reviewTitle: (userClass as UserClass & { reviewTitle?: string | null })
         .reviewTitle,
-      reviewContent: (userClass as UserClass & { reviewContent?: string | null })
-        .reviewContent,
+      reviewContent: (
+        userClass as UserClass & { reviewContent?: string | null }
+      ).reviewContent,
       lastUpdated: userClass.lastUpdated?.toString(),
     })),
   };

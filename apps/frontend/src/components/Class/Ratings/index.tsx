@@ -92,7 +92,6 @@ type ClassReviewsQueryData = {
   };
 };
 
-
 const RATING_VALUES = [5, 4, 3, 2, 1] as const;
 const RATING_TABS = {
   Instructor: "instructor",

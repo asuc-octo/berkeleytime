@@ -35,7 +35,8 @@ export default function UserRatingSummary({
           <div className={styles.titleDate}>
             <h3>{userRatings.reviewTitle}</h3>
             <h4>
-              {userRatings.lastUpdated && `${formatDate(new Date(userRatings.lastUpdated))} | `}
+              {userRatings.lastUpdated &&
+                `${formatDate(new Date(userRatings.lastUpdated))} | `}
               {userRatings.semester} {userRatings.year}
               {userRatings.professorName && `, ${userRatings.professorName}`}
             </h4>

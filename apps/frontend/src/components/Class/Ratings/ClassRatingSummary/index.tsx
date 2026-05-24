@@ -74,7 +74,8 @@ export default function ClassRatingSummary({
           <div className={styles.titleDate}>
             <h3>{classReview.reviewTitle || "No title"}</h3>
             <h4>
-              {classReview.lastUpdated && `${formatDate(new Date(classReview.lastUpdated))} | `}
+              {classReview.lastUpdated &&
+                `${formatDate(new Date(classReview.lastUpdated))} | `}
               {classReview.semester} {classReview.year}
               {classReview.professorName && `, ${classReview.professorName}`}
             </h4>
