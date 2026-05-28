@@ -435,6 +435,15 @@ interface ScheduleMapStop {
   startTime: string;
 }
 
+interface LocatedScheduleMapStop extends ScheduleMapStop {
+  coordinates: [number, number];
+}
+
+interface RouteSegment {
+  from: LocatedScheduleMapStop;
+  to: LocatedScheduleMapStop;
+}
+
 interface RouteLeg {
   distance: number;
   duration: number;
@@ -456,8 +465,7 @@ interface WalkingRouteResponse {
 
 interface MapOverlay {
   height: number;
-  routePath: string;
-  routePoints: { key: string; x: number; y: number }[];
+  routePaths: string[];
   width: number;
 }
 
@@ -465,8 +473,7 @@ type RouteStatus = "idle" | "loading" | "ready" | "error";
 
 const emptyMapOverlay: MapOverlay = {
   height: 0,
-  routePath: "",
-  routePoints: [],
+  routePaths: [],
   width: 0,
 };
 
@@ -518,26 +525,30 @@ const getDistanceMeters = (
   );
 };
 
-const estimateRouteLegs = (stops: ScheduleMapStop[]): RouteLeg[] => {
-  return stops.slice(0, -1).flatMap((stop, index) => {
-    const nextStop = stops[index + 1];
+const estimateRouteLegFromCoordinates = (
+  from: [number, number],
+  to: [number, number]
+): RouteLeg => {
+  const distance = getDistanceMeters(from, to);
+  const walkingDistance = distance * 1.25;
 
-    if (!stop.coordinates || !nextStop?.coordinates) return [];
-
-    const distance = getDistanceMeters(stop.coordinates, nextStop.coordinates);
-    const walkingDistance = distance * 1.25;
-
-    return [
-      {
-        distance: walkingDistance,
-        duration: walkingDistance / 1.35,
-      },
-    ];
-  });
+  return {
+    distance: walkingDistance,
+    duration: walkingDistance / 1.35,
+  };
 };
+
+const estimateRouteLeg = (
+  from: LocatedScheduleMapStop,
+  to: LocatedScheduleMapStop
+): RouteLeg =>
+  estimateRouteLegFromCoordinates(from.coordinates, to.coordinates);
 
 const getCoordinateKey = ([longitude, latitude]: [number, number]) =>
   `${longitude.toFixed(6)},${latitude.toFixed(6)}`;
+
+const isLocatedStop = (stop: ScheduleMapStop): stop is LocatedScheduleMapStop =>
+  Boolean(stop.coordinates);
 
 const getSvgPath = (points: { x: number; y: number }[]) =>
   points
@@ -635,9 +646,9 @@ export default function RouteMap({ selectedSections }: MapProps) {
   const [mapOverlay, setMapOverlay] = useState<MapOverlay>(emptyMapOverlay);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapMode, setMapMode] = useState<MapMode>("minimal");
-  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>(
-    []
-  );
+  const [routeCoordinateGroups, setRouteCoordinateGroups] = useState<
+    [number, number][][]
+  >([]);
   const [routeLegs, setRouteLegs] = useState<RouteLeg[]>([]);
   const [routeStatus, setRouteStatus] = useState<RouteStatus>("idle");
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
@@ -699,18 +710,47 @@ export default function RouteMap({ selectedSections }: MapProps) {
     [activeDay, stopsByDay]
   );
   const locatedStops = useMemo(
-    () => activeStops.filter((stop) => stop.coordinates),
+    () => activeStops.filter(isLocatedStop),
     [activeStops]
   );
-  const routeStops = useMemo(
+  const routeSegments = useMemo<RouteSegment[]>(
     () =>
-      locatedStops.filter(
-        (stop, index, stops) =>
-          index === 0 ||
-          !sameCoordinates(stop.coordinates, stops[index - 1].coordinates)
-      ),
-    [locatedStops]
+      activeStops.slice(0, -1).flatMap((stop, index) => {
+        const nextStop = activeStops[index + 1];
+
+        if (
+          !nextStop ||
+          !isLocatedStop(stop) ||
+          !isLocatedStop(nextStop) ||
+          sameCoordinates(stop.coordinates, nextStop.coordinates)
+        ) {
+          return [];
+        }
+
+        return [{ from: stop, to: nextStop }];
+      }),
+    [activeStops]
   );
+  const routeStops = useMemo(() => {
+    const firstSegment = routeSegments[0];
+    if (!firstSegment) return [];
+
+    const stops: LocatedScheduleMapStop[] = [firstSegment.from];
+
+    routeSegments.forEach((segment) => {
+      const previousStop = stops[stops.length - 1];
+
+      if (
+        !sameCoordinates(previousStop.coordinates, segment.from.coordinates)
+      ) {
+        return;
+      }
+
+      stops.push(segment.to);
+    });
+
+    return stops;
+  }, [routeSegments]);
   const googleMapsRouteUrl = useMemo(
     () => getGoogleMapsRouteUrl(routeStops),
     [routeStops]
@@ -742,14 +782,13 @@ export default function RouteMap({ selectedSections }: MapProps) {
     const legMap = new Map<string, RouteLeg>();
 
     routeLegs.forEach((leg, index) => {
-      const from = routeStops[index];
-      const to = routeStops[index + 1];
+      const segment = routeSegments[index];
 
-      if (from && to) legMap.set(`${from.key}:${to.key}`, leg);
+      if (segment) legMap.set(`${segment.from.key}:${segment.to.key}`, leg);
     });
 
     return legMap;
-  }, [routeLegs, routeStops]);
+  }, [routeLegs, routeSegments]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -790,14 +829,10 @@ export default function RouteMap({ selectedSections }: MapProps) {
   }, [currentTheme, mapMode]);
 
   useEffect(() => {
-    const coordinates = routeStops.flatMap((stop) =>
-      stop.coordinates ? [stop.coordinates] : []
-    );
-
-    setRouteCoordinates([]);
+    setRouteCoordinateGroups([]);
     setRouteLegs([]);
 
-    if (coordinates.length < 2) {
+    if (routeSegments.length === 0) {
       setRouteStatus("idle");
       return;
     }
@@ -806,13 +841,19 @@ export default function RouteMap({ selectedSections }: MapProps) {
 
     setRouteStatus("loading");
 
-    fetch(getWalkingRouteUrl(coordinates), { signal: controller.signal })
-      .then(async (response) => {
+    Promise.all(
+      routeSegments.map(async (segment) => {
+        const response = await fetch(
+          getWalkingRouteUrl([
+            segment.from.coordinates,
+            segment.to.coordinates,
+          ]),
+          { signal: controller.signal }
+        );
+
         if (!response.ok) throw new Error(`Routing failed: ${response.status}`);
 
-        return (await response.json()) as WalkingRouteResponse;
-      })
-      .then((data) => {
+        const data = (await response.json()) as WalkingRouteResponse;
         const route = data.routes?.[0];
         const routedCoordinates = route?.geometry?.coordinates;
 
@@ -825,22 +866,27 @@ export default function RouteMap({ selectedSections }: MapProps) {
           throw new Error(data.message ?? "Routing failed");
         }
 
-        setRouteCoordinates(routedCoordinates);
-        setRouteLegs(
-          route.legs?.length ? route.legs : estimateRouteLegs(routeStops)
-        );
+        return {
+          coordinates: routedCoordinates,
+          leg: route.legs?.[0] ?? estimateRouteLeg(segment.from, segment.to),
+        };
+      })
+    )
+      .then((routes) => {
+        setRouteCoordinateGroups(routes.map((route) => route.coordinates));
+        setRouteLegs(routes.map((route) => route.leg));
         setRouteStatus("ready");
       })
       .catch(() => {
         if (controller.signal.aborted) return;
 
-        setRouteCoordinates([]);
+        setRouteCoordinateGroups([]);
         setRouteLegs([]);
         setRouteStatus("error");
       });
 
     return () => controller.abort();
-  }, [routeStops]);
+  }, [routeSegments]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -848,16 +894,19 @@ export default function RouteMap({ selectedSections }: MapProps) {
 
     const updateMapOverlay = () => {
       const canvas = map.getCanvas();
-      const routePoints = routeCoordinates.map((coordinate, index) => {
-        const projected = map.project(coordinate);
+      const routePaths = routeCoordinateGroups.map((coordinates) => {
+        const routePoints = coordinates.map((coordinate) => {
+          const projected = map.project(coordinate);
 
-        return { key: `${index}`, x: projected.x, y: projected.y };
+          return { x: projected.x, y: projected.y };
+        });
+
+        return getSvgPath(routePoints);
       });
 
       setMapOverlay({
         height: canvas.clientHeight,
-        routePath: getSvgPath(routePoints),
-        routePoints,
+        routePaths,
         width: canvas.clientWidth,
       });
     };
@@ -872,7 +921,7 @@ export default function RouteMap({ selectedSections }: MapProps) {
       map.off("zoom", updateMapOverlay);
       window.removeEventListener("resize", updateMapOverlay);
     };
-  }, [mapLoaded, routeCoordinates]);
+  }, [mapLoaded, routeCoordinateGroups]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -998,12 +1047,12 @@ export default function RouteMap({ selectedSections }: MapProps) {
           className={styles.mapOverlay}
           viewBox={`0 0 ${mapOverlay.width} ${mapOverlay.height}`}
         >
-          {mapOverlay.routePath && mapOverlay.routePoints.length > 1 && (
-            <>
-              <path className={styles.routeHalo} d={mapOverlay.routePath} />
-              <path className={styles.routeLine} d={mapOverlay.routePath} />
-            </>
-          )}
+          {mapOverlay.routePaths.map((routePath, index) => (
+            <g key={`${index}-${routePath}`}>
+              <path className={styles.routeHalo} d={routePath} />
+              <path className={styles.routeLine} d={routePath} />
+            </g>
+          ))}
         </svg>
       )}
       <div className={styles.sideBar}>

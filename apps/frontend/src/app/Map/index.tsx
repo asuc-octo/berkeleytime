@@ -31,17 +31,27 @@ export default function Map() {
   );
 
   const selectedScheduleId = searchParams.get("schedule");
+  const selectedScheduleExists = useMemo(
+    () =>
+      Boolean(
+        selectedScheduleId &&
+          availableSchedules.some(
+            (schedule) => schedule._id === selectedScheduleId
+          )
+      ),
+    [availableSchedules, selectedScheduleId]
+  );
 
   useEffect(() => {
-    if (selectedScheduleId || availableSchedules.length === 0) return;
+    if (selectedScheduleExists || availableSchedules.length === 0) return;
 
     const firstSchedule = availableSchedules[0];
     if (firstSchedule) setSearchParams({ schedule: firstSchedule._id });
-  }, [availableSchedules, selectedScheduleId, setSearchParams]);
+  }, [availableSchedules, selectedScheduleExists, setSearchParams]);
 
   const { data: scheduleData, loading: scheduleLoading } = useReadSchedule(
     selectedScheduleId ?? "",
-    { skip: !selectedScheduleId }
+    { skip: !selectedScheduleExists }
   );
 
   const schedule = useMemo(() => {
@@ -126,7 +136,7 @@ export default function Map() {
           </select>
         </label>
       </div>
-      {scheduleLoading || !schedule ? (
+      {!selectedScheduleExists || scheduleLoading || !schedule ? (
         <div className={styles.centered}>
           <LoadingIndicator size="lg" />
         </div>
