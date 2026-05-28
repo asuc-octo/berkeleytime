@@ -29,6 +29,9 @@ const CACHE_PREFIX = "user-session:";
 
 const ANONYMOUS_SESSION_TTL = 1000 * 60 * 60 * 12;
 const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 365;
+const DEV_USER_EMAIL = "dev@berkeleytime.local";
+const DEV_USER_GOOGLE_ID = "local-dev-user";
+const DEV_USER_NAME = "Local Dev User";
 
 export default async (app: Application, redis: RedisClientType) => {
   // init
@@ -205,7 +208,28 @@ export default async (app: Application, redis: RedisClientType) => {
     const DEV_LOGIN_ROUTE = "/dev/login";
     const DEV_USERS_ROUTE = "/dev/users";
 
+    const getOrCreateDevUser = async (userId?: string) => {
+      if (userId) return await UserModel.findById(userId);
+
+      return await UserModel.findOneAndUpdate(
+        { email: DEV_USER_EMAIL },
+        {
+          $set: {
+            lastSeenAt: new Date(),
+            name: DEV_USER_NAME,
+            staff: true,
+          },
+          $setOnInsert: {
+            email: DEV_USER_EMAIL,
+            googleId: DEV_USER_GOOGLE_ID,
+          },
+        },
+        { new: true, upsert: true }
+      );
+    };
+
     // GET /dev/login?userId=xxx&redirect_uri=/
+    // Omitting userId logs in as a deterministic local dev user.
     app.get(DEV_LOGIN_ROUTE, async (req, res) => {
       const { userId, redirect_uri: redirectURI } = req.query;
 
@@ -226,12 +250,12 @@ export default async (app: Application, redis: RedisClientType) => {
         res.redirect(redirectWithDevAuthError(reason));
       };
 
-      if (!userId || typeof userId !== "string") {
+      if (userId && typeof userId !== "string") {
         failDevLogin("invalid_user_id");
         return;
       }
 
-      const user = await UserModel.findById(userId);
+      const user = await getOrCreateDevUser(userId);
       if (!user) {
         failDevLogin("user_not_found");
         return;

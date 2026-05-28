@@ -15,6 +15,7 @@ import {
 
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
+import { copyTextToClipboard } from "@/lib/clipboard";
 
 interface ShareDialogProps {
   children: ReactNode;
@@ -24,33 +25,39 @@ interface ShareDialogProps {
 // TODO: Invite collaborators
 
 export default function ShareDialog({ children }: ShareDialogProps) {
-  const { schedule } = useSchedule();
+  const { schedule, editing } = useSchedule();
   const [updateSchedule, { loading }] = useUpdateSchedule();
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
   const [copied, setCopied] = useState(false);
 
+  const shareUrl = useMemo(
+    () => `${window.location.origin}/schedules/${schedule._id}`,
+    [schedule._id]
+  );
+
   const content = useMemo(
     () => ({
-      url: window.location.href,
+      url: shareUrl,
       title: schedule.name,
       text: `View my ${schedule.semester} ${schedule.year} schedule on Berkeleytime`,
     }),
-    [schedule]
+    [schedule, shareUrl]
   );
 
-  const canShare = navigator.canShare && navigator.canShare?.(content);
+  const canShare =
+    typeof navigator.share === "function" &&
+    (!navigator.canShare || navigator.canShare(content));
 
-  const copy = () => {
+  const copy = async () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
+    await copyTextToClipboard(shareUrl);
     setCopied(true);
-
-    navigator.clipboard.writeText(window.location.href);
 
     timeoutRef.current = setTimeout(() => {
       setCopied(false);
-    }, 1000);
+    }, 1200);
   };
 
   const handleCheckedChange = async (checked: boolean) => {
@@ -88,12 +95,7 @@ export default function ShareDialog({ children }: ShareDialogProps) {
           </Dialog.Header>
           <Dialog.Body gap="3">
             <Flex gap="3" width="100%">
-              <Input
-                readOnly
-                type="url"
-                value={window.location.origin + window.location.pathname}
-                width="100%"
-              />
+              <Input readOnly type="url" value={shareUrl} width="100%" />
               <Button onClick={() => copy()}>
                 {copied ? "Copied" : "Copy link"}
               </Button>
@@ -101,16 +103,20 @@ export default function ShareDialog({ children }: ShareDialogProps) {
                 <Button onClick={() => navigator.share(content)}>Share</Button>
               )}
             </Flex>
-            <label>
-              <Flex align="center" gap="3">
-                <Checkbox
-                  checked={schedule.public}
-                  onCheckedChange={handleCheckedChange}
-                  disabled={loading}
-                />
-                <Text as="span">Anyone with the link can view</Text>
-              </Flex>
-            </label>
+            {editing ? (
+              <label>
+                <Flex align="center" gap="3">
+                  <Checkbox
+                    checked={schedule.public}
+                    onCheckedChange={handleCheckedChange}
+                    disabled={loading}
+                  />
+                  <Text as="span">Anyone with the link can view</Text>
+                </Flex>
+              </label>
+            ) : (
+              <Text>This public schedule is view-only.</Text>
+            )}
           </Dialog.Body>
         </Dialog.Card>
       </Dialog.Portal>

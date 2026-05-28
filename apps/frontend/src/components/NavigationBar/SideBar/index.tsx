@@ -53,6 +53,9 @@ export default function SideBar({ children }: SideBarProps) {
               <Link className={styles.item} to="/schedules">
                 Scheduler
               </Link>
+              <Link className={styles.item} to="/map">
+                Map
+              </Link>
               <Link className={styles.item} to="/gradtrak">
                 Gradtrak
               </Link>

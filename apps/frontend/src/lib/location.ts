@@ -84,11 +84,30 @@ Gilman
 2240 Piedmont
 */
 
-interface Building {
+export interface Building {
   location?: [number, number];
   name: string;
   link?: string;
 }
+
+const normalizeLocation = (location: string) =>
+  location.trim().replace(/\s+/g, " ");
+
+export const findBuildingForLocation = (
+  location?: string | null
+): Building | undefined => {
+  if (!location) return undefined;
+
+  const normalizedLocation = normalizeLocation(location);
+  const buildingName = Object.keys(buildings)
+    .filter(
+      (name) =>
+        normalizedLocation === name || normalizedLocation.startsWith(`${name} `)
+    )
+    .sort((a, b) => b.length - a.length)[0];
+
+  return buildingName ? buildings[buildingName] : undefined;
+};
 
 export const buildings: Record<string, Building> = {
   "Berkeley Way West": {

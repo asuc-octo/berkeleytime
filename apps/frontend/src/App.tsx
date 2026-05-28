@@ -46,7 +46,7 @@ const Schedule = lazy(() => import("@/app/Schedule"));
 const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
-// const Map = lazy(() => import("@/app/Map"));
+const Map = lazy(() => import("@/app/Map"));
 const GradTrak = lazy(() => import("@/app/GradTrak"));
 const GradTrakOnboarding = lazy(() => import("@/app/GradTrak/Onboarding"));
 const GradTrakDashboard = lazy(() => import("@/app/GradTrak/Dashboard"));
@@ -190,6 +190,14 @@ const router = createBrowserRouter([
       {
         element: <Layout footer={false} scrollLock />,
         children: [
+          {
+            element: (
+              <SuspenseBoundary key="map">
+                <Map />
+              </SuspenseBoundary>
+            ),
+            path: "map",
+          },
           {
             element: (
               <SuspenseBoundary key="profile">

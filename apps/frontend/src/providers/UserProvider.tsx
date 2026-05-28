@@ -50,12 +50,15 @@ export default function UserProvider({ children }: UserProviderProps) {
     if (autoLoginAttempted.current) return;
 
     const savedUserId = getStoredDevUserId();
-    if (savedUserId) {
-      autoLoginAttempted.current = true;
-      const redirectUri = window.location.pathname + window.location.search;
-      window.location.href = `${DEV_AUTH_LOGIN_ROUTE}?userId=${savedUserId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    }
-  }, [loading, user]);
+    if (error) return;
+
+    autoLoginAttempted.current = true;
+    const redirectUri = window.location.pathname + window.location.search;
+
+    window.location.href = savedUserId
+      ? `${DEV_AUTH_LOGIN_ROUTE}?userId=${savedUserId}&redirect_uri=${encodeURIComponent(redirectUri)}`
+      : `${DEV_AUTH_LOGIN_ROUTE}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  }, [error, loading, user]);
 
   return (
     <UserContext.Provider value={{ user, loading, error }}>

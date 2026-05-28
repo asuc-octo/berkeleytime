@@ -1,61 +1,93 @@
 .root {
-  background-color: var(--background-color);
+  height: calc(100dvh - var(--header-height, 90px));
+  min-height: 520px;
   position: relative;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
+}
 
-  .container {
-    flex-grow: 1;
-  }
+.selector {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  padding: 10px 12px;
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
 
-  .menu {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    z-index: 1;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    background-color: var(--foreground-color);
-    border-radius: 8px;
+  label {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
   }
 
-  .overlay {
-    width: 384px;
-    top: 0;
-    right: 0;
-    position: absolute;
-    background: linear-gradient(to left, var(--background-color), transparent);
-    height: 100%;
-    padding: 24px;
-    pointer-events: none;
+  span {
+    font-size: var(--text-12);
+    font-weight: var(--font-medium);
+    color: var(--paragraph-color);
+  }
 
-    .panel {
-      background-color: var(--foreground-color);
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      pointer-events: all;
-      height: 100%;
+  select {
+    min-width: 220px;
+    max-width: min(360px, 60vw);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--background-color);
+    color: var(--heading-color);
+    font: inherit;
+    font-size: var(--text-14);
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 640px) {
+  .selector {
+    width: calc(100% - 32px);
+
+    label {
+      justify-content: space-between;
+    }
+
+    select {
+      min-width: 0;
+      max-width: 100%;
+      flex: 1;
     }
   }
 }
 
-.marker {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: var(--blue-500);
+.centered {
+  min-height: calc(100dvh - var(--header-height, 90px));
   display: grid;
   place-items: center;
-  color: white;
-  font-weight: var(--font-medium);
-  font-size: var(--text-14);
-  line-height: 1;
-  border: 1px solid var(--blue-600);
+  padding: 24px;
+  background-color: var(--background-color);
 }
 
-:global(.mapboxgl-control-container) {
-  display: none;
+.message {
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    color: var(--blue-500);
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: var(--font-bold);
+    color: var(--heading-color);
+  }
+
+  p {
+    color: var(--paragraph-color);
+    line-height: 1.5;
+  }
 }

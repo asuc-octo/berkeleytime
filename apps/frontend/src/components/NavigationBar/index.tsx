@@ -155,6 +155,7 @@ export default function NavigationBar({
               {[
                 { to: "/catalog", label: "Catalog" },
                 { to: "/schedules", label: "Scheduler" },
+                { to: "/map", label: "Map" },
                 { to: "/gradtrak", label: "Gradtrak" },
                 { to: gradesPath, label: "Grades" },
                 { to: enrollmentPath, label: "Enrollment" },
@@ -200,6 +201,13 @@ export default function NavigationBar({
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>
                 Scheduler
+              </MenuItem>
+            )}
+          </NavLink>
+          <NavLink to="/map">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                Map
               </MenuItem>
             )}
           </NavLink>

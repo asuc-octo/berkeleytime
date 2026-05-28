@@ -29,11 +29,11 @@ import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
 import EditDialog from "./EditDialog";
 import styles from "./Editor.module.scss";
+import ExportDialog from "./ExportDialog";
 import GenerateSchedulesDialog from "./GenerateSchedulesDialog";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
-import exportToCalendar from "./exportToCalendar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -1184,9 +1184,9 @@ export default function Editor() {
           <MenuItem active={tab === 1} onClick={() => setTab(1)}>
             Calendar
           </MenuItem>
-          {/* <MenuItem active={tab === 2} onClick={() => setTab(2)}>
+          <MenuItem active={tab === 2} onClick={() => setTab(2)}>
             Map
-          </MenuItem> */}
+          </MenuItem>
         </div>
         {editing && (
           <GenerateSchedulesDialog schedule={schedule}>
@@ -1208,18 +1208,18 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
-        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
-          <Upload />
-          Export
-        </Button>
-        {editing && (
-          <ShareDialog>
-            <Button>
-              Share
-              <ShareIos />
-            </Button>
-          </ShareDialog>
-        )}
+        <ExportDialog>
+          <Button variant="secondary">
+            <Upload />
+            Export
+          </Button>
+        </ExportDialog>
+        <ShareDialog>
+          <Button>
+            Share
+            <ShareIos />
+          </Button>
+        </ShareDialog>
       </div>
       <div className={styles.body}>
         {!sidebarCollapsed && (

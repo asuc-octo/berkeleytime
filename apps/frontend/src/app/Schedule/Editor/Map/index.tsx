@@ -1,240 +1,779 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-// @ts-expect-error - MapboxDirections does not provide types
-import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
-import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
-import { ArrowSeparateVertical, Walking, ZoomIn, ZoomOut } from "iconoir-react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import type { FeatureCollection, Point } from "geojson";
+import { ArrowUpRight, Walking, ZoomIn, ZoomOut } from "iconoir-react";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
-import { Button, IconButton, useColorScheme, useTheme } from "@repo/theme";
+import { IconButton, MenuItem, useColorScheme, useTheme } from "@repo/theme";
 
-import { buildings } from "@/lib/location";
+import { buildings, findBuildingForLocation } from "@/lib/location";
 
 import { SectionColor } from "../../schedule";
 import styles from "./Map.module.scss";
 
-const TOKEN =
-  "pk.eyJ1IjoibWF0aGh1bGsiLCJhIjoiY2t6bTFhcDU2M2prOTJwa3VwcTJ2d2dpMiJ9.WEJWEP_qrKGXkYOgbIsaGg";
-
 const MAX_ZOOM = 18;
 const MIN_ZOOM = 14;
 const DEFAULT_ZOOM = 15.5;
-// const OFFSET: [number, number] = [-156, 0];
+const CAMPUS_CENTER: [number, number] = [-122.2592173, 37.8721508];
+const WALKING_ROUTE_ENDPOINT =
+  "https://routing.openstreetmap.de/routed-foot/route/v1/foot";
 
-mapboxgl.accessToken = TOKEN;
+type MapMode = "minimal" | "satellite";
+
+interface BerkeleyMapLabel {
+  coordinates: [number, number];
+  name: string;
+  priority?: number;
+}
+
+const MAP_MODE_OPTIONS: { label: string; value: MapMode }[] = [
+  { label: "Minimal", value: "minimal" },
+  { label: "Satellite", value: "satellite" },
+];
+
+const ADDITIONAL_BERKELEY_LABELS: BerkeleyMapLabel[] = [
+  {
+    coordinates: [-122.2592358273592, 37.8722145126222],
+    name: "Morrison Library",
+    priority: 2,
+  },
+  {
+    coordinates: [-122.26220645353504, 37.87142462552724],
+    name: "Bioscience, Natural Resources & Public Health Library",
+  },
+  {
+    coordinates: [-122.25825, 37.87533],
+    name: "Kresge Engineering Library",
+  },
+  {
+    coordinates: [-122.25534011894594, 37.872593339541446],
+    name: "Chemistry & Chemical Engineering Library",
+  },
+  {
+    coordinates: [-122.25967790769536, 37.87409189531322],
+    name: "Earth Sciences & Map Library",
+  },
+  {
+    coordinates: [-122.25489197607627, 37.87074044380782],
+    name: "Environmental Design Library",
+  },
+  {
+    coordinates: [-122.25759413529791, 37.873621559931614],
+    name: "Mathematics Statistics Library",
+  },
+  {
+    coordinates: [-122.25682010086159, 37.872480670347336],
+    name: "Physics-Astronomy Library",
+  },
+  {
+    coordinates: [-122.25401475499672, 37.86950825416665],
+    name: "Law Library",
+  },
+  {
+    coordinates: [-122.25882193535269, 37.87602971606913],
+    name: "Jacobs Institute for Design Innovation",
+    priority: 2,
+  },
+  {
+    coordinates: [-122.25831352863513, 37.87503515928838],
+    name: "CITRIS Invention Lab",
+    priority: 2,
+  },
+  {
+    coordinates: [-122.26083662991704, 37.872543936658765],
+    name: "Moffitt Makerspace",
+    priority: 2,
+  },
+  {
+    coordinates: [-122.257886, 37.875098],
+    name: "Bechtel Engineering Center",
+  },
+  {
+    coordinates: [-122.257814, 37.872065],
+    name: "Sather Tower",
+    priority: 2,
+  },
+  {
+    coordinates: [-122.254609, 37.873594],
+    name: "Hearst Greek Theatre",
+  },
+  {
+    coordinates: [-122.26033260383534, 37.86955061087345],
+    name: "Martin Luther King Jr. Student Union",
+  },
+];
+
+const BERKELEY_CUSTOM_LABELS = Array.from(
+  new Map(
+    [
+      ...Object.values(buildings).flatMap((building) =>
+        building.location && building.name !== "Off campus"
+          ? [
+              {
+                coordinates: building.location,
+                name: building.name,
+                priority: 1,
+              },
+            ]
+          : []
+      ),
+      ...ADDITIONAL_BERKELEY_LABELS,
+    ].map((label) => [label.name, label])
+  ).values()
+);
+
+const BERKELEY_AFFILIATED_LABEL_NAMES = Array.from(
+  new Set([
+    ...BERKELEY_CUSTOM_LABELS.map((label) => label.name),
+    "Berkeley Art Museum and Pacific Film Archive",
+    "C. V. Starr East Asian Library",
+    "California Hall",
+    "Campanile",
+    "Doe Memorial Library",
+    "Engineering Library",
+    "Greek Theatre",
+    "Haas School of Business",
+    "International House",
+    "Martin Luther King Jr. Student Union",
+    "Music Library",
+    "The Bancroft Library",
+    "UC Berkeley School of Law",
+    "University of California, Berkeley",
+    "UC Berkeley",
+  ])
+);
+
+const BERKELEY_LABEL_KEYWORDS = [
+  "berkeley",
+  "campanile",
+  "doe",
+  "library",
+  "maker",
+  "makerspace",
+  "invention lab",
+  "student union",
+  "hall",
+  "center",
+  "institute",
+  "school",
+  "college",
+  "museum",
+  "gym",
+  "field",
+  "lab",
+  "laboratory",
+  "auditorium",
+  "theatre",
+  "theater",
+];
+
+const BERKELEY_LABEL_GEOJSON: FeatureCollection<
+  Point,
+  { name: string; priority: number }
+> = {
+  features: BERKELEY_CUSTOM_LABELS.map((label) => ({
+    geometry: {
+      coordinates: label.coordinates,
+      type: "Point",
+    },
+    properties: {
+      name: label.name,
+      priority: label.priority ?? 1,
+    },
+    type: "Feature",
+  })),
+  type: "FeatureCollection",
+};
+
+const DAYS = [
+  { index: 0, label: "Monday", short: "M" },
+  { index: 1, label: "Tuesday", short: "Tu" },
+  { index: 2, label: "Wednesday", short: "W" },
+  { index: 3, label: "Thursday", short: "Th" },
+  { index: 4, label: "Friday", short: "F" },
+  { index: 5, label: "Saturday", short: "Sa" },
+  { index: 6, label: "Sunday", short: "Su" },
+];
+
+const getBaseMapStyle = (
+  currentTheme: string,
+  mapMode: MapMode
+): maplibregl.StyleSpecification => {
+  const isDark = currentTheme === "dark";
+  const isSatellite = mapMode === "satellite";
+  const bgColor = isDark ? "#18181b" : "#ffffff";
+  const buildingColor = isDark ? "#27272a" : "#e2e8f0";
+  const buildingOutline = isDark ? "#3f3f46" : "#cbd5e1";
+  const roadColor = isSatellite ? "rgba(255, 255, 255, 0.56)" : bgColor;
+  const roadOutline = isSatellite
+    ? "rgba(15, 23, 42, 0.65)"
+    : isDark
+      ? "#3f3f46"
+      : "#d4d4d4";
+  const satelliteLabelColor = "#003262";
+  const satelliteLabelHalo = "#fff9f0";
+  const satelliteTextFont = ["Noto Sans Bold"];
+  const textColor = isSatellite
+    ? satelliteLabelColor
+    : isDark
+      ? "#f8fafc"
+      : "#0f172a";
+  const textHalo = isSatellite
+    ? satelliteLabelHalo
+    : isDark
+      ? "rgba(3, 7, 18, 0.88)"
+      : "rgba(255, 255, 255, 0.94)";
+  const academicTextColor = isSatellite
+    ? satelliteLabelColor
+    : isDark
+      ? "#ffd166"
+      : "#001f4e";
+  const academicTextHalo = isSatellite
+    ? satelliteLabelHalo
+    : isDark
+      ? "rgba(3, 7, 18, 0.98)"
+      : "rgba(255, 255, 255, 0.98)";
+  const standardLabelSize = isSatellite ? 12 : 12;
+  const campusLabelSize = isSatellite ? 13.5 : 13.25;
+  const standardHaloWidth = isSatellite ? 2.1 : 1.35;
+  const campusHaloWidth = isSatellite ? 2.4 : 1.75;
+  const customLabelSize = isSatellite ? [12.25, 14, 16] : [12, 13.5, 15.5];
+  const labelName = ["coalesce", ["get", "name"], ""];
+  const lowerLabelName = ["downcase", labelName];
+  const exactBerkeleyLabel = [
+    "in",
+    labelName,
+    ["literal", BERKELEY_AFFILIATED_LABEL_NAMES],
+  ];
+  const keywordBerkeleyLabel = [
+    "any",
+    ...BERKELEY_LABEL_KEYWORDS.map((keyword) => [
+      ">=",
+      ["index-of", keyword, lowerLabelName],
+      0,
+    ]),
+  ];
+  const berkeleyLabel = ["any", exactBerkeleyLabel, keywordBerkeleyLabel];
+
+  return {
+    glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+    layers: [
+      {
+        id: "background",
+        paint: { "background-color": bgColor },
+        type: "background",
+      },
+      ...(isSatellite
+        ? [
+            {
+              id: "satellite",
+              paint: {
+                "raster-opacity": 0.86,
+              },
+              source: "satellite",
+              type: "raster" as const,
+            },
+          ]
+        : [
+            {
+              id: "buildings",
+              paint: {
+                "fill-color": buildingColor,
+                "fill-outline-color": buildingOutline,
+              },
+              source: "openmaptiles",
+              "source-layer": "building",
+              type: "fill" as const,
+            },
+          ]),
+      {
+        filter: ["==", ["get", "class"], "path"],
+        id: "paths-outline",
+        paint: {
+          "line-color": isSatellite ? "rgba(15, 23, 42, 0.72)" : roadOutline,
+          "line-width": 4,
+        },
+        source: "openmaptiles",
+        "source-layer": "transportation",
+        type: "line",
+      },
+      {
+        id: "roads-outline",
+        paint: {
+          "line-color": roadOutline,
+          "line-width": 4,
+        },
+        source: "openmaptiles",
+        "source-layer": "transportation",
+        type: "line",
+      },
+      {
+        id: "roads",
+        paint: {
+          "line-color": roadColor,
+          "line-width": 2,
+        },
+        source: "openmaptiles",
+        "source-layer": "transportation",
+        type: "line",
+      },
+      {
+        filter: ["all", ["has", "name"], ["!", berkeleyLabel]],
+        id: "place-labels",
+        layout: {
+          ...(isSatellite ? { "text-font": satelliteTextFont } : {}),
+          "text-anchor": "top",
+          "text-field": ["get", "name"],
+          "text-size": standardLabelSize,
+        },
+        paint: {
+          "text-color": textColor,
+          "text-halo-blur": 0,
+          "text-halo-color": textHalo,
+          "text-halo-width": standardHaloWidth,
+        },
+        source: "openmaptiles",
+        "source-layer": "poi",
+        type: "symbol",
+      },
+      {
+        filter: [
+          "all",
+          ["has", "name"],
+          ["!", exactBerkeleyLabel],
+          berkeleyLabel,
+        ],
+        id: "berkeley-affiliated-poi-labels",
+        layout: {
+          ...(isSatellite ? { "text-font": satelliteTextFont } : {}),
+          "text-anchor": "center",
+          "text-field": ["get", "name"],
+          "text-padding": 4,
+          "text-size": campusLabelSize,
+        },
+        paint: {
+          "text-color": academicTextColor,
+          "text-halo-blur": 0,
+          "text-halo-color": academicTextHalo,
+          "text-halo-width": campusHaloWidth,
+        },
+        source: "openmaptiles",
+        "source-layer": "poi",
+        type: "symbol",
+      },
+      {
+        id: "berkeley-custom-labels",
+        layout: {
+          ...(isSatellite ? { "text-font": satelliteTextFont } : {}),
+          "symbol-sort-key": ["get", "priority"],
+          "text-anchor": "center",
+          "text-field": ["get", "name"],
+          "text-padding": 3,
+          "text-radial-offset": 0.35,
+          "text-size": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            14,
+            customLabelSize[0],
+            16,
+            customLabelSize[1],
+            18,
+            customLabelSize[2],
+          ],
+          "text-variable-anchor": ["top", "bottom", "left", "right"],
+        },
+        paint: {
+          "text-color": academicTextColor,
+          "text-halo-blur": 0,
+          "text-halo-color": academicTextHalo,
+          "text-halo-width": campusHaloWidth,
+        },
+        source: "berkeleyLabels",
+        type: "symbol",
+      },
+    ],
+    sources: {
+      berkeleyLabels: {
+        data: BERKELEY_LABEL_GEOJSON,
+        type: "geojson",
+      },
+      openmaptiles: {
+        type: "vector",
+        url: "https://tiles.openfreemap.org/planet",
+      },
+      ...(isSatellite
+        ? {
+            satellite: {
+              attribution: "&copy; Esri",
+              tileSize: 256,
+              tiles: [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+              ],
+              type: "raster" as const,
+            },
+          }
+        : {}),
+    },
+    version: 8,
+  };
+};
 
 interface MapProps {
   selectedSections: SectionColor[];
 }
 
-export default function Map({ selectedSections }: MapProps) {
+interface ScheduleMapStop {
+  buildingName?: string;
+  coordinates?: [number, number];
+  courseLabel: string;
+  endTime: string;
+  key: string;
+  location?: string | null;
+  sectionLabel: string;
+  startTime: string;
+}
+
+interface RouteLeg {
+  distance: number;
+  duration: number;
+}
+
+interface WalkingRouteResponse {
+  code: string;
+  message?: string;
+  routes?: {
+    distance: number;
+    duration: number;
+    geometry?: {
+      coordinates?: [number, number][];
+      type: "LineString";
+    };
+    legs?: RouteLeg[];
+  }[];
+}
+
+interface MapOverlay {
+  height: number;
+  routePath: string;
+  routePoints: { key: string; x: number; y: number }[];
+  width: number;
+}
+
+type RouteStatus = "idle" | "loading" | "ready" | "error";
+
+const emptyMapOverlay: MapOverlay = {
+  height: 0,
+  routePath: "",
+  routePoints: [],
+  width: 0,
+};
+
+const getY = (time: string) => {
+  const [hour, minute] = time.split(":");
+  return parseInt(hour) * 60 + parseInt(minute);
+};
+
+const formatTime = (time: string) => {
+  const [hourValue, minuteValue] = time.split(":").map(Number);
+  const suffix = hourValue < 12 ? "AM" : "PM";
+  const hour = hourValue % 12 || 12;
+
+  return `${hour}:${String(minuteValue).padStart(2, "0")} ${suffix}`;
+};
+
+const formatDistance = (meters: number) => {
+  const miles = meters / 1609.344;
+
+  return miles < 0.1
+    ? `${Math.round(meters * 3.28084)} ft`
+    : `${miles.toFixed(1)} mi`;
+};
+
+const formatDuration = (seconds: number) => {
+  const minutes = Math.max(1, Math.round(seconds / 60));
+
+  return `${minutes} min`;
+};
+
+const getDistanceMeters = (
+  [fromLongitude, fromLatitude]: [number, number],
+  [toLongitude, toLatitude]: [number, number]
+) => {
+  const radius = 6371000;
+  const fromLatitudeRadians = (fromLatitude * Math.PI) / 180;
+  const toLatitudeRadians = (toLatitude * Math.PI) / 180;
+  const latitudeDelta = ((toLatitude - fromLatitude) * Math.PI) / 180;
+  const longitudeDelta = ((toLongitude - fromLongitude) * Math.PI) / 180;
+
+  const haversine =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(fromLatitudeRadians) *
+      Math.cos(toLatitudeRadians) *
+      Math.sin(longitudeDelta / 2) ** 2;
+
+  return (
+    radius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+  );
+};
+
+const estimateRouteLegs = (stops: ScheduleMapStop[]): RouteLeg[] => {
+  return stops.slice(0, -1).flatMap((stop, index) => {
+    const nextStop = stops[index + 1];
+
+    if (!stop.coordinates || !nextStop?.coordinates) return [];
+
+    const distance = getDistanceMeters(stop.coordinates, nextStop.coordinates);
+    const walkingDistance = distance * 1.25;
+
+    return [
+      {
+        distance: walkingDistance,
+        duration: walkingDistance / 1.35,
+      },
+    ];
+  });
+};
+
+const getCoordinateKey = ([longitude, latitude]: [number, number]) =>
+  `${longitude.toFixed(6)},${latitude.toFixed(6)}`;
+
+const getSvgPath = (points: { x: number; y: number }[]) =>
+  points
+    .map(
+      (point, index) =>
+        `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`
+    )
+    .join(" ");
+
+const getWalkingRouteUrl = (coordinates: [number, number][]) => {
+  const routeCoordinates = coordinates
+    .map(([longitude, latitude]) => `${longitude},${latitude}`)
+    .join(";");
+  const query = new URLSearchParams({
+    geometries: "geojson",
+    overview: "full",
+    steps: "false",
+  });
+
+  return `${WALKING_ROUTE_ENDPOINT}/${routeCoordinates}?${query.toString()}`;
+};
+
+const getGoogleMapsRouteUrl = (stops: ScheduleMapStop[]) => {
+  const coordinates = stops.flatMap((stop) =>
+    stop.coordinates ? [stop.coordinates] : []
+  );
+
+  if (coordinates.length < 2) return undefined;
+
+  const [originLongitude, originLatitude] = coordinates[0];
+  const [destinationLongitude, destinationLatitude] =
+    coordinates[coordinates.length - 1];
+  const query = new URLSearchParams({
+    api: "1",
+    destination: `${destinationLatitude},${destinationLongitude}`,
+    origin: `${originLatitude},${originLongitude}`,
+    travelmode: "walking",
+  });
+  const waypoints = coordinates
+    .slice(1, -1)
+    .map(([longitude, latitude]) => `${latitude},${longitude}`)
+    .join("|");
+
+  if (waypoints) query.set("waypoints", waypoints);
+
+  return `https://www.google.com/maps/dir/?${query.toString()}`;
+};
+
+const sameCoordinates = (first?: [number, number], second?: [number, number]) =>
+  Boolean(
+    first && second && getCoordinateKey(first) === getCoordinateKey(second)
+  );
+
+const fitMapToCoordinates = (
+  map: maplibregl.Map,
+  coordinates: [number, number][]
+) => {
+  if (coordinates.length === 0) {
+    map.easeTo({ center: CAMPUS_CENTER, zoom: DEFAULT_ZOOM, duration: 300 });
+    return;
+  }
+
+  if (coordinates.length === 1 && coordinates[0]) {
+    map.easeTo({ center: coordinates[0], zoom: 16.5, duration: 300 });
+    return;
+  }
+
+  const bounds = coordinates.reduce(
+    (bounds, coordinate) => bounds.extend(coordinate),
+    new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
+  );
+
+  map.fitBounds(bounds, {
+    duration: 400,
+    maxZoom: 16.5,
+    padding: {
+      bottom: 96,
+      left: 96,
+      right: 360,
+      top: 96,
+    },
+  });
+};
+
+export default function RouteMap({ selectedSections }: MapProps) {
   const { theme } = useTheme();
-
   const scheme = useColorScheme();
-
   const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const markersRef = useRef<maplibregl.Marker[]>([]);
+  const mapRef = useRef<maplibregl.Map | null>(null);
 
-  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const [directions, setDirections] = useState<MapboxDirections | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-
-  const waypoints = useMemo(
-    () =>
-      selectedSections
-        .filter((section) => section.section.meetings[0].location)
-        .map(
-          ({
-            section: {
-              meetings: [{ location }],
-            },
-          }) => {
-            const building = location!.split(" ").slice(0, -1).join(" ");
-            return buildings[building].location;
-          }
-        ),
-    [selectedSections]
+  const [activeDay, setActiveDay] = useState(DAYS[0].index);
+  const [mapOverlay, setMapOverlay] = useState<MapOverlay>(emptyMapOverlay);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapMode, setMapMode] = useState<MapMode>("minimal");
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>(
+    []
   );
+  const [routeLegs, setRouteLegs] = useState<RouteLeg[]>([]);
+  const [routeStatus, setRouteStatus] = useState<RouteStatus>("idle");
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+
+  const stopsByDay = useMemo(() => {
+    const nextStopsByDay = DAYS.reduce(
+      (acc, day) => ({ ...acc, [day.index]: [] as ScheduleMapStop[] }),
+      {} as Record<number, ScheduleMapStop[]>
+    );
+
+    selectedSections.forEach(({ section }) => {
+      section.meetings?.forEach((meeting, meetingIndex) => {
+        if (!meeting.startTime || !meeting.endTime) return;
+
+        DAYS.forEach((day) => {
+          if (!meeting.days?.[day.index]) return;
+
+          const building = findBuildingForLocation(meeting.location);
+          const sectionLabel = `${section.component} ${section.number}`;
+
+          nextStopsByDay[day.index].push({
+            buildingName: building?.name,
+            coordinates: building?.location,
+            courseLabel: `${section.subject} ${section.courseNumber}`,
+            endTime: meeting.endTime,
+            key: `${section.sectionId}-${meetingIndex}-${day.index}`,
+            location: meeting.location,
+            sectionLabel,
+            startTime: meeting.startTime,
+          });
+        });
+      });
+    });
+
+    DAYS.forEach((day) => {
+      nextStopsByDay[day.index].sort(
+        (a, b) =>
+          getY(a.startTime) - getY(b.startTime) ||
+          getY(a.endTime) - getY(b.endTime)
+      );
+    });
+
+    return nextStopsByDay;
+  }, [selectedSections]);
+
+  useEffect(() => {
+    const firstDayWithStops =
+      DAYS.find((day) => stopsByDay[day.index].length > 0)?.index ??
+      DAYS[0].index;
+
+    if (stopsByDay[activeDay].length === 0 && firstDayWithStops !== activeDay) {
+      setActiveDay(firstDayWithStops);
+    }
+  }, [activeDay, stopsByDay]);
+
+  const activeDayLabel = DAYS.find((day) => day.index === activeDay)?.label;
+  const activeStops = useMemo(
+    () => stopsByDay[activeDay] ?? [],
+    [activeDay, stopsByDay]
+  );
+  const locatedStops = useMemo(
+    () => activeStops.filter((stop) => stop.coordinates),
+    [activeStops]
+  );
+  const routeStops = useMemo(
+    () =>
+      locatedStops.filter(
+        (stop, index, stops) =>
+          index === 0 ||
+          !sameCoordinates(stop.coordinates, stops[index - 1].coordinates)
+      ),
+    [locatedStops]
+  );
+  const googleMapsRouteUrl = useMemo(
+    () => getGoogleMapsRouteUrl(routeStops),
+    [routeStops]
+  );
+
+  const markerGroups = useMemo(() => {
+    const groups = new Map<
+      string,
+      { coordinates: [number, number]; stops: ScheduleMapStop[] }
+    >();
+
+    locatedStops.forEach((stop) => {
+      if (!stop.coordinates) return;
+
+      const key = getCoordinateKey(stop.coordinates);
+      const currentGroup = groups.get(key);
+
+      if (currentGroup) {
+        currentGroup.stops.push(stop);
+      } else {
+        groups.set(key, { coordinates: stop.coordinates, stops: [stop] });
+      }
+    });
+
+    return Array.from(groups.values());
+  }, [locatedStops]);
+
+  const legByStopPair = useMemo(() => {
+    const legMap = new Map<string, RouteLeg>();
+
+    routeLegs.forEach((leg, index) => {
+      const from = routeStops[index];
+      const to = routeStops[index + 1];
+
+      if (from && to) legMap.set(`${from.key}:${to.key}`, leg);
+    });
+
+    return legMap;
+  }, [routeLegs, routeStops]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // let destructor: (() => void) | null = null;
+    setMapLoaded(false);
 
-    const map = new mapboxgl.Map({
+    const map = new maplibregl.Map({
+      attributionControl: false,
+      center: CAMPUS_CENTER,
       container: containerRef.current,
-      style:
-        currentTheme === "dark"
-          ? "mapbox://styles/mathhulk/clvblbtkd005k01rd1n28b2xt"
-          : "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
-      center: [-122.2592173, 37.8721508],
-      zoom: DEFAULT_ZOOM,
-      minZoom: MIN_ZOOM,
       maxZoom: MAX_ZOOM,
+      minZoom: MIN_ZOOM,
+      style: getBaseMapStyle(currentTheme, mapMode),
+      zoom: DEFAULT_ZOOM,
     });
 
-    map.on("load", async () => {
-      const directions = new MapboxDirections({
-        styles: [
-          {
-            id: "directions-route-line-casing",
-            type: "line",
-            source: "directions",
-            layout: {
-              "line-cap": "round",
-              "line-join": "round",
-            },
-            paint: {
-              "line-color": "#3b82f6",
-              "line-width": 4,
-            },
-            filter: [
-              "all",
-              ["in", "$type", "LineString"],
-              ["in", "route", "selected"],
-            ],
-          },
-        ],
-        accessToken: TOKEN,
-        unit: "imperial",
-        profile: "mapbox/walking",
-        controls: {
-          inputs: false,
-          instructions: false,
-          profileSwitcher: false,
-        },
-        interactive: false,
-        instructions: false,
-      });
-
-      map.addControl(directions);
-
-      // @ts-expect-error - MapboxDirections does not provide types
-      directions.on("route", ({ route }) => {
-        for (let index = 0; index < route[0].legs.length; index++) {
-          const { steps } = route[0].legs[index];
-
-          const start = document.createElement("div");
-          start.className = "marker";
-          start.textContent = (index + 1).toLocaleString();
-
-          /*const tooltip = document.createElement("div");
-          tooltip.className = "tooltip";
-          tooltip.textContent = "Stop";*/
-
-          const originMarker = new mapboxgl.Marker(start)
-            .setLngLat(steps[0].maneuver.location)
-            .addTo(map);
-
-          markersRef.current.push(originMarker);
-
-          /*const showTooltip = () => {
-            document.body.appendChild(tooltip);
-
-            destructor = autoUpdate(
-              start,
-              tooltip,
-              () => {
-                computePosition(start, tooltip, {
-                  placement: "top",
-                  middleware: [
-                    flip(),
-                    offset(8),
-                    shift({
-                      padding: 8,
-                      boundary: document.getElementById("boundary") as Element,
-                    }),
-                  ],
-                }).then(({ x, y }) => {
-                  Object.assign(tooltip.style, {
-                    left: `${x}px`,
-                    top: `${y}px`,
-                  });
-                });
-              },
-              {
-                animationFrame: true,
-              }
-            );
-          };
-
-          const hideTooltip = () => {
-            tooltip.remove();
-
-            destructor?.();
-          };
-
-          [
-            ["mouseenter", showTooltip],
-            ["mouseleave", hideTooltip],
-            ["focus", showTooltip],
-            ["blur", hideTooltip],
-          ].forEach(([event, listener]) => {
-            start.addEventListener(
-              event as keyof HTMLElementEventMap,
-              listener as () => void
-            );
-          });*/
-
-          if (index !== route[0].legs.length - 1) continue;
-
-          const end = document.createElement("div");
-          end.className = "marker";
-          end.textContent = (index + 2).toLocaleString();
-
-          const destinationMarker = new mapboxgl.Marker(end)
-            .setLngLat(steps[steps.length - 1].maneuver.location)
-            .addTo(map);
-
-          markersRef.current.push(destinationMarker);
-        }
-
-        map.jumpTo({ center: [-122.2592173, 37.8721508] });
-
-        // Remove unnecessary layers
-        map.removeLayer("directions-route-line");
-        map.removeLayer("directions-waypoint-point-casing");
-        map.removeLayer("directions-waypoint-point");
-        map.removeLayer("directions-origin-point");
-        map.removeLayer("directions-destination-point");
-        map.removeLayer("directions-origin-label");
-        map.removeLayer("directions-destination-label");
-      });
-
-      map.addSource("campus", {
-        type: "geojson",
-        data: "/geojson/campus.geojson",
-      });
-
-      map.addLayer({
-        id: "campus-fill",
-        type: "line",
-        source: "campus",
-        layout: {},
-        paint: {
-          "line-width": 1,
-          "line-color": "#3b82f6",
-          "line-opacity": 0.5,
-          "line-dasharray": [2, 2],
-        },
-      });
-
-      map.addLayer({
-        id: "campus-line",
-        type: "fill",
-        source: "campus",
-        layout: {},
-        paint: {
-          "fill-color": "#3b82f6",
-          "fill-opacity": 0.05,
-        },
-      });
-
-      setDirections(directions);
+    map.on("load", () => {
+      setMapLoaded(true);
     });
+
+    map.addControl(
+      new maplibregl.AttributionControl({ compact: true }),
+      "bottom-right"
+    );
 
     map.on("zoomend", () => {
       setZoom(map.getZoom());
@@ -243,89 +782,310 @@ export default function Map({ selectedSections }: MapProps) {
     mapRef.current = map;
 
     return () => {
-      mapRef.current?.remove();
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+      setMapOverlay(emptyMapOverlay);
+      map.remove();
     };
-  }, [currentTheme]);
+  }, [currentTheme, mapMode]);
 
   useEffect(() => {
-    if (!directions) return;
+    const coordinates = routeStops.flatMap((stop) =>
+      stop.coordinates ? [stop.coordinates] : []
+    );
+
+    setRouteCoordinates([]);
+    setRouteLegs([]);
+
+    if (coordinates.length < 2) {
+      setRouteStatus("idle");
+      return;
+    }
+
+    const controller = new AbortController();
+
+    setRouteStatus("loading");
+
+    fetch(getWalkingRouteUrl(coordinates), { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Routing failed: ${response.status}`);
+
+        return (await response.json()) as WalkingRouteResponse;
+      })
+      .then((data) => {
+        const route = data.routes?.[0];
+        const routedCoordinates = route?.geometry?.coordinates;
+
+        if (
+          data.code !== "Ok" ||
+          !route ||
+          !routedCoordinates ||
+          routedCoordinates.length < 2
+        ) {
+          throw new Error(data.message ?? "Routing failed");
+        }
+
+        setRouteCoordinates(routedCoordinates);
+        setRouteLegs(
+          route.legs?.length ? route.legs : estimateRouteLegs(routeStops)
+        );
+        setRouteStatus("ready");
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return;
+
+        setRouteCoordinates([]);
+        setRouteLegs([]);
+        setRouteStatus("error");
+      });
+
+    return () => controller.abort();
+  }, [routeStops]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
+
+    const updateMapOverlay = () => {
+      const canvas = map.getCanvas();
+      const routePoints = routeCoordinates.map((coordinate, index) => {
+        const projected = map.project(coordinate);
+
+        return { key: `${index}`, x: projected.x, y: projected.y };
+      });
+
+      setMapOverlay({
+        height: canvas.clientHeight,
+        routePath: getSvgPath(routePoints),
+        routePoints,
+        width: canvas.clientWidth,
+      });
+    };
+
+    updateMapOverlay();
+    map.on("move", updateMapOverlay);
+    map.on("zoom", updateMapOverlay);
+    window.addEventListener("resize", updateMapOverlay);
+
+    return () => {
+      map.off("move", updateMapOverlay);
+      map.off("zoom", updateMapOverlay);
+      window.removeEventListener("resize", updateMapOverlay);
+    };
+  }, [mapLoaded, routeCoordinates]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapLoaded) return;
 
     markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
 
-    const length = directions.getWaypoints().length;
+    markerGroups.forEach((group) => {
+      const firstStop = group.stops[0];
+      if (!firstStop) return;
 
-    for (let index = 0; index < length; index++) {
-      directions.removeWaypoint(index);
-    }
+      const markerElement = document.createElement("div");
+      markerElement.className = styles.mapMarker;
+      markerElement.textContent =
+        group.stops.length === 1
+          ? String(activeStops.indexOf(firstStop) + 1)
+          : `${activeStops.indexOf(firstStop) + 1}+`;
 
-    if (waypoints.length < 2) return;
+      const popupContent = document.createElement("div");
+      popupContent.className = styles.popup;
 
-    directions.setOrigin(waypoints[0]);
-    directions.setDestination(waypoints[waypoints.length - 1]);
+      group.stops.forEach((stop) => {
+        const stopElement = document.createElement("div");
+        stopElement.className = styles.popupStop;
 
-    for (let index = 1; index < waypoints.length - 1; index++) {
-      directions.addWaypoint(index, waypoints[index]);
-    }
-  }, [waypoints, directions]);
+        const title = document.createElement("p");
+        title.className = styles.popupTitle;
+        title.textContent = `${stop.courseLabel} ${stop.sectionLabel}`;
+
+        const details = document.createElement("p");
+        details.textContent = `${formatTime(stop.startTime)} - ${formatTime(stop.endTime)}`;
+
+        stopElement.append(title, details);
+        popupContent.append(stopElement);
+      });
+
+      const marker = new maplibregl.Marker({
+        element: markerElement,
+      })
+        .setLngLat(group.coordinates)
+        .setPopup(
+          new maplibregl.Popup({
+            closeButton: false,
+            offset: 16,
+          }).setDOMContent(popupContent)
+        )
+        .addTo(map);
+
+      markersRef.current.push(marker);
+    });
+
+    fitMapToCoordinates(
+      map,
+      markerGroups.map((group) => group.coordinates)
+    );
+  }, [activeStops, mapLoaded, markerGroups]);
 
   return (
     <div className={styles.root}>
       <div className={styles.toolBar}>
-        <Button variant="secondary">
-          <ArrowSeparateVertical />
-          Monday
-        </Button>
+        <div className={styles.dayTabs}>
+          {DAYS.map((day) => (
+            <MenuItem
+              key={day.index}
+              active={activeDay === day.index}
+              onClick={() => setActiveDay(day.index)}
+              title={`${day.label} route`}
+            >
+              {day.short}
+            </MenuItem>
+          ))}
+        </div>
         <IconButton
-          disabled={zoom === MAX_ZOOM}
+          disabled={zoom >= MAX_ZOOM}
           onClick={() => mapRef.current?.zoomIn()}
         >
           <ZoomIn />
         </IconButton>
         <IconButton
-          disabled={zoom === MIN_ZOOM}
+          disabled={zoom <= MIN_ZOOM}
           onClick={() => mapRef.current?.zoomOut()}
         >
           <ZoomOut />
         </IconButton>
       </div>
+      <div className={styles.mapControls}>
+        <div className={styles.mapModeToggle} aria-label="Map style">
+          {MAP_MODE_OPTIONS.map((option) => (
+            <button
+              aria-pressed={mapMode === option.value}
+              className={`${styles.mapModeButton} ${
+                mapMode === option.value ? styles.mapModeButtonActive : ""
+              }`}
+              key={option.value}
+              onClick={() => setMapMode(option.value)}
+              type="button"
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <a
+          aria-disabled={!googleMapsRouteUrl}
+          className={`${styles.googleMapsLink} ${
+            googleMapsRouteUrl ? "" : styles.googleMapsLinkDisabled
+          }`}
+          href={googleMapsRouteUrl ?? "#"}
+          onClick={(event) => {
+            if (!googleMapsRouteUrl) event.preventDefault();
+          }}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <ArrowUpRight />
+          Google Maps
+        </a>
+      </div>
       <div className={styles.container} ref={containerRef} />
+      {mapOverlay.width > 0 && mapOverlay.height > 0 && (
+        <svg
+          aria-hidden
+          className={styles.mapOverlay}
+          viewBox={`0 0 ${mapOverlay.width} ${mapOverlay.height}`}
+        >
+          {mapOverlay.routePath && mapOverlay.routePoints.length > 1 && (
+            <>
+              <path className={styles.routeHalo} d={mapOverlay.routePath} />
+              <path className={styles.routeLine} d={mapOverlay.routePath} />
+            </>
+          )}
+        </svg>
+      )}
       <div className={styles.sideBar}>
-        <div className={styles.waypoint}>
-          <div className={styles.number}>1</div>
-          <div className={styles.text}>
-            <p className={styles.label}>8:30 AM</p>
-            <p className={styles.heading}>STAT 154</p>
-            <p className={styles.description}>Dwinelle Hall 117</p>
-          </div>
+        <div className={styles.sideBarHeader}>
+          <p className={styles.heading}>{activeDayLabel}</p>
+          <p className={styles.summary}>
+            {activeStops.length === 0
+              ? "No in-person meetings"
+              : `${activeStops.length} meeting${activeStops.length === 1 ? "" : "s"}`}
+          </p>
         </div>
-        <div className={styles.leg}>
-          <Walking />
-          <div className={styles.value}>
-            <span className={styles.distance}>5 min.</span> (0.5 mi.)
-          </div>
-        </div>
-        <div className={styles.waypoint}>
-          <div className={styles.number}>2</div>
-          <div className={styles.text}>
-            <p className={styles.label}>8:30 AM</p>
-            <p className={styles.heading}>STAT 154</p>
-            <p className={styles.description}>Dwinelle Hall 117</p>
-          </div>
-        </div>
-        <div className={styles.leg}>
-          <Walking />
-          <div className={styles.value}>
-            <span className={styles.distance}>5 min.</span> (0.5 mi.)
-          </div>
-        </div>
-        <div className={styles.waypoint}>
-          <div className={styles.number}>3</div>
-          <div className={styles.text}>
-            <p className={styles.label}>8:30 AM</p>
-            <p className={styles.heading}>STAT 154</p>
-            <p className={styles.description}>Dwinelle Hall 117</p>
-          </div>
-        </div>
+        {activeStops.length === 0 ? (
+          <p className={styles.empty}>
+            Select another day or add classes with scheduled locations.
+          </p>
+        ) : (
+          activeStops.map((stop, index) => {
+            const nextStop = activeStops[index + 1];
+            const routeLeg =
+              nextStop && legByStopPair.get(`${stop.key}:${nextStop.key}`);
+            const sameLocation = sameCoordinates(
+              stop.coordinates,
+              nextStop?.coordinates
+            );
+            const routePending =
+              nextStop &&
+              stop.coordinates &&
+              nextStop.coordinates &&
+              !sameLocation &&
+              routeStatus === "loading";
+            const routeUnavailable =
+              nextStop &&
+              (!stop.coordinates ||
+                !nextStop.coordinates ||
+                routeStatus === "error" ||
+                !routeLeg) &&
+              !sameLocation &&
+              !routePending;
+
+            return (
+              <div key={stop.key} className={styles.timelineItem}>
+                <div className={styles.waypoint}>
+                  <div className={styles.number}>{index + 1}</div>
+                  <div className={styles.text}>
+                    <p className={styles.label}>
+                      {formatTime(stop.startTime)} - {formatTime(stop.endTime)}
+                    </p>
+                    <p className={styles.heading}>
+                      {stop.courseLabel} {stop.sectionLabel}
+                    </p>
+                    <p className={styles.description}>
+                      {stop.buildingName ?? stop.location ?? "Location TBD"}
+                    </p>
+                  </div>
+                </div>
+                {nextStop && (
+                  <div className={styles.leg}>
+                    <Walking />
+                    <div className={styles.value}>
+                      {sameLocation ? (
+                        "Same location"
+                      ) : routeLeg ? (
+                        <>
+                          <span className={styles.distance}>
+                            {formatDuration(routeLeg.duration)}
+                          </span>{" "}
+                          ({formatDistance(routeLeg.distance)})
+                        </>
+                      ) : routeUnavailable ? (
+                        "Route unavailable"
+                      ) : routePending ? (
+                        "Calculating route"
+                      ) : (
+                        "Route unavailable"
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

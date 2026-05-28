@@ -1,132 +1,138 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo } from "react";
 
-import { Position, ZoomIn, ZoomOut } from "iconoir-react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import { ArrowRight, Calendar, Plus } from "iconoir-react";
+import { Link, useSearchParams } from "react-router-dom";
 
-import { IconButton, useColorScheme, useTheme } from "@repo/theme";
+import { Button, LoadingIndicator } from "@repo/theme";
 
-import { buildings } from "@/lib/location";
+import RouteMap from "@/app/Schedule/Editor/Map";
+import {
+  getNextClassColor,
+  getSelectedSections,
+} from "@/app/Schedule/schedule";
+import { useReadSchedule, useReadSchedules } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
+import { signIn } from "@/lib/api";
+import { Color } from "@/lib/generated/graphql";
 
 import styles from "./Map.module.scss";
 
-const TOKEN =
-  "pk.eyJ1IjoibWF0aGh1bGsiLCJhIjoiY2t6bTFhcDU2M2prOTJwa3VwcTJ2d2dpMiJ9.WEJWEP_qrKGXkYOgbIsaGg";
-
-const MAX_ZOOM = 18;
-const MIN_ZOOM = 14;
-const DEFAULT_ZOOM = 15.5;
-// const OFFSET: [number, number] = [-156, 0];
-
-mapboxgl.accessToken = TOKEN;
-
 export default function Map() {
-  const { theme } = useTheme();
+  const { user, loading: userLoading } = useUser();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const scheme = useColorScheme();
+  const { data: schedules, loading: schedulesLoading } = useReadSchedules({
+    skip: !user,
+  });
 
-  const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
+  const availableSchedules = useMemo(
+    () => schedules?.filter(Boolean) ?? [],
+    [schedules]
+  );
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const selectedScheduleId = searchParams.get("schedule");
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (selectedScheduleId || availableSchedules.length === 0) return;
 
-    const map = new mapboxgl.Map({
-      container: containerRef.current,
-      style:
-        currentTheme === "dark"
-          ? "mapbox://styles/mathhulk/clvblbtkd005k01rd1n28b2xt"
-          : "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
-      center: [-122.2592173, 37.8721508],
-      zoom: DEFAULT_ZOOM,
-      minZoom: MIN_ZOOM,
-      maxZoom: MAX_ZOOM,
-    });
+    const firstSchedule = availableSchedules[0];
+    if (firstSchedule) setSearchParams({ schedule: firstSchedule._id });
+  }, [availableSchedules, selectedScheduleId, setSearchParams]);
 
-    map.on("load", async () => {
-      map.addSource("campus", {
-        type: "geojson",
-        data: "/geojson/campus.geojson",
-      });
+  const { data: scheduleData, loading: scheduleLoading } = useReadSchedule(
+    selectedScheduleId ?? "",
+    { skip: !selectedScheduleId }
+  );
 
-      map.addLayer({
-        id: "campus-fill",
-        type: "line",
-        source: "campus",
-        layout: {},
-        paint: {
-          "line-width": 1,
-          "line-color": "var(--blue-500)",
-          "line-opacity": 0.5,
-          "line-dasharray": [2, 2],
-        },
-      });
+  const schedule = useMemo(() => {
+    if (!scheduleData) return undefined;
 
-      map.addLayer({
-        id: "campus-line",
-        type: "fill",
-        source: "campus",
-        layout: {},
-        paint: {
-          "fill-color": "var(--blue-500)",
-          "fill-opacity": 0.05,
-        },
-      });
-
-      for (const building of Object.values(buildings)) {
-        if (!building.location) continue;
-
-        // Create a marker for each building
-        const el = document.createElement("div");
-        el.className = styles.marker;
-        el.innerText = building.name[0].toUpperCase();
-
-        // Add marker to map
-        new mapboxgl.Marker(el).setLngLat(building.location).addTo(map);
-      }
-    });
-
-    map.on("zoomend", () => {
-      setZoom(map.getZoom());
-    });
-
-    mapRef.current = map;
-
-    return () => {
-      mapRef.current?.remove();
+    return {
+      ...scheduleData,
+      classes: scheduleData.classes.map((cls, index) => ({
+        ...cls,
+        color: cls.color ?? getNextClassColor(index),
+      })),
+      events: scheduleData.events.map((event) => ({
+        ...event,
+        color: event.color ?? Color.Gray,
+      })),
     };
-  }, [currentTheme]);
+  }, [scheduleData]);
+
+  const selectedSections = useMemo(
+    () => getSelectedSections(schedule),
+    [schedule]
+  );
+
+  if (userLoading || (user && schedulesLoading)) {
+    return (
+      <div className={styles.centered}>
+        <LoadingIndicator size="lg" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className={styles.centered}>
+        <div className={styles.message}>
+          <Calendar />
+          <h1>Map routes</h1>
+          <p>Sign in to choose a schedule and view class-to-class routes.</p>
+          <Button onClick={() => signIn()}>
+            {import.meta.env.DEV ? "Continue as local dev user" : "Sign in"}
+            <ArrowRight />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (availableSchedules.length === 0) {
+    return (
+      <div className={styles.centered}>
+        <div className={styles.message}>
+          <Calendar />
+          <h1>No schedules yet</h1>
+          <p>Create a schedule, add classes, then return here to see routes.</p>
+          <Link to="/schedules">
+            <Button>
+              <Plus />
+              Create a schedule
+            </Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.root}>
-      <div className={styles.menu}>
-        <IconButton
-          disabled={zoom === MAX_ZOOM}
-          onClick={() => mapRef.current?.zoomIn()}
-        >
-          <ZoomIn />
-        </IconButton>
-        <IconButton
-          disabled={zoom === MIN_ZOOM}
-          onClick={() => mapRef.current?.zoomOut()}
-        >
-          <ZoomOut />
-        </IconButton>
-        <IconButton
-          disabled={zoom === MAX_ZOOM}
-          onClick={() => mapRef.current?.zoomIn()}
-        >
-          <Position />
-        </IconButton>
+      <div className={styles.selector}>
+        <label>
+          <span>Schedule</span>
+          <select
+            value={selectedScheduleId ?? ""}
+            onChange={(event) =>
+              setSearchParams({ schedule: event.target.value })
+            }
+          >
+            {availableSchedules.map((schedule) => (
+              <option key={schedule._id} value={schedule._id}>
+                {schedule.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
-      <div className={styles.container} ref={containerRef} />
-      <div className={styles.overlay}>
-        <div className={styles.panel}></div>
-      </div>
+      {scheduleLoading || !schedule ? (
+        <div className={styles.centered}>
+          <LoadingIndicator size="lg" />
+        </div>
+      ) : (
+        <RouteMap selectedSections={selectedSections} />
+      )}
     </div>
   );
 }

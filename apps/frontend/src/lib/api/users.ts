@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { DEV_AUTH_LOGIN_ROUTE } from "@/utils/devAuth";
+
 import { GetUserQuery } from "../generated/graphql";
 
 export type IUser = GetUserQuery["user"];
@@ -36,6 +38,12 @@ export const signIn = (redirectURI?: string) => {
   redirectURI =
     redirectURI ??
     window.location.origin + window.location.pathname + window.location.search;
+
+  if (import.meta.env.DEV) {
+    const localRedirectURI = window.location.pathname + window.location.search;
+    window.location.href = `${DEV_AUTH_LOGIN_ROUTE}?redirect_uri=${encodeURIComponent(localRedirectURI)}`;
+    return;
+  }
 
   window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
 };
