@@ -25,7 +25,7 @@ const getBaseURL = () => {
     case "local":
     default:
       // Local dev: test against your local running docker-compose
-      return "http://localhost:3000";
+      return "http://localhost:8080";
   }
 };
 
@@ -41,7 +41,7 @@ const getWebServer = () => {
   return {
     // Start docker-compose to build and run the app
     command: "docker compose up --build",
-    url: "http://localhost:3000",
+    url: "http://localhost:8080",
     timeout: 120 * 1000, // 2 minutes for docker to build and start
     // In 'local' mode: reuse server if developer already has docker-compose running
     // In 'ci' mode: always start fresh (process.env.CI will be true)
