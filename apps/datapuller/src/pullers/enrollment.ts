@@ -380,4 +380,3 @@ const updateEnrollmentHistories = async (config: Config) => {
 };
 
 export default { updateEnrollmentHistories };
-
