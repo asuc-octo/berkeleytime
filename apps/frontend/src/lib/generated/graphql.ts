@@ -2630,6 +2630,12 @@ export type GetCatalogSearchQuery = {
         }>;
       } | null;
       decal?: { __typename?: "CatalogDeCal"; title?: string | null } | null;
+      meetings?: Array<{
+        __typename?: "CatalogMeeting";
+        days?: Array<boolean> | null;
+        startTime?: string | null;
+        endTime?: string | null;
+      }> | null;
     }>;
   };
 };
@@ -5766,6 +5772,27 @@ export const GetCatalogSearchDocument = {
                             {
                               kind: "Field",
                               name: { kind: "Name", value: "title" },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "meetings" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "days" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "startTime" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "endTime" },
                             },
                           ],
                         },
