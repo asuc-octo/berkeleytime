@@ -11,9 +11,12 @@ export const formatUser = (user: UserType): UserModule.User => {
     student: user.email.endsWith("@berkeley.edu"),
     majors: user.majors ? user.majors : [],
     minors: user.minors ? user.minors : [],
-    bookmarkedClasses: (user.bookmarkedClasses ?? []) as unknown as UserModule.User['bookmarkedClasses'],
-    bookmarkedCourses: (user.bookmarkedCourses ?? []) as unknown as UserModule.User['bookmarkedCourses'],
-    monitoredClasses: (user.monitoredClasses ?? []) as unknown as UserModule.User['monitoredClasses'],
+    bookmarkedClasses: (user.bookmarkedClasses ??
+      []) as unknown as UserModule.User["bookmarkedClasses"],
+    bookmarkedCourses: (user.bookmarkedCourses ??
+      []) as unknown as UserModule.User["bookmarkedCourses"],
+    monitoredClasses: (user.monitoredClasses ??
+      []) as unknown as UserModule.User["monitoredClasses"],
     notificationsOn: user.notificationsOn ?? false,
   };
 };
