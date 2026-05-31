@@ -94,7 +94,7 @@ export const getMonitoredClasses = async (
 
     classes.push({
       class: formatClass(_class),
-      thresholds: monitoredClass.thresholds,
+      notified: (monitoredClass as UserModule.MonitoredClass).notified ?? false,
     });
   }
 

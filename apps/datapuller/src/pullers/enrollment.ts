@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import nodemailer from "nodemailer";
 
 import { parseTermName } from "@repo/common";
 import {
@@ -16,6 +17,12 @@ import { Config } from "../shared/config";
 const DATAGAP_THRESHOLD = 4 * GRANULARITY;
 
 const TERMS_PER_API_BATCH = 4;
+
+const HOT_COURSE_THRESHOLD = 0.8;
+const DROP_THRESHOLD = 0.05;
+const MIN_OPEN_SPOTS = 3;
+const MAX_SNAPSHOT_GAP_MS = 30 * 60 * 1000;
+
 
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
@@ -99,7 +106,6 @@ const updateEnrollmentHistories = async (config: Config) => {
   } = config;
 
   log.trace(`Fetching terms...`);
-
   const now = DateTime.now();
   const nowPTDate = now.setZone("America/Los_Angeles").toISODate();
 
