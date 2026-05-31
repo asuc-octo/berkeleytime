@@ -1,14 +1,23 @@
 import { gql } from "graphql-tag";
 
 export const userTypeDef = gql`
+  type MonitoredClass {
+    class: Class!
+    notified: Boolean!
+  }
+
   type User @cacheControl(scope: PRIVATE) {
     _id: ID!
     email: String!
     name: String!
     staff: Boolean!
     student: Boolean!
+    bookmarkedCourses: [Course!]!
+    bookmarkedClasses: [Class!]!
     majors: [String!]!
     minors: [String!]!
+    monitoredClasses: [MonitoredClass!]!
+    notificationsOn: Boolean!
   }
 
   """
@@ -33,9 +42,40 @@ export const userTypeDef = gql`
     user: User @auth
   }
 
+  input BookmarkedCourseInput {
+    subject: String!
+    number: CourseNumber!
+  }
+
+  input BookmarkedClassInput {
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+  }
+
+  input MonitoredClassRefInput {
+    year: Int!
+    semester: Semester!
+    sessionId: SessionIdentifier
+    subject: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
+  }
+
+  input MonitoredClassInput {
+    class: MonitoredClassRefInput!
+  }
+
   input UpdateUserInput {
+    bookmarkedClasses: [BookmarkedClassInput!]
+    bookmarkedCourses: [BookmarkedCourseInput!]
     majors: [String!]
     minors: [String!]
+    monitoredClasses: [MonitoredClassInput!]
+    notificationsOn: Boolean!
   }
 
   type Mutation {

@@ -1,5 +1,6 @@
 import {
   AggregatedMetricsModel,
+  ClassModel,
   CollectionModel,
   RatingModel,
   ScheduleModel,
@@ -8,7 +9,9 @@ import {
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
+import { formatClass } from "../class/formatter";
 import { formatUser } from "./formatter";
+import { UserModule } from "./generated-types/module-types";
 
 export const getUser = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");
