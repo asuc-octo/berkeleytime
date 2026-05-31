@@ -16,6 +16,7 @@
 
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { RuntimeNodeInstrumentation } from "@opentelemetry/instrumentation-runtime-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
@@ -68,6 +69,14 @@ if (endpoint) {
         "@opentelemetry/instrumentation-fs": { enabled: false },
         "@opentelemetry/instrumentation-dns": { enabled: false },
         "@opentelemetry/instrumentation-net": { enabled: false },
+      }),
+      // Node.js runtime metrics: event-loop delay/utilization, GC duration,
+      // and V8 heap usage. These are the signals needed to diagnose periodic
+      // event-loop stalls (GC pauses / heap pressure) that make /healthz time
+      // out even though the backend process stays up.
+      new RuntimeNodeInstrumentation({
+        // Sample the event loop frequently enough to catch multi-second stalls.
+        monitoringPrecision: 5000,
       }),
     ],
   });
