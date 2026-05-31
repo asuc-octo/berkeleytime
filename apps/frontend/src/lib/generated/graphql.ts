@@ -133,6 +133,20 @@ export type BannerVersionEntry = {
   version: Scalars['Int']['output'];
 };
 
+export type BookmarkedClassInput = {
+  courseNumber: Scalars['CourseNumber']['input'];
+  number: Scalars['ClassNumber']['input'];
+  semester: Semester;
+  sessionId?: InputMaybe<Scalars['SessionIdentifier']['input']>;
+  subject: Scalars['String']['input'];
+  year: Scalars['Int']['input'];
+};
+
+export type BookmarkedCourseInput = {
+  number: Scalars['CourseNumber']['input'];
+  subject: Scalars['String']['input'];
+};
+
 export enum CacheControlScope {
   Private = 'PRIVATE',
   Public = 'PUBLIC'
@@ -1174,6 +1188,25 @@ export enum MetricName {
   Usefulness = 'Usefulness',
   Workload = 'Workload'
 }
+
+export type MonitoredClass = {
+  __typename?: 'MonitoredClass';
+  class: Class;
+  notified: Scalars['Boolean']['output'];
+};
+
+export type MonitoredClassInput = {
+  class: MonitoredClassRefInput;
+};
+
+export type MonitoredClassRefInput = {
+  courseNumber: Scalars['CourseNumber']['input'];
+  number: Scalars['ClassNumber']['input'];
+  semester: Semester;
+  sessionId?: InputMaybe<Scalars['SessionIdentifier']['input']>;
+  subject: Scalars['String']['input'];
+  year: Scalars['Int']['input'];
+};
 
 /** Modify data */
 export type Mutation = {
@@ -2509,8 +2542,12 @@ export type UpdateTargetedMessageInput = {
 };
 
 export type UpdateUserInput = {
+  bookmarkedClasses?: InputMaybe<Array<BookmarkedClassInput>>;
+  bookmarkedCourses?: InputMaybe<Array<BookmarkedCourseInput>>;
   majors?: InputMaybe<Array<Scalars['String']['input']>>;
   minors?: InputMaybe<Array<Scalars['String']['input']>>;
+  monitoredClasses?: InputMaybe<Array<MonitoredClassInput>>;
+  notificationsOn: Scalars['Boolean']['input'];
 };
 
 /** Input for creating/updating a semester role. */
@@ -2527,10 +2564,14 @@ export type UpsertSemesterRoleInput = {
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID']['output'];
+  bookmarkedClasses: Array<Class>;
+  bookmarkedCourses: Array<Course>;
   email: Scalars['String']['output'];
   majors: Array<Scalars['String']['output']>;
   minors: Array<Scalars['String']['output']>;
+  monitoredClasses: Array<MonitoredClass>;
   name: Scalars['String']['output'];
+  notificationsOn: Scalars['Boolean']['output'];
   staff: Scalars['Boolean']['output'];
   student: Scalars['Boolean']['output'];
 };
