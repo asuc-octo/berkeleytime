@@ -4,7 +4,6 @@
  * When OTel is not initialized, the metrics API returns no-op instruments,
  * so all counters/histograms are always safe to use.
  */
-
 import { metrics } from "@opentelemetry/api";
 import { monitorEventLoopDelay } from "perf_hooks";
 
