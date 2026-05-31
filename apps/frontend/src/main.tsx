@@ -1,8 +1,7 @@
-import "./instrumentation";
-
 import { createRoot } from "react-dom/client";
 
 import App from "./App";
+import "./instrumentation";
 import "./main.scss";
 
 createRoot(document.getElementById("root") as HTMLElement).render(<App />);
