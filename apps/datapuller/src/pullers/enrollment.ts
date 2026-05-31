@@ -23,7 +23,6 @@ const DROP_THRESHOLD = 0.05;
 const MIN_OPEN_SPOTS = 3;
 const MAX_SNAPSHOT_GAP_MS = 30 * 60 * 1000;
 
-
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
   a: IEnrollmentSingularItem["data"],
