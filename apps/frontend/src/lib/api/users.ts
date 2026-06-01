@@ -1,8 +1,26 @@
 import { gql } from "@apollo/client";
 
-import { GetUserQuery } from "../generated/graphql";
+import { GetUserQuery, UpdateUserMutation } from "../generated/graphql";
 
 export type IUser = GetUserQuery["user"];
+
+export type UpdateUserResponse = UpdateUserMutation;
+
+export interface IMonitoredClassInput {
+  class: {
+    year: number;
+    semester: string;
+    sessionId?: string | null;
+    subject: string;
+    courseNumber: string;
+    number: string;
+  };
+}
+
+export interface IUserInput {
+  monitoredClasses?: IMonitoredClassInput[];
+  notificationsOn?: boolean;
+}
 
 export const READ_USER = gql`
   query GetUser {
