@@ -714,19 +714,19 @@ export default function Class({
                   </Flex>
                   <Flex gap="3">
                     <Notifications
-                    disabled={userLoading}
-                    classInfo={
-                      _class
-                        ? {
-                            year: _class.year,
-                            semester: _class.semester,
-                            sessionId: _class.sessionId,
-                            subject: _class.subject,
-                            courseNumber: _class.courseNumber,
-                            number: _class.number,
-                          }
-                        : undefined
-                    }
+                      disabled={userLoading}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              number: _class.number,
+                            }
+                          : undefined
+                      }
                     />
                     <AddToSchedulePopover
                       disabled={userLoading}
