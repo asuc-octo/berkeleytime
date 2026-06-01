@@ -11,6 +11,42 @@ export const READ_USER = gql`
       email
       name
       student
+      notificationsOn
+      monitoredClasses {
+        notified
+        class {
+          title
+          subject
+          courseNumber
+          number
+          year
+          semester
+          sessionId
+          unitsMin
+          unitsMax
+          gradeDistribution {
+            average
+          }
+          course {
+            title
+            subject
+            number
+            gradeDistribution {
+              average
+            }
+          }
+          primarySection {
+            enrollment {
+              latest {
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -22,6 +58,42 @@ export const UPDATE_USER = gql`
       name
       email
       student
+      notificationsOn
+      monitoredClasses {
+        notified
+        class {
+          title
+          subject
+          courseNumber
+          number
+          year
+          semester
+          sessionId
+          unitsMin
+          unitsMax
+          gradeDistribution {
+            average
+          }
+          course {
+            title
+            subject
+            number
+            gradeDistribution {
+              average
+            }
+          }
+          primarySection {
+            enrollment {
+              latest {
+                enrolledCount
+                maxEnroll
+                waitlistedCount
+                maxWaitlist
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;

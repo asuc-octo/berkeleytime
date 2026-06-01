@@ -35,6 +35,7 @@
   },
   "name": "berkeleytime",
   "dependencies": {
+    "opentelemetry": "^0.1.0",
     "react-markdown": "^10.1.0"
   }
 }
