@@ -48,7 +48,7 @@ export default defineConfig({
       "react-is": reactIsRoot,
       "@opentelemetry/api": otelApiRoot,
       "@opentelemetry/api-logs": otelApiLogsRoot,
-      "shimmer": shimmerRoot,
+      shimmer: shimmerRoot,
     },
   },
   plugins: [
