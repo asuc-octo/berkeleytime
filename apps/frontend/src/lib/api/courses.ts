@@ -133,6 +133,14 @@ export const GET_COURSE_OVERVIEW_BY_ID = gql`
   }
 `;
 
+export const GET_COURSE_NUMBER_BY_ID = gql`
+  query GetCourseNumberById($courseId: CourseIdentifier!) {
+    courseById(courseId: $courseId) {
+      number
+    }
+  }
+`;
+
 export const GET_COURSE_GRADE_DIST = gql`
   query GetCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
