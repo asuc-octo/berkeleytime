@@ -481,7 +481,19 @@ export const getUserClassRatings = async (
 };
 
 const buildInstructorNamesByClassKey = (
-  sections: { semester?: unknown; year?: unknown; classNumber?: unknown; number?: unknown; meetings?: { instructors?: { role?: string; givenName?: string; familyName?: string }[] }[] }[]
+  sections: {
+    semester?: unknown;
+    year?: unknown;
+    classNumber?: unknown;
+    number?: unknown;
+    meetings?: {
+      instructors?: {
+        role?: string;
+        givenName?: string;
+        familyName?: string;
+      }[];
+    }[];
+  }[]
 ): Map<string, string> => {
   const namesByKey = new Map<string, Set<string>>();
   sections.forEach((section) => {
@@ -491,7 +503,11 @@ const buildInstructorNamesByClassKey = (
     const names = namesByKey.get(classKey) ?? new Set<string>();
     section.meetings?.forEach((meeting) => {
       meeting.instructors?.forEach((instructor) => {
-        if (instructor.role === "PI" && instructor.givenName && instructor.familyName) {
+        if (
+          instructor.role === "PI" &&
+          instructor.givenName &&
+          instructor.familyName
+        ) {
           names.add(`${instructor.givenName} ${instructor.familyName}`);
         }
       });
@@ -499,7 +515,10 @@ const buildInstructorNamesByClassKey = (
     namesByKey.set(classKey, names);
   });
   return new Map(
-    Array.from(namesByKey.entries()).map(([key, names]) => [key, Array.from(names).join(", ")])
+    Array.from(namesByKey.entries()).map(([key, names]) => [
+      key,
+      Array.from(names).join(", "),
+    ])
   );
 };
 
