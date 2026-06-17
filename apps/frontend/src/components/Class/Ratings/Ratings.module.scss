@@ -158,7 +158,7 @@
 }
 
 .ratingsSummaryCount {
-  color: rgb(64, 64, 64);
+  color: var(--secondary-color);
   font-feature-settings: "liga" off;
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);

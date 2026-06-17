@@ -480,6 +480,29 @@ export const getUserClassRatings = async (
   return formatUserClassRatings(userRatings[0]);
 };
 
+const buildInstructorNamesByClassKey = (
+  sections: { semester?: unknown; year?: unknown; classNumber?: unknown; number?: unknown; meetings?: { instructors?: { role?: string; givenName?: string; familyName?: string }[] }[] }[]
+): Map<string, string> => {
+  const namesByKey = new Map<string, Set<string>>();
+  sections.forEach((section) => {
+    const classNumber = section.classNumber ?? section.number;
+    if (!classNumber) return;
+    const classKey = `${section.semester}|${section.year}|${classNumber}`;
+    const names = namesByKey.get(classKey) ?? new Set<string>();
+    section.meetings?.forEach((meeting) => {
+      meeting.instructors?.forEach((instructor) => {
+        if (instructor.role === "PI" && instructor.givenName && instructor.familyName) {
+          names.add(`${instructor.givenName} ${instructor.familyName}`);
+        }
+      });
+    });
+    namesByKey.set(classKey, names);
+  });
+  return new Map(
+    Array.from(namesByKey.entries()).map(([key, names]) => [key, Array.from(names).join(", ")])
+  );
+};
+
 export const getUserRatings = async (context: RequestContext) => {
   if (!context.user._id) {
     throw new GraphQLError("Unauthorized", {
@@ -529,23 +552,7 @@ export const getUserRatings = async (context: RequestContext) => {
     classNumber: { $in: classNumbers },
   }).select("semester year classNumber meetings");
 
-  const instructorNamesByClassKey = new Map<string, string>();
-  sections.forEach((section) => {
-    const classKey = `${section.semester}|${section.year}|${section.classNumber}`;
-    const names: string[] = [];
-    section.meetings?.forEach((meeting) => {
-      meeting.instructors?.forEach((instructor) => {
-        if (
-          instructor.role === "PI" &&
-          instructor.givenName &&
-          instructor.familyName
-        ) {
-          names.push(`${instructor.givenName} ${instructor.familyName}`);
-        }
-      });
-    });
-    if (names.length) instructorNamesByClassKey.set(classKey, names.join(", "));
-  });
+  const instructorNamesByClassKey = buildInstructorNamesByClassKey(sections);
 
   return {
     ...formattedUserRatings,
@@ -1398,26 +1405,7 @@ export const getClassRatings = async (
     });
   });
 
-  const instructorNamesByClassKey = new Map<string, Set<string>>();
-  sections.forEach((section) => {
-    const classNumber = section.classNumber ?? section.number;
-    if (!classNumber) return;
-    const classKey = `${section.semester}|${section.year}|${classNumber}`;
-
-    const names = instructorNamesByClassKey.get(classKey) ?? new Set<string>();
-    section.meetings?.forEach((meeting) => {
-      meeting.instructors?.forEach((instructor) => {
-        if (
-          instructor.role === "PI" &&
-          instructor.givenName &&
-          instructor.familyName
-        ) {
-          names.add(`${instructor.givenName} ${instructor.familyName}`);
-        }
-      });
-    });
-    instructorNamesByClassKey.set(classKey, names);
-  });
+  const instructorNamesByClassKey = buildInstructorNamesByClassKey(sections);
 
   type UserClassEntry = {
     subject: string;
@@ -1456,10 +1444,7 @@ export const getClassRatings = async (
         semester: rating.semester as Semester,
         year: rating.year,
         classNumber: rating.classNumber,
-        professorName:
-          Array.from(instructorNamesByClassKey.get(classKey) ?? []).join(
-            ", "
-          ) || null,
+        professorName: instructorNamesByClassKey.get(classKey) ?? null,
         metrics: [
           {
             metricName: rating.metricName as MetricName,

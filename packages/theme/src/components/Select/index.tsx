@@ -612,7 +612,6 @@ export function Select<T>({
                   }
                   onWheelCapture={(e) => {
                     e.stopPropagation();
-                    e.currentTarget.scrollTop += e.deltaY;
                   }}
                 >
                   {renderGroupedOptions()}
