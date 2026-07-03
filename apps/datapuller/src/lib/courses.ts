@@ -158,14 +158,21 @@ export const getCourses = async (
     formatCourse
   );
 
-  const latestByKey = new Map<string, ICourseItem>();
+  const rank = (course: ICourseItem) => (course.status === "ACTIVE" ? 1 : 0);
+
+  const chosenByKey = new Map<string, ICourseItem>();
   for (const course of courses) {
     const courseKey = `${course.courseId}|${course.subject}|${course.number}`;
-    const existing = latestByKey.get(courseKey);
-    if (!existing || (course.fromDate ?? "") > (existing.fromDate ?? "")) {
-      latestByKey.set(courseKey, course);
+    const existing = chosenByKey.get(courseKey);
+    if (
+      !existing ||
+      rank(course) > rank(existing) ||
+      (rank(course) === rank(existing) &&
+        (course.fromDate ?? "") > (existing.fromDate ?? ""))
+    ) {
+      chosenByKey.set(courseKey, course);
     }
   }
 
-  return [...latestByKey.values()];
+  return [...chosenByKey.values()];
 };
