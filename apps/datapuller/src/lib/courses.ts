@@ -13,7 +13,7 @@ type CombinedCourse = Course & {
 };
 
 const filterCourse = (input: CombinedCourse): boolean => {
-  return input.status?.code === "ACTIVE";
+  return input.status?.code === "ACTIVE" || input.status?.code === "FUTURE";
 };
 
 const formatCourse = (input: CombinedCourse) => {
@@ -158,5 +158,14 @@ export const getCourses = async (
     formatCourse
   );
 
-  return courses;
+  const latestByKey = new Map<string, ICourseItem>();
+  for (const course of courses) {
+    const courseKey = `${course.courseId}|${course.subject}|${course.number}`;
+    const existing = latestByKey.get(courseKey);
+    if (!existing || (course.fromDate ?? "") > (existing.fromDate ?? "")) {
+      latestByKey.set(courseKey, course);
+    }
+  }
+
+  return [...latestByKey.values()];
 };
