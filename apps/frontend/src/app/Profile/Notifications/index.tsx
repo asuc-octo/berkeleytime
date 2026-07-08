@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { Trash } from "iconoir-react";
 
@@ -13,12 +13,6 @@ import styles from "./Notifications.module.scss";
 export default function Notifications() {
   const { data: user } = useReadUser();
   const [updateUser] = useUpdateUser();
-
-  const [addDropDeadline, setAddDropDeadline] = useState(false);
-  const [lateChangeSchedule, setLateChangeSchedule] = useState(false);
-  const [receiveEmails, setReceiveEmails] = useState(
-    user?.notificationsOn ?? true
-  );
 
   const monitoredClasses = user?.monitoredClasses ?? [];
 
@@ -53,24 +47,13 @@ export default function Notifications() {
       </div>
 
       <div className={styles.section}>
-        <div className={styles.toggleOptions}>
-          <label className={styles.toggleOption}>
-            <input
-              type="checkbox"
-              checked={receiveEmails}
-              onChange={(e) => setReceiveEmails(e.target.checked)}
-              className={styles.toggleOption}
-            />
-            <h2 className={styles.noMarginHeading}>Receive Emails</h2>
-          </label>
-        </div>
-      </div>
-
-      <div className={styles.section}>
         <h2>Classes You're Tracking</h2>
 
         {monitoredClasses.length === 0 ? (
-          <Text>No classes tracked yet. Click the bell icon on any class to start tracking.</Text>
+          <Text>
+            No classes tracked yet. Click the bell icon on any class to start
+            tracking.
+          </Text>
         ) : (
           <div className={styles.classGrid}>
             {monitoredClasses.map((monitoredClass, index) => (
@@ -88,35 +71,6 @@ export default function Notifications() {
             ))}
           </div>
         )}
-      </div>
-
-      <div className={styles.section}>
-        <h2>Add/Drop Deadline Notifications</h2>
-        <Text className={styles.sectionDescription}>
-          Get notified about key academic deadlines, including add/drop and late
-          change of class schedule for the semester.
-        </Text>
-
-        <div className={styles.toggleOptions}>
-          <label className={styles.toggleOption}>
-            <input
-              type="checkbox"
-              checked={addDropDeadline}
-              onChange={(e) => setAddDropDeadline(e.target.checked)}
-              className={styles.toggleOption}
-            />
-            <span>Add/drop deadline</span>
-          </label>
-          <label className={styles.toggleOption}>
-            <input
-              type="checkbox"
-              checked={lateChangeSchedule}
-              onChange={(e) => setLateChangeSchedule(e.target.checked)}
-              className={styles.toggleOption}
-            />
-            <span>Late change of class schedule</span>
-          </label>
-        </div>
       </div>
     </div>
   );
