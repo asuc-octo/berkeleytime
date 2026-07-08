@@ -1,6 +1,5 @@
 import {
   AggregatedMetricsModel,
-  ClassModel,
   CollectionModel,
   RatingModel,
   ScheduleModel,
@@ -9,9 +8,7 @@ import {
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
-import { formatClass } from "../class/formatter";
 import { formatUser } from "./formatter";
-import { UserModule } from "./generated-types/module-types";
 
 export const getUser = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");
@@ -72,34 +69,4 @@ export const deleteAccount = async (context: RequestContext) => {
   await UserModel.findByIdAndDelete(userId);
 
   return true;
-};
-
-export const getMonitoredClasses = async (
-  monitoredClasses:
-    | UserModule.MonitoredClassInput[]
-    | UserModule.MonitoredClass[]
-) => {
-  const classes = [];
-
-  for (const monitoredClass of monitoredClasses) {
-    const classData = monitoredClass.class;
-
-    const _class = await ClassModel.findOne({
-      year: classData.year,
-      semester: classData.semester,
-      sessionId: classData.sessionId ? classData.sessionId : "1",
-      subject: classData.subject,
-      courseNumber: classData.courseNumber,
-      number: classData.number,
-    }).lean();
-
-    if (!_class) continue;
-
-    classes.push({
-      class: formatClass(_class),
-      notified: (monitoredClass as UserModule.MonitoredClass).notified ?? false,
-    });
-  }
-
-  return classes;
 };
