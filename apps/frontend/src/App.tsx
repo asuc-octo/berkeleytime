@@ -23,6 +23,7 @@ const Profile = {
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
   Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
+  Notifications: lazy(() => import("@/app/Profile/Notifications")),
 };
 
 const CollectionDetail = lazy(
@@ -231,6 +232,14 @@ const router = createBrowserRouter([
                 ),
                 path: "bookmarks",
               },
+              {
+                element: (
+                  <SuspenseBoundary key="notifications">
+                    <Profile.Notifications />
+                  </SuspenseBoundary>
+                ),
+                path: "notifications",
+              },
             ],
           },
         ],
@@ -384,6 +393,15 @@ const client = new ApolloClient({
             },
           },
           classes: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+      User: {
+        fields: {
+          monitoredClasses: {
             merge(_, incoming) {
               return incoming;
             },

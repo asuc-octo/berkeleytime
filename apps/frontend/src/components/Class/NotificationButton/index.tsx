@@ -72,6 +72,7 @@ export default function NotificationButton({
         ];
 
     await updateUser({
+      notificationsOn: user.notificationsOn ?? false,
       monitoredClasses: updated.map((mc) => ({
         class: {
           year: mc!.class!.year!,

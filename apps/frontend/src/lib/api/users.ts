@@ -39,30 +39,6 @@ export const READ_USER = gql`
           number
           year
           semester
-          sessionId
-          unitsMin
-          unitsMax
-          gradeDistribution {
-            average
-          }
-          course {
-            title
-            subject
-            number
-            gradeDistribution {
-              average
-            }
-          }
-          primarySection {
-            enrollment {
-              latest {
-                enrolledCount
-                maxEnroll
-                waitlistedCount
-                maxWaitlist
-              }
-            }
-          }
         }
       }
     }
@@ -86,30 +62,6 @@ export const UPDATE_USER = gql`
           number
           year
           semester
-          sessionId
-          unitsMin
-          unitsMax
-          gradeDistribution {
-            average
-          }
-          course {
-            title
-            subject
-            number
-            gradeDistribution {
-              average
-            }
-          }
-          primarySection {
-            enrollment {
-              latest {
-                enrolledCount
-                maxEnroll
-                waitlistedCount
-                maxWaitlist
-              }
-            }
-          }
         }
       }
     }
