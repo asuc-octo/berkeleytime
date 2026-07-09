@@ -26,10 +26,25 @@ spec:
                 name: {{ include "bt-app.backendName" . }}-env
             - secretRef:
                 name: {{ include "bt-app.backendName" . }}-secret
+          env:
+            # Cap the V8 old-space heap below the container memory limit so GC
+            # runs proactively at a predictable bound instead of letting the
+            # heap grow toward node RAM and thrash in back-to-back full GCs.
+            # Leaves headroom for non-heap memory (buffers, zlib, native).
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=1024"
           resources:
             requests:
+              # Give the latency-sensitive Node process a CPU floor so it is not
+              # the lowest-priority workload on the node during contention.
+              cpu: "500m"
+              memory: "768Mi"
               ephemeral-storage: "500Mi"
             limits:
+              # No CPU limit on purpose: CFS throttling would stall the single
+              # event-loop thread and cause exactly the /healthz timeouts we're
+              # fixing. Memory is bounded so a true leak gets recycled.
+              memory: "1536Mi"
               ephemeral-storage: "2Gi"
           readinessProbe:
             httpGet:
@@ -39,6 +54,18 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+          # Liveness is intentionally far more lenient than readiness: a few
+          # seconds of event-loop lag should pull the pod from the Service
+          # (readiness) but NOT restart it. Only a genuine multi-minute wedge
+          # (~150s unresponsive) triggers a restart as a last resort.
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 10
 
 ---
 

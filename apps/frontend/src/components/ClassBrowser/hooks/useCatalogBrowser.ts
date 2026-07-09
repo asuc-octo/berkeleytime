@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useReadSchedules } from "@/hooks/api";
+import useUser from "@/hooks/useUser";
 import { ITerm } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
+import { classConflictsWithSchedule } from "@/lib/schedule/conflict";
 
 import { FilterContextType } from "../context/FilterContext";
 import { ListContextType } from "../context/ListContext";
@@ -84,6 +87,41 @@ export default function useCatalogBrowser({
     semanticSearch: isSemanticMode,
   });
 
+  // Schedule conflict filtering
+  const { user } = useUser();
+  const { data: schedules } = useReadSchedules({
+    skip: !user || !filterState.scheduleConflictFilter,
+  });
+
+  // Find the selected schedule - must match current term to be active
+  const selectedSchedule = useMemo(() => {
+    if (!filterState.scheduleConflictFilter || !schedules) return null;
+    const schedule = schedules.find(
+      (s) => s?._id === filterState.scheduleConflictFilter
+    );
+    // Only use the schedule if it matches the current term
+    if (!schedule || schedule.year !== year || schedule.semester !== semester) {
+      return null;
+    }
+    return schedule;
+  }, [filterState.scheduleConflictFilter, schedules, year, semester]);
+
+  // Filter classes based on schedule conflicts
+  const filteredClasses = useMemo(() => {
+    if (!selectedSchedule) return queryResult.classes;
+
+    return queryResult.classes.filter((catalogClass) => {
+      // Get class meetings from the catalog class
+      const meetings = catalogClass.meetings ?? [];
+
+      // Classes without meetings don't conflict
+      if (meetings.length === 0) return true;
+
+      // Keep classes that DON'T conflict with the schedule
+      return !classConflictsWithSchedule(meetings, selectedSchedule);
+    });
+  }, [queryResult.classes, selectedSchedule]);
+
   const filterContextValue: FilterContextType = useMemo(
     () => ({
       year,
@@ -102,6 +140,7 @@ export default function useCatalogBrowser({
       enrollmentFilter: filterState.enrollmentFilter,
       online: filterState.online,
       filterOptions: queryResult.filterOptions,
+      scheduleConflictFilter: filterState.scheduleConflictFilter,
       updateUnits: filterState.updateUnits,
       updateLevels: filterState.updateLevels,
       updateDays: filterState.updateDays,
@@ -113,22 +152,27 @@ export default function useCatalogBrowser({
       updateEnrollmentFilter: filterState.updateEnrollmentFilter,
       updateOnline: filterState.updateOnline,
       updateReverse: filterState.updateReverse,
+      updateScheduleConflictFilter: filterState.updateScheduleConflictFilter,
     }),
     [year, semester, terms, filterState, queryResult.filterOptions]
   );
 
   const listContextValue: ListContextType = useMemo(
     () => ({
-      classes: queryResult.classes,
+      classes: filteredClasses,
       loading: queryResult.loading,
-      totalCount: queryResult.totalCount,
+      // When schedule filter is active, show filtered count but keep pagination working
+      // so all pages can be loaded and filtered
+      totalCount: selectedSchedule
+        ? filteredClasses.length
+        : queryResult.totalCount,
       page: queryResult.page,
       pageSize: queryResult.pageSize,
       hasNextPage: queryResult.hasNextPage,
       loadNextPage: queryResult.loadNextPage,
       isLoadingNextPage: queryResult.isLoadingNextPage,
     }),
-    [queryResult]
+    [queryResult, filteredClasses, selectedSchedule]
   );
 
   return {

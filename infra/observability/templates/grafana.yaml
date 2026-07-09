@@ -57,6 +57,7 @@ metadata:
   labels:
     {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

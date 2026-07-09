@@ -60,6 +60,7 @@ metadata:
   labels:
     {{- include "bt-observability.tempoLabels" . | nindent 4 }}
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:

@@ -3,8 +3,7 @@ import http from "http";
 
 import { Config } from "../../../../packages/common/src/utils/config";
 import log from "../lib/logger";
-import cacheRoutes from "../modules/cache/routes";
-import loaders, { loadCacheWarmingDependencies } from "./loaders";
+import loaders from "./loaders";
 
 export default async (config: Config) => {
   const app = express();
@@ -56,10 +55,11 @@ export default async (config: Config) => {
   );
 };
 
+/** 
 // Cache warming server bootstrap
 export async function bootstrapCacheWarmingServer(config: Config) {
   const app = express();
-  app.use(json());
+  app.use(express.json());
 
   const { redis } = await loadCacheWarmingDependencies();
   cacheRoutes(app, redis);
@@ -72,3 +72,4 @@ export async function bootstrapCacheWarmingServer(config: Config) {
     "Cache warming server ready"
   );
 }
+**/

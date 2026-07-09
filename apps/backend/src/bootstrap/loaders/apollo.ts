@@ -183,6 +183,24 @@ function createOtelPlugin(): ApolloServerPlugin {
   };
 }
 
+/** 
+
+ * Extracts the first query name from a GraphQL operation.
+ * For example, if the query is "query { catalog(...) { ... } }", this returns "catalog".
+ *
+ * @param operation - The parsed GraphQL operation from the request context
+ * @returns The name of the first query field, or null if not found
+ 
+function getOperationName(
+  operation: OperationDefinitionNode | undefined
+): string | null {
+  const firstSelection = operation?.selectionSet?.selections?.[0];
+  if (firstSelection && "name" in firstSelection)
+    return firstSelection.name.value;
+  return null;
+}
+*/
+
 const SESSION_COOKIE_NAME = "bt.sid";
 
 function getSessionCacheIdFromCookie(
