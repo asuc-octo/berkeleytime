@@ -35,9 +35,9 @@ import {
   SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
+import NotificationButton from "@/components/NotificationButton";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
-import NotificationButton from "@/components/NotificationButton";
 import ClassContext from "@/contexts/ClassContext";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
