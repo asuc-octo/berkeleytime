@@ -38,7 +38,6 @@ import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import NotificationButton from "@/components/NotificationButton";
-import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
 import useUser from "@/hooks/useUser";
