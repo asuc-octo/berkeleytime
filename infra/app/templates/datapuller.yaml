@@ -58,6 +58,10 @@ data:
   TZ: America/Los_Angeles # for tslog
   BACKEND_URL: {{ printf "http://%s-svc.bt.svc.cluster.local:%v" (include "bt-app.backendName" .) .Values.backend.cacheWarmingPort }}
   SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
+  SMTP_HOST: smtp.ocf.berkeley.edu
+  SMTP_PORT: "587"
+  SMTP_USER: notifications@berkeleytime.com
+  SMTP_FROM: notifications@berkeleytime.com
 
 ---
 
