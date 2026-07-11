@@ -28,7 +28,30 @@ export const updateUser = async (
   if (!context.user?._id) throw new Error("Unauthorized");
   const userId = context.user._id;
 
-  const updatedUser = await UserModel.findByIdAndUpdate(userId, user, {
+  const existingUser = await UserModel.findById(userId);
+  if (!existingUser) throw new Error("Not found");
+
+  const { monitoredClasses, ...rest } = user;
+  const update: Record<string, unknown> = { ...rest };
+
+  if (monitoredClasses != null) {
+    update.monitoredClasses = monitoredClasses.map((mc) => {
+      const existing = existingUser.monitoredClasses?.find(
+        (e) =>
+          e.class?.year === mc.class.year &&
+          e.class?.semester === mc.class.semester &&
+          e.class?.subject === mc.class.subject &&
+          e.class?.courseNumber === mc.class.courseNumber &&
+          e.class?.number === mc.class.number
+      );
+      return {
+        class: mc.class,
+        notified: existing?.notified ?? false,
+      };
+    });
+  }
+
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, update, {
     new: true,
   });
 
