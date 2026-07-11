@@ -310,7 +310,6 @@ export default function Class({
     });
   }, [userRatingsData]);
 
-
   useEffect(() => {
     if (!_class) return;
 

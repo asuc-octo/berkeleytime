@@ -23,7 +23,6 @@ const Profile = {
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
   Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
-  Notifications: lazy(() => import("@/app/Profile/Notifications")),
 };
 
 const CollectionDetail = lazy(
