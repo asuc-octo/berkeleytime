@@ -6,6 +6,7 @@ import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
+  UserModel,
 } from "@repo/common/models";
 
 import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
@@ -377,6 +378,132 @@ const updateEnrollmentHistories = async (config: Config) => {
       await updateCatalogEnrollment(log, year, semester, termEnrollments);
     }
   }
+  log.info("Completed catalog cache warming.");
+  await checkEnrollmentDrop(config);
+};
+
+const checkEnrollmentDrop = async (config: Config) => {
+  const { log, email } = config;
+
+  if (!email) {
+    log.warn("SMTP not configured, skipping enrollment drop notifications.");
+    return;
+  }
+
+  log.trace("Starting enrollment drop checks...");
+  // 1. search active terms
+  const terms = await TermModel.find({
+    academicCareerCode: "UGRD",
+    temporalPosition: { $in: ["Current", "Future"] },
+  }).lean();
+
+  if (terms.length === 0) {
+    log.warn("No active terms found, skipping.");
+    return;
+  }
+
+  const termIds = terms.map((t) => t.id);
+
+  // 2. search enrollment histories
+  const histories = await NewEnrollmentHistoryModel.find(
+    { termId: { $in: termIds } },
+    { history: { $slice: -2 } }
+  ).lean();
+
+  // 3. setup nodemailer
+  const transporter = nodemailer.createTransport({
+    host: email.host,
+    port: email.port,
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: email.user,
+      pass: email.password,
+    },
+  });
+
+  // 4. for every history, check 5 conditions
+  for (const history of histories) {
+    if (!history.history || history.history.length < 2) continue;
+
+    const latest = history.history[history.history.length - 1];
+    const previous = history.history[history.history.length - 2];
+
+    if (!latest.enrolledCount || !latest.maxEnroll) continue;
+    if (!previous.enrolledCount || !previous.maxEnroll) continue;
+
+    // Condition 1: time protection
+    const gapMs =
+      new Date(latest.endTime).getTime() - new Date(previous.endTime).getTime();
+    if (gapMs > MAX_SNAPSHOT_GAP_MS) continue;
+
+    // Condition 2: class is popular
+    const currentPct = latest.enrolledCount / latest.maxEnroll;
+    if (currentPct < HOT_COURSE_THRESHOLD) continue;
+
+    // Condition 3: significant drop
+    const previousPct = previous.enrolledCount / previous.maxEnroll;
+    const drop = previousPct - currentPct;
+    if (drop < DROP_THRESHOLD) continue;
+
+    // Condition 4: sufficient empty seats
+    const openSpots = latest.maxEnroll - latest.enrolledCount;
+    if (openSpots < MIN_OPEN_SPOTS) continue;
+
+    // 5. search for unnotified users who subscribed to this class
+    const users = await UserModel.find({
+      notificationsOn: true,
+      monitoredClasses: {
+        $elemMatch: {
+          "class.year": history.year,
+          "class.semester": history.semester,
+          "class.subject": history.subject,
+          "class.courseNumber": history.courseNumber,
+          "class.number": history.sectionNumber,
+          notified: false,
+        },
+      },
+    }).lean();
+
+    // 6. send email + notified = true
+    for (const user of users) {
+      if (!user.email) continue;
+
+      try {
+        await transporter.sendMail({
+          from: email.from,
+          to: user.email,
+          subject: `Spot opened in ${history.subject} ${history.courseNumber}`,
+          html: `
+            <p>Hi ${user.name},</p>
+            <p>${history.subject} ${history.courseNumber} section ${history.sectionNumber}
+            now has ${openSpots} open spot(s) (${Math.round(currentPct * 100)}% full).</p>
+            <p>Go to Calcentral to enroll.</p>
+          `,
+        });
+
+        await UserModel.updateOne(
+          {
+            _id: user._id,
+            "monitoredClasses.class.year": history.year,
+            "monitoredClasses.class.semester": history.semester,
+            "monitoredClasses.class.subject": history.subject,
+            "monitoredClasses.class.courseNumber": history.courseNumber,
+            "monitoredClasses.class.number": history.sectionNumber,
+          },
+          { $set: { "monitoredClasses.$.notified": true } }
+        );
+
+        log.info(
+          `✓ Email sent to ${user.email} for ${history.subject} ${history.courseNumber}`
+        );
+      } catch (err) {
+        log.error(`✗ Failed to send email to ${user.email}:`, err);
+      }
+    }
+  }
+
+  log.info("Enrollment drop check complete.");
 };
 
 export default { updateEnrollmentHistories };
