@@ -35,7 +35,6 @@ import {
   SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
-import NotificationButton from "@/components/NotificationButton";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
@@ -315,9 +314,9 @@ export default function Class({
   const [notificationThresholds, setNotificationThresholds] = useState<
     number[]
   >([]);
-  const [isNotificationToastVisible, setNotificationToastVisible] =
+  const [_isNotificationToastVisible, setNotificationToastVisible] =
     useState(false);
-  const [notificationToastMessage, setNotificationToastMessage] = useState("");
+  const [_notificationToastMessage, setNotificationToastMessage] = useState("");
   const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevThresholdsRef = useRef<number[]>([]);
   const hasInitializedToastRef = useRef(false);
