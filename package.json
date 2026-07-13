@@ -36,6 +36,7 @@
   },
   "name": "berkeleytime",
   "dependencies": {
+    "mimic-fn": "^2.1.0",
     "opentelemetry": "^0.1.0",
     "react-markdown": "^10.1.0"
   }
