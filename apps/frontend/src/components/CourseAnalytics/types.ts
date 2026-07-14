@@ -65,6 +65,7 @@ export interface CourseOutput<I, T> {
   darkColor: string;
   hidden: boolean;
   active: boolean;
+  catalogClassNumber?: string;
 }
 
 export const LIGHT_COLORS = [
