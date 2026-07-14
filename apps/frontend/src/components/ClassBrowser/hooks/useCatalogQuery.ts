@@ -138,7 +138,10 @@ export default function useCatalogQuery({
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, error, fetchMore } = useQuery<GetCatalogSearchQuery, GetCatalogSearchQueryVariables>(GET_CATALOG_SEARCH, {
+  const { data, loading, error, fetchMore } = useQuery<
+    GetCatalogSearchQuery,
+    GetCatalogSearchQueryVariables
+  >(GET_CATALOG_SEARCH, {
     variables: {
       ...catalogQueryVariables,
       page: 1,
@@ -215,7 +218,7 @@ export default function useCatalogQuery({
   const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
   const semanticError =
     semanticSearch && error
-      ? (error.graphQLErrors?.[0]?.message ?? error.message ?? "AI search failed")
+      ? (error.message ?? "AI search failed") // pre-existing error, not relatd to this pr
       : null;
 
   return {

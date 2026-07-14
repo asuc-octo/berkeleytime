@@ -29,6 +29,7 @@ import {
   Semester,
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent, getRecents } from "@/lib/recent";
+import { saveCourseClick } from "@/lib/recent";
 import { compareCollectionsByBookmarksOrder } from "@/utils/collections";
 
 import styles from "./Catalog.module.scss";
@@ -508,9 +509,11 @@ export default function Catalog() {
       subject: string,
       courseNumber: string,
       number: string,
-      sessionId: string
+      sessionId: string,
+      searchQuery: string
     ) => {
       if (!term) return;
+      saveCourseClick(`${subject}${courseNumber}`, searchQuery);
 
       setCatalogDrawerOpen(false); // Close drawer when selecting a class
 

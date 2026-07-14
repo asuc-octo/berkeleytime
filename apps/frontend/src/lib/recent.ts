@@ -8,6 +8,7 @@ export enum RecentType {
   CatalogTerm = "recent-catalog-term",
   GradesPage = "recent-grades-page",
   EnrollmentPage = "recent-enrollment-page",
+  CourseClick = "recent-course-click",
 }
 
 const MaxLength = {
@@ -17,6 +18,7 @@ const MaxLength = {
   [RecentType.CatalogTerm]: 1,
   [RecentType.GradesPage]: 1,
   [RecentType.EnrollmentPage]: 1,
+  [RecentType.CourseClick]: 50,
 };
 
 interface RecentClass {
@@ -56,6 +58,12 @@ interface RecentPageUrl {
   timestamp: number;
 }
 
+interface RecentCourseClick {
+  searchTerm: string;
+  courseNumber: string;
+  timestamp: number;
+}
+
 export type Recent<T extends RecentType> = T extends RecentType.Class
   ? RecentClass
   : T extends RecentType.Schedule
@@ -68,7 +76,9 @@ export type Recent<T extends RecentType> = T extends RecentType.Class
           ? RecentPageUrl
           : T extends RecentType.EnrollmentPage
             ? RecentPageUrl
-            : never;
+            : T extends RecentType.CourseClick
+              ? RecentCourseClick
+              : never;
 
 export const getRecents = <T extends RecentType>(
   type: T,
@@ -203,4 +213,16 @@ export const getPageUrl = (
 ): string | null => {
   const saved = getRecents(type) as RecentPageUrl[];
   return saved[0]?.url ?? null;
+};
+
+export const saveCourseClick = (courseNumber: string, searchTerm: string) => {
+  addRecent(RecentType.CourseClick, {
+    searchTerm,
+    courseNumber,
+    timestamp: Date.now(),
+  });
+};
+
+export const getCourseClicks = (): RecentCourseClick[] => {
+  return getRecents(RecentType.CourseClick) as RecentCourseClick[];
 };

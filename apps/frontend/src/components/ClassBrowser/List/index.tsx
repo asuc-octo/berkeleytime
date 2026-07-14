@@ -63,7 +63,8 @@ interface ListProps {
     subject: string,
     courseNumber: string,
     number: string,
-    sessionId: string
+    sessionId: string,
+    searchQuery: string
   ) => void;
 }
 
@@ -107,6 +108,8 @@ export default function List({ onSelect }: ListProps) {
   const catalogScrollRef = useRef<HTMLDivElement>(null);
   const recentlyViewedListRef = useRef<HTMLDivElement>(null);
   const recentlyViewedMeasureRef = useRef<HTMLDivElement>(null);
+
+  const { query } = useLayoutContext();
 
   useEffect(() => {
     setResolvedSessionIds({});
@@ -285,7 +288,8 @@ export default function List({ onSelect }: ListProps) {
       selected.subject,
       selected.courseNumber,
       selected.number,
-      selected.sessionId
+      selected.sessionId,
+      query
     );
   };
 
@@ -336,7 +340,8 @@ export default function List({ onSelect }: ListProps) {
                           recentClass.subject,
                           recentClass.courseNumber,
                           recentClass.number,
-                          recentClass.sessionId
+                          recentClass.sessionId,
+                          query
                         );
                       }}
                     >

@@ -25,13 +25,13 @@ import {
 } from "@repo/common/models";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
-import { searchSemantic } from "../semantic-search/client";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
+import { searchSemantic } from "../semantic-search/client";
 import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
@@ -197,6 +197,30 @@ const getCatalogWithSemanticSearch = async ({
   return { results, totalCount };
 };
 
+const VIEWCOUNT_BOOST = 0.05;
+
+// Given fuzzy search returns, assign a score to each item and sort by viewCount
+const scoreAndSort = (
+  items: ICatalogClassItem[],
+  scoreMap: Map<ICatalogClassItem, number>
+): ICatalogClassItem[] => {
+  const maxViewCount = Math.max(...items.map((i) => i.viewCount ?? 0), 1);
+
+  return [...items].sort((a, b) => {
+    const fuzzyA = scoreMap.get(a) ?? 1;
+    const fuzzyB = scoreMap.get(b) ?? 1;
+    const viewA =
+      (Math.log((a.viewCount ?? 0) + 1) / Math.log(maxViewCount + 1)) *
+      VIEWCOUNT_BOOST;
+    const viewB =
+      (Math.log((b.viewCount ?? 0) + 1) / Math.log(maxViewCount + 1)) *
+      VIEWCOUNT_BOOST;
+    const scoreA = fuzzyA - viewA;
+    const scoreB = fuzzyB - viewB;
+    return scoreA - scoreB;
+  });
+};
+
 const getCatalogWithSearch = async ({
   year,
   semester,
@@ -214,10 +238,14 @@ const getCatalogWithSearch = async ({
 }) => {
   const index = await getSearchIndex(year, semester);
   const hits = index.search(searchTerm);
+  const scoreMap = new Map<ICatalogClassItem, number>();
+  for (const hit of hits) scoreMap.set(hit.item, hit.score ?? 1);
   const items = hits.map((r) => r.item);
+
   const filtered = applyInMemoryFilters(items, filters);
   const totalCount = filtered.length;
-  const results = filtered.slice(skip, skip + limit);
+  const reranked = scoreAndSort(filtered, scoreMap);
+  const results = reranked.slice(skip, skip + limit);
 
   return { results, totalCount };
 };
