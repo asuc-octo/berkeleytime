@@ -28,6 +28,7 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
       subject: userClass.subject,
       courseNumber: userClass.courseNumber,
       classNumber: userClass.classNumber,
+      professorName: userClass.professorName ?? null,
 
       metrics: userClass.metrics.map((userMetric: UserMetric) => ({
         metricName: userMetric.metricName as MetricName,
@@ -36,8 +37,9 @@ export const formatUserRatings = (ratings: UserRatings): UserRatings => {
 
       reviewTitle: (userClass as UserClass & { reviewTitle?: string | null })
         .reviewTitle,
-      reviewContent: (userClass as UserClass & { reviewContent?: string | null })
-        .reviewContent,
+      reviewContent: (
+        userClass as UserClass & { reviewContent?: string | null }
+      ).reviewContent,
       lastUpdated: userClass.lastUpdated?.toString(),
     })),
   };
