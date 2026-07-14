@@ -264,7 +264,7 @@ export default function Catalog() {
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms } = useReadTerms();
+  const { data: terms, error } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
@@ -535,8 +535,7 @@ export default function Catalog() {
     navigate("/profile/bookmarks");
   }, [navigate]);
 
-  // TODO: Error state for terms loading failure
-
+  if (error) return <p>Failed to load terms. Please refresh the page.</p>;
   return (
     <>
       <div className={styles.root}>
