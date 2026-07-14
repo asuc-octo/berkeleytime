@@ -18,9 +18,9 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 import { useAllBanners } from "@/hooks/api/banner";
-import { useClickEventsTimeSeries } from "@/hooks/api/click-tracking";
 import { useAllRouteRedirects } from "@/hooks/api/route-redirect";
 import { useAllTargetedMessages } from "@/hooks/api/targeted-message";
+import { useTrackingEventsTimeSeries } from "@/hooks/api/tracking";
 
 import { AnalyticsCard, TimeRange } from "./AnalyticsCard";
 
@@ -169,9 +169,10 @@ export function OutreachPanelBlock() {
     data: seriesData,
     loading,
     error,
-  } = useClickEventsTimeSeries({
+  } = useTrackingEventsTimeSeries({
+    eventType: "click",
+    targetType: selectedTarget?.targetType ?? null,
     targetId: selectedTarget?.targetId ?? null,
-    targetType: selectedTarget?.targetType ?? "redirect",
     startDate: startDateStr,
     endDate: endDateStr,
   });

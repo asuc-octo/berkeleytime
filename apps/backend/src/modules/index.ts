@@ -19,6 +19,7 @@ import Schedule from "./schedule";
 import Staff from "./staff";
 import TargetedMessage from "./targeted-message";
 import Term from "./term";
+import Tracking from "./tracking";
 import User from "./user";
 
 const modules = [
@@ -42,6 +43,7 @@ const modules = [
   RouteRedirect,
   Pod,
   TargetedMessage,
+  Tracking,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));
