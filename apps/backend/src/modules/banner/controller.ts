@@ -9,6 +9,7 @@ import {
   StaffMemberModel,
 } from "@repo/common/models";
 
+import { getAnonymousId } from "../../utils/anonymous-id";
 import { getClientIP } from "../../utils/ip";
 import { formatBanner } from "./formatter";
 import {
@@ -369,7 +370,7 @@ export const trackBannerView = async (
   redis: RedisClientType
 ): Promise<{ success: boolean }> => {
   const clientIp = getClientIP(req);
-  const userSessionId = req.sessionID || clientIp;
+  const userSessionId = getAnonymousId(req) || req.sessionID || clientIp;
   const userAgent = req.get("user-agent") || "unknown";
 
   const fingerprint = createHash("sha256")

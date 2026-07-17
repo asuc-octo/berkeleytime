@@ -7,6 +7,7 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
+import { anonymousIdMiddleware } from "../../utils/anonymous-id";
 import bannerRoutes from "../../modules/banner/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import semanticSearchRoutes from "../../modules/semantic-search/routes";
@@ -68,6 +69,9 @@ export default async (
       },
     })
   );
+
+  // Stable per-browser ID for view dedupe, without a server-side session
+  app.use(anonymousIdMiddleware);
 
   // load authentication
   passportLoader(app, redis);

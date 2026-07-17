@@ -37,7 +37,7 @@ export default async (app: Application, redis: RedisClientType) => {
       secret: config.SESSION_SECRET,
       name: "bt.sid",
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
         secure: !config.isDev,
         httpOnly: true,

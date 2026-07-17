@@ -10,6 +10,7 @@ import {
   SectionModel,
 } from "@repo/common/models";
 
+import { getAnonymousId } from "../../utils/anonymous-id";
 import { getClientIP } from "../../utils/ip";
 import { formatClass, formatSection } from "./formatter";
 
@@ -167,7 +168,7 @@ export const trackClassView = async (
     return { success: false, rateLimited: true };
   }
 
-  const userSessionId = req.sessionID || clientIp;
+  const userSessionId = getAnonymousId(req) || req.sessionID || clientIp;
   const userAgent = req.get("user-agent") || "unknown";
 
   const fingerprint = createHash("sha256")
