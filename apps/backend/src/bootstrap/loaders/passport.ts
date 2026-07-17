@@ -28,7 +28,9 @@ const SCOPE = ["profile", "email"];
 const CACHE_PREFIX = "user-session:";
 
 const ANONYMOUS_SESSION_TTL = 1000 * 60 * 60 * 12;
-const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 365;
+// Rolling sessions: refreshed on every request, so this only logs out users
+// idle for the full duration. Kept short-ish to bound Redis session footprint.
+const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 90;
 
 export default async (app: Application, redis: RedisClientType) => {
   // init
