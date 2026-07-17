@@ -7,12 +7,12 @@ import helmet from "helmet";
 import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
-import { anonymousIdMiddleware } from "../../utils/anonymous-id";
 import bannerRoutes from "../../modules/banner/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import staffRoutes from "../../modules/staff/routes";
 import targetedMessageRoutes from "../../modules/targeted-message/routes";
+import { anonymousIdMiddleware } from "../../utils/anonymous-id";
 import passportLoader from "./passport";
 
 export default async (
