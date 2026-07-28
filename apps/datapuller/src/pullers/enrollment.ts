@@ -429,8 +429,8 @@ const checkEnrollmentDrop = async (config: Config) => {
     const latest = history.history[history.history.length - 1];
     const previous = history.history[history.history.length - 2];
 
-    if (!latest.enrolledCount || !latest.maxEnroll) continue;
-    if (!previous.enrolledCount || !previous.maxEnroll) continue;
+    if (latest.enrolledCount == null || latest.maxEnroll == null) continue;
+    if (previous.enrolledCount == null || previous.maxEnroll == null) continue;
 
     // Condition 1: time protection
     const gapMs =
