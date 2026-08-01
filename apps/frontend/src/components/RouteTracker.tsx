@@ -9,10 +9,10 @@
  *
  * When OTel is not initialized the tracer is a no-op — zero overhead.
  */
-import { useEffect, useRef } from "react";
 
-import { trace } from "@opentelemetry/api";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { trace } from "@opentelemetry/api";
 
 const tracer = trace.getTracer("berkeleytime-frontend");
 
