@@ -33,6 +33,13 @@ export interface Config {
   };
   BACKEND_URL: string;
   SEMANTIC_SEARCH_URL: string;
+  email?: {
+    host: string;
+    port: number;
+    user: string;
+    password: string;
+    from: string;
+  };
 }
 
 export function loadConfig(): Config {
@@ -66,5 +73,14 @@ export function loadConfig(): Config {
     },
     BACKEND_URL: env("BACKEND_URL"),
     SEMANTIC_SEARCH_URL: env("SEMANTIC_SEARCH_URL"),
+    email: process.env.SMTP_HOST
+      ? {
+          host: process.env.SMTP_HOST,
+          port: parseInt(process.env.SMTP_PORT ?? "587"),
+          user: process.env.SMTP_USER ?? "",
+          password: process.env.SMTP_PASSWORD ?? "",
+          from: process.env.SMTP_FROM ?? "",
+        }
+      : undefined,
   };
 }

@@ -72,6 +72,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Notifications = lazy(() => import("./NotificationButton"));
 
 interface RootProps {
   dialog?: boolean;
@@ -560,6 +561,21 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
+                    <Notifications
+                      disabled={userLoading}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              number: _class.number,
+                            }
+                          : undefined
+                      }
+                    />
                     <AddToSchedulePopover
                       disabled={userLoading}
                       classInfo={

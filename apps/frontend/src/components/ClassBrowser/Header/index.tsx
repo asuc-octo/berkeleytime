@@ -1,8 +1,12 @@
 import classNames from "classnames";
-
 import { AnimatePresence, motion } from "framer-motion";
-import { Filter, FilterSolid, Search, Sparks, SparksSolid } from "iconoir-react";
-
+import {
+  Filter,
+  FilterSolid,
+  Search,
+  Sparks,
+  SparksSolid,
+} from "iconoir-react";
 
 import { Button, IconButton } from "@repo/theme";
 

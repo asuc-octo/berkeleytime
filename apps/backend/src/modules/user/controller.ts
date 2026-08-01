@@ -8,6 +8,10 @@ import {
 
 import { UpdateUserInput } from "../../generated-types/graphql";
 import { RequestContext } from "../../types/request-context";
+import {
+  sendSubscribeConfirmation,
+  sendUnsubscribeConfirmation,
+} from "../../utils/mailer";
 import { formatUser } from "./formatter";
 
 export const getUser = async (context: RequestContext) => {
@@ -28,11 +32,74 @@ export const updateUser = async (
   if (!context.user?._id) throw new Error("Unauthorized");
   const userId = context.user._id;
 
-  const updatedUser = await UserModel.findByIdAndUpdate(userId, user, {
+  const existingUser = await UserModel.findById(userId);
+  if (!existingUser) throw new Error("Not found");
+
+  const { monitoredClasses, ...rest } = user;
+  const update: Record<string, unknown> = { ...rest };
+
+  if (monitoredClasses != null) {
+    update.monitoredClasses = monitoredClasses.map((mc) => {
+      const existing = existingUser.monitoredClasses?.find(
+        (e) =>
+          e.class?.year === mc.class.year &&
+          e.class?.semester === mc.class.semester &&
+          e.class?.subject === mc.class.subject &&
+          e.class?.courseNumber === mc.class.courseNumber &&
+          e.class?.number === mc.class.number
+      );
+      return {
+        class: mc.class,
+        notified: existing?.notified ?? false,
+      };
+    });
+  }
+
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, update, {
     new: true,
   });
 
   if (!updatedUser) throw new Error("Invalid");
+
+  if (monitoredClasses != null && existingUser.email && existingUser.name) {
+    const classKey = (c: { year: number; semester: string; subject: string; courseNumber: string; number: string }) =>
+      `${c.year}:${c.semester}:${c.subject}:${c.courseNumber}:${c.number}`;
+
+    const oldKeys = new Set(
+      (existingUser.monitoredClasses ?? []).map((e) => classKey(e.class!))
+    );
+    const newKeys = new Set(monitoredClasses.map((mc) => classKey(mc.class)));
+
+    const added = monitoredClasses.filter((mc) => !oldKeys.has(classKey(mc.class)));
+    const removed = (existingUser.monitoredClasses ?? []).filter(
+      (e) => !newKeys.has(classKey(e.class!))
+    );
+
+    await Promise.allSettled([
+      ...added.map((mc) =>
+        sendSubscribeConfirmation(
+          existingUser.email,
+          existingUser.name,
+          mc.class.subject,
+          mc.class.courseNumber,
+          mc.class.number,
+          mc.class.semester,
+          mc.class.year
+        )
+      ),
+      ...removed.map((e) =>
+        sendUnsubscribeConfirmation(
+          existingUser.email!,
+          existingUser.name,
+          e.class!.subject,
+          e.class!.courseNumber,
+          e.class!.number,
+          e.class!.semester,
+          e.class!.year
+        )
+      ),
+    ]);
+  }
 
   return formatUser(updatedUser);
 };

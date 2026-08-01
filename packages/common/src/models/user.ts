@@ -30,6 +30,100 @@ export const userSchema = new Schema(
       required: false,
       default: [],
     },
+    bookmarkedClasses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          year: {
+            type: Number,
+            required: true,
+          },
+          semester: {
+            type: String,
+            enum: ["Spring", "Summer", "Fall", "Winter"],
+            required: true,
+          },
+          subject: {
+            type: String,
+            required: true,
+          },
+          courseNumber: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+    },
+    bookmarkedCourses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          subject: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+    },
+    monitoredClasses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          class: {
+            year: {
+              type: Number,
+              required: true,
+            },
+            semester: {
+              type: String,
+              enum: ["Spring", "Summer", "Fall", "Winter"],
+              required: true,
+            },
+            sessionId: {
+              type: String,
+              required: false,
+            },
+            subject: {
+              type: String,
+              required: true,
+            },
+            courseNumber: {
+              type: String,
+              required: true,
+            },
+            number: {
+              type: String,
+              required: true,
+            },
+          },
+          notified: {
+            type: Boolean,
+            required: true,
+            default: false,
+          },
+        },
+      ],
+    },
+    notificationsOn: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    refresh_token: {
+      type: String,
+      required: false,
+    },
     minors: {
       type: [String],
       trim: true,
