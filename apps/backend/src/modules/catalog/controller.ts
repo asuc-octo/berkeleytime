@@ -25,13 +25,13 @@ import {
 } from "@repo/common/models";
 
 import { getFields, hasFieldPath } from "../../utils/graphql";
+import { searchSemantic } from "../semantic-search/client";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
-import { searchSemantic } from "../semantic-search/client";
 import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 
 export interface CatalogQueryParams {
