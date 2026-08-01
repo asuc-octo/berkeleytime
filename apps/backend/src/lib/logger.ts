@@ -10,6 +10,7 @@
  *   log.info({ key: "value" }, "something happened");
  *   const child = log.child({ module: "apollo" });
  */
+
 import pino from "pino";
 import { trace } from "@opentelemetry/api";
 
