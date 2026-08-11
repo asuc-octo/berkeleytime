@@ -29,6 +29,11 @@ import {
 
 import useUser from "@/hooks/useUser";
 import { signIn, signOut } from "@/lib/api";
+import {
+  BERKELEY_GOGGLES_URL,
+  isBerkeleyGogglesVisited,
+  markBerkeleyGogglesVisited,
+} from "@/lib/berkeley-goggles";
 import { RecentType, getPageUrl } from "@/lib/recent";
 
 import styles from "./NavigationBar.module.scss";
@@ -111,6 +116,9 @@ export default function NavigationBar({
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [gogglesVisited, setGogglesVisited] = useState(() =>
+    isBerkeleyGogglesVisited()
+  );
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
   const savedGradesUrl = getPageUrl(RecentType.GradesPage);
@@ -119,6 +127,11 @@ export default function NavigationBar({
   const enrollmentPath = savedEnrollmentUrl
     ? `/enrollment${savedEnrollmentUrl}`
     : "/enrollment";
+
+  const handleGogglesClick = () => {
+    markBerkeleyGogglesVisited();
+    setGogglesVisited(true);
+  };
 
   useEffect(() => {
     if (menuOpen) {
@@ -172,6 +185,27 @@ export default function NavigationBar({
                   </NavLink>
                 </motion.div>
               ))}
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <a
+                  href={BERKELEY_GOGGLES_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.menuNavExternal}
+                  onClick={() => {
+                    handleGogglesClick();
+                    setMenuOpen(false);
+                  }}
+                >
+                  Berkeley Goggles
+                  {!gogglesVisited && <span className={styles.ping} />}
+                </a>
+              </motion.div>
             </motion.nav>
           </motion.div>,
           document.body
@@ -224,6 +258,17 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
+          <MenuItem
+            as="a"
+            href={BERKELEY_GOGGLES_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.item}
+            onClick={handleGogglesClick}
+          >
+            Berkeley Goggles
+            {!gogglesVisited && <span className={styles.ping} />}
+          </MenuItem>
         </div>
         <IconButton
           className={styles.compactMenuButton}
