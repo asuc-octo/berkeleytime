@@ -1,4 +1,4 @@
-import { CourseModel } from "@repo/common/models";
+import { CourseModel, ICourseItem } from "@repo/common/models";
 
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";
@@ -15,26 +15,37 @@ const updateCourses = async (config: Config) => {
 
   log.info(`Fetched ${courses.length.toLocaleString()} courses.`);
   if (courses.length === 0) {
-    log.error("No courses found, skipping update.");
-    return;
+    throw new Error("No courses found in SIS.");
   }
 
-  log.trace("Deleting courses no longer in SIS...");
+  log.trace("Deleting superseded course numbers...");
 
-  const previousCourses = await CourseModel.countDocuments();
+  const courseKey = ({
+    courseId,
+    subject,
+    number,
+  }: Pick<ICourseItem, "courseId" | "subject" | "number">) =>
+    `${courseId}|${subject}|${number}`;
 
-  if (courses.length / previousCourses <= 0.95) {
-    log.error(
-      `Fetched only ${courses.length} courses, while there were ${previousCourses} previous courses`
-    );
-    return;
-  }
+  const fetchedCourseIds = [
+    ...new Set(courses.map((course) => course.courseId)),
+  ];
+  const fetchedKeys = new Set(courses.map(courseKey));
 
-  const { deletedCount } = await CourseModel.deleteMany({
-    courseId: { $nin: courses.map((course) => course.courseId) },
-  });
+  const storedCourses = await CourseModel.find(
+    { courseId: { $in: fetchedCourseIds } },
+    { courseId: 1, subject: 1, number: 1 }
+  ).lean();
 
-  log.info(`Deleted ${deletedCount.toLocaleString()} courses.`);
+  const supersededIds = storedCourses
+    .filter((course) => !fetchedKeys.has(courseKey(course)))
+    .map((course) => course._id);
+
+  const { deletedCount } = supersededIds.length
+    ? await CourseModel.deleteMany({ _id: { $in: supersededIds } })
+    : { deletedCount: 0 };
+
+  log.info(`Deleted ${deletedCount.toLocaleString()} superseded courses.`);
 
   // Insert courses in batches of 5000
   const insertBatchSize = 5000;
