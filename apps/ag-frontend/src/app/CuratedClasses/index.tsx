@@ -27,7 +27,7 @@ function Content({ curatedClasses }: ContentProps) {
 
   const fuzzySearch = useMemo(() => {
     const list = curatedClasses.map((c) => ({
-      name: `${c.subject} ${c.number}`,
+      name: `${c.subject} ${c.courseNumber}`,
       text: c.text,
       _id: c._id,
     }));

@@ -366,6 +366,8 @@ export interface GetCatalogResponse {
 export const GET_CATALOG = gql`
   query GetCatalog($year: Int!, $semester: Semester!) {
     catalog(year: $year, semester: $semester) {
+      subject
+      courseNumber
       number
       sessionId
       title
@@ -393,8 +395,6 @@ export const GET_CATALOG = gql`
         }
       }
       course {
-        subject
-        number
         title
         gradeDistribution {
           average

@@ -19,8 +19,27 @@ export async function fetchPaginatedData<
 ): Promise<T[]> {
   const results: T[] = [];
   const queryBatchSize = 50;
+  const maxAttempts = 3;
   let page = 1;
   let totalErrorCount = 0;
+
+  const failedPages: number[] = [];
+
+  const isEndOfData = (error: any) =>
+    error?.status === 404 || error?.response?.status === 404;
+
+  const fetchPage = async (params: Record<string, any>): Promise<R[]> => {
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const response: any = await api[method](params, { headers });
+        return responseProcessor(await response.json());
+      } catch (error: any) {
+        if (isEndOfData(error)) return [];
+        if (attempt >= maxAttempts) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 500 * attempt));
+      }
+    }
+  };
 
   const fetchBatch = async (termId?: string) => {
     const promises = [];
@@ -35,15 +54,15 @@ export async function fetchPaginatedData<
         params["term-id"] = termId;
       }
 
+      const pageNumber = page + i;
+
       promises.push(
-        api[method](params, { headers })
-          .then((response: any) => response.json())
-          .then((data: any) => responseProcessor(data))
-          .catch((error: any) => {
-            logger.warn(`Error fetching page ${page + i}: ${error.message}`);
-            errorCount++;
-            return [];
-          })
+        fetchPage(params).catch((error: any) => {
+          logger.warn(`Error fetching page ${pageNumber}: ${error.message}`);
+          failedPages.push(pageNumber);
+          errorCount++;
+          return [];
+        })
       );
     }
 
@@ -94,6 +113,12 @@ export async function fetchPaginatedData<
   }
 
   logger.warn(`Total errors encountered: ${totalErrorCount}`);
+
+  if (failedPages.length > 0) {
+    throw new Error(
+      `Incomplete fetch: ${failedPages.length} page(s) failed after ${maxAttempts} attempts: ${failedPages.join(", ")}`
+    );
+  }
 
   return results;
 }
