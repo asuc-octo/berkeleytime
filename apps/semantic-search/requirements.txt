@@ -1,8 +1,7 @@
 fastapi
 uvicorn[standard]
 sentence-transformers
-redisvl
-redis
+pymongo
 requests
 numpy
 
