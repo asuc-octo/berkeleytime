@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import classNames from "classnames";
 import { motion } from "framer-motion";
@@ -27,16 +27,31 @@ import {
   useTheme,
 } from "@repo/theme";
 
+import { useAllNavItems } from "@/hooks/api/nav-item";
 import useUser from "@/hooks/useUser";
 import { signIn, signOut } from "@/lib/api";
-import {
-  BERKELEY_GOGGLES_URL,
-  isBerkeleyGogglesVisited,
-  markBerkeleyGogglesVisited,
-} from "@/lib/berkeley-goggles";
+import { BERKELEY_GOGGLES_URL } from "@/lib/berkeley-goggles";
 import { RecentType, getPageUrl } from "@/lib/recent";
 
 import styles from "./NavigationBar.module.scss";
+
+interface ExtraNavItem {
+  key: string;
+  label: string;
+  badgeText?: string | null;
+  href: string;
+}
+
+// Shown only while the nav items query is loading or has failed, so hiding the
+// item from the staff dashboard does not resurrect this copy.
+const FALLBACK_NAV_ITEMS: ExtraNavItem[] = [
+  {
+    key: "fallback-clubs",
+    label: "Clubs",
+    badgeText: "NEW",
+    href: BERKELEY_GOGGLES_URL,
+  },
+];
 
 interface NavigationBarProps {
   invert?: boolean;
@@ -116,9 +131,11 @@ export default function NavigationBar({
   const { user } = useUser();
   const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [gogglesVisited, setGogglesVisited] = useState(() =>
-    isBerkeleyGogglesVisited()
-  );
+  const {
+    data: navItems,
+    loading: navItemsLoading,
+    error: navItemsError,
+  } = useAllNavItems();
   const location = useLocation();
   const isLandingPage = location.pathname === "/";
   const savedGradesUrl = getPageUrl(RecentType.GradesPage);
@@ -128,10 +145,17 @@ export default function NavigationBar({
     ? `/enrollment${savedEnrollmentUrl}`
     : "/enrollment";
 
-  const handleGogglesClick = () => {
-    markBerkeleyGogglesVisited();
-    setGogglesVisited(true);
-  };
+  const extraNavItems = useMemo<ExtraNavItem[]>(() => {
+    if (navItemsLoading || navItemsError) return FALLBACK_NAV_ITEMS;
+
+    return (navItems ?? []).map((navItem) => ({
+      key: navItem.id,
+      label: navItem.label,
+      badgeText: navItem.badgeText,
+      // Clicks are counted server-side before redirecting to the real url
+      href: `/nav-item/click/${navItem.id}`,
+    }));
+  }, [navItems, navItemsLoading, navItemsError]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -185,27 +209,33 @@ export default function NavigationBar({
                   </NavLink>
                 </motion.div>
               ))}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <a
-                  href={BERKELEY_GOGGLES_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.menuNavExternal}
-                  onClick={() => {
-                    handleGogglesClick();
-                    setMenuOpen(false);
+              {extraNavItems.map((navItem) => (
+                <motion.div
+                  key={navItem.key}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 },
                   }}
+                  transition={{ duration: 0.3 }}
                 >
-                  Berkeley Goggles
-                  {!gogglesVisited && <span className={styles.ping} />}
-                </a>
-              </motion.div>
+                  <a
+                    href={navItem.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.menuNavExternal}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <span className={styles.extraItemLabel}>
+                      {navItem.label}
+                      {navItem.badgeText && (
+                        <span className={styles.newBadge}>
+                          {navItem.badgeText}
+                        </span>
+                      )}
+                    </span>
+                  </a>
+                </motion.div>
+              ))}
             </motion.nav>
           </motion.div>,
           document.body
@@ -258,17 +288,23 @@ export default function NavigationBar({
               </MenuItem>
             )}
           </NavLink>
-          <MenuItem
-            as="a"
-            href={BERKELEY_GOGGLES_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.item}
-            onClick={handleGogglesClick}
-          >
-            Berkeley Goggles
-            {!gogglesVisited && <span className={styles.ping} />}
-          </MenuItem>
+          {extraNavItems.map((navItem) => (
+            <MenuItem
+              key={navItem.key}
+              as="a"
+              href={navItem.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classNames(styles.item, styles.extraItem)}
+            >
+              <span className={styles.extraItemLabel}>
+                {navItem.label}
+                {navItem.badgeText && (
+                  <span className={styles.newBadge}>{navItem.badgeText}</span>
+                )}
+              </span>
+            </MenuItem>
+          ))}
         </div>
         <IconButton
           className={styles.compactMenuButton}

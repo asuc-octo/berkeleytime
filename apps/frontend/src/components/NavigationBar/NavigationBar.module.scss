@@ -41,38 +41,27 @@
   align-items: center;
 }
 
-.ping {
-  position: relative;
-  display: inline-block;
+.extraItem.extraItem {
+  color: var(--heading-color);
+  font-weight: var(--font-semibold);
+}
+
+.extraItemLabel {
+  display: inline-flex;
+  align-items: center;
+}
+
+.newBadge {
   flex-shrink: 0;
-  width: 6px;
-  height: 6px;
-  margin-left: 6px;
-  border-radius: 50%;
-  background-color: var(--red-500);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background-color: var(--red-500);
-    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-}
-
-@keyframes ping {
-  75%,
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ping::before {
-    animation: none;
-  }
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background-color: var(--indigo-500);
+  color: white;
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  letter-spacing: 0.03em;
+  line-height: 1.4;
 }
 
 .themeDropdown {
@@ -183,6 +172,10 @@
           top: -12px;
           background-color: white;
         }
+      }
+
+      &.extraItem {
+        color: white;
       }
     }
 
