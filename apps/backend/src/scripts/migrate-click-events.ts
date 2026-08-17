@@ -4,8 +4,13 @@
  * ordered: false and ignores duplicate key errors.
  *
  * Usage:
- *   npx ts-node -e "require('./src/scripts/migrate-click-events')"
+ *   npx tsx src/scripts/migrate-click-events.ts
  *   OR run via the npm script: npm run migrate:click-events
+ *
+ * Set MIGRATE_BEFORE to an ISO timestamp to migrate only ClickEvents older than
+ * it. Required when running after the unified-tracking deploy is live, since the
+ * new write path also populates TrackingEvent — without a cutoff, clicks in the
+ * overlap window are counted twice.
  */
 import mongoose from "mongoose";
 
@@ -17,15 +22,30 @@ const BATCH_SIZE = 500;
 async function migrate() {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error("MONGODB_URI env var is required");
+
+  const before = process.env.MIGRATE_BEFORE;
+  if (before && Number.isNaN(new Date(before).getTime())) {
+    throw new Error(`MIGRATE_BEFORE is not a valid date: ${before}`);
+  }
+  const filter = before ? { timestamp: { $lt: new Date(before) } } : {};
+
   await mongoose.connect(uri);
   console.log("Connected to MongoDB");
 
-  const total = await ClickEventModel.countDocuments();
+  if (before) {
+    console.log(
+      `Cutoff: only migrating events before ${new Date(before).toISOString()}`
+    );
+  } else {
+    console.log("No MIGRATE_BEFORE set — migrating the entire collection");
+  }
+
+  const total = await ClickEventModel.countDocuments(filter);
   console.log(`Found ${total} ClickEvent documents to migrate`);
 
   let migrated = 0;
   let skipped = 0;
-  const cursor = ClickEventModel.find().lean().cursor();
+  const cursor = ClickEventModel.find(filter).lean().cursor();
 
   const batch: object[] = [];
 
@@ -33,23 +53,27 @@ async function migrate() {
     if (batch.length === 0) return;
     try {
       await TrackingEventModel.insertMany(batch, { ordered: false });
+      migrated += batch.length;
     } catch (err: unknown) {
-      // E11000 = duplicate key — already migrated, safe to ignore
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "code" in err &&
-        (err as { code: number }).code !== 11000
-      ) {
+      // E11000 = duplicate key — already migrated, safe to ignore. Anything
+      // else (connection drop, timeout, validation) must not be swallowed.
+      const writeErrors =
+        (err as { writeErrors?: { err?: { code?: number }; code?: number }[] })
+          ?.writeErrors ?? [];
+      const isDuplicate = (e: { err?: { code?: number }; code?: number }) =>
+        (e.err?.code ?? e.code) === 11000;
+
+      if (writeErrors.length === 0 || !writeErrors.every(isDuplicate)) {
         throw err;
       }
-      skipped += (err as { result?: { nInserted?: number } })?.result?.nInserted
-        ? 0
-        : batch.length;
+
+      migrated += batch.length - writeErrors.length;
+      skipped += writeErrors.length;
     }
-    migrated += batch.length;
     batch.length = 0;
-    process.stdout.write(`\r  Migrated ${migrated}/${total}...`);
+    process.stdout.write(
+      `\r  Migrated ${migrated}, skipped ${skipped} (of ${total})...`
+    );
   };
 
   for await (const doc of cursor) {
