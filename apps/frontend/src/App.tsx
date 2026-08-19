@@ -13,6 +13,7 @@ import { ThemeProvider } from "@repo/theme";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import { TrackingProvider } from "@/providers/TrackingProvider";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
@@ -428,11 +429,13 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <UserProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </UserProvider>
+      <TrackingProvider>
+        <UserProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </UserProvider>
+      </TrackingProvider>
     </ApolloProvider>
   );
 }

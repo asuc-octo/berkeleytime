@@ -8,6 +8,7 @@ import {
   useIncrementBannerDismiss,
   useTrackBannerView,
 } from "@/hooks/api/banner";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   isBannerSessionDismissed,
   isBannerViewed,
@@ -23,6 +24,7 @@ export default function Banner() {
   const { data: banners, loading, error } = useAllBanners();
   const { incrementDismiss } = useIncrementBannerDismiss();
   const { trackView } = useTrackBannerView();
+  const { trackView: trackUnifiedView, trackDismiss } = useTracking();
   const [dismissedBanners, setDismissedBanners] = useState<Set<string>>(
     new Set()
   );
@@ -82,13 +84,15 @@ export default function Banner() {
 
     trackedViewsRef.current.add(activeBanner.id);
     trackView(activeBanner.id);
-  }, [activeBanner, trackView]);
+    trackUnifiedView("banner", activeBanner.id);
+  }, [activeBanner, trackView, trackUnifiedView]);
 
   const handleDismiss = () => {
     if (!activeBanner) return;
 
     // Track dismissal (always on now)
     incrementDismiss(activeBanner.id);
+    trackDismiss("banner", activeBanner.id);
 
     // Mark as dismissed in this session (in-memory state)
     setDismissedBanners((prev) => new Set(prev).add(activeBanner.id));

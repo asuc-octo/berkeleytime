@@ -22,3 +22,4 @@ export * from "./route-redirect";
 export * from "./click-event";
 export * from "./targeted-message";
 export * from "./catalog-class";
+export * from "./tracking-event";
