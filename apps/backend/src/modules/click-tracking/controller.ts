@@ -6,13 +6,18 @@ import type { RedisClientType } from "redis";
 import {
   BannerModel,
   ClickEventModel,
+  NavItemModel,
   RouteRedirectModel,
   TargetedMessageModel,
 } from "@repo/common/models";
 
 import { getClientIP } from "../../utils/ip";
 
-export type TargetType = "banner" | "redirect" | "targeted-message";
+export type TargetType =
+  | "banner"
+  | "redirect"
+  | "targeted-message"
+  | "nav-item";
 
 export interface ClickEventData {
   targetId: string;
@@ -291,6 +296,10 @@ export const checkClickEventLoggingEnabled = async (
   if (targetType === "redirect") {
     const redirect = await RouteRedirectModel.findById(targetId).lean();
     return redirect?.clickEventLogging === true;
+  }
+  if (targetType === "nav-item") {
+    const navItem = await NavItemModel.findById(targetId).lean();
+    return navItem?.clickEventLogging === true;
   }
   const message = await TargetedMessageModel.findById(targetId).lean();
   return message?.clickEventLogging === true;

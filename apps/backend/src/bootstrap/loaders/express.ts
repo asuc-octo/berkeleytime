@@ -8,6 +8,7 @@ import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
 import bannerRoutes from "../../modules/banner/routes";
+import navItemRoutes from "../../modules/nav-item/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import staffRoutes from "../../modules/staff/routes";
@@ -77,6 +78,7 @@ export default async (
   if (root) {
     bannerRoutes(root, redis);
     routeRedirectRoutes(root, redis);
+    navItemRoutes(root, redis);
     targetedMessageRoutes(root, redis);
   }
 

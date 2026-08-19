@@ -11,6 +11,7 @@ import Course from "./course";
 import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
 import GradeDistribution from "./grade-distribution";
+import NavItem from "./nav-item";
 import Plan from "./plan";
 import Pod from "./pod";
 import Rating from "./rating";
@@ -41,6 +42,7 @@ const modules = [
   Plan,
   Rating,
   RouteRedirect,
+  NavItem,
   Pod,
   TargetedMessage,
   Tracking,

@@ -18,13 +18,14 @@ import {
   createChartConfig,
 } from "@/components/Chart";
 import { useAllBanners } from "@/hooks/api/banner";
+import { useAllNavItems } from "@/hooks/api/nav-item";
 import { useAllRouteRedirects } from "@/hooks/api/route-redirect";
 import { useAllTargetedMessages } from "@/hooks/api/targeted-message";
 import { useTrackingEventsTimeSeries } from "@/hooks/api/tracking";
 
 import { AnalyticsCard, TimeRange } from "./AnalyticsCard";
 
-type ClickTargetType = "banner" | "redirect" | "targeted-message";
+type ClickTargetType = "banner" | "redirect" | "targeted-message" | "nav-item";
 
 interface SelectedTarget {
   targetType: ClickTargetType;
@@ -76,7 +77,8 @@ function parseTargetValue(
     targetId &&
     (targetType === "banner" ||
       targetType === "redirect" ||
-      targetType === "targeted-message")
+      targetType === "targeted-message" ||
+      targetType === "nav-item")
   ) {
     return { targetType: targetType as ClickTargetType, targetId };
   }
@@ -90,6 +92,7 @@ export function OutreachPanelBlock() {
   const { data: redirects } = useAllRouteRedirects();
   const { data: banners } = useAllBanners();
   const { data: targetedMessages } = useAllTargetedMessages();
+  const { data: navItems } = useAllNavItems();
 
   const { targetOptions, targetOptionByValue } = useMemo(() => {
     const flat: Array<{
@@ -133,11 +136,20 @@ export function OutreachPanelBlock() {
       }
     }
 
+    if (navItems?.length) {
+      options.push({ type: "label", label: "Nav items" });
+      for (const n of navItems) {
+        const value = encodeTargetValue("nav-item", n.id);
+        flat.push({ value, label: n.label, typeLabel: "Nav item" });
+        options.push({ value, label: n.label });
+      }
+    }
+
     const targetOptionByValue = new Map(
       flat.map((o) => [o.value, { label: o.label, typeLabel: o.typeLabel }])
     );
     return { targetOptions: options, targetOptionByValue };
-  }, [redirects, banners, targetedMessages]);
+  }, [redirects, banners, targetedMessages, navItems]);
 
   const selectedTarget: SelectedTarget | null = useMemo(() => {
     const parsed = selectedValue ? parseTargetValue(selectedValue) : null;
