@@ -2,16 +2,32 @@ import { FuzzySearch } from "@repo/common";
 
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 
+const getFormerNameVariants = (formerDisplayName: string): string[] => {
+  const words = formerDisplayName.trim().split(/\s+/);
+  const formerNumber = words[words.length - 1];
+  const formerSubject = words.slice(0, -1).join("");
+
+  if (!formerSubject) return [formerDisplayName.trim()];
+
+  return [
+    formerDisplayName.trim(),
+    `${formerSubject} ${formerNumber}`,
+    `${formerSubject}${formerNumber}`,
+  ];
+};
+
 export const initialize = (
   courses: {
     title: string;
     subject: string;
     departmentNicknames?: string | null;
+    formerDisplayName?: string | null;
     number: string;
   }[]
 ) => {
   const list = courses.map((course) => {
-    const { title, subject, departmentNicknames, number } = course;
+    const { title, subject, departmentNicknames, formerDisplayName, number } =
+      course;
 
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
@@ -31,30 +47,35 @@ export const initialize = (
       ...new Set([...sisNicknames, ...hardcodedNicknames]),
     ];
 
-    const alternateNames = abbreviations.reduce(
-      (acc, abbreviation) => {
-        const abbrevs = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
+    const alternateNames = [
+      ...abbreviations.reduce(
+        (acc, abbreviation) => {
+          const abbrevs = [
+            `${abbreviation}${number}`,
+            `${abbreviation} ${number}`,
+          ];
 
-        if (containsPrefix) {
-          abbrevs.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
+          if (containsPrefix) {
+            abbrevs.push(
+              `${abbreviation}${alternateNumber}`,
+              `${abbreviation} ${alternateNumber}`
+            );
+          }
 
-        return [...acc, ...abbrevs];
-      },
-      containsPrefix
-        ? [
-            `${subject}${number}`,
-            `${subject} ${alternateNumber}`,
-            `${subject}${alternateNumber}`,
-          ]
-        : [`${subject}${number}`]
-    );
+          return [...acc, ...abbrevs];
+        },
+        containsPrefix
+          ? [
+              `${subject}${number}`,
+              `${subject} ${alternateNumber}`,
+              `${subject}${alternateNumber}`,
+            ]
+          : [`${subject}${number}`]
+      ),
+      ...(formerDisplayName?.trim()
+        ? getFormerNameVariants(formerDisplayName)
+        : []),
+    ];
 
     return {
       title,
