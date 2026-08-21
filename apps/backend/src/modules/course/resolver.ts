@@ -31,11 +31,10 @@ interface ClassIdentityFields {
   courseNumber?: string | null;
   year?: number | null;
   semester?: string | null;
-  sessionId?: string | null;
 }
 
 const getClassTermKey = (courseClass: ClassIdentityFields) =>
-  `${courseClass.year}|${courseClass.semester}|${courseClass.sessionId}`;
+  `${courseClass.year}|${courseClass.semester}`;
 
 const SEMESTER_RECENCY_ORDER: Record<string, number> = {
   Spring: 0,
