@@ -36,6 +36,7 @@ export const courseTypeDef = gql`
     academicOrganizationName: String
     departmentNicknames: String
     formerDisplayName: String
+    formerNames: [String!]!
     title: String!
     primaryInstructionMethod: InstructionMethod!
     toDate: String!

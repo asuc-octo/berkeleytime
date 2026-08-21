@@ -2,31 +2,17 @@ import { FuzzySearch } from "@repo/common";
 
 import { SUBJECT_NICKNAME_MAP } from "@/lib/departmentNicknames";
 
-const getFormerNameVariants = (formerDisplayName: string): string[] => {
-  const words = formerDisplayName.trim().split(/\s+/);
-  const formerNumber = words[words.length - 1];
-  const formerSubject = words.slice(0, -1).join("");
-
-  if (!formerSubject) return [formerDisplayName.trim()];
-
-  return [
-    formerDisplayName.trim(),
-    `${formerSubject} ${formerNumber}`,
-    `${formerSubject}${formerNumber}`,
-  ];
-};
-
 export const initialize = (
   courses: {
     title: string;
     subject: string;
     departmentNicknames?: string | null;
-    formerDisplayName?: string | null;
+    formerNames?: string[] | null;
     number: string;
   }[]
 ) => {
   const list = courses.map((course) => {
-    const { title, subject, departmentNicknames, formerDisplayName, number } =
+    const { title, subject, departmentNicknames, formerNames, number } =
       course;
 
     const containsPrefix = /^[a-zA-Z].*/.test(number);
@@ -72,9 +58,12 @@ export const initialize = (
             ]
           : [`${subject}${number}`]
       ),
-      ...(formerDisplayName?.trim()
-        ? getFormerNameVariants(formerDisplayName)
-        : []),
+      ...(formerNames ?? [])
+        .filter(Boolean)
+        .flatMap((formerName) => [
+          formerName,
+          formerName.replace(/\s+/g, ""),
+        ]),
     ];
 
     return {
