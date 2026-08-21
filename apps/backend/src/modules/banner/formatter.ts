@@ -12,7 +12,6 @@ export interface FormattedBanner {
   clickCount: number;
   dismissCount: number;
   viewCount: number;
-  clickEventLogging: boolean;
   visible: boolean;
   currentVersion: number;
   createdAt: string;
@@ -33,7 +32,6 @@ export const formatBanner = (
     clickCount: banner.clickCount ?? 0,
     dismissCount: banner.dismissCount ?? 0,
     viewCount,
-    clickEventLogging: banner.clickEventLogging ?? false,
     visible: banner.visible ?? true,
     currentVersion: banner.currentVersion ?? 1,
     createdAt: banner.createdAt.toISOString(),

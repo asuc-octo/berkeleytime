@@ -54,7 +54,6 @@ export interface CreateBannerInput {
   linkText?: string | null;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging?: boolean | null;
   visible?: boolean | null;
 }
 
@@ -64,7 +63,6 @@ export interface UpdateBannerInput {
   linkText?: string | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
-  clickEventLogging?: boolean | null;
   visible?: boolean | null;
 }
 
@@ -130,7 +128,6 @@ export const createBanner = async (
       input.linkText === "" || input.linkText === null ? null : input.linkText,
     persistent: input.persistent,
     reappearing: input.reappearing,
-    clickEventLogging: input.clickEventLogging ?? false,
     visible: input.visible ?? true,
     currentVersion: 1,
     versionHistory: [initialVersionEntry],
@@ -175,12 +172,6 @@ export const updateBanner = async (
   if (input.reappearing !== null && input.reappearing !== undefined) {
     updateData.reappearing = input.reappearing;
   }
-  if (
-    input.clickEventLogging !== null &&
-    input.clickEventLogging !== undefined
-  ) {
-    updateData.clickEventLogging = input.clickEventLogging;
-  }
   if (input.visible !== null && input.visible !== undefined) {
     updateData.visible = input.visible;
   }
@@ -203,9 +194,6 @@ export const updateBanner = async (
         (updateData.persistent as boolean) ?? currentBanner.persistent,
       reappearing:
         (updateData.reappearing as boolean) ?? currentBanner.reappearing,
-      clickEventLogging:
-        (updateData.clickEventLogging as boolean) ??
-        currentBanner.clickEventLogging,
       visible: (updateData.visible as boolean) ?? currentBanner.visible,
     };
 
@@ -216,8 +204,7 @@ export const updateBanner = async (
         linkText?: string | null;
         persistent: boolean;
         reappearing: boolean;
-        clickEventLogging?: boolean | null;
-      }
+            }
     );
     const currentVersion = currentBanner.currentVersion ?? 1;
     const newVersionEntry = createVersionEntry(
