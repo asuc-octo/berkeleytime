@@ -87,7 +87,8 @@ export default function CourseSelectionCard({
     return sorted[0].unitsMax;
   }, [courseUnitsData]);
 
-  const displayTitle = title ?? titleData?.title ?? "N/A";
+  const displayTitle =
+    title ?? titleData?.title ?? classData?.course?.title ?? "N/A";
   const hasActions = onClickHide || onClickEdit || onClickDelete;
   const topRightContent = hasActions ? (
     <>
