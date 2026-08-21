@@ -316,7 +316,7 @@ function EnrollmentSidebar({
     [selectedSemesterValue]
   );
   useEffect(() => {
-    if (!selectedCourse) return;
+    if (!selectedCourse || courseLoading) return;
 
     if (semesterOptions.length === 0) {
       if (selectedSemesterValue !== null) {
@@ -332,7 +332,7 @@ function EnrollmentSidebar({
     ) {
       setSelectedSemesterValue(null);
     }
-  }, [selectedCourse, selectedSemesterValue, semesterOptions]);
+  }, [selectedCourse, courseLoading, selectedSemesterValue, semesterOptions]);
 
   const availableClasses = useMemo(() => {
     if (!selectedSemester) return [];
