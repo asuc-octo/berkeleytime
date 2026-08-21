@@ -42,7 +42,7 @@ const buildFormerNamesByCourseId = async () => {
 
 let formerNamesByCourseIdCache: Promise<Map<string, string[]>> | null = null;
 
-const getFormerNamesByCourseId = () => {
+export const getFormerNamesByCourseId = () => {
   formerNamesByCourseIdCache ??= buildFormerNamesByCourseId().catch(
     (error) => {
       formerNamesByCourseIdCache = null;
