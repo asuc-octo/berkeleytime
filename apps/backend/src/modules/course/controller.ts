@@ -40,17 +40,38 @@ const buildFormerNamesByCourseId = async () => {
   );
 };
 
-let formerNamesByCourseIdCache: Promise<Map<string, string[]>> | null = null;
+const FORMER_NAMES_CACHE_TTL_MS = 5 * 60 * 1000;
+
+interface FormerNamesCacheEntry {
+  promise: Promise<Map<string, string[]>>;
+  expiresAt: number;
+}
+
+let formerNamesByCourseIdCache: FormerNamesCacheEntry | null = null;
 
 export const getFormerNamesByCourseId = () => {
-  formerNamesByCourseIdCache ??= buildFormerNamesByCourseId().catch(
-    (error) => {
-      formerNamesByCourseIdCache = null;
-      throw error;
-    }
-  );
+  const now = Date.now();
 
-  return formerNamesByCourseIdCache;
+  if (
+    formerNamesByCourseIdCache &&
+    now < formerNamesByCourseIdCache.expiresAt
+  ) {
+    return formerNamesByCourseIdCache.promise;
+  }
+
+  const entry: FormerNamesCacheEntry = {
+    promise: buildFormerNamesByCourseId(),
+    expiresAt: now + FORMER_NAMES_CACHE_TTL_MS,
+  };
+  formerNamesByCourseIdCache = entry;
+
+  void entry.promise.catch(() => {
+    if (formerNamesByCourseIdCache === entry) {
+      formerNamesByCourseIdCache = null;
+    }
+  });
+
+  return entry.promise;
 };
 
 export const getCourse = async (subject: string, number: string) => {
