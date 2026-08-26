@@ -31,11 +31,12 @@ export default function UserProvider({ children }: UserProviderProps) {
     if (loading) return;
     if (user) return;
 
-    // A GraphQL error (e.g. "Unauthorized" when logged out) means the backend
-    // answered normally — only a transport-level failure means it is down, in
-    // which case the SPA fallback would serve the app on the login route
-    // itself, nesting redirect_uri forever.
-    if (error && !CombinedGraphQLErrors.is(error)) return;
+    // Only the expected logged-out response should trigger auto-login. Other
+    // GraphQL errors can persist after login and cause another redirect loop.
+    const isUnauthorized =
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.every(({ message }) => message === "Unauthorized");
+    if (error && !isUnauthorized) return;
     if (window.location.pathname.startsWith(DEV_AUTH_LOGIN_ROUTE)) return;
 
     // If a previous dev auth attempt failed (e.g. stored user was deleted),
