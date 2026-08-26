@@ -127,13 +127,15 @@ export const useGetCourseWithInstructor = (
       GetCourseWithInstructorQueryVariables
     >,
     "variables"
-  >
+  > & { includeFormerNames?: boolean }
 ) => {
+  const { includeFormerNames, ...queryOptions } = options ?? {};
   const query = useQuery(GetCourseWithInstructorDocument, {
-    ...options,
+    ...queryOptions,
     variables: {
       subject,
       number,
+      includeFormerNames: includeFormerNames ?? false,
     },
   });
 

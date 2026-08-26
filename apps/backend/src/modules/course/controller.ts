@@ -74,17 +74,68 @@ export const getFormerNamesByCourseId = () => {
   return entry.promise;
 };
 
+const normalizeCourseNameKey = (name: string) =>
+  name.replace(/[,\s]/g, "").toUpperCase();
+
+interface FormerNameIndexCacheEntry {
+  source: Promise<Map<string, string[]>>;
+  promise: Promise<Map<string, string>>;
+}
+
+let courseIdByFormerNameKeyCache: FormerNameIndexCacheEntry | null = null;
+
+const getCourseIdByFormerNameKey = () => {
+  const source = getFormerNamesByCourseId();
+
+  if (courseIdByFormerNameKeyCache?.source === source) {
+    return courseIdByFormerNameKeyCache.promise;
+  }
+
+  const entry: FormerNameIndexCacheEntry = {
+    source,
+    promise: source.then((formerNamesByCourseId) => {
+      const index = new Map<string, string>();
+
+      for (const [courseId, formerNames] of formerNamesByCourseId) {
+        for (const name of formerNames) {
+          index.set(normalizeCourseNameKey(name), courseId);
+        }
+      }
+
+      return index;
+    }),
+  };
+  courseIdByFormerNameKeyCache = entry;
+
+  void entry.promise.catch(() => {
+    if (courseIdByFormerNameKeyCache === entry) {
+      courseIdByFormerNameKeyCache = null;
+    }
+  });
+
+  return entry.promise;
+};
+
 export const getCourse = async (subject: string, number: string) => {
-  const course = await CourseModel.findOne({
-    subject: buildSubjectQuery(subject),
-    number,
-  })
+  const formerNamesByCourseId = await getFormerNamesByCourseId();
+
+  // Renamed courses (e.g. "EECS 16A" -> "ELENG 66") keep their classes under
+  // one courseId, while the defunct name's own course entry has none. Former
+  // names never collide with current courses, so resolve them first.
+  const courseIdByFormerNameKey = await getCourseIdByFormerNameKey();
+  const renamedCourseId = courseIdByFormerNameKey.get(
+    normalizeCourseNameKey(`${subject} ${number}`)
+  );
+
+  const course = await CourseModel.findOne(
+    renamedCourseId
+      ? { courseId: renamedCourseId }
+      : { subject: buildSubjectQuery(subject), number }
+  )
     .sort({ fromDate: -1 })
     .lean();
 
   if (!course) return null;
-
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
 
   return {
     ...formatCourse(course as ICourseItem),
