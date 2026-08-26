@@ -25,7 +25,7 @@ export const trackingTypeDef = gql`
   """
   A single point in a tracking events time series (e.g. one day).
   """
-  type TrackingEventTimeSeriesPoint {
+  type TrackingEventTimeSeriesPoint @cacheControl(maxAge: 0) {
     date: String!
     count: Int!
   }

@@ -1,5 +1,4 @@
 import type { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@as-integrations/express5";
 import compression from "compression";
 import cors from "cors";
 import { type Application, json } from "express";
@@ -14,6 +13,10 @@ import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import staffRoutes from "../../modules/staff/routes";
 import targetedMessageRoutes from "../../modules/targeted-message/routes";
 import trackingRoutes from "../../modules/tracking/routes";
+import {
+  persistedOperationBodyErrorHandler,
+  persistedOperationGateway,
+} from "../graphql/persistedOperationGateway";
 import passportLoader from "./passport";
 
 export default async (
@@ -25,7 +28,8 @@ export default async (
   app.use(compression());
 
   // Body parser only needed during POST on the graphQL path
-  app.use(json());
+  app.use(json({ limit: "100kb" }));
+  app.use(persistedOperationBodyErrorHandler);
 
   // Cors configuration
   app.use(
@@ -91,19 +95,5 @@ export default async (
   // load staff routes
   staffRoutes(app);
 
-  app.use(
-    config.graphqlPath,
-    expressMiddleware(server, {
-      context: async ({ req }) => ({
-        req,
-        redis,
-        user: {
-          ...req.user,
-          isAuthenticated: req.isAuthenticated(),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          logout: (callback: (err: any) => void) => req.logout(callback),
-        },
-      }),
-    })
-  );
+  app.all(config.graphqlPath, persistedOperationGateway(server, redis));
 };

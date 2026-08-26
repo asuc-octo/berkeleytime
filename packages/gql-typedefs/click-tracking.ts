@@ -23,7 +23,7 @@ export const clickEventTypeDef = gql`
   """
   Paginated response for click events.
   """
-  type ClickEventConnection {
+  type ClickEventConnection @cacheControl(maxAge: 0) {
     events: [ClickEvent!]!
     totalCount: Int!
     hasMore: Boolean!
@@ -32,7 +32,7 @@ export const clickEventTypeDef = gql`
   """
   Aggregated click statistics.
   """
-  type ClickStats {
+  type ClickStats @cacheControl(maxAge: 0) {
     totalClicks: Int!
     uniqueVisitors: Int!
   }
@@ -40,7 +40,7 @@ export const clickEventTypeDef = gql`
   """
   A single point in a click events time series (e.g. one day).
   """
-  type ClickEventsTimeSeriesPoint {
+  type ClickEventsTimeSeriesPoint @cacheControl(maxAge: 0) {
     date: String!
     count: Int!
   }

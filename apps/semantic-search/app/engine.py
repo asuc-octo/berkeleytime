@@ -16,6 +16,8 @@ from redisvl.query import VectorQuery
 from redisvl.redis.utils import array_to_buffer
 from sentence_transformers import SentenceTransformer
 
+from .generated_operations import SEMANTIC_SEARCH_OPERATION_IDS
+
 logger = logging.getLogger("semantic-search")
 
 # Semester order for comparison
@@ -26,20 +28,6 @@ REDIS_URI = os.getenv("REDIS_URI", "redis://redis:6379")
 
 # Namespace prefix keeps all semantic-search keys isolated in the shared Redis instance
 INDEX_PREFIX = "semantic_search"
-
-COURSE_QUERY = """
-query Catalog($year: Int!, $semester: Semester!) {
-  catalog(year: $year, semester: $semester) {
-    courseNumber
-    subject
-    number
-    course {
-      title
-      description
-    }
-  }
-}
-"""
 
 # Backend URL for fetching course catalog (configurable for K8s vs Docker)
 BACKEND_INTERNAL_URL = os.getenv("BACKEND_URL", "http://backend:5001")
@@ -412,7 +400,10 @@ class SemanticSearchEngine:
             try:
                 resp = requests.post(
                     self.catalog_url,
-                    json={"query": COURSE_QUERY, "variables": {"year": year, "semester": semester}},
+                    json={
+                        "id": SEMANTIC_SEARCH_OPERATION_IDS["SemanticSearchCatalog"],
+                        "variables": {"year": year, "semester": semester},
+                    },
                     timeout=30,  # Reduced timeout per request, rely on retries instead
                 )
                 resp.raise_for_status()
@@ -464,24 +455,20 @@ class SemanticSearchEngine:
 
     def fetch_available_terms(self) -> List[Tuple[int, str]]:
         """Fetch list of unique available terms from backend."""
-        query = """
-        query {
-          terms {
-            year
-            semester
-          }
-        }
-        """
         try:
             resp = requests.post(
                 self.catalog_url,
-                json={"query": query},
+                json={
+                    "id": SEMANTIC_SEARCH_OPERATION_IDS["SemanticSearchTerms"]
+                },
                 timeout=30,
             )
             resp.raise_for_status()
             payload = resp.json()
             if "errors" in payload:
-                return []
+                raise RuntimeError(
+                    f"Terms query returned errors: {payload['errors']}"
+                )
             terms_data = payload.get("data", {}).get("terms") or []
             # Deduplicate terms
             seen = set()
@@ -493,7 +480,9 @@ class SemanticSearchEngine:
                         seen.add(key)
                         unique_terms.append(key)
             return unique_terms
-        except Exception:
+        except Exception as exc:
+            self._last_error = str(exc)
+            logger.error("Failed to fetch available terms: %s", exc)
             return []
 
     def _evict_old_indexes(self, max_terms: int = 2) -> None:

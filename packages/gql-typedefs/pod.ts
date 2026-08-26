@@ -15,7 +15,7 @@ export const podTypeDef = gql`
     """
     Get all pods.
     """
-    allPods: [Pod!]!
+    allPods: [Pod!]! @auth
   }
 
   """

@@ -3,13 +3,14 @@ import {
   CuratedClassModel,
   IClassItem,
   ICourseItem,
-  UserType,
 } from "@repo/common/models";
 
 import {
   CreateCuratedClassInput,
   UpdateCuratedClassInput,
 } from "../../generated-types/graphql";
+import { RequestContext } from "../../types/request-context";
+import { requireStaffAuth } from "../analytics/helpers/staff-auth";
 import { getClass } from "../class/controller";
 import { formatClass } from "../class/formatter";
 import { ClassModule } from "../class/generated-types/module-types";
@@ -207,11 +208,8 @@ export const getCuratedClasses = async () => {
   );
 };
 
-export const getCuratedClass = async (
-  context: { user?: UserType },
-  id: string
-) => {
-  if (!context.user?.staff) throw new Error("Unauthorized");
+export const getCuratedClass = async (context: RequestContext, id: string) => {
+  await requireStaffAuth(context);
 
   const curatedClass = await CuratedClassModel.findOne({
     _id: id,
@@ -223,11 +221,11 @@ export const getCuratedClass = async (
 };
 
 export const updateCuratedClass = async (
-  context: { user?: UserType },
+  context: RequestContext,
   id: string,
   input: UpdateCuratedClassInput
 ) => {
-  if (!context.user?.staff) throw new Error("Unauthorized");
+  await requireStaffAuth(context);
 
   const curatedClass = await CuratedClassModel.findOneAndUpdate(
     {
@@ -242,10 +240,10 @@ export const updateCuratedClass = async (
 };
 
 export const deleteCuratedClass = async (
-  context: { user?: UserType },
+  context: RequestContext,
   id: string
 ) => {
-  if (!context.user?.staff) throw new Error("Unauthorized");
+  await requireStaffAuth(context);
 
   const curatedClass = await CuratedClassModel.findOneAndDelete({
     _id: id,
@@ -256,14 +254,14 @@ export const deleteCuratedClass = async (
 };
 
 export const createCuratedClass = async (
-  context: { user?: UserType },
+  context: RequestContext,
   input: CreateCuratedClassInput
 ) => {
-  if (!context.user?.staff) throw new Error("Unauthorized");
+  await requireStaffAuth(context);
 
   const curatedClass = await CuratedClassModel.create({
     ...input,
-    createdBy: context.user._id,
+    createdBy: context.user!._id,
     publishedAt: new Date(),
   });
 
