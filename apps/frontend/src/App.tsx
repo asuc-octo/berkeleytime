@@ -40,6 +40,7 @@ const LegacyGradeDistributions = lazy(
   () => import("@/app/_legacy/GradeDistributions")
 );
 const About = lazy(() => import("@/app/About"));
+const Apply = lazy(() => import("@/app/Apply"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Privacy = lazy(() => import("@/app/Legal/Privacy"));
@@ -168,6 +169,14 @@ const router = createBrowserRouter([
             element: (
               <SuspenseBoundary key="about">
                 <About />
+              </SuspenseBoundary>
+            ),
+          },
+          {
+            path: "apply",
+            element: (
+              <SuspenseBoundary key="apply">
+                <Apply />
               </SuspenseBoundary>
             ),
           },
