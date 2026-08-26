@@ -122,8 +122,8 @@ export default function useCatalogQuery({
       semester: currentSemester,
       search: debouncedQuery || undefined,
       filters: filterVariables,
-      sortBy: debouncedQuery ? undefined : mapSortBy(sortBy),
-      sortOrder: debouncedQuery ? undefined : mapSortOrder(effectiveOrder),
+      sortBy: mapSortBy(sortBy),
+      sortOrder: mapSortOrder(effectiveOrder),
       semanticSearch: semanticSearch || undefined,
     }),
     [
