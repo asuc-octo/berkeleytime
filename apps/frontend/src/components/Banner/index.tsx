@@ -20,7 +20,15 @@ import {
 import styles from "./Banner.module.scss";
 import BetaBanner from "./BetaBanner";
 
-export default function Banner() {
+interface BannerProps {
+  excludedLinks?: readonly string[];
+  showFallback?: boolean;
+}
+
+export default function Banner({
+  excludedLinks = [],
+  showFallback = true,
+}: BannerProps) {
   const { data: banners, loading, error } = useAllBanners();
   const { incrementDismiss } = useIncrementBannerDismiss();
   const { trackView } = useTrackBannerView();
@@ -47,6 +55,10 @@ export default function Banner() {
     if (loading || !banners || banners.length === 0) return null;
 
     for (const banner of banners) {
+      if (banner.link && excludedLinks.includes(banner.link)) {
+        continue;
+      }
+
       // Persistent banners always show and cannot be dismissed
       if (banner.persistent) {
         return banner;
@@ -75,7 +87,7 @@ export default function Banner() {
     }
 
     return null;
-  }, [banners, loading, dismissedBanners]);
+  }, [banners, loading, dismissedBanners, excludedLinks]);
 
   // Track view for all banners (always on now)
   useEffect(() => {
@@ -107,7 +119,7 @@ export default function Banner() {
   };
 
   if (!activeBanner) {
-    return <BetaBanner />;
+    return showFallback ? <BetaBanner /> : null;
   }
 
   // Use redirect-based click tracking for reliable 100% tracking

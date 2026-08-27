@@ -12,8 +12,8 @@ import { Button } from "@repo/theme";
 import { useTracking } from "@/hooks/api/tracking/useTracking";
 
 import styles from "./Apply.module.scss";
+import { APPLICATION_FORM_URL } from "./constants";
 
-const APPLICATION_FORM_URL = "https://forms.gle/kUtzz74eeV8BiMKw6";
 const COFFEE_CHATS_URL =
   "https://airtable.com/appLBtO52VOJBy6Mf/shrW4DKqjbvk15uXq";
 const COFFEE_CHATS_EMBED_URL =
