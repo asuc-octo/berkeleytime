@@ -295,7 +295,7 @@ export default function NavigationBar({
               href={navItem.href}
               target="_blank"
               rel="noopener noreferrer"
-              className={classNames(styles.item, styles.extraItem)}
+              className={styles.item}
             >
               <span className={styles.extraItemLabel}>
                 {navItem.label}

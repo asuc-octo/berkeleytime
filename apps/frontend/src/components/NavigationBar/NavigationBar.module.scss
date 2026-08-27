@@ -41,11 +41,6 @@
   align-items: center;
 }
 
-.extraItem.extraItem {
-  color: var(--heading-color);
-  font-weight: var(--font-semibold);
-}
-
 .extraItemLabel {
   display: inline-flex;
   align-items: center;
@@ -172,10 +167,6 @@
           top: -12px;
           background-color: white;
         }
-      }
-
-      &.extraItem {
-        color: white;
       }
     }
 
