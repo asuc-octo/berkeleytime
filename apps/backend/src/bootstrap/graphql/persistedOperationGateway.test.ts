@@ -10,6 +10,7 @@ import { RedisClientType } from "redis";
 import { persistedOperationFetch } from "@repo/shared";
 
 import { persistedOperations } from "./generated/persistedOperations";
+import { persistedOperations as previousPersistedOperations } from "./generated/previousPersistedOperations";
 import {
   parsePersistedOperationRequest,
   persistedOperationBodyErrorHandler,
@@ -72,6 +73,10 @@ test("the allowlist contains only one named query or mutation per document", () 
       .digest("hex");
     assert.equal(id, expectedId);
   }
+});
+
+test("the previous generated allowlist remains available for rolling deployments", () => {
+  assert.ok(Object.keys(previousPersistedOperations).length > 0);
 });
 
 test("the browser transport strips GraphQL source before calling fetch", async () => {
@@ -177,6 +182,26 @@ test("the HTTP gateway executes only a server-controlled allowlisted document", 
     assert.equal(contextUser.email, "user@example.test");
     assert.equal(contextUser.isAuthenticated, false);
     assert.equal(typeof contextUser.logout, "function");
+
+    const [previousId, previousOperation] = Object.entries(
+      previousPersistedOperations
+    ).find(([candidateId]) => !(candidateId in persistedOperations))!;
+    assert.ok(
+      previousId,
+      "expected an operation ID unique to the prior release"
+    );
+
+    const previousBundleRequest = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: previousId }),
+    });
+    assert.equal(previousBundleRequest.status, 200);
+    await previousBundleRequest.json();
+    assert.deepEqual(executedBody, {
+      query: previousOperation.document,
+      operationName: previousOperation.operationName,
+    });
 
     authenticated = true;
     const authenticatedRequest = await fetch(url, {

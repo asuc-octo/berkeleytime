@@ -5,6 +5,12 @@ import type { RedisClientType } from "redis";
 import log from "../../lib/logger";
 import { persistedOperationRejectionCount } from "../../lib/metrics";
 import { persistedOperations } from "./generated/persistedOperations";
+import { persistedOperations as previousPersistedOperations } from "./generated/previousPersistedOperations";
+
+const acceptedPersistedOperations = {
+  ...previousPersistedOperations,
+  ...persistedOperations,
+};
 
 interface PersistedOperationRequest {
   id: string;
@@ -153,7 +159,7 @@ export function persistedOperationGateway(
       return;
     }
 
-    const operation = persistedOperations[request.id];
+    const operation = acceptedPersistedOperations[request.id];
     if (!operation) {
       reject("unknown_operation", 404, "Unknown operation", req, res);
       return;

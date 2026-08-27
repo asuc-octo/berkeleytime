@@ -200,12 +200,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/ag-frontend/src/lib/api/users.ts","apps/staff-frontend/src/lib/api/users.ts"],
   },
-  "2e5bd7f134a8e007e7a6c2fa41a2d18b0dea3028df5f4f45942fa1d0c7205bf3": {
-    operationName: "GetCourseWithInstructor",
-    document: "query GetCourseWithInstructor($subject:String!$number:CourseNumber!$includeFormerNames:Boolean=false){course(subject:$subject number:$number){classes(includeFormerNames:$includeFormerNames){year semester number subject courseNumber sessionId anyPrintInScheduleOfClasses term{temporalPosition __typename}primarySection{enrollment{latest{enrolledCount __typename}__typename}startDate meetings{instructors{familyName givenName __typename}__typename}number __typename}gradeDistribution{average __typename}__typename}__typename}}",
-    variableNames: ["subject","number","includeFormerNames"],
-    sources: ["apps/frontend/src/lib/api/courses.ts"],
-  },
   "3179d1aecde57f2f023099dd2b1de9ed7c81cd0746da4ea81e948c430eb585f3": {
     operationName: "UpdateUser",
     document: "mutation UpdateUser($user:UpdateUserInput!){updateUser(user:$user){_id name email student notificationsOn monitoredClasses{notified class{title subject courseNumber number year semester __typename}__typename}__typename}}",
@@ -307,6 +301,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation CreateBanner($input:CreateBannerInput!){createBanner(input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount clickEventLogging visible createdAt updatedAt __typename}}",
     variableNames: ["input"],
     sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
+  },
+  "470341e4006429ba4f11927a7bebe763d57286fc697f4581915329067d2fbe86": {
+    operationName: "GetCourseWithInstructor",
+    document: "query GetCourseWithInstructor($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){classes{year semester number sessionId anyPrintInScheduleOfClasses term{temporalPosition __typename}primarySection{enrollment{latest{enrolledCount __typename}__typename}startDate meetings{instructors{familyName givenName __typename}__typename}number __typename}gradeDistribution{average __typename}__typename}__typename}}",
+    variableNames: ["subject","number"],
+    sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
   "473fbb62be154fabe5c3993f4b6b57fbad614e71feb390365cf3aa4b3d08c099": {
     operationName: "CloudflareAnalyticsData",
@@ -524,12 +524,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["userId"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
   },
-  "8e7c027e5bb1794b71772622fed2ae9e623128a6a5c727328ad3c50c392cedd9": {
-    operationName: "GetCourseNames",
-    document: "query GetCourseNames{courses{courseId subject departmentNicknames formerNames number title __typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/courses.ts"],
-  },
   "975a079d64a086e0d443cda072718ffa067e834ba78e362f48779333513248e8": {
     operationName: "GetCourseGradeDist",
     document: "query GetCourseGradeDist($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number gradeDistribution{average distribution{letter count __typename}__typename}__typename}}",
@@ -637,6 +631,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetClassGrades($year:Int!$semester:Semester!$sessionId:SessionIdentifier!$subject:String!$courseNumber:CourseNumber!$number:ClassNumber!){class(year:$year semester:$semester sessionId:$sessionId subject:$subject courseNumber:$courseNumber number:$number){course{gradeDistribution{average distribution{letter count __typename}__typename}__typename}__typename}}",
     variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
     sources: ["apps/frontend/src/lib/api/classes.ts"],
+  },
+  "bce49b1ad403e9fa93fe6b00775406805489da61895b7ea73f54fdb55a204bc9": {
+    operationName: "GetCourseNames",
+    document: "query GetCourseNames{courses{courseId subject departmentNicknames number title __typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
   "c01036fe7d67ffacd32362eb15c1ec072826d4d8391af15622deaeffbdec7604": {
     operationName: "GetGradeDistribution",

@@ -2,6 +2,7 @@ import { addTypenameToDocument } from "@apollo/client/utilities";
 import { Kind, parse, print, stripIgnoredCharacters, visit } from "graphql";
 import { createHash } from "node:crypto";
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
@@ -18,6 +19,10 @@ const repositoryRoot = resolve(backendDirectory, "../..");
 const outputPath = resolve(
   backendDirectory,
   "src/bootstrap/graphql/generated/persistedOperations.ts"
+);
+const previousOutputPath = resolve(
+  backendDirectory,
+  "src/bootstrap/graphql/generated/previousPersistedOperations.ts"
 );
 const semanticSearchOutputPath = resolve(
   repositoryRoot,
@@ -216,6 +221,12 @@ if (process.argv.includes("--check")) {
   }
 } else {
   mkdirSync(dirname(outputPath), { recursive: true });
+  const current = existsSync(outputPath)
+    ? readFileSync(outputPath, "utf8")
+    : "";
+  if (current && normalized(current) !== generated) {
+    copyFileSync(outputPath, previousOutputPath);
+  }
   writeFileSync(outputPath, generated);
   mkdirSync(dirname(semanticSearchOutputPath), { recursive: true });
   writeFileSync(semanticSearchOutputPath, generatedSemanticSearch);
