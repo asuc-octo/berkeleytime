@@ -10,17 +10,137 @@ import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
 
+const buildFormerNamesByCourseId = async () => {
+  const classNames = await ClassModel.aggregate<{
+    _id: string;
+    names: string[];
+  }>([
+    {
+      $group: {
+        _id: "$courseId",
+        names: { $addToSet: { $concat: ["$subject", " ", "$courseNumber"] } },
+      },
+    },
+  ]);
+
+  const currentCourses = await CourseModel.find(
+    { printInCatalog: true },
+    { subject: 1, number: 1 }
+  ).lean();
+
+  const currentCourseNames = new Set(
+    currentCourses.map((c) => `${c.subject} ${c.number}`)
+  );
+
+  return new Map(
+    classNames.map(({ _id, names }) => [
+      _id,
+      names.filter((name) => !currentCourseNames.has(name)),
+    ])
+  );
+};
+
+const FORMER_NAMES_CACHE_TTL_MS = 5 * 60 * 1000;
+
+interface FormerNamesCacheEntry {
+  promise: Promise<Map<string, string[]>>;
+  expiresAt: number;
+}
+
+let formerNamesByCourseIdCache: FormerNamesCacheEntry | null = null;
+
+export const getFormerNamesByCourseId = () => {
+  const now = Date.now();
+
+  if (
+    formerNamesByCourseIdCache &&
+    now < formerNamesByCourseIdCache.expiresAt
+  ) {
+    return formerNamesByCourseIdCache.promise;
+  }
+
+  const entry: FormerNamesCacheEntry = {
+    promise: buildFormerNamesByCourseId(),
+    expiresAt: now + FORMER_NAMES_CACHE_TTL_MS,
+  };
+  formerNamesByCourseIdCache = entry;
+
+  void entry.promise.catch(() => {
+    if (formerNamesByCourseIdCache === entry) {
+      formerNamesByCourseIdCache = null;
+    }
+  });
+
+  return entry.promise;
+};
+
+const normalizeCourseNameKey = (name: string) =>
+  name.replace(/[,\s]/g, "").toUpperCase();
+
+interface FormerNameIndexCacheEntry {
+  source: Promise<Map<string, string[]>>;
+  promise: Promise<Map<string, string>>;
+}
+
+let courseIdByFormerNameKeyCache: FormerNameIndexCacheEntry | null = null;
+
+const getCourseIdByFormerNameKey = () => {
+  const source = getFormerNamesByCourseId();
+
+  if (courseIdByFormerNameKeyCache?.source === source) {
+    return courseIdByFormerNameKeyCache.promise;
+  }
+
+  const entry: FormerNameIndexCacheEntry = {
+    source,
+    promise: source.then((formerNamesByCourseId) => {
+      const index = new Map<string, string>();
+
+      for (const [courseId, formerNames] of formerNamesByCourseId) {
+        for (const name of formerNames) {
+          index.set(normalizeCourseNameKey(name), courseId);
+        }
+      }
+
+      return index;
+    }),
+  };
+  courseIdByFormerNameKeyCache = entry;
+
+  void entry.promise.catch(() => {
+    if (courseIdByFormerNameKeyCache === entry) {
+      courseIdByFormerNameKeyCache = null;
+    }
+  });
+
+  return entry.promise;
+};
+
 export const getCourse = async (subject: string, number: string) => {
-  const course = await CourseModel.findOne({
-    subject: buildSubjectQuery(subject),
-    number,
-  })
+  const formerNamesByCourseId = await getFormerNamesByCourseId();
+
+  // Renamed courses (e.g. "EECS 16A" -> "ELENG 66") keep their classes under
+  // one courseId, while the defunct name's own course entry has none. Former
+  // names never collide with current courses, so resolve them first.
+  const courseIdByFormerNameKey = await getCourseIdByFormerNameKey();
+  const renamedCourseId = courseIdByFormerNameKey.get(
+    normalizeCourseNameKey(`${subject} ${number}`)
+  );
+
+  const course = await CourseModel.findOne(
+    renamedCourseId
+      ? { courseId: renamedCourseId }
+      : { subject: buildSubjectQuery(subject), number }
+  )
     .sort({ fromDate: -1 })
     .lean();
 
   if (!course) return null;
 
-  return formatCourse(course as ICourseItem);
+  return {
+    ...formatCourse(course as ICourseItem),
+    formerNames: formerNamesByCourseId.get(course.courseId) ?? [],
+  };
 };
 
 export const getCourseById = async (
@@ -39,7 +159,12 @@ export const getCourseById = async (
       .lean();
 
     if (exactMatch) {
-      return formatCourse(exactMatch as ICourseItem);
+      const formerNamesByCourseId = await getFormerNamesByCourseId();
+
+      return {
+        ...formatCourse(exactMatch as ICourseItem),
+        formerNames: formerNamesByCourseId.get(courseId) ?? [],
+      };
     }
   }
 
@@ -50,7 +175,12 @@ export const getCourseById = async (
 
   if (!course) return null;
 
-  return formatCourse(course as ICourseItem);
+  const formerNamesByCourseId = await getFormerNamesByCourseId();
+
+  return {
+    ...formatCourse(course as ICourseItem),
+    formerNames: formerNamesByCourseId.get(courseId) ?? [],
+  };
 };
 
 interface GetClassesByCourseOptions {
@@ -205,9 +335,12 @@ export const getCourses = async () => {
   //   }
   // }
 
+  const formerNamesByCourseId = await getFormerNamesByCourseId();
+
   return courses.map((c) => ({
     ...formatCourse(c),
     gradeDistribution: null,
+    formerNames: formerNamesByCourseId.get(c.courseId) ?? [],
   })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
     gradeDistribution: CourseModule.Course["gradeDistribution"];
   })[];

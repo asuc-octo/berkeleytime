@@ -121,6 +121,8 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
       semester,
       searchTerm: search.trim(),
       filters,
+      sortBy,
+      sortOrder,
       limit: effectivePageSize,
       skip,
     });
@@ -202,6 +204,8 @@ const getCatalogWithSearch = async ({
   semester,
   searchTerm,
   filters,
+  sortBy,
+  sortOrder,
   limit,
   skip,
 }: {
@@ -209,17 +213,52 @@ const getCatalogWithSearch = async ({
   semester: string;
   searchTerm: string;
   filters: CatalogQueryParams["filters"];
+  sortBy?: string | null;
+  sortOrder?: string | null;
   limit: number;
   skip: number;
 }) => {
   const index = await getSearchIndex(year, semester);
   const hits = index.search(searchTerm);
   const items = hits.map((r) => r.item);
-  const filtered = applyInMemoryFilters(items, filters);
+  const filtered = sortSearchResults(
+    applyInMemoryFilters(items, filters),
+    sortBy,
+    sortOrder
+  );
   const totalCount = filtered.length;
   const results = filtered.slice(skip, skip + limit);
 
   return { results, totalCount };
+};
+
+type NumericSortField = "unitsMax" | "allTimeAverageGrade" | "openSeats";
+
+const SEARCH_SORT_FIELD_MAP: Record<string, NumericSortField> = {
+  UNITS: "unitsMax",
+  AVERAGE_GRADE: "allTimeAverageGrade",
+  OPEN_SEATS: "openSeats",
+};
+
+const sortSearchResults = (
+  items: ICatalogClassItem[],
+  sortBy?: string | null,
+  sortOrder?: string | null
+): ICatalogClassItem[] => {
+  const field = sortBy ? SEARCH_SORT_FIELD_MAP[sortBy] : undefined;
+  if (!field) return items;
+
+  const order = sortOrder === "ASC" ? 1 : -1;
+
+  return [...items].sort((a, b) => {
+    const diff = (a[field] ?? 0) - (b[field] ?? 0);
+    if (diff !== 0) return diff * order;
+    if (a.subject !== b.subject) return a.subject < b.subject ? -1 : 1;
+    if (a.courseNumber !== b.courseNumber) {
+      return a.courseNumber < b.courseNumber ? -1 : 1;
+    }
+    return 0;
+  });
 };
 
 const applyInMemoryFilters = (
