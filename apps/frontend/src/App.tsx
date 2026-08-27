@@ -173,14 +173,6 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "apply",
-            element: (
-              <SuspenseBoundary key="apply">
-                <Apply />
-              </SuspenseBoundary>
-            ),
-          },
-          {
             path: "legal/privacy",
             element: (
               <SuspenseBoundary key="privacy">
@@ -193,6 +185,19 @@ const router = createBrowserRouter([
             element: (
               <SuspenseBoundary key="terms">
                 <Terms />
+              </SuspenseBoundary>
+            ),
+          },
+        ],
+      },
+      {
+        element: <Layout banner={false} />,
+        children: [
+          {
+            path: "apply",
+            element: (
+              <SuspenseBoundary key="apply">
+                <Apply />
               </SuspenseBoundary>
             ),
           },
