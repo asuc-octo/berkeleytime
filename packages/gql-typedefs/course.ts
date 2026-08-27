@@ -17,7 +17,11 @@ export const courseTypeDef = gql`
     number: CourseNumber!
 
     "Relationships"
-    classes(printInScheduleOnly: Boolean, limit: Int): [Class!]!
+    classes(
+      printInScheduleOnly: Boolean
+      limit: Int
+      includeFormerNames: Boolean
+    ): [Class!]!
     mostRecentClass: Class
     crossListing: [Course!]!
     requiredCourses: [Course!]!
@@ -35,6 +39,8 @@ export const courseTypeDef = gql`
     academicOrganization: String
     academicOrganizationName: String
     departmentNicknames: String
+    formerDisplayName: String
+    formerNames: [String!]! @cacheControl(maxAge: 300, scope: PUBLIC)
     title: String!
     primaryInstructionMethod: InstructionMethod!
     toDate: String!
