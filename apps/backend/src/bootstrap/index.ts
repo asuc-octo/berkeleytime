@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import http from "http";
 
 import { Config } from "../../../../packages/common/src/utils/config";
