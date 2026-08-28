@@ -568,6 +568,10 @@ export const getUserRatings = async (context: RequestContext) => {
 
   const classNumbers = formattedUserRatings.classes.map((c) => c.classNumber);
   const sections = await SectionModel.find({
+    $or: formattedUserRatings.classes.map((c) => ({
+      subject: c.subject,
+      courseNumber: c.courseNumber,
+    })),
     classNumber: { $in: classNumbers },
   }).select("semester year classNumber meetings");
 
