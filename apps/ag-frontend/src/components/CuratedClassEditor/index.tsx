@@ -83,7 +83,7 @@ export default function CuratedClassEditor({
     if (!classes?.catalog) return null;
 
     const list = classes.catalog.map((cls, index) => ({
-      name: `${cls.course.subject} ${cls.course.number}`,
+      name: `${cls.subject} ${cls.courseNumber}`,
       title: cls.title || cls.course.title || "",
       index,
     }));
@@ -108,8 +108,8 @@ export default function CuratedClassEditor({
     () =>
       classes?.catalog.find(
         (cls) =>
-          cls.course.subject === localValue.subject &&
-          cls.course.number === localValue.courseNumber &&
+          cls.subject === localValue.subject &&
+          cls.courseNumber === localValue.courseNumber &&
           cls.number === localValue.number &&
           cls.sessionId === localValue.sessionId
       ),
@@ -162,8 +162,8 @@ export default function CuratedClassEditor({
                 <Flex p="1" gap="3">
                   <Flex direction="column" flexGrow="1">
                     <Heading size="2">
-                      {selectedClass.course.subject}{" "}
-                      {selectedClass.course.number} #{selectedClass.number}
+                      {selectedClass.subject} {selectedClass.courseNumber} #
+                      {selectedClass.number}
                     </Heading>
                     <Text size="2" color="gray">
                       {selectedClass.title || selectedClass.course.title}
@@ -210,12 +210,12 @@ export default function CuratedClassEditor({
                 <Flex direction="column" gap="2">
                   {filteredClasses?.map((cls) => (
                     <Card
-                      key={`${cls.course.subject}-${cls.course.number}-${cls.number}-${cls.sessionId}`}
+                      key={`${cls.subject}-${cls.courseNumber}-${cls.number}-${cls.sessionId}`}
                       onClick={() =>
                         handleChange({
-                          subject: cls.course.subject,
+                          subject: cls.subject,
                           number: cls.number,
-                          courseNumber: cls.course.number,
+                          courseNumber: cls.courseNumber,
                           sessionId: cls.sessionId,
                         })
                       }
@@ -223,8 +223,7 @@ export default function CuratedClassEditor({
                       <Flex p="1" gap="3">
                         <Flex direction="column" flexGrow="1">
                           <Heading size="2">
-                            {cls.course.subject} {cls.course.number} #
-                            {cls.number}
+                            {cls.subject} {cls.courseNumber} #{cls.number}
                           </Heading>
                           <Text size="2" color="gray">
                             {cls.title || cls.course.title}

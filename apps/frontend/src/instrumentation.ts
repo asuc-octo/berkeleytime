@@ -6,14 +6,13 @@
  *
  * When VITE_OTEL_ENDPOINT is not set, this module is a no-op.
  */
-
-import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { ZoneContextManager } from "@opentelemetry/context-zone";
-import { Resource } from "@opentelemetry/resources";
-import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { getWebAutoInstrumentations } from "@opentelemetry/auto-instrumentations-web";
+import { ZoneContextManager } from "@opentelemetry/context-zone";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { registerInstrumentations } from "@opentelemetry/instrumentation";
+import { Resource } from "@opentelemetry/resources";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 
 const otelEndpoint = import.meta.env.VITE_OTEL_ENDPOINT;
 
@@ -21,7 +20,8 @@ if (otelEndpoint) {
   const resource = new Resource({
     "service.name": "frontend",
     "service.version": import.meta.env.VITE_SERVICE_VERSION || "unknown",
-    "deployment.environment": import.meta.env.VITE_DEPLOYMENT_ENV || "production",
+    "deployment.environment":
+      import.meta.env.VITE_DEPLOYMENT_ENV || "production",
   });
 
   const provider = new WebTracerProvider({

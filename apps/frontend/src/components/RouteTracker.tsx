@@ -9,10 +9,10 @@
  *
  * When OTel is not initialized the tracer is a no-op — zero overhead.
  */
-
 import { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+
 import { trace } from "@opentelemetry/api";
+import { useLocation } from "react-router-dom";
 
 const tracer = trace.getTracer("berkeleytime-frontend");
 
@@ -40,6 +40,8 @@ function getFeature(pathname: string): string {
       return "curated";
     case "about":
       return "about";
+    case "apply":
+      return "apply";
     case "legal":
       return "legal";
     default:

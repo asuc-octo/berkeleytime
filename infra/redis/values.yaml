@@ -11,4 +11,6 @@ redis:
     persistence:
       enabled: false
     configuration: |
+      maxmemory 140mb
       maxmemory-policy volatile-lru
+      save ""

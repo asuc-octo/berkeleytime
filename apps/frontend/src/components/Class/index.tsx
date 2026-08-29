@@ -39,6 +39,7 @@ import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard"
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
 import { useGetClass } from "@/hooks/api/classes/useGetClass";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useUser from "@/hooks/useUser";
 import {
   IClassCourse,
@@ -72,6 +73,7 @@ const Grades = lazy(() => import("./Grades"));
 const Overview = lazy(() => import("./Overview"));
 const Sections = lazy(() => import("./Sections"));
 const Ratings = lazy(() => import("./Ratings"));
+const Notifications = lazy(() => import("./NotificationButton"));
 
 interface RootProps {
   dialog?: boolean;
@@ -323,6 +325,7 @@ export default function Class({
   }, [_class]);
 
   const [trackView] = useMutation(TRACK_CLASS_VIEW);
+  const { trackView: trackUnifiedView } = useTracking();
 
   useEffect(() => {
     if (!_class) return;
@@ -338,10 +341,18 @@ export default function Class({
           number: _class.number,
         },
       }).catch(() => {});
+
+      trackUnifiedView("class", _class.courseId ?? undefined, {
+        subject: _class.subject,
+        courseNumber: _class.courseNumber,
+        year: _class.year,
+        semester: _class.semester,
+        number: _class.number,
+      });
     }, VIEW_TRACKING_DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, [_class, trackView]);
+  }, [_class, trackView, trackUnifiedView]);
 
   const ratingsCount = useMemo<number | false>(() => {
     const metrics = _course?.aggregatedRatings?.metrics;
@@ -560,6 +571,21 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
+                    <Notifications
+                      disabled={userLoading}
+                      classInfo={
+                        _class
+                          ? {
+                              year: _class.year,
+                              semester: _class.semester,
+                              sessionId: _class.sessionId,
+                              subject: _class.subject,
+                              courseNumber: _class.courseNumber,
+                              number: _class.number,
+                            }
+                          : undefined
+                      }
+                    />
                     <AddToSchedulePopover
                       disabled={userLoading}
                       classInfo={

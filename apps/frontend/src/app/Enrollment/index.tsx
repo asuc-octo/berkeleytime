@@ -265,7 +265,7 @@ function EnrollmentSidebar({
     useReadCourseWithInstructor(
       selectedCourse?.subject ?? "",
       selectedCourse?.number ?? "",
-      { skip: !selectedCourse }
+      { skip: !selectedCourse, includeFormerNames: true }
     );
 
   // Consume editDraft: populate sidebar state from the draft, then clear it
@@ -316,7 +316,7 @@ function EnrollmentSidebar({
     [selectedSemesterValue]
   );
   useEffect(() => {
-    if (!selectedCourse) return;
+    if (!selectedCourse || courseLoading) return;
 
     if (semesterOptions.length === 0) {
       if (selectedSemesterValue !== null) {
@@ -332,7 +332,7 @@ function EnrollmentSidebar({
     ) {
       setSelectedSemesterValue(null);
     }
-  }, [selectedCourse, selectedSemesterValue, semesterOptions]);
+  }, [selectedCourse, courseLoading, selectedSemesterValue, semesterOptions]);
 
   const availableClasses = useMemo(() => {
     if (!selectedSemester) return [];
@@ -414,8 +414,8 @@ function EnrollmentSidebar({
       year: selectedClass.year,
       semester: selectedClass.semester,
       sessionId: selectedClass.sessionId ?? undefined,
-      subject: selectedCourse.subject,
-      courseNumber: selectedCourse.number,
+      subject: selectedClass.subject,
+      courseNumber: selectedClass.courseNumber,
       sectionNumber: selectedClass.primarySection.number,
     };
   }, [selectedClass, selectedCourse]);
@@ -682,8 +682,8 @@ function EnrollmentVisualization({
                     <CourseSelectionCard
                       color={output.color}
                       darkColor={output.darkColor}
-                      subject={output.course.subject}
-                      number={output.course.number}
+                      subject={output.input.subject}
+                      number={output.input.courseNumber}
                       subtitle={output.subtitle}
                       year={output.input.year}
                       semester={output.input.semester}
@@ -885,11 +885,11 @@ export default function Enrollment() {
         if (!output) return prev;
 
         setEditDraft({
-          subject: output.input.subject,
-          courseNumber: output.input.courseNumber,
+          subject: output.course.subject,
+          courseNumber: output.course.number,
           courseId:
             output.course.courseId ??
-            `${output.input.subject}-${output.input.courseNumber}`,
+            `${output.course.subject}-${output.course.number}`,
           year: output.input.year,
           semester: output.input.semester,
           sectionNumber: output.input.sectionNumber,

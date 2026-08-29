@@ -46,10 +46,8 @@ interface EnrollmentGraphOutput {
   input: {
     year: number;
     semester: Semester;
-  };
-  course: {
     subject: string;
-    number: string;
+    courseNumber: string;
   };
   data: IEnrollment;
 }
@@ -83,7 +81,7 @@ const getGradientId = (outputId: string) =>
   `enroll-gradient-${outputId.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
 
 const getDisplayLabel = (output: EnrollmentGraphOutput) =>
-  `${output.course.subject} ${output.course.number}`;
+  `${output.input.subject} ${output.input.courseNumber}`;
 
 const CHART_HEIGHT_RATIO = 0.55;
 const ROTATED_CHART_HEIGHT_RATIO = 0.72;

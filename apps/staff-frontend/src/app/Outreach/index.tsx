@@ -15,6 +15,12 @@ import {
 } from "../../hooks/api/banner";
 import { useCourseLookup } from "../../hooks/api/course";
 import {
+  useAllNavItems,
+  useCreateNavItem,
+  useDeleteNavItem,
+  useUpdateNavItem,
+} from "../../hooks/api/nav-item";
+import {
   useAllRouteRedirects,
   useCreateRouteRedirect,
   useDeleteRouteRedirect,
@@ -32,6 +38,11 @@ import {
   UpdateBannerInput,
 } from "../../lib/api/banner";
 import {
+  CreateNavItemInput,
+  NavItem,
+  UpdateNavItemInput,
+} from "../../lib/api/nav-item";
+import {
   CreateRouteRedirectInput,
   RouteRedirect,
   UpdateRouteRedirectInput,
@@ -48,6 +59,7 @@ const TABS = [
   { value: "banners", label: "Banners" },
   { value: "redirects", label: "Redirects" },
   { value: "targeted", label: "Targeted" },
+  { value: "nav", label: "Nav Items" },
 ];
 
 interface FormCourse {
@@ -102,6 +114,22 @@ const initialBannerFormData: BannerFormData = {
   clickEventLogging: false,
 };
 
+interface NavItemFormData {
+  label: string;
+  url: string;
+  badgeText: string;
+  order: string;
+  clickEventLogging: boolean;
+}
+
+const initialNavItemFormData: NavItemFormData = {
+  label: "",
+  url: "",
+  badgeText: "",
+  order: "0",
+  clickEventLogging: false,
+};
+
 const initialRedirectFormData: RedirectFormData = {
   fromPath: "",
   toPath: "",
@@ -136,6 +164,17 @@ export default function Outreach() {
   );
   const [redirectFormData, setRedirectFormData] = useState<RedirectFormData>(
     initialRedirectFormData
+  );
+
+  // Nav item state
+  const { data: navItems, loading: navItemsLoading } = useAllNavItems();
+  const { createNavItem, loading: creatingNavItem } = useCreateNavItem();
+  const { updateNavItem, loading: updatingNavItem } = useUpdateNavItem();
+  const { deleteNavItem, loading: deletingNavItem } = useDeleteNavItem();
+  const [isNavItemModalOpen, setIsNavItemModalOpen] = useState(false);
+  const [editingNavItem, setEditingNavItem] = useState<NavItem | null>(null);
+  const [navItemFormData, setNavItemFormData] = useState<NavItemFormData>(
+    initialNavItemFormData
   );
 
   // Targeted message state
@@ -246,6 +285,98 @@ export default function Outreach() {
       await updateBanner(bannerId, { visible: !currentVisible });
     } catch (error) {
       console.error("Error toggling banner visibility:", error);
+    }
+  };
+
+  // Nav item handlers
+  const handleOpenCreateNavItem = () => {
+    setEditingNavItem(null);
+    setNavItemFormData(initialNavItemFormData);
+    setIsNavItemModalOpen(true);
+  };
+
+  const handleOpenEditNavItem = (navItem: NavItem) => {
+    setEditingNavItem(navItem);
+    setNavItemFormData({
+      label: navItem.label,
+      url: navItem.url,
+      badgeText: navItem.badgeText || "",
+      order: String(navItem.order),
+      clickEventLogging: navItem.clickEventLogging,
+    });
+    setIsNavItemModalOpen(true);
+  };
+
+  const handleCloseNavItemModal = () => {
+    setIsNavItemModalOpen(false);
+    setEditingNavItem(null);
+    setNavItemFormData(initialNavItemFormData);
+  };
+
+  const handleSubmitNavItem = async () => {
+    if (!navItemFormData.label.trim() || !navItemFormData.url.trim()) return;
+
+    const parsedOrder = parseInt(navItemFormData.order, 10);
+
+    try {
+      if (editingNavItem) {
+        const input: UpdateNavItemInput = {
+          label: navItemFormData.label.trim(),
+          url: navItemFormData.url.trim(),
+          badgeText: navItemFormData.badgeText.trim(),
+          order: isNaN(parsedOrder) ? 0 : parsedOrder,
+          clickEventLogging: navItemFormData.clickEventLogging,
+        };
+        await updateNavItem(editingNavItem.id, input);
+      } else {
+        const input: CreateNavItemInput = {
+          label: navItemFormData.label.trim(),
+          url: navItemFormData.url.trim(),
+          badgeText: navItemFormData.badgeText.trim() || null,
+          order: isNaN(parsedOrder) ? 0 : parsedOrder,
+          clickEventLogging: navItemFormData.clickEventLogging,
+        };
+        await createNavItem(input);
+      }
+      handleCloseNavItemModal();
+    } catch (error) {
+      console.error("Error saving nav item:", error);
+    }
+  };
+
+  const handleDeleteNavItem = async (navItemId: string) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this nav item? This action cannot be undone."
+      )
+    ) {
+      try {
+        await deleteNavItem(navItemId);
+      } catch (error) {
+        console.error("Error deleting nav item:", error);
+      }
+    }
+  };
+
+  const handleToggleNavItemVisibility = async (
+    navItemId: string,
+    currentVisible: boolean
+  ) => {
+    const action = currentVisible ? "hide" : "show";
+    const confirmed = window.confirm(
+      `Are you sure you want to ${action} this nav item? ${
+        currentVisible
+          ? "It will no longer appear in the navigation bar."
+          : "It will start appearing in the navigation bar immediately."
+      }`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await updateNavItem(navItemId, { visible: !currentVisible });
+    } catch (error) {
+      console.error("Error toggling nav item visibility:", error);
     }
   };
 
@@ -527,6 +658,8 @@ export default function Outreach() {
         return "Create Redirect";
       case "targeted":
         return "Create Targeted Message";
+      case "nav":
+        return "Create Nav Item";
       default:
         return "Create";
     }
@@ -540,6 +673,8 @@ export default function Outreach() {
         return handleOpenCreateRedirect;
       case "targeted":
         return handleOpenCreateTargeted;
+      case "nav":
+        return handleOpenCreateNavItem;
       default:
         return handleOpenCreateBanner;
     }
@@ -684,6 +819,106 @@ export default function Outreach() {
                         size="small"
                         onClick={() => handleDeleteBanner(banner.id)}
                         disabled={deletingBanner}
+                        isDelete
+                      >
+                        <Trash width={14} height={14} />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {activeTab === "nav" && (
+        <>
+          {navItemsLoading ? (
+            <div className={styles.emptyState}>Loading nav items...</div>
+          ) : navItems.length === 0 ? (
+            <div className={styles.emptyState}>
+              No nav items found. Create one to get started.
+            </div>
+          ) : (
+            <div className={styles.list}>
+              {navItems.map((navItem) => (
+                <div
+                  key={navItem.id}
+                  className={`${styles.card} ${!navItem.visible ? styles.hidden : ""}`}
+                >
+                  <div className={styles.cardHeader}>
+                    {navItem.badgeText || navItem.clickEventLogging ? (
+                      <div className={styles.badgeRow}>
+                        {navItem.badgeText && (
+                          <span className={styles.badge}>
+                            {navItem.badgeText}
+                          </span>
+                        )}
+                        {navItem.clickEventLogging && (
+                          <span className={styles.badge}>
+                            Click Event Logging
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                    <div className={styles.visibilityToggle}>
+                      <Switch
+                        checked={navItem.visible}
+                        onCheckedChange={() =>
+                          handleToggleNavItemVisibility(
+                            navItem.id,
+                            navItem.visible
+                          )
+                        }
+                        disabled={updatingNavItem}
+                      />
+                      <span>{navItem.visible ? "Visible" : "Hidden"}</span>
+                    </div>
+                  </div>
+                  <p className={styles.bannerText}>{navItem.label}</p>
+                  <a
+                    href={navItem.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.fullLink}
+                  >
+                    {navItem.url}
+                  </a>
+                  <div className={styles.cardBottom}>
+                    <span className={styles.meta}>
+                      {navItem.clickCount} click
+                      {navItem.clickCount !== 1 ? "s" : ""} • Position:{" "}
+                      {navItem.order} • Created:{" "}
+                      {(() => {
+                        if (!navItem.createdAt) return "Invalid Date";
+                        const date = new Date(navItem.createdAt);
+                        return !isNaN(date.getTime())
+                          ? date.toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })
+                          : "Invalid Date";
+                      })()}
+                    </span>
+                    <div className={styles.actions}>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => handleOpenEditNavItem(navItem)}
+                      >
+                        <EditPencil width={14} height={14} />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => handleDeleteNavItem(navItem.id)}
+                        disabled={deletingNavItem}
                         isDelete
                       >
                         <Trash width={14} height={14} />
@@ -1357,6 +1592,136 @@ export default function Outreach() {
               }
             >
               {editingRedirect ? "Save Changes" : "Create Redirect"}
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Card>
+      </Dialog.Root>
+      {/* Nav Item Modal */}
+      <Dialog.Root
+        open={isNavItemModalOpen}
+        onOpenChange={setIsNavItemModalOpen}
+      >
+        <Dialog.Card>
+          <Dialog.Header
+            title={editingNavItem ? "Edit Nav Item" : "Create Nav Item"}
+            hasCloseButton
+          />
+          <Dialog.Body>
+            <Flex direction="column" gap="16px">
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Label *</label>
+                <Input
+                  type="text"
+                  placeholder="e.g., Clubs"
+                  value={navItemFormData.label}
+                  onChange={(e) =>
+                    setNavItemFormData({
+                      ...navItemFormData,
+                      label: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  The text shown in the navigation bar. Keep it to one word.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>URL *</label>
+                <Input
+                  type="text"
+                  placeholder="https://example.com"
+                  value={navItemFormData.url}
+                  onChange={(e) =>
+                    setNavItemFormData({
+                      ...navItemFormData,
+                      url: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Where the nav item links to. Clicks are counted through a
+                  redirect before landing here.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>
+                  Badge Text (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="e.g., NEW"
+                  value={navItemFormData.badgeText}
+                  onChange={(e) =>
+                    setNavItemFormData({
+                      ...navItemFormData,
+                      badgeText: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Pill shown next to the label. Leave blank to hide it for
+                  everyone.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>Position</label>
+                <Input
+                  type="number"
+                  placeholder="0"
+                  value={navItemFormData.order}
+                  onChange={(e) =>
+                    setNavItemFormData({
+                      ...navItemFormData,
+                      order: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Nav items are ordered by this number, after the built-in
+                  links.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <Flex align="center" gap="8px">
+                  <Switch
+                    checked={navItemFormData.clickEventLogging}
+                    onCheckedChange={(checked) =>
+                      setNavItemFormData({
+                        ...navItemFormData,
+                        clickEventLogging: checked === true,
+                      })
+                    }
+                  />
+                  <label className={styles.toggleLabel}>
+                    Click Event Logging
+                  </label>
+                </Flex>
+                <p className={styles.formHint}>
+                  When enabled, individual click events are logged with IP hash,
+                  user agent, referrer, and timestamps.
+                </p>
+              </div>
+            </Flex>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Button variant="secondary" onClick={handleCloseNavItemModal}>
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSubmitNavItem}
+              disabled={
+                !navItemFormData.label.trim() ||
+                !navItemFormData.url.trim() ||
+                creatingNavItem ||
+                updatingNavItem
+              }
+            >
+              {editingNavItem ? "Save Changes" : "Create Nav Item"}
             </Button>
           </Dialog.Footer>
         </Dialog.Card>

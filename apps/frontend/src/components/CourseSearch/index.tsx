@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 import { Search } from "iconoir-react";
 
 import { Badge, Color, LoadingIndicator } from "@repo/theme";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ICourse } from "@/lib/api";
 import { GetCourseNamesDocument } from "@/lib/generated/graphql";
 import { Recent, RecentType, getRecents } from "@/lib/recent";
@@ -32,6 +33,7 @@ export default function CourseSearch({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const { trackSearch, trackSearchClick } = useTracking();
 
   const [recentCourses, setRecentCourses] = useState<
     Recent<RecentType.Course>[]
@@ -71,6 +73,35 @@ export default function CourseSearch({
       .slice(0, 50) // Limit to first 50 results for performance
       .map(({ refIndex }) => catalogCourses[refIndex]);
   }, [catalogCourses, index, searchQuery]);
+
+  // Track search queries with a 1s debounce
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!searchQuery) return;
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => {
+      trackSearch(searchQuery, currentCourses.length);
+    }, 1000);
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, [searchQuery, currentCourses.length, trackSearch]);
+
+  const handleResultClick = useCallback(
+    (course: Pick<ICourse, "subject" | "number">, resultIndex: number) => {
+      if (searchQuery) {
+        trackSearchClick(
+          searchQuery,
+          `${course.subject}-${course.number}`,
+          resultIndex
+        );
+      }
+      onSelect?.(course);
+      setSearchQuery("");
+      setIsOpen(false);
+    },
+    [searchQuery, trackSearchClick, onSelect]
+  );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -156,10 +187,10 @@ export default function CourseSearch({
                               c.number === course.number
                           );
                           if (full) {
-                            onSelect?.(full);
-                            setSearchQuery("");
+                            handleResultClick(full, index);
+                          } else {
+                            setIsOpen(false);
                           }
-                          setIsOpen(false);
                         }}
                         label={`${course.subject} ${course.number}`}
                         color={Color.Zinc}
@@ -179,7 +210,7 @@ export default function CourseSearch({
                 >
                   {!minimal && <h2>CATALOG</h2>}
                   <div className={styles.catalogList}>
-                    {currentCourses.map((course) => {
+                    {currentCourses.map((course, resultIndex) => {
                       const isRated = isCourseRated(
                         course.subject,
                         course.number
@@ -190,9 +221,7 @@ export default function CourseSearch({
                           className={`${styles.catalogItem} ${isRated ? styles.ratedItem : ""}`}
                           onClick={() => {
                             if (!isRated) {
-                              onSelect?.(course);
-                              setSearchQuery("");
-                              setIsOpen(false);
+                              handleResultClick(course, resultIndex);
                             }
                           }}
                           disabled={isRated}

@@ -19,6 +19,8 @@ export * from "./pod";
 export * from "./banner";
 export * from "./banner-view-count";
 export * from "./route-redirect";
+export * from "./nav-item";
 export * from "./click-event";
 export * from "./targeted-message";
 export * from "./catalog-class";
+export * from "./tracking-event";

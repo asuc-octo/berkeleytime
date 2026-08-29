@@ -23,15 +23,11 @@
     },
     "lint": {
       "cache": false,
-      "dependsOn": [
-        "generate"
-      ]
+      "dependsOn": []
     },
     "type-check": {
       "cache": false,
-      "dependsOn": [
-        "generate"
-      ]
+      "dependsOn": []
     },
     "start": {
       "dependsOn": [

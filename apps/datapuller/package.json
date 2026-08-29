@@ -11,17 +11,18 @@
     "@repo/eslint-config": "*",
     "@types/luxon": "^3.7.1",
     "@types/node": "^24.7.0",
+    "@types/nodemailer": "^8.0.0",
     "@types/papaparse": "^5.3.16",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "cheerio": "^1.0.0",
     "@aws-sdk/client-athena": "^3.901.0",
     "@aws-sdk/client-s3": "^3.901.0",
     "@repo/common": "*",
     "@repo/sis-api": "*",
     "luxon": "^3.7.2",
+    "nodemailer": "^8.0.10",
     "papaparse": "^5.5.3",
     "playwright": "^1.50.1",
     "tslog": "^4.10.2"

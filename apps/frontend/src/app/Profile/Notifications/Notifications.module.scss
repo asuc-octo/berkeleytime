@@ -1,0 +1,51 @@
+.container {
+  max-width: 100%;
+}
+
+.header {
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+    color: var(--heading-color);
+  }
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--paragraph-color);
+  line-height: 1.6;
+  margin: 0 0 40px 0;
+  max-width: 80%;
+}
+
+.section {
+  margin-bottom: 48px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 24px 0;
+    color: var(--heading-color);
+    max-width: 80%;
+  }
+}
+
+.classGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 326px);
+  gap: 20px;
+}
+
+.classCardWrapper {
+  position: relative;
+}
+
+.notificationButtonOverlay {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+}

@@ -8,10 +8,12 @@ import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
 import bannerRoutes from "../../modules/banner/routes";
+import navItemRoutes from "../../modules/nav-item/routes";
 import routeRedirectRoutes from "../../modules/route-redirect/routes";
 import semanticSearchRoutes from "../../modules/semantic-search/routes";
 import staffRoutes from "../../modules/staff/routes";
 import targetedMessageRoutes from "../../modules/targeted-message/routes";
+import trackingRoutes from "../../modules/tracking/routes";
 import passportLoader from "./passport";
 
 export default async (
@@ -76,8 +78,12 @@ export default async (
   if (root) {
     bannerRoutes(root, redis);
     routeRedirectRoutes(root, redis);
+    navItemRoutes(root, redis);
     targetedMessageRoutes(root, redis);
   }
+
+  // load tracking beacon route
+  trackingRoutes(app, redis);
 
   // load semantic search routes
   app.use("/semantic-search", semanticSearchRoutes);

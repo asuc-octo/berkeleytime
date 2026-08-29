@@ -1,5 +1,7 @@
 import { ReactNode, useEffect, useRef } from "react";
 
+import { CombinedGraphQLErrors } from "@apollo/client";
+
 import UserContext from "@/contexts/UserContext";
 import { useReadUser } from "@/hooks/api";
 import {
@@ -29,6 +31,14 @@ export default function UserProvider({ children }: UserProviderProps) {
     if (loading) return;
     if (user) return;
 
+    // Only the expected logged-out response should trigger auto-login. Other
+    // GraphQL errors can persist after login and cause another redirect loop.
+    const isUnauthorized =
+      CombinedGraphQLErrors.is(error) &&
+      error.errors.every(({ message }) => message === "Unauthorized");
+    if (error && !isUnauthorized) return;
+    if (window.location.pathname.startsWith(DEV_AUTH_LOGIN_ROUTE)) return;
+
     // If a previous dev auth attempt failed (e.g. stored user was deleted),
     // clear the stored dev user and do not try to auto-login again.
     const searchParams = new URLSearchParams(window.location.search);
@@ -55,7 +65,7 @@ export default function UserProvider({ children }: UserProviderProps) {
       const redirectUri = window.location.pathname + window.location.search;
       window.location.href = `${DEV_AUTH_LOGIN_ROUTE}?userId=${savedUserId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
     }
-  }, [loading, user]);
+  }, [loading, user, error]);
 
   return (
     <UserContext.Provider value={{ user, loading, error }}>

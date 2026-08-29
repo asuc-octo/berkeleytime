@@ -1,15 +1,12 @@
 import { useQuery } from "@apollo/client/react";
 
-import {
-  GetUserDocument,
-  GetUserQuery,
-  GetUserQueryVariables,
-} from "@/lib/generated/graphql";
+import { READ_USER } from "@/lib/api/users";
+import { GetUserQuery } from "@/lib/generated/graphql";
 
 export const useReadUser = (
-  options?: useQuery.Options<GetUserQuery, GetUserQueryVariables>
+  options?: useQuery.Options<GetUserQuery, Record<string, never>>
 ) => {
-  const query = useQuery(GetUserDocument, {
+  const query = useQuery<GetUserQuery>(READ_USER, {
     fetchPolicy: "cache-first",
     ...options,
   });
