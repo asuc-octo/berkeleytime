@@ -244,7 +244,8 @@ const renderRequirementDetails = (
             const flatIndex = (subReq as any).flatIndex;
             return (
               <div key={`sub-${index}`}>
-                {/* Render domain emphases as standard items without 'OR' connectors */}
+                {/* Render domain emphases collapsed by default — students complete one
+                    emphasis; showing all 16 expanded is overwhelming. */}
                 {renderRequirementItem(
                   subReq,
                   `de-sub-${index}`,
@@ -257,7 +258,8 @@ const renderRequirementDetails = (
                     ? (newOverride) => onToggleAny(flatIndex, newOverride)
                     : undefined,
                   allOverrides,
-                  onToggleAny
+                  onToggleAny,
+                  false
                 )}
               </div>
             );
@@ -322,6 +324,7 @@ function RequirementItem({
   onToggleManualOverride,
   allOverrides,
   onToggleAny,
+  defaultExpanded,
 }: {
   req: RequirementResult;
   key: string;
@@ -331,6 +334,7 @@ function RequirementItem({
   onToggleManualOverride?: (newOverride: boolean | null) => void;
   allOverrides?: (boolean | null)[];
   onToggleAny?: (index: number, newOverride: boolean | null) => void;
+  defaultExpanded?: boolean;
 }) {
   // requirementIndex is used by parent component when calling onToggleManualOverride
   void requirementIndex;
@@ -354,8 +358,11 @@ function RequirementItem({
     isManuallyNotMet,
   } = evaluateEffectiveMet(req, allOverrides);
 
-  // Default: expanded if incomplete, collapsed if complete
-  const [isExpanded, setIsExpanded] = useState(!isEffectivelyMet);
+  // Default: expanded if incomplete, collapsed if complete.
+  // defaultExpanded overrides this when provided (e.g. domain emphasis children).
+  const [isExpanded, setIsExpanded] = useState(
+    defaultExpanded ?? !isEffectivelyMet
+  );
   const [isHovered, setIsHovered] = useState(false);
 
   // Check if this requirement has details to show
@@ -470,7 +477,8 @@ const renderRequirementItem = (
   manualOverride?: boolean | null,
   onToggleManualOverride?: (newOverride: boolean | null) => void,
   allOverrides?: (boolean | null)[],
-  onToggleAny?: (index: number, newOverride: boolean | null) => void
+  onToggleAny?: (index: number, newOverride: boolean | null) => void,
+  defaultExpanded?: boolean
 ) => {
   return (
     <RequirementItem
@@ -482,6 +490,7 @@ const renderRequirementItem = (
       onToggleManualOverride={onToggleManualOverride}
       allOverrides={allOverrides}
       onToggleAny={onToggleAny}
+      defaultExpanded={defaultExpanded}
     />
   );
 };
