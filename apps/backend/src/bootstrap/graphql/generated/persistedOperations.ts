@@ -38,6 +38,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/schedules.ts"],
   },
+  "09dc33a0472806c01a473e16bce469e7060e09060c9185d312d83e16fdabe9a1": {
+    operationName: "UpdateTargetedMessage",
+    document: "mutation UpdateTargetedMessage($messageId:ID!$input:UpdateTargetedMessageInput!){updateTargetedMessage(messageId:$messageId input:$input){id title description link linkText visible persistent reappearing clickCount dismissCount currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
+    variableNames: ["messageId","input"],
+    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
+  },
   "0a0760d42c77ddaaed3c77eb8c1e7479ea63f96b3fb689bc2e5ca63b4170e027": {
     operationName: "DeleteSemesterRole",
     document: "mutation DeleteSemesterRole($roleId:ID!){deleteSemesterRole(roleId:$roleId)}",
@@ -55,6 +61,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation IncrementBannerClick($bannerId:ID!){incrementBannerClick(bannerId:$bannerId){id clickCount __typename}}",
     variableNames: ["bannerId"],
     sources: ["apps/frontend/src/lib/api/banner.ts"],
+  },
+  "10b37e6b80de15a8cffc3838326d5d5a84e89bf3a7f1c090962b1d54a82b2550": {
+    operationName: "AllTargetedMessagesForStaff",
+    document: "query AllTargetedMessagesForStaff{allTargetedMessagesForStaff{id title description link linkText visible persistent reappearing clickCount dismissCount currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
   },
   "12c03815efc1bf7ae6124952baaead07eae764765d7218ebb0df476dcea38ee1": {
     operationName: "UpdateCollection",
@@ -91,6 +103,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query StaffMemberByUserId($userId:ID!){staffMemberByUserId(userId:$userId){id userId name email personalLink addedByName createdAt roles{id year semester role team photo altPhoto isLeadership __typename}__typename}}",
     variableNames: ["userId"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
+  },
+  "192eb841ee7e76955b2fc317aa505ea28fd5c1a22be1245f00726625f05f8080": {
+    operationName: "UpdateBanner",
+    document: "mutation UpdateBanner($bannerId:ID!$input:UpdateBannerInput!){updateBanner(bannerId:$bannerId input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: ["bannerId","input"],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "1b03fb7efd9a585da644b6983438b2ccdc93f10d2073a862ffe7ec8a62e4dae4": {
     operationName: "GetAllBanners",
@@ -146,6 +164,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/plans.ts"],
   },
+  "258efb8339f97efe2686c4a84168f7df71520921e7590de32dff71a7f023a4dd": {
+    operationName: "AllRouteRedirects",
+    document: "query AllRouteRedirects{allRouteRedirects{id fromPath toPath clickCount createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
+  },
   "25cef85906d5f2fcc5ec5555e68a725aedbbadb85f5bed76df3aa36f77d90b9c": {
     operationName: "TrackClassView",
     document: "mutation TrackClassView($year:Int!$semester:Semester!$sessionId:SessionIdentifier$subject:String!$courseNumber:CourseNumber!$number:ClassNumber!){trackClassView(year:$year semester:$semester sessionId:$sessionId subject:$subject courseNumber:$courseNumber number:$number)}",
@@ -163,12 +187,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query ReadSchedule($id:ID!){schedule(id:$id){_id name public createdBy year semester sessionId term{startDate endDate __typename}events{_id title description startTime endTime days color hidden __typename}classes{class{subject courseNumber number unitsMax unitsMin course{title gradeDistribution{average distribution{letter count __typename}__typename}__typename}primarySection{sectionId subject courseNumber classNumber number startDate endDate component enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}sections{sectionId subject courseNumber classNumber number startDate endDate component enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}__typename}selectedSections{sectionId __typename}color hidden locked blockedSections lockedComponents __typename}__typename}}",
     variableNames: ["id"],
     sources: ["apps/frontend/src/lib/api/schedules.ts"],
-  },
-  "27d5c659429eb88b0ed5457a61c52d1987dd3ad4c744fd3444fb434b6219db30": {
-    operationName: "ClickEventsTimeSeries",
-    document: "query ClickEventsTimeSeries($targetId:ID!$targetType:String!$startDate:String$endDate:String){clickEventsTimeSeries(targetId:$targetId targetType:$targetType startDate:$startDate endDate:$endDate){date count __typename}}",
-    variableNames: ["targetId","targetType","startDate","endDate"],
-    sources: ["apps/staff-frontend/src/lib/api/click-tracking.ts"],
   },
   "2a46e76e5ab360ebf15893a02ec92a49305ab08e6fa8cd318866fdf5795326e8": {
     operationName: "UpdateSelectedPlanRequirements",
@@ -236,6 +254,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["subject","courseNumber"],
     sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
+  "36fa411831e99f17973ed2dfbd85980ed956cb3d6c599d8190a5b2ee4acf2da2": {
+    operationName: "CreateNavItem",
+    document: "mutation CreateNavItem($input:CreateNavItemInput!){createNavItem(input:$input){id label url badgeText order visible clickCount createdAt updatedAt __typename}}",
+    variableNames: ["input"],
+    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
+  },
   "37a9bced80cdb965eabedc70524ae58273384b926b5f1d0fabbdc2d090c939a8": {
     operationName: "DeleteCollection",
     document: "mutation DeleteCollection($id:ID!){deleteCollection(id:$id)}",
@@ -302,12 +326,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester"],
     sources: ["apps/ag-frontend/src/lib/api/classes.ts"],
   },
-  "46ea9040d9400dd83e5487337239e7c7a937180b57ac7d3e20abd6bac6151d8c": {
-    operationName: "CreateBanner",
-    document: "mutation CreateBanner($input:CreateBannerInput!){createBanner(input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount clickEventLogging visible createdAt updatedAt __typename}}",
-    variableNames: ["input"],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
-  },
   "473fbb62be154fabe5c3993f4b6b57fbad614e71feb390365cf3aa4b3d08c099": {
     operationName: "CloudflareAnalyticsData",
     document: "query CloudflareAnalyticsData($days:Int!$granularity:String){cloudflareAnalyticsData(days:$days granularity:$granularity){dataPoints{date uniqueVisitors totalRequests __typename}totalUniqueVisitors totalRequests __typename}}",
@@ -332,11 +350,23 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["subject","number"],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
+  "554a679e659b58397336fedc33c3aa94254a84570b246be0b6480bc90fc560ef": {
+    operationName: "UpdateRouteRedirect",
+    document: "mutation UpdateRouteRedirect($redirectId:ID!$input:UpdateRouteRedirectInput!){updateRouteRedirect(redirectId:$redirectId input:$input){id fromPath toPath clickCount createdAt updatedAt __typename}}",
+    variableNames: ["redirectId","input"],
+    sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
+  },
   "5758c759e679eb9005c3aaeaf54504f2b6fb7995cee2a411116fef7b171ad746": {
     operationName: "GetTerms",
     document: "query GetTerms{terms{year semester temporalPosition sessions{id name startDate endDate temporalPosition __typename}startDate endDate __typename}}",
     variableNames: [],
     sources: ["apps/ag-frontend/src/lib/api/terms.ts"],
+  },
+  "5937edd68594a3d745e81acaa67ebffdac51786f4b58ba8f38bd11ee1f085225": {
+    operationName: "CreateTargetedMessage",
+    document: "mutation CreateTargetedMessage($input:CreateTargetedMessageInput!){createTargetedMessage(input:$input){id title description link linkText visible persistent reappearing clickCount dismissCount currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
+    variableNames: ["input"],
+    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
   },
   "5b1db8b7fea7b401c4e3a7d268135a09027d85ce43a68f80b1194e2e0fc1b52f": {
     operationName: "GetUser",
@@ -422,17 +452,17 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester","sessionId","subject","courseNumber","sectionNumber"],
     sources: ["apps/frontend/src/lib/api/enrollment.ts"],
   },
+  "6b7d4300c1c23e74a2a27df7b57ce981857caed69a38cc7d338301ac5444f3f4": {
+    operationName: "UpdateNavItem",
+    document: "mutation UpdateNavItem($navItemId:ID!$input:UpdateNavItemInput!){updateNavItem(navItemId:$navItemId input:$input){id label url badgeText order visible clickCount createdAt updatedAt __typename}}",
+    variableNames: ["navItemId","input"],
+    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
+  },
   "6e2d42c21ad04f77c8783a1e363f200919d8e77891ac2ae393f1eeb37e70e4aa": {
     operationName: "UpsertSemesterRole",
     document: "mutation UpsertSemesterRole($memberId:ID!$input:UpsertSemesterRoleInput!){upsertSemesterRole(memberId:$memberId input:$input){id year semester role team photo altPhoto isLeadership __typename}}",
     variableNames: ["memberId","input"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
-  },
-  "6e5fad67abbb51106aec3c128cfecc85fe414b6cc45eccaba45450f004b0c133": {
-    operationName: "CreateRouteRedirect",
-    document: "mutation CreateRouteRedirect($input:CreateRouteRedirectInput!){createRouteRedirect(input:$input){id fromPath toPath clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: ["input"],
-    sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
   },
   "6f8b1ade2d5d1140ee6b7576837d1fe90069f2d357d07eb776575a34a3c7095e": {
     operationName: "GetCourse",
@@ -452,10 +482,10 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/staff.ts"],
   },
-  "777e1dd5f198a6bf73b93139b078f0c1295bd08a8926b21a2b160d69d9a9979e": {
-    operationName: "UpdateRouteRedirect",
-    document: "mutation UpdateRouteRedirect($redirectId:ID!$input:UpdateRouteRedirectInput!){updateRouteRedirect(redirectId:$redirectId input:$input){id fromPath toPath clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: ["redirectId","input"],
+  "7757958e5aa68079d07562987531a7dc8b735976f5e6eba41b65b10b23f6680a": {
+    operationName: "CreateRouteRedirect",
+    document: "mutation CreateRouteRedirect($input:CreateRouteRedirectInput!){createRouteRedirect(input:$input){id fromPath toPath clickCount createdAt updatedAt __typename}}",
+    variableNames: ["input"],
     sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
   },
   "7806560cf23086b47a07cb85838d508488293fceb40ea0abbb0be7a59778dc4b": {
@@ -590,17 +620,11 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
     sources: ["apps/frontend/src/lib/api/classes.ts"],
   },
-  "a85728c967645d2a51a62df1f4ebf564211df1327dc78cca60a3630dc2b1df50": {
-    operationName: "UpdateBanner",
-    document: "mutation UpdateBanner($bannerId:ID!$input:UpdateBannerInput!){updateBanner(bannerId:$bannerId input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount clickEventLogging visible createdAt updatedAt __typename}}",
-    variableNames: ["bannerId","input"],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
-  },
-  "abfbc7b44fc4467eeb49c6dea1bf80ace789b15c2c34eb438e0e2d937cb96328": {
-    operationName: "UpdateNavItem",
-    document: "mutation UpdateNavItem($navItemId:ID!$input:UpdateNavItemInput!){updateNavItem(navItemId:$navItemId input:$input){id label url badgeText order visible clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: ["navItemId","input"],
-    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
+  "ace2b01ce35aa1969b7b1d1433c4c7fc9245ea83a250a444e121441ba148f9b1": {
+    operationName: "GetCourseNumberById",
+    document: "query GetCourseNumberById($courseId:CourseIdentifier!){courseById(courseId:$courseId){number __typename}}",
+    variableNames: ["courseId"],
+    sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
   "adf93122a4dc4ceda7aef78f4eee260d0ccf0649e62d8079f3f67be7bc2ba375": {
     operationName: "GetCuratedClasses",
@@ -614,17 +638,17 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/curated-classes.ts","apps/frontend/src/lib/api/curated-classes.ts"],
   },
-  "b41432c674a8673c552fe4ad3c7d499f8e3c6c704a38400418f6b640f5b08c3a": {
-    operationName: "AllRouteRedirects",
-    document: "query AllRouteRedirects{allRouteRedirects{id fromPath toPath clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
-  },
   "b5e8487e1e4701fa3a5b109925a67dc711511fac6b6b159d66d0303f367e7496": {
     operationName: "GetCourseTitle",
     document: "query GetCourseTitle($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number title aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}__typename}}",
     variableNames: ["subject","number"],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
+  },
+  "b6901c13a13258df5f94f75c25ea0d3e9f2e4e023fb3f3421b7384c7780db0ea": {
+    operationName: "AllNavItemsForStaff",
+    document: "query AllNavItemsForStaff{allNavItemsForStaff{id label url badgeText order visible clickCount createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
   },
   "b9ebe3a81aacda185a17d1b5065903a8348739955fdec31c04711395577cf034": {
     operationName: "GetClassRatingsData",
@@ -655,12 +679,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetCourse($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number title description academicCareer gradeDistribution{average distribution{letter count __typename}__typename}gradingBasis finalExam requirements requiredCourses{subject number __typename}classes{year semester number __typename}aggregatedRatings{metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}__typename}}",
     variableNames: ["subject","number"],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
-  },
-  "c55263349e82afc90d550fb9e8000156714bbed41d0eef68293cab2cee470e08": {
-    operationName: "AllTargetedMessagesForStaff",
-    document: "query AllTargetedMessagesForStaff{allTargetedMessagesForStaff{id title description link linkText visible persistent reappearing clickCount dismissCount clickEventLogging currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
   },
   "c712125a05efa4bf191f5223926f0445580f0c20d61a79be9d470d0274532ae7": {
     operationName: "DeleteBanner",
@@ -710,12 +728,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["input"],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
-  "d02b2cfae30c8c0ff25b34ea5a427792470f35c6b30ccbb68c4865b452678037": {
-    operationName: "CreateNavItem",
-    document: "mutation CreateNavItem($input:CreateNavItemInput!){createNavItem(input:$input){id label url badgeText order visible clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: ["input"],
-    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
-  },
   "d3e9cb88e80d533b3399febf1e64b0a15bc6e3f61209b0c626db594dc864522c": {
     operationName: "GetTargetedMessagesForCourse",
     document: "query GetTargetedMessagesForCourse($courseId:String!){targetedMessagesForCourse(courseId:$courseId){id title description link linkText persistent reappearing __typename}}",
@@ -727,12 +739,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation CreateNewPlanTerm($planTerm:PlanTermInput!){createNewPlanTerm(planTerm:$planTerm){_id name userEmail year term hidden status pinned __typename}}",
     variableNames: ["planTerm"],
     sources: ["apps/frontend/src/lib/api/plans.ts"],
-  },
-  "da55878e9c664cb8a51d7587f27a15317508dd4327ec9b496c91930e56744d31": {
-    operationName: "AllBannersForStaff",
-    document: "query AllBannersForStaff{allBannersForStaff{id text link linkText persistent reappearing clickCount dismissCount viewCount clickEventLogging visible createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "de284e74096a0b451bc6c97e17c0fb3991cd2e954c33a9d9950f5fa0115a1ddd": {
     operationName: "GetCourseRequirements",
@@ -746,18 +752,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester","sessionId","subject","courseNumber","sectionNumber"],
     sources: ["apps/ag-frontend/src/lib/api/enrollment.ts"],
   },
-  "e180a9021d06454c041f4c5f94dff76fb2e1c4a90ac46aa1710d1d086e6446f0": {
-    operationName: "UpdateTargetedMessage",
-    document: "mutation UpdateTargetedMessage($messageId:ID!$input:UpdateTargetedMessageInput!){updateTargetedMessage(messageId:$messageId input:$input){id title description link linkText visible persistent reappearing clickCount dismissCount clickEventLogging currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
-    variableNames: ["messageId","input"],
-    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
-  },
-  "e3dc2b7d5ddca3d1e085ea8612ce42f1958ff556494fa8befb38b1aa1b513ba4": {
-    operationName: "CreateTargetedMessage",
-    document: "mutation CreateTargetedMessage($input:CreateTargetedMessageInput!){createTargetedMessage(input:$input){id title description link linkText visible persistent reappearing clickCount dismissCount clickEventLogging currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
-    variableNames: ["input"],
-    sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
-  },
   "e3e6089d02bd0512a97e6e7a08a493db2c5dd485ba38d8faf00e341149185ebf": {
     operationName: "CollectionAnalyticsData",
     document: "query CollectionAnalyticsData{collectionAnalyticsData{collectionCreations{createdAt userId __typename}classAdditions{addedAt userId __typename}customCollectionCreations{createdAt userId __typename}usersWithCustomCollections{createdAt userId __typename}customCollections{userEmail classCount name createdAt __typename}highlights{largestCollectionSize largestCustomCollectionSize largestCustomCollectionName mostBookmarkedCourse mostBookmarkedCourseCount mostCollectionsByUser __typename}__typename}}",
@@ -769,6 +763,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetTerms{terms(withCatalogData:true){year semester temporalPosition hasCatalogData sessions{id name startDate endDate temporalPosition __typename}startDate endDate __typename}}",
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/terms.ts"],
+  },
+  "ebde8b5a1d81ff2e7cb8a8ce90b25c1b922c6108d031e5402ab4783cf016daed": {
+    operationName: "CreateBanner",
+    document: "mutation CreateBanner($input:CreateBannerInput!){createBanner(input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: ["input"],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "ef3a260a0e8b4a6e32dcef6bc90c7193b333e9c9d3e552b484b986e1f440b397": {
     operationName: "GetCourses",
@@ -830,17 +830,17 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["plan"],
     sources: ["apps/frontend/src/lib/api/plans.ts"],
   },
-  "fe74b3084791eca196906a4f7e7391ed7f378de5528ef35ca01e761b946bb19b": {
-    operationName: "AllNavItemsForStaff",
-    document: "query AllNavItemsForStaff{allNavItemsForStaff{id label url badgeText order visible clickCount clickEventLogging createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
-  },
   "fef990bedc3d26ec882c3f16b3e9a521288b19add81209333661830c2957b630": {
     operationName: "IncrementBannerDismiss",
     document: "mutation IncrementBannerDismiss($bannerId:ID!){incrementBannerDismiss(bannerId:$bannerId){id dismissCount __typename}}",
     variableNames: ["bannerId"],
     sources: ["apps/frontend/src/lib/api/banner.ts"],
+  },
+  "feff172c18906f12533b53a8b0252bedb791873ffd644d8c4be4815ff4d9b18f": {
+    operationName: "AllBannersForStaff",
+    document: "query AllBannersForStaff{allBannersForStaff{id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "ff59a3171cb0cb81a4b5de9460135c598c307b097972115f79fb9d44a406e843": {
     operationName: "CreateRatings",
