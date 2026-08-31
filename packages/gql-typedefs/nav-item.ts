@@ -12,7 +12,6 @@ export const navItemTypeDef = gql`
     order: Int!
     visible: Boolean!
     clickCount: Int!
-    clickEventLogging: Boolean!
     createdAt: String!
     updatedAt: String!
   }
@@ -38,7 +37,6 @@ export const navItemTypeDef = gql`
     badgeText: String
     order: Int
     visible: Boolean
-    clickEventLogging: Boolean
   }
 
   """
@@ -50,7 +48,6 @@ export const navItemTypeDef = gql`
     badgeText: String
     order: Int
     visible: Boolean
-    clickEventLogging: Boolean
   }
 
   type Mutation {

@@ -11,7 +11,6 @@ export interface Banner {
   clickCount: number;
   dismissCount: number;
   viewCount: number;
-  clickEventLogging: boolean;
   visible: boolean;
   createdAt: string;
   updatedAt: string;
@@ -30,7 +29,6 @@ export const ALL_BANNERS_FOR_STAFF = gql`
       clickCount
       dismissCount
       viewCount
-      clickEventLogging
       visible
       createdAt
       updatedAt
@@ -45,7 +43,6 @@ export interface CreateBannerInput {
   linkText?: string | null;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateBannerInput {
@@ -54,7 +51,6 @@ export interface UpdateBannerInput {
   linkText?: string | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
-  clickEventLogging?: boolean | null;
   visible?: boolean | null;
 }
 
@@ -70,7 +66,6 @@ export const CREATE_BANNER = gql`
       clickCount
       dismissCount
       viewCount
-      clickEventLogging
       visible
       createdAt
       updatedAt
@@ -90,7 +85,6 @@ export const UPDATE_BANNER = gql`
       clickCount
       dismissCount
       viewCount
-      clickEventLogging
       visible
       createdAt
       updatedAt

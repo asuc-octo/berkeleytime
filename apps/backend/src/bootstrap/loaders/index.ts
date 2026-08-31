@@ -4,7 +4,6 @@ import { config } from "../../../../../packages/common/src/utils/config";
 import log from "../../lib/logger";
 import { startBannerViewCountFlushJob } from "../../modules/banner/jobs/flush-view-counts";
 import { startViewCountFlushJob } from "../../modules/class/jobs/flush-view-counts";
-import { startClickEventsFlushJob } from "../../modules/click-tracking/jobs/flush-click-events";
 import { startTrackingEventsFlushJob } from "../../modules/tracking/jobs/flush-tracking-events";
 import { startActivityScoreUpdateJob } from "../../modules/user/jobs/update-activity-scores";
 // loaders
@@ -31,7 +30,6 @@ export default async (root: Application): Promise<void> => {
   // start background jobs
   startViewCountFlushJob(apolloRedis);
   startBannerViewCountFlushJob(apolloRedis);
-  startClickEventsFlushJob(apolloRedis);
   startActivityScoreUpdateJob();
   startTrackingEventsFlushJob(apolloRedis);
 
