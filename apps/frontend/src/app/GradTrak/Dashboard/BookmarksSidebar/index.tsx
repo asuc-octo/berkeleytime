@@ -46,6 +46,8 @@ export default function BookmarksSidebar({ onClose }: BookmarksSidebarProps) {
               cls.primarySection?.enrollment?.latest?.enrolledCount ?? null,
             maxEnroll:
               cls.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+            waitlistedCount:
+              cls.primarySection?.enrollment?.latest?.waitlistedCount ?? null,
             unitsMin: cls.unitsMin ?? 0,
             unitsMax: cls.unitsMax ?? 0,
             hasReservedSeats:

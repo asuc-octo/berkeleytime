@@ -47,6 +47,7 @@ services:
     restart: always
     volumes:
       - ./apps/semantic-search/app:/app/app
+      - ./apps/semantic-search/eval:/app/eval
     environment:
       - SEMANTIC_SEARCH_YEAR=2026
       - SEMANTIC_SEARCH_SEMESTER=Spring

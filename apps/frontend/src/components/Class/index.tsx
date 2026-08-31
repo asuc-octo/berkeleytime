@@ -319,6 +319,11 @@ export default function Class({
       number: _class.number,
       sessionId: _class.sessionId,
     });
+
+    addRecent(RecentType.Course, {
+      subject: _class.subject,
+      number: _class.courseNumber,
+    });
   }, [_class]);
 
   const [trackView] = useMutation(TRACK_CLASS_VIEW);

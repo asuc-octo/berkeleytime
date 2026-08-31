@@ -34,6 +34,14 @@ const GRADE_THRESHOLDS = [
   { min: 0.0, grade: "D-" },
 ] as const;
 
+export function getGradeColor(grade: string): string {
+  const firstLetter = grade[0];
+  if (firstLetter === "A") return "var(--emerald-500)";
+  if (firstLetter === "B") return "var(--amber-500)";
+  if (grade === "N/A" || !firstLetter) return "var(--paragraph-color)";
+  return "var(--rose-500)";
+}
+
 export function getLetterGradeFromGPA(gpa: number): string {
   if (!gpa) return "F";
 

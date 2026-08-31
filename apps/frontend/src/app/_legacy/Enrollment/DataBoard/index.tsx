@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import moment from "moment";
 
-import { getEnrollmentColor } from "@/components/Capacity";
+import { getEnrollmentColor } from "@/lib/enrollment";
 import CourseSideMetrics from "@/components/CourseSideMetrics";
 import { useReadCourseTitle } from "@/hooks/api";
 import { IEnrollment } from "@/lib/api";

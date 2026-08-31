@@ -91,9 +91,10 @@ export const getPrimarySection = async (
   sessionId: string,
   subject: string,
   courseNumber: string,
-  number: string
+  number: string,
+  courseId?: string | null
 ) => {
-  const section = await SectionModel.findOne({
+  let section = await SectionModel.findOne({
     year,
     semester,
     sessionId,
@@ -102,6 +103,19 @@ export const getPrimarySection = async (
     number,
     primary: true,
   }).lean();
+
+  if (!section && courseId) {
+    section = await SectionModel.findOne({
+      year,
+      semester,
+      sessionId,
+      courseId,
+      classNumber: number,
+      primary: true,
+    })
+      .sort({ sectionId: 1 })
+      .lean();
+  }
 
   if (!section) return null;
 

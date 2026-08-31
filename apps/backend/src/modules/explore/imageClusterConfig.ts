@@ -1,85 +1,186 @@
-export const DEFAULT_EXPLORE_IMAGE =
-  "/course-card-images/interdisciplinary.jpg";
+import { normalizeSubject } from "@repo/common";
 
-export const SUBJECT_CLUSTER_IMAGE: Record<string, string> = {
-  // Math
-  MATH: "/course-card-images/math.jpg",
-  STAT: "/course-card-images/math.jpg",
-
-  // Physics
-  PHYSICS: "/course-card-images/physics.jpg",
-
-  // Chemistry:
-  CHEM: "/course-card-images/chemistry.jpg",
-
-  // Engineering
-  AEROENG: "/course-card-images/engineering.jpg",
-  ENGIN: "/course-card-images/engineering.jpg",
-  MECENG: "/course-card-images/engineering.jpg",
-  ELENG: "/course-card-images/engineering.jpg",
-  CIVENG: "/course-card-images/engineering.jpg",
-  BIOENG: "/course-card-images/engineering.jpg",
-  INDENG: "/course-card-images/engineering.jpg",
-  MATSCI: "/course-card-images/engineering.jpg",
-  NUCENG: "/course-card-images/engineering.jpg",
-
-  // Technology / computing
-  COMPSCI: "/course-card-images/technology.jpg",
-  EECS: "/course-card-images/technology.jpg",
-  DATA: "/course-card-images/technology.jpg",
-  INFO: "/course-card-images/technology.jpg",
-
-  // Health / life sciences
-  BIOLOGY: "/course-card-images/health.jpg",
-  ASTRON: "/course-card-images/health.jpg",
-  INTEGBI: "/course-card-images/health.jpg",
-  MCELLBI: "/course-card-images/health.jpg",
-  PBHLTH: "/course-card-images/health.jpg",
-  NUSCTX: "/course-card-images/health.jpg",
-  MBN: "/course-card-images/health.jpg",
-
-  // Social sciences
-  SOCIOL: "/course-card-images/socialsciences.jpg",
-  PSYCH: "/course-card-images/socialsciences.jpg",
-  POLSCI: "/course-card-images/socialsciences.jpg",
-  ANTHRO: "/course-card-images/socialsciences.jpg",
-
-  // Humanities / languages
-  ENGLISH: "/course-card-images/humanities.jpg",
-  HISTORY: "/course-card-images/humanities.jpg",
-  PHILOS: "/course-card-images/humanities.jpg",
-  LINGUIS: "/course-card-images/humanities.jpg",
-  CLASSIC: "/course-card-images/humanities.jpg",
-  CHINESE: "/course-card-images/humanities.jpg",
-  KOREAN: "/course-card-images/humanities.jpg",
-  ARABIC: "/course-card-images/humanities.jpg",
-  URDU: "/course-card-images/humanities.jpg",
-  MELC: "/course-card-images/humanities.jpg",
-
-  // Arts
-  ART: "/course-card-images/arts.jpg",
-  THEATER: "/course-card-images/arts.jpg",
-  FILM: "/course-card-images/arts.jpg",
-  DANCE: "/course-card-images/arts.jpg",
-  HISTART: "/course-card-images/arts.jpg",
-
-  // Music
-  MUSIC: "/course-card-images/music.jpg",
-
-  // Business / law
-  ECON: "/course-card-images/businesslaw.jpg",
-  UGBA: "/course-card-images/businesslaw.jpg",
-  LEGALST: "/course-card-images/businesslaw.jpg",
-  JOURN: "/course-card-images/businesslaw.jpg",
-
-  // Education / human development
-  EDUC: "/course-card-images/education.jpg",
-  SOCWEL: "/course-card-images/education.jpg",
-
-  // Environment
-  EPS: "/course-card-images/environmental.jpg",
-  ESPM: "/course-card-images/environmental.jpg",
-  GEOG: "/course-card-images/environmental.jpg",
-  CYPLAN: "/course-card-images/environmental.jpg",
-  AGRS: "/course-card-images/environmental.jpg",
+// Maps a visual cluster to its subjects. The frontend builds the image URL from
+// the cluster name. Unlisted subjects fall back to the campus default.
+const CLUSTER_SUBJECTS: Record<string, string[]> = {
+  math: ["MATH", "STAT", "MPS"],
+  physics: ["PHYSICS"],
+  astronomy: ["ASTRON"],
+  chemistry: ["CHEM"],
+  biology: [
+    "MCELLBI",
+    "INTEGBI",
+    "PLANTBI",
+    "BIOLOGY",
+    "BIOPHY",
+    "CMPBIO",
+    "COMPBIO",
+    "NUSCTX",
+    "MBN",
+  ],
+  medicine: ["OPTOM", "VISSCI", "HMEDSCI", "CPH"],
+  publichealth: ["PBHLTH"],
+  engineering: [
+    "MECENG",
+    "CIVENG",
+    "ELENG",
+    "MATSCI",
+    "NUCENG",
+    "AEROENG",
+    "CHMENG",
+    "BIOENG",
+    "INDENG",
+    "ENGIN",
+    "DEVENG",
+    "NSE",
+  ],
+  computing: ["COMPSCI", "EECS", "DATA", "INFO", "DATASCI", "CDSS", "CYBER"],
+  environment: ["ESPM", "EPS", "GEOG", "ENERES", "NATRES", "CSOL"],
+  society: [
+    "SOCIOL",
+    "ANTHRO",
+    "ETHSTD",
+    "ASAMST",
+    "CHICANO",
+    "AFRICAM",
+    "NATAMST",
+    "GWS",
+    "LGBT",
+    "DISSTD",
+    "QTP",
+    "AMERSTD",
+    "ASIANST",
+    "LATAMST",
+    "MESTU",
+    "EUST",
+    "STS",
+  ],
+  politics: [
+    "POLSCI",
+    "PUBPOL",
+    "PUBAFF",
+    "POLECON",
+    "GPP",
+    "IAS",
+    "GLOBAL",
+    "PACS",
+    "DEVP",
+    "DEVSTD",
+    "DEMOG",
+    "COMPSS",
+  ],
+  psychology: ["PSYCH", "COGSCI", "NEU", "NEUROSC"],
+  economics: [
+    "ECON",
+    "UGBA",
+    "MBA",
+    "EWMBA",
+    "XMBA",
+    "PHDBA",
+    "MFE",
+    "ARESEC",
+    "ENVECON",
+  ],
+  law: ["LAW", "LEGALST"],
+  architecture: ["ARCH", "CYPLAN", "ENVDES", "RDEV", "LDARCH", "GMS"],
+  education: ["EDUC", "SOCWEL", "EDSTEM", "SCMATHE", "GSPDP"],
+  literature: [
+    "ENGLISH",
+    "COMLIT",
+    "CRWRIT",
+    "RHETOR",
+    "COLWRIT",
+    "CRITTH",
+    "FOLKLOR",
+    "MEDST",
+    "HUM",
+    "DIGHUM",
+    "BUDDSTD",
+    "RELIGST",
+    "STRELIG",
+    "JEWISH",
+  ],
+  language: [
+    "FRENCH",
+    "SPANISH",
+    "ITALIAN",
+    "PORTUG",
+    "CATALAN",
+    "GERMAN",
+    "DUTCH",
+    "SCANDIN",
+    "DANISH",
+    "SWEDISH",
+    "NORWEGN",
+    "FINNISH",
+    "ICELAND",
+    "SLAVIC",
+    "RUSSIAN",
+    "POLISH",
+    "UKRAINI",
+    "CZECH",
+    "BOSCRSR",
+    "HUNGARI",
+    "CELTIC",
+    "CHINESE",
+    "JAPAN",
+    "KOREAN",
+    "EALANG",
+    "SASIAN",
+    "SSEASN",
+    "SEASIAN",
+    "VIETNMS",
+    "FILIPN",
+    "INDONES",
+    "THAI",
+    "KHMER",
+    "BURMESE",
+    "MONGOLN",
+    "TIBETAN",
+    "HINDI",
+    "PUNJABI",
+    "TAMIL",
+    "TELUGU",
+    "BANGLA",
+    "URDU",
+    "SANSKR",
+    "ARABIC",
+    "PERSIAN",
+    "IRANIAN",
+    "ARMENI",
+    "TURKISH",
+    "HEBREW",
+    "YIDDISH",
+    "SEMITIC",
+    "LINGUIS",
+    "LANPRO",
+    "MELC",
+  ],
+  history: [
+    "HISTORY",
+    "CLASSIC",
+    "AGRS",
+    "AHMA",
+    "EGYPT",
+    "CUNEIF",
+    "LATIN",
+    "GREEK",
+    "MDGRK",
+  ],
+  philosophy: ["PHILOS"],
+  art: ["ART", "HISTART", "VISSTD", "DESINV"],
+  music: ["MUSIC"],
+  performance: ["THEATER", "FILM"],
+  media: ["JOURN", "MEDIAST", "NWMEDIA"],
 };
+
+const SUBJECT_TO_CLUSTER: Record<string, string> = {};
+for (const [cluster, subjects] of Object.entries(CLUSTER_SUBJECTS)) {
+  for (const subject of subjects) {
+    SUBJECT_TO_CLUSTER[subject] = cluster;
+  }
+}
+
+export function clusterForSubject(subject: string): string | null {
+  return SUBJECT_TO_CLUSTER[normalizeSubject(subject)] ?? null;
+}

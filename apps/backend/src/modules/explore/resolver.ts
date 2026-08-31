@@ -1,42 +1,58 @@
+import type { RedisClientType } from "redis";
+
 import {
-  getExploreBecauseYouViewed,
+  getExploreBecauseYouViewedBatch,
   getExploreCuratedHandpickedCourses,
   getExplorePopularCourseSnapshots,
   getExploreSnapshotsForSubjects,
   getExploreTopPicks,
 } from "./controller";
 
+interface GraphQLContext {
+  redis: RedisClientType;
+}
+
 export default {
   Query: {
     explorePopularCourses: async (
       _: unknown,
-      args: { limit?: number | null | undefined }
-    ) => getExplorePopularCourseSnapshots(args.limit),
+      args: { limit?: number | null | undefined },
+      context: GraphQLContext
+    ) => getExplorePopularCourseSnapshots(args.limit, context.redis),
 
     explorePopularCoursesForSubjects: async (
       _: unknown,
-      args: { subjects: string[]; limit?: number | null | undefined }
-    ) => getExploreSnapshotsForSubjects(args.subjects, args.limit),
+      args: { subjects: string[]; limit?: number | null | undefined },
+      context: GraphQLContext
+    ) =>
+      getExploreSnapshotsForSubjects(args.subjects, args.limit, context.redis),
 
-    exploreCuratedHandpickedCourses: async () =>
-      getExploreCuratedHandpickedCourses(),
+    exploreCuratedHandpickedCourses: async (
+      _: unknown,
+      __: unknown,
+      context: GraphQLContext
+    ) => getExploreCuratedHandpickedCourses(context.redis),
 
-    exploreBecauseYouViewed: async (
+    exploreBecauseYouViewedBatch: async (
       _: unknown,
       args: {
-        subject: string;
-        courseNumber: string;
+        anchors: Array<{ subject: string; courseNumber: string }>;
         year: number;
         semester: string;
         limit?: number | null;
-      }
+        history?: Array<{ subject: string; courseNumber: string }> | null;
+        maxRows?: number | null;
+      },
+      context: GraphQLContext
     ) =>
-      getExploreBecauseYouViewed(
-        args.subject,
-        args.courseNumber,
+      getExploreBecauseYouViewedBatch(
+        args.anchors,
         args.year,
         args.semester,
-        args.limit
+        args.limit,
+        args.history,
+        args.maxRows,
+        context.redis
       ),
 
     exploreTopPicks: async (
@@ -46,7 +62,15 @@ export default {
         year: number;
         semester: string;
         limit?: number | null;
-      }
-    ) => getExploreTopPicks(args.history, args.year, args.semester, args.limit),
+      },
+      context: GraphQLContext
+    ) =>
+      getExploreTopPicks(
+        args.history,
+        args.year,
+        args.semester,
+        args.limit,
+        context.redis
+      ),
   },
 };

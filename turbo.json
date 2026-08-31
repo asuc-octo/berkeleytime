@@ -1,60 +1,42 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    ".env"
-  ],
+  "globalDependencies": [".env"],
   "ui": "stream",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "generate",
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["generate", "^build"],
+      "outputs": ["dist/**"]
     },
     "generate": {
       "cache": false,
-      "outputs": [
-        "*/**/generated-types/**",
-        "*/**/generated/**"
-      ]
+      "outputs": ["*/**/generated-types/**", "*/**/generated/**"]
     },
     "lint": {
       "cache": false,
-      "dependsOn": [
-        "generate"
-      ]
+      "dependsOn": ["generate"]
     },
     "type-check": {
       "cache": false,
-      "dependsOn": [
-        "generate"
-      ]
+      "dependsOn": ["generate"]
     },
     "start": {
-      "dependsOn": [
-        "generate",
-        "^build"
-      ],
+      "dependsOn": ["generate", "^build"],
       "cache": false,
       "persistent": true
     },
     "dev": {
-      "dependsOn": [
-        "generate",
-        "^build"
-      ],
+      "dependsOn": ["generate", "^build"],
       "cache": false,
       "persistent": true
     },
     "main": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
+    },
+    "test": {
+      "dependsOn": ["generate"],
+      "cache": false
     }
   }
 }

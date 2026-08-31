@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { gql } from "@apollo/client";
 import { useApolloClient, useQuery } from "@apollo/client/react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -16,8 +15,10 @@ import useUser from "@/hooks/useUser";
 import { signIn } from "@/lib/api";
 import { GET_CLASS } from "@/lib/api/classes";
 import { EXPLORE_SNAPSHOT_ROW_LIMIT } from "@/lib/api/explore";
+import { courseCardImageUrl } from "@/lib/courseCardImage";
+import { formatEnrollment } from "@/lib/enrollment";
 import {
-  GetExploreBecauseYouViewedDocument,
+  GetExploreBecauseYouViewedBatchDocument,
   GetExploreCuratedHandpickDocument,
   GetExplorePopularDocument,
   type GetExplorePopularQuery,
@@ -35,13 +36,6 @@ type ExploreSnap = NonNullable<
   GetExplorePopularQuery["explorePopularCourses"]
 >[number];
 type CourseAnchor = { subject: string; number: string; title?: string };
-type CourseCrossListingQuery = {
-  course: null | {
-    courseId: string;
-    title?: string;
-    crossListing: Array<{ subject: string; number: string }>;
-  };
-};
 type RecentClassCardQuery = {
   class: null | {
     subject: string;
@@ -69,6 +63,7 @@ type RecentClassCardQuery = {
         latest?: {
           enrolledCount?: number | null;
           maxEnroll?: number | null;
+          waitlistedCount?: number | null;
           activeReservedMaxCount?: number | null;
         } | null;
       } | null;
@@ -76,20 +71,6 @@ type RecentClassCardQuery = {
   };
 };
 
-const GET_COURSE_CROSS_LISTING = gql`
-  query GetCourseCrossListing($subject: String!, $number: CourseNumber!) {
-    course(subject: $subject, number: $number) {
-      courseId
-      title
-      crossListing {
-        subject
-        number
-      }
-    }
-  }
-`;
-
-/** Matches catalog default-term ordering (see Catalog/index.tsx). */
 const SEMESTER_ORDER: Record<string, number> = {
   [Semester.Spring]: 0,
   [Semester.Summer]: 1,
@@ -97,16 +78,29 @@ const SEMESTER_ORDER: Record<string, number> = {
   [Semester.Winter]: 3,
 };
 
-const DEFAULT_CATALOG_CLASS_NUMBER = "001";
 const DEFAULT_CATALOG_SESSION_ID = "1";
+
+const FEATURED_PAGE = {
+  title: "Major planning made easy",
+  description:
+    "Map requirements, experiment with schedules, and pair those plans with live enrollment data from Berkeleytime.",
+  image: "/images/gradtrak-preview.png",
+  imageAlt: "Gradtrak preview",
+  to: "/gradtrak",
+  cta: "Explore Gradtrak",
+};
 
 function buildCatalogClassPath(
   term: { year: number; semester: string },
-  subject: string,
-  catalogCourseNumber: string
+  course: {
+    subject: string;
+    number: string;
+    classNumber: string;
+    sessionId: string;
+  }
 ) {
   const semester = String(term.semester);
-  return `/catalog/${term.year}/${semester}/${subject}/${catalogCourseNumber}/${DEFAULT_CATALOG_CLASS_NUMBER}/${DEFAULT_CATALOG_SESSION_ID}`;
+  return `/catalog/${term.year}/${semester}/${course.subject}/${course.number}/${course.classNumber}/${course.sessionId}`;
 }
 
 function buildCatalogSpecificClassPath(recentClass: {
@@ -120,25 +114,6 @@ function buildCatalogSpecificClassPath(recentClass: {
   return `/catalog/${recentClass.year}/${recentClass.semester}/${recentClass.subject}/${recentClass.courseNumber}/${recentClass.number}/${recentClass.sessionId ?? DEFAULT_CATALOG_SESSION_ID}`;
 }
 
-function formatEnrollmentPercent(
-  enrolled: number | null | undefined,
-  max: number | null | undefined
-): string | null {
-  if (enrolled == null || max == null || max <= 0) return null;
-  return `${Math.round((enrolled / max) * 100)}% enrolled`;
-}
-
-function getEnrollmentPercentColor(
-  enrolled: number | null | undefined,
-  max: number | null | undefined
-): string | null {
-  if (enrolled == null || max == null || max <= 0) return null;
-  const pct = Math.round((enrolled / max) * 100);
-  if (pct >= 90) return "var(--rose-500)";
-  if (pct >= 70) return "var(--yellow-500)";
-  return "var(--emerald-500)";
-}
-
 function formatUnits(
   unitsMin: number | null | undefined,
   unitsMax: number | null | undefined
@@ -149,7 +124,6 @@ function formatUnits(
   return `${unitsMin}-${unitsMax} units`;
 }
 
-const IMG = { popular: 22, curated: 44 } as const;
 const EXPLORE_SKELETON_CARD_COUNT = 6;
 
 function SnapshotCarouselSkeleton({
@@ -181,19 +155,17 @@ function SnapshotCarouselSkeleton({
 function SnapshotCarousel({
   courses,
   catalogTerm,
-  imageSeed,
 }: {
   courses: ExploreSnap[];
   catalogTerm: { year: number; semester: string };
-  imageSeed: number;
 }) {
   if (courses.length === 0) return null;
   return (
     <ScrollableRow>
-      {courses.map((course, index) => (
+      {courses.map((course) => (
         <Link
           key={course.courseId}
-          to={buildCatalogClassPath(catalogTerm, course.subject, course.number)}
+          to={buildCatalogClassPath(catalogTerm, course)}
           className={styles.cardLink}
         >
           <CatalogCard
@@ -205,8 +177,8 @@ function SnapshotCarousel({
                 ? { average: course.gradeAverage }
                 : undefined
             }
-            imageUrl={course.imageUrl ?? undefined}
-            imageIndex={imageSeed + index}
+            imageUrl={courseCardImageUrl(course.imageCluster, course.courseId)}
+            seatScore={course.seatScore}
           />
         </Link>
       ))}
@@ -217,44 +189,68 @@ function SnapshotCarousel({
 type CatalogTerm = { year: number; semester: string };
 
 function BecauseYouViewedRail({
-  anchor,
+  subject,
+  number,
+  title,
+  courses,
   catalogTerm,
-  imageSeed,
 }: {
-  anchor: CourseAnchor;
+  subject: string;
+  number: string;
+  title?: string | null;
+  courses: ExploreSnap[];
   catalogTerm: CatalogTerm;
-  imageSeed: number;
 }) {
-  const { data, loading } = useQuery(GetExploreBecauseYouViewedDocument, {
-    variables: {
-      subject: anchor.subject,
-      courseNumber: anchor.number,
-      year: catalogTerm.year,
-      semester: catalogTerm.semester,
-      limit: EXPLORE_SNAPSHOT_ROW_LIMIT,
-    },
-    fetchPolicy: "network-only",
-  });
-
-  const courses = data?.exploreBecauseYouViewed ?? [];
-
-  if (!loading && courses.length === 0) return null;
+  if (courses.length === 0) return null;
 
   return (
     <ExploreRail
-      title={`Because you viewed ${anchor.subject} ${anchor.number}${anchor.title ? `: ${anchor.title}` : ""}`}
+      title={`Because you viewed ${subject} ${number}${title ? `: ${title}` : ""}`}
     >
-      {loading ? (
-        <SnapshotCarouselSkeleton />
-      ) : (
-        <SnapshotCarousel
-          courses={courses}
-          catalogTerm={catalogTerm}
-          imageSeed={imageSeed}
-        />
-      )}
+      <SnapshotCarousel courses={courses} catalogTerm={catalogTerm} />
     </ExploreRail>
   );
+}
+
+type BecauseRail = {
+  subject: string;
+  courseNumber: string;
+  title?: string | null;
+  courses: ExploreSnap[];
+};
+
+/** Fetches the "Because you viewed" rails in one request. */
+function useBecauseYouViewed(
+  pool: CourseAnchor[],
+  catalogTerm: CatalogTerm | null
+): { rails: BecauseRail[]; loading: boolean } {
+  const { data, loading } = useQuery(GetExploreBecauseYouViewedBatchDocument, {
+    variables: {
+      anchors: pool.map((a) => ({
+        subject: a.subject,
+        courseNumber: a.number,
+      })),
+      year: catalogTerm?.year ?? 0,
+      semester: catalogTerm?.semester ?? "",
+      limit: EXPLORE_SNAPSHOT_ROW_LIMIT,
+      maxRows: BECAUSE_VIEWED_ROW_COUNT,
+    },
+    skip: pool.length === 0 || catalogTerm === null,
+    fetchPolicy: "network-only",
+  });
+
+  const rails = useMemo(
+    () =>
+      (data?.exploreBecauseYouViewedBatch ?? []).map((group) => ({
+        subject: group.subject,
+        courseNumber: group.courseNumber,
+        title: group.title,
+        courses: group.courses ?? [],
+      })),
+    [data?.exploreBecauseYouViewedBatch]
+  );
+
+  return { rails, loading };
 }
 
 function TopPicksRail({
@@ -262,7 +258,7 @@ function TopPicksRail({
   catalogTerm,
 }: {
   history: Array<{ subject: string; number: string }>;
-  catalogTerm: CatalogTerm;
+  catalogTerm: CatalogTerm | null;
 }) {
   const { data, loading } = useQuery(GetExploreTopPicksDocument, {
     variables: {
@@ -270,11 +266,11 @@ function TopPicksRail({
         subject: h.subject,
         courseNumber: h.number,
       })),
-      year: catalogTerm.year,
-      semester: catalogTerm.semester,
+      year: catalogTerm?.year ?? 0,
+      semester: catalogTerm?.semester ?? "",
       limit: EXPLORE_SNAPSHOT_ROW_LIMIT,
     },
-    skip: history.length === 0,
+    skip: history.length === 0 || catalogTerm === null,
     fetchPolicy: "network-only",
   });
 
@@ -282,14 +278,10 @@ function TopPicksRail({
 
   return (
     <ExploreRail title="Top picks for you">
-      {loading ? (
+      {loading || catalogTerm === null ? (
         <SnapshotCarouselSkeleton />
       ) : courses.length > 0 ? (
-        <SnapshotCarousel
-          courses={courses}
-          catalogTerm={catalogTerm}
-          imageSeed={0}
-        />
+        <SnapshotCarousel courses={courses} catalogTerm={catalogTerm} />
       ) : (
         <p className={placeholderStyles.placeholderBlurb}>
           View some courses in the catalog to get personalized picks here.
@@ -299,8 +291,7 @@ function TopPicksRail({
   );
 }
 
-const BECAUSE_VIEWED_RECENT_WINDOW = 20;
-const BECAUSE_VIEWED_ROW_COUNT = 5;
+const BECAUSE_VIEWED_ROW_COUNT = 7;
 
 function shuffle<T>(items: T[]): T[] {
   const copy = [...items];
@@ -317,36 +308,12 @@ function sampleUpTo<T>(items: readonly T[], k: number): T[] {
   return shuffle([...items]).slice(0, Math.min(k, items.length));
 }
 
-function anchorKey(anchor: CourseAnchor): string {
-  return `${anchor.subject}::${anchor.number}`;
-}
-
-function pickBecauseAnchors(
-  pool: ReadonlyArray<CourseAnchor>,
-  canonicalByAnchor: Map<string, string>
-): CourseAnchor[] {
-  if (pool.length === 0) return [];
-  const shuffled = shuffle([...pool]);
-  const seenCanonicals = new Set<string>();
-  const chosen: CourseAnchor[] = [];
-  for (const anchor of shuffled) {
-    const key = anchorKey(anchor);
-    const canonical = canonicalByAnchor.get(key) ?? key;
-    if (seenCanonicals.has(canonical)) continue;
-    seenCanonicals.add(canonical);
-    chosen.push(anchor);
-    if (chosen.length >= BECAUSE_VIEWED_ROW_COUNT) break;
-  }
-  return chosen;
-}
-
 export default function Explore() {
   const apolloClient = useApolloClient();
   const navigate = useNavigate();
   const { user } = useUser();
   const { data: terms } = useReadTerms();
   const { data: apiCollections } = useGetAllCollectionsWithPreview();
-  const [becauseAnchors, setBecauseAnchors] = useState<CourseAnchor[]>([]);
   const [recentClassMeta, setRecentClassMeta] = useState<
     Record<string, NonNullable<RecentClassCardQuery["class"]>>
   >({});
@@ -379,6 +346,12 @@ export default function Explore() {
     GetExploreCuratedHandpickDocument
   );
 
+  const viewedPool = useMemo(() => getRecents(RecentType.Course), []);
+  const { rails: becauseRails, loading: becauseLoading } = useBecauseYouViewed(
+    viewedPool,
+    latestCatalogTerm
+  );
+
   const popularCourses =
     popularData?.explorePopularCourses?.filter(Boolean) ?? [];
 
@@ -391,7 +364,6 @@ export default function Explore() {
     () => sampleUpTo(handpickPool, EXPLORE_SNAPSHOT_ROW_LIMIT),
     [handpickPool]
   );
-  const topPicksHistory = useMemo(() => getRecents(RecentType.Course), []);
   const recentClasses = useMemo(
     () => getRecents(RecentType.Class).slice(0, 6),
     []
@@ -419,6 +391,9 @@ export default function Explore() {
             null,
           maxEnroll:
             entry.class!.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+          waitlistedCount:
+            entry.class!.primarySection?.enrollment?.latest?.waitlistedCount ??
+            null,
           unitsMin: entry.class!.unitsMin,
           unitsMax: entry.class!.unitsMax,
           hasReservedSeats:
@@ -427,69 +402,6 @@ export default function Explore() {
         })),
     [allSavedCollection?.classes]
   );
-
-  useEffect(() => {
-    const pool = getRecents(RecentType.Course).slice(
-      0,
-      BECAUSE_VIEWED_RECENT_WINDOW
-    );
-    if (pool.length === 0) {
-      setBecauseAnchors([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    const fetchCanonicals = async () => {
-      const canonicalByAnchor = new Map<string, string>();
-      const titleByAnchor = new Map<string, string>();
-      await Promise.all(
-        pool.map(async (anchor) => {
-          const key = anchorKey(anchor);
-          try {
-            const { data } = await apolloClient.query<CourseCrossListingQuery>({
-              query: GET_COURSE_CROSS_LISTING,
-              variables: { subject: anchor.subject, number: anchor.number },
-              fetchPolicy: "network-only",
-            });
-            const course = data?.course;
-            const courseId = course?.courseId;
-            const title = course?.title;
-            if (typeof title === "string" && title.length > 0) {
-              titleByAnchor.set(key, title);
-            }
-            if (typeof courseId === "string" && courseId.length > 0) {
-              canonicalByAnchor.set(key, `courseId::${courseId}`);
-              return;
-            }
-            const aliases = course?.crossListing ?? [];
-            const aliasKeys = aliases
-              .map((c: { subject?: string; number?: string }) =>
-                c?.subject && c?.number ? `${c.subject}::${c.number}` : null
-              )
-              .filter((v: string | null): v is string => v !== null);
-            aliasKeys.push(key);
-            aliasKeys.sort();
-            canonicalByAnchor.set(key, `cross::${aliasKeys.join("|")}`);
-          } catch {
-            canonicalByAnchor.set(key, key);
-          }
-        })
-      );
-      if (cancelled) return;
-      setBecauseAnchors(
-        pickBecauseAnchors(pool, canonicalByAnchor).map((anchor) => ({
-          ...anchor,
-          title: titleByAnchor.get(anchorKey(anchor)),
-        }))
-      );
-    };
-
-    void fetchCanonicals();
-    return () => {
-      cancelled = true;
-    };
-  }, [apolloClient]);
 
   useEffect(() => {
     if (recentClasses.length === 0) {
@@ -550,25 +462,24 @@ export default function Explore() {
         <Flex mb="2" align="center" gap="6" className={styles.heroBanner}>
           <Box className={styles.heroImageContainer}>
             <img
-              src="/images/ExplorePage.png"
-              alt="Gradtrak preview"
+              src={FEATURED_PAGE.image}
+              alt={FEATURED_PAGE.imageAlt}
               className={styles.heroImage}
             />
           </Box>
           <Flex direction="column" gap="2" className={styles.heroText}>
-            <p className={styles.heroLabel}>NEW FEATURE</p>
-            <h2 className={styles.heroTitle}>Major planning made easy</h2>
+            <p className={styles.heroLabel}>FEATURED</p>
+            <h2 className={styles.heroTitle}>{FEATURED_PAGE.title}</h2>
             <p className={styles.heroDescription}>
-              Map requirements, experiment with schedules, and pair those plans
-              with live enrollment data from Berkeleytime.
+              {FEATURED_PAGE.description}
             </p>
             <Button
               as={Link}
-              to="/gradtrak"
+              to={FEATURED_PAGE.to}
               variant="primary"
               style={{ width: "fit-content" }}
             >
-              Explore Gradtrak
+              {FEATURED_PAGE.cta}
             </Button>
           </Flex>
         </Flex>
@@ -591,7 +502,7 @@ export default function Explore() {
           </div>
           <div className={styles.recentlyViewedColumn}>
             <h3 className={styles.recentlyViewedTitle}>
-              Classes you recently viewed
+              Courses you recently viewed
             </h3>
             {recentClasses.length === 0 ? (
               <p className={placeholderStyles.placeholderBlurb}>
@@ -609,13 +520,8 @@ export default function Explore() {
                   const key = `${recentClass.year}::${recentClass.semester}::${recentClass.subject}::${recentClass.courseNumber}::${recentClass.number}::${recentClass.sessionId ?? ""}`;
                   const meta = recentClassMeta[key];
                   if (!meta) return null;
-                  const enrollmentLabel = formatEnrollmentPercent(
-                    meta.primarySection?.enrollment?.latest?.enrolledCount,
-                    meta.primarySection?.enrollment?.latest?.maxEnroll
-                  );
-                  const enrollmentColor = getEnrollmentPercentColor(
-                    meta.primarySection?.enrollment?.latest?.enrolledCount,
-                    meta.primarySection?.enrollment?.latest?.maxEnroll
+                  const enrollment = formatEnrollment(
+                    meta.primarySection?.enrollment?.latest
                   );
                   const unitsLabel = formatUnits(meta.unitsMin, meta.unitsMax);
                   return (
@@ -644,12 +550,12 @@ export default function Explore() {
                         replaceInfoContent
                         infoContent={
                           <>
-                            {enrollmentLabel && (
+                            {enrollment && (
                               <span
                                 className={styles.recentMetaPill}
-                                style={{ color: enrollmentColor ?? undefined }}
+                                style={{ color: enrollment.color }}
                               >
-                                {enrollmentLabel}
+                                {enrollment.label}
                               </span>
                             )}
                             {unitsLabel && (
@@ -668,19 +574,26 @@ export default function Explore() {
           </div>
         </div>
 
-        <TopPicksRail
-          history={topPicksHistory}
-          catalogTerm={catalogRouteTerm}
-        />
+        <TopPicksRail history={viewedPool} catalogTerm={latestCatalogTerm} />
 
-        {becauseAnchors.map((anchor, slot) => (
-          <BecauseYouViewedRail
-            key={`${anchor.subject}-${anchor.number}-${slot}`}
-            anchor={anchor}
-            catalogTerm={catalogRouteTerm}
-            imageSeed={100 + slot * 20}
-          />
-        ))}
+        {becauseLoading
+          ? Array.from({
+              length: Math.min(BECAUSE_VIEWED_ROW_COUNT, viewedPool.length),
+            }).map((_, slot) => (
+              <ExploreRail key={`because-skeleton-${slot}`} title="">
+                <SnapshotCarouselSkeleton />
+              </ExploreRail>
+            ))
+          : becauseRails.map((rail) => (
+              <BecauseYouViewedRail
+                key={`${rail.subject}-${rail.courseNumber}`}
+                subject={rail.subject}
+                number={rail.courseNumber}
+                title={rail.title}
+                courses={rail.courses}
+                catalogTerm={catalogRouteTerm}
+              />
+            ))}
 
         <ExploreRail title="Highly rated on Berkeleytime">
           {popularLoading ? (
@@ -689,7 +602,6 @@ export default function Explore() {
             <SnapshotCarousel
               courses={popularCourses}
               catalogTerm={catalogRouteTerm}
-              imageSeed={IMG.popular}
             />
           )}
         </ExploreRail>
@@ -701,14 +613,10 @@ export default function Explore() {
         ) : handpickedCourses.length > 0 ? (
           <ExploreRail title="Hand-picked by the Berkeleytime team">
             <ScrollableRow>
-              {handpickedCourses.map((course: ExploreSnap, index) => (
+              {handpickedCourses.map((course: ExploreSnap) => (
                 <Link
                   key={course.courseId}
-                  to={buildCatalogClassPath(
-                    catalogRouteTerm,
-                    course.subject,
-                    course.number
-                  )}
+                  to={buildCatalogClassPath(catalogRouteTerm, course)}
                   className={styles.cardLink}
                 >
                   <CatalogCard
@@ -720,8 +628,11 @@ export default function Explore() {
                         ? { average: course.gradeAverage }
                         : undefined
                     }
-                    imageUrl={course.imageUrl ?? undefined}
-                    imageIndex={IMG.curated + index}
+                    imageUrl={courseCardImageUrl(
+                      course.imageCluster,
+                      course.courseId
+                    )}
+                    seatScore={course.seatScore}
                   />
                 </Link>
               ))}
@@ -730,7 +641,7 @@ export default function Explore() {
         ) : (
           <ExploreRail title="Hand-picked by the Berkeleytime team">
             <p className={placeholderStyles.placeholderBlurb}>
-              No curated courses match the latest catalog term yet—open curated
+              No curated courses match the latest catalog term yet. Open curated
               classes to see staff pins, or check back after the schedule is
               published.
             </p>

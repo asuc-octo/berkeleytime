@@ -25,6 +25,10 @@ dist/
 generated-types/
 generated-typedefs/
 
+# python bytecode
+__pycache__/
+*.py[cod]
+
 # others
 *.cert
 *.key

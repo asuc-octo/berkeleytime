@@ -4,7 +4,7 @@ import { FrameAltEmpty } from "iconoir-react";
 
 import { Box, Container, PillSwitcher } from "@repo/theme";
 
-import { getEnrollmentColor } from "@/components/Capacity";
+import { getEnrollmentColor } from "@/lib/enrollment";
 import EmptyState from "@/components/Class/EmptyState";
 import { LocationHoverCard } from "@/components/Location/LocationHoverCard";
 import Time from "@/components/Time";

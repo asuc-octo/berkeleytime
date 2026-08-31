@@ -5,56 +5,92 @@ export const exploreTypeDef = gql`
     courseId: CourseIdentifier!
     subject: String!
     number: CourseNumber!
+    """
+    Section number of the class to link to, like "001".
+    """
+    classNumber: String!
+    """
+    Session the linked class belongs to, like "1".
+    """
+    sessionId: String!
     title: String!
     totalRatingCount: Int!
     gradeAverage: Float
-    imageUrl: String
+    """
+    Visual cluster used to pick a card image, like "engineering".
+    """
+    imageCluster: String
+    """
+    2 open seats, 1 capacity unpublished, 0 every class full.
+    """
+    seatScore: Int!
+    """
+    UGRD, GRAD or LAW.
+    """
+    academicCareer: String
   }
 
   """
-  A single course in the user's viewed history, identified by subject and catalog course code.
-  courseNumber matches courseEmbeddings.courseId (e.g. "C100", "61A").
+  One course in the user's viewed history. courseNumber is a catalog code.
   """
   input ExploreHistoryItem {
     subject: String!
     courseNumber: String!
   }
 
+  """
+  Recommendations for a single anchor.
+  """
+  type ExploreBecauseViewedGroup {
+    subject: String!
+    courseNumber: String!
+    """
+    Anchor's course title.
+    """
+    title: String
+    courses: [ExploreCourseSnapshot!]!
+  }
+
   type Query {
     """
-    Courses with the highest all-time student rating count, joined to latest catalog rows.
+    Courses with the highest all-time student rating count.
     """
     explorePopularCourses(limit: Int): [ExploreCourseSnapshot!]!
       @cacheControl(maxAge: 0)
     """
-    Same as popular, restricted to Berkeley subject codes (normalized). For topical discovery rails.
+    Same as popular, restricted to normalized Berkeley subject codes.
     """
     explorePopularCoursesForSubjects(
       subjects: [String!]!
       limit: Int
     ): [ExploreCourseSnapshot!]! @cacheControl(maxAge: 0)
     """
-    Curated picks de-duplicated to the course level, limited to courses that have at least one
-    class printed in the schedule for the latest term with catalog data (same default term as the catalog).
-    Unordered—clients may shuffle and sample.
+    Staff-curated picks from every term, offered in the latest one. Unordered.
     """
     exploreCuratedHandpickedCourses: [ExploreCourseSnapshot!]!
+      @cacheControl(maxAge: 0)
     """
-    Courses semantically similar to a single anchor course the user recently viewed.
-    courseNumber is the catalog course code (e.g. "C100") matching courseEmbeddings.courseId.
-    Returns empty list when the anchor has no embedding for the given term.
+    Courses similar to each anchor, batched into one request.
     """
-    exploreBecauseYouViewed(
-      subject: String!
-      courseNumber: String!
+    exploreBecauseYouViewedBatch(
+      anchors: [ExploreHistoryItem!]!
       year: Int!
       semester: String!
+      """
+      Courses per rail.
+      """
       limit: Int
-    ): [ExploreCourseSnapshot!]! @cacheControl(maxAge: 0)
+      """
+      Kept out of every rail. Defaults to the anchors when omitted.
+      """
+      history: [ExploreHistoryItem!]
+      """
+      Rails to return. Defaults to 5.
+      """
+      maxRows: Int
+    ): [ExploreBecauseViewedGroup!]! @cacheControl(maxAge: 0)
     """
-    Personalized picks based on a decay-weighted centroid of the user's viewed course history.
-    history items use the same catalog course code as exploreBecauseYouViewed.
-    Returns empty list when none of the history courses have embeddings for the given term.
+    Picks from a decay-weighted centroid of the user's viewed history.
     """
     exploreTopPicks(
       history: [ExploreHistoryItem!]!

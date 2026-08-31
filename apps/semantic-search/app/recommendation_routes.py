@@ -5,6 +5,13 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from . import recommendation_engine
+from .recommendation_engine import (
+    DEFAULT_DECAY,
+    DEFAULT_RETURN_K,
+    DEFAULT_SIM_THRESHOLD,
+    MAX_RETURN_K,
+    MIN_RETURN_K,
+)
 
 logger = logging.getLogger("semantic-search.recommendation_routes")
 
@@ -28,8 +35,8 @@ class BecauseViewedRequest(BaseModel):
     course_number: str
     year: int = Field(..., ge=2000, le=2100)
     semester: str
-    limit: int = Field(20, ge=1, le=48)
-    sim_threshold: float = Field(1.0, ge=0.0, le=1.0)
+    limit: int = Field(DEFAULT_RETURN_K, ge=MIN_RETURN_K, le=MAX_RETURN_K)
+    sim_threshold: float = Field(DEFAULT_SIM_THRESHOLD, ge=0.0, le=1.0)
 
 
 class TopPicksHistoryItem(BaseModel):
@@ -41,9 +48,9 @@ class TopPicksRequest(BaseModel):
     history: List[TopPicksHistoryItem] = Field(..., min_length=1)
     year: int = Field(..., ge=2000, le=2100)
     semester: str
-    limit: int = Field(20, ge=1, le=48)
-    decay: float = Field(0.8, ge=0.0, le=1.0)
-    sim_threshold: float = Field(1.0, ge=0.0, le=1.0)
+    limit: int = Field(DEFAULT_RETURN_K, ge=MIN_RETURN_K, le=MAX_RETURN_K)
+    decay: float = Field(DEFAULT_DECAY, ge=0.0, le=1.0)
+    sim_threshold: float = Field(DEFAULT_SIM_THRESHOLD, ge=0.0, le=1.0)
 
 
 class CourseResult(BaseModel):

@@ -15,10 +15,27 @@
 }
 
 .imageContainer {
+  position: relative;
   height: 168px;
   background-size: cover;
   background-position: center;
   background-color: var(--slate-200);
+}
+
+.seatBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.12px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(2px);
 }
 
 .content {

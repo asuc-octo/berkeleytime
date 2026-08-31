@@ -10,35 +10,19 @@ logger = logging.getLogger("semantic-search.recommendation_engine")
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://mongodb:27017/bt")
 VECTOR_SEARCH_INDEX_NAME = "course_embeddings_vector_search"
 
+# Shared with the request models in recommendation_routes.py.
+DEFAULT_RETURN_K = 20
+MIN_RETURN_K = 1
+# Upper bound on caller input, staying above the largest pool asked for by the backend.
+MAX_RETURN_K = 200
+DEFAULT_DECAY = 0.9
+# Since near duplicates are skipped, search for more courses than what the pool needs.
+FETCH_FACTOR = 3
+# Cosine at or above this counts as a duplicate result.
+DEFAULT_SIM_THRESHOLD = 0.92
+
 _mongo_client = MongoClient(MONGODB_URI)
 _embeddings_col = _mongo_client.get_default_database()["courseEmbeddings"]
-_classes_col = _mongo_client.get_default_database()["classes"]
-
-
-def _filter_raw_to_catalog(raw: List[Dict], year: int, semester: str) -> List[Dict]:
-    """Filter raw vector search docs to only those in the schedule of classes for the term.
-
-    Applies before diversity filtering so the full pool of valid-catalog courses
-    is available. Uses classes.courseNumber (= courseEmbeddings.courseId) and subject.
-    """
-    if not raw:
-        return []
-    valid: Set[tuple] = set()
-    cursor = _classes_col.find(
-        {
-            "year": year,
-            "semester": semester,
-            "anyPrintInScheduleOfClasses": True,
-            "$or": [
-                {"subject": doc["subject"], "courseNumber": doc["courseId"]}
-                for doc in raw
-            ],
-        },
-        {"subject": 1, "courseNumber": 1, "_id": 0},
-    )
-    for doc in cursor:
-        valid.add((doc["subject"], doc["courseNumber"]))
-    return [doc for doc in raw if (doc["subject"], doc["courseId"]) in valid]
 
 
 def _l2_normalize(v: np.ndarray, eps: float = 1e-12) -> np.ndarray:
@@ -49,12 +33,7 @@ def _l2_normalize(v: np.ndarray, eps: float = 1e-12) -> np.ndarray:
 def _fetch_embeddings(
     year: int, semester: str, pairs: List[Dict]
 ) -> List[Dict]:
-    """Fetch stored embeddings for the given (subject, courseId) pairs in a specific term.
-
-    Each element of `pairs` must have 'subject' and 'course_number' keys.
-    Filters by both subject and courseId to avoid cross-subject collisions where
-    multiple subjects share the same course number (e.g. STAT 134 vs ECON 134).
-    """
+    """Fetch stored embeddings for (subject, courseId) pairs in one term."""
     if not pairs:
         return []
     cursor = _embeddings_col.find(
@@ -76,14 +55,14 @@ def _vector_search(
     semester: str,
     fetch_k: int,
 ) -> List[Dict]:
-    """Run Atlas $vectorSearch for the given query vector, returning results with embeddings."""
+    """Run Atlas $vectorSearch, returning results with their embeddings."""
     pipeline = [
         {
             "$vectorSearch": {
                 "index": VECTOR_SEARCH_INDEX_NAME,
                 "path": "embedding",
                 "queryVector": query_vec.tolist(),
-                "numCandidates": min(fetch_k * 10, 2000),
+                "exact": True,
                 "limit": fetch_k,
                 "filter": {"year": year, "semester": semester},
             }
@@ -111,20 +90,24 @@ def _post_filter(
     seed_vecs: List[np.ndarray],
     return_k: int,
     sim_threshold: float,
+    seed_exempt_subject: Optional[str] = None,
 ) -> List[Dict]:
-    """Exclude history/anchor courses by (subject, courseId), apply diversity threshold."""
-    seen_vecs = list(seed_vecs)
+    """Exclude history/anchor courses, then apply the diversity threshold."""
+    seeds = [_l2_normalize(v) for v in seed_vecs]
+    picked: List[np.ndarray] = []
     results: List[Dict] = []
     for doc in raw:
         pair = (doc["subject"], doc["courseId"])
         if pair in exclude_pairs:
             continue
-        v = np.array(doc["embedding"], dtype="float32")
-        if sim_threshold > 0.0 and seen_vecs:
-            if any(float(v @ h) >= sim_threshold for h in seen_vecs):
+        v = _l2_normalize(np.array(doc["embedding"], dtype="float32"))
+        if sim_threshold > 0.0:
+            exempt = seed_exempt_subject is not None and doc["subject"] == seed_exempt_subject
+            against = picked if exempt else seeds + picked
+            if any(float(v @ h) >= sim_threshold for h in against):
                 continue
         results.append({"subject": doc["subject"], "courseNumber": doc["courseId"], "score": doc["score"]})
-        seen_vecs.append(v)
+        picked.append(v)
         if len(results) >= return_k:
             break
     return results
@@ -135,8 +118,8 @@ def recommend_because_viewed(
     course_number: str,
     year: int,
     semester: str,
-    return_k: int = 20,
-    sim_threshold: float = 1.0,
+    return_k: int = DEFAULT_RETURN_K,
+    sim_threshold: float = DEFAULT_SIM_THRESHOLD,
 ) -> List[Dict]:
     """Return courses semantically similar to a single anchor course."""
     anchor_docs = _fetch_embeddings(
@@ -148,22 +131,30 @@ def recommend_because_viewed(
         )
         return []
 
-    anchor_vec = np.array(anchor_docs[0]["embedding"], dtype="float32")
-    fetch_k = return_k * 5
+    anchor_vec = _l2_normalize(
+        np.array(anchor_docs[0]["embedding"], dtype="float32")
+    )
+    fetch_k = return_k * FETCH_FACTOR
     raw = _vector_search(anchor_vec, year, semester, fetch_k)
-    raw = _filter_raw_to_catalog(raw, year, semester)
-    # seed_vecs starts empty so diversity only applies between selected results,
-    # not between results and the anchor.  The anchor is excluded via exclude_pairs.
-    return _post_filter(raw, {(subject, course_number)}, [], return_k, sim_threshold)
+    # The anchor seeds the filter so near-identical results are dropped, except
+    # in its own subject where sequels are kept.
+    return _post_filter(
+        raw,
+        {(subject, course_number)},
+        [anchor_vec],
+        return_k,
+        sim_threshold,
+        seed_exempt_subject=subject,
+    )
 
 
 def recommend_top_picks(
     history: List[Dict],
     year: int,
     semester: str,
-    return_k: int = 20,
-    decay: float = 0.8,
-    sim_threshold: float = 1.0,
+    return_k: int = DEFAULT_RETURN_K,
+    decay: float = DEFAULT_DECAY,
+    sim_threshold: float = DEFAULT_SIM_THRESHOLD,
 ) -> List[Dict]:
     """Return courses based on a decay-weighted centroid of the user's course history."""
     if not history:
@@ -173,9 +164,12 @@ def recommend_top_picks(
     if not docs:
         return []
 
-    # Key by (subject, courseId) to avoid cross-subject collisions
+    # Normalized so every history course pulls on the centroid equally.
     pair_to_emb: Dict[tuple, np.ndarray] = {
-        (d["subject"], d["courseId"]): np.array(d["embedding"], dtype="float32") for d in docs
+        (d["subject"], d["courseId"]): _l2_normalize(
+            np.array(d["embedding"], dtype="float32")
+        )
+        for d in docs
     }
 
     weighted: Optional[np.ndarray] = None
@@ -192,10 +186,9 @@ def recommend_top_picks(
     if weighted is None or w_sum == 0.0:
         return []
 
-    user_vec = _l2_normalize(np.asarray(weighted / w_sum, dtype="float32"))
-    fetch_k = return_k * 5
+    user_vec = _l2_normalize(np.asarray(weighted, dtype="float32"))
+    fetch_k = return_k * FETCH_FACTOR
     raw = _vector_search(user_vec, year, semester, fetch_k)
-    raw = _filter_raw_to_catalog(raw, year, semester)
     exclude_pairs = {(h["subject"], h["course_number"]) for h in history}
     return _post_filter(
         raw, exclude_pairs, list(pair_to_emb.values()), return_k, sim_threshold

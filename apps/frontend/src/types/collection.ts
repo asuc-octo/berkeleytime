@@ -8,6 +8,7 @@ export interface CollectionPreviewClass {
   gradeAverage: number | null;
   enrolledCount: number | null;
   maxEnroll: number | null;
+  waitlistedCount: number | null;
   unitsMin: number;
   unitsMax: number;
   hasReservedSeats: boolean;

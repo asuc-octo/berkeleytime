@@ -32,6 +32,7 @@ query Catalog($year: Int!, $semester: Semester!) {
     course {
       title
       description
+      academicOrganizationName
     }
   }
 }
@@ -423,11 +424,20 @@ class SemanticSearchEngine:
 
     @staticmethod
     def _build_course_text(course: Dict) -> str:
+        """Build the text the encoder embeds."""
         subj = (course.get("subject") or "").strip()
-        num = course.get("number", "")
-        title = ((course.get("course") or {}).get("title") or "").strip()
-        desc = ((course.get("course") or {}).get("description") or "").strip()
-        return f"SUBJECT: {subj} NUMBER: {num}\nTITLE: {title}\nDESCRIPTION: {desc}\n"
+        num = course.get("courseNumber", "")
+        detail = course.get("course") or {}
+        title = (detail.get("title") or "").strip()
+        desc = (detail.get("description") or "").strip()
+        org = (detail.get("academicOrganizationName") or "").strip()
+
+        parts = [f"{subj} {num}: {title}."]
+        if org:
+            parts.append(f"Offered by the {org} department.")
+        if desc:
+            parts.append(desc)
+        return " ".join(parts)
 
     @staticmethod
     def _hash_course_text(text: str) -> str:

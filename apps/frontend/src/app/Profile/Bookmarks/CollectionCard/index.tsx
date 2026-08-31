@@ -25,7 +25,8 @@ import {
   capitalizeColor,
   getColorCSSVar,
 } from "@/lib/colors";
-import { getLetterGradeFromGPA } from "@/lib/grades";
+import { formatEnrollment } from "@/lib/enrollment";
+import { getGradeColor, getLetterGradeFromGPA } from "@/lib/grades";
 import { CollectionPreviewClass } from "@/types/collection";
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -50,33 +51,6 @@ interface CollectionCardProps {
   showPin?: boolean;
 }
 
-function formatEnrollment(
-  enrolled: number | null,
-  max: number | null
-): string | null {
-  if (enrolled === null || max === null || max === 0) return null;
-  const pct = Math.round((enrolled / max) * 100);
-  return `${pct}% enrolled`;
-}
-
-function getGradeColor(grade: string): string {
-  const firstLetter = grade[0];
-  if (firstLetter === "A") return "var(--emerald-500)";
-  if (firstLetter === "B") return "var(--yellow-500)";
-  return "var(--rose-500)";
-}
-
-function getEnrollmentColor(
-  enrolled: number | null,
-  max: number | null
-): string | null {
-  if (enrolled === null || max === null || max <= 0) return null;
-  const pct = Math.max(0, Math.min(100, Math.round((enrolled / max) * 100)));
-  if (pct >= 90) return "var(--rose-500)";
-  if (pct >= 70) return "var(--yellow-500)";
-  return "var(--emerald-500)";
-}
-
 function formatUnits(min: number, max: number): string {
   if (min === max) {
     return `${min} ${min === 1 ? "unit" : "units"}`;
@@ -93,15 +67,8 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
     classData.gradeAverage !== null
       ? getLetterGradeFromGPA(classData.gradeAverage)
       : null;
-  const enrollment = formatEnrollment(
-    classData.enrolledCount,
-    classData.maxEnroll
-  );
+  const enrollment = formatEnrollment(classData);
   const gradeColor = grade ? getGradeColor(grade) : null;
-  const enrollmentColor = getEnrollmentColor(
-    classData.enrolledCount,
-    classData.maxEnroll
-  );
   const units = formatUnits(classData.unitsMin, classData.unitsMax);
 
   return (
@@ -124,9 +91,9 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
         {enrollment && (
           <span
             className={`${styles.cardPill} ${styles.enrolled}`}
-            style={{ color: enrollmentColor ?? undefined }}
+            style={{ color: enrollment.color }}
           >
-            {enrollment}
+            {enrollment.label}
           </span>
         )}
         <span className={styles.cardPill}>{units}</span>

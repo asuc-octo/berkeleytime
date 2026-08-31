@@ -53,9 +53,7 @@ const CATALOG_SEMESTER_ORDER: Record<string, number> = {
   Winter: 3,
 };
 
-/**
- * Most recent term that has catalog data (`hasCatalogData`), matching how the catalog UI picks its default term.
- */
+/** Most recent term with catalog data, matching how the catalog picks its default. */
 export async function getLatestCatalogTerm(): Promise<{
   year: number;
   semester: string;

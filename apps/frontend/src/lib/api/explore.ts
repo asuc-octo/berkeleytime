@@ -8,10 +8,13 @@ export const GET_EXPLORE_POPULAR = gql`
       courseId
       subject
       number
+      classNumber
+      sessionId
       title
       totalRatingCount
       gradeAverage
-      imageUrl
+      imageCluster
+      seatScore
     }
   }
 `;
@@ -22,36 +25,49 @@ export const GET_EXPLORE_CURATED_HANDPICK = gql`
       courseId
       subject
       number
+      classNumber
+      sessionId
       title
       totalRatingCount
       gradeAverage
-      imageUrl
+      imageCluster
+      seatScore
     }
   }
 `;
 
-export const GET_EXPLORE_BECAUSE_YOU_VIEWED = gql`
-  query GetExploreBecauseYouViewed(
-    $subject: String!
-    $courseNumber: String!
+export const GET_EXPLORE_BECAUSE_YOU_VIEWED_BATCH = gql`
+  query GetExploreBecauseYouViewedBatch(
+    $anchors: [ExploreHistoryItem!]!
     $year: Int!
     $semester: String!
     $limit: Int
+    $history: [ExploreHistoryItem!]
+    $maxRows: Int
   ) {
-    exploreBecauseYouViewed(
-      subject: $subject
-      courseNumber: $courseNumber
+    exploreBecauseYouViewedBatch(
+      anchors: $anchors
       year: $year
       semester: $semester
       limit: $limit
+      history: $history
+      maxRows: $maxRows
     ) {
-      courseId
       subject
-      number
+      courseNumber
       title
-      totalRatingCount
-      gradeAverage
-      imageUrl
+      courses {
+        courseId
+        subject
+        number
+        classNumber
+        sessionId
+        title
+        totalRatingCount
+        gradeAverage
+        imageCluster
+        seatScore
+      }
     }
   }
 `;
@@ -72,10 +88,13 @@ export const GET_EXPLORE_TOP_PICKS = gql`
       courseId
       subject
       number
+      classNumber
+      sessionId
       title
       totalRatingCount
       gradeAverage
-      imageUrl
+      imageCluster
+      seatScore
     }
   }
 `;

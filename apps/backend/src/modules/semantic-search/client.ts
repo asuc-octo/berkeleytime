@@ -105,7 +105,7 @@ export async function recommendBecauseViewed(
   courseNumber: string,
   year: number,
   semester: string,
-  limit: number = 14
+  limit: number
 ): Promise<RecommendResult[]> {
   const data = await postRecommend("/because-viewed", {
     subject,
@@ -121,7 +121,7 @@ export async function recommendTopPicks(
   history: Array<{ subject: string; courseNumber: string }>,
   year: number,
   semester: string,
-  limit: number = 14
+  limit: number
 ): Promise<RecommendResult[]> {
   const data = await postRecommend("/top-picks", {
     history: history.map((h) => ({
