@@ -48,7 +48,7 @@ export const scheduleTypeDef = gql`
     hidden: Boolean
   }
 
-  type Schedule @cacheControl(maxAge: 1) {
+  type Schedule @cacheControl(maxAge: 0, scope: PRIVATE) {
     _id: ID!
     name: String!
     createdBy: String!

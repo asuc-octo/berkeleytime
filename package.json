@@ -4,6 +4,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "generate": "turbo run generate",
+    "generate:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs",
+    "check:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs --check",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "start": "turbo run start",

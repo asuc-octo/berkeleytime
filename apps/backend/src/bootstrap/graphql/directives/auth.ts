@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MapperKind, getDirective, mapSchema } from "@graphql-tools/utils";
-import { GraphQLSchema, defaultFieldResolver } from "graphql";
+import { GraphQLError, GraphQLSchema, defaultFieldResolver } from "graphql";
 
 const DIRECTIVE_NAME = "auth";
 
@@ -44,7 +44,9 @@ export default function authDirectiveTransformer(schema: GraphQLSchema) {
           info: any
         ) {
           if (!contextValue.user.isAuthenticated) {
-            throw new Error("Not authenticated");
+            throw new GraphQLError("Not authenticated", {
+              extensions: { code: "UNAUTHENTICATED" },
+            });
           }
 
           return resolve.call(this, _parent, args, contextValue, info);

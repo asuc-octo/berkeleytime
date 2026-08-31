@@ -3,5 +3,6 @@ export interface RequestContext {
     _id?: string;
     email?: string;
     isAuthenticated?: boolean;
+    logout?: (callback: (error?: unknown) => void) => void;
   };
 }

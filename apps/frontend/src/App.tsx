@@ -8,6 +8,7 @@ import {
   redirect,
 } from "react-router-dom";
 
+import { persistedOperationFetch } from "@repo/shared";
 import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
@@ -375,6 +376,7 @@ const client = new ApolloClient({
   link: new HttpLink({
     uri: "/api/graphql",
     credentials: "include",
+    fetch: persistedOperationFetch,
   }),
   cache: new InMemoryCache({
     typePolicies: {

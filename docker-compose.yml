@@ -22,7 +22,7 @@ services:
         - CMD
         - node
         - -e
-        - require("http").get("http://localhost:5001/api/graphql",()=>process.exit(0)).on("error",()=>process.exit(1))
+        - require("http").get("http://localhost:5001/healthz",r=>process.exit(r.statusCode===200?0:1)).on("error",()=>process.exit(1))
       interval: 5s
       timeout: 5s
       start_period: 20s
@@ -291,4 +291,3 @@ volumes:
     driver: local
   mongodb-configdb:
     driver: local
-

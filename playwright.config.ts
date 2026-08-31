@@ -9,11 +9,14 @@ import { defineConfig, devices } from "@playwright/test";
  * Set via: TEST_ENV=production npx playwright test
  */
 const TEST_ENV = process.env.TEST_ENV || "local";
+const TEST_BASE_URL = process.env.TEST_BASE_URL;
 
 /**
  * Determine the base URL based on test environment
  */
 const getBaseURL = () => {
+  if (TEST_BASE_URL) return TEST_BASE_URL;
+
   switch (TEST_ENV) {
     case "production":
       // Test the live production site
@@ -41,11 +44,14 @@ const getWebServer = () => {
   return {
     // Start docker-compose to build and run the app
     command: "docker compose up --build",
-    url: "http://localhost:3000",
+    url: getBaseURL(),
     timeout: 300 * 1000, // 5 minutes for docker to build and start
     // In 'local' mode: reuse server if developer already has docker-compose running
     // In 'ci' mode: always start fresh (process.env.CI will be true)
-    reuseExistingServer: TEST_ENV === "local" && !process.env.CI,
+    reuseExistingServer:
+      TEST_ENV === "local" &&
+      process.env.REUSE_EXISTING_TEST_SERVER === "true" &&
+      !process.env.CI,
   };
 };
 
