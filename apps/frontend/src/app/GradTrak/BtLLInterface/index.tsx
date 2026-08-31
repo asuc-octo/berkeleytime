@@ -240,10 +240,10 @@ const renderRequirementDetails = (
       return (
         <div
           style={{
-            marginTop: "0.25rem",
+            marginTop: "var(--space-1)",
             display: "flex",
             flexDirection: "column",
-            gap: "0.25rem",
+            gap: "var(--space-1)",
           }}
         >
           {subRequirements.map((subReq, index) => {
@@ -416,7 +416,9 @@ function RequirementItem({
   return (
     <div
       key={itemKey}
-      className={styles.item}
+      className={classNames(styles.item, {
+        [styles.expanded]: isExpanded && hasDetails,
+      })}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
