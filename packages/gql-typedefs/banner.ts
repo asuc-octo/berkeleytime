@@ -14,7 +14,6 @@ export const bannerTypeDef = gql`
     clickCount: Int!
     dismissCount: Int!
     viewCount: Int!
-    clickEventLogging: Boolean!
     visible: Boolean!
     currentVersion: Int!
     createdAt: String!
@@ -30,7 +29,6 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean
     reappearing: Boolean
-    clickEventLogging: Boolean
     visible: Boolean
   }
 
@@ -42,15 +40,6 @@ export const bannerTypeDef = gql`
     changedFields: [String!]!
     timestamp: String!
     snapshot: BannerSnapshot!
-  }
-
-  """
-  Click statistics for a specific banner version.
-  """
-  type BannerVersionClickStats {
-    version: Int!
-    clickCount: Int!
-    uniqueVisitors: Int!
   }
 
   type Query {
@@ -68,15 +57,6 @@ export const bannerTypeDef = gql`
     Get the version history for a banner. Staff only.
     """
     bannerVersionHistory(bannerId: ID!): [BannerVersionEntry!]! @auth
-
-    """
-    Get click statistics grouped by banner version. Staff only.
-    """
-    bannerClickStatsByVersion(
-      bannerId: ID!
-      startDate: String
-      endDate: String
-    ): [BannerVersionClickStats!]! @auth
   }
 
   """
@@ -88,7 +68,6 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean!
     reappearing: Boolean!
-    clickEventLogging: Boolean
     visible: Boolean
   }
 
@@ -101,7 +80,6 @@ export const bannerTypeDef = gql`
     linkText: String
     persistent: Boolean
     reappearing: Boolean
-    clickEventLogging: Boolean
     visible: Boolean
   }
 

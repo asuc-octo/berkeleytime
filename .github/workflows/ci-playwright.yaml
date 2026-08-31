@@ -1,0 +1,57 @@
+name: "CI: GraphQL Boundary Tests"
+
+concurrency:
+  group: ci-playwright-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - ".github/workflows/ci-playwright.yaml"
+      - "apps/backend/**"
+      - "apps/frontend/**"
+      - "apps/ag-frontend/**"
+      - "apps/staff-frontend/**"
+      - "apps/semantic-search/**"
+      - "packages/**"
+      - "tests/**"
+      - "infra/app/**"
+      - "docker-compose.yml"
+      - "nginx.conf"
+      - "playwright.config.ts"
+
+jobs:
+  boundary:
+    if: github.event.pull_request.draft == false
+    name: Sanity and API Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Prepare test environment
+        run: cp .env.template .env
+
+      - name: Run persisted-operation boundary tests
+        env:
+          TEST_ENV: ci
+        run: npx playwright test --project=sanity --project=api
+
+      - name: Stop test services
+        if: always()
+        run: docker compose down --volumes

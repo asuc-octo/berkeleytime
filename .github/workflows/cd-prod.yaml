@@ -1,13 +1,13 @@
 name: "CD: Deploy to Production"
-run-name: "Deployed `${{ github.sha }}`${{ inputs.deploy_staff && ' with staff dashboard' || '' }}"
+run-name: "Deployed `${{ github.sha }}` with AG and staff frontends"
 
 concurrency: production
 
 on:
   workflow_dispatch:
     inputs:
-      deploy_staff:
-        description: "Deploy staff dashboard"
+      deploy_observability:
+        description: "Deploy observability stack"
         required: true
         type: boolean
         default: false
@@ -42,5 +42,7 @@ jobs:
       values: |
         host: berkeleytime.com
       host: berkeleytime.com
-      deploy_staff: ${{ inputs.deploy_staff }}
+      deploy_staff: true
+      deploy_ag: true
+      deploy_observability: ${{ inputs.deploy_observability }}
     secrets: inherit

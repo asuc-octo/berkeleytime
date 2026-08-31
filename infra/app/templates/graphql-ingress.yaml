@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-graphql-ingress
+  labels:
+    {{- include "bt-app.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100k"
+    nginx.ingress.kubernetes.io/hsts: "true"
+    nginx.ingress.kubernetes.io/hsts-max-age: "0"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.host }}
+      secretName: bt-cert
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+          - path: /api/graphql
+            pathType: Exact
+            backend:
+              service:
+                name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}
+          - path: /api/graphql/
+            pathType: Exact
+            backend:
+              service:
+                name: {{ include "bt-app.backendName" . }}-svc
+                port:
+                  number: {{ .Values.port }}

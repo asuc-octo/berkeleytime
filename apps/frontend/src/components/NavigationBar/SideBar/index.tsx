@@ -42,7 +42,10 @@ export default function SideBar({ children }: SideBarProps) {
               Dicover
             </Link> */}
               <Link className={styles.item} to="/explore">
-                Explore
+                <span className={styles.itemLabel}>
+                  Explore
+                  <span className={styles.newBadge}>NEW</span>
+                </span>
               </Link>
               <Link className={styles.item} to="/catalog">
                 Catalog

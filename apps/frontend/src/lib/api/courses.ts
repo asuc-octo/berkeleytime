@@ -133,6 +133,14 @@ export const GET_COURSE_OVERVIEW_BY_ID = gql`
   }
 `;
 
+export const GET_COURSE_NUMBER_BY_ID = gql`
+  query GetCourseNumberById($courseId: CourseIdentifier!) {
+    courseById(courseId: $courseId) {
+      number
+    }
+  }
+`;
+
 export const GET_COURSE_GRADE_DIST = gql`
   query GetCourseGradeDist($subject: String!, $number: CourseNumber!) {
     course(subject: $subject, number: $number) {
@@ -151,12 +159,18 @@ export const GET_COURSE_GRADE_DIST = gql`
 `;
 
 export const GET_COURSE_WITH_INSTRUCTOR = gql`
-  query GetCourseWithInstructor($subject: String!, $number: CourseNumber!) {
+  query GetCourseWithInstructor(
+    $subject: String!
+    $number: CourseNumber!
+    $includeFormerNames: Boolean = false
+  ) {
     course(subject: $subject, number: $number) {
-      classes {
+      classes(includeFormerNames: $includeFormerNames) {
         year
         semester
         number
+        subject
+        courseNumber
         sessionId
         anyPrintInScheduleOfClasses
         term {
@@ -217,6 +231,7 @@ export const GET_COURSE_NAMES = gql`
       courseId
       subject
       departmentNicknames
+      formerNames
       number
       title
     }

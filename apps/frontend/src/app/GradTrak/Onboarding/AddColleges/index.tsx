@@ -52,7 +52,6 @@ export default function AddColleges({ onNext }: AddCollegesProps) {
         case "Journalism":
           return Colleges.Journ;
         case "Law":
-        case "School of Law":
           return Colleges.Law;
         case "Natural Resources":
           return Colleges.Natres;

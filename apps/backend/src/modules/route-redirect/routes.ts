@@ -3,7 +3,7 @@ import type { RedisClientType } from "redis";
 
 import { RouteRedirectModel } from "@repo/common/models";
 
-import { trackIntensiveClick } from "../click-tracking/controller";
+import { bufferTrackingEvents } from "../tracking/controller";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Server-side redirect handler for snappy redirects
@@ -25,15 +25,17 @@ export default (app: Application, redis?: RedisClientType) => {
         return res.redirect("/");
       }
 
-      // Track click event if enabled and redis is available
-      if (redirect.clickEventLogging && redis) {
-        trackIntensiveClick(
-          redis,
-          req,
-          redirect._id.toString(),
-          "redirect"
-        ).catch((error) => {
-          console.error("Error tracking redirect click event:", error);
+      if (redis) {
+        bufferTrackingEvents(redis, req, [
+          {
+            eventType: "click",
+            targetType: "redirect",
+            targetId: redirect._id.toString(),
+            metadata: { fromPath, toPath: redirect.toPath },
+            timestamp: new Date().toISOString(),
+          },
+        ]).catch((error) => {
+          console.error("Error buffering redirect tracking event:", error);
         });
       }
 

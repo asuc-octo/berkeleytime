@@ -9,7 +9,6 @@ export const routeRedirectTypeDef = gql`
     fromPath: String!
     toPath: String!
     clickCount: Int!
-    clickEventLogging: Boolean!
     createdAt: String!
     updatedAt: String!
   }
@@ -27,7 +26,6 @@ export const routeRedirectTypeDef = gql`
   input CreateRouteRedirectInput {
     fromPath: String!
     toPath: String!
-    clickEventLogging: Boolean
   }
 
   """
@@ -36,7 +34,6 @@ export const routeRedirectTypeDef = gql`
   input UpdateRouteRedirectInput {
     fromPath: String
     toPath: String
-    clickEventLogging: Boolean
   }
 
   type Mutation {

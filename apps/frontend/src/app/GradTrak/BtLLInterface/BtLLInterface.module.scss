@@ -81,6 +81,14 @@
       position: relative;
       transition: all 0.2s ease;
 
+      // An expanded item's nested details would otherwise sit flush against the
+      // next sibling row. Radix's space scale (--space-*, from
+      // @radix-ui/themes/layout.css via ThemeProvider) is the app's spacing
+      // standard; --space-2 = 8px.
+      &.expanded {
+        padding-bottom: var(--space-2);
+      }
+
       .element {
         display: flex;
         justify-content: space-between;
@@ -294,5 +302,54 @@
         opacity: 0.7;
       }
     }
+  }
+}
+
+// Checkmark legend above accordions
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: transparent;
+
+  .legendItem {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7em;
+    color: var(--paragraph-color);
+    white-space: nowrap;
+  }
+
+  .legendHint {
+    font-style: italic;
+    opacity: 0.7;
+    margin-left: auto;
+  }
+
+  .legendCheck {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  .legendEmpty {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    border: 1.5px dashed var(--border-color);
+    border-radius: 2px;
+  }
+
+  // Reuse existing check color classes
+  .auto {
+    color: var(--green-600);
+  }
+
+  .manual {
+    color: var(--heading-color);
   }
 }

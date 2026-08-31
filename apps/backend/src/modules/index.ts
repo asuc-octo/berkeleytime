@@ -4,7 +4,6 @@ import Analytics from "./analytics";
 import Banner from "./banner";
 import Catalog from "./catalog";
 import Class from "./class";
-import ClickTracking from "./click-tracking";
 import Collection from "./collection";
 import Common from "./common";
 import Course from "./course";
@@ -12,6 +11,7 @@ import CuratedClasses from "./curated-classes";
 import Enrollment from "./enrollment";
 import Explore from "./explore";
 import GradeDistribution from "./grade-distribution";
+import NavItem from "./nav-item";
 import Plan from "./plan";
 import Pod from "./pod";
 import Rating from "./rating";
@@ -20,12 +20,12 @@ import Schedule from "./schedule";
 import Staff from "./staff";
 import TargetedMessage from "./targeted-message";
 import Term from "./term";
+import Tracking from "./tracking";
 import User from "./user";
 
 const modules = [
   Analytics,
   Banner,
-  ClickTracking,
   User,
   GradeDistribution,
   Catalog,
@@ -42,8 +42,10 @@ const modules = [
   Plan,
   Rating,
   RouteRedirect,
+  NavItem,
   Pod,
   TargetedMessage,
+  Tracking,
 ];
 
 export const resolvers = merge(modules.map((module) => module.resolver));

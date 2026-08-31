@@ -46,7 +46,7 @@ export const getTerm = async (
 };
 
 /** Same chronological ordering as the main catalog default (year desc, then semester within year). */
-const CATALOG_SEMESTER_ORDER: Record<string, number> = {
+export const CATALOG_SEMESTER_ORDER: Record<string, number> = {
   Spring: 0,
   Summer: 1,
   Fall: 2,

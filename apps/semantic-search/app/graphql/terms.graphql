@@ -1,0 +1,6 @@
+query SemanticSearchTerms {
+  terms {
+    year
+    semester
+  }
+}

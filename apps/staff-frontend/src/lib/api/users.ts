@@ -1,5 +1,7 @@
 import { gql } from "@apollo/client";
 
+import { BASE } from "@/helper";
+
 export interface IUser {
   _id: string;
   name: string;
@@ -27,12 +29,12 @@ export const signIn = (redirectURI?: string) => {
     redirectURI ??
     window.location.origin + window.location.pathname + window.location.search;
 
-  window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
+  window.location.href = `${BASE}/api/login?redirect_uri=${encodeURIComponent(redirectURI)}`;
 };
 
 export const signOut = async (redirectURI?: string) => {
   redirectURI =
     redirectURI ?? window.location.pathname + window.location.search;
 
-  window.location.href = `${window.location.origin}/api/logout?redirect_uri=${redirectURI}`;
+  window.location.href = `${BASE}/api/logout?redirect_uri=${encodeURIComponent(redirectURI)}`;
 };

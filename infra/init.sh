@@ -120,3 +120,10 @@ helm install bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag --namespace
 
 helm install bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff --namespace=bt \
     --version=1.0.0
+
+# =============
+# OBSERVABILITY
+# =============
+
+helm install bt-observability oci://registry-1.docker.io/octoberkeleytime/bt-observability --namespace=bt \
+    --version=1.0.0

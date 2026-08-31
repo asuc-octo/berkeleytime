@@ -30,6 +30,26 @@ const CACHE_PREFIX = "user-session:";
 const ANONYMOUS_SESSION_TTL = 1000 * 60 * 60 * 12;
 const AUTHENTICATED_SESSION_TTL = 1000 * 60 * 60 * 24 * 365;
 
+function safeRedirect(value: unknown): string | null {
+  if (typeof value !== "string" || value.length === 0) return null;
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+
+  try {
+    const url = new URL(value);
+    const isBerkeleytime =
+      url.protocol === "https:" &&
+      (url.hostname === "berkeleytime.com" ||
+        url.hostname.endsWith(".berkeleytime.com"));
+    const isLocalDevelopment =
+      config.isDev &&
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      (url.hostname === "localhost" || url.hostname === "127.0.0.1");
+    return isBerkeleytime || isLocalDevelopment ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export default async (app: Application, redis: RedisClientType) => {
   // init
   app.use(
@@ -37,7 +57,7 @@ export default async (app: Application, redis: RedisClientType) => {
       secret: config.SESSION_SECRET,
       name: "bt.sid",
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
         secure: !config.isDev,
         httpOnly: true,
@@ -61,8 +81,7 @@ export default async (app: Application, redis: RedisClientType) => {
 
     const { redirect_uri: redirectURI } = req.query;
 
-    const parsedRedirectURI =
-      typeof redirectURI === "string" ? redirectURI : null;
+    const parsedRedirectURI = safeRedirect(redirectURI);
 
     if (authenticated) {
       res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
@@ -125,8 +144,7 @@ export default async (app: Application, redis: RedisClientType) => {
               Buffer.from(state as string, "base64").toString()
             );
 
-            parsedRedirectURI =
-              typeof redirectURI === "string" ? redirectURI : undefined;
+            parsedRedirectURI = safeRedirect(redirectURI) ?? undefined;
           } catch {
             // Do nothing
           }
@@ -146,10 +164,7 @@ export default async (app: Application, redis: RedisClientType) => {
 
       const { redirect_uri: redirectURI } = req.query;
 
-      const parsedRedirectURI =
-        typeof redirectURI === "string" && redirectURI.startsWith("/")
-          ? redirectURI
-          : null;
+      const parsedRedirectURI = safeRedirect(redirectURI);
 
       res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
     });
@@ -160,10 +175,17 @@ export default async (app: Application, redis: RedisClientType) => {
     done(null, user);
   });
   passport.deserializeUser(async (user: { _id: string } | undefined, done) => {
-    if (user?._id) {
-      await UserModel.updateOne({ _id: user._id }, { lastSeenAt: new Date() });
+    try {
+      if (user?._id) {
+        await UserModel.updateOne(
+          { _id: user._id },
+          { lastSeenAt: new Date() }
+        );
+      }
+      done(null, user);
+    } catch (error) {
+      done(error as Error);
     }
-    done(null, user);
   });
   passport.use(
     new GoogleStrategy.Strategy(
@@ -209,8 +231,7 @@ export default async (app: Application, redis: RedisClientType) => {
     app.get(DEV_LOGIN_ROUTE, async (req, res) => {
       const { userId, redirect_uri: redirectURI } = req.query;
 
-      const parsedRedirectURI =
-        typeof redirectURI === "string" ? redirectURI : "/";
+      const parsedRedirectURI = safeRedirect(redirectURI) ?? "/";
 
       const redirectWithDevAuthError = (reason: string) => {
         const separator = parsedRedirectURI.includes("?") ? "&" : "?";

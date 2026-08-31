@@ -16,7 +16,10 @@ import {
   recommendBecauseViewed,
   recommendTopPicks,
 } from "../semantic-search/client";
-import { getLatestCatalogTerm } from "../term/controller";
+import {
+  CATALOG_SEMESTER_ORDER,
+  getLatestCatalogTerm,
+} from "../term/controller";
 import { clusterForSubject } from "./imageClusterConfig";
 import {
   type CanonicalClass,
@@ -698,8 +701,21 @@ export async function getExploreCuratedHandpickedCourses(
       }>)
     : [];
 
+  // Current-term pins prioritized, then the most recent past terms fill the rest.
+  const termRank = (year: number, semester: string) =>
+    year * 10 + (CATALOG_SEMESTER_ORDER[semester] ?? -1);
+  const currentRank = termRank(catalogTerm.year, catalogTerm.semester);
+  const orderedRows = [...curatedRows].sort((a, b) => {
+    const rankA = termRank(a.year, a.semester);
+    const rankB = termRank(b.year, b.semester);
+    if (rankA === rankB) return 0;
+    if (rankA === currentRank) return -1;
+    if (rankB === currentRank) return 1;
+    return rankB - rankA;
+  });
+
   const courseIds: string[] = [];
-  for (const row of curatedRows) {
+  for (const row of orderedRows) {
     const courseId = courseIdByPair.get(`${row.subject}::${row.courseNumber}`);
     if (courseId) courseIds.push(courseId);
   }

@@ -1,0 +1,169 @@
+@use "@/mixins" as *;
+
+.popover {
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0;
+  z-index: var(--z-popover);
+  width: 320px;
+  animation: expandOut 150ms ease-out;
+  transform-origin: top right;
+  overflow: hidden;
+  box-shadow:
+    0 0 1px 0 rgba(0, 0, 0, 0.12),
+    0 4px 16px 0 rgba(0, 0, 0, 0.08);
+
+  @include dark-mode {
+    box-shadow:
+      0 0 1px 0 rgba(0, 0, 0, 0.3),
+      0 4px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+
+.scheduleList {
+  display: flex;
+  flex-direction: column;
+}
+
+.scheduleRows {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scheduleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.scheduleName {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--heading-color);
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  word-wrap: break-word;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scheduleCount {
+  color: var(--secondary-color);
+  font-weight: var(--font-normal);
+}
+
+.addButton {
+  flex-shrink: 0;
+}
+
+.addButton.added,
+.addButton.added[data-variant="outline"] {
+  color: var(--green-500);
+  border-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  cursor: default;
+}
+
+.loadingState,
+.emptyState {
+  padding: 16px;
+  text-align: center;
+  font-size: var(--text-14);
+  color: var(--secondary-color);
+}
+
+.createScheduleBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-color);
+  text-align: left;
+  font-size: var(--text-14);
+  font-weight: var(--font-medium);
+  color: var(--blue-500);
+  cursor: pointer;
+  outline: none;
+  transition: background-color 150ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--button-hover-color);
+  }
+}
+
+.createScheduleForm {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: 1px solid var(--border-color);
+  gap: 12px;
+}
+
+.createScheduleHeader {
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
+  color: var(--heading-color);
+}
+
+.createScheduleInputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.createScheduleLabel {
+  font-size: var(--text-12);
+  font-weight: var(--font-medium);
+  color: var(--secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.createScheduleActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.createScheduleSubmit,
+.createScheduleSubmit[data-variant="outline"] {
+  flex-shrink: 0;
+  background-color: var(--blue-500);
+  border-color: var(--blue-500);
+  color: white;
+
+  &:hover:not([data-disabled]) {
+    background-color: var(--blue-600);
+    border-color: var(--blue-600);
+    color: white;
+  }
+}
+
+@keyframes expandOut {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

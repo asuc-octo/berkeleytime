@@ -7,11 +7,13 @@ export const initialize = (
     title: string;
     subject: string;
     departmentNicknames?: string | null;
+    formerNames?: string[] | null;
     number: string;
   }[]
 ) => {
   const list = courses.map((course) => {
-    const { title, subject, departmentNicknames, number } = course;
+    const { title, subject, departmentNicknames, formerNames, number } =
+      course;
 
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
@@ -31,30 +33,38 @@ export const initialize = (
       ...new Set([...sisNicknames, ...hardcodedNicknames]),
     ];
 
-    const alternateNames = abbreviations.reduce(
-      (acc, abbreviation) => {
-        const abbrevs = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
+    const alternateNames = [
+      ...abbreviations.reduce(
+        (acc, abbreviation) => {
+          const abbrevs = [
+            `${abbreviation}${number}`,
+            `${abbreviation} ${number}`,
+          ];
 
-        if (containsPrefix) {
-          abbrevs.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
+          if (containsPrefix) {
+            abbrevs.push(
+              `${abbreviation}${alternateNumber}`,
+              `${abbreviation} ${alternateNumber}`
+            );
+          }
 
-        return [...acc, ...abbrevs];
-      },
-      containsPrefix
-        ? [
-            `${subject}${number}`,
-            `${subject} ${alternateNumber}`,
-            `${subject}${alternateNumber}`,
-          ]
-        : [`${subject}${number}`]
-    );
+          return [...acc, ...abbrevs];
+        },
+        containsPrefix
+          ? [
+              `${subject}${number}`,
+              `${subject} ${alternateNumber}`,
+              `${subject}${alternateNumber}`,
+            ]
+          : [`${subject}${number}`]
+      ),
+      ...(formerNames ?? [])
+        .filter(Boolean)
+        .flatMap((formerName) => [
+          formerName,
+          formerName.replace(/\s+/g, ""),
+        ]),
+    ];
 
     return {
       title,

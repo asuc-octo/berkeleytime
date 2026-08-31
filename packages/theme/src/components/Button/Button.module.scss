@@ -20,6 +20,11 @@
     background-color 100ms ease-in-out,
     color 100ms ease-in-out;
 
+  &:focus-visible {
+    outline: 2px solid var(--blue-500);
+    outline-offset: 2px;
+  }
+
   &[data-disabled] {
     pointer-events: none;
     opacity: 0.5;

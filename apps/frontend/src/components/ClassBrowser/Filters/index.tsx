@@ -26,6 +26,7 @@ import {
 import { useFilterContext } from "../context/FilterContext";
 import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Filters.module.scss";
+import ScheduleConflictFilter from "./ScheduleConflictFilter";
 
 type RequirementSelection =
   | { type: "breadth"; value: string }
@@ -64,6 +65,7 @@ export default function Filters() {
     semester,
     terms,
     filterOptions,
+    updateScheduleConflictFilter,
   } = useFilterContext();
 
   const navigate = useNavigate();
@@ -216,6 +218,7 @@ export default function Filters() {
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
     updateEnrollmentFilter(null);
+    updateScheduleConflictFilter(null);
   };
 
   return (
@@ -368,6 +371,7 @@ export default function Filters() {
             }))}
           />
         </div>
+        <ScheduleConflictFilter />
         <div className={styles.formControl}>
           <p className={styles.label}>Grading Option</p>
           <Select<GradingFilter>

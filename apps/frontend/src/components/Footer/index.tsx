@@ -102,6 +102,9 @@ export default function Footer() {
           </div>
           <div className={styles.column}>
             <p className={styles.label}>Offerings</p>
+            <Link to="/explore" className={styles.link}>
+              Explore
+            </Link>
             <Link to="/catalog" className={styles.link}>
               Courses
             </Link>

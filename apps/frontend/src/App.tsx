@@ -8,17 +8,20 @@ import {
   redirect,
 } from "react-router-dom";
 
+import { persistedOperationFetch } from "@repo/shared";
 import { ThemeProvider } from "@repo/theme";
 
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
+import { TrackingProvider } from "@/providers/TrackingProvider";
 import UserProvider from "@/providers/UserProvider";
 
 const Landing = lazy(() => import("@/app/Landing"));
 const Profile = {
   Root: lazy(() => import("@/app/Profile")),
   Account: lazy(() => import("@/app/Profile/Account")),
+  Notifications: lazy(() => import("@/app/Profile/Notifications")),
   Support: lazy(() => import("@/app/Profile/Support")),
   Ratings: lazy(() => import("@/app/Profile/Ratings")),
   Bookmarks: lazy(() => import("@/app/Profile/Bookmarks")),
@@ -39,6 +42,7 @@ const LegacyGradeDistributions = lazy(
   () => import("@/app/_legacy/GradeDistributions")
 );
 const About = lazy(() => import("@/app/About"));
+const Apply = lazy(() => import("@/app/Apply"));
 // const Discover = lazy(() => import("@/app/Discover"));
 const CuratedClasses = lazy(() => import("@/app/CuratedClasses"));
 const Privacy = lazy(() => import("@/app/Legal/Privacy"));
@@ -171,6 +175,14 @@ const router = createBrowserRouter([
             ),
           },
           {
+            path: "apply",
+            element: (
+              <SuspenseBoundary key="apply">
+                <Apply />
+              </SuspenseBoundary>
+            ),
+          },
+          {
             path: "legal/privacy",
             element: (
               <SuspenseBoundary key="privacy">
@@ -230,6 +242,14 @@ const router = createBrowserRouter([
                   </SuspenseBoundary>
                 ),
                 path: "bookmarks",
+              },
+              {
+                element: (
+                  <SuspenseBoundary key="notifications">
+                    <Profile.Notifications />
+                  </SuspenseBoundary>
+                ),
+                path: "notifications",
               },
             ],
           },
@@ -365,6 +385,7 @@ const client = new ApolloClient({
   link: new HttpLink({
     uri: "/api/graphql",
     credentials: "include",
+    fetch: persistedOperationFetch,
   }),
   cache: new InMemoryCache({
     typePolicies: {
@@ -398,6 +419,15 @@ const client = new ApolloClient({
           },
         },
       },
+      User: {
+        fields: {
+          monitoredClasses: {
+            merge(_, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
       Schedule: {
         fields: {
           events: {
@@ -419,11 +449,13 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <UserProvider>
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </UserProvider>
+      <TrackingProvider>
+        <UserProvider>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </UserProvider>
+      </TrackingProvider>
     </ApolloProvider>
   );
 }

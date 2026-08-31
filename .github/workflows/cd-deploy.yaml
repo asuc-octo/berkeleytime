@@ -27,6 +27,14 @@ on:
         description: "Deploy staff dashboard (prod only)"
         type: boolean
         default: false
+      deploy_ag:
+        description: "Deploy AG dashboard (prod only)"
+        type: boolean
+        default: false
+      deploy_observability:
+        description: "Deploy observability stack (prod only)"
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -48,7 +56,7 @@ jobs:
             set -e  # Exit immediately if a command fails
 
             # Check if helm chart exists
-            helm status ${{ inputs.name }} &>/dev/null && status=true || status=false
+            helm status ${{ inputs.name }} --namespace=bt &>/dev/null && status=true || status=false
 
             # Upgrade helm chart, or install if not exists
             helm upgrade ${{ inputs.name }} oci://registry-1.docker.io/octoberkeleytime/bt-app \
@@ -57,11 +65,52 @@ jobs:
               --namespace=bt \
               --values <(echo "${{ inputs.values }}")
 
-            # Restart deployment if helm chart existed
+            # Roll the backend first and require it to become healthy before
+            # switching any persisted-operation clients.
             if [ $status = true ]; then
-              kubectl rollout restart deployment ${{ inputs.name }}-backend
-              kubectl rollout restart deployment ${{ inputs.name }}-frontend
-              kubectl rollout restart deployment ${{ inputs.name }}-semantic-search 2>/dev/null || true
+              kubectl -n bt rollout restart deployment ${{ inputs.name }}-backend
+            fi
+
+            if ! kubectl -n bt rollout status --timeout=300s deployment ${{ inputs.name }}-backend; then
+              echo "=== Backend deployment failed, collecting debug info ==="
+              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} -o wide
+              echo "=== Pod descriptions ==="
+              kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }} | tail -200
+              echo "=== Pod logs ==="
+              kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }} --tail=100 --all-containers=true 2>/dev/null || true
+              exit 1
+            fi
+
+            if [ $status = true ]; then
+              kubectl -n bt rollout restart deployment ${{ inputs.name }}-frontend
+              kubectl -n bt rollout restart deployment ${{ inputs.name }}-semantic-search 2>/dev/null || true
+            fi
+            kubectl -n bt rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
+
+            # Deploy observability stack if requested
+            if [ "${{ inputs.deploy_observability }}" = "true" ]; then
+              helm upgrade bt-observability oci://registry-1.docker.io/octoberkeleytime/bt-observability \
+                --install \
+                --version=${{ inputs.version }} \
+                --namespace=bt
+            fi
+
+            # Deploy AG only after the backend gateway is healthy.
+            if [ "${{ inputs.deploy_ag }}" = "true" ]; then
+              echo "Deploying AG dashboard..."
+
+              helm status bt-ag --namespace=bt &>/dev/null && ag_status=true || ag_status=false
+
+              helm upgrade bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag \
+                --install \
+                --version=${{ inputs.version }} \
+                --namespace=bt
+
+              if [ $ag_status = true ]; then
+                kubectl -n bt rollout restart deployment bt-ag-frontend
+              fi
+
+              kubectl -n bt rollout status --timeout=300s deployment bt-ag-frontend
             fi
 
             # Deploy staff dashboard if requested
@@ -69,7 +118,7 @@ jobs:
               echo "Deploying staff dashboard..."
 
               # Check if staff helm chart exists
-              helm status bt-staff &>/dev/null && staff_status=true || staff_status=false
+              helm status bt-staff --namespace=bt &>/dev/null && staff_status=true || staff_status=false
 
               # Upgrade staff helm chart, or install if not exists
               helm upgrade bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
@@ -79,34 +128,21 @@ jobs:
 
               # Restart deployment if helm chart existed
               if [ $staff_status = true ]; then
-                kubectl rollout restart deployment bt-staff-frontend
+                kubectl -n bt rollout restart deployment bt-staff-frontend
               fi
 
               # Check container status
-              kubectl rollout status --timeout=300s deployment bt-staff-frontend
+              kubectl -n bt rollout status --timeout=300s deployment bt-staff-frontend
             fi
 
-            # Check container status with debugging on failure
-            if ! kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-backend; then
-              echo "=== Backend deployment failed, collecting debug info ==="
-              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} -o wide
-              echo "=== Pod descriptions ==="
-              kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }} | tail -200
-              echo "=== Pod logs ==="
-              kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }} --tail=100 --all-containers=true 2>/dev/null || true
-              exit 1
-            fi
-            kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
-
-            # Semantic-search check (non-blocking, may take a while due to model loading)
+            # Semantic search must become ready; /health returns 503 after a
+            # terminal index-build failure, so a broken internal consumer can
+            # no longer be reported as a successful deployment.
             echo "=== Checking semantic-search status ==="
             kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} | grep semantic || true
 
-            if kubectl rollout status --timeout=300s deployment ${{ inputs.name }}-semantic-search 2>/dev/null; then
-              echo "Semantic-search deployed successfully"
-            else
-              echo "Semantic-search still starting or failed"
-            fi
+            kubectl -n bt rollout status --timeout=600s deployment ${{ inputs.name }}-semantic-search
+            echo "Semantic-search deployed successfully"
 
             echo "=== Semantic-search logs ==="
             kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
@@ -119,4 +155,7 @@ jobs:
           echo "# :white_check_mark: Deployment available at [${{ inputs.host }}](https://${{ inputs.host }})." >> $GITHUB_STEP_SUMMARY
           if [ "${{ inputs.deploy_staff }}" = "true" ]; then
             echo "# :white_check_mark: Staff dashboard available at [staff.berkeleytime.com](https://staff.berkeleytime.com)." >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ "${{ inputs.deploy_ag }}" = "true" ]; then
+            echo "# :white_check_mark: AG dashboard available at [ag.berkeleytime.com](https://ag.berkeleytime.com)." >> $GITHUB_STEP_SUMMARY
           fi

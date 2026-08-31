@@ -3,10 +3,12 @@ import { useEffect } from "react";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 import DevAuthBanner from "@/components/DevAuthBanner";
+import RouteTracker from "@/components/RouteTracker";
 import {
   useAllRouteRedirects,
   useIncrementRouteRedirectClick,
 } from "@/hooks/api/route-redirect";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 
 // Module-level tracking to prevent duplicate increments
 let lastIncrementedPath: string | null = null;
@@ -20,6 +22,7 @@ export default function RootWrapper() {
   const location = useLocation();
   const { data: redirects, loading } = useAllRouteRedirects();
   const { incrementClick } = useIncrementRouteRedirectClick();
+  const { trackClick, flushBeacon } = useTracking();
 
   // Check for redirects immediately on route change
   useEffect(() => {
@@ -44,12 +47,22 @@ export default function RootWrapper() {
       lastIncrementedPath = currentPath;
       lastIncrementTime = now;
       incrementClick(matchingRedirect.id);
+      trackClick("redirect", matchingRedirect.id, { fromPath: currentPath });
+      flushBeacon();
       window.location.href = matchingRedirect.toPath;
     }
-  }, [location.pathname, redirects, loading, incrementClick]);
+  }, [
+    location.pathname,
+    redirects,
+    loading,
+    incrementClick,
+    trackClick,
+    flushBeacon,
+  ]);
 
   return (
     <>
+      <RouteTracker />
       {import.meta.env.DEV && <DevAuthBanner />}
       <ScrollRestoration />
       <Outlet />

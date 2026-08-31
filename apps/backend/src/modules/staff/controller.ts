@@ -73,7 +73,8 @@ export const getRoleMember = async (memberId: string) => {
   return member;
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (context: StaffRequestContext) => {
+  await requireStaffMember(context);
   const users = await UserModel.find()
     .select("_id name email")
     .sort({ name: 1 })
@@ -82,7 +83,11 @@ export const getAllUsers = async () => {
   return users;
 };
 
-export const getStaffMemberByUserId = async (userId: string) => {
+export const getStaffMemberByUserId = async (
+  context: StaffRequestContext,
+  userId: string
+) => {
+  await requireStaffMember(context);
   const member = await StaffMemberModel.findOne({ userId }).lean();
   return member;
 };
@@ -92,8 +97,16 @@ export const getAllStaffMembers = async () => {
   return members;
 };
 
-export const getMemberEmail = async (userId?: string) => {
-  if (!userId) return null;
+export const getMemberEmail = async (
+  context: StaffRequestContext,
+  userId?: string
+) => {
+  if (!userId || !context.user?._id) return null;
+  const requesterIsStaff = await StaffMemberModel.exists({
+    userId: context.user._id,
+  });
+  // Staff profiles are public, but their account email addresses are not.
+  if (!requesterIsStaff) return null;
   const user = await UserModel.findById(userId).select("email").lean();
   return user?.email ?? null;
 };

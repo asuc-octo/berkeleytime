@@ -4,6 +4,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "generate": "turbo run generate",
+    "generate:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs",
+    "check:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs --check",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "start": "turbo run start",
@@ -24,6 +26,7 @@
     "@playwright/test": "^1.58.2",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/node": "^25.2.1",
+    "baseline-browser-mapping": "^2.10.42",
     "patch-package": "8.0.1",
     "prettier": "3.6.2",
     "turbo": "2.5.8"
@@ -35,6 +38,8 @@
   },
   "name": "berkeleytime",
   "dependencies": {
+    "mimic-fn": "^2.1.0",
+    "opentelemetry": "^0.1.0",
     "react-markdown": "^10.1.0"
   }
 }

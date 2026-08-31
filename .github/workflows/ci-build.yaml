@@ -15,6 +15,9 @@ on:
       - ".github/workflows/ci-build.yaml"
       - "apps/backend/**"
       - "apps/frontend/**"
+      - "apps/ag-frontend/**"
+      - "apps/staff-frontend/**"
+      - "apps/semantic-search/**"
       - "apps/datapuller/**"
       - "packages/**"
 
@@ -25,7 +28,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: [backend, frontend, datapuller] # only essential to reduce actions minutes usage
+        image:
+          [
+            backend,
+            frontend,
+            ag-frontend,
+            staff-frontend,
+            semantic-search,
+            datapuller,
+          ]
 
     steps:
       - name: Checkout Repository
@@ -37,8 +48,8 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./apps/${{ matrix.image }}/Dockerfile
+          context: "https://github.com/${{ github.repository }}.git#${{ github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
+          file: ${{ matrix.image == 'semantic-search' && './Dockerfile' || format('./apps/{0}/Dockerfile', matrix.image) }}
           target: ${{ matrix.image }}-prod
           platforms: linux/amd64
           push: false

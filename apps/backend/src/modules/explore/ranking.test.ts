@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 
 import {
   type ExploreCourseSnapshot,
@@ -48,48 +49,47 @@ function ids(snapshots: ExploreCourseSnapshot[]): string[] {
 
 describe("capLimit", () => {
   it("defaults to 20 when the client sends nothing", () => {
-    expect(capLimit(null)).toBe(20);
-    expect(capLimit(undefined)).toBe(20);
-    expect(capLimit(NaN)).toBe(20);
+    assert.strictEqual(capLimit(null), 20);
+    assert.strictEqual(capLimit(undefined), 20);
+    assert.strictEqual(capLimit(NaN), 20);
   });
 
   it("clamps to at least 1", () => {
-    expect(capLimit(0)).toBe(1);
-    expect(capLimit(-5)).toBe(1);
+    assert.strictEqual(capLimit(0), 1);
+    assert.strictEqual(capLimit(-5), 1);
   });
 
   it("clamps to the rail cap", () => {
-    expect(capLimit(999)).toBe(48);
-    expect(capLimit(48)).toBe(48);
+    assert.strictEqual(capLimit(999), 48);
+    assert.strictEqual(capLimit(48), 48);
   });
 
   it("floors fractional limits", () => {
-    expect(capLimit(20.7)).toBe(20);
+    assert.strictEqual(capLimit(20.7), 20);
   });
 });
 
 describe("recommendPoolSize", () => {
   it("over-fetches by the pool factor", () => {
-    expect(recommendPoolSize(10)).toBe(30);
+    assert.strictEqual(recommendPoolSize(10), 30);
   });
 
   it("stops at the pool cap", () => {
-    expect(recommendPoolSize(20)).toBe(48);
-    expect(recommendPoolSize(48)).toBe(48);
+    assert.strictEqual(recommendPoolSize(20), 48);
+    assert.strictEqual(recommendPoolSize(48), 48);
   });
 });
 
 describe("uniqueCourseIds", () => {
   it("keeps the first occurrence of a cross-listed course", () => {
-    expect(uniqueCourseIds(["157712", "125364", "157712", "999"])).toEqual([
-      "157712",
-      "125364",
-      "999",
-    ]);
+    assert.deepStrictEqual(
+      uniqueCourseIds(["157712", "125364", "157712", "999"]),
+      ["157712", "125364", "999"]
+    );
   });
 
   it("returns an empty list unchanged", () => {
-    expect(uniqueCourseIds([])).toEqual([]);
+    assert.deepStrictEqual(uniqueCourseIds([]), []);
   });
 });
 
@@ -101,14 +101,15 @@ describe("scoreRange", () => {
       { subject: "COMPSCI", courseNumber: "70", score: 0.86 },
     ];
 
-    expect(scoreRange(results)).toBeCloseTo(0.06, 10);
+    assert.ok(Math.abs(scoreRange(results) - 0.06) < 10 ** -10 / 2);
   });
 
   it("returns 0 for pools too small to have a span", () => {
-    expect(scoreRange([])).toBe(0);
-    expect(
-      scoreRange([{ subject: "COMPSCI", courseNumber: "61A", score: 0.92 }])
-    ).toBe(0);
+    assert.strictEqual(scoreRange([]), 0);
+    assert.strictEqual(
+      scoreRange([{ subject: "COMPSCI", courseNumber: "61A", score: 0.92 }]),
+      0
+    );
   });
 });
 
@@ -119,21 +120,30 @@ describe("perturbRecommendResults", () => {
   ];
 
   it("returns the input when there is nothing to jitter", () => {
-    expect(perturbRecommendResults(results, 0, 0.4)).toBe(results);
-    expect(perturbRecommendResults(results, 0.5, 0)).toBe(results);
-    expect(perturbRecommendResults([results[0]!], 0.5, 0.4)).toHaveLength(1);
+    assert.strictEqual(perturbRecommendResults(results, 0, 0.4), results);
+    assert.strictEqual(perturbRecommendResults(results, 0.5, 0), results);
+    assert.strictEqual(
+      perturbRecommendResults([results[0]!], 0.5, 0.4).length,
+      1
+    );
   });
 
   it("leaves scores untouched at the midpoint of the noise", () => {
     const out = perturbRecommendResults(results, 0.5, 0.4, () => 0.5);
 
-    expect(out.map((r) => r.score)).toEqual([0.9, 0.8]);
+    assert.deepStrictEqual(
+      out.map((r) => r.score),
+      [0.9, 0.8]
+    );
   });
 
   it("can reorder the pool", () => {
     const out = perturbRecommendResults(results, 0.5, 0.4, seededRng([0, 1]));
 
-    expect(out.map((r) => r.courseNumber)).toEqual(["61B", "61A"]);
+    assert.deepStrictEqual(
+      out.map((r) => r.courseNumber),
+      ["61B", "61A"]
+    );
   });
 
   it("bounds the noise by range times fraction", () => {
@@ -148,9 +158,7 @@ describe("perturbRecommendResults", () => {
         const original = results.find(
           (o) => o.courseNumber === r.courseNumber
         )!;
-        expect(Math.abs(r.score - original.score)).toBeLessThanOrEqual(
-          temperature + 1e-9
-        );
+        assert.ok(Math.abs(r.score - original.score) <= temperature + 1e-9);
       }
     }
   });
@@ -158,26 +166,29 @@ describe("perturbRecommendResults", () => {
   it("does not mutate the input", () => {
     perturbRecommendResults(results, 0.5, 0.4, seededRng([0, 1]));
 
-    expect(results.map((r) => r.score)).toEqual([0.9, 0.8]);
+    assert.deepStrictEqual(
+      results.map((r) => r.score),
+      [0.9, 0.8]
+    );
   });
 });
 
 describe("inferUserCareer", () => {
   it("defaults to UGRD when nothing is known", () => {
-    expect(inferUserCareer([])).toBe("UGRD");
-    expect(inferUserCareer([null, null])).toBe("UGRD");
+    assert.strictEqual(inferUserCareer([]), "UGRD");
+    assert.strictEqual(inferUserCareer([null, null]), "UGRD");
   });
 
   it("takes the majority career", () => {
-    expect(inferUserCareer(["GRAD", "GRAD", "UGRD"])).toBe("GRAD");
+    assert.strictEqual(inferUserCareer(["GRAD", "GRAD", "UGRD"]), "GRAD");
   });
 
   it("ignores nulls when counting", () => {
-    expect(inferUserCareer([null, "GRAD", null])).toBe("GRAD");
+    assert.strictEqual(inferUserCareer([null, "GRAD", null]), "GRAD");
   });
 
   it("keeps the first career on a tie", () => {
-    expect(inferUserCareer(["GRAD", "UGRD"])).toBe("GRAD");
+    assert.strictEqual(inferUserCareer(["GRAD", "UGRD"]), "GRAD");
   });
 });
 
@@ -194,11 +205,12 @@ describe("withoutAdministrative", () => {
       "Field Studies",
     ];
 
-    expect(
+    assert.deepStrictEqual(
       withoutAdministrative(
         titles.map((title, i) => snapshot(`${i}`, { title }))
-      )
-    ).toEqual([]);
+      ),
+      []
+    );
   });
 
   it("keeps real courses whose title starts with a matched word", () => {
@@ -210,7 +222,7 @@ describe("withoutAdministrative", () => {
       snapshot("3", { title: "Special Relativity" }),
     ]);
 
-    expect(ids(kept)).toEqual(["1", "2", "3"]);
+    assert.deepStrictEqual(ids(kept), ["1", "2", "3"]);
   });
 });
 
@@ -219,13 +231,14 @@ describe("shuffle", () => {
     const items = ["a", "b", "c"];
     shuffle(items, seededRng([0.99, 0.01]));
 
-    expect(items).toEqual(["a", "b", "c"]);
+    assert.deepStrictEqual(items, ["a", "b", "c"]);
   });
 
   it("returns a permutation of the input", () => {
     const items = ["a", "b", "c", "d"];
 
-    expect([...shuffle(items, seededRng([0.3, 0.7, 0.1]))].sort()).toEqual(
+    assert.deepStrictEqual(
+      [...shuffle(items, seededRng([0.3, 0.7, 0.1]))].sort(),
       items
     );
   });
@@ -234,7 +247,8 @@ describe("shuffle", () => {
     const items = ["a", "b", "c", "d"];
     const draws = [0.3, 0.7, 0.1];
 
-    expect(shuffle(items, seededRng(draws))).toEqual(
+    assert.deepStrictEqual(
+      shuffle(items, seededRng(draws)),
       shuffle(items, seededRng(draws))
     );
   });
@@ -265,13 +279,13 @@ describe("rankByAdjustedScore", () => {
       c: 0.9,
     });
 
-    expect(ids(out)).toEqual(["b", "c", "a"]);
+    assert.deepStrictEqual(ids(out), ["b", "c", "a"]);
   });
 
   it("treats a missing score as 0", () => {
     const out = ranked([snapshot("a"), snapshot("b")], { b: 0.5 });
 
-    expect(ids(out)).toEqual(["b", "a"]);
+    assert.deepStrictEqual(ids(out), ["b", "a"]);
   });
 
   it("docks a course whose classes are all full", () => {
@@ -283,7 +297,7 @@ describe("rankByAdjustedScore", () => {
       { full: 0.92, open: 0.9 }
     );
 
-    expect(ids(out)).toEqual(["open", "full"]);
+    assert.deepStrictEqual(ids(out), ["open", "full"]);
   });
 
   it("keeps a full course ahead when its lead exceeds the dock", () => {
@@ -296,7 +310,7 @@ describe("rankByAdjustedScore", () => {
       { full: 0.9 + lead, open: 0.9 }
     );
 
-    expect(ids(out)).toEqual(["full", "open"]);
+    assert.deepStrictEqual(ids(out), ["full", "open"]);
   });
 
   it("does not dock a course whose capacity is unpublished", () => {
@@ -308,7 +322,7 @@ describe("rankByAdjustedScore", () => {
       { unknown: 0.95, open: 0.9 }
     );
 
-    expect(ids(out)).toEqual(["unknown", "open"]);
+    assert.deepStrictEqual(ids(out), ["unknown", "open"]);
   });
 
   it("docks a career mismatch symmetrically", () => {
@@ -329,8 +343,8 @@ describe("rankByAdjustedScore", () => {
       "GRAD"
     );
 
-    expect(ids(forUndergrad)).toEqual(["ugrd", "grad"]);
-    expect(ids(forGrad)).toEqual(["grad", "ugrd"]);
+    assert.deepStrictEqual(ids(forUndergrad), ["ugrd", "grad"]);
+    assert.deepStrictEqual(ids(forGrad), ["grad", "ugrd"]);
   });
 
   it("never docks a course with no known career", () => {
@@ -343,7 +357,7 @@ describe("rankByAdjustedScore", () => {
       "GRAD"
     );
 
-    expect(ids(out)).toEqual(["unknown", "match"]);
+    assert.deepStrictEqual(ids(out), ["unknown", "match"]);
   });
 
   it("docks a course already shown in an earlier rail", () => {
@@ -354,7 +368,7 @@ describe("rankByAdjustedScore", () => {
       new Set(["shown"])
     );
 
-    expect(ids(out)).toEqual(["fresh", "shown"]);
+    assert.deepStrictEqual(ids(out), ["fresh", "shown"]);
   });
 
   it("compounds penalties", () => {
@@ -370,7 +384,7 @@ describe("rankByAdjustedScore", () => {
       { both: 0.9, fullOnly: 0.9, clean: 0.9 }
     );
 
-    expect(ids(out)).toEqual(["clean", "fullOnly", "both"]);
+    assert.deepStrictEqual(ids(out), ["clean", "fullOnly", "both"]);
   });
 
   it("keeps the relative order of equally penalized courses", () => {
@@ -386,7 +400,7 @@ describe("rankByAdjustedScore", () => {
       { a: 0.8, b: 0.95, c: 0.9 }
     );
 
-    expect(ids(penalized)).toEqual(ids(unpenalized));
+    assert.deepStrictEqual(ids(penalized), ids(unpenalized));
   });
 
   it("docks by the configured fraction of the range", () => {
@@ -398,16 +412,19 @@ describe("rankByAdjustedScore", () => {
       { full: 0.9 + gap, open: 0.9 }
     );
 
-    expect(clears(RECOMMEND_FULL_SEAT_PENALTY_FRACTION)).toBe(true);
-    expect(clears(RECOMMEND_CAREER_MISMATCH_PENALTY_FRACTION)).toBe(true);
-    expect(clears(RECOMMEND_CROSS_RAIL_PENALTY_FRACTION)).toBe(true);
-    expect(ids(seat)).toEqual(["open", "full"]);
+    assert.strictEqual(clears(RECOMMEND_FULL_SEAT_PENALTY_FRACTION), true);
+    assert.strictEqual(
+      clears(RECOMMEND_CAREER_MISMATCH_PENALTY_FRACTION),
+      true
+    );
+    assert.strictEqual(clears(RECOMMEND_CROSS_RAIL_PENALTY_FRACTION), true);
+    assert.deepStrictEqual(ids(seat), ["open", "full"]);
   });
 
   it("does not mutate the input", () => {
     const snapshots = [snapshot("a"), snapshot("b")];
     ranked(snapshots, { a: 0.1, b: 0.9 });
 
-    expect(ids(snapshots)).toEqual(["a", "b"]);
+    assert.deepStrictEqual(ids(snapshots), ["a", "b"]);
   });
 });

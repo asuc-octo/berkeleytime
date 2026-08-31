@@ -1,0 +1,12 @@
+query SemanticSearchCatalog($year: Int!, $semester: Semester!) {
+  catalog(year: $year, semester: $semester) {
+    courseNumber
+    subject
+    number
+    course {
+      title
+      description
+      academicOrganizationName
+    }
+  }
+}

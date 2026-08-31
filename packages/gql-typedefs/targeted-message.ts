@@ -15,7 +15,6 @@ export const targetedMessageTypeDef = gql`
     reappearing: Boolean!
     clickCount: Int!
     dismissCount: Int!
-    clickEventLogging: Boolean!
     currentVersion: Int!
     targetCourses: [TargetedMessageCourse!]!
     createdAt: String!
@@ -44,7 +43,6 @@ export const targetedMessageTypeDef = gql`
     linkText: String
     persistent: Boolean!
     reappearing: Boolean!
-    clickEventLogging: Boolean
     targetCourses: [TargetedMessageCourseInput!]!
   }
 
@@ -55,7 +53,6 @@ export const targetedMessageTypeDef = gql`
     linkText: String
     persistent: Boolean
     reappearing: Boolean
-    clickEventLogging: Boolean
     visible: Boolean
     targetCourses: [TargetedMessageCourseInput!]
   }
