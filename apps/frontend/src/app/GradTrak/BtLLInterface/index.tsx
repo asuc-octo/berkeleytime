@@ -238,7 +238,14 @@ const renderRequirementDetails = (
       req.description?.data === "Domain Emphasis"
     ) {
       return (
-        <div style={{ marginTop: "0.25rem" }}>
+        <div
+          style={{
+            marginTop: "0.25rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.25rem",
+          }}
+        >
           {subRequirements.map((subReq, index) => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const flatIndex = (subReq as any).flatIndex;
