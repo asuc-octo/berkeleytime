@@ -48,7 +48,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.image == 'semantic-search' && './apps/semantic-search' || '.' }}
+          context: "https://github.com/${{ github.repository }}.git#${{ github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
           file: ${{ matrix.image == 'semantic-search' && './Dockerfile' || format('./apps/{0}/Dockerfile', matrix.image) }}
           target: ${{ matrix.image }}-prod
           platforms: linux/amd64
