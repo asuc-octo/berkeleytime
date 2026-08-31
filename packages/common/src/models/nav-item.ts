@@ -32,11 +32,6 @@ export const navItemSchema = new Schema(
       required: true,
       default: 0,
     },
-    clickEventLogging: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
     deletedAt: {
       type: Date,
       default: null,

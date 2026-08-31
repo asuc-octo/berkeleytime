@@ -75,7 +75,6 @@ interface TargetedMessageFormData {
   linkText: string;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging: boolean;
   targetCourses: FormCourse[];
 }
 
@@ -86,7 +85,6 @@ const initialTargetedMessageFormData: TargetedMessageFormData = {
   linkText: "",
   persistent: false,
   reappearing: false,
-  clickEventLogging: false,
   targetCourses: [],
 };
 
@@ -96,13 +94,11 @@ interface BannerFormData {
   linkText: string;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging: boolean;
 }
 
 interface RedirectFormData {
   fromPath: string;
   toPath: string;
-  clickEventLogging: boolean;
 }
 
 const initialBannerFormData: BannerFormData = {
@@ -111,7 +107,6 @@ const initialBannerFormData: BannerFormData = {
   linkText: "",
   persistent: false,
   reappearing: false,
-  clickEventLogging: false,
 };
 
 interface NavItemFormData {
@@ -119,7 +114,6 @@ interface NavItemFormData {
   url: string;
   badgeText: string;
   order: string;
-  clickEventLogging: boolean;
 }
 
 const initialNavItemFormData: NavItemFormData = {
@@ -127,13 +121,11 @@ const initialNavItemFormData: NavItemFormData = {
   url: "",
   badgeText: "",
   order: "0",
-  clickEventLogging: false,
 };
 
 const initialRedirectFormData: RedirectFormData = {
   fromPath: "",
   toPath: "",
-  clickEventLogging: false,
 };
 
 export default function Outreach() {
@@ -210,7 +202,6 @@ export default function Outreach() {
       linkText: banner.linkText || "",
       persistent: banner.persistent,
       reappearing: banner.reappearing,
-      clickEventLogging: banner.clickEventLogging,
     });
     setIsBannerModalOpen(true);
   };
@@ -232,7 +223,6 @@ export default function Outreach() {
           linkText: bannerFormData.linkText.trim() || null,
           persistent: bannerFormData.persistent,
           reappearing: bannerFormData.reappearing,
-          clickEventLogging: bannerFormData.clickEventLogging,
         };
         await updateBanner(editingBanner.id, input);
       } else {
@@ -242,7 +232,6 @@ export default function Outreach() {
           linkText: bannerFormData.linkText.trim() || null,
           persistent: bannerFormData.persistent,
           reappearing: bannerFormData.reappearing,
-          clickEventLogging: bannerFormData.clickEventLogging,
         };
         await createBanner(input);
       }
@@ -302,7 +291,6 @@ export default function Outreach() {
       url: navItem.url,
       badgeText: navItem.badgeText || "",
       order: String(navItem.order),
-      clickEventLogging: navItem.clickEventLogging,
     });
     setIsNavItemModalOpen(true);
   };
@@ -325,7 +313,6 @@ export default function Outreach() {
           url: navItemFormData.url.trim(),
           badgeText: navItemFormData.badgeText.trim(),
           order: isNaN(parsedOrder) ? 0 : parsedOrder,
-          clickEventLogging: navItemFormData.clickEventLogging,
         };
         await updateNavItem(editingNavItem.id, input);
       } else {
@@ -334,7 +321,6 @@ export default function Outreach() {
           url: navItemFormData.url.trim(),
           badgeText: navItemFormData.badgeText.trim() || null,
           order: isNaN(parsedOrder) ? 0 : parsedOrder,
-          clickEventLogging: navItemFormData.clickEventLogging,
         };
         await createNavItem(input);
       }
@@ -392,7 +378,6 @@ export default function Outreach() {
     setRedirectFormData({
       fromPath: redirect.fromPath,
       toPath: redirect.toPath,
-      clickEventLogging: redirect.clickEventLogging,
     });
     setIsRedirectModalOpen(true);
   };
@@ -412,14 +397,12 @@ export default function Outreach() {
         const input: UpdateRouteRedirectInput = {
           fromPath: redirectFormData.fromPath.trim(),
           toPath: redirectFormData.toPath.trim(),
-          clickEventLogging: redirectFormData.clickEventLogging,
         };
         await updateRouteRedirect(editingRedirect.id, input);
       } else {
         const input: CreateRouteRedirectInput = {
           fromPath: redirectFormData.fromPath.trim(),
           toPath: redirectFormData.toPath.trim(),
-          clickEventLogging: redirectFormData.clickEventLogging,
         };
         await createRouteRedirect(input);
       }
@@ -474,7 +457,6 @@ export default function Outreach() {
       linkText: message.linkText || "",
       persistent: message.persistent,
       reappearing: message.reappearing,
-      clickEventLogging: message.clickEventLogging,
       targetCourses: message.targetCourses.map((c) => ({
         ...c,
       })),
@@ -587,7 +569,6 @@ export default function Outreach() {
           linkText: targetedFormData.linkText.trim() || null,
           persistent: targetedFormData.persistent,
           reappearing: targetedFormData.reappearing,
-          clickEventLogging: targetedFormData.clickEventLogging,
           targetCourses: resolvedCourses,
         };
         await updateTargetedMessage(editingTargeted.id, input);
@@ -599,7 +580,6 @@ export default function Outreach() {
           linkText: targetedFormData.linkText.trim() || null,
           persistent: targetedFormData.persistent,
           reappearing: targetedFormData.reappearing,
-          clickEventLogging: targetedFormData.clickEventLogging,
           targetCourses: resolvedCourses,
         };
         await createTargetedMessage(input);
@@ -710,20 +690,13 @@ export default function Outreach() {
                   className={`${styles.card} ${!banner.visible ? styles.hidden : ""}`}
                 >
                   <div className={styles.cardHeader}>
-                    {banner.persistent ||
-                    banner.reappearing ||
-                    banner.clickEventLogging ? (
+                    {banner.persistent || banner.reappearing ? (
                       <div className={styles.badgeRow}>
                         {banner.persistent && (
                           <span className={styles.badge}>Persistent</span>
                         )}
                         {banner.reappearing && (
                           <span className={styles.badge}>Reappearing</span>
-                        )}
-                        {banner.clickEventLogging && (
-                          <span className={styles.badge}>
-                            Click Event Logging
-                          </span>
                         )}
                       </div>
                     ) : (
@@ -849,18 +822,11 @@ export default function Outreach() {
                   className={`${styles.card} ${!navItem.visible ? styles.hidden : ""}`}
                 >
                   <div className={styles.cardHeader}>
-                    {navItem.badgeText || navItem.clickEventLogging ? (
+                    {navItem.badgeText ? (
                       <div className={styles.badgeRow}>
-                        {navItem.badgeText && (
-                          <span className={styles.badge}>
-                            {navItem.badgeText}
-                          </span>
-                        )}
-                        {navItem.clickEventLogging && (
-                          <span className={styles.badge}>
-                            Click Event Logging
-                          </span>
-                        )}
+                        <span className={styles.badge}>
+                          {navItem.badgeText}
+                        </span>
                       </div>
                     ) : (
                       <div />
@@ -945,11 +911,6 @@ export default function Outreach() {
             <div className={styles.list}>
               {redirects.map((redirect) => (
                 <div key={redirect.id} className={styles.card}>
-                  {redirect.clickEventLogging && (
-                    <div className={styles.badgeRow}>
-                      <span className={styles.badge}>Click Event Logging</span>
-                    </div>
-                  )}
                   <div className={styles.copyRow}>
                     <span className={styles.redirectPath}>
                       /go/{redirect.fromPath.replace(/^\//, "")}
@@ -1033,20 +994,13 @@ export default function Outreach() {
                   className={`${styles.card} ${!message.visible ? styles.hidden : ""}`}
                 >
                   <div className={styles.cardHeader}>
-                    {message.persistent ||
-                    message.reappearing ||
-                    message.clickEventLogging ? (
+                    {message.persistent || message.reappearing ? (
                       <div className={styles.badgeRow}>
                         {message.persistent && (
                           <span className={styles.badge}>Persistent</span>
                         )}
                         {message.reappearing && (
                           <span className={styles.badge}>Reappearing</span>
-                        )}
-                        {message.clickEventLogging && (
-                          <span className={styles.badge}>
-                            Click Event Logging
-                          </span>
                         )}
                       </div>
                     ) : (
@@ -1326,27 +1280,6 @@ export default function Outreach() {
                   tab.
                 </p>
               </div>
-
-              <div className={styles.formField}>
-                <Flex align="center" gap="8px">
-                  <Switch
-                    checked={targetedFormData.clickEventLogging}
-                    onCheckedChange={(checked) =>
-                      setTargetedFormData({
-                        ...targetedFormData,
-                        clickEventLogging: checked === true,
-                      })
-                    }
-                  />
-                  <label className={styles.toggleLabel}>
-                    Click Event Logging
-                  </label>
-                </Flex>
-                <p className={styles.formHint}>
-                  When enabled, individual click events are logged with IP hash,
-                  user agent, referrer, and timestamps.
-                </p>
-              </div>
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>
@@ -1467,27 +1400,6 @@ export default function Outreach() {
                   tab.
                 </p>
               </div>
-
-              <div className={styles.formField}>
-                <Flex align="center" gap="8px">
-                  <Switch
-                    checked={bannerFormData.clickEventLogging}
-                    onCheckedChange={(checked) =>
-                      setBannerFormData({
-                        ...bannerFormData,
-                        clickEventLogging: checked === true,
-                      })
-                    }
-                  />
-                  <label className={styles.toggleLabel}>
-                    Click Event Logging
-                  </label>
-                </Flex>
-                <p className={styles.formHint}>
-                  When enabled, individual click events are logged with IP hash,
-                  user agent, referrer, and timestamps.
-                </p>
-              </div>
             </Flex>
           </Dialog.Body>
           <Dialog.Footer>
@@ -1552,27 +1464,6 @@ export default function Outreach() {
                 />
                 <p className={styles.formHint}>
                   The external URL to redirect to (e.g., https://example.com).
-                </p>
-              </div>
-
-              <div className={styles.formField}>
-                <Flex align="center" gap="8px">
-                  <Switch
-                    checked={redirectFormData.clickEventLogging}
-                    onCheckedChange={(checked) =>
-                      setRedirectFormData({
-                        ...redirectFormData,
-                        clickEventLogging: checked === true,
-                      })
-                    }
-                  />
-                  <label className={styles.toggleLabel}>
-                    Click Event Logging
-                  </label>
-                </Flex>
-                <p className={styles.formHint}>
-                  When enabled, individual click events are logged with IP hash,
-                  user agent, referrer, and timestamps.
                 </p>
               </div>
             </Flex>
@@ -1682,27 +1573,6 @@ export default function Outreach() {
                 <p className={styles.formHint}>
                   Nav items are ordered by this number, after the built-in
                   links.
-                </p>
-              </div>
-
-              <div className={styles.formField}>
-                <Flex align="center" gap="8px">
-                  <Switch
-                    checked={navItemFormData.clickEventLogging}
-                    onCheckedChange={(checked) =>
-                      setNavItemFormData({
-                        ...navItemFormData,
-                        clickEventLogging: checked === true,
-                      })
-                    }
-                  />
-                  <label className={styles.toggleLabel}>
-                    Click Event Logging
-                  </label>
-                </Flex>
-                <p className={styles.formHint}>
-                  When enabled, individual click events are logged with IP hash,
-                  user agent, referrer, and timestamps.
                 </p>
               </div>
             </Flex>

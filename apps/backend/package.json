@@ -8,7 +8,6 @@
     "test": "tsx --test \"src/**/*.test.ts\"",
     "lint": "eslint src/",
     "generate": "node scripts/prepare-typedefs.js && graphql-codegen --config codegen.ts",
-    "migrate:click-events": "tsx src/scripts/migrate-click-events.ts",
     "type-check": "tsc --noEmit --incremental false"
   },
   "devDependencies": {
