@@ -623,9 +623,15 @@ export default function BtLLGradTrakInterface({
         ]);
 
         const config = { debug: false, fetchCourse };
-        const evaluated = init(req.code, commonVars, config) as
-          | RequirementResult[]
-          | null;
+        let evaluated: RequirementResult[] | null;
+        try {
+          evaluated = init(req.code, commonVars, config) as
+            | RequirementResult[]
+            | null;
+        } catch (error) {
+          console.error(`Failed to evaluate requirement ${req.name}:`, error);
+          continue;
+        }
 
         if (Array.isArray(evaluated) && evaluated.length > 0) {
           // Flatten nested requirements onto a continuous index track, starting roots at 0
@@ -680,7 +686,10 @@ export default function BtLLGradTrakInterface({
       setIsLoading(false);
     };
 
-    fetchAndEvaluateRequirements();
+    fetchAndEvaluateRequirements().catch((error) => {
+      console.error("Failed to fetch and evaluate requirements:", error);
+      setIsLoading(false);
+    });
   }, [plan, planTerms, apolloClient, majors, minors, colleges]);
 
   if (!plan || !planTerms || planTerms.length === 0) {
