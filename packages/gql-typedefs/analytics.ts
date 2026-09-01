@@ -14,7 +14,7 @@ export const analyticsTypeDef = gql`
   """
   Daily aggregated activity across features (schedules, ratings, GradTrak, bookmarks)
   """
-  type GeneralActivityDataPoint {
+  type GeneralActivityDataPoint @cacheControl(maxAge: 0) {
     date: String!
     schedulesCreated: Int!
     ratingsSubmitted: Int!
@@ -26,7 +26,7 @@ export const analyticsTypeDef = gql`
   """
   Activity score distribution bucket for analytics
   """
-  type ActivityScoreDistributionPoint {
+  type ActivityScoreDistributionPoint @cacheControl(maxAge: 0) {
     "Score range label, e.g. '0.0–0.1'"
     bucket: String!
     "Lower bound of this bucket (e.g. 0.5 for the 0.5–0.6 bucket)"

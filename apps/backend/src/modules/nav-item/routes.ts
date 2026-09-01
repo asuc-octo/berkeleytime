@@ -3,7 +3,6 @@ import type { RedisClientType } from "redis";
 
 import { NavItemModel } from "@repo/common/models";
 
-import { trackIntensiveClick } from "../click-tracking/controller";
 import { bufferTrackingEvents } from "../tracking/controller";
 
 export default (app: Application, redis?: RedisClientType) => {
@@ -25,16 +24,6 @@ export default (app: Application, redis?: RedisClientType) => {
       }
 
       if (redis) {
-        // Legacy intensive click tracking (opt-in per nav item)
-        if (navItem.clickEventLogging) {
-          trackIntensiveClick(redis, req, navItemId, "nav-item").catch(
-            (error) => {
-              console.error("Error tracking nav item click event:", error);
-            }
-          );
-        }
-
-        // Unified tracking — always emitted
         bufferTrackingEvents(redis, req, [
           {
             eventType: "click",

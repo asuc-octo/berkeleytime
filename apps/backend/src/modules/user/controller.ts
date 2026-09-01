@@ -62,15 +62,22 @@ export const updateUser = async (
   if (!updatedUser) throw new Error("Invalid");
 
   if (monitoredClasses != null && existingUser.email && existingUser.name) {
-    const classKey = (c: { year: number; semester: string; subject: string; courseNumber: string; number: string }) =>
-      `${c.year}:${c.semester}:${c.subject}:${c.courseNumber}:${c.number}`;
+    const classKey = (c: {
+      year: number;
+      semester: string;
+      subject: string;
+      courseNumber: string;
+      number: string;
+    }) => `${c.year}:${c.semester}:${c.subject}:${c.courseNumber}:${c.number}`;
 
     const oldKeys = new Set(
       (existingUser.monitoredClasses ?? []).map((e) => classKey(e.class!))
     );
     const newKeys = new Set(monitoredClasses.map((mc) => classKey(mc.class)));
 
-    const added = monitoredClasses.filter((mc) => !oldKeys.has(classKey(mc.class)));
+    const added = monitoredClasses.filter(
+      (mc) => !oldKeys.has(classKey(mc.class))
+    );
     const removed = (existingUser.monitoredClasses ?? []).filter(
       (e) => !newKeys.has(classKey(e.class!))
     );
@@ -134,6 +141,12 @@ export const deleteAccount = async (context: RequestContext) => {
 
   // Delete the user record
   await UserModel.findByIdAndDelete(userId);
+
+  if (context.user.logout) {
+    await new Promise<void>((resolve, reject) =>
+      context.user!.logout!((error) => (error ? reject(error) : resolve()))
+    );
+  }
 
   return true;
 };

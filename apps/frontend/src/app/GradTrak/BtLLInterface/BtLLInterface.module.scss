@@ -81,6 +81,14 @@
       position: relative;
       transition: all 0.2s ease;
 
+      // An expanded item's nested details would otherwise sit flush against the
+      // next sibling row. Radix's space scale (--space-*, from
+      // @radix-ui/themes/layout.css via ThemeProvider) is the app's spacing
+      // standard; --space-2 = 8px.
+      &.expanded {
+        padding-bottom: var(--space-2);
+      }
+
       .element {
         display: flex;
         justify-content: space-between;

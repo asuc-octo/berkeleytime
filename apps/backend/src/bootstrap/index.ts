@@ -24,7 +24,7 @@ export default async (config: Config) => {
       log.info(
         {
           method: req.method,
-          path: req.originalUrl,
+          path: req.path,
           statusCode: res.statusCode,
           duration,
           userAgent: req.get("user-agent"),

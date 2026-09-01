@@ -4,6 +4,7 @@
   "private": true,
   "main": "index.ts",
   "dependencies": {
-    "@repo/typescript-config": "*"
+    "@repo/typescript-config": "*",
+    "graphql": "^16.11.0"
   }
 }
