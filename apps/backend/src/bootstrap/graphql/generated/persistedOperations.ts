@@ -134,6 +134,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/schedules.ts","apps/frontend/src/lib/api/schedules.ts"],
   },
+  "1c58f253507638b7132f12e1de037b804ee249a66c4bfbbd1d1002bcb0cc3000": {
+    operationName: "GetUserRatings",
+    document: "query GetUserRatings{userRatings{classes{subject courseNumber semester year classNumber professorName metrics{metricName value __typename}reviewTitle reviewContent reviewerGrade lastUpdated __typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/ratings.ts"],
+  },
   "1ca3cf6917e03729d6cddb6fdb92a508daa862d82c0ff3c29c06686bb8339cd8": {
     operationName: "GetCatalogSearch",
     document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
@@ -577,12 +583,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetAggregatedRatings($subject:String!$courseNumber:String!$semester:Semester!$year:Int!$classNumber:String){aggregatedRatings(subject:$subject courseNumber:$courseNumber semester:$semester year:$year classNumber:$classNumber){metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}}",
     variableNames: ["subject","courseNumber","semester","year","classNumber"],
     sources: ["apps/ag-frontend/src/lib/api/ratings.ts","apps/frontend/src/lib/api/ratings.ts"],
-  },
-  "99f5014dca7c4dc5e32a13807b5ef0acd788c84b6c09125ab6cfc59cf275c336": {
-    operationName: "GetUserRatings",
-    document: "query GetUserRatings{userRatings{classes{subject courseNumber semester year classNumber metrics{metricName value __typename}reviewTitle reviewContent reviewerGrade lastUpdated __typename}__typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
   "9d64fb0136d28325822a321e61969fbd9bf8387ec1e5a8df4c9416557c5c085f": {
     operationName: "CreateNewPlan",
