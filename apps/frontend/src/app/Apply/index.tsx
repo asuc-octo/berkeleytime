@@ -15,9 +15,9 @@ import styles from "./Apply.module.scss";
 
 const APPLICATION_FORM_URL = "https://forms.gle/kUtzz74eeV8BiMKw6";
 const COFFEE_CHATS_URL =
-  "https://airtable.com/appLBtO52VOJBy6Mf/shrW4DKqjbvk15uXq";
+  "https://airtable.com/appS2E6oOWx3AeOmx/shrTOrgzZCdPK5Czv";
 const COFFEE_CHATS_EMBED_URL =
-  "https://airtable.com/embed/appLBtO52VOJBy6Mf/shrW4DKqjbvk15uXq";
+  "https://airtable.com/embed/appS2E6oOWx3AeOmx/shrTOrgzZCdPK5Czv";
 
 const ROLES = [
   {
