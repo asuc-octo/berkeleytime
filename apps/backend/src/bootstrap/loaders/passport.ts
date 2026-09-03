@@ -176,13 +176,16 @@ export default async (app: Application, redis: RedisClientType) => {
   });
   passport.deserializeUser(async (user: { _id: string } | undefined, done) => {
     try {
-      if (user?._id) {
-        await UserModel.updateOne(
-          { _id: user._id },
-          { lastSeenAt: new Date() }
-        );
+      if (!user?._id) {
+        done(null, user);
+        return;
       }
-      done(null, user);
+      const fresh = await UserModel.findOneAndUpdate(
+        { _id: user._id },
+        { lastSeenAt: new Date() },
+        { new: true }
+      ).lean();
+      done(null, fresh ?? user);
     } catch (error) {
       done(error as Error);
     }
