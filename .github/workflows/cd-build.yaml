@@ -31,7 +31,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and Push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: "https://github.com/${{ github.repository }}.git#${{ github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
           file: ${{ matrix.image == 'semantic-search' && './Dockerfile' || format('./apps/{0}/Dockerfile', matrix.image) }}
