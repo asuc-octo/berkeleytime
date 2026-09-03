@@ -1,4 +1,16 @@
+import { LNS_REQ_BTLL } from "../reference_gradtrak_reqs";
 import { init } from "./interpreter";
+import type { Course } from "./lib/course";
+import { runBipartiteMatch } from "./lib/course_assignment";
+
+const mkCourse = (number: string): Course => ({
+  subject: { data: "CS", type: "string" },
+  number: { data: number, type: "string" },
+  units: { data: 4, type: "number" },
+  breadthRequirements: { data: [], type: "List<string>" },
+  universityRequirement: { data: "", type: "string" },
+  languageLevel: { data: "", type: "string" },
+});
 
 const TESTS = [
   {
@@ -381,6 +393,100 @@ const TESTS = [
       try {
         if (init(testCode, new Map(), { debug: true }) !== true) return false;
         return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "runBipartiteMatch — augmenting path forces reassignment",
+    test: () => {
+      const a = mkCourse("170");
+      const b = mkCourse("161");
+      const c = mkCourse("189");
+      const result = runBipartiteMatch([[a, b], [a], [c]]);
+      return result.every((r) => r.length === 1);
+    },
+  },
+  {
+    name: "runBipartiteMatch — slot with no eligible courses stays empty",
+    test: () => {
+      const result = runBipartiteMatch([
+        [mkCourse("170")],
+        [],
+        [mkCourse("189")],
+      ]);
+      return (
+        result[0].length === 1 &&
+        result[1].length === 0 &&
+        result[2].length === 1
+      );
+    },
+  },
+  {
+    name: "runBipartiteMatch — a course is never assigned to two categories",
+    test: () => {
+      const shared = mkCourse("170");
+      const result = runBipartiteMatch([[shared], [shared], [shared]]);
+      const assigned = result.flat();
+      return (
+        assigned.length === 1 &&
+        result.filter((r) => r.length === 0).length === 2
+      );
+    },
+  },
+  {
+    name: "seven breadths — a contested course does not cost another category",
+    test: () => {
+      const breadthCourse = (
+        subject: string,
+        number: string,
+        breadths: string[]
+      ) => ({
+        subject: { data: subject, type: "string" },
+        number: { data: number, type: "string" },
+        units: { data: 4, type: "number" },
+        breadthRequirements: { data: breadths, type: "List<string>" },
+        universityRequirement: { data: "", type: "string" },
+        languageLevel: { data: "", type: "string" },
+      });
+      const courses = [
+        breadthCourse("IB", "35AC", [
+          "Arts & Literature",
+          "Biological Sciences",
+        ]),
+        breadthCourse("ENGLISH", "45A", ["Arts & Literature"]),
+      ];
+      const column = {
+        year: { data: 2025, type: "number" },
+        semester: { data: "Fall", type: "string" },
+        name: { data: "Fall 2025", type: "string" },
+        courses: { data: courses, type: "List<Course>" },
+        units: { data: 8, type: "number" },
+      };
+      const columns = [column, column, column];
+      const plan = {
+        units: { data: 8, type: "number" },
+        columns: { data: columns, type: "List<Column>" },
+        allCourses: { data: courses, type: "List<Course>" },
+      };
+      try {
+        const evaluated = init(
+          LNS_REQ_BTLL,
+          new Map([
+            ["this", { data: plan, type: "Plan" }],
+            ["columns", { data: columns, type: "List<Column>" }],
+          ]),
+          { debug: false }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ) as any[];
+        const met = (name: string) =>
+          evaluated.find((r) => r.description?.data === name)?.result?.data;
+        return (
+          met("Arts & Literature") === true &&
+          met("Biological Sciences") === true
+        );
       } catch (error) {
         console.error(error);
         return false;
