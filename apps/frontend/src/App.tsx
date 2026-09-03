@@ -11,6 +11,7 @@ import {
 import { persistedOperationFetch } from "@repo/shared";
 import { ThemeProvider } from "@repo/theme";
 
+import { RECRUITMENT_BANNER_LINKS } from "@/app/Apply/constants";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -174,14 +175,6 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "apply",
-            element: (
-              <SuspenseBoundary key="apply">
-                <Apply />
-              </SuspenseBoundary>
-            ),
-          },
-          {
             path: "legal/privacy",
             element: (
               <SuspenseBoundary key="privacy">
@@ -194,6 +187,24 @@ const router = createBrowserRouter([
             element: (
               <SuspenseBoundary key="terms">
                 <Terms />
+              </SuspenseBoundary>
+            ),
+          },
+        ],
+      },
+      {
+        element: (
+          <Layout
+            bannerExcludedLinks={RECRUITMENT_BANNER_LINKS}
+            bannerFallback={false}
+          />
+        ),
+        children: [
+          {
+            path: "apply",
+            element: (
+              <SuspenseBoundary key="apply">
+                <Apply />
               </SuspenseBoundary>
             ),
           },
