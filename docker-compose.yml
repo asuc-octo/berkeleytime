@@ -40,7 +40,7 @@ services:
     networks:
       - bt
     ports:
-      - "${DEV_PORT_PREFIX:-30}10:8000"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}10:8000"
     restart: always
     volumes:
       - ./apps/semantic-search/app:/app/app
@@ -48,7 +48,7 @@ services:
       - SEMANTIC_SEARCH_YEAR=2026
       - SEMANTIC_SEARCH_SEMESTER=Spring
       - BACKEND_URL=http://backend:5001
-      - REDIS_URI=redis://redis:6379
+      - REDIS_URI=redis://:${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}@redis:6379
   frontend:
     build:
       context: .
@@ -133,7 +133,8 @@ services:
       - mongodb-db:/data/db
       - mongodb-configdb:/data/configdb
   mongodb:
-    image: mongodb/mongodb-atlas-local:8.0
+    image: ${MONGODB_IMAGE:?Set MONGODB_IMAGE in .env}
+    pull_policy: always
     hostname: rs0
     depends_on:
       mongodb-preflight:
@@ -141,9 +142,12 @@ services:
     networks:
       - bt
     ports:
-      - "${DEV_PORT_PREFIX:-30}08:27017"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}08:27017"
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USERNAME:?Set MONGODB_ROOT_USERNAME in .env}
+      MONGODB_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:?Set MONGODB_ROOT_PASSWORD in .env}
     healthcheck:
-      test: '/usr/bin/mongosh --port 27017 --quiet --eval "db.runCommand({ ping: 1 }).ok"'
+      test: '/usr/bin/mongosh --host localhost --port 27017 --username "$$MONGODB_INITDB_ROOT_USERNAME" --password "$$MONGODB_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --quiet --eval "db.runCommand({ ping: 1 }).ok"'
       interval: 5s
       timeout: 10s
       start_period: 15s
@@ -153,12 +157,15 @@ services:
       - mongodb-configdb:/data/configdb
       - ./infra/mongo/migrations:/migrations
   mongodb-init:
-    image: mongodb/mongodb-atlas-local:8.0
+    image: ${MONGODB_IMAGE:?Set MONGODB_IMAGE in .env}
+    pull_policy: always
     depends_on:
       mongodb:
         condition: service_healthy
     networks:
       - bt
+    environment:
+      MONGODB_INIT_URI: mongodb://${MONGODB_ROOT_USERNAME:?Set MONGODB_ROOT_USERNAME in .env}:${MONGODB_ROOT_PASSWORD:?Set MONGODB_ROOT_PASSWORD in .env}@mongodb:27017/bt?authSource=admin&replicaSet=rs0
     restart: "no"
     entrypoint:
       - /bin/sh
@@ -166,7 +173,7 @@ services:
       - -ec
       - |
         attempts=0
-        until mongosh "mongodb://mongodb:27017/bt" /scripts/01-create-search-indexes.js; do
+        until mongosh "$$MONGODB_INIT_URI" /scripts/01-create-search-indexes.js; do
           attempts=$$((attempts + 1))
           if [ "$$attempts" -ge 30 ]; then
             echo "mongodb-init failed after $$attempts attempts."
@@ -187,16 +194,19 @@ services:
     networks:
       - bt
     ports:
-      - "${DEV_PORT_PREFIX:-30}00:8080"
-      - "${DEV_PORT_PREFIX:-30}01:8081"
-      - "${DEV_PORT_PREFIX:-30}02:8082"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}00:8080"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}01:8081"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}02:8082"
     restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
   redis:
     image: redis/redis-stack-server:7.2.0-v14
     ports:
-      - "${DEV_PORT_PREFIX:-30}04:6379"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}04:6379"
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
     networks:
       - bt
     restart: always
@@ -207,6 +217,8 @@ services:
         condition: service_started
     networks:
       - bt
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
     restart: "no"
     entrypoint:
       - /bin/sh
@@ -214,7 +226,7 @@ services:
       - -ec
       - |
         attempts=0
-        until [ "$$(redis-cli -h redis ping)" = "PONG" ]; do
+        until [ "$$(redis-cli --no-auth-warning -h redis -a "$$REDIS_PASSWORD" ping)" = "PONG" ]; do
           attempts=$$((attempts + 1))
           if [ "$$attempts" -ge 30 ]; then
             echo "redis-preflight failed waiting for redis."
@@ -223,7 +235,7 @@ services:
           sleep 1
         done
 
-        redis-cli -h redis FLUSHALL
+        redis-cli --no-auth-warning -h redis -a "$$REDIS_PASSWORD" FLUSHALL
         echo "Flushed redis cache on startup."
   storybook:
     profiles:
@@ -233,7 +245,7 @@ services:
       dockerfile: ./apps/storybook/Dockerfile
       target: storybook-dev
     ports:
-      - "${DEV_PORT_PREFIX:-30}05:6006"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}05:6006"
     networks:
       - bt
     restart: always
@@ -248,7 +260,7 @@ services:
       dockerfile: ./apps/docs/Dockerfile
       target: docs-dev
     ports:
-      - "${DEV_PORT_PREFIX:-30}03:3000"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}03:3000"
     networks:
       - bt
     restart: always
@@ -257,29 +269,32 @@ services:
       
   # if using staff photos in dev, use --profile dev
   minio:
-    image: 'minio/minio:latest'
+    image: ${MINIO_IMAGE:?Set MINIO_IMAGE in .env}
     profiles:
       - dev
     ports:
-      - "${DEV_PORT_PREFIX:-30}06:9000"
-      - "${DEV_PORT_PREFIX:-30}07:9090"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}06:9000"
+      - "${DEV_BIND_ADDRESS:-127.0.0.1}:${DEV_PORT_PREFIX:-30}07:9090"
     environment:
-      MINIO_ROOT_USER: 'root'
-      MINIO_ROOT_PASSWORD: 'password'
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
     networks:
       - bt
     volumes:
       - 'minio:/data/minio'
     command: minio server /data/minio --console-address ":9090"
   createbuckets:
-    image: minio/mc
+    image: ${MINIO_MC_IMAGE:?Set MINIO_MC_IMAGE in .env}
     profiles:
       - dev
     depends_on:
       - minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set myminio http://localhost:9000 root password;
+      /usr/bin/mc alias set myminio http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD";
       /usr/bin/mc mb myminio/images; 
       /usr/bin/mc anonymous set public myminio/images;
       exit 0;

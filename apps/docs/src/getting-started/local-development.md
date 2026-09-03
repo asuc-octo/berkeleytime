@@ -51,8 +51,9 @@ git switch main
 # Continue installation of dependencies.
 pre-commit install
 
-# Create .env from template file
+# Create .env from template file and generate local database credentials
 cp .env.template .env
+node scripts/initialize-local-env.mjs
 
 # Setup local code editor intellisense.
 npm install
@@ -66,6 +67,17 @@ docker compose up -d
 ```
 
 The Berkeleytime application should now be running locally at `http://localhost:3000`! Make sure that each page (catalog, grades, etc.) is working as expected.
+
+### Applying the database-security upgrade to an existing checkout
+
+MongoDB creates its initial authenticated user only when its local data volume is first initialized. If you already have a Berkeleytime MongoDB volume, export any local-only work you need, then recreate the local services and reseed the redacted public backup:
+
+```sh
+docker compose down --volumes
+bash apps/docs/src/getting-started/bootstrap-local.sh
+```
+
+This removes local Docker volumes only; it does not affect production or staging data.
 
 ## Common Commands
 
@@ -111,7 +123,7 @@ docker compose --profile ag --profile staff up -d
 ```
 
 ## Ports
-`docker compose up` will automatically setup certain services on your localhost ports. By default, `DEV_PORT_PREFIX` is set to `30`, which means services will be available on ports starting with `30XX`. You can adjust this by setting the `DEV_PORT_PREFIX` environment variable if you need to run multiple instances of the repository in parallel (e.g., for git worktree setups).
+`docker compose up` publishes local development services only on `127.0.0.1`; they are not reachable from your Wi-Fi or other network interfaces. By default, `DEV_PORT_PREFIX` is set to `30`, which means services will be available on ports starting with `30XX`. You can adjust this by setting the `DEV_PORT_PREFIX` environment variable if you need to run multiple instances of the repository in parallel (e.g., for git worktree setups). Do not change `DEV_BIND_ADDRESS` unless you have separately configured network controls and service authentication.
 
 The following ports are used by default (`DEV_PORT_PREFIX=30`):
 
