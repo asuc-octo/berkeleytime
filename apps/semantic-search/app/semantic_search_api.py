@@ -7,13 +7,15 @@ from typing import List, Optional, Tuple
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
 
-from .engine import DEFAULT_TERM, SemanticSearchEngine
+from .semantic_search_engine import DEFAULT_TERM, SemanticSearchEngine
+from .recommendation_routes import router as recommendation_router
 
 logger = logging.getLogger("semantic-search")
 logging.basicConfig(level=os.getenv("SEMANTIC_SEARCH_LOG_LEVEL", "INFO"))
 
 engine = SemanticSearchEngine()
 app = FastAPI()
+app.include_router(recommendation_router)
 
 
 class RefreshRequest(BaseModel):

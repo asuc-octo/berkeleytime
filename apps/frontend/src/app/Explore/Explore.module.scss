@@ -1,0 +1,156 @@
+.heroTitle {
+  font-size: 1.75rem;
+  font-weight: var(--font-bold);
+  margin: 0;
+  color: var(--heading-color);
+
+  :global(body[data-theme="dark"]) & {
+    color: var(--slate-100);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      color: var(--slate-100);
+    }
+  }
+}
+
+.heroBanner {
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.heroImageContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+  border-radius: 0px;
+  display: block;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroLabel {
+  font-size: var(--text-12);
+  font-weight: var(--font-bold);
+  color: var(--blue-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.heroDescription {
+  color: var(--paragraph-color);
+  margin: 0;
+}
+
+.bookmarksRow {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(0, 2fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.bookmarksCardWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.recentlyViewedColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recentlyViewedTitle {
+  margin: 0 0 0.8rem;
+  font-size: var(--text-18);
+  color: var(--heading-color);
+}
+
+.recentlyViewedGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.recentClassLink {
+  text-decoration: none;
+}
+
+.recentMetaPill {
+  font-size: var(--text-14);
+  color: var(--paragraph-color);
+  line-height: 1;
+}
+
+.cardLink {
+  text-decoration: none;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  flex: 0 0 320px;
+}
+
+.skeletonCard {
+  width: 100%;
+  min-width: 240px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  background: var(--card-background);
+}
+
+.skeletonImage {
+  height: 168px;
+  background: var(--slate-200);
+
+  :global(body[data-theme="dark"]) & {
+    background: var(--slate-700);
+  }
+
+  :global(body:not([data-theme])) & {
+    @media (prefers-color-scheme: dark) {
+      background: var(--slate-700);
+    }
+  }
+}
+
+.skeletonContent {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeletonTitle {
+  width: 58%;
+  --skeleton-height: var(--text-16);
+}
+
+.skeletonSubtitle {
+  width: 78%;
+}
+
+@media (max-width: 1080px) {
+  .bookmarksRow {
+    grid-template-columns: 1fr;
+  }
+
+  .recentlyViewedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .recentlyViewedGrid {
+    grid-template-columns: 1fr;
+  }
+}

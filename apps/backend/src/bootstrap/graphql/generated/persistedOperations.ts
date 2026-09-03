@@ -8,12 +8,6 @@ export interface PersistedOperation {
 }
 
 export const persistedOperations: Readonly<Record<string, PersistedOperation>> = {
-  "0117817462719371e7dbd006b53ed0f5b72ec24fb063fbfc9b2a391d8d63e614": {
-    operationName: "GetCollectionById",
-    document: "query GetCollectionById($id:ID!){myCollectionById(id:$id){name classes{class{subject courseNumber number sessionId title year semester unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll endTime activeReservedMaxCount __typename}__typename}__typename}__typename}error __typename}__typename}}",
-    variableNames: ["id"],
-    sources: ["apps/frontend/src/lib/api/collection.ts"],
-  },
   "012a981a58c0b3a2f28561a040d7db1638de377b874b7d0f153b13293010b303": {
     operationName: "GetAllRouteRedirects",
     document: "query GetAllRouteRedirects{allRouteRedirects{id fromPath toPath clickCount createdAt updatedAt __typename}}",
@@ -80,12 +74,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/schedules.ts"],
   },
-  "141950a047d51952546116886516e63b945e7d3ddc8f89a7317f19501f2f9413": {
-    operationName: "SemanticSearchCatalog",
-    document: "query SemanticSearchCatalog($year:Int!$semester:Semester!){catalog(year:$year semester:$semester){courseNumber subject number course{title description __typename}__typename}}",
-    variableNames: ["year","semester"],
-    sources: ["apps/semantic-search/app/graphql/catalog.graphql"],
-  },
   "163f465b05c1952e7533992c10b142c76ed1ae514cbb306f4314d7e3a5d19b37": {
     operationName: "GetCourse",
     document: "query GetCourse($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number title description academicCareer gradeDistribution{average distribution{letter count __typename}__typename}gradingBasis finalExam requirements requiredCourses{subject number __typename}classes{year semester number primarySection{meetings{instructors{familyName givenName __typename}__typename}__typename}__typename}aggregatedRatings{metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}__typename}}",
@@ -109,6 +97,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation UpdateBanner($bannerId:ID!$input:UpdateBannerInput!){updateBanner(bannerId:$bannerId input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
     variableNames: ["bannerId","input"],
     sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
+  },
+  "196c33cc499d326a9f27a71054fcfed7ee0291540602bc2cd02e832635ab046e": {
+    operationName: "GetExploreTopPicks",
+    document: "query GetExploreTopPicks($history:[ExploreHistoryItem!]!$year:Int!$semester:String!$limit:Int){exploreTopPicks(history:$history year:$year semester:$semester limit:$limit){courseId subject number classNumber sessionId title totalRatingCount gradeAverage imageCluster seatScore __typename}}",
+    variableNames: ["history","year","semester","limit"],
+    sources: ["apps/frontend/src/lib/api/explore.ts"],
   },
   "1b03fb7efd9a585da644b6983438b2ccdc93f10d2073a862ffe7ec8a62e4dae4": {
     operationName: "GetAllBanners",
@@ -464,6 +458,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["memberId","input"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
   },
+  "6e46654f05de959eae7d358062f57e1fe8cd98ad1776be4050a75ae36dd76725": {
+    operationName: "GetExploreCuratedHandpick",
+    document: "query GetExploreCuratedHandpick{exploreCuratedHandpickedCourses{courseId subject number classNumber sessionId title totalRatingCount gradeAverage imageCluster seatScore __typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/explore.ts"],
+  },
   "6f8b1ade2d5d1140ee6b7576837d1fe90069f2d357d07eb776575a34a3c7095e": {
     operationName: "GetCourse",
     document: "query GetCourse($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){subject number title description academicCareer gradeDistribution{average distribution{letter count __typename}__typename}gradingBasis finalExam requirements requiredCourses{subject number __typename}classes{year semester number sessionId primarySection{enrollment{latest{enrolledCount __typename}__typename}meetings{instructors{familyName givenName __typename}__typename}number __typename}gradeDistribution{average __typename}__typename}__typename}}",
@@ -518,6 +518,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["input"],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
+  "7c938d0d2349effae7556315064213ebd7b7f27dda00ef5ccfb5a503df303f2a": {
+    operationName: "SemanticSearchCatalog",
+    document: "query SemanticSearchCatalog($year:Int!$semester:Semester!){catalog(year:$year semester:$semester){courseNumber subject number course{title description academicOrganizationName __typename}__typename}}",
+    variableNames: ["year","semester"],
+    sources: ["apps/semantic-search/app/graphql/catalog.graphql"],
+  },
   "7ca746e48566a69a29077a2bf1d326cd671aaa6d95088a2f8eeb4fbc29172963": {
     operationName: "AllPods",
     document: "query AllPods{allPods{id name semester year __typename}}",
@@ -529,6 +535,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation DeleteRating($subject:String!$courseNumber:String!$semester:Semester!$year:Int!$classNumber:String!$metricName:MetricName!){deleteRating(subject:$subject courseNumber:$courseNumber semester:$semester year:$year classNumber:$classNumber metricName:$metricName)}",
     variableNames: ["subject","courseNumber","semester","year","classNumber","metricName"],
     sources: ["apps/ag-frontend/src/lib/api/ratings.ts"],
+  },
+  "826c013e5ac73117356d0b607b9d8ba74a9e63c135b7302605c48b57d592a9c2": {
+    operationName: "GetExplorePopular",
+    document: "query GetExplorePopular($limit:Int){explorePopularCourses(limit:$limit){courseId subject number classNumber sessionId title totalRatingCount gradeAverage imageCluster seatScore __typename}}",
+    variableNames: ["limit"],
+    sources: ["apps/frontend/src/lib/api/explore.ts"],
   },
   "837afad6f778e2aad887abd231928f5bec3787b5168f5bca9e76d4937b9f4d50": {
     operationName: "GetCuratedClasses",
@@ -584,11 +596,23 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
+  "9a037d4cb9a44d5c78f54f5a805f547d41c4272d08c77c856935d32e1f2c5d22": {
+    operationName: "GetCollectionById",
+    document: "query GetCollectionById($id:ID!){myCollectionById(id:$id){name classes{class{subject courseNumber number sessionId title year semester unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll endTime waitlistedCount activeReservedMaxCount __typename}__typename}__typename}__typename}error __typename}__typename}}",
+    variableNames: ["id"],
+    sources: ["apps/frontend/src/lib/api/collection.ts"],
+  },
   "9d64fb0136d28325822a321e61969fbd9bf8387ec1e5a8df4c9416557c5c085f": {
     operationName: "CreateNewPlan",
     document: "mutation CreateNewPlan($colleges:[Colleges!]!$startYear:Int!$endYear:Int!$majors:[String!]!$minors:[String!]!){createNewPlan(colleges:$colleges startYear:$startYear endYear:$endYear majors:$majors minors:$minors){_id planTerms{_id name year term courses{courseID courseName courseTitle courseUnits pnp transfer labels{name color __typename}__typename}hidden status pinned __typename}majors minors colleges labels{name color __typename}__typename}}",
     variableNames: ["colleges","startYear","endYear","majors","minors"],
     sources: ["apps/frontend/src/lib/api/plans.ts"],
+  },
+  "9ef1763eb15591064d19cc98728ca8768c16ff4e4068a57408e4afb8c1d2b767": {
+    operationName: "GetExploreBecauseYouViewedBatch",
+    document: "query GetExploreBecauseYouViewedBatch($anchors:[ExploreHistoryItem!]!$year:Int!$semester:String!$limit:Int$history:[ExploreHistoryItem!]$maxRows:Int){exploreBecauseYouViewedBatch(anchors:$anchors year:$year semester:$semester limit:$limit history:$history maxRows:$maxRows){subject courseNumber title courses{courseId subject number classNumber sessionId title totalRatingCount gradeAverage imageCluster seatScore __typename}__typename}}",
+    variableNames: ["anchors","year","semester","limit","history","maxRows"],
+    sources: ["apps/frontend/src/lib/api/explore.ts"],
   },
   "a01cc580fe950e7399524bdf5ff733344263736994bbcd8ff64772dff4996166": {
     operationName: "VoteReviewHelpful",
@@ -716,9 +740,9 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id","schedule"],
     sources: ["apps/frontend/src/lib/api/schedules.ts"],
   },
-  "cc68fe9b28ad053114d48e7f4a4ba1e59cf52d3cef156eb6ab9b2409c1a1f86e": {
+  "ccb5a05742fd8e0633cdfdda25b1aa0a0384f9ec46845626875981cbbcf4ce24": {
     operationName: "GetAllCollectionsWithPreview",
-    document: "query GetAllCollectionsWithPreview{myCollections{_id name color pinnedAt isSystem lastAdd classes{addedAt class{subject courseNumber number title unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll activeReservedMaxCount __typename}__typename}__typename}__typename}__typename}__typename}}",
+    document: "query GetAllCollectionsWithPreview{myCollections{_id name color pinnedAt isSystem lastAdd classes{addedAt class{subject courseNumber number title unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll waitlistedCount activeReservedMaxCount __typename}__typename}__typename}__typename}__typename}__typename}}",
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },

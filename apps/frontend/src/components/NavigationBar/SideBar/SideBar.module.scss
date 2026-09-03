@@ -42,6 +42,24 @@
           color: var(--paragraph-color);
         }
       }
+
+      .itemLabel {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .newBadge {
+        flex-shrink: 0;
+        margin-left: 8px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background-color: var(--indigo-500);
+        color: white;
+        font-size: 10px;
+        font-weight: var(--font-bold);
+        letter-spacing: 0.03em;
+        line-height: 1.4;
+      }
     }
   }
 

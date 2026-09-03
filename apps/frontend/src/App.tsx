@@ -31,6 +31,7 @@ const CollectionDetail = lazy(
   () => import("@/app/Profile/Bookmarks/CollectionDetail")
 );
 
+const Explore = lazy(() => import("@/app/Explore"));
 const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const Grades = lazy(() => import("@/app/Grades"));
@@ -279,6 +280,14 @@ const router = createBrowserRouter([
                 },
               },
             ],
+          },
+          {
+            element: (
+              <SuspenseBoundary key="explore">
+                <Explore />
+              </SuspenseBoundary>
+            ),
+            path: "explore",
           },
           {
             element: (

@@ -4,9 +4,21 @@ import { Card, Skeleton } from "@repo/theme";
 import cardStyles from "./ClassCard.module.scss";
 import styles from "./Skeleton.module.scss";
 
-export default function ClassCardSkeleton() {
+interface ClassCardSkeletonProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export default function ClassCardSkeleton({
+  className,
+  style,
+}: ClassCardSkeletonProps) {
   return (
-    <Card.RootColumn className={styles.root} hoverColorChange={false}>
+    <Card.RootColumn
+      className={className ? `${styles.root} ${className}` : styles.root}
+      hoverColorChange={false}
+      style={style}
+    >
       <Card.ColumnHeader>
         <Card.Body>
           <div className={cardStyles.cardContent}>

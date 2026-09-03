@@ -33,6 +33,10 @@
   min-width: 0;
 }
 
+.mutedDescription {
+  color: var(--paragraph-color);
+}
+
 .gradeContainer {
   flex: 0 0 auto;
   display: inline-flex;

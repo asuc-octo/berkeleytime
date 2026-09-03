@@ -4,7 +4,8 @@
   border-radius: 20px;
   padding: 20px;
   width: 420px;
-  height: 230px;
+  min-height: 280px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -89,7 +90,6 @@
 .cardGrade {
   font-size: var(--text-16);
   font-weight: var(--font-semibold);
-  color: var(--emerald-500);
 }
 
 .cardDescription {
@@ -108,10 +108,10 @@
   font-size: var(--text-14);
   color: var(--paragraph-color);
   letter-spacing: -0.1px;
+}
 
-  &.enrolled {
-    color: var(--red-500);
-  }
+.enrolled {
+  font-weight: var(--font-medium);
 }
 
 .reserved {
@@ -195,7 +195,7 @@
   border: 1px solid var(--border-color);
   border-radius: 20px;
   width: 420px;
-  height: 230px;
+  height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;

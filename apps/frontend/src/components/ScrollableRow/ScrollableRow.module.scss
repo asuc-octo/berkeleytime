@@ -1,0 +1,77 @@
+.wrapper {
+  position: relative;
+  overflow: visible;
+}
+
+.scrollContainer {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+
+  > a,
+  > div {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+}
+
+.arrowButton {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--heading-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: var(--button-hover-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+}
+
+.arrowLeft {
+  left: -18px;
+
+  @media (max-width: 768px) {
+    left: -12px;
+  }
+}
+
+.arrowRight {
+  right: -18px;
+
+  @media (max-width: 768px) {
+    right: -12px;
+  }
+}

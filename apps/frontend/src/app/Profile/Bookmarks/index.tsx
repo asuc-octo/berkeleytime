@@ -54,6 +54,9 @@ export default function Bookmarks() {
               null,
             maxEnroll:
               entry.class.primarySection?.enrollment?.latest?.maxEnroll ?? null,
+            waitlistedCount:
+              entry.class.primarySection?.enrollment?.latest?.waitlistedCount ??
+              null,
             unitsMin: entry.class.unitsMin,
             unitsMax: entry.class.unitsMax,
             hasReservedSeats:

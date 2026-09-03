@@ -90,6 +90,7 @@ datapuller:
       schedule: "28 4 * * *"
       args: ["--puller=decals"]
 
+
     grades-l5y:
       schedule: "35 4 1 * *"
       args: ["--puller=grades-last-five-years"]

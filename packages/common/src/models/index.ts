@@ -22,4 +22,5 @@ export * from "./route-redirect";
 export * from "./nav-item";
 export * from "./targeted-message";
 export * from "./catalog-class";
+export * from "./course-embedding";
 export * from "./tracking-event";

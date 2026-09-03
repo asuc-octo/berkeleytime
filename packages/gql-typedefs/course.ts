@@ -45,6 +45,7 @@ export const courseTypeDef = gql`
     primaryInstructionMethod: InstructionMethod!
     toDate: String!
     typicallyOffered: [String!]
+    viewCount: Int
   }
 
   enum CourseGradingBasis {

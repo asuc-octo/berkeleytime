@@ -4,20 +4,9 @@ import { User } from "iconoir-react";
 
 import { Tooltip } from "@repo/theme";
 
+import { getEnrollmentColor } from "@/lib/enrollment";
+
 import styles from "./Capacity.module.scss";
-
-export const getEnrollmentColor = (count?: number, capacity?: number) => {
-  if (typeof count !== "number" || typeof capacity !== "number")
-    return "var(--paragraph-color)";
-
-  const percentage = count / capacity;
-
-  return percentage >= 0.75
-    ? "var(--rose-500)"
-    : percentage > 0.5
-      ? "var(--amber-500)"
-      : "var(--emerald-500)";
-};
 
 interface CapacityProps {
   enrolledCount?: number;

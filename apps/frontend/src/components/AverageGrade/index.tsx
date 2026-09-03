@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { Tooltip } from "@repo/theme";
 
-import { getLetterGradeFromGPA } from "@/lib/grades";
+import { getGradeColor, getLetterGradeFromGPA } from "@/lib/grades";
 
 import styles from "./AverageGrade.module.scss";
 
@@ -18,17 +18,6 @@ interface AverageGradeProps {
   };
   style?: React.CSSProperties;
   tooltip?: string;
-}
-
-function getGradeColor(grade: string): string {
-  if (grade === "N/A") {
-    return "var(--paragraph-color)";
-  }
-
-  const firstLetter = grade[0];
-  if (firstLetter === "A") return "var(--emerald-500)";
-  if (firstLetter === "B") return "var(--amber-500)";
-  return "var(--rose-500)";
 }
 
 export function ColoredGrade({ grade, style }: ColoredGradeProps) {

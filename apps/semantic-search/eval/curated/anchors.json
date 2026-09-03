@@ -1,0 +1,489 @@
+{
+  "term": {
+    "year": 2026,
+    "semester": "Fall"
+  },
+  "relevant_size": 10,
+  "queries": [
+    {
+      "anchor": "COMPSCI_186",
+      "name": "Introduction to Database Systems",
+      "relevant": [
+        "COMPSCI_C187",
+        "INDENG_115",
+        "INDENG_215",
+        "COMPSCI_162",
+        "COMPSCI_262A",
+        "DATA_144",
+        "COMPSCI_C100",
+        "COMPSCI_61C",
+        "COMPSCI_61B",
+        "COMPSCI_168"
+      ]
+    },
+    {
+      "anchor": "COMPSCI_189",
+      "name": "Introduction to Machine Learning",
+      "relevant": [
+        "COMPSCI_C100",
+        "COMPSCI_188",
+        "COMPSCI_C182",
+        "STAT_154",
+        "DATA_C102",
+        "INDENG_142A",
+        "COMPSCI_C281A",
+        "COMPSCI_180",
+        "DATA_144",
+        "STAT_215A"
+      ]
+    },
+    {
+      "anchor": "COMPSCI_161",
+      "name": "Computer Security",
+      "relevant": [
+        "COMPSCI_171",
+        "MATH_116",
+        "COMPSCI_162",
+        "COMPSCI_168",
+        "COMPSCI_262A",
+        "COMPSCI_172",
+        "COMPSCI_170",
+        "COMPSCI_61C",
+        "COMPSCI_252A",
+        "COMPSCI_C249A"
+      ]
+    },
+    {
+      "anchor": "MATH_110",
+      "name": "Abstract Linear Algebra",
+      "relevant": [
+        "MATH_54",
+        "MATH_56",
+        "MATH_113",
+        "MATH_H113",
+        "MATH_250A",
+        "MATH_252",
+        "MATH_221",
+        "MATH_128A",
+        "MATH_115",
+        "MATH_104"
+      ]
+    },
+    {
+      "anchor": "MATH_104",
+      "name": "Introduction to Analysis",
+      "relevant": [
+        "MATH_H104",
+        "MATH_185",
+        "MATH_H185",
+        "MATH_202A",
+        "MATH_206",
+        "MATH_118",
+        "MATH_126",
+        "MATH_204",
+        "MATH_53",
+        "MATH_110"
+      ]
+    },
+    {
+      "anchor": "STAT_134",
+      "name": "Concepts of Probability",
+      "relevant": [
+        "STAT_150",
+        "STAT_C140",
+        "STAT_135",
+        "STAT_201A",
+        "STAT_C205A",
+        "STAT_201B",
+        "COMPSCI_70",
+        "STAT_20",
+        "DATA_C88S",
+        "STAT_151A"
+      ]
+    },
+    {
+      "anchor": "DATA_C100",
+      "name": "Principles and Techniques of Data Science",
+      "relevant": [
+        "DATA_C102",
+        "DATA_144",
+        "DATA_C101",
+        "STAT_C131A",
+        "STAT_135",
+        "STAT_151A",
+        "COMPSCI_189",
+        "STAT_154",
+        "DATA_C88C",
+        "STAT_134"
+      ]
+    },
+    {
+      "anchor": "PHYSICS_137A",
+      "name": "Quantum Mechanics",
+      "relevant": [
+        "PHYSICS_137B",
+        "PHYSICS_221A",
+        "PHYSICS_112",
+        "PHYSICS_110A",
+        "PHYSICS_105",
+        "PHYSICS_141A",
+        "PHYSICS_129",
+        "PHYSICS_C191A",
+        "CHEM_221A",
+        "PHYSICS_5C"
+      ]
+    },
+    {
+      "anchor": "CHEM_3A",
+      "name": "Chemical Structure and Reactivity",
+      "relevant": [
+        "CHEM_3B",
+        "CHEM_3AL",
+        "CHEM_3BL",
+        "CHEM_12A",
+        "CHEM_115",
+        "CHEM_136",
+        "CHEM_135",
+        "CHEM_1A",
+        "CHEM_1AL",
+        "CHEM_261A"
+      ]
+    },
+    {
+      "anchor": "CHEM_120A",
+      "name": "Physical Chemistry",
+      "relevant": [
+        "CHEM_120B",
+        "CHEM_125",
+        "CHEM_220A",
+        "CHEM_221A",
+        "CHEM_C130",
+        "CHEM_C150",
+        "PHYSICS_112",
+        "PHYSICS_137A",
+        "CHEM_250A",
+        "CHEM_105"
+      ]
+    },
+    {
+      "anchor": "MCELLBI_102",
+      "name": "Survey of the Principles of Biochemistry",
+      "relevant": [
+        "MCELLBI_100B",
+        "MCELLBI_110",
+        "MCELLBI_C110L",
+        "MCELLBI_C112",
+        "MCELLBI_104",
+        "MCELLBI_C100A",
+        "MCELLBI_143",
+        "MCELLBI_140",
+        "CHEM_135",
+        "MCELLBI_136"
+      ]
+    },
+    {
+      "anchor": "MCELLBI_136",
+      "name": "Physiology",
+      "relevant": [
+        "MCELLBI_32",
+        "MCELLBI_32L",
+        "MCELLBI_133L",
+        "MCELLBI_236",
+        "INTEGBI_131",
+        "INTEGBI_131L",
+        "INTEGBI_137",
+        "INTEGBI_148",
+        "INTEGBI_123",
+        "MCELLBI_102"
+      ]
+    },
+    {
+      "anchor": "MCELLBI_150",
+      "name": "Molecular Immunology",
+      "relevant": [
+        "MCELLBI_150L",
+        "MCELLBI_50",
+        "MCELLBI_251",
+        "PBHLTH_263",
+        "MCELLBI_C112",
+        "MCELLBI_55",
+        "MCELLBI_132",
+        "MCELLBI_153",
+        "PBHLTH_162A",
+        "MCELLBI_110"
+      ]
+    },
+    {
+      "anchor": "INTEGBI_160",
+      "name": "Evolution",
+      "relevant": [
+        "INTEGBI_C109",
+        "MCELLBI_143",
+        "INTEGBI_C242",
+        "INTEGBI_264",
+        "INTEGBI_35AC",
+        "ANTHRO_111",
+        "INTEGBI_C144",
+        "INTEGBI_206",
+        "INTEGBI_C156",
+        "MCELLBI_140"
+      ]
+    },
+    {
+      "anchor": "ECON_100A",
+      "name": "Microeconomics",
+      "relevant": [
+        "ECON_101A",
+        "ECON_100B",
+        "ECON_130",
+        "ECON_1",
+        "ECON_C110",
+        "ECON_121",
+        "ECON_131",
+        "ECON_C103",
+        "ECON_201A",
+        "ECON_119"
+      ]
+    },
+    {
+      "anchor": "ECON_140",
+      "name": "Econometrics",
+      "relevant": [
+        "ECON_141",
+        "STAT_153",
+        "ECON_244",
+        "STAT_151A",
+        "STAT_135",
+        "ECON_C103",
+        "ECON_204",
+        "STAT_256",
+        "ECON_174",
+        "DATA_C102"
+      ]
+    },
+    {
+      "anchor": "ECON_136",
+      "name": "Financial Economics",
+      "relevant": [
+        "ECON_139",
+        "ECON_235",
+        "ECON_165",
+        "INDENG_221",
+        "ECON_100A",
+        "ECON_140",
+        "ECON_134",
+        "ECON_119",
+        "ECON_121",
+        "STAT_150"
+      ]
+    },
+    {
+      "anchor": "PSYCH_110",
+      "name": "Introduction to Biological Psychology",
+      "relevant": [
+        "PSYCH_C127",
+        "PSYCH_114",
+        "PSYCH_125",
+        "PSYCH_115",
+        "PSYCH_C61",
+        "PSYCH_22",
+        "MCELLBI_C260",
+        "PSYCH_C120",
+        "PSYCH_133",
+        "INTEGBI_C139"
+      ]
+    },
+    {
+      "anchor": "PSYCH_140",
+      "name": "Developmental Psychology",
+      "relevant": [
+        "PSYCH_147",
+        "PSYCH_125",
+        "PSYCH_131",
+        "PSYCH_C143",
+        "PSYCH_230A",
+        "PSYCH_249",
+        "PSYCH_163",
+        "PSYCH_290H",
+        "PSYCH_1",
+        "PSYCH_102"
+      ]
+    },
+    {
+      "anchor": "PSYCH_160",
+      "name": "Social Psychology",
+      "relevant": [
+        "PSYCH_168",
+        "PSYCH_163",
+        "PSYCH_150",
+        "PSYCH_260A",
+        "PSYCH_269",
+        "PSYCH_290J",
+        "PSYCH_240B",
+        "PSYCH_134",
+        "PSYCH_1",
+        "PSYCH_2"
+      ]
+    },
+    {
+      "anchor": "LINGUIS_120",
+      "name": "Syntax",
+      "relevant": [
+        "LINGUIS_100",
+        "LINGUIS_220A",
+        "LINGUIS_221",
+        "LINGUIS_230",
+        "LINGUIS_210",
+        "LINGUIS_140",
+        "LINGUIS_170",
+        "LINGUIS_270",
+        "LINGUIS_5",
+        "LINGUIS_C142"
+      ]
+    },
+    {
+      "anchor": "PHILOS_12A",
+      "name": "Introduction to Logic",
+      "relevant": [
+        "MATH_125A",
+        "MATH_136",
+        "MATH_135",
+        "PHILOS_146",
+        "PHILOS_135",
+        "MATH_225A",
+        "COMPSCI_172",
+        "PHILOS_100",
+        "MATH_55",
+        "COMPSCI_70"
+      ]
+    },
+    {
+      "anchor": "MUSIC_108",
+      "name": "Music Perception and Cognition",
+      "relevant": [
+        "MUSIC_156",
+        "PSYCH_C120",
+        "MUSIC_158A",
+        "PSYCH_C123",
+        "MUSIC_25",
+        "MUSIC_57",
+        "MUSIC_30",
+        "PSYCH_C127",
+        "MUSIC_105",
+        "MUSIC_20"
+      ]
+    },
+    {
+      "anchor": "MECENG_106",
+      "name": "Fluid Mechanics",
+      "relevant": [
+        "MECENG_163",
+        "MECENG_C166",
+        "MECENG_165",
+        "MECENG_C162",
+        "MECENG_109",
+        "MECENG_185",
+        "CIVENG_100",
+        "MECENG_266",
+        "MECENG_40",
+        "MECENG_151A"
+      ]
+    },
+    {
+      "anchor": "MECENG_132",
+      "name": "Dynamic Systems and Feedback",
+      "relevant": [
+        "MECENG_C136",
+        "MECENG_136HL",
+        "MECENG_C136S",
+        "MECENG_C232",
+        "MECENG_C231A",
+        "MECENG_C106A",
+        "MECENG_249",
+        "MECENG_139",
+        "MECENG_102B",
+        "MECENG_144"
+      ]
+    },
+    {
+      "anchor": "INDENG_162",
+      "name": "Linear Programming and Network Flows",
+      "relevant": [
+        "INDENG_266",
+        "INDENG_262A",
+        "INDENG_240",
+        "MATH_170",
+        "INDENG_150",
+        "INDENG_153",
+        "INDENG_250",
+        "INDENG_174",
+        "INDENG_172",
+        "COMPSCI_270"
+      ]
+    },
+    {
+      "anchor": "CIVENG_111",
+      "name": "Environmental Engineering",
+      "relevant": [
+        "CIVENG_111L",
+        "CIVENG_112",
+        "CIVENG_115",
+        "CIVENG_211A",
+        "CIVENG_218A",
+        "CIVENG_176",
+        "CIVENG_11",
+        "PBHLTH_270",
+        "CIVENG_268E",
+        "CIVENG_108"
+      ]
+    },
+    {
+      "anchor": "PBHLTH_250A",
+      "name": "Epidemiologic Methods I",
+      "relevant": [
+        "PBHLTH_250BW",
+        "PBHLTH_252",
+        "PBHLTH_252B",
+        "PBHLTH_255D",
+        "PBHLTH_252D",
+        "PBHLTH_142",
+        "PBHLTH_245",
+        "PBHLTH_260A",
+        "PBHLTH_253W",
+        "STAT_256"
+      ]
+    },
+    {
+      "anchor": "GEOG_C188",
+      "name": "Geographic Information Systems",
+      "relevant": [
+        "GEOG_80",
+        "GEOG_C183",
+        "GEOG_248",
+        "GEOG_285",
+        "CIVENG_C172",
+        "GEOG_40",
+        "GEOG_140B",
+        "GEOG_C136",
+        "CIVENG_170A",
+        "GEOG_C148"
+      ]
+    },
+    {
+      "anchor": "ANTHRO_2AC",
+      "name": "Introduction to Archaeology",
+      "relevant": [
+        "ANTHRO_122A",
+        "ANTHRO_123A",
+        "ANTHRO_127A",
+        "ANTHRO_136B",
+        "ANTHRO_229A",
+        "ANTHRO_230",
+        "ANTHRO_128M",
+        "ANTHRO_C125B",
+        "ANTHRO_121AC",
+        "ANTHRO_235"
+      ]
+    }
+  ]
+}

@@ -4,13 +4,13 @@ import { FrameAltEmpty } from "iconoir-react";
 
 import { Box, Container, PillSwitcher } from "@repo/theme";
 
-import { getEnrollmentColor } from "@/components/Capacity";
 import EmptyState from "@/components/Class/EmptyState";
 import { LocationHoverCard } from "@/components/Location/LocationHoverCard";
 import Time from "@/components/Time";
 import { useGetClassSections } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { componentMap } from "@/lib/api";
+import { getEnrollmentColor } from "@/lib/enrollment";
 import { Component } from "@/lib/generated/graphql";
 import { buildings } from "@/lib/location";
 

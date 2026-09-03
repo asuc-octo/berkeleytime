@@ -25,7 +25,8 @@ import {
   capitalizeColor,
   getColorCSSVar,
 } from "@/lib/colors";
-import { getLetterGradeFromGPA } from "@/lib/grades";
+import { formatEnrollment } from "@/lib/enrollment";
+import { getGradeColor, getLetterGradeFromGPA } from "@/lib/grades";
 import { CollectionPreviewClass } from "@/types/collection";
 
 // eslint-disable-next-line css-modules/no-unused-class
@@ -50,15 +51,6 @@ interface CollectionCardProps {
   showPin?: boolean;
 }
 
-function formatEnrollment(
-  enrolled: number | null,
-  max: number | null
-): string | null {
-  if (enrolled === null || max === null || max === 0) return null;
-  const pct = Math.round((enrolled / max) * 100);
-  return `${pct}% enrolled`;
-}
-
 function formatUnits(min: number, max: number): string {
   if (min === max) {
     return `${min} ${min === 1 ? "unit" : "units"}`;
@@ -75,10 +67,8 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
     classData.gradeAverage !== null
       ? getLetterGradeFromGPA(classData.gradeAverage)
       : null;
-  const enrollment = formatEnrollment(
-    classData.enrolledCount,
-    classData.maxEnroll
-  );
+  const enrollment = formatEnrollment(classData);
+  const gradeColor = grade ? getGradeColor(grade) : null;
   const units = formatUnits(classData.unitsMin, classData.unitsMax);
 
   return (
@@ -87,13 +77,23 @@ function TiltedCardContent({ classData }: TiltedCardContentProps) {
         <span className={styles.cardTitle}>
           {classData.subject} {classData.courseNumber}
         </span>
-        {grade && <span className={styles.cardGrade}>{grade}</span>}
+        {grade && (
+          <span
+            className={styles.cardGrade}
+            style={{ color: gradeColor ?? undefined }}
+          >
+            {grade}
+          </span>
+        )}
       </div>
       <p className={styles.cardDescription}>{classData.title || "Untitled"}</p>
       <div className={styles.cardFooter}>
         {enrollment && (
-          <span className={`${styles.cardPill} ${styles.enrolled}`}>
-            {enrollment}
+          <span
+            className={`${styles.cardPill} ${styles.enrolled}`}
+            style={{ color: enrollment.color }}
+          >
+            {enrollment.label}
           </span>
         )}
         <span className={styles.cardPill}>{units}</span>
@@ -157,35 +157,35 @@ export function CollectionCard({
       icon: <BookStack width={18} height={18} />,
       onClick: onRename,
     });
-  }
 
-  // Color submenu
-  const colorSubItems: MenuItem[] = [
-    {
-      name: "No color",
-      icon: <ColorDot color={null} />,
-      onClick: () => onColorChange?.(null),
-    },
-    ...COLLECTION_COLORS.map((c) => ({
-      name: capitalizeColor(c),
-      icon: <ColorDot color={c} />,
-      onClick: () => onColorChange?.(c),
-    })),
-  ];
+    // Color submenu
+    const colorSubItems: MenuItem[] = [
+      {
+        name: "No color",
+        icon: <ColorDot color={null} />,
+        onClick: () => onColorChange?.(null),
+      },
+      ...COLLECTION_COLORS.map((c) => ({
+        name: capitalizeColor(c),
+        icon: <ColorDot color={c} />,
+        onClick: () => onColorChange?.(c),
+      })),
+    ];
 
-  menuItems.push({
-    name: "Edit color",
-    icon: <EditPencil width={18} height={18} />,
-    subItems: colorSubItems,
-  });
-
-  if (!isSystem) {
     menuItems.push({
-      name: "Delete collection",
-      icon: <Trash width={18} height={18} />,
-      onClick: onDelete,
-      isDelete: true,
+      name: "Edit color",
+      icon: <EditPencil width={18} height={18} />,
+      subItems: colorSubItems,
     });
+
+    if (!isSystem) {
+      menuItems.push({
+        name: "Delete collection",
+        icon: <Trash width={18} height={18} />,
+        onClick: onDelete,
+        isDelete: true,
+      });
+    }
   }
 
   const title = (

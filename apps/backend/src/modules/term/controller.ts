@@ -44,3 +44,32 @@ export const getTerm = async (
 
   return formatTerm(term);
 };
+
+/** Same chronological ordering as the main catalog default (year desc, then semester within year). */
+export const CATALOG_SEMESTER_ORDER: Record<string, number> = {
+  Spring: 0,
+  Summer: 1,
+  Fall: 2,
+  Winter: 3,
+};
+
+/** Most recent term with catalog data, matching how the catalog picks its default. */
+export async function getLatestCatalogTerm(): Promise<{
+  year: number;
+  semester: string;
+} | null> {
+  const terms = await getTerms(true);
+  if (terms.length === 0) return null;
+
+  const sorted = [...terms].sort((a, b) => {
+    if (a.year !== b.year) return b.year - a.year;
+    const ao = CATALOG_SEMESTER_ORDER[a.semester] ?? -1;
+    const bo = CATALOG_SEMESTER_ORDER[b.semester] ?? -1;
+    return bo - ao;
+  });
+
+  const t = sorted[0];
+  if (t?.year == null || !t.semester) return null;
+
+  return { year: t.year, semester: t.semester };
+}

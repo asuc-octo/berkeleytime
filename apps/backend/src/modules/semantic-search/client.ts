@@ -16,6 +16,19 @@ interface SemanticSearchResponse {
   results: SemanticSearchResult[];
 }
 
+export interface RecommendResult {
+  subject: string;
+  courseNumber: string;
+  score: number;
+}
+
+interface RecommendResponse {
+  count: number;
+  year: number;
+  semester: string;
+  results: RecommendResult[];
+}
+
 export async function searchSemantic(
   query: string,
   year: number,
@@ -55,4 +68,69 @@ export async function searchSemantic(
   }
 
   return (await response.json()) as SemanticSearchResponse;
+}
+
+async function postRecommend(
+  path: string,
+  body: Record<string, unknown>
+): Promise<RecommendResponse> {
+  const url = `${config.semanticSearch.url}/recommend${path}`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    let detail: string | undefined;
+    try {
+      const err = (await response.json()) as {
+        detail?: string;
+        error?: string;
+      };
+      detail = err?.detail ?? err?.error;
+    } catch {
+      /* ignore parse errors */
+    }
+    throw new Error(
+      detail ?? `Recommend service error: ${response.statusText}`
+    );
+  }
+
+  return (await response.json()) as RecommendResponse;
+}
+
+export async function recommendBecauseViewed(
+  subject: string,
+  courseNumber: string,
+  year: number,
+  semester: string,
+  limit: number
+): Promise<RecommendResult[]> {
+  const data = await postRecommend("/because-viewed", {
+    subject,
+    course_number: courseNumber,
+    year,
+    semester,
+    limit,
+  });
+  return data.results;
+}
+
+export async function recommendTopPicks(
+  history: Array<{ subject: string; courseNumber: string }>,
+  year: number,
+  semester: string,
+  limit: number
+): Promise<RecommendResult[]> {
+  const data = await postRecommend("/top-picks", {
+    history: history.map((h) => ({
+      subject: h.subject,
+      course_number: h.courseNumber,
+    })),
+    year,
+    semester,
+    limit,
+  });
+  return data.results;
 }

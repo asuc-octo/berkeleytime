@@ -35,6 +35,12 @@ import { RecentType, getPageUrl } from "@/lib/recent";
 
 import styles from "./NavigationBar.module.scss";
 
+interface PrimaryNavItem {
+  to: string;
+  label: string;
+  badgeText?: string;
+}
+
 interface ExtraNavItem {
   key: string;
   label: string;
@@ -190,12 +196,13 @@ export default function NavigationBar({
               }}
             >
               {[
+                { to: "/explore", label: "Explore", badgeText: "NEW" },
                 { to: "/catalog", label: "Catalog" },
                 { to: "/schedules", label: "Scheduler" },
                 { to: "/gradtrak", label: "Gradtrak" },
                 { to: gradesPath, label: "Grades" },
                 { to: enrollmentPath, label: "Enrollment" },
-              ].map(({ to, label }) => (
+              ].map(({ to, label, badgeText }: PrimaryNavItem) => (
                 <motion.div
                   key={to}
                   variants={{
@@ -205,7 +212,12 @@ export default function NavigationBar({
                   transition={{ duration: 0.3 }}
                 >
                   <NavLink to={to} onClick={() => setMenuOpen(false)}>
-                    {label}
+                    <span className={styles.extraItemLabel}>
+                      {label}
+                      {badgeText && (
+                        <span className={styles.newBadge}>{badgeText}</span>
+                      )}
+                    </span>
                   </NavLink>
                 </motion.div>
               ))}
@@ -253,6 +265,16 @@ export default function NavigationBar({
           Berkeleytime
         </Link>
         <div className={styles.group}>
+          <NavLink to="/explore">
+            {({ isActive }) => (
+              <MenuItem className={styles.item} active={isActive}>
+                <span className={styles.extraItemLabel}>
+                  Explore
+                  <span className={styles.newBadge}>NEW</span>
+                </span>
+              </MenuItem>
+            )}
+          </NavLink>
           <NavLink to="/catalog">
             {({ isActive }) => (
               <MenuItem className={styles.item} active={isActive}>

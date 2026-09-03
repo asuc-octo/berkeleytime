@@ -190,7 +190,8 @@ const resolvers: ClassModule.Resolvers = {
           parent.sessionId,
           parent.subject,
           parent.courseNumber,
-          parent.number
+          parent.number,
+          parent.courseId
         ))) as IntermediateSection | ClassModule.Section | null;
 
       if (!primarySection) {

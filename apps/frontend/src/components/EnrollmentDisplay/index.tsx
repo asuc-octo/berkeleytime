@@ -4,7 +4,7 @@ import moment from "moment";
 
 import { Tooltip } from "@repo/theme";
 
-import { getEnrollmentColor } from "@/components/Capacity";
+import { getEnrollmentColor } from "@/lib/enrollment";
 
 import styles from "./EnrollmentDisplay.module.scss";
 

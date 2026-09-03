@@ -6,6 +6,7 @@ query SemanticSearchCatalog($year: Int!, $semester: Semester!) {
     course {
       title
       description
+      academicOrganizationName
     }
   }
 }

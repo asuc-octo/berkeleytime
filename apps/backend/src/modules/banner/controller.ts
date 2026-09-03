@@ -204,7 +204,7 @@ export const updateBanner = async (
         linkText?: string | null;
         persistent: boolean;
         reappearing: boolean;
-            }
+      }
     );
     const currentVersion = currentBanner.currentVersion ?? 1;
     const newVersionEntry = createVersionEntry(

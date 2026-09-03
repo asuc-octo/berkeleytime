@@ -37,6 +37,9 @@ services:
     build:
       context: ./apps/semantic-search
       dockerfile: Dockerfile
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
       - bt
     ports:
@@ -44,11 +47,12 @@ services:
     restart: always
     volumes:
       - ./apps/semantic-search/app:/app/app
+      - ./apps/semantic-search/eval:/app/eval
     environment:
       - SEMANTIC_SEARCH_YEAR=2026
       - SEMANTIC_SEARCH_SEMESTER=Spring
       - BACKEND_URL=http://backend:5001
-      - REDIS_URI=redis://redis:6379
+      - MONGODB_URI=mongodb://mongodb:27017/bt?replicaSet=rs0
   frontend:
     build:
       context: .
@@ -254,22 +258,22 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
-      
+
   # if using staff photos in dev, use --profile dev
   minio:
-    image: 'minio/minio:latest'
+    image: "minio/minio:latest"
     profiles:
       - dev
     ports:
       - "${DEV_PORT_PREFIX:-30}06:9000"
       - "${DEV_PORT_PREFIX:-30}07:9090"
     environment:
-      MINIO_ROOT_USER: 'root'
-      MINIO_ROOT_PASSWORD: 'password'
+      MINIO_ROOT_USER: "root"
+      MINIO_ROOT_PASSWORD: "password"
     networks:
       - bt
     volumes:
-      - 'minio:/data/minio'
+      - "minio:/data/minio"
     command: minio server /data/minio --console-address ":9090"
   createbuckets:
     image: minio/mc
