@@ -1,0 +1,26 @@
+name: "CI: Compose Security"
+
+on:
+  pull_request:
+    paths:
+      - "docker-compose.yml"
+      - ".env.template"
+      - "scripts/initialize-local-env.mjs"
+      - "scripts/check-compose-network-security.mjs"
+      - ".github/workflows/ci-compose-security.yaml"
+
+jobs:
+  compose-security:
+    name: Check local-service exposure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+      - name: Generate ephemeral local credentials
+        run: |
+          cp .env.template .env
+          node scripts/initialize-local-env.mjs
+      - name: Check Compose port bindings and database authentication
+        run: node scripts/check-compose-network-security.mjs

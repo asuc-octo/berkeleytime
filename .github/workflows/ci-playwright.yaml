@@ -18,6 +18,8 @@ on:
       - "tests/**"
       - "infra/app/**"
       - "docker-compose.yml"
+      - ".env.template"
+      - "scripts/initialize-local-env.mjs"
       - "nginx.conf"
       - "playwright.config.ts"
 
@@ -45,7 +47,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Prepare test environment
-        run: cp .env.template .env
+        run: |
+          cp .env.template .env
+          node scripts/initialize-local-env.mjs
 
       - name: Run persisted-operation boundary tests
         env:
