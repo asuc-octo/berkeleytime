@@ -215,7 +215,7 @@ export const termsRatingsAggregator = async (
 export const userRatingsAggregator = async (context: RequestContext) => {
   if (!context.user?._id) throw new Error("Unauthorized");
   return await RatingModel.aggregate([
-    { $match: { createdBy: context.user._id } },
+    { $match: { createdBy: context.user._id.toString() } },
     {
       $group: {
         _id: {
@@ -275,7 +275,7 @@ export const userClassRatingsAggregator = async (
   classNumber: string
 ) => {
   if (!context.user?._id) throw new Error("Unauthorized");
-  const userId = context.user._id;
+  const userId = context.user._id.toString();
   return await RatingModel.aggregate([
     {
       $match: {
