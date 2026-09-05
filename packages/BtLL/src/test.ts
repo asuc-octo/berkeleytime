@@ -17,7 +17,7 @@ const TESTS = [
       `;
 
       try {
-        const result = init(testCode, new Map(), { debug: true });
+        const result = init(testCode, new Map(), { debug: false });
         if (result[0] !== false) return false;
         if (result[1] !== true) return false;
         if (result[2] !== true) return false;
@@ -42,7 +42,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -54,7 +54,7 @@ const TESTS = [
     name: "function call test",
     test: () => {
       const testCode = `
-      Function<number>(number) times_three (a, b){
+      Function<number>(number) times_three (a){
         number return add([a, a, a])
       }
       Function<boolean>() main (){ 
@@ -63,7 +63,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== 9) return false;
+        if (init(testCode, new Map(), { debug: false }) !== 9) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -83,16 +83,17 @@ const TESTS = [
       }
       Function<boolean>() main (){ 
         List<number> list [1, 3, 2, 3, 4, 5, 3]
+        // find returns the matched element itself
         number res1 find(list, find_func)
-        // matches three 3s
+        // three 3s in the list
         List<number> res2 filter(list, find_func)
-        // should be 21
+        // 1+3+2+3+4+5+3
         number res3 reduce(list, add_func, 0)
-        boolean return and([equal([res1, length(res2)]), equal([res3, 21])])
+        boolean return and([equal([res1, 3]), equal([length(res2), 3]), equal([res3, 21])])
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -113,7 +114,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -138,7 +139,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -159,7 +160,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -184,7 +185,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -205,7 +206,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -231,7 +232,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -257,7 +258,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -279,7 +280,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -304,7 +305,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -327,7 +328,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -353,7 +354,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -379,7 +380,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -412,6 +413,7 @@ const test = () => {
     console.log(
       `${redColor}Failed tests\n✗\t${failedTests.join("\n✗\t")}${resetColor}`
     );
+    process.exitCode = 1;
   }
 };
 
