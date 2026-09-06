@@ -32,7 +32,7 @@
   top: var(--sections-sticky-top-gap, var(--space-5, 24px));
   z-index: 3;
   background-color: var(--foreground-color);
-  padding: 0 8px 10px;
+  padding: 0 var(--space-2) 10px;
 
   &::before {
     content: "";
@@ -69,7 +69,7 @@
 }
 
 .headerCell {
-  padding: 8px;
+  padding: var(--space-2);
   font-weight: var(--font-semibold);
   font-size: var(--text-14);
   line-height: 20px;
@@ -92,7 +92,7 @@
 }
 
 .cell {
-  padding: 12px 8px;
+  padding: var(--space-3) var(--space-2);
   font-weight: var(--font-normal);
   font-size: var(--text-14);
   line-height: 20px;
