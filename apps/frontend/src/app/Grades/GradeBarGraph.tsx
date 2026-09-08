@@ -77,7 +77,7 @@ export default function GradeBarGraph({
   const liveRangeRef = useRef<[number, number]>([0, 100]);
   const thumbLabelLeftRef = useRef<HTMLSpanElement>(null);
   const thumbLabelRightRef = useRef<HTMLSpanElement>(null);
-  const [showPassNoPass, setShowPassNoPass] = useState(false);
+  const [showPassNoPass, setShowPassNoPass] = useState(true);
   const throttleTimeoutRef = useRef<number | null>(null);
   const pendingRangeRef = useRef<[number, number] | null>(null);
   const lastRangeCommitAtRef = useRef(0);
