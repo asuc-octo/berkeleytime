@@ -25,6 +25,7 @@ import type { IGradeDistribution } from "@/lib/api";
 import { LETTER_GRADES, PASS_FAIL } from "@/lib/grades";
 
 import styles from "./GradeBarGraph.module.scss";
+import { buildGradeChartData, isLetterGrade } from "./GradeBarGraph.utils";
 
 const CHART_HEIGHT_RATIO = 0.55;
 const HORIZONTAL_CHART_HEIGHT_RATIO = 0.72;
@@ -161,53 +162,11 @@ export default function GradeBarGraph({
 
     const chartConfig = createChartConfig(dataKeys, { labels, colors });
 
-    // Pre-compute totals for each output
-    const totals = outputs.map((output) => {
-      const dist = output.data?.distribution;
-      if (!dist) return 0;
-      return displayedGrades.reduce((acc, letter) => {
-        const grade = dist.find((g) => g.letter === letter);
-        return acc + (grade?.count ?? 0);
-      }, 0);
-    });
-
-    // Build percentage for each letter grade per course
-    const percentages = displayedGrades.map((letter) => {
-      const row: Record<string, number> = {};
-      outputs.forEach((output, i) => {
-        const dist = output.data?.distribution;
-        if (!dist || totals[i] === 0) {
-          row[dataKeys[i]] = 0;
-          return;
-        }
-        const grade = dist.find((g) => g.letter === letter);
-        row[dataKeys[i]] = ((grade?.count ?? 0) / totals[i]) * 100;
-      });
-      return row;
-    });
-
-    // Pre-compute cumulative percentiles (from F upward)
-    const cumulative: Record<string, number>[] = Array.from(
-      { length: displayedGrades.length },
-      () => ({})
+    const chartData = buildGradeChartData(
+      outputs.map((output) => output.data?.distribution),
+      dataKeys,
+      displayedGrades
     );
-    dataKeys.forEach((key) => {
-      let cum = 0;
-      for (let i = displayedGrades.length - 1; i >= 0; i--) {
-        cumulative[i][key] = cum;
-        cum += percentages[i][key];
-      }
-    });
-
-    const chartData = displayedGrades.map((letter, i) => {
-      const row: Record<string, number | string> = { letter };
-      dataKeys.forEach((key) => {
-        row[key] = percentages[i][key];
-        row[`${key}_pctlLo`] = cumulative[i][key];
-        row[`${key}_pctlHi`] = cumulative[i][key] + percentages[i][key];
-      });
-      return row;
-    });
 
     return { chartData, chartConfig, dataKeys };
   }, [outputs, displayedGrades]);
@@ -287,14 +246,12 @@ export default function GradeBarGraph({
   const cellFills = useMemo(() => {
     return dataKeys.map((key, keyIndex) =>
       chartData.map((row) => {
+        const hasPercentile = isLetterGrade(row.letter);
         const pctlLo = row[`${key}_pctlLo`] as number;
         const pctlHi = row[`${key}_pctlHi`] as number;
-        const inRange = isGradeInRange(
-          pctlLo,
-          pctlHi,
-          sliderRange[0],
-          sliderRange[1]
-        );
+        const inRange =
+          !hasPercentile ||
+          isGradeInRange(pctlLo, pctlHi, sliderRange[0], sliderRange[1]);
         const isHoveredCourse =
           hoveredIndex === null ||
           outputs.length <= 1 ||
@@ -420,6 +377,9 @@ export default function GradeBarGraph({
                           {payload.map((item) => {
                             const key = item.dataKey as string;
                             const row = item.payload;
+                            const hasPercentile = isLetterGrade(
+                              String(row.letter)
+                            );
                             const pctlLo = row[`${key}_pctlLo`] as number;
                             const pctlHi = row[`${key}_pctlHi`] as number;
                             return (
@@ -440,10 +400,12 @@ export default function GradeBarGraph({
                                 <span className={styles.tooltipItemValue}>
                                   {formatters.percent(item.value, 1)}
                                 </span>
-                                <span className={styles.tooltipItemValue}>
-                                  {ordinal(Math.round(pctlLo))}–
-                                  {ordinal(Math.round(pctlHi))} pctile
-                                </span>
+                                {hasPercentile && (
+                                  <span className={styles.tooltipItemValue}>
+                                    {ordinal(Math.round(pctlLo))}–
+                                    {ordinal(Math.round(pctlHi))} pctile
+                                  </span>
+                                )}
                               </div>
                             );
                           })}
