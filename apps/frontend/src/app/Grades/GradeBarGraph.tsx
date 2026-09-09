@@ -403,7 +403,7 @@ export default function GradeBarGraph({
                                 {hasPercentile && (
                                   <span className={styles.tooltipItemValue}>
                                     {ordinal(Math.round(pctlLo))}–
-                                    {ordinal(Math.round(pctlHi))} pctile
+                                    {ordinal(Math.round(pctlHi))} percentile
                                   </span>
                                 )}
                               </div>
