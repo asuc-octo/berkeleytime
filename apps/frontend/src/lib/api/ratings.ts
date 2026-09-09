@@ -98,6 +98,7 @@ export const GET_USER_RATINGS = gql`
         semester
         year
         classNumber
+        professorName
         metrics {
           metricName
           value
