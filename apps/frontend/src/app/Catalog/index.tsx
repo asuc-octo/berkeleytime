@@ -412,7 +412,12 @@ export default function Catalog() {
       return;
     }
 
-    const gapPx = 8;
+    const measureRow = foldersViewportRef.current?.querySelector(
+      `.${styles.bookmarkMeasureRow}`
+    );
+    const gapPx = measureRow
+      ? Number.parseFloat(window.getComputedStyle(measureRow).columnGap) || 0
+      : 0;
     let usedWidth = 0;
     const nextVisibleIds: string[] = [];
 
