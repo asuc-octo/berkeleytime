@@ -14,11 +14,11 @@
   }
 
   .sidebar {
-    padding: 48px 40px;
+    padding: var(--space-8) var(--space-7);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-5);
     flex-shrink: 0;
 
     @media (max-width: 991px) {
@@ -29,14 +29,14 @@
   .navGroup {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   .navItem {
     padding: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     cursor: pointer;
     color: var(--paragraph-color);
 
@@ -48,7 +48,7 @@
 
     span {
       font-weight: var(--font-medium);
-      font-size: 16px;
+      font-size: var(--font-sizes-3);
       line-height: 20px;
       letter-spacing: -0.1px;
       white-space: nowrap;
@@ -71,12 +71,12 @@
   }
 
   .contentInner {
-    padding: 48px;
+    padding: var(--space-8);
     width: 100%;
     max-width: 1500px;
     display: flex;
     flex-direction: column;
-    gap: 48px;
+    gap: var(--space-8);
     height: fit-content;
   }
 
@@ -89,17 +89,17 @@
   .pageContent {
     display: flex;
     flex-direction: column;
-    gap: 48px;
+    gap: var(--space-8);
   }
 
   .section {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-5);
   }
 
   .sectionTitle {
-    font-size: 24px;
+    font-size: var(--font-sizes-6);
     font-weight: var(--font-semibold);
     margin: 0;
   }
@@ -115,7 +115,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
   }
 
   .ratingsSection {
@@ -129,11 +129,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
   }
 
   .addRatingButton {
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     height: 32px;
     font-size: var(--text-14);
     font-weight: var(--font-normal);
@@ -150,7 +150,7 @@
   }
 
   .newCollectionButton {
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     height: 32px;
     font-size: var(--text-14);
     font-weight: var(--font-normal);

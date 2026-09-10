@@ -34,8 +34,8 @@
 .scheduleRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-color);
 
   &:last-child {
@@ -76,7 +76,7 @@
 
 .loadingState,
 .emptyState {
-  padding: 16px;
+  padding: var(--space-4);
   text-align: center;
   font-size: var(--text-14);
   color: var(--secondary-color);
@@ -85,9 +85,9 @@
 .createScheduleBtn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   background: none;
   border: none;
   border-top: 1px solid var(--border-color);
@@ -108,11 +108,11 @@
 .createScheduleForm {
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: var(--space-4);
   width: 100%;
   box-sizing: border-box;
   border-top: 1px solid var(--border-color);
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .createScheduleHeader {
@@ -139,8 +139,8 @@
 .createScheduleActions {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  margin-top: 4px;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
 }
 
 .createScheduleSubmit,

@@ -7,7 +7,7 @@
 
 .infoItem label {
   color: var(--text-gray);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
   width: 250px;
   max-width: 30%;
   flex: 0 0 auto;
@@ -21,6 +21,6 @@
 
 .actions {
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
