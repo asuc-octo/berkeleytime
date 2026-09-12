@@ -4,7 +4,7 @@ import threading
 import time
 from typing import List, Optional, Tuple
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel, Field
 
 from .engine import DEFAULT_TERM, SemanticSearchEngine
@@ -90,7 +90,7 @@ def build_index() -> None:
 
 
 @app.get("/health")
-def health():
+def health(response: Response):
     indexes = engine.describe_indices()
     building = engine._building
     build_duration = engine.get_build_duration_seconds()
@@ -107,6 +107,9 @@ def health():
         status = "error"
     else:
         status = "waiting"
+
+    if status == "error":
+        response.status_code = 503
 
     return {
         "status": status,

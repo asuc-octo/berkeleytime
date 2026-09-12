@@ -141,13 +141,13 @@
 .coffeeChatsEmbed {
   width: 100%;
   max-width: 900px;
-  height: 600px;
+  height: 1200px;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background-color: var(--foreground-color);
 
   @media (max-width: 768px) {
-    height: 480px;
+    height: 960px;
   }
 }
 

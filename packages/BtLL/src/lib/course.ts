@@ -20,13 +20,39 @@ export const definedFields = [
   "languageLevel",
 ];
 
+const makeCourse = (
+  subject: Data<string>,
+  number: Data<string>
+): Data<Course> => ({
+  data: {
+    subject,
+    number,
+    units: {
+      data: 0,
+      type: "number",
+    },
+    universityRequirement: {
+      data: "",
+      type: "string",
+    },
+    breadthRequirements: {
+      data: [],
+      type: "List<string>",
+    },
+    languageLevel: {
+      data: "",
+      type: "string",
+    },
+  },
+  type: "Course",
+});
+
 export const constructor = (
   _: string,
   v: string,
   variables: Variables,
   config?: BtLLConfig
 ): Data<Course> => {
-  // Parse the course string using curly brackets: {"subject", "number"}
   const parts = argSplit(v.substring(1, v.length - 1));
 
   if (parts.length !== 1 && parts.length !== 2) {
@@ -37,61 +63,19 @@ export const constructor = (
 
   if (parts.length === 1) {
     const name = evaluate(parts[0].trim(), "string", variables, config).data;
-    return {
-      data: {
-        subject: { data: name.split(" ")[0], type: "string" },
-        number: { data: name.split(" ")[1], type: "string" },
-        units: {
-          data: 0,
-          type: "number",
-        },
-        universityRequirement: {
-          data: "",
-          type: "string",
-        },
-        breadthRequirements: {
-          data: [],
-          type: "List<string>",
-        },
-        languageLevel: {
-          data: "",
-          type: "string",
-        },
-      },
-      type: "Course",
-    };
+    return makeCourse(
+      { data: name.split(" ")[0], type: "string" },
+      { data: name.split(" ")[1], type: "string" }
+    );
   }
 
-  const subject = parts[0].trim();
-  const number = parts[1].trim();
-
-  const subjectData = evaluate(subject, "string", variables, config);
-  const numberData = evaluate(number, "string", variables, config);
-
-  // Create a course with subject and number
-  return {
-    data: {
-      subject: subjectData,
-      number: numberData,
-      units: {
-        data: 0,
-        type: "number",
-      },
-      universityRequirement: {
-        data: "",
-        type: "string",
-      },
-      breadthRequirements: {
-        data: [],
-        type: "List<string>",
-      },
-    },
-    type: "Course",
-  };
+  return makeCourse(
+    evaluate(parts[0].trim(), "string", variables, config),
+    evaluate(parts[1].trim(), "string", variables, config)
+  );
 };
 
-// Helper function to check if two courses are equal (by subject and number)
-const coursesEqual = (course1: Course, course2: Course): boolean => {
+export const coursesEqual = (course1: Course, course2: Course): boolean => {
   return (
     course1.subject.data === course2.subject.data &&
     course1.number.data === course2.number.data
@@ -109,7 +93,6 @@ export const functions: FunctionMapEntry[] = [
           list1: Data<Array<Course>>,
           list2: Data<Array<Course>>
         ) => {
-          // Check if there's at least one course in common between the two lists
           for (const course1 of list1.data) {
             for (const course2 of list2.data) {
               if (coursesEqual(course1, course2)) {
@@ -133,7 +116,6 @@ export const functions: FunctionMapEntry[] = [
           list1: Data<Array<Course>>,
           list2: Data<Array<Course>>
         ) => {
-          // Check if all courses in list2 (required courses) are present in list1 (student's courses)
           return {
             data: list2.data.every((course2) =>
               list1.data.some((course1) => coursesEqual(course1, course2))
@@ -167,6 +149,19 @@ export const functions: FunctionMapEntry[] = [
     },
   ],
   [
+    "sum_units",
+    {
+      type: "Function<number>(List<Course>)",
+      data: {
+        eval: (_: Variables, courses: Data<Array<Course>>) => ({
+          data: courses.data.reduce((acc, c) => acc + (c.units?.data ?? 0), 0),
+          type: "number" as const,
+        }),
+        args: ["List<Course>"],
+      },
+    },
+  ],
+  [
     "take_until_units",
     {
       type: "Function<List<Course>>(List<Course>, number)",
@@ -177,7 +172,7 @@ export const functions: FunctionMapEntry[] = [
           targetUnits: Data<number>
         ) => {
           let sum = 0;
-          const result = [];
+          const result: Course[] = [];
           for (const course of list.data) {
             if (sum >= targetUnits.data) break;
             result.push(course);

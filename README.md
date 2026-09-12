@@ -9,3 +9,6 @@ Berkeleytime was created by [Yuxin Zhu](http://yuxinzhu.com/) and [Noah Gilmore]
 # Getting started
 
 Follow the instructions on the [Getting Started page of the docs](https://docs.berkeleytime.com/getting-started/local-development.html) to setup!
+
+Security-sensitive GraphQL changes must follow the
+[public GraphQL trust-boundary guide](docs/security/public-graphql-boundary.md).

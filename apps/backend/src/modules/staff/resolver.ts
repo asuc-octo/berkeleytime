@@ -33,10 +33,14 @@ const resolvers = {
 
     allStaffMembers: () => getAllStaffMembers(),
 
-    staffMemberByUserId: (_: unknown, { userId }: { userId: string }) =>
-      getStaffMemberByUserId(userId),
+    staffMemberByUserId: (
+      _: unknown,
+      { userId }: { userId: string },
+      context: StaffRequestContext
+    ) => getStaffMemberByUserId(context, userId),
 
-    allUsers: () => getAllUsers(),
+    allUsers: (_: unknown, __: unknown, context: StaffRequestContext) =>
+      getAllUsers(context),
   },
 
   Mutation: {
@@ -80,8 +84,11 @@ const resolvers = {
   StaffMember: {
     id: (parent: { _id?: { toString: () => string }; id?: string }) =>
       parent._id?.toString() ?? parent.id,
-    email: (parent: { userId?: { toString: () => string } }) =>
-      getMemberEmail(parent.userId?.toString()),
+    email: (
+      parent: { userId?: { toString: () => string } },
+      _: unknown,
+      context: StaffRequestContext
+    ) => getMemberEmail(context, parent.userId?.toString()),
     roles: (parent: { _id?: { toString: () => string }; id?: string }) => {
       const id = parent._id?.toString() ?? parent.id;
       if (!id) throw new Error("Missing id");

@@ -30,7 +30,15 @@ const chartConfig = createChartConfig(["course"], {
 
 export default function Grades() {
   const {
-    class: { subject, courseNumber, number, semester, year, sessionId },
+    class: {
+      subject,
+      courseNumber,
+      courseId,
+      number,
+      semester,
+      year,
+      sessionId,
+    },
   } = useClass();
   const { data, loading } = useGetClassGrades(
     year,
@@ -102,7 +110,7 @@ export default function Grades() {
 
   const gradeExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
-    params.set("input", `${subject};${courseNumber}`);
+    params.set("input", `${subject};${courseId}`);
 
     if (typeof window !== "undefined") {
       try {
@@ -116,7 +124,7 @@ export default function Grades() {
     }
 
     return `/grades?${params.toString()}`;
-  }, [subject, courseNumber]);
+  }, [subject, courseId]);
 
   const subtitle = useMemo(() => {
     if (!courseTotal || courseTotal <= 0) return null;

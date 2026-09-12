@@ -39,6 +39,9 @@ npx playwright test --project=sanity
 # Run only API tests
 npx playwright test --project=api
 
+# Explicitly reuse an already-running local stack
+REUSE_EXISTING_TEST_SERVER=true npx playwright test --project=api
+
 # Run only e2e tests (all browsers)
 npx playwright test --grep e2e
 ```
@@ -88,9 +91,10 @@ Example:
 ```typescript
 test('can query courses', async ({ request }) => {
   const response = await request.post('/api/graphql', {
-    data: {
-      query: `{ courses { id title } }`,
-    },
+    data: persistedOperationBySource(
+      'apps/frontend/src/lib/api/courses.ts',
+      'GetCourses'
+    ),
   });
   expect(response.ok()).toBeTruthy();
   const data = await response.json();
@@ -126,7 +130,7 @@ When you open a PR, GitHub Actions automatically:
 3. Runs sanity tests against the built code
 4. Reports results in the PR
 
-See [`.github/workflows/playwright.yml`](../.github/workflows/playwright.yml)
+See [`.github/workflows/ci-playwright.yaml`](../.github/workflows/ci-playwright.yaml)
 
 ### How It Works
 

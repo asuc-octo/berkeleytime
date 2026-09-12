@@ -23,7 +23,7 @@ jobs:
           ref: refs/pull/${{ inputs.pr_number }}/head
 
       - name: Set up Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v5
         with:
           version: "3.10.2"
 

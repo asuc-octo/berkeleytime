@@ -26,7 +26,6 @@ async function forward(
     console.error("Semantic search proxy error:", error);
     res.status(502).json({
       error: "Unable to reach semantic search service",
-      details: String(error),
     });
   }
 }

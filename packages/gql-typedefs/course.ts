@@ -50,9 +50,11 @@ export const courseTypeDef = gql`
   enum CourseGradingBasis {
     BMT
     CNC
+    GPT
     GRD
     IOP
     LAW
+    LW1
     OPT
     PNP
     SUS

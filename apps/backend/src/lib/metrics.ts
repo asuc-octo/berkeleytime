@@ -30,6 +30,13 @@ export const graphqlErrorCount = meter.createCounter("graphql.error.count", {
   description: "Total number of GraphQL errors",
 });
 
+export const persistedOperationRejectionCount = meter.createCounter(
+  "graphql.persisted_operation.rejection.count",
+  {
+    description: "Public GraphQL gateway requests rejected before execution",
+  }
+);
+
 // ── Feature Usage ──────────────────────────────────────────────────────
 
 export const featureUsageCount = meter.createCounter("feature.usage.count", {

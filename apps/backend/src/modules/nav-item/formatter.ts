@@ -10,7 +10,6 @@ export interface FormattedNavItem {
   order: number;
   visible: boolean;
   clickCount: number;
-  clickEventLogging: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,7 +23,6 @@ export const formatNavItem = (navItem: NavItemType): FormattedNavItem => {
     order: navItem.order ?? 0,
     visible: navItem.visible ?? true,
     clickCount: navItem.clickCount ?? 0,
-    clickEventLogging: navItem.clickEventLogging ?? false,
     createdAt: navItem.createdAt.toISOString(),
     updatedAt: navItem.updatedAt.toISOString(),
   };

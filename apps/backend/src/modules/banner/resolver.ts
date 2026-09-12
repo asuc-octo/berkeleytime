@@ -15,10 +15,7 @@ import {
   trackBannerView,
   updateBanner,
 } from "./controller";
-import {
-  getBannerVersionHistory,
-  getClickStatsByVersion,
-} from "./version-service";
+import { getBannerVersionHistory } from "./version-service";
 
 interface GraphQLContext extends BannerRequestContext {
   req: Request;
@@ -60,24 +57,6 @@ const resolvers = {
             : entry.timestamp,
         snapshot: entry.snapshot,
       }));
-    },
-
-    bannerClickStatsByVersion: async (
-      _: unknown,
-      {
-        bannerId,
-        startDate,
-        endDate,
-      }: { bannerId: string; startDate?: string; endDate?: string },
-      context: GraphQLContext
-    ) => {
-      // Verify caller is a staff member
-      await requireStaffMember(context);
-
-      const parsedStartDate = startDate ? new Date(startDate) : undefined;
-      const parsedEndDate = endDate ? new Date(endDate) : undefined;
-
-      return getClickStatsByVersion(bannerId, parsedStartDate, parsedEndDate);
     },
   },
 

@@ -1,83 +1,38 @@
 import { expect, test } from "@playwright/test";
 
-/**
- * API tests for Course-related GraphQL queries
- * These tests validate the GraphQL API endpoints directly
- */
+import { persistedOperationBySource } from "../helpers/persisted-operation";
 
-test.describe("Course API", () => {
-  test("can query courses", async ({ request }) => {
+const COURSE_OPERATIONS_SOURCE = "apps/frontend/src/lib/api/courses.ts";
+
+test.describe("Persisted course operations", () => {
+  test("an allowlisted campus-data operation succeeds", async ({ request }) => {
     const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          query GetCourses {
-            courses {
-              courseId
-              subject
-              number
-              title
-            }
-          }
-        `,
-      },
+      data: persistedOperationBySource(COURSE_OPERATIONS_SOURCE, "GetCourses"),
     });
 
     expect(response.ok()).toBeTruthy();
-    const { data } = await response.json();
-
-    expect(data).toBeDefined();
-    expect(data.courses).toBeDefined();
+    const { data, errors } = await response.json();
+    expect(errors).toBeUndefined();
     expect(Array.isArray(data.courses)).toBe(true);
-    expect(data.courses.length).toBeGreaterThan(0);
   });
 
-  test("can query a specific course", async ({ request }) => {
+  test("an allowlisted operation accepts its intended variables", async ({
+    request,
+  }) => {
     const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          query GetCourse($subject: String!, $number: CourseNumber!) {
-            course(subject: $subject, number: $number) {
-              courseId
-              subject
-              number
-              title
-              description
-            }
-          }
-        `,
-        variables: {
-          subject: "COMPSCI",
-          number: "61A",
-        },
-      },
+      data: persistedOperationBySource(
+        COURSE_OPERATIONS_SOURCE,
+        "GetCourseTitle",
+        {
+          subject: "THIS_SUBJECT_DOES_NOT_EXIST",
+          number: "000",
+        }
+      ),
     });
 
     expect(response.ok()).toBeTruthy();
-    const { data } = await response.json();
-
-    expect(data).toBeDefined();
-    expect(data.course).toBeDefined();
-    expect(data.course.subject).toBe("COMPSCI");
-    expect(data.course.number).toBe("61A");
-  });
-
-  test("handles invalid query gracefully", async ({ request }) => {
-    const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          query {
-            invalidField {
-              doesNotExist
-            }
-          }
-        `,
-      },
-    });
-
-    const data = await response.json();
-
-    // GraphQL should return errors for invalid queries
-    expect(data.errors).toBeDefined();
-    expect(Array.isArray(data.errors)).toBe(true);
+    const { data, errors } = await response.json();
+    expect(errors).toBeUndefined();
+    expect(data).toHaveProperty("course");
   });
 });

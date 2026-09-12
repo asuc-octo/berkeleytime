@@ -10,7 +10,6 @@ const bannerSnapshotSchema = new Schema(
     hiddenOn: [String],
     persistent: Boolean,
     reappearing: Boolean,
-    clickEventLogging: Boolean,
     visible: Boolean,
   },
   { _id: false }
@@ -70,11 +69,6 @@ export const bannerSchema = new Schema(
       type: Number,
       required: true,
       default: 0,
-    },
-    clickEventLogging: {
-      type: Boolean,
-      required: true,
-      default: false,
     },
     visible: {
       type: Boolean,

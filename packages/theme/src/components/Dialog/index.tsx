@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 
 import { FlexProps, Heading, Text, Theme } from "@radix-ui/themes";
 import classNames from "classnames";
@@ -123,13 +123,16 @@ function Header({
   );
 }
 
-function Body({ children, ...props }: FlexProps) {
+const Body = forwardRef<HTMLDivElement, FlexProps>(function Body(
+  { children, ...props },
+  ref
+) {
   return (
-    <Flex p="4" align="start" direction="column" {...props}>
+    <Flex ref={ref} p="4" align="start" direction="column" {...props}>
       {children}
     </Flex>
   );
-}
+});
 
 function Footer({ children, ...props }: FlexProps) {
   return (

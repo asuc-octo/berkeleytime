@@ -39,7 +39,8 @@ export interface CreatePodInput {
   year: number;
 }
 
-export const getAllPods = async () => {
+export const getAllPods = async (context: PodRequestContext) => {
+  await requireStaffMember(context);
   const pods = await PodModel.find()
     .sort({ year: -1, semester: 1, name: 1 })
     .lean();

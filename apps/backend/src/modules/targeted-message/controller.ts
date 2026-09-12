@@ -102,7 +102,6 @@ export interface CreateTargetedMessageInput {
   linkText?: string | null;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging?: boolean | null;
   targetCourses: TargetedMessageCourseInput[];
 }
 
@@ -113,7 +112,6 @@ export interface UpdateTargetedMessageInput {
   linkText?: string | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
-  clickEventLogging?: boolean | null;
   visible?: boolean | null;
   targetCourses?: TargetedMessageCourseInput[] | null;
 }
@@ -135,7 +133,6 @@ export const createTargetedMessage = async (
     visible: true,
     persistent: input.persistent,
     reappearing: input.reappearing,
-    clickEventLogging: input.clickEventLogging ?? false,
     targetCourses: input.targetCourses,
   };
 
@@ -154,7 +151,6 @@ export const createTargetedMessage = async (
     visible: true,
     persistent: input.persistent,
     reappearing: input.reappearing,
-    clickEventLogging: input.clickEventLogging ?? false,
     targetCourses: input.targetCourses,
     currentVersion: 1,
     versionHistory: [initialVersionEntry],
@@ -206,14 +202,6 @@ export const updateTargetedMessage = async (
       changedFields.push("linkText");
     updateData.linkText = newLinkText;
   }
-  if (
-    input.clickEventLogging !== null &&
-    input.clickEventLogging !== undefined
-  ) {
-    if (input.clickEventLogging !== currentMessage.clickEventLogging)
-      changedFields.push("clickEventLogging");
-    updateData.clickEventLogging = input.clickEventLogging;
-  }
   if (input.visible !== null && input.visible !== undefined) {
     if (input.visible !== currentMessage.visible) changedFields.push("visible");
     updateData.visible = input.visible;
@@ -254,9 +242,6 @@ export const updateTargetedMessage = async (
         (updateData.persistent as boolean) ?? currentMessage.persistent,
       reappearing:
         (updateData.reappearing as boolean) ?? currentMessage.reappearing,
-      clickEventLogging:
-        (updateData.clickEventLogging as boolean) ??
-        currentMessage.clickEventLogging,
       targetCourses:
         (updateData.targetCourses as TargetedMessageCourseInput[]) ??
         currentMessage.targetCourses,
@@ -334,7 +319,6 @@ export const deleteTargetedMessage = async (
     visible: currentMessage.visible,
     persistent: currentMessage.persistent,
     reappearing: currentMessage.reappearing,
-    clickEventLogging: currentMessage.clickEventLogging,
     targetCourses: currentMessage.targetCourses,
   };
 

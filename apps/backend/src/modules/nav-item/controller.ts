@@ -39,7 +39,6 @@ export interface CreateNavItemInput {
   badgeText?: string | null;
   order?: number | null;
   visible?: boolean | null;
-  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateNavItemInput {
@@ -48,7 +47,6 @@ export interface UpdateNavItemInput {
   badgeText?: string | null;
   order?: number | null;
   visible?: boolean | null;
-  clickEventLogging?: boolean | null;
 }
 
 /**
@@ -88,7 +86,6 @@ export const createNavItem = async (
     badgeText: input.badgeText || undefined,
     order: input.order ?? 0,
     visible: input.visible ?? true,
-    clickEventLogging: input.clickEventLogging ?? false,
   });
 
   return formatNavItem(navItem);
@@ -118,12 +115,6 @@ export const updateNavItem = async (
   }
   if (input.visible !== null && input.visible !== undefined) {
     updateData.visible = input.visible;
-  }
-  if (
-    input.clickEventLogging !== null &&
-    input.clickEventLogging !== undefined
-  ) {
-    updateData.clickEventLogging = input.clickEventLogging;
   }
 
   const navItem = await NavItemModel.findByIdAndUpdate(navItemId, updateData, {

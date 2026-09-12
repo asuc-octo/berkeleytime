@@ -21,7 +21,6 @@ const targetedMessageSnapshotSchema = new Schema(
     visible: Boolean,
     persistent: Boolean,
     reappearing: Boolean,
-    clickEventLogging: Boolean,
     targetCourses: [targetedMessageCourseSchema],
   },
   { _id: false }
@@ -98,11 +97,6 @@ export const targetedMessageSchema = new Schema(
       type: Number,
       required: true,
       default: 0,
-    },
-    clickEventLogging: {
-      type: Boolean,
-      required: true,
-      default: false,
     },
 
     // Version control

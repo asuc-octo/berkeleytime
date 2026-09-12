@@ -2,7 +2,7 @@ import { ApolloServer } from "@apollo/server";
 import type { ApolloServerPlugin } from "@apollo/server";
 import responseCachePlugin from "@apollo/server-plugin-response-cache";
 import { ApolloServerPluginCacheControl } from "@apollo/server/plugin/cacheControl";
-import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
+import { ApolloServerPluginLandingPageDisabled } from "@apollo/server/plugin/disabled";
 import {
   KeyValueCache,
   KeyValueCacheSetOptions,
@@ -10,9 +10,11 @@ import {
 import { ApolloArmor } from "@escape.tech/graphql-armor";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
 import { createHash } from "crypto";
+import type { GraphQLFormattedError } from "graphql";
 import { RedisClientType } from "redis";
 import { gunzipSync, gzipSync } from "zlib";
 
+import { config } from "../../../../../packages/common/src/utils/config";
 import log from "../../lib/logger";
 import {
   cacheHitCount,
@@ -260,7 +262,10 @@ class RedisCache implements KeyValueCache {
     if (!value) return;
 
     const start = performance.now();
-    const ttl = Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull());
+    const ttl = Math.max(
+      1,
+      Math.min(options?.ttl ?? 24 * 60 * 60, timeToNextPull())
+    );
     await this.client.set(
       this.prefix + key,
       gzipSync(value).toString("base64"),
@@ -293,6 +298,39 @@ const armor = new ApolloArmor({
 
 const protection = armor.protect();
 
+export function formatGraphQLError(
+  formattedError: GraphQLFormattedError
+): GraphQLFormattedError {
+  const code = String(formattedError.extensions?.code ?? "");
+  const clientErrorStatuses: Record<string, number> = {
+    BAD_USER_INPUT: 400,
+    GRAPHQL_PARSE_FAILED: 400,
+    GRAPHQL_VALIDATION_FAILED: 400,
+    UNAUTHENTICATED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+  };
+  const status = clientErrorStatuses[code];
+
+  if (status) {
+    return {
+      ...formattedError,
+      extensions: {
+        ...formattedError.extensions,
+        http: { status },
+      },
+    };
+  }
+
+  return {
+    message: "Internal server error",
+    extensions: {
+      code: "INTERNAL_SERVER_ERROR",
+      http: { status: 500 },
+    },
+  };
+}
+
 export default async (redis: RedisClientType) => {
   const schema = buildSchema();
 
@@ -302,31 +340,15 @@ export default async (redis: RedisClientType) => {
     plugins: [
       ...protection.plugins,
       createOtelPlugin(),
-      // HTTP caching for catalog query (5 min TTL)
-      {
-        async requestDidStart() {
-          return {
-            async willSendResponse(requestContext) {
-              if (requestContext.operationName === "GetCanonicalCatalog") {
-                requestContext.response.http?.headers.set(
-                  "Cache-Control",
-                  "public, max-age=300"
-                );
-              }
-            },
-          };
-        },
-      },
-      ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
+      ApolloServerPluginLandingPageDisabled(),
       ApolloServerPluginCacheControl({
         calculateHttpHeaders: false,
-        defaultMaxAge: 24 * 60 * 60, // 24 hours
+        // Fail closed: only fields with an explicit positive cache hint may be
+        // shared. Personalized and staff operations are uncached by default.
+        defaultMaxAge: 0,
       }),
       responseCachePlugin({
         sessionId: async (req) => {
-          const explicitSessionId = req.request.http?.headers.get("sessionId");
-          if (explicitSessionId) return explicitSessionId;
-
           const cookieHeader = req.request.http?.headers.get("cookie") ?? null;
           return getSessionCacheIdFromCookie(cookieHeader);
         },
@@ -338,29 +360,9 @@ export default async (redis: RedisClientType) => {
         },
       }),
     ],
-    // TODO(prod): introspection: config.isDev,
-    introspection: true,
+    introspection: config.isDev,
     cache: new RedisCache(redis),
-    formatError: (formattedError) => {
-      // Return BAD_USER_INPUT errors as 400s
-      if (formattedError.extensions?.code === "BAD_USER_INPUT") {
-        return {
-          ...formattedError,
-          extensions: {
-            ...formattedError.extensions,
-            http: { status: 400 },
-          },
-        };
-      }
-      // Return other errors as internal server errors
-      return {
-        message: formattedError.message,
-        extensions: {
-          code: "INTERNAL_SERVER_ERROR",
-          http: { status: 500 },
-        },
-      };
-    },
+    formatError: formatGraphQLError,
   });
 
   await server.start();

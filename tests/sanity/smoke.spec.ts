@@ -22,13 +22,15 @@ test("can navigate to catalog page", async ({ page }) => {
   await expect(page).toHaveURL(/catalog/);
 });
 
-test("GraphQL API is accessible", async ({ request }) => {
-  // Test that the GraphQL endpoint responds
+test("raw public GraphQL is disabled", async ({ request }) => {
   const response = await request.post("/api/graphql", {
     data: {
       query: "{ __typename }",
     },
   });
 
-  expect(response.ok()).toBeTruthy();
+  expect(response.status()).toBe(400);
+  await expect(response.json()).resolves.toEqual({
+    error: "Invalid persisted operation request",
+  });
 });

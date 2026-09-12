@@ -8,7 +8,8 @@ import {
 
 const resolvers = {
   Query: {
-    allPods: () => getAllPods(),
+    allPods: (_: unknown, __: unknown, context: PodRequestContext) =>
+      getAllPods(context),
   },
 
   Mutation: {

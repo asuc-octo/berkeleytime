@@ -59,7 +59,7 @@ if (endpoint) {
         // GraphQL resolver-level tracing
         "@opentelemetry/instrumentation-graphql": {
           mergeItems: true,
-          allowValues: true,
+          allowValues: false,
         },
         // Mongoose / MongoDB tracing (auto-detected)
         "@opentelemetry/instrumentation-mongoose": {},

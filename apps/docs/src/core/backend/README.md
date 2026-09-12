@@ -176,7 +176,11 @@ export const TermModel: Model<ITermItem> = model<ITermItem>(
 
 To test the GraphQL API, it is recommended to first [seed the local database](../../getting-started/local-development.md#seeding-local-database) in order to have data.
 
-API testing is mainly done through the [Apollo GraphQL Sandbox](https://www.apollographql.com/docs/apollo-sandbox) available at `http://localhost:3000/api/graphql` when the backend container is running. While the UI is helpful for creating queries for you, it is highly recommended to review the [GraphQL docs](https://graphql.org/learn/), specifically these pages:
+The public `/api/graphql` route accepts only generated persisted-operation IDs,
+not raw GraphQL documents or Apollo Sandbox requests. Add a named `gql`
+document to an approved client source, run `npm run generate:operations`, and
+test it through the shared persisted-operation transport. Review the repository
+security guide before changing this boundary. For GraphQL concepts, see:
 - [schemas and types](https://graphql.org/learn/schema/)
 - [queries](https://graphql.org/learn/queries/)
 - [mutations](https://graphql.org/learn/mutations/)

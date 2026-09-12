@@ -1,7 +1,7 @@
 import { gql } from "graphql-tag";
 
 export const curatedClassesTypeDef = gql`
-  type CuratedClass @cacheControl(maxAge: 1) {
+  type CuratedClass @cacheControl(maxAge: 0) {
     _id: ID!
 
     class: Class!

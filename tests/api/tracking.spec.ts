@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { persistedOperation } from "../helpers/persisted-operation";
+
+const TRACK_EVENTS = `
+  mutation TrackEvents($events: [TrackingEventInput!]!) {
+    trackEvents(events: $events)
+  }
+`;
+
 const validEvent = {
   eventType: "click",
   targetType: "course",
@@ -46,10 +54,11 @@ test.describe("Tracking beacon endpoint", () => {
     expect(response.status()).toBe(400);
   });
 
-  test("rate limit: silently drops after 30 calls but still returns 204", async ({
+  test("maintains the 204 beacon contract across repeated calls", async ({
     request,
   }) => {
-    // First 30 calls should all succeed
+    // This intentionally verifies only the externally visible 204 contract;
+    // the silent-drop side effect requires a separate instrumented unit test.
     for (let i = 0; i < 30; i++) {
       const response = await request.post("/api/tracking/beacon", {
         data: { events: [validEvent] },
@@ -57,27 +66,17 @@ test.describe("Tracking beacon endpoint", () => {
       expect(response.status()).toBe(204);
     }
 
-    // 31st call is over the limit — still 204 (silent drop, not an error)
-    const overLimit = await request.post("/api/tracking/beacon", {
+    const finalCall = await request.post("/api/tracking/beacon", {
       data: { events: [validEvent] },
     });
-    expect(overLimit.status()).toBe(204);
+    expect(finalCall.status()).toBe(204);
   });
 });
 
 test.describe("Tracking GraphQL mutation", () => {
   test("trackEvents returns true for valid batch", async ({ request }) => {
     const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          mutation TrackEvents($events: [TrackingEventInput!]!) {
-            trackEvents(events: $events)
-          }
-        `,
-        variables: {
-          events: [validEvent],
-        },
-      },
+      data: persistedOperation(TRACK_EVENTS, { events: [validEvent] }),
     });
 
     expect(response.ok()).toBeTruthy();
@@ -89,14 +88,7 @@ test.describe("Tracking GraphQL mutation", () => {
   test("trackEvents errors on batch over 50", async ({ request }) => {
     const events = Array.from({ length: 51 }, () => ({ ...validEvent }));
     const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          mutation TrackEvents($events: [TrackingEventInput!]!) {
-            trackEvents(events: $events)
-          }
-        `,
-        variables: { events },
-      },
+      data: persistedOperation(TRACK_EVENTS, { events }),
     });
 
     expect(response.ok()).toBeTruthy();
@@ -115,16 +107,9 @@ test.describe("Tracking GraphQL mutation", () => {
     }
 
     const response = await request.post("/api/graphql", {
-      data: {
-        query: `
-          mutation TrackEvents($events: [TrackingEventInput!]!) {
-            trackEvents(events: $events)
-          }
-        `,
-        variables: {
-          events: [{ ...validEvent, metadata: bigMetadata }],
-        },
-      },
+      data: persistedOperation(TRACK_EVENTS, {
+        events: [{ ...validEvent, metadata: bigMetadata }],
+      }),
     });
 
     expect(response.ok()).toBeTruthy();

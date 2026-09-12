@@ -34,7 +34,7 @@ export const staffTypeDef = gql`
   """
   A user account for search results.
   """
-  type UserSearchResult {
+  type UserSearchResult @cacheControl(maxAge: 0) {
     _id: ID!
     name: String!
     email: String!
@@ -59,12 +59,12 @@ export const staffTypeDef = gql`
     """
     Get all users (staff only).
     """
-    allUsers: [UserSearchResult!]!
+    allUsers: [UserSearchResult!]! @auth
 
     """
     Get a staff member by user ID.
     """
-    staffMemberByUserId(userId: ID!): StaffMember
+    staffMemberByUserId(userId: ID!): StaffMember @auth
   }
 
   """

@@ -32,6 +32,7 @@ import { type IGradeDistribution } from "@/lib/api";
 import { type ICourseWithInstructorClass } from "@/lib/api/courses";
 import { sortByTermDescending } from "@/lib/classes";
 import {
+  GetCourseNumberByIdDocument,
   GetGradeDistributionDocument,
   Semester,
   TemporalPosition,
@@ -59,16 +60,29 @@ const loadOutputsFromInputs = async (
   const results = await Promise.all(
     dedupedInputs.map(async (input) => {
       try {
-        const response = await client.query({
-          query: GetGradeDistributionDocument,
-          variables: input,
-        });
+        // The URL carries only courseId; resolve the human-readable course
+        // number so cards and edit/filter lookups don't run with an empty value.
+        const [response, courseResponse] = await Promise.all([
+          client.query({
+            query: GetGradeDistributionDocument,
+            variables: input,
+          }),
+          client
+            .query({
+              query: GetCourseNumberByIdDocument,
+              variables: { courseId: input.courseId },
+            })
+            .catch(() => null),
+        ]);
 
         if (!response.data?.grade) return null;
 
+        const courseNumber =
+          courseResponse?.data?.courseById?.number ?? input.courseNumber;
+
         return {
           data: response.data.grade,
-          input,
+          input: { ...input, courseNumber },
         };
       } catch {
         return null;

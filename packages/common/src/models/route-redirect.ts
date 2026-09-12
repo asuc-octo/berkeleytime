@@ -18,11 +18,6 @@ export const routeRedirectSchema = new Schema(
       required: true,
       default: 0,
     },
-    clickEventLogging: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
   },
   {
     timestamps: {

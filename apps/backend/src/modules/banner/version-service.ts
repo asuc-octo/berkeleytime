@@ -1,11 +1,8 @@
-import { Types } from "mongoose";
-
 import {
   BannerModel,
   BannerSnapshot,
   BannerType,
   BannerVersionEntry,
-  ClickEventModel,
 } from "@repo/common/models";
 
 // Fields that are tracked in version history (editable content fields)
@@ -16,7 +13,6 @@ const VERSIONED_FIELDS = [
   "hiddenOn",
   "persistent",
   "reappearing",
-  "clickEventLogging",
   "visible",
 ] as const;
 
@@ -34,7 +30,6 @@ export const createSnapshot = (banner: BannerType): BannerSnapshot => {
     hiddenOn: banner.hiddenOn ?? [],
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
-    clickEventLogging: banner.clickEventLogging ?? false,
     visible: banner.visible ?? true,
   };
 };
@@ -49,7 +44,6 @@ export const createSnapshotFromInput = (input: {
   hiddenOn?: string[] | null;
   persistent: boolean;
   reappearing: boolean;
-  clickEventLogging?: boolean | null;
   visible?: boolean | null;
 }): BannerSnapshot => {
   return {
@@ -59,7 +53,6 @@ export const createSnapshotFromInput = (input: {
     hiddenOn: input.hiddenOn ?? [],
     persistent: input.persistent,
     reappearing: input.reappearing,
-    clickEventLogging: input.clickEventLogging ?? false,
     visible: input.visible ?? true,
   };
 };
@@ -176,63 +169,6 @@ export const getVersionAtTimestamp = async (
 
   // If no version was found, return the oldest version (shouldn't happen normally)
   return sortedHistory[sortedHistory.length - 1] || null;
-};
-
-/**
- * Gets click statistics grouped by banner version.
- * Enables correlation analysis between content changes and user behavior.
- */
-export const getClickStatsByVersion = async (
-  bannerId: string,
-  startDate?: Date,
-  endDate?: Date
-): Promise<
-  Array<{
-    version: number;
-    clickCount: number;
-    uniqueVisitors: number;
-  }>
-> => {
-  const matchStage: Record<string, unknown> = {
-    targetId: new Types.ObjectId(bannerId),
-    targetType: "banner",
-    targetVersion: { $exists: true, $ne: null },
-  };
-
-  if (startDate || endDate) {
-    matchStage.timestamp = {};
-    if (startDate) {
-      (matchStage.timestamp as Record<string, Date>).$gte = startDate;
-    }
-    if (endDate) {
-      (matchStage.timestamp as Record<string, Date>).$lte = endDate;
-    }
-  }
-
-  const results = await ClickEventModel.aggregate([
-    { $match: matchStage },
-    {
-      $group: {
-        _id: "$targetVersion",
-        clickCount: { $sum: 1 },
-        uniqueFingerprints: { $addToSet: "$sessionFingerprint" },
-      },
-    },
-    {
-      $project: {
-        version: "$_id",
-        clickCount: 1,
-        uniqueVisitors: { $size: "$uniqueFingerprints" },
-      },
-    },
-    { $sort: { version: 1 } },
-  ]);
-
-  return results.map((r) => ({
-    version: r.version,
-    clickCount: r.clickCount,
-    uniqueVisitors: r.uniqueVisitors,
-  }));
 };
 
 /**

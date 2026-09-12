@@ -10,6 +10,8 @@ import {
   redirect,
 } from "react-router-dom";
 
+import { persistedOperationFetch } from "@repo/shared";
+
 import CuratedClass from "@/app/CuratedClass";
 import CuratedClasses from "@/app/CuratedClasses";
 import Layout from "@/app/Layout";
@@ -51,6 +53,7 @@ const client = new ApolloClient({
       ? `${window.location.origin}/api/graphql`
       : "https://berkeleytime.com/api/graphql",
     credentials: "include",
+    fetch: persistedOperationFetch,
   }),
   cache: new InMemoryCache(),
 });

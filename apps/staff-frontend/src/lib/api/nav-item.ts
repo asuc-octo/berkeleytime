@@ -9,7 +9,6 @@ export interface NavItem {
   order: number;
   visible: boolean;
   clickCount: number;
-  clickEventLogging: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,7 +24,6 @@ export const ALL_NAV_ITEMS_FOR_STAFF = gql`
       order
       visible
       clickCount
-      clickEventLogging
       createdAt
       updatedAt
     }
@@ -39,7 +37,6 @@ export interface CreateNavItemInput {
   badgeText?: string | null;
   order?: number | null;
   visible?: boolean | null;
-  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateNavItemInput {
@@ -48,7 +45,6 @@ export interface UpdateNavItemInput {
   badgeText?: string | null;
   order?: number | null;
   visible?: boolean | null;
-  clickEventLogging?: boolean | null;
 }
 
 export const CREATE_NAV_ITEM = gql`
@@ -61,7 +57,6 @@ export const CREATE_NAV_ITEM = gql`
       order
       visible
       clickCount
-      clickEventLogging
       createdAt
       updatedAt
     }
@@ -78,7 +73,6 @@ export const UPDATE_NAV_ITEM = gql`
       order
       visible
       clickCount
-      clickEventLogging
       createdAt
       updatedAt
     }

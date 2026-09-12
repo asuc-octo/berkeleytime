@@ -610,6 +610,9 @@ export function Select<T>({
                   style={
                     maxListHeight ? { maxHeight: maxListHeight } : undefined
                   }
+                  onWheelCapture={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
                   {renderGroupedOptions()}
                 </Command.List>

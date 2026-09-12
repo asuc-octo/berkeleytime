@@ -38,13 +38,11 @@ export const requireStaffMember = async (
 export interface CreateRouteRedirectInput {
   fromPath: string;
   toPath: string;
-  clickEventLogging?: boolean | null;
 }
 
 export interface UpdateRouteRedirectInput {
   fromPath?: string | null;
   toPath?: string | null;
-  clickEventLogging?: boolean | null;
 }
 
 export const getAllRouteRedirects = async () => {
@@ -68,7 +66,6 @@ export const createRouteRedirect = async (
   const redirect = await RouteRedirectModel.create({
     fromPath,
     toPath: input.toPath, // toPath can be external URL, no normalization
-    clickEventLogging: input.clickEventLogging ?? false,
   });
 
   return formatRouteRedirect(redirect);
@@ -90,12 +87,6 @@ export const updateRouteRedirect = async (
   }
   if (input.toPath !== null && input.toPath !== undefined) {
     updateData.toPath = input.toPath; // toPath can be external URL, no normalization
-  }
-  if (
-    input.clickEventLogging !== null &&
-    input.clickEventLogging !== undefined
-  ) {
-    updateData.clickEventLogging = input.clickEventLogging;
   }
 
   const redirect = await RouteRedirectModel.findByIdAndUpdate(

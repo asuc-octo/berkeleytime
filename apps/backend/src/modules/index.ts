@@ -4,7 +4,6 @@ import Analytics from "./analytics";
 import Banner from "./banner";
 import Catalog from "./catalog";
 import Class from "./class";
-import ClickTracking from "./click-tracking";
 import Collection from "./collection";
 import Common from "./common";
 import Course from "./course";
@@ -26,7 +25,6 @@ import User from "./user";
 const modules = [
   Analytics,
   Banner,
-  ClickTracking,
   User,
   GradeDistribution,
   Catalog,

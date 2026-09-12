@@ -128,7 +128,7 @@ Use these packages rather than duplicating code across apps.
 - **Database Models**: Defined in `packages/common/src/models/` (Mongoose schemas)
 - **Environment Variables**: Use `.env` files (see `.env.template`)
 - **Monorepo**: Changes to packages may require rebuilding dependent apps
-- **GraphQL Playground**: Available at `http://localhost:[DEV_PORT_BASE]/api/graphql` in dev mode
+- **Public GraphQL boundary**: `/api/graphql` accepts only generated persisted-operation IDs; never mount raw Apollo HTTP middleware
 
 ## When Adding Features
 
