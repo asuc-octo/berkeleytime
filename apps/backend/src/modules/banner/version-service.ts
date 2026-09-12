@@ -13,6 +13,7 @@ const VERSIONED_FIELDS = [
   "text",
   "link",
   "linkText",
+  "hiddenOn",
   "persistent",
   "reappearing",
   "clickEventLogging",
@@ -30,6 +31,7 @@ export const createSnapshot = (banner: BannerType): BannerSnapshot => {
     text: banner.text,
     link: banner.link ?? undefined,
     linkText: banner.linkText ?? undefined,
+    hiddenOn: banner.hiddenOn ?? [],
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
     clickEventLogging: banner.clickEventLogging ?? false,
@@ -44,6 +46,7 @@ export const createSnapshotFromInput = (input: {
   text: string;
   link?: string | null;
   linkText?: string | null;
+  hiddenOn?: string[] | null;
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging?: boolean | null;
@@ -53,6 +56,7 @@ export const createSnapshotFromInput = (input: {
     text: input.text,
     link: input.link ?? undefined,
     linkText: input.linkText ?? undefined,
+    hiddenOn: input.hiddenOn ?? [],
     persistent: input.persistent,
     reappearing: input.reappearing,
     clickEventLogging: input.clickEventLogging ?? false,
@@ -86,7 +90,15 @@ export const detectChangedFields = (
     const normalizedCurrent = currentValue ?? null;
     const normalizedNew = newValue ?? null;
 
-    if (normalizedCurrent !== normalizedNew) {
+    const valuesMatch =
+      Array.isArray(normalizedCurrent) && Array.isArray(normalizedNew)
+        ? normalizedCurrent.length === normalizedNew.length &&
+          normalizedCurrent.every(
+            (value, index) => value === normalizedNew[index]
+          )
+        : normalizedCurrent === normalizedNew;
+
+    if (!valuesMatch) {
       changedFields.push(field);
     }
   }

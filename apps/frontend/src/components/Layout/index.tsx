@@ -12,7 +12,6 @@ import styles from "./Layout.module.scss";
 
 interface LayoutProps {
   banner?: boolean;
-  bannerExcludedLinks?: readonly string[];
   bannerFallback?: boolean;
   header?: boolean;
   footer?: boolean;
@@ -22,7 +21,6 @@ interface LayoutProps {
 
 export default function Layout({
   banner = true,
-  bannerExcludedLinks,
   bannerFallback = true,
   header = true,
   footer = true,
@@ -41,12 +39,7 @@ export default function Layout({
       >
         {(showBanner || header) && (
           <div ref={headerRef} className={styles.stickyHeader}>
-            {showBanner && (
-              <Banner
-                excludedLinks={bannerExcludedLinks}
-                showFallback={bannerFallback}
-              />
-            )}
+            {showBanner && <Banner showFallback={bannerFallback} />}
             {header && <NavigationBar noBorder={!headerBorder} />}
           </div>
         )}

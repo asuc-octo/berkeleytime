@@ -7,6 +7,7 @@ export interface FormattedBanner {
   text: string;
   link?: string;
   linkText?: string;
+  hiddenOn: string[];
   persistent: boolean;
   reappearing: boolean;
   clickCount: number;
@@ -28,6 +29,7 @@ export const formatBanner = (
     text: banner.text,
     link: banner.link ?? undefined,
     linkText: banner.linkText ?? undefined,
+    hiddenOn: banner.hiddenOn ?? [],
     persistent: banner.persistent,
     reappearing: banner.reappearing ?? false,
     clickCount: banner.clickCount ?? 0,

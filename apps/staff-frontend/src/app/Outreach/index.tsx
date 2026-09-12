@@ -94,6 +94,7 @@ interface BannerFormData {
   text: string;
   link: string;
   linkText: string;
+  hiddenOn: string;
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging: boolean;
@@ -109,6 +110,7 @@ const initialBannerFormData: BannerFormData = {
   text: "",
   link: "",
   linkText: "",
+  hiddenOn: "",
   persistent: false,
   reappearing: false,
   clickEventLogging: false,
@@ -208,6 +210,7 @@ export default function Outreach() {
       text: banner.text,
       link: banner.link || "",
       linkText: banner.linkText || "",
+      hiddenOn: banner.hiddenOn.join(", "),
       persistent: banner.persistent,
       reappearing: banner.reappearing,
       clickEventLogging: banner.clickEventLogging,
@@ -230,6 +233,10 @@ export default function Outreach() {
           text: bannerFormData.text.trim(),
           link: bannerFormData.link.trim() || null,
           linkText: bannerFormData.linkText.trim() || null,
+          hiddenOn: bannerFormData.hiddenOn
+            .split(",")
+            .map((path) => path.trim())
+            .filter(Boolean),
           persistent: bannerFormData.persistent,
           reappearing: bannerFormData.reappearing,
           clickEventLogging: bannerFormData.clickEventLogging,
@@ -240,6 +247,10 @@ export default function Outreach() {
           text: bannerFormData.text.trim(),
           link: bannerFormData.link.trim() || null,
           linkText: bannerFormData.linkText.trim() || null,
+          hiddenOn: bannerFormData.hiddenOn
+            .split(",")
+            .map((path) => path.trim())
+            .filter(Boolean),
           persistent: bannerFormData.persistent,
           reappearing: bannerFormData.reappearing,
           clickEventLogging: bannerFormData.clickEventLogging,
@@ -712,6 +723,7 @@ export default function Outreach() {
                   <div className={styles.cardHeader}>
                     {banner.persistent ||
                     banner.reappearing ||
+                    banner.hiddenOn.length > 0 ||
                     banner.clickEventLogging ? (
                       <div className={styles.badgeRow}>
                         {banner.persistent && (
@@ -719,6 +731,11 @@ export default function Outreach() {
                         )}
                         {banner.reappearing && (
                           <span className={styles.badge}>Reappearing</span>
+                        )}
+                        {banner.hiddenOn.length > 0 && (
+                          <span className={styles.badge}>
+                            Hidden on {banner.hiddenOn.join(", ")}
+                          </span>
                         )}
                         {banner.clickEventLogging && (
                           <span className={styles.badge}>
@@ -1427,6 +1444,28 @@ export default function Outreach() {
                 <p className={styles.formHint}>
                   Text to display on the button. Defaults to "Open link" if left
                   blank.
+                </p>
+              </div>
+
+              <div className={styles.formField}>
+                <label className={styles.formLabel}>
+                  Hidden on paths (optional)
+                </label>
+                <Input
+                  type="text"
+                  placeholder="e.g., /apply, /about"
+                  value={bannerFormData.hiddenOn}
+                  onChange={(e) =>
+                    setBannerFormData({
+                      ...bannerFormData,
+                      hiddenOn: e.target.value,
+                    })
+                  }
+                />
+                <p className={styles.formHint}>
+                  Comma-separated site paths where this banner should not
+                  appear. Start each path with / and omit query strings and URL
+                  hashes.
                 </p>
               </div>
 

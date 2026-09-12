@@ -7,6 +7,7 @@ const bannerSnapshotSchema = new Schema(
     text: String,
     link: String,
     linkText: String,
+    hiddenOn: [String],
     persistent: Boolean,
     reappearing: Boolean,
     clickEventLogging: Boolean,
@@ -44,6 +45,11 @@ export const bannerSchema = new Schema(
       type: String,
       required: false,
       trim: true,
+    },
+    hiddenOn: {
+      type: [String],
+      required: true,
+      default: [],
     },
     persistent: {
       type: Boolean,

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowUpRight, Xmark } from "iconoir-react";
 import Markdown from "react-markdown";
+import { useLocation } from "react-router";
 
 import {
   useAllBanners,
@@ -21,14 +22,14 @@ import styles from "./Banner.module.scss";
 import BetaBanner from "./BetaBanner";
 
 interface BannerProps {
-  excludedLinks?: readonly string[];
   showFallback?: boolean;
 }
 
-export default function Banner({
-  excludedLinks = [],
-  showFallback = true,
-}: BannerProps) {
+const normalizePath = (path: string) =>
+  path === "/" ? path : path.replace(/\/+$/, "");
+
+export default function Banner({ showFallback = true }: BannerProps) {
+  const { pathname } = useLocation();
   const { data: banners, loading, error } = useAllBanners();
   const { incrementDismiss } = useIncrementBannerDismiss();
   const { trackView } = useTrackBannerView();
@@ -55,7 +56,11 @@ export default function Banner({
     if (loading || !banners || banners.length === 0) return null;
 
     for (const banner of banners) {
-      if (banner.link && excludedLinks.includes(banner.link)) {
+      if (
+        banner.hiddenOn.some(
+          (hiddenPath) => normalizePath(hiddenPath) === normalizePath(pathname)
+        )
+      ) {
         continue;
       }
 
@@ -87,7 +92,7 @@ export default function Banner({
     }
 
     return null;
-  }, [banners, loading, dismissedBanners, excludedLinks]);
+  }, [banners, loading, dismissedBanners, pathname]);
 
   // Track view for all banners (always on now)
   useEffect(() => {

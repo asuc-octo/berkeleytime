@@ -10,7 +10,6 @@ import {
 
 import { ThemeProvider } from "@repo/theme";
 
-import { RECRUITMENT_BANNER_LINKS } from "@/app/Apply/constants";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -192,12 +191,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        element: (
-          <Layout
-            bannerExcludedLinks={RECRUITMENT_BANNER_LINKS}
-            bannerFallback={false}
-          />
-        ),
+        element: <Layout bannerFallback={false} />,
         children: [
           {
             path: "apply",

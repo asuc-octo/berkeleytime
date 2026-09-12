@@ -6,6 +6,7 @@ export interface Banner {
   text: string;
   link: string | null;
   linkText: string | null;
+  hiddenOn: string[];
   persistent: boolean;
   reappearing: boolean;
   clickCount: number;
@@ -25,6 +26,7 @@ export const ALL_BANNERS_FOR_STAFF = gql`
       text
       link
       linkText
+      hiddenOn
       persistent
       reappearing
       clickCount
@@ -43,6 +45,7 @@ export interface CreateBannerInput {
   text: string;
   link?: string | null;
   linkText?: string | null;
+  hiddenOn?: string[] | null;
   persistent: boolean;
   reappearing: boolean;
   clickEventLogging?: boolean | null;
@@ -52,6 +55,7 @@ export interface UpdateBannerInput {
   text?: string | null;
   link?: string | null;
   linkText?: string | null;
+  hiddenOn?: string[] | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
   clickEventLogging?: boolean | null;
@@ -65,6 +69,7 @@ export const CREATE_BANNER = gql`
       text
       link
       linkText
+      hiddenOn
       persistent
       reappearing
       clickCount
@@ -85,6 +90,7 @@ export const UPDATE_BANNER = gql`
       text
       link
       linkText
+      hiddenOn
       persistent
       reappearing
       clickCount
