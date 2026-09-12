@@ -1,9 +1,10 @@
 import { type Response, Router } from "express";
+import type { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
 import { searchCourses } from "./controller";
+import { createRefreshRateLimit, requireStaffRefreshAccess } from "./security";
 
-const router = Router();
 const baseUrl = config.semanticSearch.url.replace(/\/$/, "");
 
 async function forward(
@@ -30,43 +31,59 @@ async function forward(
   }
 }
 
-router.get("/health", async (_req, res) => {
-  await forward(`${baseUrl}/health`, { method: "GET" }, res);
-});
+export default function semanticSearchRoutes(redis: RedisClientType) {
+  const router = Router();
 
-router.post("/refresh", async (req, res) => {
-  const body = req.body ?? {};
-  await forward(
-    `${baseUrl}/refresh`,
-    {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    },
-    res
+  router.get("/health", async (_req, res) => {
+    await forward(`${baseUrl}/health`, { method: "GET" }, res);
+  });
+
+  router.post(
+    "/refresh",
+    requireStaffRefreshAccess,
+    createRefreshRateLimit(redis),
+    async (req, res) => {
+      const body = req.body ?? {};
+      await forward(
+        `${baseUrl}/refresh`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        },
+        res
+      );
+    }
   );
-});
 
-// Lightweight endpoint: returns only course identifiers for frontend filtering
-router.get("/courses", searchCourses);
+  // Lightweight endpoint: returns only course identifiers for frontend filtering
+  router.get("/courses", searchCourses);
 
-// Full proxy endpoint (kept for backwards compatibility)
-router.post("/search", async (req, res) => {
-  const body = req.body ?? {};
-  if (!body.query || !String(body.query).trim()) {
-    res.status(400).json({ error: "query is required" });
-    return;
-  }
+  // Full proxy endpoint (kept for backwards compatibility)
+  router.post("/search", async (req, res) => {
+    const body = req.body ?? {};
+    if (!body.query || !String(body.query).trim()) {
+      res.status(400).json({ error: "query is required" });
+      return;
+    }
 
-  await forward(
-    `${baseUrl}/search`,
-    {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    },
-    res
-  );
-});
+    const searchRequest = {
+      query: body.query,
+      threshold: body.threshold,
+      year: body.year,
+      semester: body.semester,
+    };
 
-export default router;
+    await forward(
+      `${baseUrl}/search`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(searchRequest),
+      },
+      res
+    );
+  });
+
+  return router;
+}

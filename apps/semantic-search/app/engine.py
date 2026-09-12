@@ -368,11 +368,8 @@ class SemanticSearchEngine:
                 self._indices[key] = loaded
             return loaded
 
-        # Index not ready — start a background build if nothing is already running,
-        # then return an error immediately so the request doesn't hang.
-        self.refresh_async(year, canonical_semester, allowed)
         raise RuntimeError(
-            f"Index for {canonical_semester} {year} is still being built. Please try again in a moment."
+            f"Index for {canonical_semester} {year} is not available."
         )
 
     def _key(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
@@ -505,13 +502,23 @@ class SemanticSearchEngine:
                 if cursor == 0:
                     break
 
-            # Sort newest first
-            all_meta.sort(
-                key=lambda m: (m.get("year", 0), SEMESTER_ORDER.get(m.get("semester", ""), 0)),
+            # Retention is based on distinct academic terms, not index variants.
+            # Otherwise filtered indexes for one term can crowd the production
+            # unfiltered index out of the fixed-size metadata list.
+            terms = {
+                (meta.get("year", 0), meta.get("semester", ""))
+                for meta in all_meta
+            }
+            newest_terms = sorted(
+                terms,
+                key=lambda term: (term[0], SEMESTER_ORDER.get(term[1], 0)),
                 reverse=True,
-            )
+            )[:max_terms]
+            keep_terms = set(newest_terms)
 
-            for meta in all_meta[max_terms:]:
+            for meta in all_meta:
+                if (meta.get("year", 0), meta.get("semester", "")) in keep_terms:
+                    continue
                 try:
                     index_name = self._get_index_name(meta["year"], meta["semester"], meta.get("allowed_subjects"))
                     schema = self._build_schema(index_name)
