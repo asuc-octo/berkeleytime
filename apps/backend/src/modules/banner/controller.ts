@@ -52,6 +52,7 @@ export interface CreateBannerInput {
   text: string;
   link?: string | null;
   linkText?: string | null;
+  hiddenOn?: string[] | null;
   persistent: boolean;
   reappearing: boolean;
   visible?: boolean | null;
@@ -61,10 +62,29 @@ export interface UpdateBannerInput {
   text?: string | null;
   link?: string | null;
   linkText?: string | null;
+  hiddenOn?: string[] | null;
   persistent?: boolean | null;
   reappearing?: boolean | null;
   visible?: boolean | null;
 }
+
+const normalizeHiddenOn = (paths: string[]): string[] => {
+  const normalizedPaths = paths
+    .map((path) => path.trim())
+    .filter(Boolean)
+    .map((path) => {
+      if (!path.startsWith("/") || path.includes("?") || path.includes("#")) {
+        throw new GraphQLError(
+          `Hidden banner paths must be URL paths without query strings or hashes: ${path}`,
+          { extensions: { code: "BAD_USER_INPUT" } }
+        );
+      }
+
+      return path === "/" ? path : path.replace(/\/+$/, "");
+    });
+
+  return [...new Set(normalizedPaths)];
+};
 
 /**
  * Get all visible banners for public display.
@@ -118,7 +138,8 @@ export const createBanner = async (
   await requireStaffMember(context);
 
   // Create initial snapshot and version entry for the new banner
-  const snapshot = createSnapshotFromInput(input);
+  const hiddenOn = normalizeHiddenOn(input.hiddenOn ?? []);
+  const snapshot = createSnapshotFromInput({ ...input, hiddenOn });
   const initialVersionEntry = createInitialVersionEntry(snapshot);
 
   const banner = await BannerModel.create({
@@ -126,6 +147,7 @@ export const createBanner = async (
     link: input.link === "" || input.link === null ? null : input.link,
     linkText:
       input.linkText === "" || input.linkText === null ? null : input.linkText,
+    hiddenOn,
     persistent: input.persistent,
     reappearing: input.reappearing,
     visible: input.visible ?? true,
@@ -166,6 +188,9 @@ export const updateBanner = async (
     updateData.linkText =
       input.linkText === "" || input.linkText === null ? null : input.linkText;
   }
+  if (input.hiddenOn !== null && input.hiddenOn !== undefined) {
+    updateData.hiddenOn = normalizeHiddenOn(input.hiddenOn);
+  }
   if (input.persistent !== null && input.persistent !== undefined) {
     updateData.persistent = input.persistent;
   }
@@ -190,6 +215,10 @@ export const updateBanner = async (
         updateData.linkText !== undefined
           ? updateData.linkText
           : currentBanner.linkText,
+      hiddenOn:
+        updateData.hiddenOn !== undefined
+          ? updateData.hiddenOn
+          : currentBanner.hiddenOn,
       persistent:
         (updateData.persistent as boolean) ?? currentBanner.persistent,
       reappearing:
@@ -202,6 +231,7 @@ export const updateBanner = async (
         text: string;
         link?: string | null;
         linkText?: string | null;
+        hiddenOn?: string[] | null;
         persistent: boolean;
         reappearing: boolean;
       }
