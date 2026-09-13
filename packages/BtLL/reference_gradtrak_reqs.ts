@@ -1054,11 +1054,6 @@ Function<boolean>(Course) technical_elective_finder (course){
   boolean return or([is_anthro_107, is_arch, is_art, is_astron, is_bioeng, is_chem, is_chmeng, is_civeng, is_cogsci, is_comlit_170, is_compbio_175, is_cyplan_101, is_data, is_hist_c184d, is_sts_c104, is_demog, is_desinv, is_meceng_292c, is_deveng_290, is_dighum_101, is_econ, is_educ, is_eecs, is_eneres, is_engin, is_envecon, is_eps, is_espm, is_geog, is_indeng, is_info, is_integbi, is_ldarch, is_legalst_123, is_ling, is_math, is_mcellbi, is_me, is_music, is_neurosc, is_newmedia, is_nuceng, is_nusctx_103, is_philos, is_physics, is_polsci, is_psych_c123, is_pbhtlh, is_pubpol, is_sociol_166, is_spanish_100, is_stat, is_theater_177, is_ugba])
 }
 
-Function<number>(number, Course) add_course_units (acc, course){
-  number units get_attr(course, "units")
-  number return add([acc, units])
-}
-
 Function<boolean>(Course) any_upper_div_tech_finder (course) {
   boolean is_design design_upper_div_finder(course)
   boolean is_cs cs_upper_div_finder(course)
@@ -1108,46 +1103,26 @@ Function<List<Requirement>>() main (){
 
   // TODO: add special topics and graduate courses from https://eecs.berkeley.edu/academics/courses/approved-cs-graduate-and-special-topics-courses/
 
-  // Upper Division
-  
-  // Design: 4 units
-  List<Course> design_eligible filter(courses, design_upper_div_finder)
-  List<Course> design_used take_until_units(design_eligible, 4)
-  number design_units reduce(design_used, add_course_units, 0)
-  NumberRequirement design_upper_div {design_eligible, design_units, 4, "Design Upper Division Units"}
-  
-  // CS: 8 units
-  List<Course> cs_eligible filter(courses, cs_upper_div_finder)
-  List<Course> cs_pool filter(cs_eligible, (c) {
-    boolean is_used one_common_course([c], design_used)
-    boolean return not(is_used)
-  })
-  List<Course> cs_used take_until_units(cs_pool, 8)
-  number cs_units reduce(cs_used, add_course_units, 0)
-  NumberRequirement cs_upper_div {cs_pool, cs_units, 8, "CS Upper Division Units"}
-
-  // CS/EE/EECS: 8 units
-  List<Course> eecs_eligible filter(courses, eecs_upper_div_finder)
-  List<Course> eecs_pool filter(eecs_eligible, (c) {
-    boolean used_design one_common_course([c], design_used)
-    boolean used_cs one_common_course([c], cs_used)
-    boolean return not(or([used_design, used_cs]))
-  })
-  List<Course> eecs_used take_until_units(eecs_pool, 8)
-  number eecs_units reduce(eecs_used, add_course_units, 0)
-  NumberRequirement eecs_upper_div {eecs_pool, eecs_units, 8, "CS/EE/EECS Upper Division Units"}
-
-  // Technical elective: 4 units
+  // Upper Division — optimal unit-based assignment, no course used twice
+  List<Course> design_eligible    filter(courses, design_upper_div_finder)
+  List<Course> cs_eligible        filter(courses, cs_upper_div_finder)
+  List<Course> eecs_eligible      filter(courses, eecs_upper_div_finder)
   List<Course> tech_elec_eligible filter(courses, technical_elective_finder)
-  List<Course> tech_pool filter(tech_elec_eligible, (c) {
-    boolean used_design one_common_course([c], design_used)
-    boolean used_cs one_common_course([c], cs_used)
-    boolean used_eecs one_common_course([c], eecs_used)
-    boolean return not(or([used_design, used_cs, used_eecs]))
-  })
-  List<Course> tech_used take_until_units(tech_pool, 4)
-  number tech_units reduce(tech_used, add_course_units, 0)
-  NumberRequirement tech_elec_upper_div {tech_pool, tech_units, 4, "Upper Division Technical Elective"}
+
+  List<Course> design_courses assign_by_units(design_eligible, cs_eligible, eecs_eligible, tech_elec_eligible, 4, 8, 8, 4, 0)
+  List<Course> cs_courses     assign_by_units(design_eligible, cs_eligible, eecs_eligible, tech_elec_eligible, 4, 8, 8, 4, 1)
+  List<Course> eecs_courses   assign_by_units(design_eligible, cs_eligible, eecs_eligible, tech_elec_eligible, 4, 8, 8, 4, 2)
+  List<Course> tech_courses   assign_by_units(design_eligible, cs_eligible, eecs_eligible, tech_elec_eligible, 4, 8, 8, 4, 3)
+
+  number design_units sum_units(design_courses)
+  number cs_units     sum_units(cs_courses)
+  number eecs_units   sum_units(eecs_courses)
+  number tech_units   sum_units(tech_courses)
+
+  NumberRequirement design_upper_div    {design_courses, design_units, 4, "Design Upper Division Units"}
+  NumberRequirement cs_upper_div        {cs_courses, cs_units, 8, "CS Upper Division Units"}
+  NumberRequirement eecs_upper_div      {eecs_courses, eecs_units, 8, "CS/EE/EECS Upper Division Units"}
+  NumberRequirement tech_elec_upper_div {tech_courses, tech_units, 4, "Upper Division Technical Elective"}
 
   // min 24 total units
   number total_tech_units add([design_units, cs_units, eecs_units, tech_units])

@@ -1,6 +1,13 @@
 import { Data, FunctionMapEntry, Variables } from "../types";
 import { Course, coursesEqual } from "./course";
 
+// ---------------------------------------------------------------------------
+// Shared helpers
+// ---------------------------------------------------------------------------
+
+// Dedup a list-of-lists of courses into a flat course array + per-list
+// indices into that array. Used by every matcher in this file so equality
+// (subject + number) is computed once.
 function buildCourseIndex(eligibleLists: Course[][]): {
   allCourses: Course[];
   eligible: number[][];
@@ -15,6 +22,27 @@ function buildCourseIndex(eligibleLists: Course[][]): {
   const eligible = eligibleLists.map((list) => list.map(courseIdx));
   return { allCourses, eligible };
 }
+
+// Berkeley course-numbering convention:
+//   - lower division: 1–99
+//   - upper division: 100–199
+//   - graduate: ≥ 200
+// Course numbers may have a letter prefix (C/N/W) and/or a letter suffix
+// (A/B/L/AC/…), e.g. "C100", "170L", "C170A". We strip both and parse the
+// digits.
+export function isUpperDivision(course: Course): boolean {
+  const num = course.number?.data ?? "";
+  const match = num.match(/^[A-Z]*(\d+)[A-Z]*$/);
+  if (!match) return false;
+  const n = parseInt(match[1], 10);
+  return n >= 100 && n <= 199;
+}
+
+// ---------------------------------------------------------------------------
+// assign_by_count — bipartite matching (Kuhn's augmenting-path algorithm)
+// Each category needs ≥1 course; no course used twice. Maximizes categories
+// satisfied.
+// ---------------------------------------------------------------------------
 
 function tryAugment(
   cat: number,
@@ -57,6 +85,78 @@ export function runBipartiteMatch(eligibleLists: Course[][]): Course[][] {
   return matchCat.map((ci) => (ci >= 0 ? [allCourses[ci]] : []));
 }
 
+// ---------------------------------------------------------------------------
+// assign_by_units — unit-threshold bucket assignment (backtracking)
+// Each bucket needs ≥T_k units; no course used twice. Maximizes buckets
+// satisfied. Uses most-constrained-first ordering to prune early.
+// ---------------------------------------------------------------------------
+
+export function runUnitAssignment(
+  eligibleLists: Course[][],
+  thresholds: number[]
+): Course[][] {
+  const k = eligibleLists.length;
+  const { allCourses, eligible } = buildCourseIndex(eligibleLists);
+
+  // Per-course: which buckets is it eligible for
+  const courseEligible: number[][] = allCourses.map((_, ci) =>
+    eligible.reduce<number[]>((acc, bucketList, bi) => {
+      if (bucketList.includes(ci)) acc.push(bi);
+      return acc;
+    }, [])
+  );
+
+  // Sort courses: most constrained first (fewest eligible buckets)
+  const sortedCourseIndices = allCourses
+    .map((_, i) => i)
+    .sort((a, b) => courseEligible[a].length - courseEligible[b].length);
+
+  const unitsAssigned = new Array<number>(k).fill(0);
+  const assigned: Course[][] = Array.from({ length: k }, () => []);
+
+  let bestSatisfied = 0;
+  let bestAssigned: Course[][] = Array.from({ length: k }, () => []);
+
+  function backtrack(courseOrder: number[], pos: number): void {
+    const satisfied = unitsAssigned.filter((u, i) => u >= thresholds[i]).length;
+    if (satisfied > bestSatisfied) {
+      bestSatisfied = satisfied;
+      bestAssigned = assigned.map((b) => [...b]);
+    }
+    if (pos >= courseOrder.length) return;
+
+    const remaining = courseOrder.slice(pos);
+    const potentialUnits = new Array<number>(k).fill(0);
+    for (const ci of remaining) {
+      for (const bi of courseEligible[ci]) {
+        potentialUnits[bi] += allCourses[ci].units?.data ?? 0;
+      }
+    }
+    const maxPossible = unitsAssigned.filter(
+      (u, i) => u >= thresholds[i] || u + potentialUnits[i] >= thresholds[i]
+    ).length;
+    if (maxPossible <= bestSatisfied) return;
+
+    const ci = courseOrder[pos];
+    for (const bi of courseEligible[ci]) {
+      const units = allCourses[ci].units?.data ?? 0;
+      assigned[bi].push(allCourses[ci]);
+      unitsAssigned[bi] += units;
+      backtrack(courseOrder, pos + 1);
+      assigned[bi].pop();
+      unitsAssigned[bi] -= units;
+    }
+    backtrack(courseOrder, pos + 1);
+  }
+
+  backtrack(sortedCourseIndices, 0);
+  return bestAssigned;
+}
+
+// ---------------------------------------------------------------------------
+// BtLL built-in registrations
+// ---------------------------------------------------------------------------
+
 export const functions: FunctionMapEntry[] = [
   [
     "assign_by_count",
@@ -86,6 +186,45 @@ export const functions: FunctionMapEntry[] = [
           "List<Course>",
           "List<Course>",
           "List<Course>",
+          "number",
+        ],
+      },
+    },
+  ],
+  [
+    "assign_by_units",
+    {
+      type: "Function<List<Course>>(List<Course>, List<Course>, List<Course>, List<Course>, number, number, number, number, number)",
+      data: {
+        eval: (
+          _: Variables,
+          l0: Data<Course[]>,
+          l1: Data<Course[]>,
+          l2: Data<Course[]>,
+          l3: Data<Course[]>,
+          t0: Data<number>,
+          t1: Data<number>,
+          t2: Data<number>,
+          t3: Data<number>,
+          slot: Data<number>
+        ): Data<Course[]> => {
+          const lists = [l0, l1, l2, l3];
+          const thresholds = [t0.data, t1.data, t2.data, t3.data];
+          const result = runUnitAssignment(
+            lists.map((l) => l.data),
+            thresholds
+          );
+          return { data: result[slot.data], type: "List<Course>" };
+        },
+        args: [
+          "List<Course>",
+          "List<Course>",
+          "List<Course>",
+          "List<Course>",
+          "number",
+          "number",
+          "number",
+          "number",
           "number",
         ],
       },
