@@ -91,8 +91,6 @@ export const evaluate = (
             expr,
             `Expected ${funcVar.data.args.length} arguments but got ${args.length} arguments for function '${functionName}'`
           );
-        // if_else and elseifs only evaluate the branch that is taken, so a branch
-        // may contain an expression that would throw if the condition were different
         if (functionName === "if_else" && args.length === 3) {
           const condition = evaluate(args[0], "boolean", variables, config);
           return evaluate(

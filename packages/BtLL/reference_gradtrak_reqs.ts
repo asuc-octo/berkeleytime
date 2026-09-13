@@ -55,8 +55,6 @@ Function<boolean>() main (){
   // Senior residence
   List<Column> columns get_attr(this, "columns")
   List<Column> only_spring_fall filter(columns, spring_fall_column)
-  // Senior year is the last two Fall/Spring terms; the divider is the term before them.
-  // A plan shorter than three Fall/Spring terms has no divider, so it is all senior year.
   number index if_else(greater_than(length(only_spring_fall), 2), divider_index(), -1)
   List<Column> pre_senior_columns slice(columns, 0, add([index, 1]))
   number pre_senior_units reduce(pre_senior_columns, add_units, 0)

@@ -439,7 +439,6 @@ const TESTS = [
       try {
         const result = init(UC_REQ_BTLL, variables, { debug: false }) as any[];
         if (result.length !== 5) return false;
-        // No divider column: whole plan is senior, so 0 pre-senior units and 30 senior units
         const [preSenior, senior] = result[4].requirements.data;
         if (preSenior.result.data !== false) return false;
         if (senior.result.data !== true) return false;
