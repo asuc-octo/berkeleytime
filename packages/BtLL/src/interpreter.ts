@@ -91,6 +91,40 @@ export const evaluate = (
             expr,
             `Expected ${funcVar.data.args.length} arguments but got ${args.length} arguments for function '${functionName}'`
           );
+        // if_else and elseifs only evaluate the branch that is taken, so a branch
+        // may contain an expression that would throw if the condition were different
+        if (functionName === "if_else" && args.length === 3) {
+          const condition = evaluate(args[0], "boolean", variables, config);
+          return evaluate(
+            condition.data ? args[1] : args[2],
+            expected_type,
+            variables,
+            config
+          );
+        }
+        if (
+          functionName === "elseifs" &&
+          args.length === 2 &&
+          args.every((arg) => arg.startsWith("[") && arg.endsWith("]"))
+        ) {
+          const conditions = argSplit(args[0].slice(1, -1));
+          const branches = argSplit(args[1].slice(1, -1));
+          if (conditions.length !== branches.length - 1)
+            throw new SyntaxError(
+              expr,
+              `There must be exactly one more branch than conditions: ${conditions.length} conditions and ${branches.length} branches`
+            );
+          const taken = conditions.findIndex(
+            (condition) =>
+              evaluate(condition, "boolean", variables, config).data
+          );
+          return evaluate(
+            branches[taken === -1 ? branches.length - 1 : taken],
+            expected_type,
+            variables,
+            config
+          );
+        }
         const args_val =
           argList.length > 0
             ? args.map((arg, i) =>

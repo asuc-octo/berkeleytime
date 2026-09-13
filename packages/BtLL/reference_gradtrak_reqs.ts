@@ -29,6 +29,10 @@ Function<boolean>(Column) spring_fall_column (column){
 Function<boolean>(Column) find_divider_column (column){
   boolean return equal([get_attr(column, "name"), get_attr(divider_column, "name")])
 }
+Function<number>() divider_index (){
+  Column divider_column get_element(only_spring_fall, add([length(only_spring_fall), -3]))
+  number return findIndex(columns, find_divider_column)
+}
 Function<number>(number, Column) add_units (acc, column){
   number units get_attr(column, "units")
   number return add([acc, units])
@@ -51,8 +55,9 @@ Function<boolean>() main (){
   // Senior residence
   List<Column> columns get_attr(this, "columns")
   List<Column> only_spring_fall filter(columns, spring_fall_column)
-  Column divider_column get_element(only_spring_fall, add([length(only_spring_fall), -3]))
-  number index findIndex(columns, find_divider_column)
+  // Senior year is the last two Fall/Spring terms; the divider is the term before them.
+  // A plan shorter than three Fall/Spring terms has no divider, so it is all senior year.
+  number index if_else(greater_than(length(only_spring_fall), 2), divider_index(), -1)
   List<Column> pre_senior_columns slice(columns, 0, add([index, 1]))
   number pre_senior_units reduce(pre_senior_columns, add_units, 0)
   number senior_units reduce(slice(columns, add([index, 1]), length(columns)), add_units, 0)

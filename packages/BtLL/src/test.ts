@@ -1,3 +1,4 @@
+import { UC_REQ_BTLL } from "../reference_gradtrak_reqs";
 import { init } from "./interpreter";
 
 const TESTS = [
@@ -380,6 +381,68 @@ const TESTS = [
       `;
       try {
         if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "if_else and elseifs only evaluate the taken branch",
+    test: () => {
+      const testCode = `
+      Function<number>() explode (){
+        List<number> empty []
+        number return get_attr(get_element(empty, 0), "units")
+      }
+      Function<boolean>() main (){
+        number a if_else(true, 1, explode())
+        number b if_else(false, explode(), 2)
+        number c elseifs([false, true], [explode(), 3, explode()])
+        number d elseifs([false, false], [explode(), explode(), 4])
+        boolean return equal([add([a, b, c, d]), 10])
+      }
+      `;
+      try {
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "UC requirements with fewer than 3 Fall/Spring columns",
+    test: () => {
+      const column = (name: string, semester: string, year: number) => ({
+        name: { data: name, type: "string" },
+        semester: { data: semester, type: "string" },
+        year: { data: year, type: "number" },
+        courses: { data: [], type: "List<Course>" },
+        units: { data: 15, type: "number" },
+      });
+      const columns = [
+        column("Fall 2024", "Fall", 2024),
+        column("Spring 2025", "Spring", 2025),
+      ];
+      const plan = {
+        units: { data: 30, type: "number" },
+        columns: { data: columns, type: "List<Column>" },
+        allCourses: { data: [], type: "List<Course>" },
+      };
+      const variables = new Map<string, any>([
+        ["this", { data: plan, type: "Plan" }],
+        ["columns", { data: columns, type: "List<Column>" }],
+      ]);
+      try {
+        const result = init(UC_REQ_BTLL, variables, { debug: false }) as any[];
+        if (result.length !== 5) return false;
+        // No divider column: whole plan is senior, so 0 pre-senior units and 30 senior units
+        const [preSenior, senior] = result[4].requirements.data;
+        if (preSenior.result.data !== false) return false;
+        if (senior.result.data !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
