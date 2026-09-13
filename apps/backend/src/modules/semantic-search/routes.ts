@@ -73,6 +73,7 @@ export default function semanticSearchRoutes(redis: RedisClientType) {
       year: body.year,
       semester: body.semester,
       allowed_subjects: body.allowed_subjects,
+    };
 
     await forward(
       `${baseUrl}/search`,
