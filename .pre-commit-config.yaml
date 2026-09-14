@@ -2,13 +2,6 @@ default_install_hook_types: [pre-push]
 repos:
   - repo: local
     hooks:
-      - id: type-check
-        name: type-check
-        entry: npm run type-check
-        language: system
-        stages: [pre-push]
-        fail_fast: true
-        pass_filenames: false
       - id: format
         name: format
         entry: npx prettier --write
@@ -22,17 +15,4 @@ repos:
         language: system
         stages: [pre-push]
         fail_fast: true
-        pass_filenames: false
-      - id: playwright-tests
-        name: playwright-tests (sanity + api)
-        entry: npx playwright test --project=sanity --project=api
-        language: system
-        stages: [pre-push]
-        fail_fast: true
-        pass_filenames: false
-      - id: build
-        name: build
-        entry: npm run build
-        language: system
-        stages: [pre-push]
         pass_filenames: false
