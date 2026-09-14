@@ -1,3 +1,5 @@
+import { GraphQLError } from "graphql";
+
 import { VALID_MAJORS, VALID_MINORS } from "@repo/common/lib/degreePrograms";
 import {
   AggregatedMetricsModel,
@@ -33,7 +35,9 @@ const validateDegrees = (
 ) => {
   for (const value of values) {
     if (!vocabulary.has(value)) {
-      throw new Error(`Invalid ${field}: "${value}"`);
+      throw new GraphQLError(`Invalid ${field}: "${value}"`, {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
     }
   }
 };
