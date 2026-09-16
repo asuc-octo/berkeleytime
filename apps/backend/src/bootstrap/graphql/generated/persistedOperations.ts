@@ -104,18 +104,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["userId"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
   },
-  "192eb841ee7e76955b2fc317aa505ea28fd5c1a22be1245f00726625f05f8080": {
-    operationName: "UpdateBanner",
-    document: "mutation UpdateBanner($bannerId:ID!$input:UpdateBannerInput!){updateBanner(bannerId:$bannerId input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
-    variableNames: ["bannerId","input"],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
-  },
-  "1b03fb7efd9a585da644b6983438b2ccdc93f10d2073a862ffe7ec8a62e4dae4": {
-    operationName: "GetAllBanners",
-    document: "query GetAllBanners{allBanners{id text link linkText persistent reappearing clickCount dismissCount viewCount createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/banner.ts"],
-  },
   "1b25cbab30ff79ff2e3e3b7b123beea791bc356f09e0dafa5f4cb13554940c32": {
     operationName: "GetCourseRatings",
     document: "query GetCourseRatings($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){subject number aggregatedRatings{metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}__typename}}",
@@ -518,6 +506,18 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
+  "7b4d53d3b5a46ad93c0c20f8cdb6c3972cc18bde2d5f7a624e74f959bfac7f52": {
+    operationName: "AllBannersForStaff",
+    document: "query AllBannersForStaff{allBannersForStaff{id text link linkText hiddenOn persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
+  },
+  "7baf3574e524653784a29d23b6ad5feff445bf46244f499b5350735696f85c0a": {
+    operationName: "GetAllBanners",
+    document: "query GetAllBanners{allBanners{id text link linkText hiddenOn persistent reappearing clickCount dismissCount viewCount createdAt updatedAt __typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/banner.ts"],
+  },
   "7bcb8210cb29d327c5e6a2d383cdb11408895616f96e20f3f9fd58ea376c5639": {
     operationName: "CreateCollection",
     document: "mutation CreateCollection($input:CreateCollectionInput!){createCollection(input:$input){_id name color pinnedAt isSystem lastAdd classes{class{subject courseNumber number __typename}__typename}__typename}}",
@@ -529,6 +529,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query AllPods{allPods{id name semester year __typename}}",
     variableNames: [],
     sources: ["apps/staff-frontend/src/lib/api/pod.ts"],
+  },
+  "7dd7f46557202ba7c11acfbc2d0aa18d98e208e6bce7330d1ffa1432c66b589d": {
+    operationName: "UpdateBanner",
+    document: "mutation UpdateBanner($bannerId:ID!$input:UpdateBannerInput!){updateBanner(bannerId:$bannerId input:$input){id text link linkText hiddenOn persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: ["bannerId","input"],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "7f1464c55e62fb4e563e90e18ef91da460fda1ef6584c33301a0113c8cb69103": {
     operationName: "DeleteRating",
@@ -692,6 +698,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/curated-classes.ts","apps/frontend/src/lib/api/curated-classes.ts"],
   },
+  "c7a63ba3db13eb968766630d55bb66f22a6ca570247dcf99fd6e100da91e090b": {
+    operationName: "CreateBanner",
+    document: "mutation CreateBanner($input:CreateBannerInput!){createBanner(input:$input){id text link linkText hiddenOn persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
+    variableNames: ["input"],
+    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
+  },
   "c8324e0f4f27972b12e62a44b44a87c1e35de13705947ff22659d7fc93b1a6e4": {
     operationName: "TrackingEventsTimeSeries",
     document: "query TrackingEventsTimeSeries($eventType:String$targetType:String$targetId:String$startDate:String$endDate:String){trackingEventsTimeSeries(eventType:$eventType targetType:$targetType targetId:$targetId startDate:$startDate endDate:$endDate){date count __typename}}",
@@ -764,12 +776,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/terms.ts"],
   },
-  "ebde8b5a1d81ff2e7cb8a8ce90b25c1b922c6108d031e5402ab4783cf016daed": {
-    operationName: "CreateBanner",
-    document: "mutation CreateBanner($input:CreateBannerInput!){createBanner(input:$input){id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
-    variableNames: ["input"],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
-  },
   "ef3a260a0e8b4a6e32dcef6bc90c7193b333e9c9d3e552b484b986e1f440b397": {
     operationName: "GetCourses",
     document: "query GetCourses{courses{courseId subject number title gradeDistribution{average distribution{letter count __typename}__typename}academicCareer finalExam gradingBasis typicallyOffered primaryInstructionMethod __typename}}",
@@ -835,12 +841,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation IncrementBannerDismiss($bannerId:ID!){incrementBannerDismiss(bannerId:$bannerId){id dismissCount __typename}}",
     variableNames: ["bannerId"],
     sources: ["apps/frontend/src/lib/api/banner.ts"],
-  },
-  "feff172c18906f12533b53a8b0252bedb791873ffd644d8c4be4815ff4d9b18f": {
-    operationName: "AllBannersForStaff",
-    document: "query AllBannersForStaff{allBannersForStaff{id text link linkText persistent reappearing clickCount dismissCount viewCount visible createdAt updatedAt __typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/banner.ts"],
   },
   "ff59a3171cb0cb81a4b5de9460135c598c307b097972115f79fb9d44a406e843": {
     operationName: "CreateRatings",

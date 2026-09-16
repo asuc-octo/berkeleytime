@@ -272,12 +272,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
-  "383c19923625189d6af6177c3adb4ab4d2357bed1f24f838fb640a472b08565f": {
-    operationName: "SemanticSearchTerms",
-    document: "query SemanticSearchTerms{terms{year semester __typename}}",
-    variableNames: [],
-    sources: ["apps/semantic-search/app/graphql/terms.graphql"],
-  },
   "3a06e634704b6ee830eb309c303c73ec39b120f9d10c705005e63ec18d60f93c": {
     operationName: "CreateCuratedClass",
     document: "mutation CreateCuratedClass($curatedClass:CreateCuratedClassInput!){createCuratedClass(curatedClass:$curatedClass){_id text image subject courseNumber number semester year sessionId publishedAt createdAt updatedAt class{number sessionId title unitsMax unitsMin finalExam gradingBasis primarySection{component online instructionMode attendanceRequired lecturesRecorded enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days __typename}__typename}course{subject number title gradeDistribution{average __typename}academicCareer __typename}__typename}__typename}}",
@@ -349,6 +343,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query AllStaffMembers{allStaffMembers{id userId name email personalLink addedByName createdAt roles{id year semester role team photo altPhoto isLeadership __typename}__typename}}",
     variableNames: [],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
+  },
+  "4bf7a28744fcfd8f32e8603110d32ad5bbc244166ef9f748c86815f066be29a0": {
+    operationName: "SemanticSearchTerms",
+    document: "query SemanticSearchTerms{terms(withCatalogData:true){year semester __typename}}",
+    variableNames: [],
+    sources: ["apps/semantic-search/app/graphql/terms.graphql"],
   },
   "4d066f6881899eb8bb65717335b1687864bb8e2d65f2debf04a6227f08415f7b": {
     operationName: "GetAllClassesForCourse",
