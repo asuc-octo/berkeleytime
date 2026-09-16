@@ -1,3 +1,6 @@
+import { GraphQLError } from "graphql";
+
+import { VALID_MAJORS, VALID_MINORS } from "@repo/common/lib/degreePrograms";
 import {
   AggregatedMetricsModel,
   CollectionModel,
@@ -25,6 +28,20 @@ export const getUser = async (context: RequestContext) => {
   return formatUser(user);
 };
 
+const validateDegrees = (
+  values: readonly string[],
+  vocabulary: ReadonlySet<string>,
+  field: string
+) => {
+  for (const value of values) {
+    if (!vocabulary.has(value)) {
+      throw new GraphQLError(`Invalid ${field}: "${value}"`, {
+        extensions: { code: "BAD_USER_INPUT" },
+      });
+    }
+  }
+};
+
 export const updateUser = async (
   context: RequestContext,
   user: UpdateUserInput
@@ -34,6 +51,14 @@ export const updateUser = async (
 
   const existingUser = await UserModel.findById(userId);
   if (!existingUser) throw new Error("Not found");
+
+  if (user.majors != null) {
+    validateDegrees(user.majors, VALID_MAJORS, "major");
+  }
+
+  if (user.minors != null) {
+    validateDegrees(user.minors, VALID_MINORS, "minor");
+  }
 
   const { monitoredClasses, ...rest } = user;
   const update: Record<string, unknown> = { ...rest };

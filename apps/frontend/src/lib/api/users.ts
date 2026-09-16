@@ -20,6 +20,8 @@ export interface IMonitoredClassInput {
 export interface IUserInput {
   monitoredClasses?: IMonitoredClassInput[];
   notificationsOn?: boolean;
+  majors?: string[];
+  minors?: string[];
 }
 
 export const READ_USER = gql`
@@ -30,6 +32,8 @@ export const READ_USER = gql`
       name
       student
       notificationsOn
+      majors
+      minors
       monitoredClasses {
         notified
         class {
@@ -53,6 +57,8 @@ export const UPDATE_USER = gql`
       email
       student
       notificationsOn
+      majors
+      minors
       monitoredClasses {
         notified
         class {
