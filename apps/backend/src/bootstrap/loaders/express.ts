@@ -90,7 +90,7 @@ export default async (
   trackingRoutes(app, redis);
 
   // load semantic search routes
-  app.use("/semantic-search", semanticSearchRoutes);
+  app.use("/semantic-search", semanticSearchRoutes(redis));
 
   // load staff routes
   staffRoutes(app);
