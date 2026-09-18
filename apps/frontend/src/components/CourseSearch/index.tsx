@@ -33,13 +33,26 @@ export default function CourseSearch({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { trackSearch, trackSearchClick } = useTracking();
+  const { trackSearch, trackSearchClick, trackEvent } = useTracking();
 
   const [recentCourses, setRecentCourses] = useState<
     Recent<RecentType.Course>[]
   >([]);
 
-  const { data, loading } = useQuery(GetCourseNamesDocument);
+  const { data, loading, error } = useQuery(GetCourseNamesDocument);
+
+  // The fuzzy search below can't function without this course list, so a
+  // failed fetch here is a real search failure, not just an empty result.
+  const trackedCourseNamesErrorRef = useRef<typeof error>(undefined);
+  useEffect(() => {
+    if (error && trackedCourseNamesErrorRef.current !== error) {
+      trackedCourseNamesErrorRef.current = error;
+      trackEvent("search_failed", "course-discovery", undefined, {
+        query: "GetCourseNames",
+        message: error.message?.slice(0, 200),
+      });
+    }
+  }, [error, trackEvent]);
 
   const catalogCourses = useMemo(() => {
     if (!data?.courses) return [];
