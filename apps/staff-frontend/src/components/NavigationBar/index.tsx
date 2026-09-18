@@ -27,6 +27,9 @@ export default function NavigationBar() {
         <NavLink to="/outreach">
           {({ isActive }) => <MenuItem active={isActive}>Outreach</MenuItem>}
         </NavLink>
+        <NavLink to="/engagement">
+          {({ isActive }) => <MenuItem active={isActive}>Engagement</MenuItem>}
+        </NavLink>
       </div>
       {user && (
         <DropdownMenu.Root>

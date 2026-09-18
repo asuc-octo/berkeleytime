@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import {
   CreateScheduleDocument,
   CreateScheduleInput,
@@ -78,13 +79,40 @@ export const useCreateSchedule = () => {
     },
   });
 
+  const { trackEvent } = useTracking();
+
+  /**
+   * `source` labels which surface created the schedule (e.g. "schedules-page",
+   * "clone", "class-page"). Tracking lives here rather than at the call sites
+   * so any future creation path is counted automatically; omitting `source`
+   * costs the label, never the event.
+   */
   const createSchedule = useCallback(
-    async (schedule: CreateScheduleInput) => {
+    async (schedule: CreateScheduleInput, source?: string) => {
       const mutate = mutation[0];
 
-      return await mutate({ variables: { schedule } });
+      const result = await mutate({ variables: { schedule } });
+
+      if (result.data?.createSchedule) {
+        const metadata: Record<string, unknown> = {
+          year: schedule.year,
+          semester: schedule.semester,
+          classCount: schedule.classes?.length ?? 0,
+        };
+
+        if (source) metadata.source = source;
+
+        trackEvent(
+          "schedule_saved",
+          "schedule",
+          result.data.createSchedule._id,
+          metadata
+        );
+      }
+
+      return result;
     },
-    [mutation]
+    [mutation, trackEvent]
   );
 
   return [createSchedule, mutation[1]] as [
