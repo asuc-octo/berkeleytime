@@ -136,7 +136,7 @@
       z-index: 2;
       background: var(--foreground-color);
       border-radius: 0.25rem;
-      box-shadow: 0px 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+      box-shadow: var(--shadow-focus-sm);
       padding: 0.25rem;
 
       .item {
