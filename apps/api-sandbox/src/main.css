@@ -32,7 +32,7 @@ h2 {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 20px;
 }
 
@@ -94,7 +94,7 @@ h2 {
 .input-group select:focus {
   outline: none;
   border-color: #003262;
-  box-shadow: 0 0 0 2px rgba(0, 50, 98, 0.1);
+  box-shadow: var(--shadow-focus-sm);
 }
 
 .main-content {
@@ -113,7 +113,7 @@ h2 {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   height: fit-content;
 }
 
@@ -169,7 +169,7 @@ h2 {
   background: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
