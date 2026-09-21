@@ -205,7 +205,7 @@
   width: max-content;
   padding: 16px;
   padding-top: 0px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-md);
 
   .label-count {
     color: var(--label-color);
