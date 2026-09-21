@@ -127,7 +127,7 @@
   font-size: var(--text-14);
   animation: fadeIn 100ms ease-in;
   z-index: var(--z-tooltip);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-sm);
 
   .tooltipArrow {
     fill: var(--tooltip-color);

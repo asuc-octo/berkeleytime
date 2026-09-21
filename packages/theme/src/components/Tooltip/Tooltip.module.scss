@@ -5,7 +5,7 @@
   border: 1px solid var(--border-color);
   max-width: 256px;
   animation: fadeIn 100ms ease-in;
-  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-focus-lg),;
 }
 
 .cardCompact {

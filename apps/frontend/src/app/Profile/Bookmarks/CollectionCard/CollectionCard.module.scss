@@ -52,7 +52,7 @@
   border: 1px solid var(--border-color);
   border-radius: 8px 8px 0 0;
   box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .singleCard {
