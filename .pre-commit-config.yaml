@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: format
         name: format
-        entry: npx prettier --write
+        entry: npx prettier --check
         language: system
         files: \.(ts|tsx)$
         stages: [pre-push]
