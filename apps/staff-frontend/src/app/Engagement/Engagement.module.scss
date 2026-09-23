@@ -26,6 +26,17 @@
   font-size: 14px;
 }
 
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  margin: 0 0 8px;
+  color: var(--heading-color);
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));

@@ -50,21 +50,24 @@ function formatDisplayDate(dateKey: string): string {
   return `${MONTH_NAMES[month - 1]} ${day}`;
 }
 
-interface ScheduleEventCardProps {
+interface EventCardProps {
   title: string;
   description: string;
   /** Tracking event type, e.g. "schedule_saved" */
   eventType: string;
+  /** Tracking target type; the staff query skips unless this is set */
+  targetType: string;
   /** Unit shown next to the headline number, e.g. "saved" */
   valueLabel: string;
 }
 
-function ScheduleEventCard({
+function EventCard({
   title,
   description,
   eventType,
+  targetType,
   valueLabel,
-}: ScheduleEventCardProps) {
+}: EventCardProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
 
   const days = getTimeRangeDays(timeRange);
@@ -86,7 +89,7 @@ function ScheduleEventCard({
     error,
   } = useTrackingEventsTimeSeries({
     eventType,
-    targetType: "schedule",
+    targetType,
     startDate: startDateStr,
     endDate: endDateStr,
   });
@@ -197,35 +200,100 @@ function ScheduleEventCard({
   );
 }
 
+const SECTIONS: { title: string; cards: EventCardProps[] }[] = [
+  {
+    title: "Schedules",
+    cards: [
+      {
+        title: "Schedules saved",
+        description:
+          "New schedules created from the schedules page, a clone, or a class page",
+        eventType: "schedule_saved",
+        targetType: "schedule",
+        valueLabel: "saved",
+      },
+      {
+        title: "Schedules generated",
+        description: "Times the schedule generator produced combinations",
+        eventType: "schedule_generate",
+        targetType: "schedule",
+        valueLabel: "generated",
+      },
+    ],
+  },
+  {
+    title: "Course discovery",
+    cards: [
+      {
+        title: "Course results clicked",
+        description: "Classes opened from the catalog results list",
+        eventType: "course_result_clicked",
+        targetType: "class",
+        valueLabel: "clicks",
+      },
+      {
+        title: "Search filters applied",
+        description:
+          "Catalog filter changes (sort, level, requirements, units, and more)",
+        eventType: "search_filter_applied",
+        targetType: "catalog_filter",
+        valueLabel: "applied",
+      },
+    ],
+  },
+  {
+    title: "Reliability",
+    cards: [
+      {
+        title: "Page errors",
+        description: "Catalog render crashes caught by the error boundary",
+        eventType: "page_error",
+        targetType: "course-discovery",
+        valueLabel: "errors",
+      },
+      {
+        title: "Data load failures",
+        description: "Class details that failed to load in the catalog",
+        eventType: "data_load_failed",
+        targetType: "course-discovery",
+        valueLabel: "failures",
+      },
+      {
+        title: "Search failures",
+        description:
+          "Catalog or course searches that errored, as opposed to returning no results",
+        eventType: "search_failed",
+        targetType: "course-discovery",
+        valueLabel: "failures",
+      },
+    ],
+  },
+];
+
 export default function Engagement() {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
         <h1 className={styles.title}>Engagement</h1>
         <p className={styles.subtitle}>
-          Schedule activity from unified tracking. Counts start from the day
-          this ships — earlier activity can be backfilled later.
+          Schedule, course discovery, and reliability activity from unified
+          tracking. Counts start from the day each event ships — earlier
+          activity can be backfilled later.
         </p>
       </div>
 
-      <div className={styles.grid}>
-        <div className={styles.cell}>
-          <ScheduleEventCard
-            title="Schedules saved"
-            description="New schedules created from the schedules page, a clone, or a class page"
-            eventType="schedule_saved"
-            valueLabel="saved"
-          />
-        </div>
-        <div className={styles.cell}>
-          <ScheduleEventCard
-            title="Schedules generated"
-            description="Times the schedule generator produced combinations"
-            eventType="schedule_generate"
-            valueLabel="generated"
-          />
-        </div>
-      </div>
+      {SECTIONS.map((section) => (
+        <section key={section.title} className={styles.section}>
+          <h2 className={styles.sectionTitle}>{section.title}</h2>
+          <div className={styles.grid}>
+            {section.cards.map((card) => (
+              <div key={card.eventType} className={styles.cell}>
+                <EventCard {...card} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }
