@@ -64,14 +64,12 @@
   &[data-state="active"] {
     background-color: var(--background-color);
     color: var(--zinc-900);
-    box-shadow:
-      var(--shadow-sm);
+    box-shadow: var(--shadow-popup);
 
     @include dark-mode {
       background-color: var(--zinc-700);
       color: var(--zinc-50);
-      box-shadow:
-        var(--shadow-sm);
+      box-shadow: var(--shadow-popup);
     }
   }
 }

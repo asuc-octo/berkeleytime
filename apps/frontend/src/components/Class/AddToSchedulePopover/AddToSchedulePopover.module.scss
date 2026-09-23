@@ -10,14 +10,10 @@
   animation: expandOut 150ms ease-out;
   transform-origin: top right;
   overflow: hidden;
-  box-shadow:
-    var(--shadow-sm),
-    var(--shadow-md);
+  box-shadow: var(--shadow-popup), var(---shadow-dropdown);
 
   @include dark-mode {
-    box-shadow:
-    var(--shadow-sm),
-    var(--shadow-md);
+    box-shadow: var(--shadow-popup), var(---shadow-dropdown);
   }
 }
 

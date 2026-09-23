@@ -4,7 +4,7 @@
   position: absolute;
   right: 30px;
   top: 80px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(---shadow-dropdown);
   border-radius: 8px;
   border: 1px solid var(--border-color);
 
@@ -14,7 +14,7 @@
     font-size: var(--text-14);
     font-weight: var(--font-medium);
     color: var(--heading-color);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-popup);
 
     &:last-child {
       margin-bottom: 0;

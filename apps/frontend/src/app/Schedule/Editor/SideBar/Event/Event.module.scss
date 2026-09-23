@@ -4,7 +4,7 @@
   &:global(.draggable-mirror) {
     border-color: var(--blue-500);
     z-index: var(--z-modal);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(---shadow-dropdown);
   }
 
   &:global(.draggable-source--is-dragging) {
@@ -18,7 +18,7 @@
   }
 
   &:not(:global(.draggable-source--is-dragging)) {
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-popup);
     background-color: var(--foreground-color);
   }
 
@@ -35,7 +35,7 @@
     border-style: solid;
     border-color: var(--border-color);
     background-color: var(--foreground-color);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-popup);
     padding: 16px;
   }
 
