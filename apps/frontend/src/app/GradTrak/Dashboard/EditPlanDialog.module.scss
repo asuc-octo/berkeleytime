@@ -50,22 +50,28 @@
 }
 
 .degree-list {
+  --item-height: 48px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 8px;
-  max-height: 200px;
+  max-height: calc(4.5 * var(--item-height, 36px) + 8px);
   overflow-y: auto;
   padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
+
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
+
   &::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
+    border-radius: 9999px;
+    background: var(--border-subtle, rgba(150, 150, 150, 0.3));
   }
 }
 
