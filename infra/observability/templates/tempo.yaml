@@ -27,7 +27,7 @@ data:
 
     compactor:
       compaction:
-        block_retention: 72h
+        block_retention: {{ .Values.tempo.retention}}
 
     storage:
       trace:

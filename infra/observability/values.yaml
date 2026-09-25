@@ -18,6 +18,7 @@ collector:
 # Grafana Tempo (distributed tracing)
 tempo:
   image: grafana/tempo:2.4.1
+  retention: 72h
   storage:
     size: 10Gi
   resources:
@@ -31,6 +32,7 @@ tempo:
 # Grafana Loki (log aggregation)
 loki:
   image: grafana/loki:3.0.0
+  retention: 72h
   storage:
     size: 10Gi
   resources:
