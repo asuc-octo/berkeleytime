@@ -4,7 +4,7 @@
   &:global(.draggable-mirror) {
     border-color: var(--blue-500);
     z-index: var(--z-modal);
-    box-shadow: var(---shadow-dropdown);
+    box-shadow: var(--shadow-dropdown);
   }
 
   &:global(.draggable-source--is-dragging) {

@@ -63,7 +63,7 @@
         display: flex;
         align-items: center;
         gap: 16px;
-        box-shadow: var(---shadow-dropdown);
+        box-shadow: var(--shadow-dropdown);
 
         .input:not(:placeholder-shown) + .placeholder {
           display: none;
