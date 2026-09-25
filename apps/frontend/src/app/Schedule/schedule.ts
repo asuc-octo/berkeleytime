@@ -1,5 +1,3 @@
-import { Color as ThemeColor } from "@repo/theme";
-
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import { Color, Event, Section } from "@/lib/generated/graphql";
 
@@ -74,21 +72,28 @@ export const getSelectedSections = (schedule?: ISchedule) => {
   );
 };
 
-export const acceptedColors = Object.values(ThemeColor);
-
-// DARK_MODE colors from grades mapped to Color enum
-const COLOR_ORDER: Color[] = [
+/**
+ * Categorical colors for schedule classes and events.
+ * Consecutive entries alternate warm and cool hues so neighboring
+ * blocks stay distinguishable. Legacy theme colors are still valid
+ * on saved schedules; this list only limits new choices.
+ */
+export const scheduleClassColors: Color[] = [
   Color.Blue,
-  Color.Green,
-  Color.Red,
-  Color.Teal,
-  Color.Orange,
-  Color.Emerald,
-  Color.Sky,
+  Color.Amber,
   Color.Violet,
+  Color.Emerald,
+  Color.Rose,
+  Color.Cyan,
+  Color.Pink,
+  Color.Lime,
+  Color.Fuchsia,
+  Color.Slate,
 ];
 
+export const acceptedColors = scheduleClassColors;
+
 export const getNextClassColor = (classIndex: number): Color => {
-  const colorIndex = classIndex % COLOR_ORDER.length;
-  return COLOR_ORDER[colorIndex];
+  const colorIndex = classIndex % scheduleClassColors.length;
+  return scheduleClassColors[colorIndex];
 };
