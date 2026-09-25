@@ -12,8 +12,8 @@
   border-radius: 8px;
   background-color: var(--foreground-color);
   box-shadow:
-    0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.1)),
-    0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
+    var(--shadow-focus-lg),
+    var(--shadow-focus-sm);
   transition: all 0.2s ease;
 
   &:hover {

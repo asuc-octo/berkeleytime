@@ -6,7 +6,7 @@
   max-width: 350px;
   min-width: 180px;
   animation: fadeIn 100ms ease-in;
-  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-focus-lg);
 }
 
 .tooltipHeader {
