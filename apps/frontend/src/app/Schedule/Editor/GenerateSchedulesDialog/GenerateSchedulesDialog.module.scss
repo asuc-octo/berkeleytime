@@ -10,7 +10,6 @@
   overflow: hidden;
   flex: 1;
   min-height: 0;
-  max-height: 500px;
 }
 
 .container {
@@ -37,9 +36,22 @@
 }
 
 .scrollableContent {
+  --item-height: 241px;
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  max-height: calc(4.5 * var(--item-height, 36px) + 8px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--border-subtle, rgba(150, 150, 150, 0.3));
+  }
 }
 
 .grid {

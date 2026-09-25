@@ -39,8 +39,20 @@
 }
 
 .collectionRows {
-  max-height: 300px;
+  --item-height: 45px;
+  max-height: calc(4.5 * var(--item-height, 36px) + 8px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--border-subtle, rgba(150, 150, 150, 0.3));
+  }
 }
 
 .collectionRow {

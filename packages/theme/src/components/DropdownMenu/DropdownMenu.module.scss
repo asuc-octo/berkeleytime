@@ -1,8 +1,11 @@
 .content {
+  --item-height: 32px;
   z-index: var(--z-popover, 500);
   min-width: 150px;
-  max-height: 300px;
+  max-height: calc(4.5 * var(--item-height, 36px) + 8px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
   background-color: var(--foreground-color);
   padding: 4px;
   border: 1px solid var(--border-color);
@@ -11,6 +14,15 @@
   animation-duration: 400ms;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--border-subtle, rgba(150, 150, 150, 0.3));
+  }
 }
 .content[data-side="top"] {
   animation-name: slideDownAndFade;
