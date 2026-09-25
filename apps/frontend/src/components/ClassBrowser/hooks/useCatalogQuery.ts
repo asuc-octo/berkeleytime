@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client/react";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import type {
   ICatalogClassServer,
   ICatalogFilterOptions,
@@ -151,6 +152,26 @@ export default function useCatalogQuery({
     fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
   });
+
+  // Report a failed catalog search once per distinct error — today a plain
+  // keyword-search failure renders the same "no classes found" empty state
+  // as a genuine zero-result search, so this is the only signal that
+  // distinguishes "search is broken" from "search found nothing".
+  const { trackEvent } = useTracking();
+  const trackedSearchErrorRef = useRef<typeof error>(undefined);
+  useEffect(() => {
+    if (error && trackedSearchErrorRef.current !== error) {
+      trackedSearchErrorRef.current = error;
+      trackEvent("search_failed", "course-discovery", undefined, {
+        message: (
+          error.graphQLErrors?.[0]?.message ??
+          error.message ??
+          ""
+        ).slice(0, 200),
+        semanticSearch,
+      });
+    }
+  }, [error, trackEvent, semanticSearch]);
 
   // Fetch filter options (heavily cached)
   const { data: filterOptionsData } = useQuery(

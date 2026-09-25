@@ -50,6 +50,16 @@ export interface TrackingContextValue {
     targetId: string,
     resultIndex: number
   ) => void;
+  /**
+   * Escape hatch for events that are not a click/view/dismiss/search —
+   * e.g. "schedule_saved". Prefer the named helpers above when one fits.
+   */
+  trackEvent: (
+    eventType: string,
+    targetType: string,
+    targetId?: string,
+    metadata?: Record<string, unknown>
+  ) => void;
   flushBeacon: () => void;
 }
 
@@ -166,6 +176,16 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     [enqueue]
   );
 
+  const trackEvent = useCallback(
+    (
+      eventType: string,
+      targetType: string,
+      targetId?: string,
+      metadata?: Record<string, unknown>
+    ) => enqueue({ eventType, targetType, targetId, metadata }),
+    [enqueue]
+  );
+
   return (
     <TrackingContext.Provider
       value={{
@@ -174,6 +194,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         trackDismiss,
         trackSearch,
         trackSearchClick,
+        trackEvent,
         flushBeacon,
       }}
     >

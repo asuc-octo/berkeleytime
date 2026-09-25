@@ -114,15 +114,18 @@ export default function CreateScheduleDialog({
     setLoading(true);
 
     // TODO: Error handling, loading state
-    const { data: { createSchedule: schedule } = {} } = await createSchedule({
-      name: name,
-      year: Number(year),
-      semester: semester as Semester,
-      sessionId:
-        isSummerTerm && sessionId
-          ? sessionId
-          : (selectedTerm.sessions?.[0]?.id ?? ""),
-    });
+    const { data: { createSchedule: schedule } = {} } = await createSchedule(
+      {
+        name: name,
+        year: Number(year),
+        semester: semester as Semester,
+        sessionId:
+          isSummerTerm && sessionId
+            ? sessionId
+            : (selectedTerm.sessions?.[0]?.id ?? ""),
+      },
+      "schedules-page"
+    );
 
     setLoading(false);
 
