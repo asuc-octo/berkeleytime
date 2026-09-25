@@ -412,13 +412,14 @@
   --rose-badge: var(--rose-500);
 
   // shadows
-  --shadow-popup: 0 1px 2px rgb(0 0 0 / 5%);
-  ---shadow-dropdown: 0 4px 12px rgb(0 0 0 / 10%);
+  --shadow-popup: 0 2px 4px rgb(0 0 0 / 5%);
+  --shadow-dropdown: 0 4px 12px rgb(0 0 0 / 10%);
   --shadow-lg: 0 8px 24px rgb(0 0 0 / 16%);
   --shadow-focus: 0 0 0 2px rgb(0 50 98 / 10%);
   --shadow-focus-sm:
     0 0 0 2px --border,
-    rgba(0, 0, 0, 0.1) --shadow-focus-lg: 0 0 0 8px --border, rgba(0, 0, 0, 0.1);
+    rgba(0, 0, 0, 0.1);
+  --shadow-focus-lg: 0 0 0 8px --border, rgba(0, 0, 0, 0.1);
 }
 
 @mixin dark-theme {
