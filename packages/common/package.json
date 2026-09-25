@@ -4,7 +4,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./models": "./src/models/index.ts",
-    "./lib/departmentNicknames": "./src/lib/departmentNicknames.ts"
+    "./lib/departmentNicknames": "./src/lib/departmentNicknames.ts",
+    "./lib/degreePrograms": "./src/lib/degreePrograms.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
