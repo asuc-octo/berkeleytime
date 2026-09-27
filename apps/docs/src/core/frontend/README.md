@@ -87,14 +87,17 @@ A component can follow Berkeleytime’s visual design and still belong in the sh
 
 The theme defines shared **color and typography tokens** in `ThemeProvider.scss`. Refer to that file for exact names and supported values.
 
-The theme does not currently define shared spacing, border-radius, or shadow tokens. Define those values in the component’s SCSS module, including `margin`, `padding`, and `gap`.
+`ThemeProvider` imports `@radix-ui/themes/layout.css` and wraps its children in Radix `Theme`, making the shared `--space-*` spacing scale available within that theme. Use those variables for `margin`, `padding`, and `gap` in component SCSS modules. For example, existing frontend code uses `padding-bottom: var(--space-2)`.
+
+`ThemeProvider.scss` does not define custom shared border-radius or shadow tokens. Follow existing component patterns for radius and shadow values, and keep component-specific declarations in the component’s SCSS module.
 
 When styling an interface:
 
 - Reuse defined color and typography tokens.
 - Confirm that a CSS variable exists before referencing it.
 - Follow existing component styling patterns.
-- Keep spacing, radius, and shadow values in component SCSS modules.
+- Use Radix `--space-*` variables for spacing within `ThemeProvider`; keep declarations in component SCSS modules.
+- Follow existing component patterns for local radius and shadow values.
 - Avoid introducing a second naming convention for an existing token category.
 - Do not use fallback values to conceal an undefined token.
 
@@ -134,7 +137,7 @@ When implementing a design:
 
 1. Check whether an existing theme component supports the required appearance and behavior.
 2. Match colors and typography to defined theme tokens.
-3. Implement spacing, radius, and shadows in the component’s SCSS module, following existing component patterns.
+3. Map spacing to the available Radix `--space-*` scale in the component’s SCSS module. Follow existing component patterns for radius and shadows.
 4. Coordinate missing component variants or shared styling needs with the team.
 
 CSS copied from Figma Dev Mode may contain variable names that do not exist in the repository. Translate those references into supported tokens or appropriate component styles before using them.
@@ -176,18 +179,24 @@ That configuration also lists `packages/shared/queries.ts`, but the file does no
 
 ### Workflow
 
-1. Write frontend queries in `src/lib/api/*.ts` using the `gql` tag.
-2. Run `npm run generate`.
-3. Import the generated document from `@/lib/generated/graphql`.
-4. Use the document in an Apollo hook.
-5. Derive reusable response types from generated types when needed.
+1. Write or update a named frontend query or mutation in `apps/frontend/src/lib/api/*.ts` using the `gql` tag.
+2. From `apps/frontend`, run `npm run generate` to regenerate client documents and types.
+3. From the repository root, run `npm run generate:operations` to update the server’s persisted-operation allowlist.
+4. From the repository root, run `npm run check:operations` to check that the generated allowlist is current. CI runs this check too.
+5. Commit the source operation changes and any changed, tracked outputs from the operation generator, including `apps/backend/src/bootstrap/graphql/generated/persistedOperations.ts`, `apps/backend/src/bootstrap/graphql/generated/previousPersistedOperations.ts`, and `apps/semantic-search/app/generated_operations.py` when changed. Frontend client files under `apps/frontend/src/lib/generated/` are ignored by Git; do not force-add them.
+6. Import the generated document from `@/lib/generated/graphql` and use it in an Apollo hook.
+7. Derive reusable response types from generated types when needed.
+
+Frontend type generation alone does not update the server allowlist. A new operation ID that is absent from the server’s allowlist is rejected with `404 Unknown operation`. The backend serving the request must have the updated allowlist.
 
 Do not manually edit generated files. Update the source query or generation configuration and regenerate them instead.
 
 ### Define a query
 
 ```tsx
-// src/lib/api/courses.ts
+// Illustrative excerpt based on src/lib/api/courses.ts.
+// This file already defines GetCourse; update the existing operation rather
+// than adding another operation with the same name.
 
 import { gql } from "@apollo/client";
 
@@ -204,7 +213,7 @@ export const GET_COURSE = gql`
 
 ### Use the generated document
 
-After running `npm run generate`, use `GetCourseDocument` with Apollo Client:
+After completing both generation steps above, use `GetCourseDocument` with Apollo Client:
 
 ```tsx
 import { useQuery } from "@apollo/client/react";
@@ -283,7 +292,8 @@ Keep child components close to their parent when they are only used there. If th
 
 - Use shared theme components before building custom equivalents.
 - Use defined color and typography tokens.
-- Keep component-specific styling, including spacing, radius, and shadows, in SCSS modules.
+- Use the Radix `--space-*` scale for spacing within `ThemeProvider`.
+- Keep component-specific declarations in SCSS modules and follow existing patterns for radius and shadows.
 - Keep shared token definitions and theme behavior in `packages/theme`.
 - Avoid creating local copies of shared component styles.
 - When updating older styles, adopt existing shared patterns where appropriate and verify the result.
@@ -298,4 +308,4 @@ Check changes in the contexts where they will be used:
 - Applicable loading, empty, error, and disabled states
 - Storybook examples and application pages affected by shared changes
 
-A token or shared component update may affect more than the page being edited. Review those affected uses before merging.
+A token or shared component update may affect more than the page being edited. Review those affected uses before merging
