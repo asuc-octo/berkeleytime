@@ -1,4 +1,18 @@
+The updated rules are in `AGENTS.md` and `.cursorrules`. Two skills now load on the relevant work: `.cursor/skills/design-system/SKILL.md` for UI and Figma, and `.cursor/skills/backend-reliability/SKILL.md` for API changes. A short always-on rule is in `.cursor/rules/change-discipline.mdc`.
+
 # Berkeleytime Codebase Rules
+
+## How to work
+
+This semester the goal is reliability and consistency. Match the codebase that already exists. A small change that follows a nearby pattern is the successful outcome.
+
+Before writing code:
+
+1. Search for the existing pattern in the nearest module, page, or component. Copy that shape.
+2. Change only what the task needs. Leave surrounding code, dependencies, and abstractions as they are.
+3. If the existing pattern and the requested change disagree, stop and say so before inventing a new approach.
+4. UI uses `@repo/theme` components and the CSS variables in `ThemeProvider.scss`.
+5. Backend work stays inside the module the task names, keeps `/api/graphql` as a persisted-operation gateway, and leaves generated files untouched.
 
 ## Project Overview
 
@@ -8,13 +22,14 @@ Berkeleytime is a course discovery and planning tool for UC Berkeley students. I
 
 This is a **monorepo** using Turbo for build orchestration. The codebase is organized into:
 
-- **Apps**: All stored in the `app/` directory (backend, frontend, datapuller are the main ones)
+- **Apps**: All stored in the `apps/` directory (backend, frontend, datapuller are the main ones)
 - **Packages**: Shared code in `packages/` (theme, common, gql-typedefs, sis-api, shared, etc.)
 - **Infrastructure**: Kubernetes/Helm charts in `infra/`
 
 ## Tech Stack
 
 ### Backend (`apps/backend`)
+
 - **Runtime**: Node.js (>=22.12.0) with TypeScript
 - **Framework**: Express.js
 - **API**: Apollo GraphQL Server
@@ -23,6 +38,7 @@ This is a **monorepo** using Turbo for build orchestration. The codebase is orga
 - **Auth**: Passport.js
 
 ### Frontend (`apps/frontend`)
+
 - **Framework**: React with TypeScript
 - **Build Tool**: Vite
 - **GraphQL Client**: Apollo Client
@@ -31,6 +47,7 @@ This is a **monorepo** using Turbo for build orchestration. The codebase is orga
 - **Routing**: React Router
 
 ### Other Services
+
 - **Datapuller**: Service for pulling data from UC Berkeley APIs
 - **Docs**: mdBook documentation site
 - **Staff/AG Frontends**: Admin interfaces
@@ -44,7 +61,7 @@ Backend follows a **module-based architecture**. Each module represents a domain
 ```
 modules/[domain]/
   ├── typedefs/           # GraphQL schema definitions
-  ├── generated-types/    # Generated TypeScript types (DO NOT EDIT)
+  ├── generated-types/    # Generated TypeScript types (leave untouched)
   ├── controller.ts       # Database querying functions (Mongoose)
   ├── formatter.ts        # Optional: DB models → GraphQL types
   ├── resolver.ts         # GraphQL resolvers
@@ -53,10 +70,11 @@ modules/[domain]/
 
 **Pipeline**: Request → Resolver → Controller → Database → Formatter → Response
 
-- **DO NOT** edit files in `generated-types/` directories - they are auto-generated
-- Use GraphQL Code Generation: run `npm run generate` in backend after schema changes
-- Controllers use Mongoose to query MongoDB
-- Formatters translate DB models to GraphQL types (only if types differ)
+- Leave files in `generated-types/` untouched. They are auto-generated.
+- Use GraphQL Code Generation: run `npm run generate` in backend after schema changes.
+- Controllers use Mongoose to query MongoDB.
+- Formatters translate DB models to GraphQL types only when the types differ.
+- Read the nearest existing module and follow it. Add a formatter only when the DB model and the GraphQL type differ.
 
 ### Frontend Structure (`apps/frontend/src/`)
 
@@ -73,32 +91,68 @@ src/
 
 - Use **SCSS Modules** for component styling: `[Component].module.scss`
 - Component folders: `index.tsx` + `[Component].module.scss`
-- Child components should be extracted when logic becomes complex or reusable
-   - Reusable Berkeleytime-specific components (such as a ClassCard) should be put in `components/`
-   - Reusable generic components (like a Select) should be put in the parent `packages/theme/src/components` folder
+- Extract a child component when the logic is reused or the parent is hard to follow.
+  - Reusable Berkeleytime-specific components (such as a ClassCard) go in `apps/frontend/src/components/`
+  - Reusable generic components (such as a Select) go in `packages/theme/src/components/`
+
+## Design system
+
+Prototypes and new UI are built from `@repo/theme` and the tokens in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss`. Look there before creating a component or a color.
+
+### Components
+
+Import from `@repo/theme`:
+
+- Actions and input: `Button`, `IconButton`, `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `ColorPicker`, `DaySelect`
+- Text: `Text`, `Heading`, `Label`
+- Surfaces: `Card`, `Dialog`, `DropdownMenu`, `Accordion`, `Tooltip`, `HoverCard`, `Badge`, `PillSwitcher`
+- Feedback: `Skeleton`, `LoadingIndicator`, `Boundary`
+- Layout, re-exported from Radix: `Box`, `Flex`, `Grid`, `Section`, `Container`
+
+`Button` variants are `primary`, `secondary`, and `tertiary`, with `noFill` and `isDelete`. `Text` sizes are `"1"` through `"9"` and weights are `regular`, `medium`, and `bold`. Use those props before adding a one-off class.
+
+A new generic primitive belongs in `packages/theme` only when none of the components above can express it. A Berkeleytime-specific composite stays in `apps/frontend/src/components/`.
+
+### Tokens
+
+Use the semantic variables so light and dark mode stay in sync:
+
+- Color: `--heading-color`, `--paragraph-color`, `--description-color`, `--secondary-color`, `--label-color`, `--background-color`, `--foreground-color`, `--backdrop-color`, `--border-color`
+- Type: `--heading-large`, `--heading-medium`, `--heading-small`, `--heading-caps`, `--body-medium`, `--text-12`, `--text-14`, `--text-16`, `--text-18`, `--text-28`
+
+Palette variables such as `--blue-500` and `--neutral-900` live in the same file. Use them when a semantic token does not cover the case, such as a badge or a brand accent. Write colors as `var(--token)`. Leave raw hex, `rgb()`, and new color scales out of component SCSS.
+
+### Styling
+
+- Use SCSS Modules (`.module.scss`) for component styles.
+- Use Bootstrap utility classes (`m-*`, `p-*`) for simple spacing when appropriate.
+- Import styles: `import styles from "./Component.module.scss"`
+- Combine classes with `classNames` from `classnames`: `classNames(styles.base, { [styles.active]: isActive })`
+- When implementing a Figma frame, map each element onto an existing `@repo/theme` component and a token before writing new CSS.
+
+## Backend reliability
+
+- `/api/graphql` accepts only generated persisted-operation IDs. Leave raw Apollo HTTP middleware unmounted. The browser sends an operation ID and variables; the server owns the document.
+- Frontend operations live in `lib/api/` and are called through Apollo hooks with the generated `...Document` types.
+- Overall schemas live in `packages/gql-typedefs`. Backend resolvers live in `resolver.ts`.
+- After a GraphQL schema change, run `npm run generate`.
+- Leave `generated-types/`, `generated-typedefs/`, and `generated/` untouched.
+- Database models live in `packages/common/src/models/`.
+- Protect user-owned fields and mutations with the `@auth` directive (`directive @auth on OBJECT | FIELD_DEFINITION`). Public catalog reads stay public, matching the nearest existing field.
+- Throw `GraphQLError` with an existing code: `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `NOT_FOUND`, or `INTERNAL_SERVER_ERROR`. Let expected failures return as GraphQL errors. Let unexpected failures surface; do not add an empty `catch` that hides them.
+- Keep queries bounded and consistent with the neighboring controller. Check existing Redis usage before adding a cache.
+- UC Berkeley APIs are accessed through `@repo/sis-api`.
 
 ## Conventions
 
 ### TypeScript
-- Use strict TypeScript
-- Generate types from GraphQL schemas - don't write them manually for API query related types
-- Use generated types from `generated-types/` directories
 
-### GraphQL
-- Overall schemas defined in `packages/gql-typedefs`
-- **Backend**: Resolvers are defined in in `resolver.ts`
-- **Frontend**: Define queries/mutations in `lib/api/`, use Apollo Client hooks
-- Always run `npm run generate` after GraphQL schema changes
-- Use GraphQL Code Generation for type safety
-
-### Styling
-- Use SCSS Modules (`.module.scss`) for component styles
-- Use Bootstrap utility classes (`m-*`, `p-*`) for simple spacing when appropriate
-- Import styles: `import styles from "./Component.module.scss"`
-- Use `classNames` utility (or similar) when combining classes instead of manual string manipulation (e.g., `classNames(styles.base, { [styles.active]: isActive })` instead of `styles.base + (isActive ? ' ' + styles.active : '')`)
-- Use/extend `@repo/theme` components when available instead of building custom ones
+- Use strict TypeScript.
+- Generate types from GraphQL schemas. Leave hand-written API query types out of the codebase.
+- Use generated types from `generated-types/` directories.
 
 ### File Naming
+
 - Components: PascalCase (`RatingButton.tsx`)
 - Utilities/hooks: camelCase (`ratingErrorMessages.ts`, `useReadClass.ts`)
 - SCSS modules: `[Component].module.scss`
@@ -115,44 +169,40 @@ Use these packages rather than duplicating code across apps.
 
 ## Development Workflow
 
-1. **Type Generation**: Always run `npm run generate` after GraphQL changes
-2. **Type-Check**: Uses `tsc` (`npm run type-check`)
-3. **Linting**: Use ESLint (configured in `packages/eslint-config`, `npm run lint`)
-4. **Formatting**: Prettier with import sorting (configured in `.prettierrc`)
-5. **Docker**: Development uses Docker Compose. `docker compose up` will setup all services. Use the `--build` flag after significant changes, otherwise hot-reload is enabled.
-6. **Turbo**: Use `npm run dev`, `npm run build`, etc. from root (Turbo handles orchestration)
-
-## Important Notes
-
-- **Generated Code**: Never edit `generated-types/`, `generated-typedefs/`, or `generated/` directories
-- **Database Models**: Defined in `packages/common/src/models/` (Mongoose schemas)
-- **Environment Variables**: Use `.env` files (see `.env.template`)
-- **Monorepo**: Changes to packages may require rebuilding dependent apps
-- **Public GraphQL boundary**: `/api/graphql` accepts only generated persisted-operation IDs; never mount raw Apollo HTTP middleware
+1. **Type Generation**: Run `npm run generate` after GraphQL changes.
+2. **Type-Check**: Uses `tsc` (`npm run type-check`).
+3. **Linting**: Use ESLint (configured in `packages/eslint-config`, `npm run lint`).
+4. **Formatting**: Prettier with import sorting (configured in `.prettierrc`).
+5. **Docker**: Development uses Docker Compose. `docker compose up` sets up all services. Use the `--build` flag after significant changes; otherwise hot-reload is enabled.
+6. **Turbo**: Use `npm run dev`, `npm run build`, and the other root scripts. Turbo handles orchestration.
 
 ## When Adding Features
 
 ### Backend (GraphQL API)
-1. Add GraphQL type definitions in module's `typedefs/`
-2. Add controller functions for database queries
-3. Add resolver functions that call controllers
-4. Add formatter if DB model differs from GraphQL type
-5. Run `npm run generate` to generate types
-6. Export module in `src/modules/index.ts`
+
+1. Add GraphQL type definitions in the module's `typedefs/`.
+2. Add controller functions for database queries.
+3. Add resolver functions that call controllers.
+4. Add a formatter if the DB model differs from the GraphQL type.
+5. Run `npm run generate`.
+6. Export the module in `src/modules/index.ts`.
 
 ### Frontend (React Components)
-1. Add GraphQL queries/mutations in `lib/api/`
-2. Create components in `app/` (page-specific) or `components/` (reusable)
-3. Use Apollo Client hooks (`useQuery`, `useMutation`). With these, always use the generated `...Document` types, NEVER the raw exported string.
-4. Use SCSS Modules for styling
-5. Use components from `@repo/theme` when possible
-6. Try to use Apollo GraphQL's caching patterns when possible
-7. Use color CSS variables defined in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss` for consistency with light and dark mode
+
+1. Add GraphQL queries and mutations in `lib/api/`.
+2. Create components in `app/` (page-specific) or `components/` (reusable).
+3. Use Apollo Client hooks (`useQuery`, `useMutation`) with the generated `...Document` types.
+4. Use SCSS Modules for styling.
+5. Use components from `@repo/theme`.
+6. Follow the Apollo cache pattern already used by the nearest similar query.
+7. Use the CSS variables in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss`.
 
 ## Common Patterns
 
-- **Error Handling**: Use GraphQL error codes (UNAUTHENTICATED, BAD_USER_INPUT, etc.)
-- **Authentication**: Handled by Passport.js in backend, check auth status in resolvers
-- **Caching**: Redis is used for caching - check backend code for cache patterns
-- **Data Sources**: UC Berkeley APIs accessed via `@repo/sis-api` package
+- **Error Handling**: `GraphQLError` with `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `NOT_FOUND`, or `INTERNAL_SERVER_ERROR`.
+- **Authentication**: Passport.js establishes the session. `@auth` enforces it on protected schema fields. Check the nearest resolver before adding a second auth check.
+- **Caching**: Redis is used for caching. Follow an existing cache call site.
+- **Data Sources**: UC Berkeley APIs are accessed via `@repo/sis-api`.
+- **Environment Variables**: Use `.env` files (see `.env.template`).
+- **Monorepo**: Changes to packages may require rebuilding dependent apps.
 
