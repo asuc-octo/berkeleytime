@@ -1,208 +1,311 @@
-The updated rules are in `AGENTS.md` and `.cursorrules`. Two skills now load on the relevant work: `.cursor/skills/design-system/SKILL.md` for UI and Figma, and `.cursor/skills/backend-reliability/SKILL.md` for API changes. A short always-on rule is in `.cursor/rules/change-discipline.mdc`.
+## `.cursorrules`
 
-# Berkeleytime Codebase Rules
+```markdown
+Project-wide instructions live in `.cursorrules`. Task-specific guidance lives in `.cursor/skills/design-system/SKILL.md` for UI and Figma work and `.cursor/skills/backend-reliability/SKILL.md` for backend and API work. The always-on change discipline rule lives in `.cursor/rules/change-discipline.mdc`.
 
-## How to work
+## Change discipline
 
-This semester the goal is reliability and consistency. Match the codebase that already exists. A small change that follows a nearby pattern is the successful outcome.
+- Follow the nearest existing module, page, or component.
+- Keep changes limited to the requested task.
+- Add dependencies, abstractions, and refactors only when the task requires them.
+- If an existing pattern conflicts with the requested behavior or authorization requirements, explain the conflict before copying it.
 
-Before writing code:
+## Frontend
 
-1. Search for the existing pattern in the nearest module, page, or component. Copy that shape.
-2. Change only what the task needs. Leave surrounding code, dependencies, and abstractions as they are.
-3. If the existing pattern and the requested change disagree, stop and say so before inventing a new approach.
-4. UI uses `@repo/theme` components and the CSS variables in `ThemeProvider.scss`.
-5. Backend work stays inside the module the task names, keeps `/api/graphql` as a persisted-operation gateway, and leaves generated files untouched.
+- Use existing components from `@repo/theme`.
+- Read `packages/theme/src/components/index.ts` and `packages/theme/src/components/ThemeProvider/ThemeProvider.scss` before adding components or colors.
+- Use existing semantic CSS variables for colors and typography.
+- Define spacing, border radius, and shadows in component SCSS modules where the theme has no corresponding tokens.
+- Follow `.cursor/skills/design-system/SKILL.md` for UI and Figma work.
 
-## Project Overview
+## Backend
 
-Berkeleytime is a course discovery and planning tool for UC Berkeley students. It combines academic information from UC Berkeley's Office of the Registrar and Engineering Integration Services (EIS) to provide students with course data, schedules, ratings, and planning tools.
-
-## Architecture
-
-This is a **monorepo** using Turbo for build orchestration. The codebase is organized into:
-
-- **Apps**: All stored in the `apps/` directory (backend, frontend, datapuller are the main ones)
-- **Packages**: Shared code in `packages/` (theme, common, gql-typedefs, sis-api, shared, etc.)
-- **Infrastructure**: Kubernetes/Helm charts in `infra/`
-
-## Tech Stack
-
-### Backend (`apps/backend`)
-
-- **Runtime**: Node.js (>=22.12.0) with TypeScript
-- **Framework**: Express.js
-- **API**: Apollo GraphQL Server
-- **Database**: MongoDB (Mongoose ORM)
-- **Cache**: Redis
-- **Auth**: Passport.js
-
-### Frontend (`apps/frontend`)
-
-- **Framework**: React with TypeScript
-- **Build Tool**: Vite
-- **GraphQL Client**: Apollo Client
-- **Styling**: SCSS Modules
-- **UI Components**: Custom components from `@repo/theme` (Radix UI based)
-- **Routing**: React Router
-
-### Other Services
-
-- **Datapuller**: Service for pulling data from UC Berkeley APIs
-- **Docs**: mdBook documentation site
-- **Staff/AG Frontends**: Admin interfaces
-
-## Code Organization Patterns
-
-### Backend Modules (`apps/backend/src/modules/`)
-
-Backend follows a **module-based architecture**. Each module represents a domain (User, Course, Rating, etc.) and follows this structure:
-
-```
-modules/[domain]/
-  ├── typedefs/           # GraphQL schema definitions
-  ├── generated-types/    # Generated TypeScript types (leave untouched)
-  ├── controller.ts       # Database querying functions (Mongoose)
-  ├── formatter.ts        # Optional: DB models → GraphQL types
-  ├── resolver.ts         # GraphQL resolvers
-  └── index.ts            # Module entrypoint
-```
-
-**Pipeline**: Request → Resolver → Controller → Database → Formatter → Response
-
-- Leave files in `generated-types/` untouched. They are auto-generated.
-- Use GraphQL Code Generation: run `npm run generate` in backend after schema changes.
-- Controllers use Mongoose to query MongoDB.
-- Formatters translate DB models to GraphQL types only when the types differ.
-- Read the nearest existing module and follow it. Add a formatter only when the DB model and the GraphQL type differ.
-
-### Frontend Structure (`apps/frontend/src/`)
-
-```
-src/
-  ├── app/                # Views, pages, and scoped components
-  ├── components/         # Reusable React components
-  ├── contexts/           # React contexts
-  ├── hooks/              # React hooks
-  ├── lib/                # Utility functions and logic
-  │   └── api/            # GraphQL queries, mutations, and types
-  └── utils/              # Utility functions
-```
-
-- Use **SCSS Modules** for component styling: `[Component].module.scss`
-- Component folders: `index.tsx` + `[Component].module.scss`
-- Extract a child component when the logic is reused or the parent is hard to follow.
-  - Reusable Berkeleytime-specific components (such as a ClassCard) go in `apps/frontend/src/components/`
-  - Reusable generic components (such as a Select) go in `packages/theme/src/components/`
-
-## Design system
-
-Prototypes and new UI are built from `@repo/theme` and the tokens in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss`. Look there before creating a component or a color.
-
-### Components
-
-Import from `@repo/theme`:
-
-- Actions and input: `Button`, `IconButton`, `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `ColorPicker`, `DaySelect`
-- Text: `Text`, `Heading`, `Label`
-- Surfaces: `Card`, `Dialog`, `DropdownMenu`, `Accordion`, `Tooltip`, `HoverCard`, `Badge`, `PillSwitcher`
-- Feedback: `Skeleton`, `LoadingIndicator`, `Boundary`
-- Layout, re-exported from Radix: `Box`, `Flex`, `Grid`, `Section`, `Container`
-
-`Button` variants are `primary`, `secondary`, and `tertiary`, with `noFill` and `isDelete`. `Text` sizes are `"1"` through `"9"` and weights are `regular`, `medium`, and `bold`. Use those props before adding a one-off class.
-
-A new generic primitive belongs in `packages/theme` only when none of the components above can express it. A Berkeleytime-specific composite stays in `apps/frontend/src/components/`.
-
-### Tokens
-
-Use the semantic variables so light and dark mode stay in sync:
-
-- Color: `--heading-color`, `--paragraph-color`, `--description-color`, `--secondary-color`, `--label-color`, `--background-color`, `--foreground-color`, `--backdrop-color`, `--border-color`
-- Type: `--heading-large`, `--heading-medium`, `--heading-small`, `--heading-caps`, `--body-medium`, `--text-12`, `--text-14`, `--text-16`, `--text-18`, `--text-28`
-
-Palette variables such as `--blue-500` and `--neutral-900` live in the same file. Use them when a semantic token does not cover the case, such as a badge or a brand accent. Write colors as `var(--token)`. Leave raw hex, `rgb()`, and new color scales out of component SCSS.
-
-### Styling
-
-- Use SCSS Modules (`.module.scss`) for component styles.
-- Use Bootstrap utility classes (`m-*`, `p-*`) for simple spacing when appropriate.
-- Import styles: `import styles from "./Component.module.scss"`
-- Combine classes with `classNames` from `classnames`: `classNames(styles.base, { [styles.active]: isActive })`
-- When implementing a Figma frame, map each element onto an existing `@repo/theme` component and a token before writing new CSS.
-
-## Backend reliability
-
-- `/api/graphql` accepts only generated persisted-operation IDs. Leave raw Apollo HTTP middleware unmounted. The browser sends an operation ID and variables; the server owns the document.
-- Frontend operations live in `lib/api/` and are called through Apollo hooks with the generated `...Document` types.
-- Overall schemas live in `packages/gql-typedefs`. Backend resolvers live in `resolver.ts`.
-- After a GraphQL schema change, run `npm run generate`.
-- Leave `generated-types/`, `generated-typedefs/`, and `generated/` untouched.
+- Follow the nearest module under `apps/backend/src/modules/`.
 - Database models live in `packages/common/src/models/`.
-- Protect user-owned fields and mutations with the `@auth` directive (`directive @auth on OBJECT | FIELD_DEFINITION`). Public catalog reads stay public, matching the nearest existing field.
-- Throw `GraphQLError` with an existing code: `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `NOT_FOUND`, or `INTERNAL_SERVER_ERROR`. Let expected failures return as GraphQL errors. Let unexpected failures surface; do not add an empty `catch` that hides them.
-- Keep queries bounded and consistent with the neighboring controller. Check existing Redis usage before adding a cache.
-- UC Berkeley APIs are accessed through `@repo/sis-api`.
+- After a backend GraphQL schema change, run `npm run generate` from `apps/backend`.
+- Do not hand-edit `generated-types/`, `generated-typedefs/`, or `generated/`; update their sources and use the generator.
+- Keep the persisted-operation gateway at `/api/graphql`.
 
-## Conventions
+## Authentication and authorization
 
-### TypeScript
+- `@auth` checks whether the caller is authenticated. It does not check record ownership or staff permissions.
+- Apply `@auth` to fields and mutations that require a signed-in user.
+- User-owned operations also require controller-level authorization. Scope record access to the caller using the existing ownership predicate, such as `createdBy: context.user._id`.
+- Never authorize a user-owned write using authentication and a caller-supplied record ID alone.
+- Protect private user-owned reads with the corresponding ownership or access check.
+- Staff-only operations require the existing staff authorization check.
+- Public catalog reads stay public, matching the nearest existing field.
 
-- Use strict TypeScript.
-- Generate types from GraphQL schemas. Leave hand-written API query types out of the codebase.
-- Use generated types from `generated-types/` directories.
+## GraphQL errors
 
-### File Naming
+- Use `GraphQLError` and preserve the error semantics of the nearest relevant controller.
+- Existing codes include `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `INVALID_ARGUMENT`, `NOT_FOUND`, `CONFLICT`, and `INTERNAL_SERVER_ERROR`.
+- Preserve `CONFLICT` for conflict cases and `INVALID_ARGUMENT` where the existing API uses it; do not replace them with `BAD_USER_INPUT` merely to shorten this list.
+- Return expected failures as GraphQL errors. Let unexpected failures surface; do not hide them in empty `catch` blocks.
+- Follow `.cursor/skills/backend-reliability/SKILL.md` for backend and API work.
+```
 
-- Components: PascalCase (`RatingButton.tsx`)
-- Utilities/hooks: camelCase (`ratingErrorMessages.ts`, `useReadClass.ts`)
-- SCSS modules: `[Component].module.scss`
+## `.cursor/skills/design-system/SKILL.md`
 
-## Shared Packages
+```markdown
+---
+name: design-system
+description: >-
+  Build Berkeleytime UI from the @repo/theme design system and ThemeProvider
+  tokens. Use when creating or editing a page, component, prototype, layout,
+  SCSS module, or when the user mentions Figma, design, mockup, tokens, or
+  styling.
+---
 
-- **`@repo/theme`**: UI component library (Radix UI primitives + Berkeleytime-specific)
-- **`@repo/common`**: Shared utilities and types
-- **`@repo/gql-typedefs`**: Shared GraphQL type definitions
-- **`@repo/sis-api`**: Auto-generated TypeScript clients for UC Berkeley APIs
-- **`@repo/shared`**: Shared business logic
+# Berkeleytime design system
 
-Use these packages rather than duplicating code across apps.
+Build screens from components and tokens that already exist. Read
+`packages/theme/src/components/index.ts` and
+`packages/theme/src/components/ThemeProvider/ThemeProvider.scss` before
+adding a component or a color. Confirm component exports, props, and tokens
+in the source before using them.
 
-## Development Workflow
+## Before writing UI
 
-1. **Type Generation**: Run `npm run generate` after GraphQL changes.
-2. **Type-Check**: Uses `tsc` (`npm run type-check`).
-3. **Linting**: Use ESLint (configured in `packages/eslint-config`, `npm run lint`).
-4. **Formatting**: Prettier with import sorting (configured in `.prettierrc`).
-5. **Docker**: Development uses Docker Compose. `docker compose up` sets up all services. Use the `--build` flag after significant changes; otherwise hot-reload is enabled.
-6. **Turbo**: Use `npm run dev`, `npm run build`, and the other root scripts. Turbo handles orchestration.
+1. Find the closest existing page or component under `apps/frontend/src/`
+   and follow its structure.
+2. Map each element to an existing `@repo/theme` component.
+3. Map each color and text style to an existing CSS variable.
+4. Add a new component only when no existing one can express the element.
 
-## When Adding Features
+## Components
 
-### Backend (GraphQL API)
+Import shared components from `@repo/theme`. Check the component index for
+the current exports.
 
-1. Add GraphQL type definitions in the module's `typedefs/`.
-2. Add controller functions for database queries.
-3. Add resolver functions that call controllers.
-4. Add a formatter if the DB model differs from the GraphQL type.
-5. Run `npm run generate`.
-6. Export the module in `src/modules/index.ts`.
+Components to look for include:
 
-### Frontend (React Components)
+- Actions and input: `Button`, `IconButton`, `Input`, `Select`, `Checkbox`,
+  `Switch`, `Slider`, `ColorPicker`, `DaySelect`
+- Text: `Text`, `Heading`, `Label`
+- Surfaces: `Card`, `Dialog`, `DropdownMenu`, `Accordion`, `Tooltip`,
+  `HoverCard`, `Badge`, `PillSwitcher`
+- Feedback: `Skeleton`, `LoadingIndicator`, `Boundary`
+- Layout: `Box`, `Flex`, `Grid`, `Section`, `Container`
 
-1. Add GraphQL queries and mutations in `lib/api/`.
-2. Create components in `app/` (page-specific) or `components/` (reusable).
-3. Use Apollo Client hooks (`useQuery`, `useMutation`) with the generated `...Document` types.
-4. Use SCSS Modules for styling.
-5. Use components from `@repo/theme`.
-6. Follow the Apollo cache pattern already used by the nearest similar query.
-7. Use the CSS variables in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss`.
+Check the implementation for supported props. Existing Button options
+include `primary`, `secondary`, and `tertiary` variants, plus `noFill`
+and `isDelete`. Text sizes are `"1"` through `"9"` and weights are
+`regular`, `medium`, and `bold`.
 
-## Common Patterns
+- Generic primitives go in `packages/theme/src/components/`.
+- Berkeleytime-specific composites, such as a class card, go in
+  `apps/frontend/src/components/`.
+- Page-specific views stay in `apps/frontend/src/app/`.
 
-- **Error Handling**: `GraphQLError` with `UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `NOT_FOUND`, or `INTERNAL_SERVER_ERROR`.
-- **Authentication**: Passport.js establishes the session. `@auth` enforces it on protected schema fields. Check the nearest resolver before adding a second auth check.
-- **Caching**: Redis is used for caching. Follow an existing cache call site.
-- **Data Sources**: UC Berkeley APIs are accessed via `@repo/sis-api`.
-- **Environment Variables**: Use `.env` files (see `.env.template`).
-- **Monorepo**: Changes to packages may require rebuilding dependent apps.
+## Tokens
+
+Token source:
+`packages/theme/src/components/ThemeProvider/ThemeProvider.scss`.
+
+Use semantic variables so light and dark mode stay in sync:
+
+- `--heading-color`, `--paragraph-color`, `--description-color`,
+  `--secondary-color`, `--label-color`
+- `--background-color`, `--foreground-color`, `--backdrop-color`,
+  `--border-color`
+- `--heading-large`, `--heading-medium`, `--heading-small`,
+  `--heading-caps`, `--body-medium`
+- `--text-12`, `--text-14`, `--text-16`, `--text-18`, `--text-28`
+
+`--heading-color` and `--paragraph-color` are text colors.
+`--foreground-color` is a surface color, used for cards and tooltips,
+not for text. `--background-color` is a background surface.
+
+Use a palette variable such as `--blue-500` only when no semantic token
+covers the case. Write `var(--token)` in SCSS. Leave raw hex and `rgb()`
+out of component styles.
+
+The theme does not define spacing, border-radius, or shadow tokens.
+Define `margin`, `padding`, `gap`, radius, and shadow in the component
+SCSS module, following nearby components. Do not assume Bootstrap
+utilities are available.
+
+## Styling
+
+- Follow the existing SCSS module convention: `index.tsx` plus
+  `[Component].module.scss`.
+- Import styles with `import styles from "./Component.module.scss"`.
+- Combine classes with `classNames` from `classnames`.
+- Check the resulting UI in light and dark mode and at relevant
+  viewport sizes.
+
+## Figma
+
+When a Figma URL or frame is provided, implement it with the existing
+components and tokens. Treat the frame as the layout reference.
+Keep Berkeleytime components, type scale, and colors.
+
+Translate Figma Dev Mode variable names into tokens that exist in
+`ThemeProvider.scss`. Confirm the token exists before using it.
+```
+
+## `.cursor/skills/backend-reliability/SKILL.md`
+
+```markdown
+---
+name: backend-reliability
+description: >-
+  Make careful Berkeleytime backend changes that follow the existing module
+  pipeline and persisted GraphQL gateway. Use when editing apps/backend,
+  GraphQL schemas, resolvers, controllers, Mongoose models, Redis, Docker, or
+  when the user mentions the API, auth, or a backend bug.
+---
+
+# Berkeleytime backend reliability
+
+Follow the nearest relevant module and keep changes within the task.
+Verify behavior and authorization as well as compilation. Do not copy
+an existing pattern when it would allow unauthorized access.
+
+## Before writing
+
+1. Open the closest module under `apps/backend/src/modules/` and follow
+   its structure.
+2. Identify the files the task requires changing.
+3. Determine whether the operation handles public catalog data,
+   private user-owned data, or staff-only functionality.
+4. Identify the authentication and authorization checks it needs.
+
+## Module pipeline
+
+modules/[domain]/
+  ├── typedefs/
+  ├── generated-types/    # generated; do not hand-edit
+  ├── controller.ts
+  ├── formatter.ts        # when the DB model and GraphQL type differ
+  ├── resolver.ts
+  └── index.ts
+
+Request → Resolver → Controller → Database → Formatter → Response.
+
+- Schema definitions for a module live in its `typedefs/`.
+  Shared schema lives in `packages/gql-typedefs`.
+- Mongoose models live in `packages/common/src/models/`.
+- After a backend schema change, run `npm run generate` from
+  `apps/backend`.
+- Export a new module from `apps/backend/src/modules/index.ts`.
+
+## GraphQL boundary
+
+`/api/graphql` accepts a generated persisted-operation ID and variables.
+The server owns the document.
+
+- Leave raw Apollo HTTP middleware unmounted.
+- Frontend operations live in `lib/api/` and use the generated
+  `...Document` with `useQuery` or `useMutation`.
+- Do not hand-edit `generated-types/`, `generated-typedefs/`, or
+  `generated/`. Update source definitions and run the generator.
+
+## Authentication and authorization
+
+- Passport.js creates the session.
+- `@auth` only rejects a request when
+  `contextValue.user.isAuthenticated` is false. It does not compare
+  record ownership or check a staff role.
+- Put `@auth` on fields and mutations that require a signed-in user.
+- Public catalog reads stay public, matching the nearest existing field.
+
+### User-owned operations
+
+- User-owned writes also require a controller-level authorization
+  predicate that scopes the target record to the caller.
+- Follow the ownership predicate used by the relevant model.
+  For example, `deleteCollection` scopes access with
+  `createdBy: context.user._id`.
+- Include ownership in the database mutation filter where appropriate.
+  Authentication plus a caller-supplied record ID is insufficient.
+- Derive the caller identity from the trusted context, not from
+  user-supplied owner fields.
+- Protect private user-owned reads with the corresponding ownership
+  or access check.
+- Preserve intentional sharing or delegated access through the existing
+  authorization policy.
+- Follow the nearby controller's `NOT_FOUND` or `FORBIDDEN` behavior
+  when access is denied, avoiding disclosure of private record existence.
+
+### Staff-only operations
+
+- Require the existing staff authorization check in addition to
+  authentication.
+- Follow the nearest staff-protected controller and use `FORBIDDEN`
+  for insufficient permissions.
+
+## GraphQL errors
+
+- Throw `GraphQLError` with the code the nearest relevant controller
+  already uses.
+- Existing codes include:
+  - `UNAUTHENTICATED`
+  - `FORBIDDEN`
+  - `BAD_USER_INPUT`
+  - `INVALID_ARGUMENT`
+  - `NOT_FOUND`
+  - `CONFLICT`
+  - `INTERNAL_SERVER_ERROR`
+- Keep `CONFLICT` for conflict cases, including the existing banner
+  conflict behavior.
+- Keep `INVALID_ARGUMENT` where the API uses it, including invalid
+  rating metrics.
+- Do not relabel these cases as `BAD_USER_INPUT` merely to standardize
+  the code list.
+- Return expected failures as GraphQL errors.
+- Let unexpected failures surface. Do not add empty `catch` blocks
+  that hide them.
+
+## Data access
+
+- Match the query bounds, projections, and indexes of the neighboring
+  controller.
+- Follow an existing Redis call site before adding a cache.
+- Read UC Berkeley APIs through `@repo/sis-api`.
+- Read environment variables from the existing `.env` pattern.
+
+## Verification
+
+- Run the checks relevant to the changed module.
+- For authorization changes, verify that an unauthenticated caller is
+  rejected, an authorized owner succeeds, and a different signed-in
+  user cannot read private data or modify the owner's record by ID.
+- For staff-only changes, verify that an ordinary signed-in user is
+  rejected and an authorized staff user succeeds.
+- Verify that public catalog reads remain public where intended.
+- For changed error paths, verify that the existing error codes are
+  preserved.
+```
+
+## `.cursor/rules/change-discipline.mdc`
+
+```markdown
+---
+description: Keep Berkeleytime edits small, consistent with nearby code, and limited to the task
+alwaysApply: true
+---
+
+# Change discipline
+
+- Search the nearest module, page, or component and follow its relevant
+  patterns.
+- Edit only the files the task requires.
+- Add a dependency, abstraction, or refactor only when the task requires it.
+- If the requested behavior or authorization requirements conflict with
+  an existing pattern, explain the conflict before copying it.
+- UI uses existing `@repo/theme` components and variables from
+  `ThemeProvider.scss`.
+- Define spacing, radius, and shadows in component SCSS where the theme
+  has no corresponding tokens.
+- Backend stays on the persisted-operation gateway at `/api/graphql`.
+- Do not hand-edit generated files; update their sources and regenerate.
+- `@auth` checks authentication only. User-owned operations require
+  controller-level ownership or access checks, and staff-only operations
+  require staff authorization.
+- Preserve the nearest relevant controller's GraphQL error semantics,
+  including `CONFLICT` and `INVALID_ARGUMENT`.
+- Verify the behavior affected by the change.
+``
 
