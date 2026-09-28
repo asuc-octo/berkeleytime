@@ -25,6 +25,7 @@ export interface FilterContextType {
   breadths: string[];
   universityRequirements: string[];
   gradingFilters: GradingFilter[];
+  department: string | null;
   sortBy: SortBy;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
@@ -39,6 +40,7 @@ export interface FilterContextType {
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;

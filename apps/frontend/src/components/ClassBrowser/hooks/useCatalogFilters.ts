@@ -112,6 +112,7 @@ export interface CatalogFilterState {
   breadths: string[];
   universityRequirements: string[];
   gradingFilters: GradingFilter[];
+  department: string | null;
   sortBy: SortBy;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
@@ -131,6 +132,7 @@ export interface CatalogFilterUpdaters {
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
@@ -159,6 +161,7 @@ export default function useCatalogFilters({
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
+  const [localDepartment, setLocalDepartment] = useState<string | null>(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
@@ -231,18 +234,21 @@ export default function useCatalogFilters({
     [searchParams, localUniversityRequirements, persistent]
   );
 
-  const gradingFilters = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("gradingBases")
-            ?.split(",")
-            .filter((basis) =>
-              Object.values(GradingFilter).includes(basis as GradingFilter)
-            ) ?? []) as GradingFilter[])
-        : localGradingFilters,
-    [searchParams, localGradingFilters, persistent]
-  );
+  const gradingFilters = useMemo(() => {
+    if (!persistent) return localGradingFilters;
+    const raw = searchParams.get("gradingBases");
+    if (!raw) return [];
+    return raw
+      .split(",")
+      .filter((basis) =>
+        Object.values(GradingFilter).includes(basis as GradingFilter)
+      ) as GradingFilter[];
+  }, [searchParams, localGradingFilters, persistent]);
+
+  const department = useMemo(() => {
+    if (!persistent) return localDepartment;
+    return searchParams.get("department") || null;
+  }, [searchParams, localDepartment, persistent]);
 
   const sortBy = useMemo(() => {
     if (persistent) {
@@ -307,6 +313,8 @@ export default function useCatalogFilters({
       filters.gradingFilters = mapGradingFilterToBasisCodes(gradingFilters);
     }
 
+    if (department) filters.departments = [department];
+
     if (breadths.length > 0) filters.breadths = breadths;
     if (universityRequirements.length > 0) {
       filters.universityRequirements = universityRequirements;
@@ -322,6 +330,7 @@ export default function useCatalogFilters({
     timeRange,
     enrollmentFilter,
     gradingFilters,
+    department,
     breadths,
     universityRequirements,
     online,
@@ -337,6 +346,7 @@ export default function useCatalogFilters({
     breadths.length > 0 ||
     universityRequirements.length > 0 ||
     gradingFilters.length > 0 ||
+    department !== null ||
     enrollmentFilter !== null ||
     online ||
     sortBy !== SortBy.Relevance ||
@@ -431,6 +441,7 @@ export default function useCatalogFilters({
     breadths,
     universityRequirements,
     gradingFilters,
+    department,
     sortBy,
     reverse: localReverse,
     effectiveOrder,
@@ -451,8 +462,27 @@ export default function useCatalogFilters({
         setLocalUniversityRequirements,
         reqs
       ),
-    updateGradingFilters: (filters) =>
-      updateArray("gradingBases", setLocalGradingFilters, filters),
+    updateGradingFilters: (filters) => {
+      if (persistent) {
+        if (filters.length === 0) {
+          searchParams.delete("gradingBases");
+        } else {
+          searchParams.set("gradingBases", filters.join(","));
+        }
+        setSearchParams(searchParams);
+        return;
+      }
+      setLocalGradingFilters(filters);
+    },
+    updateDepartment: (value) => {
+      if (persistent) {
+        if (value) searchParams.set("department", value);
+        else searchParams.delete("department");
+        setSearchParams(searchParams);
+        return;
+      }
+      setLocalDepartment(value);
+    },
     updateSortBy,
     updateEnrollmentFilter: (filter) => {
       if (persistent) {
