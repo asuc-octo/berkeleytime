@@ -81,6 +81,10 @@ export const GET_CATALOG_CLASS_IDENTITIES = gql`
 export const GET_CATALOG_FILTER_OPTIONS = gql`
   query GetCatalogFilterOptions($year: Int!, $semester: Semester!) {
     catalogFilterOptions(year: $year, semester: $semester) {
+      departments {
+        code
+        name
+      }
       levels
       gradingOptions
       breadthRequirements

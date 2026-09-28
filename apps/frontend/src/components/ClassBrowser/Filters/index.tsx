@@ -3,40 +3,71 @@ import { useEffect, useMemo, useState } from "react";
 import { Filter, SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Button,
-  DaySelect,
-  IconButton,
-  Input,
-  Select,
-  Slider,
-} from "@repo/theme";
-import type { Option, SelectTab } from "@repo/theme";
+import { Button, DaySelect, IconButton, Select, Slider } from "@repo/theme";
+import type { Option } from "@repo/theme";
 
 import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { sortByTermDescending } from "@/lib/classes";
 
-import {
-  Day,
-  EMPTY_DAYS,
-  EnrollmentFilter,
-  GradingFilter,
-  Level,
-  SortBy,
-} from "../browser";
+import { Day, EMPTY_DAYS, Level, SortBy } from "../browser";
 import { useFilterContext } from "../context/FilterContext";
 import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Filters.module.scss";
-import ScheduleConflictFilter from "./ScheduleConflictFilter";
 
 type RequirementSelection =
   | { type: "breadth"; value: string }
   | { type: "university"; value: string };
 
-const REQUIREMENT_TABS = {
-  LS: "ls",
-  UNIVERSITY: "university",
-} as const;
+const TIME_LABELS = [
+  "8:00 AM",
+  "8:30 AM",
+  "9:00 AM",
+  "9:30 AM",
+  "10:00 AM",
+  "10:30 AM",
+  "11:00 AM",
+  "11:30 AM",
+  "12:00 PM",
+  "12:30 PM",
+  "1:00 PM",
+  "1:30 PM",
+  "2:00 PM",
+  "2:30 PM",
+  "3:00 PM",
+  "3:30 PM",
+  "4:00 PM",
+  "4:30 PM",
+  "5:00 PM",
+  "5:30 PM",
+  "6:00 PM",
+  "6:30 PM",
+  "7:00 PM",
+  "7:30 PM",
+  "8:00 PM",
+  "8:30 PM",
+  "9:00 PM",
+] as const;
+
+const to24HourTime = (label: (typeof TIME_LABELS)[number]) => {
+  const [time, period] = label.split(" ");
+  const [hourText, minute] = time.split(":");
+  let hour = Number(hourText);
+  if (period === "PM" && hour !== 12) hour += 12;
+  if (period === "AM" && hour === 12) hour = 0;
+  return `${String(hour).padStart(2, "0")}:${minute}`;
+};
+
+const TIME_OPTIONS = TIME_LABELS.map((label) => ({
+  label,
+  value: to24HourTime(label),
+}));
+
+const SORT_OPTION_LABELS: Record<SortBy, string> = {
+  [SortBy.Relevance]: "Relevance",
+  [SortBy.Units]: "Units",
+  [SortBy.AverageGrade]: "Average Grade",
+  [SortBy.OpenSeats]: "Open Seats",
+};
 
 export default function Filters() {
   const { mode, setExpanded } = useLayoutContext();
@@ -53,9 +84,9 @@ export default function Filters() {
     updateBreadths,
     universityRequirements,
     updateUniversityRequirements,
-    gradingFilters,
     updateGradingFilters,
-    enrollmentFilter,
+    department,
+    updateDepartment,
     updateEnrollmentFilter,
     sortBy,
     reverse,
@@ -73,9 +104,6 @@ export default function Filters() {
   const { trackEvent } = useTracking();
 
   const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
-  const [activeRequirementTab, setActiveRequirementTab] = useState<string>(
-    REQUIREMENT_TABS.LS
-  );
 
   useEffect(() => {
     const newDays = daysArray.reduce((acc, v, i) => {
@@ -103,93 +131,57 @@ export default function Filters() {
     return result;
   }, [filterOptions]);
 
-  const breadthRequirementOptions = useMemo<Option<RequirementSelection>[]>(
-    () =>
-      (filterOptions?.breadthRequirements ?? []).map((breadth) => ({
-        value: { type: "breadth", value: breadth } as RequirementSelection,
-        label: breadth,
-      })),
-    [filterOptions]
-  );
+  const requirementOptions = useMemo<Option<RequirementSelection>[]>(() => {
+    const options: Option<RequirementSelection>[] = [];
+    const university = filterOptions?.universityRequirements ?? [];
+    const breadths = filterOptions?.breadthRequirements ?? [];
 
-  const universityRequirementOptions = useMemo<Option<RequirementSelection>[]>(
-    () =>
-      (filterOptions?.universityRequirements ?? []).map((requirement) => ({
-        value: {
-          type: "university",
-          value: requirement,
-        } as RequirementSelection,
-        label: requirement,
-      })),
-    [filterOptions]
-  );
-
-  const requirementTabs = useMemo<SelectTab<RequirementSelection>[]>(() => {
-    const tabs: SelectTab<RequirementSelection>[] = [];
-
-    if (breadthRequirementOptions.length > 0) {
-      tabs.push({
-        value: REQUIREMENT_TABS.LS,
-        label: "L&S",
-        options: breadthRequirementOptions,
-      });
+    if (university.length > 0) {
+      options.push({ type: "label", label: "University Requirements" });
+      options.push(
+        ...university.map((requirement) => ({
+          value: { type: "university" as const, value: requirement },
+          label: requirement,
+        }))
+      );
     }
 
-    if (universityRequirementOptions.length > 0) {
-      tabs.push({
-        value: REQUIREMENT_TABS.UNIVERSITY,
-        label: "University",
-        options: universityRequirementOptions,
-      });
-    }
-
-    return tabs;
-  }, [breadthRequirementOptions, universityRequirementOptions]);
-  const requirementSelectTabs =
-    requirementTabs.length > 0 ? requirementTabs : undefined;
-
-  const selectedRequirement = useMemo<RequirementSelection | null>(() => {
     if (breadths.length > 0) {
-      return { type: "breadth", value: breadths[0] };
+      options.push({ type: "label", label: "L&S Breadth" });
+      options.push(
+        ...breadths.map((breadth) => ({
+          value: { type: "breadth" as const, value: breadth },
+          label: breadth,
+        }))
+      );
     }
-    if (universityRequirements.length > 0) {
-      return { type: "university", value: universityRequirements[0] };
-    }
-    return null;
-  }, [breadths, universityRequirements]);
 
-  useEffect(() => {
-    if (selectedRequirement?.type === "breadth") {
-      setActiveRequirementTab(REQUIREMENT_TABS.LS);
-      return;
-    }
-    if (selectedRequirement?.type === "university") {
-      setActiveRequirementTab(REQUIREMENT_TABS.UNIVERSITY);
-    }
-  }, [selectedRequirement]);
+    return options;
+  }, [filterOptions]);
 
-  useEffect(() => {
-    if (!requirementSelectTabs?.length) return;
-    const hasActiveTab = requirementSelectTabs.some(
-      (tab) => tab.value === activeRequirementTab
-    );
-    if (!hasActiveTab) {
-      setActiveRequirementTab(requirementSelectTabs[0].value);
-    }
-  }, [activeRequirementTab, requirementSelectTabs]);
+  const selectedRequirements = useMemo<RequirementSelection[]>(
+    () => [
+      ...universityRequirements.map((value) => ({
+        type: "university" as const,
+        value,
+      })),
+      ...breadths.map((value) => ({ type: "breadth" as const, value })),
+    ],
+    [breadths, universityRequirements]
+  );
 
-  const gradingOptions = useMemo<Option<GradingFilter>[]>(() => {
-    return Object.values(GradingFilter).map((category) => ({
-      value: category,
-      label: category,
-    }));
-  }, []);
+  const departmentOptions = useMemo(
+    () =>
+      (filterOptions?.departments ?? []).map((option) => ({
+        value: option.code,
+        label: option.name,
+      })),
+    [filterOptions]
+  );
 
   const isClassLevelDisabled = Object.values(filteredLevels).every(
     (count) => count === 0
   );
-  const isGradingDisabled =
-    !filterOptions || filterOptions.gradingOptions.length === 0;
 
   const isAscending = effectiveOrder === "asc";
   const nextOrderLabel = isAscending ? "descending" : "ascending";
@@ -214,6 +206,7 @@ export default function Filters() {
     updateBreadths([]);
     updateUniversityRequirements([]);
     updateGradingFilters([]);
+    updateDepartment(null);
     updateUnits([0, 5]);
     setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
@@ -228,13 +221,14 @@ export default function Filters() {
       <div className={styles.body}>
         <div className={styles.filtersHeader}>
           <p className={styles.filtersTitle}>Filters</p>
-          <button
+          <Button
             type="button"
-            className={styles.clearButton}
+            variant="tertiary"
+            noFill
             onClick={handleClearFilters}
           >
             Clear
-          </button>
+          </Button>
         </div>
         {mode !== "full" && (
           <Button
@@ -245,13 +239,47 @@ export default function Filters() {
             <span>Close Filters</span>
           </Button>
         )}
+        <div className={styles.sortControls}>
+          <Select
+            value={sortBy}
+            selectedLabel={`Sort by ${SORT_OPTION_LABELS[sortBy]}`}
+            onChange={(value) => {
+              if (typeof value !== "string") return;
+              updateSortBy(value as SortBy);
+              trackEvent("search_filter_applied", "catalog_filter", "sort", {
+                value,
+              });
+            }}
+            options={Object.values(SortBy).map((sortOption) => ({
+              value: sortOption,
+              label: SORT_OPTION_LABELS[sortOption],
+            }))}
+          />
+          <IconButton
+            className={styles.sortToggleButton}
+            onClick={() => updateReverse((previous) => !previous)}
+            aria-label={`Switch to ${nextOrderLabel} order`}
+            title={`Switch to ${nextOrderLabel} order`}
+            aria-pressed={reverse}
+          >
+            {isAscending ? (
+              <SortUp width={16} height={16} />
+            ) : (
+              <SortDown width={16} height={16} />
+            )}
+          </IconButton>
+        </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Semester</p>
           <Select
-            searchable
+            combobox
             disabled={!terms || terms.length === 0}
             value={currentTermLabel}
+            placeholder="Select a semester"
+            side="bottom"
+            maxListHeight={280}
             onChange={(value) => {
+              if (typeof value !== "string") return;
               const selectedTerm = availableTerms.find(
                 (term) => `${term.semester} ${term.year}` === value
               );
@@ -265,50 +293,94 @@ export default function Filters() {
               value: `${term.semester} ${term.year}`,
               label: `${term.semester} ${term.year}`,
             }))}
-            searchPlaceholder="Search semesters..."
             emptyMessage="No semesters found."
-            maxListHeight={130}
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Sort By</p>
-          <div className={styles.sortControls}>
-            <Select
-              value={sortBy}
-              onChange={(value) => {
-                updateSortBy(value as SortBy);
-                trackEvent("search_filter_applied", "catalog_filter", "sort", { value });
-              }}
-              options={Object.values(SortBy).map((sortOption) => {
-                return { value: sortOption, label: sortOption };
-              })}
-            />
-            <IconButton
-              className={styles.sortToggleButton}
-              onClick={() => updateReverse((previous) => !previous)}
-              aria-label={`Switch to ${nextOrderLabel} order`}
-              title={`Switch to ${nextOrderLabel} order`}
-              aria-pressed={reverse}
-            >
-              {isAscending ? (
-                <SortUp width={16} height={16} />
-              ) : (
-                <SortDown width={16} height={16} />
-              )}
-            </IconButton>
-          </div>
+          <p className={styles.label}>Department</p>
+          <Select
+            combobox
+            clearable
+            disabled={!filterOptions || departmentOptions.length === 0}
+            value={department}
+            placeholder="Select a department"
+            side="bottom"
+            maxListHeight={280}
+            onChange={(value) => {
+              if (Array.isArray(value)) return;
+              updateDepartment(value);
+              if (value) {
+                trackEvent(
+                  "search_filter_applied",
+                  "catalog_filter",
+                  "department",
+                  { value }
+                );
+              }
+            }}
+            options={departmentOptions}
+            emptyMessage="No departments found."
+          />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Class level</p>
+          <p className={styles.label}>Requirements</p>
+          <Select<RequirementSelection>
+            multi
+            clearable
+            value={selectedRequirements}
+            placeholder="Filter by requirements"
+            disabled={requirementOptions.length === 0}
+            onChange={(value) => {
+              if (value === null) {
+                updateBreadths([]);
+                updateUniversityRequirements([]);
+                return;
+              }
+              if (!Array.isArray(value)) return;
+              updateBreadths(
+                value
+                  .filter((requirement) => requirement.type === "breadth")
+                  .map((requirement) => requirement.value)
+              );
+              updateUniversityRequirements(
+                value
+                  .filter((requirement) => requirement.type === "university")
+                  .map((requirement) => requirement.value)
+              );
+              if (value.length > 0) {
+                trackEvent(
+                  "search_filter_applied",
+                  "catalog_filter",
+                  "requirement",
+                  { value: value.map((requirement) => requirement.value) }
+                );
+              }
+            }}
+            options={requirementOptions}
+            emptyMessage="No requirements found."
+          />
+        </div>
+        <div className={styles.formControl}>
+          <p className={styles.label}>Class Level</p>
           <Select
             multi
+            clearable
             value={levels}
             placeholder="Select class levels"
             disabled={isClassLevelDisabled}
             onChange={(v) => {
-              if (Array.isArray(v)) {
+              if (v === null) {
+                updateLevels([]);
+              } else if (Array.isArray(v)) {
                 updateLevels(v);
-                if (v.length > 0) trackEvent("search_filter_applied", "catalog_filter", "level", { value: v });
+                if (v.length > 0) {
+                  trackEvent(
+                    "search_filter_applied",
+                    "catalog_filter",
+                    "level",
+                    { value: v }
+                  );
+                }
               }
             }}
             options={Object.values(Level).map((level) => {
@@ -320,41 +392,6 @@ export default function Filters() {
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Requirements</p>
-          <Select<RequirementSelection>
-            searchable
-            clearable
-            value={selectedRequirement}
-            placeholder="Filter by requirements"
-            tabs={requirementSelectTabs}
-            defaultTab={requirementSelectTabs?.[0]?.value}
-            tabValue={activeRequirementTab}
-            onTabChange={(tabValue) => {
-              setActiveRequirementTab(tabValue);
-            }}
-            onChange={(value) => {
-              if (value === null) {
-                updateBreadths([]);
-                updateUniversityRequirements([]);
-                return;
-              }
-              if (Array.isArray(value)) return;
-              if (value.type === "breadth") {
-                updateBreadths([value.value]);
-                updateUniversityRequirements([]);
-              } else {
-                updateUniversityRequirements([value.value]);
-                updateBreadths([]);
-              }
-              trackEvent("search_filter_applied", "catalog_filter", "requirement", { value: value.value, type: value.type });
-            }}
-            searchPlaceholder="Search requirements..."
-            emptyMessage="No requirements found."
-            contentClassName={styles.requirementsSelectContent}
-            tabsWrapperClassName={styles.requirementsTabs}
-          />
-        </div>
-        <div className={styles.formControl}>
           <p className={styles.label}>Units</p>
           <Slider
             min={0}
@@ -363,90 +400,76 @@ export default function Filters() {
             value={units}
             onValueChange={(v) => {
               updateUnits(v);
-              trackEvent("search_filter_applied", "catalog_filter", "units", { value: v });
+              trackEvent("search_filter_applied", "catalog_filter", "units", {
+                value: v,
+              });
             }}
             labels={["0", "1", "2", "3", "4", "5+"]}
           />
         </div>
         <div className={styles.formControl}>
-          <p className={styles.label}>Enrollment Status</p>
-          <Select
-            value={enrollmentFilter}
-            placeholder="Select enrollment status"
-            clearable
-            onChange={(value) => {
-              updateEnrollmentFilter(value as EnrollmentFilter | null);
-              if (value != null) trackEvent("search_filter_applied", "catalog_filter", "enrollment", { value });
-            }}
-            options={Object.values(EnrollmentFilter).map((filter) => ({
-              value: filter,
-              label: filter,
-            }))}
-          />
-        </div>
-        <ScheduleConflictFilter />
-        <div className={styles.formControl}>
-          <p className={styles.label}>Grading Option</p>
-          <Select<GradingFilter>
-            multi
-            value={gradingFilters}
-            placeholder="Filter by grading options"
-            disabled={isGradingDisabled}
-            onChange={(v) => {
-              if (Array.isArray(v)) {
-                updateGradingFilters(v);
-                if (v.length > 0) trackEvent("search_filter_applied", "catalog_filter", "grading", { value: v });
-              }
-            }}
-            options={gradingOptions}
-          />
-        </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Date and Time</p>
+          <p className={styles.label}>Day and Time</p>
           <DaySelect
             days={daysArray}
             updateDays={(v) => {
               setDaysArray([...v]);
               const selectedCount = v.filter(Boolean).length;
-              if (selectedCount > 0) trackEvent("search_filter_applied", "catalog_filter", "days", { value: selectedCount });
+              if (selectedCount > 0) {
+                trackEvent("search_filter_applied", "catalog_filter", "days", {
+                  value: selectedCount,
+                });
+              }
             }}
             size="sm"
           />
           <div className={styles.timeRangeInputs}>
-            <div className={styles.timeInputGroup}>
-              <label htmlFor="time-from" className={styles.timeLabel}>
-                From
-              </label>
-              <Input
-                type="time"
-                id="time-from"
-                value={timeRange[0] ?? ""}
-                min={filterOptions?.timeRange?.minStartTime}
-                max={filterOptions?.timeRange?.maxEndTime}
-                onChange={(e) => {
-                  const value = e.target.value || null;
+            <div className={styles.timeField}>
+              <Select
+                clearable
+                value={timeRange[0]}
+                placeholder="Start"
+                dense
+                style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
+                maxListHeight={200}
+                contentClassName={styles.timeMenu}
+                onChange={(value) => {
+                  if (Array.isArray(value)) return;
                   updateTimeRange([value, timeRange[1]]);
-                  if (value) trackEvent("search_filter_applied", "catalog_filter", "time_start", { value });
+                  if (value) {
+                    trackEvent(
+                      "search_filter_applied",
+                      "catalog_filter",
+                      "time_start",
+                      { value }
+                    );
+                  }
                 }}
-                className={styles.timeInput}
+                options={TIME_OPTIONS}
               />
             </div>
-            <div className={styles.timeInputGroup}>
-              <label htmlFor="time-to" className={styles.timeLabel}>
-                To
-              </label>
-              <Input
-                type="time"
-                id="time-to"
-                value={timeRange[1] ?? ""}
-                min={filterOptions?.timeRange?.minStartTime}
-                max={filterOptions?.timeRange?.maxEndTime}
-                onChange={(e) => {
-                  const value = e.target.value || null;
+            <span className={styles.timeConnector}>to</span>
+            <div className={styles.timeField}>
+              <Select
+                clearable
+                value={timeRange[1]}
+                placeholder="End"
+                dense
+                style={{ width: "100%", paddingLeft: 10, paddingRight: 10 }}
+                maxListHeight={200}
+                contentClassName={styles.timeMenu}
+                onChange={(value) => {
+                  if (Array.isArray(value)) return;
                   updateTimeRange([timeRange[0], value]);
-                  if (value) trackEvent("search_filter_applied", "catalog_filter", "time_end", { value });
+                  if (value) {
+                    trackEvent(
+                      "search_filter_applied",
+                      "catalog_filter",
+                      "time_end",
+                      { value }
+                    );
+                  }
                 }}
-                className={styles.timeInput}
+                options={TIME_OPTIONS}
               />
             </div>
           </div>
