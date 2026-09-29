@@ -297,16 +297,16 @@
   --text-20: 1.25rem; // 20px
   --text-28: 1.75rem; // 28px
 
-  // Spacing scale
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 40px;
-  --space-8: 48px;
-  --space-9: 64px;
+  // Spacing scale (rem based on 16px base)
+  --space-1: 0.25rem; // 4px
+  --space-2: 0.5rem; // 8px
+  --space-3: 0.75rem; // 12px
+  --space-4: 1rem; // 16px
+  --space-5: 1.5rem; // 24px
+  --space-6: 2rem; // 32px
+  --space-7: 2.5rem; // 40px
+  --space-8: 3rem; // 48px
+  --space-9: 4rem; // 64px
 
   // Font weights
   --font-normal: 400;
