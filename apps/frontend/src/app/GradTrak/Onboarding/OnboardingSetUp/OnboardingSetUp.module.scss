@@ -1,5 +1,5 @@
 .hero {
-  padding: 5rem 1rem;
+  padding: 5rem var(--space-4);
   text-align: center;
   margin-left: 25%;
   max-width: 50%;
@@ -9,13 +9,13 @@
 .filter {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   margin-top: 12px;
 }
 
 .primary {
   width: 100%;
   justify-content: center;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem var(--space-4);
   gap: 0.625rem;
 }

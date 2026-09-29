@@ -8,9 +8,9 @@
   pointer-events: none;
 
   .button {
-    padding: 0 16px;
+    padding: 0 var(--space-4);
     border-radius: 4px 0 0 4px;
-    gap: 16px;
+    gap: var(--space-4);
     height: 48px;
     transform: translateX(calc(100% - 48px));
     pointer-events: auto;

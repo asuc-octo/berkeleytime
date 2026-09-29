@@ -13,7 +13,7 @@ body {
     align-items: flex-start;
     align-self: stretch;
     text-align: left;
-    padding: 1rem;
+    padding: var(--space-4);
     border-radius: 0.5rem;
     background-color: var(--foreground-color);
     box-shadow:
@@ -26,7 +26,7 @@ body {
 
     input {
       color: var(--heading-color);
-      font-size: 0.75rem;
+      font-size: var(--text-12);
       font-weight: var(--font-medium);
       background-color: transparent;
       padding: 0;
@@ -69,10 +69,10 @@ body {
 
       .item {
         display: flex;
-        padding: 0.5rem 1rem;
+        padding: var(--space-2) var(--space-4);
         align-items: center;
         align-self: stretch;
-        font-size: 0.875rem;
+        font-size: var(--text-14);
         color: var(--heading-color);
         overflow: hidden;
         text-align: left;
@@ -103,7 +103,7 @@ body {
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
-        padding: 1rem;
+        padding: var(--space-4);
         gap: 0.625rem;
         color: var(--paragraph-color);
         transition: background-color 0.3 ease;

@@ -14,12 +14,12 @@
     bottom: 24px;
     left: 24px;
     z-index: 1;
-    padding: 12px;
+    padding: var(--space-3);
     border: 1px solid var(--border-color);
     background-color: var(--foreground-color);
     border-radius: 8px;
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .overlay {
@@ -29,7 +29,7 @@
     position: absolute;
     background: linear-gradient(to left, var(--background-color), transparent);
     height: 100%;
-    padding: 24px;
+    padding: var(--space-5);
     pointer-events: none;
 
     .panel {

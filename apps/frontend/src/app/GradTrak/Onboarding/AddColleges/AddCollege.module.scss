@@ -1,5 +1,5 @@
 .hero {
-  padding: 5rem 1rem;
+  padding: 5rem var(--space-4);
   text-align: center;
   margin-left: 25%;
   max-width: 50%;
@@ -10,21 +10,21 @@
 .primary {
   flex: 1;
   justify-content: center;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem var(--space-4);
   gap: 0.625rem;
 }
 
 .secondary {
   flex: 1;
   justify-content: center;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem var(--space-4);
   gap: 0.625rem;
 }
 
 .add-button {
   width: 100%;
   justify-content: center;
-  padding: 1.25rem 1rem;
+  padding: 1.25rem var(--space-4);
   gap: 0.625rem;
 }
 
@@ -46,10 +46,10 @@
 
 .college-chip {
   display: flex;
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   border-radius: 4px;
   background: rgba(47, 128, 237, 0.1);
   color: var(--Blue, #2f80ed);
@@ -65,5 +65,5 @@
 .selected-college-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: var(--space-2);
 }

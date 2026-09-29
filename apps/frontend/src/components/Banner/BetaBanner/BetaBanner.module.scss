@@ -4,7 +4,7 @@
   flex-shrink: 0;
   height: 32px;
   background-color: var(--backdrop-color);
-  padding: 12px;
+  padding: var(--space-3);
   display: flex;
   align-items: center;
   color: var(--foreground-color);
@@ -13,16 +13,16 @@
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .link {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     color: var(--gray-700);
     text-decoration: none;
-    padding: 4px 8px;
+    padding: var(--space-1) var(--space-2);
     border-radius: 4px;
     transition: color 100ms ease-in-out;
 
@@ -55,7 +55,7 @@
     color: var(--gray-700);
     display: flex;
     align-items: center;
-    padding: 4px;
+    padding: var(--space-1);
     border-radius: 4px;
     transition: color 100ms ease-in-out;
     margin-left: 8px;

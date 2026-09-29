@@ -1,7 +1,7 @@
 .root {
   width: 100%;
   color: var(--secondary-color);
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-14);
   cursor: pointer;
   border-radius: 4px;

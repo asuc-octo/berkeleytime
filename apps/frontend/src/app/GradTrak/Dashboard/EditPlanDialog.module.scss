@@ -6,7 +6,7 @@
 
 .edit-dialog-body {
   min-height: 450px;
-  padding-bottom: 24px;
+  padding-bottom: var(--space-5);
 }
 
 .tabs {
@@ -18,20 +18,20 @@
 }
 
 .tab-content {
-  padding-top: 8px;
+  padding-top: var(--space-2);
 }
 
 .edit-dialog-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-5);
   width: 100%;
 }
 
 .degree-search-row {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: var(--space-2);
   margin-bottom: 12px;
 }
 
@@ -52,11 +52,11 @@
 .degree-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   margin-top: 8px;
   max-height: 200px;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: var(--space-1);
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -76,16 +76,16 @@
   padding: 10px 14px;
   background-color: var(--button-hover-color);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: var(--text-14);
   color: var(--heading-color);
   .remove-button {
     cursor: pointer;
     color: var(--paragraph-color);
-    font-size: 18px;
+    font-size: var(--text-18);
     font-weight: bold;
     line-height: 1;
     opacity: 0.7;
-    padding: 0 4px;
+    padding: 0 var(--space-1);
     transition: opacity 0.2s;
     transition: color 0.2s;
     &:hover {
@@ -97,5 +97,5 @@
 
 .empty-state {
   color: var(--gray-500);
-  font-size: 14px;
+  font-size: var(--text-14);
 }

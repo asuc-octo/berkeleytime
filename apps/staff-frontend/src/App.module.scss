@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  gap: 24px;
+  gap: var(--space-5);
   background-color: var(--background-color);
   color: var(--paragraph-color);
 }
@@ -25,19 +25,19 @@
 
 .heading {
   font-size: 24px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--heading-color);
 }
 
 .errorText {
   color: var(--red-500);
-  font-size: 14px;
+  font-size: var(--text-14);
   margin: 0;
 }
 
 .returnLink {
   color: var(--paragraph-color);
-  font-size: 14px;
+  font-size: var(--text-14);
   text-decoration: none;
   opacity: 0.7;
   transition: opacity 0.2s;

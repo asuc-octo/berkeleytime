@@ -1,5 +1,5 @@
 .header {
-  padding: 5rem 1rem;
+  padding: 5rem var(--space-4);
   text-align: center;
   margin-left: 25%;
   max-width: 50%;
@@ -25,12 +25,12 @@
 .semesterSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .semesterTitle {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
   align-items: center;
   font-size: var(--text-14);
   font-weight: var(--font-medium);
@@ -51,5 +51,5 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 270px);
-  gap: 8px;
+  gap: var(--space-2);
 }

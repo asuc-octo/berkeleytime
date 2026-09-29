@@ -8,7 +8,7 @@ $section-spacing: 48px;
 }
 
 .aboutSection {
-  padding: $section-spacing 40px;
+  padding: $section-spacing var(--space-7);
   box-sizing: border-box;
   width: 100%;
 }
@@ -44,14 +44,14 @@ $section-spacing: 48px;
 }
 
 .wrapper {
-  padding: 0 40px;
+  padding: 0 var(--space-7);
 }
 
 .getInvolvedBox {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 24px;
+  gap: var(--space-5);
   width: 100%;
   font-size: var(--text-18);
   padding: $section-spacing 0;
@@ -59,7 +59,7 @@ $section-spacing: 48px;
 
   @media (max-width: $breakpoint) {
     flex-direction: column;
-    gap: 24px;
+    gap: var(--space-5);
     align-items: center;
     text-align: center;
   }
@@ -105,7 +105,7 @@ $section-spacing: 48px;
 }
 
 .sponsorsSection {
-  padding: $section-spacing 40px;
+  padding: $section-spacing var(--space-7);
   box-sizing: border-box;
   width: 100%;
 }
@@ -142,7 +142,7 @@ $section-spacing: 48px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 32px;
+  gap: var(--space-6);
   flex-wrap: wrap;
   flex: 1;
   max-width: 680px;
@@ -170,7 +170,7 @@ $section-spacing: 48px;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-radius: 8px;
   transition: background-color 0.2s ease;
 
@@ -192,15 +192,15 @@ $section-spacing: 48px;
 }
 
 .ocfHostedOn {
-  font-size: 12px;
+  font-size: var(--text-12);
   color: var(--paragraph-color);
-  font-weight: 400;
+  font-weight: var(--font-normal);
 }
 
 .ocfName {
   font-size: 24px;
   color: var(--heading-color);
-  font-weight: 700;
+  font-weight: var(--font-bold);
 }
 
 .mechanizeContainer {
@@ -208,7 +208,7 @@ $section-spacing: 48px;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-radius: 8px;
   transition: background-color 0.2s ease;
 
@@ -225,9 +225,9 @@ $section-spacing: 48px;
 }
 
 .mechanizeName {
-  font-size: 20px;
+  font-size: var(--text-20);
   color: var(--heading-color);
-  font-weight: 500;
+  font-weight: var(--font-medium);
 }
 
 .mechanizeLogoDark {

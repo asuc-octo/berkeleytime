@@ -15,7 +15,7 @@
     width: 384px;
 
     .body {
-      padding-top: 12px;
+      padding-top: var(--space-3);
     }
   }
 
@@ -24,15 +24,15 @@
     width: 100%;
 
     .body {
-      padding-top: 12px;
+      padding-top: var(--space-3);
     }
   }
 
   .body {
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    gap: 16px;
+    padding: var(--space-5);
+    gap: var(--space-4);
 
     .closeFiltersButton {
       width: 100%;
@@ -95,7 +95,7 @@
 
     .sortControls {
       display: flex;
-      gap: 8px;
+      gap: var(--space-2);
       align-items: stretch;
 
       > :first-child {
@@ -114,7 +114,7 @@
 
     .timeRangeInputs {
       display: flex;
-      gap: 16px;
+      gap: var(--space-4);
       margin-top: 12px;
     }
 
@@ -171,7 +171,7 @@
 
   :global([role="tab"]) {
     border-radius: 4px 4px 0 0;
-    padding: 6px 8px;
+    padding: 6px var(--space-2);
     min-height: 28px;
     background: transparent;
     box-shadow: none;

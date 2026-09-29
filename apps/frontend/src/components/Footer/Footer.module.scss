@@ -1,32 +1,32 @@
 .wrapper {
-  padding: 0 40px;
+  padding: 0 var(--space-7);
 }
 
 .root {
-  padding: 64px 0;
+  padding: var(--space-9) 0;
   display: flex;
   flex-wrap: wrap;
   border-top: 1px solid var(--border-color);
-  gap: 64px;
+  gap: var(--space-9);
 
   .columns {
     display: flex;
-    gap: 64px;
+    gap: var(--space-9);
   }
 
   @media (max-width: 768px) {
-    gap: 48px;
+    gap: var(--space-8);
 
     .columns {
       width: 100%;
-      gap: 48px;
+      gap: var(--space-8);
     }
   }
 
   .column {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 
     .label {
       font-size: var(--text-14);
@@ -54,7 +54,7 @@
     .brandGroup {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--space-2);
     }
 
     .description {
@@ -84,7 +84,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 0;
+  padding: var(--space-5) 0;
   font-size: var(--text-14);
   color: var(--paragraph-color);
 }

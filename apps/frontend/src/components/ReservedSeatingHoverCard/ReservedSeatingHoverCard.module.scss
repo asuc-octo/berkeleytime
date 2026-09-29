@@ -24,7 +24,7 @@
 .trigger {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   border: none;
   background: none;
   padding: 0;
@@ -46,7 +46,7 @@
 }
 
 .header {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
   color: var(--heading-color);
@@ -56,15 +56,15 @@
 .content {
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 12px;
+  padding: var(--space-3);
+  gap: var(--space-3);
 }
 
 .group {
   display: grid;
   grid-template-columns: 1fr max-content;
   align-items: center;
-  column-gap: 12px;
+  column-gap: var(--space-3);
 }
 
 .description {

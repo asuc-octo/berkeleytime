@@ -9,11 +9,11 @@
 }
 
 .cardCompact {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
 }
 
 .title {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
   color: var(--heading-color);
@@ -22,7 +22,7 @@
 }
 
 .simpleTitle {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
   color: var(--heading-color);
@@ -30,7 +30,7 @@
 }
 
 .description {
-  padding: 12px;
+  padding: var(--space-3);
   font-size: var(--text-14);
   font-weight: var(--font-normal);
   color: var(--secondary-color);
