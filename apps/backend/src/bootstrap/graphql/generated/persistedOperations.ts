@@ -140,6 +140,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/schedules.ts","apps/frontend/src/lib/api/schedules.ts"],
   },
+  "1c58f253507638b7132f12e1de037b804ee249a66c4bfbbd1d1002bcb0cc3000": {
+    operationName: "GetUserRatings",
+    document: "query GetUserRatings{userRatings{classes{subject courseNumber semester year classNumber professorName metrics{metricName value __typename}reviewTitle reviewContent reviewerGrade lastUpdated __typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/ratings.ts"],
+  },
   "1ca3cf6917e03729d6cddb6fdb92a508daa862d82c0ff3c29c06686bb8339cd8": {
     operationName: "GetCatalogSearch",
     document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
@@ -266,12 +272,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
-  "383c19923625189d6af6177c3adb4ab4d2357bed1f24f838fb640a472b08565f": {
-    operationName: "SemanticSearchTerms",
-    document: "query SemanticSearchTerms{terms{year semester __typename}}",
-    variableNames: [],
-    sources: ["apps/semantic-search/app/graphql/terms.graphql"],
-  },
   "3a06e634704b6ee830eb309c303c73ec39b120f9d10c705005e63ec18d60f93c": {
     operationName: "CreateCuratedClass",
     document: "mutation CreateCuratedClass($curatedClass:CreateCuratedClassInput!){createCuratedClass(curatedClass:$curatedClass){_id text image subject courseNumber number semester year sessionId publishedAt createdAt updatedAt class{number sessionId title unitsMax unitsMin finalExam gradingBasis primarySection{component online instructionMode attendanceRequired lecturesRecorded enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days __typename}__typename}course{subject number title gradeDistribution{average __typename}academicCareer __typename}__typename}__typename}}",
@@ -343,6 +343,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query AllStaffMembers{allStaffMembers{id userId name email personalLink addedByName createdAt roles{id year semester role team photo altPhoto isLeadership __typename}__typename}}",
     variableNames: [],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
+  },
+  "4bf7a28744fcfd8f32e8603110d32ad5bbc244166ef9f748c86815f066be29a0": {
+    operationName: "SemanticSearchTerms",
+    document: "query SemanticSearchTerms{terms(withCatalogData:true){year semester __typename}}",
+    variableNames: [],
+    sources: ["apps/semantic-search/app/graphql/terms.graphql"],
   },
   "4d066f6881899eb8bb65717335b1687864bb8e2d65f2debf04a6227f08415f7b": {
     operationName: "GetAllClassesForCourse",
@@ -571,12 +577,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetAggregatedRatings($subject:String!$courseNumber:String!$semester:Semester!$year:Int!$classNumber:String){aggregatedRatings(subject:$subject courseNumber:$courseNumber semester:$semester year:$year classNumber:$classNumber){metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}}",
     variableNames: ["subject","courseNumber","semester","year","classNumber"],
     sources: ["apps/ag-frontend/src/lib/api/ratings.ts","apps/frontend/src/lib/api/ratings.ts"],
-  },
-  "99f5014dca7c4dc5e32a13807b5ef0acd788c84b6c09125ab6cfc59cf275c336": {
-    operationName: "GetUserRatings",
-    document: "query GetUserRatings{userRatings{classes{subject courseNumber semester year classNumber metrics{metricName value __typename}reviewTitle reviewContent reviewerGrade lastUpdated __typename}__typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
   "9acaa58b959c2b3d035f5bb7195240d25c724cd629bdf426e46c066d148705a8": {
     operationName: "GetUser",

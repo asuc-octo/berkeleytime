@@ -45,7 +45,7 @@ const getWebServer = () => {
     // Start docker-compose to build and run the app
     command: "docker compose up --build",
     url: getBaseURL(),
-    timeout: 300 * 1000, // 5 minutes for docker to build and start
+    timeout: 600 * 1000, // 10 minutes for docker to build and start (CI has no layer cache, cold image pulls can be slow)
     // In 'local' mode: reuse server if developer already has docker-compose running
     // In 'ci' mode: always start fresh (process.env.CI will be true)
     reuseExistingServer:

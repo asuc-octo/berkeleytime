@@ -1,14 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
-import { METRIC_ORDER, MetricName } from "@repo/shared";
+import { METRIC_ORDER } from "@repo/shared";
 
 import { IUserRatingClass } from "@/lib/api";
 
-import {
-  formatDate,
-  getAverageRatingColor,
-  isMetricRating,
-} from "../metricsUtil";
+import { formatDate } from "../metricsUtil";
 import styles from "./UserRatingSummary.module.scss";
 
 export default function UserRatingSummary({
@@ -16,29 +12,11 @@ export default function UserRatingSummary({
 }: {
   userRatings: IUserRatingClass;
 }) {
-  const ratingMetrics = userRatings.metrics.filter((metric) =>
-    isMetricRating(MetricName[metric.metricName])
-  );
-  const metricsAverage =
-    ratingMetrics.length > 0
-      ? ratingMetrics.reduce((sum, m) => {
-          const value =
-            m.metricName === MetricName.Difficulty ||
-            m.metricName === MetricName.Workload
-              ? 5 - m.value
-              : m.value;
-          return sum + value;
-        }, 0) / ratingMetrics.length
-      : null;
-
   const rawGrade = (
     userRatings as IUserRatingClass & { reviewerGrade?: string | null }
   ).reviewerGrade;
   const displayGrade =
     rawGrade && rawGrade.toLowerCase() !== "n/a" ? rawGrade : "N/A";
-
-  const ratingColor =
-    metricsAverage != null ? getAverageRatingColor(metricsAverage) : null;
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -56,9 +34,12 @@ export default function UserRatingSummary({
         <div className={styles.bodyLeft}>
           <div className={styles.titleDate}>
             <h3>{userRatings.reviewTitle}</h3>
-            {userRatings.lastUpdated && (
-              <h4>{formatDate(new Date(userRatings.lastUpdated))}</h4>
-            )}
+            <h4>
+              {userRatings.lastUpdated &&
+                `${formatDate(new Date(userRatings.lastUpdated))} | `}
+              {userRatings.semester} {userRatings.year}
+              {userRatings.professorName && `, ${userRatings.professorName}`}
+            </h4>
           </div>
           <div
             ref={contentRef}
@@ -106,25 +87,6 @@ export default function UserRatingSummary({
       </div>
       <div className={styles.body}>
         <div className={styles.bodyRight}>
-          <h2 className={styles.ratingGrade}>Rating</h2>
-          <div
-            className={styles.rating}
-            style={
-              ratingColor
-                ? {
-                    borderColor: ratingColor.badge,
-                    backgroundColor: ratingColor.bg,
-                    color: ratingColor.badge,
-                  }
-                : undefined
-            }
-          >
-            {metricsAverage != null ? (
-              <span>{metricsAverage.toFixed(1)}</span>
-            ) : (
-              <span>N/A</span>
-            )}
-          </div>
           <h2 className={styles.ratingGrade}>Grade</h2>
           <div
             className={`${styles.grade}${displayGrade === "N/A" ? ` ${styles.naGrade}` : ""}`}
