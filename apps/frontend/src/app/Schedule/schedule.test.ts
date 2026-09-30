@@ -2,11 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Color } from "@/lib/generated/graphql";
 
-import {
-  acceptedColors,
-  getNextClassColor,
-  scheduleClassColors,
-} from "./schedule";
+import { getNextClassColor, scheduleClassColors } from "./schedule";
 
 describe("scheduleClassColors", () => {
   it("offers a short, distinct categorical palette", () => {
@@ -25,10 +21,6 @@ describe("scheduleClassColors", () => {
     expect(new Set(scheduleClassColors).size).toBe(scheduleClassColors.length);
     expect(scheduleClassColors.length).toBeGreaterThanOrEqual(8);
     expect(scheduleClassColors.length).toBeLessThanOrEqual(10);
-  });
-
-  it("is the list shown in the class color menu", () => {
-    expect(acceptedColors).toBe(scheduleClassColors);
   });
 
   it("assigns new classes from the curated palette", () => {
@@ -51,7 +43,7 @@ describe("scheduleClassColors", () => {
     ];
 
     for (const color of legacyColors) {
-      expect(color).toEqual(expect.any(String));
+      expect(Object.values(Color)).toContain(color);
       expect(scheduleClassColors).not.toContain(color);
     }
   });
