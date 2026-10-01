@@ -204,23 +204,24 @@ export default async (app: Application, redis: RedisClientType) => {
           return done(null, false, { message: "Invalid" });
         }
 
-        let user = await UserModel.findOne({ email });
+        try {
+          // Atomic upsert instead of findOne + save: save() version-checks
+          // array paths, so concurrent logins for the same user threw a
+          // VersionError. Passport doesn't await this callback, so any
+          // rejection here crashed the process.
+          const doc = await UserModel.findOneAndUpdate(
+            { email },
+            {
+              $set: { name: profile.displayName, lastSeenAt: new Date() },
+              $setOnInsert: { email, googleId: profile.id },
+            },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          );
 
-        if (!user) {
-          user = new UserModel({
-            email,
-            googleId: profile.id,
-            name: profile.displayName,
-            lastSeenAt: new Date(),
-          });
-        } else {
-          user.name = profile.displayName;
-          user.lastSeenAt = new Date();
+          done(null, doc);
+        } catch (error) {
+          done(error as Error);
         }
-
-        const doc = await user.save();
-
-        done(null, doc);
       }
     )
   );
