@@ -1,6 +1,10 @@
 import { gql } from "@apollo/client";
 
-import { GetUserQuery, UpdateUserMutation } from "../generated/graphql";
+import {
+  GetUserQuery,
+  NotificationEvent,
+  UpdateUserMutation,
+} from "../generated/graphql";
 
 export type IUser = GetUserQuery["user"];
 
@@ -15,6 +19,7 @@ export interface IMonitoredClassInput {
     courseNumber: string;
     number: string;
   };
+  events?: NotificationEvent[];
 }
 
 export interface IUserInput {
@@ -32,6 +37,7 @@ export const READ_USER = gql`
       notificationsOn
       monitoredClasses {
         notified
+        events
         class {
           title
           subject
@@ -55,6 +61,7 @@ export const UPDATE_USER = gql`
       notificationsOn
       monitoredClasses {
         notified
+        events
         class {
           title
           subject

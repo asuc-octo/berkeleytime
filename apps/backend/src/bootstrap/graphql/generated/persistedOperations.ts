@@ -218,17 +218,17 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["subject","number","includeFormerNames"],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
-  "3179d1aecde57f2f023099dd2b1de9ed7c81cd0746da4ea81e948c430eb585f3": {
-    operationName: "UpdateUser",
-    document: "mutation UpdateUser($user:UpdateUserInput!){updateUser(user:$user){_id name email student notificationsOn monitoredClasses{notified class{title subject courseNumber number year semester __typename}__typename}__typename}}",
-    variableNames: ["user"],
-    sources: ["apps/frontend/src/lib/api/users.ts"],
-  },
   "322753122a2b1228f6eb1df6b57b5629a41f94e05d771acb01ac32086d1b8511": {
     operationName: "DeletePod",
     document: "mutation DeletePod($podId:ID!){deletePod(podId:$podId)}",
     variableNames: ["podId"],
     sources: ["apps/staff-frontend/src/lib/api/pod.ts"],
+  },
+  "323626797d3e3ee1367255887bab66671bbedb1d7dcd52b08357cd07ec81cf58": {
+    operationName: "GetUser",
+    document: "query GetUser{user{_id email name student notificationsOn monitoredClasses{notified events class{title subject courseNumber number year semester __typename}__typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/users.ts"],
   },
   "3236b1a0096a316eee01648f22d41d08e36340c796601033829e53ef82145940": {
     operationName: "CreatePod",
@@ -361,12 +361,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation CreateTargetedMessage($input:CreateTargetedMessageInput!){createTargetedMessage(input:$input){id title description link linkText visible persistent reappearing clickCount dismissCount currentVersion targetCourses{courseId subject courseNumber __typename}createdAt updatedAt __typename}}",
     variableNames: ["input"],
     sources: ["apps/staff-frontend/src/lib/api/targeted-message.ts"],
-  },
-  "5b1db8b7fea7b401c4e3a7d268135a09027d85ce43a68f80b1194e2e0fc1b52f": {
-    operationName: "GetUser",
-    document: "query GetUser{user{_id email name student notificationsOn monitoredClasses{notified class{title subject courseNumber number year semester __typename}__typename}__typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/users.ts"],
   },
   "5d1675146672fd8912c17991d416c8bf8049f01feec299335ba1905ce5481c76": {
     operationName: "UpdateCuratedClass",
@@ -739,6 +733,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation RemoveClassFromCollection($input:RemoveClassInput!){removeClassFromCollection(input:$input){_id name color pinnedAt isSystem lastAdd classes{class{subject courseNumber number __typename}__typename}__typename}}",
     variableNames: ["input"],
     sources: ["apps/frontend/src/lib/api/collection.ts"],
+  },
+  "ce52df73ebdffc77d48f13097d352216548f0f12dff8e7fac5fe440ab5948d92": {
+    operationName: "UpdateUser",
+    document: "mutation UpdateUser($user:UpdateUserInput!){updateUser(user:$user){_id name email student notificationsOn monitoredClasses{notified events class{title subject courseNumber number year semester __typename}__typename}__typename}}",
+    variableNames: ["user"],
+    sources: ["apps/frontend/src/lib/api/users.ts"],
   },
   "d3e9cb88e80d533b3399febf1e64b0a15bc6e3f61209b0c626db594dc864522c": {
     operationName: "GetTargetedMessagesForCourse",

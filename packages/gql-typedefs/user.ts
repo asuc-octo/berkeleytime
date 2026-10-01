@@ -1,9 +1,19 @@
 import { gql } from "graphql-tag";
 
 export const userTypeDef = gql`
+  enum NotificationEvent {
+    ENROLLMENT_50
+    ENROLLMENT_75
+    ENROLLMENT_90
+    UNRESERVED_SEAT_OPENS
+    WAITLIST_POSITION_IMPROVES
+    WAITLIST_SPACE_OPENS
+  }
+
   type MonitoredClass {
     class: Class!
     notified: Boolean!
+    events: [NotificationEvent!]!
   }
 
   type User @cacheControl(scope: PRIVATE) {
@@ -67,6 +77,8 @@ export const userTypeDef = gql`
 
   input MonitoredClassInput {
     class: MonitoredClassRefInput!
+    "Defaults to the existing selection, or every event for a new class"
+    events: [NotificationEvent!]
   }
 
   input UpdateUserInput {

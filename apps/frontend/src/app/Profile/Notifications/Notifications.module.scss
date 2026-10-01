@@ -1,11 +1,3 @@
-.subtitle {
-  font-size: var(--text-16);
-  color: var(--paragraph-color);
-  line-height: 1.6;
-  margin: 8px 0 0 0;
-  max-width: 80%;
-}
-
 .classGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 326px);
@@ -13,12 +5,7 @@
 }
 
 .classCardWrapper {
-  position: relative;
-}
-
-.notificationButtonOverlay {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }

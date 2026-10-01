@@ -22,6 +22,7 @@ export * from "./Slider";
 export * from "./Skeleton";
 export * from "./PillSwitcher";
 export * from "./ColorPicker";
+export * from "./Toast";
 
 // https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage
 export { Box, Flex, Grid, Section, Container } from "@radix-ui/themes";
