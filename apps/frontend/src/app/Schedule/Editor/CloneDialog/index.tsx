@@ -40,28 +40,31 @@ export default function CloneDialog({ children }: CloneDialogProps) {
   const confirm = async () => {
     setLoading(true);
 
-    const { data } = await createSchedule({
-      year: schedule.year,
-      semester: schedule.semester,
-      classes: schedule.classes.map((_class) => ({
-        subject: _class.class.subject,
-        courseNumber: _class.class.courseNumber,
-        number: _class.class.number,
-        sectionIds: _class.selectedSections.map((s) => s.sectionId),
-      })),
-      events: events
-        ? schedule.events.map((e) => {
-            // TODO: Clean up
+    const { data } = await createSchedule(
+      {
+        year: schedule.year,
+        semester: schedule.semester,
+        classes: schedule.classes.map((_class) => ({
+          subject: _class.class.subject,
+          courseNumber: _class.class.courseNumber,
+          number: _class.class.number,
+          sectionIds: _class.selectedSections.map((s) => s.sectionId),
+        })),
+        events: events
+          ? schedule.events.map((e) => {
+              // TODO: Clean up
 
-            // eslint-disable-next-line
-            const { _id, __typename, ...rest } = (e as any) || {};
+              // eslint-disable-next-line
+              const { _id, __typename, ...rest } = (e as any) || {};
 
-            return rest;
-          })
-        : [],
-      name: name,
-      sessionId: schedule.sessionId,
-    });
+              return rest;
+            })
+          : [],
+        name: name,
+        sessionId: schedule.sessionId,
+      },
+      "clone"
+    );
 
     setLoading(false);
 

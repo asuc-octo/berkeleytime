@@ -11,6 +11,7 @@ import {
 import { persistedOperationFetch } from "@repo/shared";
 import { ThemeProvider } from "@repo/theme";
 
+import CatalogErrorBoundary from "@/components/CatalogErrorBoundary";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -323,7 +324,9 @@ const router = createBrowserRouter([
                 key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
                 fallback={<></>}
               >
-                <Catalog />
+                <CatalogErrorBoundary>
+                  <Catalog />
+                </CatalogErrorBoundary>
               </SuspenseBoundary>
             ),
             path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",
