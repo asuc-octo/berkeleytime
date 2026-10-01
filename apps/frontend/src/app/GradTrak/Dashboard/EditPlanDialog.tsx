@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Xmark } from "iconoir-react";
 
+import { DEGREE_PROGRAMS as DEGREES } from "@repo/common/lib/degreePrograms";
 import { Button, Dialog, Flex, Select, Text } from "@repo/theme";
 
 import MajorSearch from "@/components/MajorSearch";
@@ -12,7 +13,6 @@ import { Colleges, PlanInput } from "@/lib/generated/graphql";
 import collegesData from "../Onboarding/AddColleges/colleges.json";
 import { DegreeOption } from "../types";
 import styles from "./EditPlanDialog.module.scss";
-import DEGREES from "./degree-programs-types.json";
 
 type CollegeOption = {
   label: string;
