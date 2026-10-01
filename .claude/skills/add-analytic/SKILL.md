@@ -74,7 +74,8 @@ nobody can see it yet** — that's a one-block addition (Path B).
 | eventType | targetType | targetId | Instrumented in | Dashboard card |
 |---|---|---|---|---|
 | `schedule_saved` | `schedule` | schedule id | `hooks/api/schedules/useCreateSchedule.ts` | `SchedulesSavedBlock` |
-| `schedule_generate` | `schedule` | schedule id | `app/Schedule/Editor/GenerateSchedulesDialog` | `SchedulesGeneratedBlock` |
+| `schedule_generate` | `schedule` | schedule id | `app/Schedule/Editor/GenerateSchedulesDialog` (every Generate button click) | `ScheduleGenerationBlock` (clicks line) |
+| `schedule_generate_succeeded` | `schedule` | schedule id | `app/Schedule/Editor/GenerateSchedulesDialog` (once per dialog open, only if at least one schedule was produced) | `ScheduleGenerationBlock` (generated line) |
 | `course_result_clicked` | `class` | `subject-courseNumber` | `ClassBrowser/List/index.tsx` | `CourseResultsClickedBlock` |
 | `search_filter_applied` | `catalog_filter` | filter name (`sort`, `level`, `units`, ...) | `ClassBrowser/Filters/index.tsx` | `SearchFiltersAppliedBlock` |
 | `page_error` | `course-discovery` | — | `components/CatalogErrorBoundary` | `PageErrorsBlock` |
