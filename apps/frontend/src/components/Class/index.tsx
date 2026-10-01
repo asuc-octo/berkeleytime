@@ -26,6 +26,8 @@ import {
   IconButton,
   MenuItem,
   Tooltip as ThemeTooltip,
+  ToastProvider,
+  ToastViewport,
 } from "@repo/theme";
 
 import { AverageGrade } from "@/components/AverageGrade";
@@ -538,7 +540,7 @@ export default function Class({
   }
 
   return (
-    <>
+    <ToastProvider>
       <Root dialog={dialog} activeTab={activeTab} onTabChange={setActiveTab}>
         <Flex
           direction="column"
@@ -953,6 +955,7 @@ export default function Class({
               )}
             </ClassContext>
           </div>
+          <ToastViewport position="container" />
         </Flex>
       </Root>
       {shouldShowUnlockModal && (
@@ -987,6 +990,6 @@ export default function Class({
         onClose={() => setIsErrorDialogOpen(false)}
         errorMessage={errorMessage}
       />
-    </>
+    </ToastProvider>
   );
 }
