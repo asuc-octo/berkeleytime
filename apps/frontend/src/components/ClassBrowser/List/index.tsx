@@ -6,6 +6,7 @@ import { EmptyPage } from "iconoir-react";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ICatalogClassServer } from "@/lib/api/catalog";
 import { RecentType, getRecents } from "@/lib/recent";
 
@@ -93,7 +94,8 @@ export default function List({ onSelect }: ListProps) {
   const { classes, loading, hasNextPage, loadNextPage, isLoadingNextPage } =
     useListContext();
 
-  const { year, semester, aiSearchActive } = useLayoutContext();
+  const { year, semester, aiSearchActive, query } = useLayoutContext();
+  const { trackEvent } = useTracking();
 
   const shouldReduceMotion = useReducedMotion();
   const [recentlyViewedVersion, setRecentlyViewedVersion] = useState(0);
@@ -281,6 +283,16 @@ export default function List({ onSelect }: ListProps) {
   const handleClassClick = (index: number) => {
     const selected = classes[index];
     if (!selected) return;
+    trackEvent(
+      "course_result_clicked",
+      "class",
+      `${selected.subject}-${selected.courseNumber}`,
+      {
+        position: index,
+        query: query || null,
+        aiSearch: aiSearchActive,
+      }
+    );
     onSelect(
       selected.subject,
       selected.courseNumber,

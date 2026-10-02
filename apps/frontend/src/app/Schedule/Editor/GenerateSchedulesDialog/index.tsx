@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Button, ColoredSquare, Dialog, Flex } from "@repo/theme";
 
 import ScheduleSummary from "@/components/ScheduleSummary";
 import { useUpdateSchedule } from "@/hooks/api";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import {
   IScheduleEvent,
@@ -451,6 +452,11 @@ export default function GenerateSchedulesDialog({
     null
   );
   const [updateSchedule] = useUpdateSchedule();
+  const { trackEvent } = useTracking();
+
+  // Guards schedule_generate so it fires once per time the dialog is opened,
+  // not on every recomputation of the combinations.
+  const trackedOpenRef = useRef(false);
 
   // Initialize selected classes from schedule when dialog opens
   useEffect(() => {
@@ -531,6 +537,26 @@ export default function GenerateSchedulesDialog({
       return scheduleData;
     });
   }, [selectedClasses, schedule, open]);
+
+  // Record one generation per dialog session, once combinations are computed
+  useEffect(() => {
+    if (!open) {
+      trackedOpenRef.current = false;
+      return;
+    }
+
+    if (trackedOpenRef.current || selectedClasses.length === 0) return;
+
+    trackedOpenRef.current = true;
+
+    trackEvent("schedule_generate", "schedule", schedule._id, {
+      classCount: selectedClasses.length,
+      generatedCount: Array.isArray(generatedSchedules)
+        ? generatedSchedules.length
+        : 0,
+      tooManyCombinations: typeof generatedSchedules === "string",
+    });
+  }, [open, selectedClasses, generatedSchedules, schedule._id, trackEvent]);
 
   const handleSelectSchedule = useCallback(() => {
     if (activeScheduleIndex === null || typeof generatedSchedules === "string")
