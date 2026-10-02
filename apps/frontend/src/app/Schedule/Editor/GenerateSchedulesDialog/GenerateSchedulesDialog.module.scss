@@ -30,8 +30,8 @@
 }
 
 .tip {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-14);
+  font-weight: var(--font-semibold);
   margin: 0;
   color: var(--paragraph-color);
 }
@@ -45,15 +45,15 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  padding: 0 0 16px 0;
+  gap: var(--space-4);
+  padding: 0 0 var(--space-4) 0;
 }
 
 .scheduleCard {
   cursor: pointer;
   border: 2px solid transparent;
   border-radius: 8px;
-  padding: 8px;
+  padding: var(--space-2);
   transition: border-color 0.2s;
 
   &.selected {
@@ -62,11 +62,11 @@
 }
 
 .emptyState {
-  padding: 40px;
+  padding: var(--space-7);
   color: var(--label-color);
 }
 
 .emptyStateMessage {
-  font-size: 12px;
+  font-size: var(--text-12);
   margin-top: 8px;
 }

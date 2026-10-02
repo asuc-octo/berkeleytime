@@ -5,10 +5,10 @@
   right: 0;
   height: 36px;
   background-color: var(--red-100);
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   border-bottom: 1px solid var(--red-300);
   z-index: var(--z-dev);
 }
@@ -20,7 +20,7 @@
 
 .badge {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: var(--font-bold);
   color: var(--red-800);
   background: var(--red-200);
   padding: 2px 6px;
@@ -37,9 +37,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  padding: var(--space-1) 10px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--red-800);
   background: var(--red-200);
   border: 1px solid var(--red-300);
@@ -57,7 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: var(--space-1);
   background: none;
   border: none;
   cursor: pointer;
@@ -84,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 12px;
+  padding: 2px var(--space-3);
   background: var(--red-200);
   border: none;
   border-bottom-left-radius: 4px;
@@ -112,13 +112,13 @@
 }
 
 .searchContainer {
-  padding: 8px;
+  padding: var(--space-2);
   flex-shrink: 0;
 }
 
 .searchInput {
   width: 100%;
-  padding: 8px 10px;
+  padding: var(--space-2) 10px;
   font-size: 13px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -144,30 +144,30 @@
 .userItem {
   height: auto !important;
   min-height: auto !important;
-  padding: 12px 14px !important;
+  padding: var(--space-3) 14px !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 4px !important;
+  gap: var(--space-1) !important;
   line-height: 1.4 !important;
   white-space: normal !important;
   cursor: pointer;
 }
 
 .userName {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: var(--font-semibold);
+  font-size: var(--text-14);
   line-height: 1.4;
 }
 
 .userEmail {
-  font-size: 12px;
+  font-size: var(--text-12);
   color: var(--gray-500);
   line-height: 1.4;
 }
 
 .staffBadge {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   background: var(--blue-500);
   color: white;
   padding: 2px 6px;
@@ -176,7 +176,7 @@
 }
 
 .noResults {
-  padding: 12px;
+  padding: var(--space-3);
   text-align: center;
   font-size: 13px;
   color: var(--gray-500);
@@ -185,7 +185,7 @@
 .switchUser {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--gray-600);
   flex-shrink: 0;
 }

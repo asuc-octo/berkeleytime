@@ -46,8 +46,8 @@
 .collectionRow {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--border-color);
 
   &:last-child {
@@ -66,7 +66,7 @@
   word-wrap: break-word;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .pinIcon {
@@ -95,9 +95,9 @@
 .createCollectionBtn {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   width: 100%;
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   background: none;
   border: none;
   border-top: 1px solid var(--border-color);
@@ -118,7 +118,7 @@
 .createCollectionForm {
   display: flex;
   flex-direction: column;
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   width: 100%;
   box-sizing: border-box;
   border-top: 1px solid var(--border-color);
@@ -127,7 +127,7 @@
 .createCollectionInputRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   width: 100%;
 }
 

@@ -30,7 +30,7 @@
 .trigger {
   border: solid 1px var(--border-color);
   border-radius: 4px;
-  padding: 8px 16px;
+  padding: var(--space-2) var(--space-4);
   min-height: 44px;
   font-weight: var(--font-normal);
   font-size: var(--text-14);
@@ -81,10 +81,10 @@
     var(--radix-dropdown-menu-content-available-height, 300px)
   );
   overflow-y: auto;
-  padding: 4px;
+  padding: var(--space-1);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 
   [data-highlighted] > * {
     background-color: var(--button-hover-color);
@@ -92,7 +92,7 @@
 }
 
 .sectionLabel {
-  padding: 8px 12px 4px;
+  padding: var(--space-2) var(--space-3) var(--space-1);
   font-size: 11px;
   font-weight: var(--font-semibold);
   text-transform: uppercase;
@@ -109,7 +109,7 @@
   color: var(--paragraph-color);
   cursor: pointer;
   border-top: solid 1px var(--button-active-color);
-  padding: 12px 24px;
+  padding: var(--space-3) var(--space-5);
   margin: 2px;
 }
 
@@ -140,8 +140,8 @@
   display: flex;
   align-items: center;
   border-bottom: solid 1px var(--border-color);
-  padding: 8px 12px;
-  gap: 8px;
+  padding: var(--space-2) var(--space-3);
+  gap: var(--space-2);
 }
 
 .searchIcon {
@@ -169,7 +169,7 @@
   overflow-y: auto;
   min-height: 0;
   overflow-x: hidden;
-  padding: 4px;
+  padding: var(--space-1);
 
   [cmdk-item] {
     margin-bottom: 4px;
@@ -185,7 +185,7 @@
 }
 
 .commandEmpty {
-  padding: 24px 12px;
+  padding: var(--space-5) var(--space-3);
   text-align: center;
   color: var(--label-color);
   font-size: var(--text-14);
@@ -195,7 +195,7 @@
   overflow: hidden;
 
   [cmdk-group-heading] {
-    padding: 8px 12px 4px;
+    padding: var(--space-2) var(--space-3) var(--space-1);
     font-size: 11px;
     font-weight: var(--font-semibold);
     text-transform: uppercase;
@@ -219,7 +219,7 @@
 .badgeContainer {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: var(--space-2);
   flex-wrap: wrap;
   align-items: center;
   line-height: 1;

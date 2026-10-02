@@ -7,10 +7,10 @@
     border-bottom: 1px solid var(--border-color);
     background-color: var(--foreground-color);
     display: flex;
-    padding: 12px;
+    padding: var(--space-3);
     position: relative;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
 
     .tabs {
       display: flex;
@@ -21,7 +21,7 @@
       display: flex;
       align-items: center;
       width: 372px;
-      gap: 12px;
+      gap: var(--space-3);
 
       .separator {
         border-left: 1px solid var(--border-color);

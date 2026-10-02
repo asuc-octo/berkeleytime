@@ -20,8 +20,8 @@
   flex: 1;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 0;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
   font-size: var(--text-18);
   font-weight: var(--font-medium);
   color: var(--heading-color);
@@ -61,7 +61,7 @@
 }
 
 .contentInner {
-  padding-bottom: 16px;
+  padding-bottom: var(--space-4);
   font-size: var(--text-16);
   line-height: 1.6;
   color: var(--paragraph-color);

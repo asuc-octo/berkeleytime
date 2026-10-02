@@ -1,7 +1,7 @@
 .list {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   background-color: var(--button-hover-color);
   padding: 3px;
   border-radius: 30px;
@@ -80,7 +80,7 @@
 
 .tabsTrigger {
   border-radius: 4px 4px 0 0;
-  padding: 6px 8px;
+  padding: 6px var(--space-2);
   min-height: 28px;
   background: transparent;
   box-shadow: none;

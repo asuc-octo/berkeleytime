@@ -4,7 +4,7 @@
   max-height: 300px;
   overflow-y: auto;
   background-color: var(--foreground-color);
-  padding: 4px;
+  padding: var(--space-1);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -33,12 +33,12 @@
   display: flex;
   align-items: center;
   height: 30px;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   position: relative;
   user-select: none;
   outline: none;
   white-space: nowrap;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .item:hover {
   background-color: var(--button-active-color);

@@ -40,7 +40,7 @@
       justify-content: space-between;
       align-items: center;
       align-self: stretch;
-      padding: 2rem 2rem 0 2rem;
+      padding: var(--space-6) var(--space-6) 0 var(--space-6);
 
       .buttons-group {
         display: flex;
@@ -117,8 +117,8 @@
   flex-direction: column;
   overflow-x: auto;
   overflow-y: auto;
-  padding: 2rem;
-  gap: 2rem;
+  padding: var(--space-6);
+  gap: var(--space-6);
 }
 
 .semester-blocks-inner {
@@ -129,7 +129,7 @@
 
 .semester-layout {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
 
   &[data-layout="grid"] {
     display: grid;
@@ -203,7 +203,7 @@
 
 .filters-dropdown {
   width: max-content;
-  padding: 16px;
+  padding: var(--space-4);
   padding-top: 0px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 

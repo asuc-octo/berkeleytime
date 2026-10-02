@@ -49,8 +49,8 @@
 }
 
 .badgeLabel {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--text-12);
+  font-weight: var(--font-semibold);
   color: white;
   line-height: 1;
 }
@@ -76,7 +76,7 @@
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
   overflow: hidden;
 }
@@ -85,7 +85,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .linkButton {

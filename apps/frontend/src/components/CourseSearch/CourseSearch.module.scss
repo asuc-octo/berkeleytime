@@ -5,11 +5,11 @@
 
 .searchInput {
   width: 100%;
-  padding: 0.625rem 1rem 0.625rem 2.5rem; // left padding for icon space
+  padding: 0.625rem var(--space-4) 0.625rem var(--space-7); // left padding for icon space
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: var(--text-14);
   color: var(--heading-color);
 
   &::placeholder {
@@ -32,12 +32,12 @@
 }
 
 .section {
-  padding-top: 0.5rem;
+  padding-top: var(--space-2);
   padding-bottom: 0;
 
   h2 {
-    padding: 0 1rem;
-    font-size: 0.75rem;
+    padding: 0 var(--space-4);
+    font-size: var(--text-12);
     font-weight: var(--font-semibold);
     text-transform: uppercase;
     color: var(--heading-color);
@@ -49,15 +49,15 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.25rem 1rem 0.5rem;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-4) var(--space-2);
   overflow-x: auto;
 }
 
 .catalogList {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
   padding: 0;
 }
 
@@ -65,9 +65,9 @@
   text-align: left;
   background: transparent;
   border: none;
-  padding: 0.625rem 1rem;
+  padding: 0.625rem var(--space-4);
   border-radius: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-14);
   color: var(--paragraph-color);
   cursor: pointer;
   transition: background-color 0.15s ease;
@@ -120,9 +120,9 @@
 }
 
 .moreCoursesHint {
-  padding: 0.25rem 1rem 0.75rem;
+  padding: var(--space-1) var(--space-4) var(--space-3);
   margin-bottom: 0.5rem;
   color: var(--label-color);
   font-style: italic;
-  font-size: 0.875rem;
+  font-size: var(--text-14);
 }

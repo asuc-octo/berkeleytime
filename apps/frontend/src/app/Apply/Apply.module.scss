@@ -1,17 +1,17 @@
 .root {
-  padding: 48px;
+  padding: var(--space-8);
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 64px;
+  gap: var(--space-9);
   width: 100%;
   box-sizing: border-box;
 
   @media (max-width: 768px) {
-    padding: 32px 16px;
-    gap: 48px;
+    padding: var(--space-6) var(--space-4);
+    gap: var(--space-8);
   }
 }
 
@@ -31,7 +31,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-5);
   text-align: center;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .heroDescription {
-  font-size: 16px;
+  font-size: var(--text-16);
   line-height: 1.6;
   color: var(--paragraph-color);
   max-width: 700px;
@@ -53,18 +53,18 @@
 .applyButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   text-decoration: none;
   height: 40px;
   padding: 0 20px;
-  font-size: 14px;
+  font-size: var(--text-14);
 }
 
 .section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: var(--space-6);
 }
 
 .title {
@@ -75,7 +75,7 @@
 }
 
 .sectionDescription {
-  font-size: 16px;
+  font-size: var(--text-16);
   line-height: 1.6;
   color: var(--paragraph-color);
   max-width: 700px;
@@ -86,7 +86,7 @@
 .rolesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: var(--space-5);
   max-width: 900px;
   width: 100%;
 
@@ -99,12 +99,12 @@
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 32px;
+  padding: var(--space-6);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .roleIcon {
@@ -115,14 +115,14 @@
 }
 
 .roleTitle {
-  font-size: 20px;
+  font-size: var(--text-20);
   font-weight: var(--font-semibold);
   color: var(--heading-color);
   margin: 0;
 }
 
 .roleDescription {
-  font-size: 14px;
+  font-size: var(--text-14);
   line-height: 1.6;
   color: var(--paragraph-color);
   margin: 0;
@@ -131,7 +131,7 @@
 .coffeeChatsHeader {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .coffeeIcon {
@@ -155,7 +155,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
+  font-size: var(--text-14);
   color: var(--blue-500);
   text-decoration: none;
   margin-top: -16px;
@@ -169,6 +169,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   text-align: center;
 }

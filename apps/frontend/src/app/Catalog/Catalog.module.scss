@@ -21,8 +21,8 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 8px;
-    padding: 0 16px;
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
   }
 
   .bookmarkButton {
@@ -121,7 +121,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .bookmarkUnavailableItem {
@@ -139,7 +139,7 @@
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  gap: 8px;
+  gap: var(--space-2);
   width: max-content;
 }
 
@@ -148,7 +148,7 @@
   left: 0;
   top: 0;
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   visibility: hidden;
   pointer-events: none;
   white-space: nowrap;
