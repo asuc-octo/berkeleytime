@@ -22,14 +22,10 @@
   animation: expandOut 150ms ease-out;
   transform-origin: top right;
   overflow: hidden;
-  box-shadow:
-    0 0 1px 0 rgba(0, 0, 0, 0.12),
-    0 4px 16px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-popup), var(--shadow-dropdown);
 
   @include dark-mode {
-    box-shadow:
-      0 0 1px 0 rgba(0, 0, 0, 0.3),
-      0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-popup), var(--shadow-dropdown);
   }
 }
 

@@ -143,9 +143,8 @@
 }
 
 .requirementsSelectContent {
-  box-shadow: none;
+  box-shadow: var(--shadow-dropdown);
 }
-
 .requirementsTabs {
   padding: 0;
   background-color: var(--foreground-color);

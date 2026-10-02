@@ -14,14 +14,14 @@
   :global(body[data-theme="dark"]) &,
   :global([data-theme="dark"]) & {
     box-shadow:
-      0 12px 24px rgba(0, 0, 0, 0.5),
+      var(--shadow-lg),
       0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
   :global(body:not([data-theme])) & {
     @media (prefers-color-scheme: dark) {
       box-shadow:
-        0 12px 24px rgba(0, 0, 0, 0.5),
+        var(--shadow-lg),
         0 0 0 1px rgba(255, 255, 255, 0.08);
     }
   }

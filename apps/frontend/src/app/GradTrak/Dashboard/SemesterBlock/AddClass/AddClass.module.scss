@@ -17,8 +17,8 @@ body {
     border-radius: 0.5rem;
     background-color: var(--foreground-color);
     box-shadow:
-      0px 0px 12px 0px var(--border, rgba(0, 0, 0, 0.1)),
-      0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
+      var(--shadow-focus-lg),
+      var(--shadow-focus-sm);
     transition: all 0.2s ease;
     max-height: 18rem;
     width: 100%;
@@ -43,7 +43,7 @@ body {
 
     border-radius: 0.25rem;
     border: 1px solid var(--border-color);
-    box-shadow: 0px 0px 1px 0px var(--border, rgba(0, 0, 0, 0.1));
+    box-shadow: var(--shadow-focus-sm);
     max-height: 18rem;
     width: max-content;
     overflow: hidden;
