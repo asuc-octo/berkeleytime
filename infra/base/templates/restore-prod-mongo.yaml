@@ -29,8 +29,9 @@ spec:
                   }
                   trap cleanup EXIT
 
-                  # Find production MongoDB pod
-                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
+                  # Find production MongoDB pod (not the mongot "-search-" pod).
+                  # $MONGO_AUTH is set in the mongod container (bt-mongo chart) and expands to root credentials.
+                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo-mongodb-')
 
                   # Download production MongoDB backup
                   echo "Downloading backup from s3 bucket..."
@@ -75,9 +76,10 @@ spec:
                   kubectl cp --namespace=bt \
                     /tmp/prod_backup.gz "$prod_pod:/tmp/prod_backup.gz"
                   kubectl exec --namespace=bt \
-                    "$prod_pod" -- mongosh bt --eval "db.dropDatabase()"
+                    "$prod_pod" -- sh -c 'mongosh $MONGO_AUTH bt --eval "db.dropDatabase()"'
+                  # Only restore bt.* so users in admin are never overwritten.
                   kubectl exec --namespace=bt \
-                    "$prod_pod" -- mongorestore --archive=/tmp/prod_backup.gz --gzip --drop
+                    "$prod_pod" -- sh -c "mongorestore \$MONGO_AUTH --nsInclude='bt.*' --archive=/tmp/prod_backup.gz --gzip --drop"
                   kubectl exec --namespace=bt \
                     "$prod_pod" -- rm /tmp/prod_backup.gz
 

@@ -29,15 +29,16 @@ spec:
                   }
                   trap cleanup EXIT
 
-                  # Find production MongoDB pod
-                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
+                  # Find production MongoDB pod (not the mongot "-search-" pod).
+                  # $MONGO_AUTH is set in the mongod container (bt-mongo chart) and expands to root credentials.
+                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo-mongodb-')
 
                   # Date for daily public backup filename (YYYYMMDD)
                   backup_date=$(date +%Y%m%d)
 
                   echo "Dumping public MongoDB collections..."
                   kubectl exec --namespace=bt \
-                    "$prod_pod" -- mongodump \
+                    "$prod_pod" -- sh -c 'mongodump $MONGO_AUTH \
                     --db bt \
                     --excludeCollection users \
                     --excludeCollection plans \
@@ -59,7 +60,7 @@ spec:
                     --excludeCollection staff-members \
                     --excludeCollection targetedmessages \
                     --archive=/tmp/prod_public_backup.gz \
-                    --gzip
+                    --gzip'
 
                   # Copy archive out of Mongo pod
                   kubectl cp --namespace=bt \

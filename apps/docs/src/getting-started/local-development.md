@@ -79,6 +79,10 @@ bash apps/docs/src/getting-started/bootstrap-local.sh
 
 This removes local Docker volumes only; it does not affect production or staging data.
 
+### Upgrading to MongoDB 8.3 (vector search)
+
+Local MongoDB runs `mongodb/mongodb-atlas-local`, which bundles `mongot`, so `$search` and `$vectorSearch` work out of the box. If your `.env` still has `MONGODB_IMAGE=mongodb/mongodb-atlas-local:8.0`, change it to `8.3` (see `.env.template`). MongoDB 8.3 cannot open an 8.0 data volume directly, so recreate the volumes and reseed using the same commands as above.
+
 ## Common Commands
 
 Upon changing any [GraphQL](https://www.graphql-js.org/docs/) typedefs in the backend, the generated types must be regenerated:

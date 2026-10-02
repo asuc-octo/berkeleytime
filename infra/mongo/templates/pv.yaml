@@ -1,3 +1,4 @@
+# claimRef pins each PV to its StatefulSet's PVC so envs can't bind each other's hostPath.
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -7,8 +8,33 @@ metadata:
 spec:
   storageClassName: manual
   capacity:
-    storage: {{ .Values.mongodb.persistence.size }}
+    storage: {{ .Values.persistence.size }}
   accessModes:
     - ReadWriteOnce
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: data-{{ include "bt-mongo.mongodName" . }}-0
   hostPath:
     path: {{ .Values.hostPath }}
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-search-pv
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{ .Values.persistence.searchSize }}
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: data-{{ include "bt-mongo.searchName" . }}-0
+  hostPath:
+    path: {{ .Values.hostPathSearch }}
+    type: DirectoryOrCreate

@@ -1,0 +1,194 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-mongo.mongodName" . }}-headless
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  # The replica set member's own hostname must resolve before it is Ready, or rs.initiate fails.
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "bt-mongo.selectorLabels" (list . "mongod") | nindent 4 }}
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "bt-mongo.mongodName" . }}
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+    env: {{ .Values.env }}
+spec:
+  serviceName: {{ include "bt-mongo.mongodName" . }}-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bt-mongo.selectorLabels" (list . "mongod") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-mongo.selectorLabels" (list . "mongod") | nindent 8 }}
+        env: {{ .Values.env }}
+      annotations:
+        # Backup / restore / migration jobs `kubectl exec` without -c.
+        kubectl.kubernetes.io/default-container: mongod
+        checksum/config: {{ include (print $.Template.BasePath "/mongod-config.yaml") . | sha256sum }}
+    spec:
+      initContainers:
+        # mongod refuses a keyfile readable by group/others, and Secret volumes are owned by root.
+        # Copy it to an emptyDir owned by the mongod user, and fix ownership of the hostPath data dir.
+        - name: permissions
+          image: {{ .Values.busyboxImage }}
+          command:
+            - sh
+            - -ec
+            - |
+              cp /secret/keyfile /etc/mongod-keyfile/keyfile
+              chmod 400 /etc/mongod-keyfile/keyfile
+              chown {{ .Values.runAsUser }}:{{ .Values.runAsGroup }} /etc/mongod-keyfile/keyfile
+              chown -R {{ .Values.runAsUser }}:{{ .Values.runAsGroup }} /data/db
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+            - name: auth
+              mountPath: /secret
+              readOnly: true
+            - name: keyfile
+              mountPath: /etc/mongod-keyfile
+      containers:
+        - name: mongod
+          image: {{ .Values.image }}
+          # Bypass the image's entrypoint; all config comes from mongod.conf.
+          command: ["mongod", "--config", "/etc/mongod/mongod.conf"]
+          securityContext:
+            runAsUser: {{ .Values.runAsUser }}
+            runAsGroup: {{ .Values.runAsGroup }}
+          ports:
+            - name: mongodb
+              containerPort: 27017
+          env:
+            # The image sets HOME=/data/db; keep mongosh's ~/.mongodb out of the dbPath.
+            - name: HOME
+              value: /tmp
+            - name: MONGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bt-mongo.authSecretName" . }}
+                  key: root-password
+            # Auth flags for `kubectl exec <pod> -- sh -c 'mongodump $MONGO_AUTH ...'` in backup/restore
+            # jobs and migrations. Unset on pre-8.3 pods, where auth was disabled.
+            - name: MONGO_AUTH
+              value: "--username=root --password=$(MONGO_ROOT_PASSWORD) --authenticationDatabase=admin"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand({ ping: 1 }).ok"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand({ ping: 1 }).ok"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+            - name: config
+              mountPath: /etc/mongod/mongod.conf
+              subPath: mongod.conf
+              readOnly: true
+            - name: keyfile
+              mountPath: /etc/mongod-keyfile
+              readOnly: true
+            {{- if .Files.Glob "migrations/*.js" }}
+            # Same path as Docker Compose.
+            - name: migrations
+              mountPath: /migrations
+              readOnly: true
+            {{- end }}
+        # Initiates the replica set and creates/updates users, then idles.
+        - name: mongod-init
+          image: {{ .Values.image }}
+          command:
+            - sh
+            - -c
+            - |
+              until mongosh --quiet --eval "db.adminCommand({ ping: 1 })" >/dev/null 2>&1; do sleep 2; done
+              until mongosh --quiet /etc/mongod/init.js; do
+                echo "mongod-init failed, retrying in 5s..."
+                sleep 5
+              done
+              exec sleep infinity
+          securityContext:
+            runAsUser: {{ .Values.runAsUser }}
+            runAsGroup: {{ .Values.runAsGroup }}
+          env:
+            - name: HOME
+              value: /tmp
+            - name: MONGOD_HOST
+              value: {{ include "bt-mongo.mongodHost" . }}:27017
+            - name: REPL_SET_NAME
+              value: {{ .Values.replSetName }}
+            - name: MONGO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bt-mongo.authSecretName" . }}
+                  key: root-password
+            - name: MONGO_APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bt-mongo.authSecretName" . }}
+                  key: app-password
+            - name: MONGO_MONGOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "bt-mongo.authSecretName" . }}
+                  key: mongot-password
+          resources:
+            requests:
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/mongod/init.js
+              subPath: init.js
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "bt-mongo.mongodName" . }}-config
+        - name: auth
+          secret:
+            secretName: {{ include "bt-mongo.authSecretName" . }}
+            defaultMode: 0400
+        - name: keyfile
+          emptyDir:
+            medium: Memory
+        {{- if .Files.Glob "migrations/*.js" }}
+        - name: migrations
+          configMap:
+            name: {{ .Release.Name }}-migrations
+        {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: manual
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}

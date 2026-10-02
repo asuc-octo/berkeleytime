@@ -68,6 +68,74 @@ docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/pro
 docker exec berkeleytime-mongodb-1 mongosh bt --eval 'const r = db.users.findOneAndUpdate({ email: "dev@berkeleytime.local" }, { $setOnInsert: { googleId: "dev-fake-public-backup", email: "dev@berkeleytime.local", name: "Dev User", staff: false, lastSeenAt: new Date() } }, { upsert: true, returnDocument: "after" }); print("Dev user id: " + r._id); print("Login URL: http://localhost:3000/api/dev/login?userId=" + r._id + "&redirect_uri=/");'
 ```
 
+## MongoDB and Search (`mongot`)
+
+Each environment's `bt-<env>-mongo` release (`infra/mongo`) runs two StatefulSets:
+
+- `bt-<env>-mongo-mongodb-0`: `mongod` 8.3 (single-member replica set `rs0`, auth enabled). The `mongod-init` sidecar initiates the replica set and creates/updates the `root`, `bt` (app) and `mongot` users from the `bt-<env>-mongo-auth` Secret on every start.
+- `bt-<env>-mongo-search-0`: `mongot`, which powers `$search`, `$searchMeta` and `$vectorSearch`. `mongod` proxies these to it over gRPC (port 27028); clients only ever connect to `mongod`.
+
+### Connecting with `mongosh`
+
+The `mongod` container exposes `$MONGO_AUTH` (root credentials) for exec sessions:
+
+```sh
+k exec -it bt-prod-mongo-mongodb-0 -- sh -c 'mongosh $MONGO_AUTH bt'
+```
+
+### Creating the auth Secret for an environment
+
+The Secret needs four keys. Passwords must be URL-safe because the app interpolates them into `MONGODB_URI`:
+
+```sh
+cat <<EOF | ./infra/json-to-secret.sh bt-prod-mongo-auth bt bt-prod-mongo-auth.yaml bt-prod-mongo-auth-sealed.yaml
+{
+  "keyfile": "$(openssl rand -base64 756 | tr -d '\n')",
+  "root-password": "$(openssl rand -hex 32)",
+  "app-password": "$(openssl rand -hex 32)",
+  "mongot-password": "$(openssl rand -hex 32)"
+}
+EOF
+```
+
+Copy the `encryptedData` from the sealed output into `auth.encryptedData` in the environment's values file (`infra/mongo/values.yaml`, `values-staging.yaml`, `values-dev.yaml`), or apply it directly with `k apply -f`. Changing `app-password` or `mongot-password` later takes effect on the next `mongod` pod restart; `root-password` must be rotated manually with `db.changeUserPassword` first.
+
+### Creating a vector search index
+
+```js
+const bt = db.getSiblingDB("bt");
+bt.myCollection.createSearchIndex({
+  name: "my_vector_index",
+  type: "vectorSearch",
+  definition: {
+    fields: [{ type: "vector", path: "embedding", numDimensions: 1536, similarity: "cosine" }],
+  },
+});
+bt.myCollection.getSearchIndexes(); // wait for status: "READY"
+```
+
+Check `mongot` health with `k exec bt-prod-mongo-search-0 -- curl -s localhost:8080/health` (expect `SERVING`). Index data lives on the `hostPathSearch` volume; if it is lost, `mongot` rebuilds indexes from `mongod`.
+
+> **Note:** `mongodump` does not include search index definitions, and the restore/reset jobs drop the `bt` database. Search indexes must be recreated after any restore, so keep their definitions in code and create them idempotently (as `docker/mongodb/init/01-create-search-indexes.js` does locally).
+
+### Upgrading an environment from the Bitnami chart (MongoDB 8.0)
+
+8.0 data files cannot be opened by 8.3, so each environment is migrated with dump and restore into a new data directory (`/data/<env>/db83`). The old directory (`/data/<env>/db`) is left in place for rollback. Do dev, then stage, then prod (prod needs a short maintenance window).
+
+1. Create and apply the `bt-<env>-mongo-auth` Secret (see above).
+2. Suspend writers: `k patch cronjob <name> -p '{"spec":{"suspend":true}}'` for each `bt-<env>-app-datapuller-*` cronjob.
+3. Dump: `k exec bt-<env>-mongo-mongodb-0 -- mongodump --db=bt --archive=/tmp/pre83.gz --gzip && k cp bt-<env>-mongo-mongodb-0:/tmp/pre83.gz ./pre83.gz`
+4. `helm uninstall bt-<env>-mongo` (hostPath data stays on disk), then install chart `2.0.0` with the environment's values file.
+5. Wait for both pods to be Ready, then restore:
+   ```sh
+   k cp ./pre83.gz bt-<env>-mongo-mongodb-0:/tmp/pre83.gz
+   k exec bt-<env>-mongo-mongodb-0 -- sh -c "mongorestore \$MONGO_AUTH --nsInclude='bt.*' --archive=/tmp/pre83.gz --gzip --drop"
+   ```
+6. Point the app at the authenticated Mongo by setting `mongoAuthSecret: bt-<env>-mongo-auth` for that environment (`infra/app/values.yaml` for prod, the `values:` block in `.github/workflows/cd-stage.yaml` / `cd-dev.yaml` for stage and dev) and redeploy the app. Unsuspend the datapuller cronjobs.
+7. Verify document counts against the dump, run a manual backup job (`k create job --from=cronjob/bt-base-backup-prod-mongo <job name>`), and smoke-test `$vectorSearch` on a scratch collection.
+
+**Rollback:** `helm uninstall bt-<env>-mongo`, reinstall chart `1.0.0` with `hostPath=/data/<env>/db`, and unset `mongoAuthSecret`.
+
 ## Secrets
 
 ### Deploying a new environment variable with sealed-secrets
