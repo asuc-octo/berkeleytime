@@ -572,6 +572,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
+  "94aee53b8a6b8fdc10d4c2916d6c295dfaa2fb0f8a448177a90f686e9bc306a2": {
+    operationName: "GradesSessionUsers",
+    document: "query GradesSessionUsers($days:Int!){gradesSessionUsers(days:$days){dataPoints{date loggedInUsers anonymousUsers totalUsers __typename}uniqueLoggedInUsers uniqueAnonymousUsers uniqueUsers __typename}}",
+    variableNames: ["days"],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "975a079d64a086e0d443cda072718ffa067e834ba78e362f48779333513248e8": {
     operationName: "GetCourseGradeDist",
     document: "query GetCourseGradeDist($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number gradeDistribution{average distribution{letter count __typename}__typename}__typename}}",

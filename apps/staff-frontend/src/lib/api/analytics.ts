@@ -274,3 +274,33 @@ export const GENERAL_ACTIVITY_ANALYTICS = gql`
     }
   }
 `;
+
+export interface GradesSessionUsersDataPoint {
+  date: string;
+  loggedInUsers: number;
+  anonymousUsers: number;
+  totalUsers: number;
+}
+
+export interface GradesSessionUsersData {
+  dataPoints: GradesSessionUsersDataPoint[];
+  uniqueLoggedInUsers: number;
+  uniqueAnonymousUsers: number;
+  uniqueUsers: number;
+}
+
+export const GRADES_SESSION_USERS = gql`
+  query GradesSessionUsers($days: Int!) {
+    gradesSessionUsers(days: $days) {
+      dataPoints {
+        date
+        loggedInUsers
+        anonymousUsers
+        totalUsers
+      }
+      uniqueLoggedInUsers
+      uniqueAnonymousUsers
+      uniqueUsers
+    }
+  }
+`;

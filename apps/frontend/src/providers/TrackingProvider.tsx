@@ -125,12 +125,6 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    const handlePageHide = () => flushBeacon();
-    window.addEventListener("pagehide", handlePageHide);
-    return () => window.removeEventListener("pagehide", handlePageHide);
-  }, [flushBeacon]);
-
-  useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (queueRef.current.length > 0) {
@@ -231,9 +225,22 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         metadata: { ...metadata, durationMs: Date.now() - session.startedAt },
       });
     },
-
     [enqueue]
   );
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      // End open sessions here rather than in each page's own pagehide
+      // listener: this listener is registered first, so events queued by
+      // later listeners would miss the beacon
+      for (const targetType of [...sessionsRef.current.keys()]) {
+        trackSessionEnd(targetType);
+      }
+      flushBeacon();
+    };
+    window.addEventListener("pagehide", handlePageHide);
+    return () => window.removeEventListener("pagehide", handlePageHide);
+  }, [flushBeacon, trackSessionEnd]);
 
   return (
     <TrackingContext.Provider

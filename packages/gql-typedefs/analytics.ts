@@ -37,6 +37,28 @@ export const analyticsTypeDef = gql`
     percent: Float!
   }
 
+  """
+  Unique users who started a Grades session on one day
+  """
+  type GradesSessionUsersDataPoint @cacheControl(maxAge: 0) {
+    date: String!
+    "Signed-in users, counted by user id"
+    loggedInUsers: Int!
+    "Signed-out visitors, estimated by hashed IP"
+    anonymousUsers: Int!
+    totalUsers: Int!
+  }
+
+  """
+  Daily Grades session users plus totals that are unique across the range
+  """
+  type GradesSessionUsersData @cacheControl(maxAge: 0) {
+    dataPoints: [GradesSessionUsersDataPoint!]!
+    uniqueLoggedInUsers: Int!
+    uniqueAnonymousUsers: Int!
+    uniqueUsers: Int!
+  }
+
   extend type Query {
     """
     Dashboard statistics aggregation
@@ -103,5 +125,10 @@ export const analyticsTypeDef = gql`
     activityScoreDistribution(
       formula: String
     ): [ActivityScoreDistributionPoint!]! @auth
+
+    """
+    Staff-only: Daily unique users who started a Grades session (added their first course)
+    """
+    gradesSessionUsers(days: Int!): GradesSessionUsersData! @auth
   }
 `;

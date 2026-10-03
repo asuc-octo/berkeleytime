@@ -26,6 +26,7 @@ import {
 import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { useReadCourseWithInstructor } from "@/hooks/api";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useEnterToAdd from "@/hooks/useEnterToAdd";
 import useRafHoverIndex from "@/hooks/useRafHoverIndex";
 import { type IGradeDistribution } from "@/lib/api";
@@ -846,6 +847,8 @@ export default function Grades() {
   const skipNextUrlHydrationRef = useRef(false);
   const initialRestoreCompleteRef = useRef(false);
   const initialDrawerStateAppliedRef = useRef(false);
+  const hydratedOnceRef = useRef(false);
+  const { trackSessionStart, trackSessionEnd } = useTracking();
 
   useEffect(() => {
     if (searchParamsString.length > 0) return;
@@ -940,6 +943,23 @@ export default function Grades() {
     setDrawerOpen(outputs.length === 0);
     initialDrawerStateAppliedRef.current = true;
   }, [isDesktop, isHydratingFromUrl, outputs.length]);
+
+  // session start
+  useEffect(() => {
+    if (isHydratingFromUrl) return;
+
+    const restored = !hydratedOnceRef.current && outputs.length > 0;
+    hydratedOnceRef.current = true;
+
+    if (outputs.length > 0) {
+      trackSessionStart("grades", { restored });
+    } else {
+      trackSessionEnd("grades");
+    }
+  }, [isHydratingFromUrl, outputs.length, trackSessionStart, trackSessionEnd]);
+
+  // session end
+  useEffect(() => () => trackSessionEnd("grades"), [trackSessionEnd]);
 
   const remove = useCallback((index: number) => {
     setOutputs((prev) => prev.filter((_, i) => i !== index));
