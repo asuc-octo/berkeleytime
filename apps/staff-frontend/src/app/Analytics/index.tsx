@@ -13,6 +13,7 @@ import {
   UsersWithBookmarksBlock,
   UsersWithCustomCollectionsBlock,
 } from "./components/CollectionAnalytics";
+import { DevicesBlock } from "./components/DeviceAnalytics";
 import {
   CourseResultsClickedBlock,
   DataLoadFailuresBlock,
@@ -167,6 +168,9 @@ export default function Analytics() {
             <div className={styles.cell}>
               <ActivityScoreDistributionBlock />
             </div>
+            <div className={styles.cell}>
+              <DevicesBlock />
+            </div>
           </>
         )}
         {showScheduler && (
@@ -251,6 +255,9 @@ export default function Analytics() {
           <>
             <div className={styles.cell}>
               <GradesUsersBlock />
+            </div>
+            <div className={styles.cell}>
+              <DevicesBlock targetType="grades" scopeLabel="Grades" />
             </div>
           </>
         )}

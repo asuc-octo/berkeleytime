@@ -3,6 +3,7 @@ import { GraphQLError } from "graphql";
 import { RequestContext } from "../../types/request-context";
 import { getCloudflareAnalyticsData } from "./controllers/cloudflare";
 import { getCollectionAnalyticsData } from "./controllers/collection";
+import { getDeviceAnalyticsData } from "./controllers/device";
 import { getGeneralActivityAnalytics } from "./controllers/generalActivity";
 import { getGradesSessionUsersData } from "./controllers/grades";
 import { getGradTrakAnalyticsData } from "./controllers/plan";
@@ -278,6 +279,27 @@ const resolvers = {
     ) => {
       try {
         return await getGradesSessionUsersData(context, days);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    // Device and browser analytics
+    deviceAnalyticsData: async (
+      _: unknown,
+      { days, targetType }: { days: number; targetType?: string },
+      context: RequestContext
+    ) => {
+      try {
+        return await getDeviceAnalyticsData(context, days, targetType);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

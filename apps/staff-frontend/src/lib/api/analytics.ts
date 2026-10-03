@@ -304,3 +304,35 @@ export const GRADES_SESSION_USERS = gql`
     }
   }
 `;
+
+export interface DeviceVendorCount {
+  name: string;
+  users: number;
+}
+
+export interface DeviceCategoryCount {
+  category: string;
+  users: number;
+  vendors: DeviceVendorCount[];
+}
+
+export interface DeviceAnalyticsData {
+  devices: DeviceCategoryCount[];
+  totalUsers: number;
+}
+
+export const DEVICE_ANALYTICS = gql`
+  query DeviceAnalyticsData($days: Int!, $targetType: String) {
+    deviceAnalyticsData(days: $days, targetType: $targetType) {
+      devices {
+        category
+        users
+        vendors {
+          name
+          users
+        }
+      }
+      totalUsers
+    }
+  }
+`;

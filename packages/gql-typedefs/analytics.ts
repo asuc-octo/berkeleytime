@@ -59,6 +59,34 @@ export const analyticsTypeDef = gql`
     uniqueUsers: Int!
   }
 
+  """
+  Vendor (or OS, when the user agent carries no manufacturer) slice within one
+  device category
+  """
+  type DeviceVendorCount @cacheControl(maxAge: 0) {
+    name: String!
+    users: Int!
+  }
+
+  """
+  Unique visitors on one macro device category (Mobile/Computer/TV/Other)
+  """
+  type DeviceCategoryCount @cacheControl(maxAge: 0) {
+    category: String!
+    users: Int!
+    vendors: [DeviceVendorCount!]!
+  }
+
+  """
+  Device breakdown of tracking-event visitors, parsed from stored user
+  agents. A visitor on both a phone and a laptop counts in both categories;
+  totalUsers is unique across all of them.
+  """
+  type DeviceAnalyticsData @cacheControl(maxAge: 0) {
+    devices: [DeviceCategoryCount!]!
+    totalUsers: Int!
+  }
+
   extend type Query {
     """
     Dashboard statistics aggregation
@@ -130,5 +158,13 @@ export const analyticsTypeDef = gql`
     Staff-only: Daily unique users who started a Grades session (added their first course)
     """
     gradesSessionUsers(days: Int!): GradesSessionUsersData! @auth
+
+    """
+    Staff-only: Unique visitors by device category, parsed from
+    tracking-event user agents. Pass a targetType (e.g. "grades") to scope to
+    one feature's events; omit it for site-wide numbers.
+    """
+    deviceAnalyticsData(days: Int!, targetType: String): DeviceAnalyticsData!
+      @auth
   }
 `;
