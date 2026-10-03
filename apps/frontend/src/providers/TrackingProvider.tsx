@@ -60,6 +60,14 @@ export interface TrackingContextValue {
     targetId?: string,
     metadata?: Record<string, unknown>
   ) => void;
+  trackSessionStart: (
+    targetType: string,
+    metadata?: Record<string, unknown>
+  ) => void;
+  trackSessionEnd: (
+    targetType: string,
+    metadata?: Record<string, unknown>
+  ) => void;
   flushBeacon: () => void;
 }
 
@@ -68,6 +76,9 @@ const TrackingContext = createContext<TrackingContextValue | null>(null);
 export function TrackingProvider({ children }: { children: ReactNode }) {
   const queueRef = useRef<TrackingEventInput[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sessionsRef = useRef(
+    new Map<string, { id: string; startedAt: number }>()
+  );
 
   const [mutate] = useMutation<
     TrackEventsMutation,
@@ -186,6 +197,44 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
     [enqueue]
   );
 
+  const trackSessionStart = useCallback(
+    (targetType: string, metadata?: Record<string, unknown>) => {
+      // ignore duplicate starts
+      if (sessionsRef.current.has(targetType)) return;
+
+      // create session happens in provider so future Bt devs can use this
+      const id = crypto.randomUUID();
+      sessionsRef.current.set(targetType, { id, startedAt: Date.now() });
+
+      enqueue({
+        eventType: "session_start",
+        targetType,
+        targetId: id,
+        metadata,
+      });
+    },
+    [enqueue]
+  );
+
+  const trackSessionEnd = useCallback(
+    (targetType: string, metadata?: Record<string, unknown>) => {
+      const session = sessionsRef.current.get(targetType);
+
+      // ignore session with no session start
+      if (!session) return;
+      sessionsRef.current.delete(targetType);
+
+      enqueue({
+        eventType: "session_end",
+        targetType,
+        targetId: session.id, // defined in trackSessionStart
+        metadata: { ...metadata, durationMs: Date.now() - session.startedAt },
+      });
+    },
+
+    [enqueue]
+  );
+
   return (
     <TrackingContext.Provider
       value={{
@@ -195,6 +244,8 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         trackSearch,
         trackSearchClick,
         trackEvent,
+        trackSessionStart,
+        trackSessionEnd,
         flushBeacon,
       }}
     >
