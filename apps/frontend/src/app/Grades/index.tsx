@@ -198,6 +198,7 @@ function FilterPanel({
   onEditDraftConsumed,
 }: FilterPanelProps) {
   const client = useApolloClient();
+  const { trackEvent } = useTracking();
 
   const [loading, setLoading] = useState(false);
 
@@ -546,6 +547,13 @@ function FilterPanel({
           ...o,
           active: false,
         }))
+      );
+
+      trackEvent(
+        "course_added",
+        "grades",
+        `${currentInput.subject}-${currentInput.courseNumber}`,
+        { by: currentInput.type ?? "aggregate" }
       );
 
       setLoading(false);

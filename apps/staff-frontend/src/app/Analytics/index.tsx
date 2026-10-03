@@ -32,7 +32,10 @@ import {
   TotalGradTraksBlock,
   UtilizationRatioBlock,
 } from "./components/GradTrakAnalytics";
-import { GradesUsersBlock } from "./components/GradesAnalytics";
+import {
+  GradesSearchesBlock,
+  GradesUsersBlock,
+} from "./components/GradesAnalytics";
 import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   AverageScoresOverTimeBlock,
@@ -255,6 +258,9 @@ export default function Analytics() {
           <>
             <div className={styles.cell}>
               <GradesUsersBlock />
+            </div>
+            <div className={styles.cell}>
+              <GradesSearchesBlock />
             </div>
             <div className={styles.cell}>
               <DevicesBlock targetType="grades" scopeLabel="Grades" />

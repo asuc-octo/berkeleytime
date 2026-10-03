@@ -19,6 +19,7 @@ import {
 import { useGradesSessionUsersData } from "@/hooks/api";
 
 import { AnalyticsCard, TimeRange } from "./AnalyticsCard";
+import { EventCard } from "./EngagementAnalytics";
 
 // Helper to get time range in days
 function getTimeRangeDays(timeRange: TimeRange): number {
@@ -45,6 +46,20 @@ function formatDisplayDate(dateStr: string): string {
   ];
   const [, month, day] = dateStr.split("-");
   return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+}
+
+// Grades Searches Block - courses added to the Grades chart each day
+export function GradesSearchesBlock() {
+  return (
+    <EventCard
+      title="Grades Searches"
+      description="Number of courses looked up on Grades"
+      eventType="course_added"
+      targetType="grades"
+      valueLabel="lookups"
+      variant="area"
+    />
+  );
 }
 
 // Grades Users Block - unique users who started a Grades session each day

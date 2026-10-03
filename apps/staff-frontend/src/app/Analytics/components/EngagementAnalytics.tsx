@@ -1,6 +1,8 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Line,
   LineChart,
@@ -56,16 +58,21 @@ interface EventCardProps {
   targetType: string;
   /** Unit shown next to the headline number, e.g. "saved" */
   valueLabel: string;
+  /** Chart style; defaults to a line */
+  variant?: "line" | "area";
 }
 
-function EventCard({
+export function EventCard({
   title,
   description,
   eventType,
   targetType,
   valueLabel,
+  variant = "line",
 }: EventCardProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const gradientId = useId();
+  const EventChart = variant === "area" ? AreaChart : LineChart;
 
   const days = getTimeRangeDays(timeRange);
   const endDate = useMemo(() => new Date(), []);
@@ -151,7 +158,23 @@ function EventCard({
       {!loading && !error && (
         <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
+            <EventChart data={chartData}>
+              {variant === "area" && (
+                <defs>
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--heading-color)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--heading-color)"
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                </defs>
+              )}
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="var(--border-color)"
@@ -180,16 +203,26 @@ function EventCard({
                       : "-",
                 }}
               />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke="var(--heading-color)"
-                strokeWidth={2}
-                dot={false}
-                connectNulls
-                activeDot={{ r: 4, fill: "var(--heading-color)" }}
-              />
-            </LineChart>
+              {variant === "area" ? (
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  stroke="var(--heading-color)"
+                  strokeWidth={2}
+                  fill={`url(#${gradientId})`}
+                />
+              ) : (
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="var(--heading-color)"
+                  strokeWidth={2}
+                  dot={false}
+                  connectNulls
+                  activeDot={{ r: 4, fill: "var(--heading-color)" }}
+                />
+              )}
+            </EventChart>
           </ResponsiveContainer>
         </ChartContainer>
       )}
