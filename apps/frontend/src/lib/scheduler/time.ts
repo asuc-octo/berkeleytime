@@ -82,7 +82,3 @@ export const intervalsOverlap = (a: Interval[], b: Interval[]) =>
   a.some((x) =>
     b.some((y) => x.day === y.day && x.start < y.end && y.start < x.end)
   );
-
-/** Minutes of class time across the week. */
-export const classMinutes = (intervals: Interval[]) =>
-  intervals.reduce((sum, { start, end }) => sum + end - start, 0);

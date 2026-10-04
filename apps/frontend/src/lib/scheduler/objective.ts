@@ -1,110 +1,94 @@
-import { GeneratorPreferences } from "./preferences";
-import { Interval } from "./time";
-import { GeneratorSection } from "./types";
+import { SortKey } from "./preferences";
 
-/*
- * The score of a schedule is a weighted sum; lower is better. Every term is
- * one of two kinds, which is what makes the search fast (README.md, "Why the
- * floor is valid"):
- *
- * - per-slot: depends only on one chosen time slot, so it adds up.
- * - monotone: depends on the whole schedule but can only grow as meetings
- *   are added (days used, time on campus).
- *
- * A new term must be one of these kinds. A reward such as "prefer breaks"
- * has to be written as a penalty on its opposite (long back-to-back runs).
- */
+/** The numbers a schedule is sorted by. */
+export interface Totals {
+  /** Idle minutes between the first and last class of each day, summed. */
+  gapMinutes: number;
+  daysOnCampus: number;
+  closedSections: number;
+  /** Earliest start of the week; Infinity when nothing has a time. */
+  firstStart: number;
+  /** Latest end of the week; -Infinity when nothing has a time. */
+  lastEnd: number;
+}
 
-export const WEIGHTS = {
-  /** Per minute a meeting falls outside the preferred hours. */
-  outsideHours: 1,
-  /** A closed section; one at least 90% full costs a quarter of this. */
-  seatRisk: 60,
-  /** Per minute between a day's first start and last end. */
-  timeOnCampus: 1,
-  /** Per day with a meeting. */
-  dayOnCampus: 120,
-  /** Per avoided day with a meeting. */
-  avoidedDay: 500,
-};
+const DAY = 24 * 60;
 
-export const ALL_DAYS = 0b1111111;
-
-export const popcount = (mask: number) => {
+/** Days in a bitmask where bit d means day d. */
+export const countDays = (days: number) => {
   let count = 0;
-  for (let rest = mask; rest; rest &= rest - 1) count++;
+  for (let rest = days; rest; rest &= rest - 1) count++;
   return count;
 };
 
-export const isClosed = (section: GeneratorSection) =>
-  section.enrollment?.latest?.status === "C";
+type Term = keyof Totals;
 
-/** Enrolled share of capacity, or 0 when unknown. */
-export const fill = (section: GeneratorSection) => {
-  const latest = section.enrollment?.latest;
-  return latest && latest.maxEnroll > 0
-    ? latest.enrolledCount / latest.maxEnroll
-    : 0;
+/** Each sort key followed by its tie-breaks, most important first. */
+const ORDER: Record<SortKey, Term[]> = {
+  "fewest-gaps": ["gapMinutes", "closedSections", "daysOnCampus"],
+  "fewest-days": ["daysOnCampus", "closedSections", "gapMinutes"],
+  "latest-start": [
+    "firstStart",
+    "closedSections",
+    "gapMinutes",
+    "daysOnCampus",
+  ],
+  "earliest-finish": [
+    "lastEnd",
+    "closedSections",
+    "gapMinutes",
+    "daysOnCampus",
+  ],
 };
 
-/** 1 for closed, 0.25 for at least 90% full, else 0. */
-export const seatRisk = (section: GeneratorSection) => {
-  if (isClosed(section)) return 1;
-  return fill(section) >= 0.9 ? 0.25 : 0;
-};
+/** Largest value a term can take, so the weights below keep the order. */
+const largest = (term: Term, choiceCount: number) =>
+  term === "gapMinutes"
+    ? 7 * DAY
+    : term === "daysOnCampus"
+      ? 7
+      : term === "closedSections"
+        ? choiceCount
+        : DAY;
 
-/** Orders sections by how likely the student is to get a seat. */
-export const bySeatAvailability = (a: GeneratorSection, b: GeneratorSection) =>
-  seatRisk(a) - seatRisk(b) || fill(a) - fill(b);
+/** Weight of each term in the cost; 0 for terms the sort key ignores. */
+export type Objective = Record<Term, number>;
 
 /**
- * Per-slot cost: minutes outside the preferred hours plus seat risk. Seat
- * risk uses the best section in the slot, because that is the one chosen.
+ * Turns the sort key and its tie-breaks into weights for one number to
+ * minimize (README.md, "Objective"). Each term's weight is larger than the
+ * most all later terms can add up to, so comparing costs gives the same
+ * order as comparing the terms one by one.
  */
-export const slotCost = (
-  intervals: Interval[],
-  sections: GeneratorSection[],
-  { earliestStart, latestEnd }: GeneratorPreferences
-) => {
-  let cost = WEIGHTS.seatRisk * Math.min(...sections.map(seatRisk));
+export const createObjective = (
+  sortBy: SortKey,
+  choiceCount: number
+): Objective => {
+  const objective: Objective = {
+    gapMinutes: 0,
+    daysOnCampus: 0,
+    closedSections: 0,
+    firstStart: 0,
+    lastEnd: 0,
+  };
 
-  for (const { start, end } of intervals) {
-    if (earliestStart !== null)
-      cost += WEIGHTS.outsideHours * Math.max(0, earliestStart - start);
-    if (latestEnd !== null)
-      cost += WEIGHTS.outsideHours * Math.max(0, end - latestEnd);
+  let weight = 1;
+  for (const term of [...ORDER[sortBy]].reverse()) {
+    objective[term] = weight;
+    weight *= largest(term, choiceCount) + 1;
   }
 
-  return cost;
+  return objective;
 };
-
-/** Monotone: avoided days used, plus days on campus when asked. */
-export const dayCost = (
-  dayMask: number,
-  avoidMask: number,
-  preferences: GeneratorPreferences
-) =>
-  WEIGHTS.avoidedDay * popcount(dayMask & avoidMask) +
-  (preferences.fewerDays ? WEIGHTS.dayOnCampus * popcount(dayMask) : 0);
 
 /**
- * Monotone: total time on campus (last end minus first start, per day) when
- * fewer gaps is asked. `first` and `last` hold 7 entries starting at
- * `offset`; days without meetings have first = Infinity.
+ * The cost of a schedule; lower is better. Never decreases when gaps, days,
+ * closed sections or the last end grow, or when the first start moves
+ * earlier, so lower bounds on those give a lower bound on the cost.
  */
-export const spanCost = (
-  first: Float64Array,
-  last: Float64Array,
-  offset: number,
-  preferences: GeneratorPreferences
-) => {
-  if (!preferences.fewerGaps) return 0;
-
-  let total = 0;
-  for (let day = 0; day < 7; day++) {
-    const span = last[offset + day] - first[offset + day];
-    if (span > 0) total += span;
-  }
-
-  return WEIGHTS.timeOnCampus * total;
-};
+export const costOf = (objective: Objective, totals: Totals) =>
+  objective.gapMinutes * totals.gapMinutes +
+  objective.daysOnCampus * totals.daysOnCampus +
+  objective.closedSections * totals.closedSections +
+  objective.firstStart * (DAY - Math.min(DAY, totals.firstStart)) +
+  objective.lastEnd * Math.max(0, totals.lastEnd);

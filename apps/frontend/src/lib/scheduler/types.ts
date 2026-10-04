@@ -1,7 +1,7 @@
 /*
  * Public input and output types of the schedule generator. Inputs are a
  * structural subset of the GraphQL schedule types, so `IScheduleClass` and
- * `IScheduleEvent` can be passed in directly. See README.md for the pipeline.
+ * `IScheduleEvent` can be passed in directly. See README.md.
  */
 
 /** One weekly meeting of a section. `days` is Monday first. */
@@ -15,7 +15,7 @@ export interface GeneratorSection {
   sectionId: string;
   /** LEC, DIS, LAB, ... A student takes one section per component. */
   component: string;
-  /** ISO dates. Sections that never run in the same weeks cannot conflict. */
+  /** ISO dates. Sections that never run in the same weeks cannot clash. */
   startDate?: string | null;
   endDate?: string | null;
   meetings: GeneratorMeeting[];
@@ -40,49 +40,58 @@ export interface GeneratorClass {
   lockedComponents?: string[] | null;
 }
 
-/** A busy time the student added. Always a hard constraint. */
+/** A busy time the student added. Never overlapped. */
 export interface GeneratorEvent {
   days: (boolean | null)[];
   startTime: string;
   endTime: string;
 }
 
+/** A preference rule that can be turned off when nothing fits. */
+export type Rule =
+  | "earliestStart"
+  | "latestEnd"
+  | "avoidDays"
+  | "onlyOpenSections";
+
 /** Why no schedule exists. Class indexes refer to the input array. */
 export type Reason =
-  | { kind: "closed" | "events"; classIndex: number; component: string }
+  | {
+      /** Which check removed every section of this component. */
+      kind: "closed" | "hours" | "days" | "events";
+      classIndex: number;
+      component: string;
+    }
   | { kind: "class"; classIndex: number }
   | { kind: "pair"; classIndexes: [number, number] }
   | { kind: "all" };
 
-export interface ChosenSection {
-  sectionId: string;
-}
-
-export interface GeneratedClassChoice {
-  /** Index into the classes passed to generateSchedules. */
-  classIndex: number;
-  sections: ChosenSection[];
-}
-
 export interface GeneratedSchedule {
-  classes: GeneratedClassChoice[];
-  /** Preference cost; lower is better. Comparable only within one run. */
-  cost: number;
+  classes: { classIndex: number; sectionIds: string[] }[];
   daysOnCampus: number;
-  /** Time between classes on the same day, not counting passing time. */
+  /** Idle time between the first and last class of each day, summed. */
   gapMinutes: number;
+  /** Earliest start and latest end of the week, minutes after midnight. */
+  firstStart: number | null;
+  lastEnd: number | null;
   closedSections: number;
 }
 
 export interface GenerateResult {
+  /**
+   * Up to `count` schedules: the best one for the sort key, then each next
+   * best that is clearly different from the ones before it.
+   */
   schedules: GeneratedSchedule[];
   /**
-   * The time budget ran out. The schedules are still conflict-free, but they
+   * The time budget ran out. The schedules still follow every rule, but they
    * may not be the best ones and the list may be shorter than asked for.
    */
   stoppedEarly: boolean;
-  /** Filled only when there are no schedules and the search finished. */
+  /** Why nothing fits; filled only when that is proven. */
   reasons: Reason[];
+  /** Rules in use that, turned off alone, would let a schedule fit. */
+  relaxations: Rule[];
   stats: {
     /** Search nodes visited, across every search in this run. */
     nodes: number;

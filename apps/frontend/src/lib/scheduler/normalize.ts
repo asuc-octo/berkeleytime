@@ -1,9 +1,8 @@
-import { WEIGHTS, isClosed, slotCost } from "./objective";
-import { GeneratorPreferences } from "./preferences";
+import { Objective, countDays, createObjective } from "./objective";
+import { GeneratorPreferences, SortKey } from "./preferences";
 import {
   DateRange,
   Interval,
-  classMinutes,
   intervalsOverlap,
   rangesOverlap,
   toBusyIntervals,
@@ -17,49 +16,74 @@ import {
   Reason,
 } from "./types";
 
-/** Sections of one component that meet at exactly the same times and weeks. */
-export interface Slot {
-  /** Index of the variable this slot belongs to. */
-  variable: number;
-  sections: GeneratorSection[];
+/**
+ * One way to fill a choice: all sections of that component which meet at
+ * exactly the same times in the same weeks. They are interchangeable for
+ * scheduling, so the search treats them as one option.
+ */
+export interface Option {
+  /** Index of the choice this option belongs to. */
+  choice: number;
+  /** The section to use: the student's current one if it is here, else the one most likely to have a seat. */
+  section: GeneratorSection;
   intervals: Interval[];
   range: DateRange;
-  /** Bit d is set when the slot meets on day d (0 = Monday). */
-  dayMask: number;
-  /** Per-slot part of the score. */
-  cost: number;
-  /** Ids of slots in other variables that overlap this one. */
+  /** Ids of options in other choices that overlap this one. */
   conflicts: number[];
+  /** Bit d is set when the option meets on day d (0 = Monday). */
+  days: number;
+  /** Earliest start and latest end; Infinity and -Infinity without times. */
+  start: number;
+  end: number;
+  /** Class minutes per week. */
+  minutes: number;
+  /** 1 when `section` is closed, else 0. */
+  closed: number;
 }
 
-/** One decision: which slot to use for one component of one class. */
-export interface Variable {
+/** One decision: which option to use for one component of one class. */
+export interface Choice {
   classIndex: number;
   component: string;
-  /** Slot ids, cheapest first. */
-  slots: number[];
+  /** Option ids, the most promising for the sort key first. */
+  options: number[];
 }
 
 export interface Problem {
-  variables: Variable[];
-  slots: Slot[];
-  /** Set when some variable has no usable slot; nothing else is searched. */
+  choices: Choice[];
+  options: Option[];
+  /** Set when a rule or busy time removed every section of a component. */
   reasons: Reason[];
-  avoidMask: number;
-  preferences: GeneratorPreferences;
+  objective: Objective;
 }
+
+export const isClosed = (section: GeneratorSection) =>
+  section.enrollment?.latest?.status === "C";
+
+const fill = (section: GeneratorSection) => {
+  const latest = section.enrollment?.latest;
+  return latest && latest.maxEnroll > 0
+    ? latest.enrolledCount / latest.maxEnroll
+    : 0;
+};
+
+/** Open before closed, then the emptiest first. */
+const bySeatAvailability = (a: GeneratorSection, b: GeneratorSection) =>
+  Number(isClosed(a)) - Number(isClosed(b)) || fill(a) - fill(b);
+
+type CheckKind = "closed" | "hours" | "days" | "events";
 
 interface Group {
   component: string;
   candidates: GeneratorSection[];
-  /** Locked by the student: never filtered. */
-  fixed: boolean;
+  /** Locked by the student: rules never remove these. */
+  locked: boolean;
 }
 
 /**
- * Applies lock and block settings and groups a class's sections by
- * component. A component with every section excluded comes back empty and
- * is left out of generation, matching the old generator.
+ * Groups a class's sections by component after applying locks and
+ * exclusions. A component with every section excluded comes back empty and
+ * is left out of generation, as in the old generator.
  */
 const toGroups = (scheduleClass: GeneratorClass): Group[] => {
   const { primarySection, sections } = scheduleClass.class;
@@ -77,7 +101,7 @@ const toGroups = (scheduleClass: GeneratorClass): Group[] => {
     return all.filter(isSelected).map((section) => ({
       component: section.component,
       candidates: [section],
-      fixed: true,
+      locked: true,
     }));
 
   const blocked = new Set((scheduleClass.blockedSections ?? []).map(String));
@@ -96,27 +120,79 @@ const toGroups = (scheduleClass: GeneratorClass): Group[] => {
       : [];
 
     return kept.length > 0
-      ? { component, candidates: kept, fixed: true }
+      ? { component, candidates: kept, locked: true }
       : {
           component,
           candidates: group.filter(
             (section) => !blocked.has(String(section.sectionId))
           ),
-          fixed: false,
+          locked: false,
         };
   });
 };
 
-const slotKey = (intervals: Interval[], range: DateRange) =>
+/**
+ * The checks every section must pass, in order. The first check that
+ * removes every remaining section becomes the reason shown to the student.
+ */
+const checks = (
+  preferences: GeneratorPreferences,
+  busy: Interval[],
+  locked: boolean
+): [
+  CheckKind,
+  (intervals: Interval[], section: GeneratorSection) => boolean,
+][] => {
+  const { earliestStart, latestEnd, avoidDays, onlyOpenSections } = preferences;
+  // Busy times apply to every section; the rules skip locked ones.
+  const busyCheck: [CheckKind, (intervals: Interval[]) => boolean] = [
+    "events",
+    (intervals) => !intervalsOverlap(intervals, busy),
+  ];
+  if (locked) return [busyCheck];
+
+  return [
+    ["closed", (_, section) => !onlyOpenSections || !isClosed(section)],
+    [
+      "hours",
+      (intervals) =>
+        intervals.every(
+          ({ start, end }) =>
+            (earliestStart === null || start >= earliestStart) &&
+            (latestEnd === null || end <= latestEnd)
+        ),
+    ],
+    ["days", (intervals) => intervals.every(({ day }) => !avoidDays[day])],
+    busyCheck,
+  ];
+};
+
+/**
+ * Tries first the options most likely to be best on their own, so the
+ * search finds a good schedule early and can skip more of the rest.
+ */
+const promisingFirst = (sortBy: SortKey) => (a: Option, b: Option) => {
+  const own =
+    sortBy === "fewest-days"
+      ? countDays(a.days) - countDays(b.days)
+      : sortBy === "latest-start"
+        ? Math.min(b.start, 24 * 60) - Math.min(a.start, 24 * 60)
+        : sortBy === "earliest-finish"
+          ? Math.max(a.end, 0) - Math.max(b.end, 0)
+          : 0;
+  return own || a.closed - b.closed;
+};
+
+const optionKey = (intervals: Interval[], range: DateRange) =>
   `${range.first}:${range.last}|${intervals
     .map(({ day, start, end }) => `${day}:${start}-${end}`)
     .sort()
     .join("|")}`;
 
 /**
- * Builds the search problem: one variable per (class, component), sections
- * merged into time slots, slots that hit a busy time removed, and a table of
- * which slots overlap.
+ * Builds the search problem: one choice per (class, component), with
+ * sections filtered by the rules and merged into options, and for each
+ * option the options it overlaps.
  */
 export const buildProblem = (
   classes: GeneratorClass[],
@@ -124,90 +200,88 @@ export const buildProblem = (
   preferences: GeneratorPreferences
 ): Problem => {
   const busy = toBusyIntervals(events);
-  const variables: Variable[] = [];
-  const slots: Slot[] = [];
+  const choices: Choice[] = [];
+  const options: Option[] = [];
   const reasons: Reason[] = [];
 
   classes.forEach((scheduleClass, classIndex) => {
-    for (const { component, candidates, fixed } of toGroups(scheduleClass)) {
+    const selected = new Set(
+      scheduleClass.selectedSections.map(({ sectionId }) => String(sectionId))
+    );
+
+    for (const { component, candidates, locked } of toGroups(scheduleClass)) {
       if (candidates.length === 0) continue;
 
-      const open =
-        fixed || !preferences.onlyOpenSections
-          ? candidates
-          : candidates.filter((section) => !isClosed(section));
-      const free = open.filter(
-        (section) => !intervalsOverlap(toIntervals(section.meetings), busy)
-      );
-
-      if (open.length === 0)
-        reasons.push({ kind: "closed", classIndex, component });
-      else if (free.length === 0)
-        reasons.push({ kind: "events", classIndex, component });
+      let kept = candidates;
+      for (const [kind, passes] of checks(preferences, busy, locked)) {
+        kept = kept.filter((section) =>
+          passes(toIntervals(section.meetings), section)
+        );
+        if (kept.length === 0) {
+          reasons.push({ kind, classIndex, component });
+          break;
+        }
+      }
 
       // Merge sections that are interchangeable for scheduling.
       const byTime = new Map<string, GeneratorSection[]>();
-      for (const section of free) {
-        const key = slotKey(
+      for (const section of kept) {
+        const key = optionKey(
           toIntervals(section.meetings),
           toDateRange(section)
         );
         byTime.set(key, [...(byTime.get(key) ?? []), section]);
       }
 
-      const variable = variables.length;
+      const choice = choices.length;
       const ids: number[] = [];
       for (const group of byTime.values()) {
+        const section =
+          group.find((section) => selected.has(String(section.sectionId))) ??
+          [...group].sort(bySeatAvailability)[0];
         const intervals = toIntervals(group[0].meetings);
-        ids.push(slots.length);
-        slots.push({
-          variable,
-          sections: group,
+
+        ids.push(options.length);
+        options.push({
+          choice,
+          section,
           intervals,
           range: toDateRange(group[0]),
-          dayMask: intervals.reduce((mask, { day }) => mask | (1 << day), 0),
-          cost: slotCost(intervals, group, preferences),
           conflicts: [],
+          days: intervals.reduce((days, { day }) => days | (1 << day), 0),
+          start: Math.min(...intervals.map(({ start }) => start)),
+          end: Math.max(...intervals.map(({ end }) => end)),
+          minutes: intervals.reduce(
+            (sum, { start, end }) => sum + end - start,
+            0
+          ),
+          closed: isClosed(section) ? 1 : 0,
         });
       }
 
-      if (preferences.fewerGaps) {
-        // Gap time = time on campus - class time. Charging the class-time part
-        // per slot keeps the time-on-campus part monotone (README.md).
-        const most = Math.max(
-          0,
-          ...ids.map((id) => classMinutes(slots[id].intervals))
-        );
-        for (const id of ids)
-          slots[id].cost +=
-            WEIGHTS.timeOnCampus * (most - classMinutes(slots[id].intervals));
-      }
-
-      ids.sort((a, b) => slots[a].cost - slots[b].cost);
-      variables.push({ classIndex, component, slots: ids });
+      ids.sort((a, b) =>
+        promisingFirst(preferences.sortBy)(options[a], options[b])
+      );
+      choices.push({ classIndex, component, options: ids });
     }
   });
 
-  const n = slots.length;
+  const n = options.length;
   for (let a = 0; a < n; a++)
     for (let b = a + 1; b < n; b++)
       if (
-        slots[a].variable !== slots[b].variable &&
-        rangesOverlap(slots[a].range, slots[b].range) &&
-        intervalsOverlap(slots[a].intervals, slots[b].intervals)
+        options[a].choice !== options[b].choice &&
+        rangesOverlap(options[a].range, options[b].range) &&
+        intervalsOverlap(options[a].intervals, options[b].intervals)
       ) {
-        slots[a].conflicts.push(b);
-        slots[b].conflicts.push(a);
+        options[a].conflicts.push(b);
+        options[b].conflicts.push(a);
       }
 
   return {
-    variables,
-    slots,
+    choices,
+    options,
     reasons,
-    avoidMask: preferences.avoidDays.reduce(
-      (mask, avoid, day) => (avoid ? mask | (1 << day) : mask),
-      0
-    ),
-    preferences,
+    objective: createObjective(preferences.sortBy, choices.length),
   };
 };

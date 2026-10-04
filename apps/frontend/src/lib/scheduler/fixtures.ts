@@ -61,12 +61,11 @@ export const scheduleClass = (
   ...options,
 });
 
-/** Defaults with fewer gaps off, so each test turns on only what it checks. */
+/** Default preferences with the given rules turned on. */
 export const preferences = (
   overrides: Partial<GeneratorPreferences> = {}
 ): GeneratorPreferences => ({
   ...DEFAULT_PREFERENCES,
-  fewerGaps: false,
   ...overrides,
 });
 
@@ -75,8 +74,8 @@ export const sectionsOf = (
   classes: GeneratorClass[],
   schedule: GeneratedSchedule
 ) =>
-  schedule.classes.flatMap(({ classIndex, sections }) =>
-    sections.map(({ sectionId }) => {
+  schedule.classes.flatMap(({ classIndex, sectionIds }) =>
+    sectionIds.map((sectionId) => {
       const { primarySection, sections: all } = classes[classIndex].class;
       const found = [primarySection, ...all].find(
         (candidate) => candidate?.sectionId === sectionId
@@ -195,6 +194,55 @@ export const realisticClasses = (seed = 7): GeneratorClass[] => {
     scheduleClass(
       section("LEC", [TUE, THU], 12.5, { hours: 1.5 }),
       component(random, "DIS", 12, 8, twoDays)
+    ),
+  ];
+};
+
+/**
+ * The same four classes, but most sections have a time of their own, as in
+ * real Fall 2026 data, where merging same-time sections saves only about 2x
+ * (README.md, "Merging interchangeable sections"). Hundreds of thousands of
+ * schedules fit.
+ */
+export const realLikeClasses = (seed = 7): GeneratorClass[] => {
+  const random = seededRandom(seed);
+  // Half-hour start times from 8:00, so few sections share a time.
+  const halfHour = (slots: number) => 8 + Math.floor(random() * slots) / 2;
+  const oneDay = () => ({
+    days: [pick(random, [MON, TUE, WED, THU, FRI])],
+    startHour: halfHour(22),
+    hours: 1,
+  });
+  const twoDays = () => ({
+    days: pick(random, [
+      [MON, WED],
+      [TUE, THU],
+    ]),
+    startHour: halfHour(20),
+    hours: 1,
+  });
+  const lab = (hours: number) => () => ({
+    days: [pick(random, [MON, TUE, WED, THU, FRI])],
+    startHour: halfHour(24 - 2 * hours),
+    hours,
+  });
+
+  return [
+    scheduleClass(section("LEC", [MON, WED, FRI], 13), [
+      ...component(random, "DIS", 40, 40, oneDay),
+      ...component(random, "LAB", 30, 30, lab(2)),
+    ]),
+    scheduleClass(
+      section("LEC", [MON, WED, FRI], 10),
+      component(random, "LAB", 35, 35, lab(2))
+    ),
+    scheduleClass(section("LEC", [MON, WED, FRI], 9), [
+      ...component(random, "DIS", 25, 25, twoDays),
+      ...component(random, "LAB", 25, 25, lab(3)),
+    ]),
+    scheduleClass(
+      section("LEC", [TUE, THU], 12.5, { hours: 1.5 }),
+      component(random, "DIS", 12, 12, twoDays)
     ),
   ];
 };

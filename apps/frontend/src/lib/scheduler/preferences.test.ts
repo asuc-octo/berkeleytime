@@ -15,7 +15,8 @@ describe("sanitizePreferences", () => {
         earliestStart: "9",
         latestEnd: 2000,
         avoidDays: "Fri",
-        fewerDays: 1,
+        onlyOpenSections: 1,
+        sortBy: "most-fun",
       })
     ).toEqual(DEFAULT_PREFERENCES);
   });
@@ -25,9 +26,8 @@ describe("sanitizePreferences", () => {
       earliestStart: 540,
       latestEnd: 1020,
       avoidDays: [false, false, false, false, true, false, false],
-      fewerDays: true,
-      fewerGaps: false,
       onlyOpenSections: true,
+      sortBy: "latest-start",
     };
 
     expect(sanitizePreferences(valid)).toEqual(valid);

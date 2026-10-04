@@ -1,32 +1,44 @@
+/** How to order the schedules that pass the rules. */
+export type SortKey =
+  | "fewest-gaps"
+  | "fewest-days"
+  | "latest-start"
+  | "earliest-finish";
+
+export const SORT_KEYS: SortKey[] = [
+  "fewest-gaps",
+  "fewest-days",
+  "latest-start",
+  "earliest-finish",
+];
+
+/**
+ * The student's rules. Sections that break a rule are left out, except
+ * sections the student locked.
+ */
 export interface GeneratorPreferences {
-  /** Minutes after midnight. Meetings that start earlier rank lower. */
+  /** Minutes after midnight. No meeting may start earlier. */
   earliestStart: number | null;
-  /** Minutes after midnight. Meetings that end later rank lower. */
+  /** Minutes after midnight. No meeting may end later. */
   latestEnd: number | null;
   /** Monday first, like section meetings and saved events. */
   avoidDays: boolean[];
-  fewerDays: boolean;
-  fewerGaps: boolean;
-  /** Hard filter: closed sections are never used unless locked. */
   onlyOpenSections: boolean;
+  sortBy: SortKey;
 }
 
 export const DEFAULT_PREFERENCES: GeneratorPreferences = {
   earliestStart: null,
   latestEnd: null,
   avoidDays: [false, false, false, false, false, false, false],
-  fewerDays: false,
-  fewerGaps: true,
   onlyOpenSections: false,
+  sortBy: "fewest-gaps",
 };
 
 const STORAGE_KEY = "schedule-generator-preferences";
 
 const toTime = (value: unknown) =>
   typeof value === "number" && value >= 0 && value < 24 * 60 ? value : null;
-
-const toFlag = (value: unknown, fallback: boolean) =>
-  typeof value === "boolean" ? value : fallback;
 
 export const sanitizePreferences = (value: unknown): GeneratorPreferences => {
   if (!value || typeof value !== "object") return DEFAULT_PREFERENCES;
@@ -39,12 +51,13 @@ export const sanitizePreferences = (value: unknown): GeneratorPreferences => {
     avoidDays: DEFAULT_PREFERENCES.avoidDays.map((_, day) =>
       Array.isArray(input.avoidDays) ? input.avoidDays[day] === true : false
     ),
-    fewerDays: toFlag(input.fewerDays, DEFAULT_PREFERENCES.fewerDays),
-    fewerGaps: toFlag(input.fewerGaps, DEFAULT_PREFERENCES.fewerGaps),
-    onlyOpenSections: toFlag(
-      input.onlyOpenSections,
-      DEFAULT_PREFERENCES.onlyOpenSections
-    ),
+    onlyOpenSections:
+      typeof input.onlyOpenSections === "boolean"
+        ? input.onlyOpenSections
+        : DEFAULT_PREFERENCES.onlyOpenSections,
+    sortBy: SORT_KEYS.includes(input.sortBy as SortKey)
+      ? (input.sortBy as SortKey)
+      : DEFAULT_PREFERENCES.sortBy,
   };
 };
 
