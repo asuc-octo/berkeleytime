@@ -54,25 +54,8 @@ export type Reason =
   | { kind: "pair"; classIndexes: [number, number] }
   | { kind: "all" };
 
-/**
- * How good the results are guaranteed to be.
- * - optimal: the search finished with exact pruning.
- * - near-optimal: the search finished, but pruned with a relative gap after
- *   the soft budget, so each result costs at most (1 + gap) times the best.
- * - best-found: the hard budget stopped the search; no guarantee.
- */
-export type Quality =
-  | { kind: "optimal" }
-  | { kind: "near-optimal"; gap: number }
-  | { kind: "best-found" };
-
 export interface ChosenSection {
   sectionId: string;
-  /**
-   * Sections that could replace this one without changing anything else:
-   * same-time sections first, then other times that still fit.
-   */
-  backups: string[];
 }
 
 export interface GeneratedClassChoice {
@@ -93,7 +76,11 @@ export interface GeneratedSchedule {
 
 export interface GenerateResult {
   schedules: GeneratedSchedule[];
-  quality: Quality;
+  /**
+   * The time budget ran out. The schedules are still conflict-free, but they
+   * may not be the best ones and the list may be shorter than asked for.
+   */
+  stoppedEarly: boolean;
   /** Filled only when there are no schedules and the search finished. */
   reasons: Reason[];
   stats: {
@@ -106,10 +93,6 @@ export interface GenerateResult {
 export interface GenerateOptions {
   /** How many schedules to return. Default 8. */
   count?: number;
-  /** Exact search until this many ms; then prune with `gap`. Default 150. */
-  softBudgetMs?: number;
-  /** Stop every search after this many ms. Default 500. */
-  hardBudgetMs?: number;
-  /** Relative tolerance used after the soft budget. Default 0.05 (5%). */
-  gap?: number;
+  /** Stop searching after this many ms. Default 100. */
+  budgetMs?: number;
 }

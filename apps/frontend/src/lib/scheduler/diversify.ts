@@ -1,16 +1,16 @@
 import { Problem } from "./normalize";
-import { Clock, Finish, search, worseFinish } from "./search";
+import { Clock, search } from "./search";
 
 export interface DiverseSchedules {
   /** Slot id per variable, best first. */
   choices: number[][];
   costs: number[];
-  /** The worst way any of the searches ended. */
-  finish: Finish;
+  /** The time budget ran out during one of the searches. */
+  stopped: boolean;
 }
 
 /**
- * Builds the result list one search at a time (README.md, "Diversity"):
+ * Builds the result list one search at a time (README.md, "Variety"):
  * first the cheapest schedule, then repeatedly the cheapest schedule that
  * differs from every earlier result in at least `minDistance` choices. The
  * distance starts at half of the choices that have more than one option and
@@ -19,8 +19,7 @@ export interface DiverseSchedules {
 export const findDiverseSchedules = (
   problem: Problem,
   count: number,
-  clock: Clock,
-  gap: number
+  clock: Clock
 ): DiverseSchedules => {
   const variableIds = problem.variables.map((_, index) => index);
   const flexible = problem.variables.filter(
@@ -29,29 +28,19 @@ export const findDiverseSchedules = (
 
   const choices: number[][] = [];
   const costs: number[] = [];
-  let finish: Finish = "exact";
   let minDistance = Math.max(1, Math.ceil(flexible / 2));
 
   while (choices.length < count && minDistance > 0) {
-    const outcome = search(
-      problem,
-      variableIds,
-      choices,
-      minDistance,
-      clock,
-      gap
-    );
-    finish = worseFinish(finish, outcome.finish);
+    const outcome = search(problem, variableIds, choices, minDistance, clock);
 
     if (outcome.choice) {
       choices.push(outcome.choice);
       costs.push(outcome.cost);
-      continue;
     }
 
-    if (outcome.finish === "stopped") break;
-    minDistance--;
+    if (outcome.stopped) return { choices, costs, stopped: true };
+    if (!outcome.choice) minDistance--;
   }
 
-  return { choices, costs, finish };
+  return { choices, costs, stopped: false };
 };

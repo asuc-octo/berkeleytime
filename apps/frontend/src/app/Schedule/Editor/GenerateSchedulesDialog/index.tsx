@@ -7,7 +7,6 @@ import {
   DaySelect,
   Dialog,
   Flex,
-  LoadingIndicator,
   Select,
 } from "@repo/theme";
 
@@ -17,7 +16,7 @@ import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ISchedule, componentMap } from "@/lib/api";
 import { IScheduleListSchedule } from "@/lib/api/schedules";
 import { Component } from "@/lib/generated/graphql";
-import { GeneratedSchedule, Quality, Reason } from "@/lib/scheduler";
+import { GeneratedSchedule, Reason, generateSchedules } from "@/lib/scheduler";
 import { applyGeneratedSelection } from "@/lib/scheduler/apply";
 import {
   GeneratorPreferences,
@@ -26,7 +25,6 @@ import {
   toMondayFirst,
   toSundayFirst,
 } from "@/lib/scheduler/preferences";
-import { useScheduleGenerator } from "@/lib/scheduler/useScheduleGenerator";
 
 import styles from "./GenerateSchedulesDialog.module.scss";
 
@@ -68,13 +66,6 @@ const summarize = (generated: GeneratedSchedule) =>
     .filter(Boolean)
     .join(" · ");
 
-const describeQuality = (quality: Quality) =>
-  quality.kind === "near-optimal"
-    ? `To stay fast, the search settled for schedules within ${Math.round(quality.gap * 100)}% of the best possible.`
-    : quality.kind === "best-found"
-      ? "The search stopped early, so these may not be the best possible schedules."
-      : null;
-
 export default function GenerateSchedulesDialog({
   schedule,
   children,
@@ -105,18 +96,20 @@ export default function GenerateSchedulesDialog({
     [schedule.events]
   );
 
-  // Runs in a Web Worker, so the dialog stays responsive while it searches.
-  const {
-    result: generation,
-    loading,
-    error,
-  } = useScheduleGenerator({
-    classes,
-    events,
-    preferences,
-    count: visibleCount,
-    enabled: open && step === "results" && classes.length > 0,
-  });
+  const generating = open && step === "results" && classes.length > 0;
+
+  // A few milliseconds on realistic schedules, and bounded by a time budget.
+  const generation = useMemo(() => {
+    if (!generating) return null;
+
+    try {
+      return generateSchedules(classes, events, preferences, {
+        count: visibleCount,
+      });
+    } catch {
+      return null;
+    }
+  }, [generating, classes, events, preferences, visibleCount]);
 
   const generatedSchedules = useMemo(
     () =>
@@ -152,7 +145,7 @@ export default function GenerateSchedulesDialog({
     trackEvent("schedule_generate", "schedule", schedule._id, {
       classCount: classes.length,
       generatedCount: generation.schedules.length,
-      quality: generation.quality.kind,
+      stoppedEarly: generation.stoppedEarly,
       elapsedMs: Math.round(generation.stats.elapsedMs),
       nodes: generation.stats.nodes,
       earliestStart: preferences.earliestStart,
@@ -386,9 +379,10 @@ export default function GenerateSchedulesDialog({
                   Tip: Lock/Hide courses in schedule to control which schedules
                   are generated.
                 </h3>
-                {generation && describeQuality(generation.quality) && (
+                {generation?.stoppedEarly && (
                   <p className={styles.hint}>
-                    {describeQuality(generation.quality)}
+                    The search stopped early, so these may not be the best
+                    possible schedules.
                   </p>
                 )}
               </Flex>
@@ -414,7 +408,6 @@ export default function GenerateSchedulesDialog({
                       <Flex justify="center">
                         <Button
                           variant="secondary"
-                          disabled={loading}
                           onClick={() =>
                             setVisibleCount((count) => count + PAGE_SIZE)
                           }
@@ -424,14 +417,6 @@ export default function GenerateSchedulesDialog({
                       </Flex>
                     )}
                   </>
-                ) : loading ? (
-                  <Flex
-                    align="center"
-                    justify="center"
-                    className={styles.emptyState}
-                  >
-                    <LoadingIndicator size="lg" />
-                  </Flex>
                 ) : (
                   <Flex
                     direction="column"
@@ -450,7 +435,7 @@ export default function GenerateSchedulesDialog({
                           {describeReason(reason)}
                         </p>
                       ))
-                    ) : error ? (
+                    ) : generating && !generation ? (
                       <p className={styles.emptyStateMessage}>
                         Something went wrong while generating schedules. Try
                         again.

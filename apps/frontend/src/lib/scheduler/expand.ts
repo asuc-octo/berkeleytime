@@ -31,12 +31,9 @@ export const gapMinutes = (intervals: Interval[]) => {
 };
 
 /**
- * Turns a slot choice into real sections (README.md, "Expand").
- *
- * In each slot it keeps the section the student already has, if any, else
- * the one most likely to have a seat. Backups for a section are the other
- * sections in its slot, then sections in other slots of the same component
- * that overlap nothing else in the schedule.
+ * Turns a slot choice into real sections (README.md, "Expand"). In each slot
+ * it keeps the section the student already has, if any, else the one most
+ * likely to have a seat.
  */
 export const expandSchedule = (
   problem: Problem,
@@ -44,51 +41,30 @@ export const expandSchedule = (
   choice: number[],
   cost: number
 ): GeneratedSchedule => {
-  const { variables, slots, conflictMatrix } = problem;
-  const n = slots.length;
+  const { variables, slots } = problem;
   const byClass = classes.map(
     (_, classIndex): GeneratedClassChoice => ({ classIndex, sections: [] })
   );
   const intervals: Interval[] = [];
   let closedSections = 0;
 
-  // A slot of this variable fits if it overlaps no other chosen slot.
-  const fits = (candidate: number, variableIndex: number) =>
-    choice.every(
-      (picked, other) =>
-        other === variableIndex ||
-        picked < 0 ||
-        conflictMatrix[candidate * n + picked] === 0
-    );
-
   choice.forEach((id, variableIndex) => {
     if (id < 0) return;
 
     const slot = slots[id];
-    const variable = variables[variableIndex];
+    const { classIndex } = variables[variableIndex];
     const selected = new Set(
-      classes[variable.classIndex].selectedSections.map(({ sectionId }) =>
+      classes[classIndex].selectedSections.map(({ sectionId }) =>
         String(sectionId)
       )
     );
 
-    const ranked = [...slot.sections].sort(bySeatAvailability);
     const section =
       slot.sections.find((candidate) =>
         selected.has(String(candidate.sectionId))
-      ) ?? ranked[0];
+      ) ?? [...slot.sections].sort(bySeatAvailability)[0];
 
-    const otherTimes = variable.slots
-      .filter((other) => other !== id && fits(other, variableIndex))
-      .flatMap((other) => [...slots[other].sections].sort(bySeatAvailability));
-
-    byClass[variable.classIndex].sections.push({
-      sectionId: section.sectionId,
-      backups: [
-        ...ranked.filter((candidate) => candidate !== section),
-        ...otherTimes,
-      ].map((candidate) => candidate.sectionId),
-    });
+    byClass[classIndex].sections.push({ sectionId: section.sectionId });
 
     if (isClosed(section)) closedSections++;
     intervals.push(...slot.intervals);

@@ -43,8 +43,6 @@ export interface Variable {
 export interface Problem {
   variables: Variable[];
   slots: Slot[];
-  /** conflictMatrix[a * slots.length + b] is 1 when slots a and b overlap. */
-  conflictMatrix: Uint8Array;
   /** Set when some variable has no usable slot; nothing else is searched. */
   reasons: Reason[];
   avoidMask: number;
@@ -191,7 +189,6 @@ export const buildProblem = (
   });
 
   const n = slots.length;
-  const conflictMatrix = new Uint8Array(n * n);
   for (let a = 0; a < n; a++)
     for (let b = a + 1; b < n; b++)
       if (
@@ -199,7 +196,6 @@ export const buildProblem = (
         rangesOverlap(slots[a].range, slots[b].range) &&
         intervalsOverlap(slots[a].intervals, slots[b].intervals)
       ) {
-        conflictMatrix[a * n + b] = conflictMatrix[b * n + a] = 1;
         slots[a].conflicts.push(b);
         slots[b].conflicts.push(a);
       }
@@ -207,7 +203,6 @@ export const buildProblem = (
   return {
     variables,
     slots,
-    conflictMatrix,
     reasons,
     avoidMask: preferences.avoidDays.reduce(
       (mask, avoid, day) => (avoid ? mask | (1 << day) : mask),

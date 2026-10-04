@@ -22,8 +22,8 @@ export const explain = (
   // A search cut short by the budget counts as fitting, so a conflict is
   // only reported when it is proven.
   const fits = (variableIds: number[]) => {
-    const outcome = search(problem, variableIds, [], 0, clock, 0);
-    return outcome.choice !== null || outcome.finish === "stopped";
+    const outcome = search(problem, variableIds, [], 0, clock);
+    return outcome.choice !== null || outcome.stopped;
   };
 
   const reasons: Reason[] = [];

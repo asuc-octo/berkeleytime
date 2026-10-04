@@ -39,13 +39,13 @@ describe("generateSchedules", () => {
       ]),
     ];
 
-    const { schedules, quality } = generateSchedules(
+    const { schedules, stoppedEarly } = generateSchedules(
       classes,
       [],
       preferences()
     );
 
-    expect(quality).toEqual({ kind: "optimal" });
+    expect(stoppedEarly).toBe(false);
     expect(schedules).toHaveLength(8);
     for (const schedule of schedules) {
       const chosen = sectionsOf(classes, schedule);
@@ -253,42 +253,6 @@ describe("generateSchedules", () => {
     expect(schedule.gapMinutes).toBe(120);
   });
 
-  it("lists backups: same-time sections first, then other times that fit", () => {
-    const sameTime = [section("DIS", [TUE], 9), section("DIS", [TUE], 9)];
-    const otherTime = section("DIS", [THU], 9);
-    const clashing = section("DIS", [WED], 9);
-    const classes = [
-      scheduleClass(section("LEC", [MON], 13), [
-        ...sameTime,
-        otherTime,
-        clashing,
-      ]),
-      scheduleClass(section("LEC", [WED], 9), []),
-    ];
-
-    const { schedules } = generateSchedules(
-      classes,
-      [],
-      preferences({ earliestStart: 9 * 60 })
-    );
-    const discussion = schedules[0].classes[0].sections[1];
-
-    const chosenTime = sameTime.find(
-      (s) => s.sectionId === discussion.sectionId
-    )
-      ? "TUE"
-      : "THU";
-    if (chosenTime === "TUE") {
-      expect(discussion.backups).toEqual([
-        sameTime.find((s) => s.sectionId !== discussion.sectionId)!.sectionId,
-        otherTime.sectionId,
-      ]);
-    } else {
-      expect(discussion.backups).toEqual(sameTime.map((s) => s.sectionId));
-    }
-    expect(discussion.backups).not.toContain(clashing.sectionId);
-  });
-
   it("explains why nothing fits", () => {
     const overlapping = [
       scheduleClass(section("LEC", [MON, WED, FRI], 10), []),
@@ -389,7 +353,7 @@ describe("generateSchedules", () => {
           continue;
         }
 
-        expect(byStart.quality).toEqual({ kind: "optimal" });
+        expect(byStart.stoppedEarly).toBe(false);
         expect(earlyMinutes(sectionsOf(classes, byStart.schedules[0]))).toBe(
           Math.min(...valid.map(earlyMinutes))
         );
@@ -405,50 +369,26 @@ describe("generateSchedules", () => {
           expect(hasOverlap(sectionsOf(classes, schedule))).toBe(false);
       }
     });
-
-    it("stays within the gap when it approximates", () => {
-      const gap = 0.2;
-
-      for (const classes of instances) {
-        const valid = validSchedules(classes);
-        if (valid.length === 0) continue;
-
-        // A zero soft budget makes the search prune with the gap from the
-        // start.
-        const result = generateSchedules(
-          classes,
-          [],
-          preferences({ earliestStart: 10 * 60 }),
-          { softBudgetMs: 0, gap }
-        );
-
-        expect(result.quality).toEqual({ kind: "near-optimal", gap });
-        const best = Math.min(...valid.map(earlyMinutes));
-        expect(
-          earlyMinutes(sectionsOf(classes, result.schedules[0]))
-        ).toBeLessThanOrEqual(best * (1 + gap));
-      }
-    });
   });
 
-  it("respects the hard budget on a very large input", () => {
+  it("stops at the time budget and says so", () => {
     const classes = adversarialClasses();
-    const started = performance.now();
 
     const result = generateSchedules(
       classes,
       [],
       preferences({ fewerGaps: true, fewerDays: true }),
-      { softBudgetMs: 5, hardBudgetMs: 40 }
+      { budgetMs: 0 }
     );
 
-    expect(performance.now() - started).toBeLessThan(400);
+    expect(result.stoppedEarly).toBe(true);
+    expect(result.reasons).toEqual([]);
     expect(result.schedules.length).toBeGreaterThan(0);
     for (const schedule of result.schedules)
       expect(hasOverlap(sectionsOf(classes, schedule))).toBe(false);
   });
 
-  it("solves the realistic case exactly within the default budget", () => {
+  it("solves the realistic case within the default budget", () => {
     const classes = realisticClasses();
 
     const result = generateSchedules(
@@ -458,6 +398,6 @@ describe("generateSchedules", () => {
     );
 
     expect(result.schedules).toHaveLength(8);
-    expect(result.quality.kind).not.toBe("best-found");
+    expect(result.stoppedEarly).toBe(false);
   });
 });

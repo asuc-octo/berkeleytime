@@ -1,17 +1,10 @@
 /*
  * Run with `npx vitest bench src/lib/scheduler` from apps/frontend.
- * README.md ("Performance") explains the cases and the numbers.
  */
 import { bench, describe } from "vitest";
 
 import { adversarialClasses, preferences, realisticClasses } from "./fixtures";
-import { GenerateOptions, generateSchedules } from "./index";
-
-const policies: Record<string, GenerateOptions> = {
-  "exact only": { softBudgetMs: 1e9, hardBudgetMs: 1e9, gap: 0 },
-  default: {},
-  "5% gap from the start": { softBudgetMs: 0, gap: 0.05 },
-};
+import { generateSchedules } from "./index";
 
 const inputs = {
   realistic: realisticClasses(),
@@ -26,10 +19,10 @@ const mixed = preferences({
   avoidDays: [false, false, false, false, true, false, false],
 });
 
-for (const [inputName, classes] of Object.entries(inputs))
-  describe(`${inputName}, 8 results, mixed preferences`, () => {
-    for (const [policyName, options] of Object.entries(policies))
-      bench(policyName, () => {
-        generateSchedules(classes, [], mixed, options);
-      });
-  });
+describe("8 results, mixed preferences", () => {
+  for (const [name, classes] of Object.entries(inputs))
+    bench(name, () => {
+      // A budget this large is never reached, so this times the full search.
+      generateSchedules(classes, [], mixed, { budgetMs: 1e9 });
+    });
+});

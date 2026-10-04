@@ -3,40 +3,23 @@ import { ALL_DAYS, dayCost, spanCost } from "./objective";
 
 /** Shared time budget for every search in one generation. */
 export interface Clock {
-  /** performance.now() after which searches prune with the gap. */
-  soft: number;
   /** performance.now() after which every search stops. */
-  hard: number;
+  deadline: number;
   /** Search nodes visited so far, across searches. */
   nodes: number;
 }
 
-export const createClock = (
-  softBudgetMs: number,
-  hardBudgetMs: number
-): Clock => {
-  const now = performance.now();
-  return { soft: now + softBudgetMs, hard: now + hardBudgetMs, nodes: 0 };
-};
-
-/**
- * How a search ended.
- * - exact: finished with exact pruning.
- * - gap: finished, but pruned with the gap after the soft budget.
- * - stopped: the hard budget ran out.
- */
-export type Finish = "exact" | "gap" | "stopped";
-
-const FINISH_ORDER: Finish[] = ["exact", "gap", "stopped"];
-
-export const worseFinish = (a: Finish, b: Finish): Finish =>
-  FINISH_ORDER.indexOf(a) >= FINISH_ORDER.indexOf(b) ? a : b;
+export const createClock = (budgetMs: number): Clock => ({
+  deadline: performance.now() + budgetMs,
+  nodes: 0,
+});
 
 export interface SearchOutcome {
   /** Slot id per variable (-1 outside the search), or null if none exists. */
   choice: number[] | null;
   cost: number;
-  finish: Finish;
+  /** The time budget ran out, so `choice` is only the best found so far. */
+  stopped: boolean;
 }
 
 /** Nodes between clock reads; reading the clock costs more than a node. */
@@ -48,17 +31,15 @@ const CLOCK_INTERVAL = 256;
  * Finds the cheapest assignment of `variableIds` that differs from every
  * schedule in `previous` in at least `minDistance` variables. Uses forward
  * checking, the fewest-options-first (MRV) variable order, and a floor
- * (lower bound) built from per-slot and monotone costs. After the clock's
- * soft budget it prunes with a relative `gap`; at the hard budget it stops
- * and returns the best schedule found so far.
+ * (lower bound) built from per-slot and monotone costs. When the clock's
+ * budget runs out it stops and returns the best schedule found so far.
  */
 export const search = (
   problem: Problem,
   variableIds: number[],
   previous: number[][],
   minDistance: number,
-  clock: Clock,
-  gap: number
+  clock: Clock
 ): SearchOutcome => {
   const { variables, slots, avoidMask, preferences } = problem;
   const depthLimit = variableIds.length;
@@ -80,19 +61,14 @@ export const search = (
 
   let best: number[] | null = null;
   let bestCost = Infinity;
-  let tolerance = performance.now() > clock.soft ? gap : 0;
-  let usedGap = tolerance > 0;
   let stopped = false;
 
   const visit = (depth: number, cost: number, dayMask: number): void => {
-    if (++clock.nodes % CLOCK_INTERVAL === 0) {
-      const now = performance.now();
-      if (now > clock.hard) stopped = true;
-      else if (tolerance === 0 && now > clock.soft) {
-        tolerance = gap;
-        usedGap = true;
-      }
-    }
+    if (
+      ++clock.nodes % CLOCK_INTERVAL === 0 &&
+      performance.now() > clock.deadline
+    )
+      stopped = true;
     if (stopped) return;
 
     // Every earlier result must still be reachable at the required distance.
@@ -154,9 +130,7 @@ export const search = (
       dayCost(forced, avoidMask, preferences) -
       dayCost(dayMask, avoidMask, preferences);
 
-    // Exact pruning while tolerance is 0. With a gap, anything pruned costs
-    // at least bestCost / (1 + gap), so the result stays within that factor.
-    if (floor * (1 + tolerance) >= bestCost) return;
+    if (floor >= bestCost) return;
 
     const nextRow = row + 7;
 
@@ -201,9 +175,5 @@ export const search = (
 
   visit(0, 0, 0);
 
-  return {
-    choice: best,
-    cost: bestCost,
-    finish: stopped ? "stopped" : usedGap ? "gap" : "exact",
-  };
+  return { choice: best, cost: bestCost, stopped };
 };
