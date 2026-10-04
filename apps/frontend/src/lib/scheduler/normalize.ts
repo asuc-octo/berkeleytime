@@ -6,6 +6,7 @@ import {
   classMinutes,
   intervalsOverlap,
   rangesOverlap,
+  toBusyIntervals,
   toDateRange,
   toIntervals,
 } from "./time";
@@ -124,7 +125,7 @@ export const buildProblem = (
   events: GeneratorEvent[],
   preferences: GeneratorPreferences
 ): Problem => {
-  const busy = toIntervals(events);
+  const busy = toBusyIntervals(events);
   const variables: Variable[] = [];
   const slots: Slot[] = [];
   const reasons: Reason[] = [];

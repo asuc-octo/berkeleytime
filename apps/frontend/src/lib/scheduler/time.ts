@@ -32,22 +32,36 @@ const toMinutes = (time?: string | null) => {
   return Number.isFinite(minutes) ? minutes : null;
 };
 
-/**
- * Expands meetings into one interval per meeting day. Meetings without a
- * usable time are skipped: SIS marks a time that has not been announced
- * with a 00:00 start.
- */
-export const toIntervals = (meetings: GeneratorMeeting[]): Interval[] =>
+const expand = (
+  meetings: GeneratorMeeting[],
+  midnightIsUnannounced: boolean
+): Interval[] =>
   meetings.flatMap(({ days, startTime, endTime }) => {
     const start = toMinutes(startTime);
     const listedEnd = toMinutes(endTime);
-    if (!start || listedEnd === null || listedEnd <= start) return [];
+    if (start === null || listedEnd === null || listedEnd <= start) return [];
+    if (start === 0 && midnightIsUnannounced) return [];
 
     const end = roundListedEnd(listedEnd);
     return (days ?? []).flatMap((meets, day) =>
       meets ? [{ day, start, end }] : []
     );
   });
+
+/**
+ * Expands section meetings into one interval per meeting day. Meetings
+ * without a usable time are skipped: SIS marks a time that has not been
+ * announced with a 00:00 start.
+ */
+export const toIntervals = (meetings: GeneratorMeeting[]): Interval[] =>
+  expand(meetings, true);
+
+/**
+ * Expands the student's busy times. Unlike a section, an event that starts
+ * at 00:00 really does start at midnight.
+ */
+export const toBusyIntervals = (events: GeneratorMeeting[]): Interval[] =>
+  expand(events, false);
 
 const toDay = (date?: string | null) => {
   if (!date) return null;

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   rangesOverlap,
   roundListedEnd,
+  toBusyIntervals,
   toDateRange,
   toIntervals,
 } from "./time";
@@ -39,6 +40,20 @@ describe("toIntervals", () => {
         { days: [true], startTime: "11:00:00", endTime: "10:00:00" },
       ])
     ).toEqual([]);
+  });
+});
+
+describe("toBusyIntervals", () => {
+  it("keeps an event that starts at midnight", () => {
+    expect(
+      toBusyIntervals([
+        {
+          days: [true, false, false, false, false, false, false],
+          startTime: "00:00",
+          endTime: "09:00",
+        },
+      ])
+    ).toEqual([{ day: 0, start: 0, end: 540 }]);
   });
 });
 

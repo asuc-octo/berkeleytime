@@ -135,7 +135,7 @@ at 14 distinct times and 30 labs at 12 distinct times.
 | `expand.ts`               | `expandSchedule(problem, classes, choice, cost)`                                                                                             | Turns slots into sections with backups and stats.                                                                                                    |
 | `expand.ts`               | `gapMinutes(intervals)`                                                                                                                      | Minutes between classes on the same day, ignoring passing time.                                                                                      |
 | `explain.ts`              | `explain(problem, classCount, clock)`                                                                                                        | Finds which classes cannot fit together.                                                                                                             |
-| `time.ts`                 | `toIntervals`, `roundListedEnd`, `toDateRange`, `rangesOverlap`, `intervalsOverlap`, `classMinutes`                                          | Parsing meeting times and dates, and overlap checks.                                                                                                 |
+| `time.ts`                 | `toIntervals`, `toBusyIntervals`, `roundListedEnd`, `toDateRange`, `rangesOverlap`, `intervalsOverlap`, `classMinutes`                       | Parsing meeting times and dates, and overlap checks.                                                                                                 |
 | `preferences.ts`          | `GeneratorPreferences`, `DEFAULT_PREFERENCES`, `sanitizePreferences`, `loadPreferences`, `savePreferences`, `toSundayFirst`, `toMondayFirst` | The preferences form's data, saved in `localStorage`.                                                                                                |
 | `apply.ts`                | `applyGeneratedSelection(classes, generated)`                                                                                                | Applies a chosen result: changes only the selected sections of generated classes.                                                                    |
 | `protocol.ts`             | `GenerateRequest`, `GenerateResponse`, `handleRequest`, `toGeneratorClasses`, `toGeneratorEvents`                                            | The worker's message format, shared by the worker and the main-thread fallback.                                                                      |
@@ -169,9 +169,12 @@ what it does here, why we chose it, what it costs us, and where it comes from.
   (`expand.ts`).
 - **Why.** For conflicts and time preferences such sections are
   interchangeable values in the sense of Freuder (1991), so removing all but
-  one loses no schedule. It shrinks the search: in our realistic test input,
-  3.2 x 10^8 raw combinations become about 10^6. It also stops the results
-  from showing schedules that differ only in room.
+  one loses no schedule. It stops the results from showing schedules that
+  differ only in room, and it shrinks the search. How much depends on the
+  data: about 300x on the synthetic input in `fixtures.ts`, but only about 2x
+  on real Fall 2026 sections (17x at best, for COMPSCI 61A), where most
+  sections have a time slot to themselves. The search is fast because of
+  pruning, not merging.
 - **Tradeoff.** Anything that depends on the specific section rather than its
   time cannot affect the search directly. Seat risk works around this by
   scoring each slot by its best section. Walking distance, which depends on
@@ -372,15 +375,17 @@ intervals in the search state, not just first start and last end.
 
 ## Assumptions to confirm
 
-These depend on the Phase 0 data check:
+Checked against Fall 2026 data by `scripts/measure-schedule-generator.ts` (Phase 0), except where noted:
 
 - **Berkeley time.** End times ending in :x9 are rounded up one minute
-  (`roundListedEnd`), because SIS lists 10:10-11:00 as 10:00-10:59. If stored
-  times differ, change only that function.
+  (`roundListedEnd`), because SIS lists 10:10-11:00 as 10:00-10:59. The
+  Phase 0 data check confirmed this: 97% of Fall 2026 meetings end at :59 or
+  :29. Four end at :14 and are not rounded.
 - **Optional components.** Every component of a class is treated as required.
-  If Voluntary (VOL) or Supplementary (SUP) sections, or non-enrollment
-  sections (`type` N), turn out to be optional, `toGroups` in `normalize.ts`
-  should skip them, and the API needs to expose `type`.
+  Fall 2026 has 19 Voluntary (VOL) and Supplementary (SUP) sections across 13
+  courses, and they are still forced into schedules. If they should be
+  optional, `toGroups` in `normalize.ts` should skip those component codes.
+  `type` cannot be used for this: nearly every discussion and lab is `type` N.
 - **Date ranges.** Conflicts use each section's `startDate` and `endDate`.
   Meeting-level dates are not fetched by the schedule query.
 - **Seat data freshness.** Seat risk uses `enrollment.latest`, which may be

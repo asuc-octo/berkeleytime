@@ -96,6 +96,28 @@ describe("generateSchedules", () => {
     expect(sectionIdsOf(schedules[0], 0)).toContain(thursday.sectionId);
   });
 
+  it("respects an event that starts at midnight", () => {
+    const afternoon = section("DIS", [MON], 14);
+    const classes = [
+      scheduleClass(section("LEC", [TUE, THU], 10), [
+        section("DIS", [MON], 8),
+        afternoon,
+      ]),
+    ];
+    const events: GeneratorEvent[] = [
+      {
+        days: [true, false, false, false, false, false, false],
+        startTime: "00:00",
+        endTime: "09:00",
+      },
+    ];
+
+    const { schedules } = generateSchedules(classes, events, preferences());
+
+    expect(schedules).toHaveLength(1);
+    expect(sectionIdsOf(schedules[0], 0)).toContain(afternoon.sectionId);
+  });
+
   it("keeps locked classes and components and skips excluded sections", () => {
     const lecture = section("LEC", [MON, WED, FRI], 10);
     const [first, second, third] = [TUE, WED, THU].map((day) =>
