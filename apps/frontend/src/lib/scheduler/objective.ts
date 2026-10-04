@@ -10,6 +10,8 @@ export interface Totals {
   firstStart: number;
   /** Latest end of the week; -Infinity when nothing has a time. */
   lastEnd: number;
+  /** Sections without a set time, which the rules cannot check. */
+  unannouncedSections: number;
 }
 
 const DAY = 24 * 60;
@@ -23,17 +25,33 @@ export const countDays = (days: number) => {
 
 type Term = keyof Totals;
 
-/** Each sort key followed by its tie-breaks, most important first. */
+/**
+ * Each sort key followed by its tie-breaks, most important first. Sections
+ * without a set time come before everything: they would otherwise look best,
+ * since they add no gaps or days, and the rules cannot check them.
+ */
 const ORDER: Record<SortKey, Term[]> = {
-  "fewest-gaps": ["gapMinutes", "closedSections", "daysOnCampus"],
-  "fewest-days": ["daysOnCampus", "closedSections", "gapMinutes"],
+  "fewest-gaps": [
+    "unannouncedSections",
+    "gapMinutes",
+    "closedSections",
+    "daysOnCampus",
+  ],
+  "fewest-days": [
+    "unannouncedSections",
+    "daysOnCampus",
+    "closedSections",
+    "gapMinutes",
+  ],
   "latest-start": [
+    "unannouncedSections",
     "firstStart",
     "closedSections",
     "gapMinutes",
     "daysOnCampus",
   ],
   "earliest-finish": [
+    "unannouncedSections",
     "lastEnd",
     "closedSections",
     "gapMinutes",
@@ -47,7 +65,7 @@ const largest = (term: Term, choiceCount: number) =>
     ? 7 * DAY
     : term === "daysOnCampus"
       ? 7
-      : term === "closedSections"
+      : term === "closedSections" || term === "unannouncedSections"
         ? choiceCount
         : DAY;
 
@@ -70,6 +88,7 @@ export const createObjective = (
     closedSections: 0,
     firstStart: 0,
     lastEnd: 0,
+    unannouncedSections: 0,
   };
 
   let weight = 1;
@@ -83,12 +102,14 @@ export const createObjective = (
 
 /**
  * The cost of a schedule; lower is better. Never decreases when gaps, days,
- * closed sections or the last end grow, or when the first start moves
- * earlier, so lower bounds on those give a lower bound on the cost.
+ * closed or unannounced sections or the last end grow, or when the first
+ * start moves earlier, so lower bounds on those give a lower bound on the
+ * cost.
  */
 export const costOf = (objective: Objective, totals: Totals) =>
   objective.gapMinutes * totals.gapMinutes +
   objective.daysOnCampus * totals.daysOnCampus +
   objective.closedSections * totals.closedSections +
   objective.firstStart * (DAY - Math.min(DAY, totals.firstStart)) +
-  objective.lastEnd * Math.max(0, totals.lastEnd);
+  objective.lastEnd * Math.max(0, totals.lastEnd) +
+  objective.unannouncedSections * totals.unannouncedSections;

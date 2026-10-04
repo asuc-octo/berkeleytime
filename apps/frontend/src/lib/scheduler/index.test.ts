@@ -36,6 +36,7 @@ const keyOf = (chosen: GeneratorSection[]) =>
   chosen.map((s, i) => `${i}:${timesOf([s])}`).join("|");
 
 interface Measured {
+  unannouncedSections: number;
   gapMinutes: number;
   daysOnCampus: number;
   closedSections: number;
@@ -43,19 +44,17 @@ interface Measured {
   lastEnd: number | null;
 }
 
-// The sort key and its tie-breaks as a tuple; lower is better.
+// The sort key and its tie-breaks as a tuple; lower is better. Sections
+// without a set time always come first.
 const sortTuple = (sortBy: SortKey, m: Measured) => {
   const ties = [m.closedSections, m.gapMinutes, m.daysOnCampus];
-  switch (sortBy) {
-    case "fewest-gaps":
-      return [m.gapMinutes, m.closedSections, m.daysOnCampus];
-    case "fewest-days":
-      return [m.daysOnCampus, m.closedSections, m.gapMinutes];
-    case "latest-start":
-      return [-(m.firstStart ?? 24 * 60), ...ties];
-    case "earliest-finish":
-      return [m.lastEnd ?? 0, ...ties];
-  }
+  const order = {
+    "fewest-gaps": [m.gapMinutes, m.closedSections, m.daysOnCampus],
+    "fewest-days": [m.daysOnCampus, m.closedSections, m.gapMinutes],
+    "latest-start": [-(m.firstStart ?? 24 * 60), ...ties],
+    "earliest-finish": [m.lastEnd ?? 0, ...ties],
+  };
+  return [m.unannouncedSections, ...order[sortBy]];
 };
 
 const compareTuples = (a: number[], b: number[]) => {
@@ -215,13 +214,12 @@ describe("generateSchedules", () => {
     ]);
   });
 
-  it("enforces the rules but never removes locked sections", () => {
+  it("enforces every rule", () => {
     const early = section("DIS", [MON], 8);
     const friday = section("DIS", [FRI], 13);
     const late = section("DIS", [WED], 18);
     const closed = section("DIS", [TUE], 13, { status: "C" });
     const good = section("DIS", [THU], 13);
-    const lockedEarly = section("LAB", [TUE], 8);
     const classes = [
       scheduleClass(section("LEC", [TUE, THU], 11), [
         early,
@@ -230,10 +228,6 @@ describe("generateSchedules", () => {
         closed,
         good,
       ]),
-      scheduleClass(section("LEC", [MON, WED], 14), [lockedEarly], {
-        lockedComponents: ["LAB"],
-        selectedSections: [{ sectionId: lockedEarly.sectionId }],
-      }),
     ];
 
     const { schedules } = generateSchedules(
@@ -249,7 +243,59 @@ describe("generateSchedules", () => {
 
     expect(schedules).toHaveLength(1);
     expect(idsOf(schedules[0], 0)).toContain(good.sectionId);
-    expect(idsOf(schedules[0], 1)).toContain(lockedEarly.sectionId);
+  });
+
+  it("applies the rules to locked sections too, and says they are locked", () => {
+    const lockedEarly = section("LAB", [TUE], 8);
+    const classes = [
+      scheduleClass(section("LEC", [MON, WED], 14), [lockedEarly], {
+        lockedComponents: ["LAB"],
+        selectedSections: [{ sectionId: lockedEarly.sectionId }],
+      }),
+    ];
+
+    const result = generateSchedules(
+      classes,
+      [],
+      preferences({ earliestStart: 10 * 60 })
+    );
+
+    expect(result.schedules).toHaveLength(0);
+    expect(result.reasons).toEqual([
+      { kind: "hours", classIndex: 0, component: "LAB", locked: true },
+    ]);
+    expect(result.relaxations).toEqual(["earliestStart"]);
+  });
+
+  it("keeps no class on any day kept free, locked or not", () => {
+    const lecture = section("LEC", [MON, WED, FRI], 10);
+    const discussion = section("DIS", [TUE], 9);
+    const classes = [
+      scheduleClass(lecture, [discussion, section("DIS", [THU], 9)], {
+        locked: true,
+        selectedSections: [
+          { sectionId: lecture.sectionId },
+          { sectionId: discussion.sectionId },
+        ],
+      }),
+      ...realisticClasses(),
+    ];
+
+    const result = generateSchedules(
+      classes,
+      [],
+      preferences({
+        avoidDays: [true, true, true, true, true, false, false],
+      })
+    );
+
+    expect(result.schedules).toHaveLength(0);
+    expect(result.reasons).toContainEqual({
+      kind: "days",
+      classIndex: 0,
+      component: "LEC",
+      locked: true,
+    });
   });
 
   it("does not schedule around times that are not announced yet", () => {
@@ -266,6 +312,31 @@ describe("generateSchedules", () => {
     );
 
     expect(schedules).toHaveLength(1);
+    expect(schedules[0].unannouncedSections).toBe(1);
+  });
+
+  it("prefers sections with a set time over ones without", () => {
+    const tba: GeneratorSection = {
+      ...section("DIS", [], 0),
+      meetings: [{ days: [], startTime: "00:00:00", endTime: "00:00:00" }],
+    };
+    const timed = section("DIS", [TUE], 15);
+    const classes = [
+      scheduleClass(section("LEC", [MON, WED], 10), [tba, timed]),
+    ];
+
+    for (const sortBy of SORT_KEYS) {
+      const { schedules } = generateSchedules(
+        classes,
+        [],
+        preferences({ sortBy })
+      );
+
+      // Without a time the discussion would add no day and no gap.
+      expect(idsOf(schedules[0], 0)).toContain(timed.sectionId);
+      expect(schedules[0].unannouncedSections).toBe(0);
+      expect(schedules[1].unannouncedSections).toBe(1);
+    }
   });
 
   it("lets sections in different weeks share a time", () => {
@@ -467,6 +538,8 @@ describe("generateSchedules", () => {
         }
         const days = [0, 1, 2, 3, 4, 5, 6].filter((day) => busy[day] > 0);
         const measured: Measured = {
+          unannouncedSections: path.filter((id) => rounded[id].length === 0)
+            .length,
           gapMinutes: days.reduce(
             (sum, day) => sum + last[day] - first[day] - busy[day],
             0
@@ -528,6 +601,8 @@ describe("generateSchedules", () => {
           gapMinutes += Math.max(0, today[i].start - today[i - 1].end);
       }
       return {
+        unannouncedSections: chosen.filter((s) => intervalsOf([s]).length === 0)
+          .length,
         gapMinutes,
         daysOnCampus: days.length,
         closedSections: 0,

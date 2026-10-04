@@ -66,7 +66,12 @@ export const search = (
   let bestCost = Infinity;
   let stopped = false;
 
-  const visit = (depth: number, closed: number, days: number): void => {
+  const visit = (
+    depth: number,
+    closed: number,
+    unannounced: number,
+    days: number
+  ): void => {
     if (
       ++clock.nodes % CLOCK_INTERVAL === 0 &&
       performance.now() > clock.deadline
@@ -103,6 +108,7 @@ export const search = (
         closedSections: closed,
         firstStart,
         lastEnd,
+        unannouncedSections: unannounced,
       });
       if (cost < bestCost) {
         bestCost = cost;
@@ -112,13 +118,14 @@ export const search = (
     }
 
     // Bounds over every open choice, whatever option it ends up with: the
-    // fewest closed sections it adds, the most class minutes it can fill
-    // gaps with, the latest the week can still start, the earliest it can
-    // still end, and the days it meets on in any case. Branch on the choice
-    // with the fewest live options.
+    // fewest closed and unannounced sections it adds, the most class minutes
+    // it can fill gaps with, the latest the week can still start, the
+    // earliest it can still end, and the days it meets on in any case.
+    // Branch on the choice with the fewest live options.
     let next = -1;
     let fewest = Infinity;
     let closedFloor = closed;
+    let unannouncedFloor = unannounced;
     let minutesLeft = 0;
     let startCeiling = firstStart;
     let endFloor = lastEnd;
@@ -129,6 +136,7 @@ export const search = (
 
       let live = 0;
       let fewestClosed = 1;
+      let fewestUnannounced = 1;
       let mostMinutes = 0;
       let latestStart = -Infinity;
       let earliestEnd = Infinity;
@@ -139,6 +147,7 @@ export const search = (
         const option = options[id];
         live++;
         fewestClosed = Math.min(fewestClosed, option.closed);
+        fewestUnannounced = Math.min(fewestUnannounced, option.unannounced);
         mostMinutes = Math.max(mostMinutes, option.minutes);
         latestStart = Math.max(latestStart, option.start);
         earliestEnd = Math.min(earliestEnd, option.end);
@@ -148,6 +157,7 @@ export const search = (
       if (live === 0) return;
 
       closedFloor += fewestClosed;
+      unannouncedFloor += fewestUnannounced;
       minutesLeft += mostMinutes;
       startCeiling = Math.min(startCeiling, latestStart);
       endFloor = Math.max(endFloor, earliestEnd);
@@ -167,6 +177,7 @@ export const search = (
       closedSections: closedFloor,
       firstStart: startCeiling,
       lastEnd: endFloor,
+      unannouncedSections: unannouncedFloor,
     });
     if (floor >= bestCost) return;
 
@@ -201,7 +212,12 @@ export const search = (
         busy[nextRow + day] += end - start;
       }
 
-      visit(depth + 1, closed + option.closed, days | option.days);
+      visit(
+        depth + 1,
+        closed + option.closed,
+        unannounced + option.unannounced,
+        days | option.days
+      );
 
       for (let i = dropped.length - 1; i >= mark; i--) removed[dropped[i]]--;
       dropped.length = mark;
@@ -213,7 +229,7 @@ export const search = (
     }
   };
 
-  visit(0, 0, 0);
+  visit(0, 0, 0, 0);
 
   return { picked: best, stopped };
 };

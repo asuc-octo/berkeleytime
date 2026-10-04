@@ -61,6 +61,8 @@ export type Reason =
       kind: "closed" | "hours" | "days" | "events";
       classIndex: number;
       component: string;
+      /** The removed sections were locked by the student. */
+      locked?: boolean;
     }
   | { kind: "class"; classIndex: number }
   | { kind: "pair"; classIndexes: [number, number] }
@@ -75,6 +77,8 @@ export interface GeneratedSchedule {
   firstStart: number | null;
   lastEnd: number | null;
   closedSections: number;
+  /** Sections without a set time; the rules cannot check them. */
+  unannouncedSections: number;
 }
 
 export interface GenerateResult {

@@ -10,10 +10,11 @@ it. When nothing fits, it says why and which rule to turn off.
 What to know before changing it:
 
 - **Rules are enforced, not weighed.** A section that breaks a rule is left
-  out, unless the student locked it.
+  out, even one the student locked. The explanation then says it was locked.
 - **One sort key, chosen by the student:** fewest gaps, fewest days, latest
   start or earliest finish. Ties go to fewer closed sections, then fewer
-  gaps, then fewer days.
+  gaps, then fewer days. Before all of these, schedules with fewer sections
+  that have no set time come first.
 - **The first result is the true best**, not the best of a sample: the
   search is branch-and-bound, which skips only schedules it can prove are
   worse.
@@ -171,23 +172,36 @@ The dialog that calls all this is
   - meeting on an avoided day;
   - closed, when "only open sections" is on.
 
-  Locked sections are never removed by rules. Busy times remove every
-  section that overlaps them, locked or not.
+  Locked sections follow the rules too, and so do busy times. When a rule
+  removes a locked section, the reason says so ("Your locked Lecture of
+  COMPSCI 61A meets on a day you keep free").
+
+  Sections without a set time (see [Known limits](#known-limits)) cannot be
+  checked, so every rule keeps them.
 
 - **Why.** It is exactly what the student asked for and is easy to explain.
   It also makes the search smaller.
-- **Tradeoff.** Contradictory rules leave nothing, for example keeping
-  Fridays free when a lab only runs on Fridays. The student then sees why
-  and a one-click option to turn that rule off (section 7).
+- **Tradeoff.**
+  - Contradictory rules leave nothing, for example keeping Fridays free when
+    a lab only runs on Fridays. The student then sees why and a one-click
+    option to turn that rule off (section 7).
+  - A rule cannot be limited to the classes still being chosen. A student who
+    locked the 8 AM section they are enrolled in cannot also ask for "no
+    classes before 10" for everything else. The same goes for a locked
+    closed section and "only open sections".
 
 ### 4. Objective: the sort key as one number
 
 - **What.** `objective.ts` turns the sort key and its tie-breaks into a
-  weighted sum. For "fewest gaps" the terms are gaps, then closed sections,
-  then days. Each term's weight is larger than the most that all later terms
-  can add up to, so a lower cost always means better on the first term that
-  differs. This is the standard way to turn a lexicographic order (compare
-  term by term) into one number.
+  weighted sum. For "fewest gaps" the terms are sections without a set time,
+  then gaps, then closed sections, then days. Each term's weight is larger
+  than the most that all later terms can add up to, so a lower cost always
+  means better on the first term that differs. This is the standard way to
+  turn a lexicographic order (compare term by term) into one number.
+
+  Sections without a set time come first because they would otherwise look
+  best: they add no gaps and no days, and no rule can rule them out.
+
 - **Why.** The search compares and bounds one number at a time, which keeps
   it simple and fast.
 - **Tradeoff.** Each term needs a known largest value (gaps up to 7 x 24
@@ -216,6 +230,7 @@ The dialog that calls all this is
   | Gaps            | Time on campus so far, minus class time so far, minus the most class time the open choices can still add; at least 0. Time on campus only grows as classes are added. |
   | Days            | Days used so far, plus days that every remaining option of some open choice meets on.                                                                                 |
   | Closed sections | Closed so far, plus the fewest each open choice can add.                                                                                                              |
+  | No set time     | Sections without a time so far, plus the fewest each open choice can add.                                                                                             |
   | Latest start    | The week cannot start later than the earliest of: the start so far, and for each open choice its latest-starting option.                                              |
   | Earliest finish | The week cannot end earlier than the latest of: the end so far, and for each open choice its earliest-ending option.                                                  |
 
@@ -370,8 +385,11 @@ noted:
   `normalize.ts`. `type` cannot be used for this: nearly every discussion
   and lab is `type` N.
 - **Time not announced.** A section meeting that starts at 00:00 is treated
-  as having no time and never clashes. Busy times are exempt: one that starts
-  at 00:00 really starts at midnight (`toBusyIntervals`).
+  as having no time, and so is a section with no meetings. Such a section
+  never clashes and passes every rule, so schedules with fewer of them come
+  first, and each card shows how many it has ("1 section without a set
+  time"). Busy times are exempt: one that starts at 00:00 really starts at
+  midnight (`toBusyIntervals`).
 - **Half-term sections.** Clashes respect each section's date range, but
   gaps and days do not, so two sections that never run in the same weeks can
   still count toward the same day's gaps.
@@ -398,9 +416,10 @@ npx vitest bench src/lib/scheduler   # benchmarks in generate.bench.ts
     `realLikeClasses()`. For every sort key, the first result must equal the
     true best. Listing and sorting a capped number of schedules fails this
     test.
-  - Also covers locks, exclusions, busy times (including one at midnight),
-    time-TBA meetings, date ranges, Berkeley time, variety, explanations,
-    relaxation hints and the time budget.
+  - Also covers locks, exclusions, rules on locked sections, busy times
+    (including one at midnight), sections without a set time, date ranges,
+    Berkeley time, variety, explanations, relaxation hints and the time
+    budget.
 - **`time.test.ts`, `apply.test.ts`, `preferences.test.ts`:** cover the
   smaller modules.
 

@@ -39,6 +39,8 @@ export interface Option {
   minutes: number;
   /** 1 when `section` is closed, else 0. */
   closed: number;
+  /** 1 when the option has no set time, so rules cannot check it, else 0. */
+  unannounced: number;
 }
 
 /** One decision: which option to use for one component of one class. */
@@ -76,7 +78,7 @@ type CheckKind = "closed" | "hours" | "days" | "events";
 interface Group {
   component: string;
   candidates: GeneratorSection[];
-  /** Locked by the student: rules never remove these. */
+  /** Locked by the student; reasons say so when a rule removes these. */
   locked: boolean;
 }
 
@@ -132,24 +134,18 @@ const toGroups = (scheduleClass: GeneratorClass): Group[] => {
 };
 
 /**
- * The checks every section must pass, in order. The first check that
- * removes every remaining section becomes the reason shown to the student.
+ * The checks every section must pass, in order, locked sections included.
+ * The first check that removes every remaining section becomes the reason
+ * shown to the student.
  */
 const checks = (
   preferences: GeneratorPreferences,
-  busy: Interval[],
-  locked: boolean
+  busy: Interval[]
 ): [
   CheckKind,
   (intervals: Interval[], section: GeneratorSection) => boolean,
 ][] => {
   const { earliestStart, latestEnd, avoidDays, onlyOpenSections } = preferences;
-  // Busy times apply to every section; the rules skip locked ones.
-  const busyCheck: [CheckKind, (intervals: Interval[]) => boolean] = [
-    "events",
-    (intervals) => !intervalsOverlap(intervals, busy),
-  ];
-  if (locked) return [busyCheck];
 
   return [
     ["closed", (_, section) => !onlyOpenSections || !isClosed(section)],
@@ -163,7 +159,7 @@ const checks = (
         ),
     ],
     ["days", (intervals) => intervals.every(({ day }) => !avoidDays[day])],
-    busyCheck,
+    ["events", (intervals) => !intervalsOverlap(intervals, busy)],
   ];
 };
 
@@ -180,7 +176,7 @@ const promisingFirst = (sortBy: SortKey) => (a: Option, b: Option) => {
         : sortBy === "earliest-finish"
           ? Math.max(a.end, 0) - Math.max(b.end, 0)
           : 0;
-  return own || a.closed - b.closed;
+  return a.unannounced - b.unannounced || own || a.closed - b.closed;
 };
 
 const optionKey = (intervals: Interval[], range: DateRange) =>
@@ -213,12 +209,16 @@ export const buildProblem = (
       if (candidates.length === 0) continue;
 
       let kept = candidates;
-      for (const [kind, passes] of checks(preferences, busy, locked)) {
+      for (const [kind, passes] of checks(preferences, busy)) {
         kept = kept.filter((section) =>
           passes(toIntervals(section.meetings), section)
         );
         if (kept.length === 0) {
-          reasons.push({ kind, classIndex, component });
+          reasons.push(
+            locked
+              ? { kind, classIndex, component, locked }
+              : { kind, classIndex, component }
+          );
           break;
         }
       }
@@ -256,6 +256,7 @@ export const buildProblem = (
             0
           ),
           closed: isClosed(section) ? 1 : 0,
+          unannounced: intervals.length === 0 ? 1 : 0,
         });
       }
 

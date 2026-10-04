@@ -94,9 +94,20 @@ const summarize = (generated: GeneratedSchedule) =>
       `${formatTime(generated.firstStart)}–${formatTime(generated.lastEnd)}`,
     generated.closedSections > 0 &&
       `${plural(generated.closedSections, "closed section")}`,
+    generated.unannouncedSections > 0 &&
+      `${plural(generated.unannouncedSections, "section")} without a set time`,
   ]
     .filter(Boolean)
     .join(" · ");
+
+/** "Monday", "Monday and Friday", "Monday, Wednesday and Friday". */
+const listDays = (days: boolean[]) => {
+  const names = days.flatMap((on, day) => (on ? [DAY_NAMES[day]] : []));
+  if (names.length === DAY_NAMES.length) return "any day";
+  return names.length > 1
+    ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+    : names[0];
+};
 
 const describeRelaxation = (rule: Rule, preferences: GeneratorPreferences) =>
   rule === "earliestStart"
@@ -104,9 +115,7 @@ const describeRelaxation = (rule: Rule, preferences: GeneratorPreferences) =>
     : rule === "latestEnd"
       ? `Allow classes after ${formatTime(preferences.latestEnd ?? 0)}`
       : rule === "avoidDays"
-        ? `Allow classes on ${preferences.avoidDays
-            .flatMap((avoid, day) => (avoid ? [DAY_NAMES[day]] : []))
-            .join(" and ")}`
+        ? `Allow classes on ${listDays(preferences.avoidDays)}`
         : "Include closed sections";
 
 export default function GenerateSchedulesDialog({
@@ -232,15 +241,27 @@ export default function GenerateSchedulesDialog({
     const label = (component: string) =>
       componentMap[component as Component] ?? component;
 
+    // "Lecture of COMPSCI 61A", for a section the student locked.
+    const ofClass = (reason: { classIndex: number; component: string }) =>
+      `${label(reason.component)} of ${name(reason.classIndex)}`;
+
     switch (reason.kind) {
       case "closed":
-        return `Every ${label(reason.component)} section of ${name(reason.classIndex)} is closed.`;
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} is closed.`
+          : `Every ${label(reason.component)} section of ${name(reason.classIndex)} is closed.`;
       case "hours":
-        return `No ${label(reason.component)} section of ${name(reason.classIndex)} fits your class hours.`;
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} is outside your class hours.`
+          : `No ${label(reason.component)} section of ${name(reason.classIndex)} fits your class hours.`;
       case "days":
-        return `Every ${label(reason.component)} section of ${name(reason.classIndex)} meets on a day you keep free.`;
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} meets on a day you keep free.`
+          : `Every ${label(reason.component)} section of ${name(reason.classIndex)} meets on a day you keep free.`;
       case "events":
-        return `No ${label(reason.component)} section of ${name(reason.classIndex)} fits around your events.`;
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} overlaps one of your events.`
+          : `No ${label(reason.component)} section of ${name(reason.classIndex)} fits around your events.`;
       case "class":
         return `No combination of ${name(reason.classIndex)}'s own sections fits together.`;
       case "pair":
@@ -370,8 +391,8 @@ export default function GenerateSchedulesDialog({
                   Only use open sections
                 </label>
                 <p className={styles.hint}>
-                  These are rules: schedules that break them are left out.
-                  Locked sections always stay.
+                  These are rules: schedules that break them are left out, even
+                  ones that use your locked sections.
                 </p>
               </div>
               <div className={styles.field}>

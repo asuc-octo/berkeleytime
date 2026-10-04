@@ -68,17 +68,19 @@ const findRelaxations = (
     );
   });
 
-/** Days, gaps, first start, last end and closed sections of a schedule. */
+/** The numbers a schedule is sorted by (see `Totals`). */
 export const totalsOf = (problem: Problem, picked: number[]): Totals => {
   const first = Array(7).fill(Infinity);
   const last = Array(7).fill(-Infinity);
   const busy = Array(7).fill(0);
   let closedSections = 0;
+  let unannouncedSections = 0;
 
   for (const id of picked) {
     if (id < 0) continue;
     const option = problem.options[id];
     closedSections += option.closed;
+    unannouncedSections += option.unannounced;
     for (const { day, start, end } of option.intervals) {
       first[day] = Math.min(first[day], start);
       last[day] = Math.max(last[day], end);
@@ -92,6 +94,7 @@ export const totalsOf = (problem: Problem, picked: number[]): Totals => {
     closedSections,
     firstStart: Infinity,
     lastEnd: -Infinity,
+    unannouncedSections,
   };
   for (let day = 0; day < 7; day++) {
     if (last[day] <= first[day]) continue;
@@ -128,6 +131,7 @@ const toSchedule = (
     firstStart: Number.isFinite(totals.firstStart) ? totals.firstStart : null,
     lastEnd: Number.isFinite(totals.lastEnd) ? totals.lastEnd : null,
     closedSections: totals.closedSections,
+    unannouncedSections: totals.unannouncedSections,
   };
 };
 
