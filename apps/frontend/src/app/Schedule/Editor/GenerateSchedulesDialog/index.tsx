@@ -7,21 +7,18 @@ import {
   DaySelect,
   Dialog,
   Flex,
+  LoadingIndicator,
   Select,
 } from "@repo/theme";
 
 import ScheduleSummary from "@/components/ScheduleSummary";
 import { useUpdateSchedule } from "@/hooks/api";
 import { useTracking } from "@/hooks/api/tracking/useTracking";
-import { ISchedule, IScheduleClass, componentMap } from "@/lib/api";
+import { ISchedule, componentMap } from "@/lib/api";
 import { IScheduleListSchedule } from "@/lib/api/schedules";
 import { Component } from "@/lib/generated/graphql";
+import { GeneratedSchedule, Quality, Reason } from "@/lib/scheduler";
 import { applyGeneratedSelection } from "@/lib/scheduler/apply";
-import {
-  GeneratedSchedule,
-  Reason,
-  generateSchedules,
-} from "@/lib/scheduler/generate";
 import {
   GeneratorPreferences,
   loadPreferences,
@@ -29,6 +26,7 @@ import {
   toMondayFirst,
   toSundayFirst,
 } from "@/lib/scheduler/preferences";
+import { useScheduleGenerator } from "@/lib/scheduler/useScheduleGenerator";
 
 import styles from "./GenerateSchedulesDialog.module.scss";
 
@@ -60,7 +58,7 @@ const formatGaps = (minutes: number) => {
   return `${parts.filter(Boolean).join(" ")} of gaps`;
 };
 
-const summarize = (generated: GeneratedSchedule<IScheduleClass>) =>
+const summarize = (generated: GeneratedSchedule) =>
   [
     `${generated.daysOnCampus} ${generated.daysOnCampus === 1 ? "day" : "days"}`,
     formatGaps(generated.gapMinutes),
@@ -69,6 +67,13 @@ const summarize = (generated: GeneratedSchedule<IScheduleClass>) =>
   ]
     .filter(Boolean)
     .join(" · ");
+
+const describeQuality = (quality: Quality) =>
+  quality.kind === "near-optimal"
+    ? `To stay fast, the search settled for schedules within ${Math.round(quality.gap * 100)}% of the best possible.`
+    : quality.kind === "best-found"
+      ? "The search stopped early, so these may not be the best possible schedules."
+      : null;
 
 export default function GenerateSchedulesDialog({
   schedule,
@@ -100,13 +105,18 @@ export default function GenerateSchedulesDialog({
     [schedule.events]
   );
 
-  const generation = useMemo(() => {
-    if (!open || step !== "results" || classes.length === 0) return null;
-
-    return generateSchedules(classes, events, preferences, {
-      count: visibleCount,
-    });
-  }, [open, step, classes, events, preferences, visibleCount]);
+  // Runs in a Web Worker, so the dialog stays responsive while it searches.
+  const {
+    result: generation,
+    loading,
+    error,
+  } = useScheduleGenerator({
+    classes,
+    events,
+    preferences,
+    count: visibleCount,
+    enabled: open && step === "results" && classes.length > 0,
+  });
 
   const generatedSchedules = useMemo(
     () =>
@@ -118,14 +128,14 @@ export default function GenerateSchedulesDialog({
           semester: schedule.semester,
           sessionId: schedule.sessionId,
           events: schedule.events,
-          classes: generated.classes.map(({ scheduleClass, sectionIds }) => ({
-            class: scheduleClass.class,
-            selectedSections: sectionIds.map((sectionId) => ({ sectionId })),
-            color: scheduleClass.color,
+          classes: generated.classes.map(({ classIndex, sections }) => ({
+            class: classes[classIndex].class,
+            selectedSections: sections.map(({ sectionId }) => ({ sectionId })),
+            color: classes[classIndex].color,
           })),
         })
       ) ?? [],
-    [generation, schedule]
+    [generation, schedule, classes]
   );
 
   // Record one generation per dialog session, once results are computed
@@ -142,7 +152,9 @@ export default function GenerateSchedulesDialog({
     trackEvent("schedule_generate", "schedule", schedule._id, {
       classCount: classes.length,
       generatedCount: generation.schedules.length,
-      complete: generation.complete,
+      quality: generation.quality.kind,
+      elapsedMs: Math.round(generation.stats.elapsedMs),
+      nodes: generation.stats.nodes,
       earliestStart: preferences.earliestStart,
       latestEnd: preferences.latestEnd,
       avoidDayCount: preferences.avoidDays.filter(Boolean).length,
@@ -200,11 +212,11 @@ export default function GenerateSchedulesDialog({
     // classes and every lock and excluded section survive.
     const nextClasses = applyGeneratedSelection(
       schedule.classes,
-      selected.classes.map(({ scheduleClass, sectionIds }) => ({
-        subject: scheduleClass.class.subject,
-        courseNumber: scheduleClass.class.courseNumber,
-        number: scheduleClass.class.number,
-        sectionIds,
+      selected.classes.map(({ classIndex, sections }) => ({
+        subject: classes[classIndex].class.subject,
+        courseNumber: classes[classIndex].class.courseNumber,
+        number: classes[classIndex].class.number,
+        sectionIds: sections.map(({ sectionId }) => sectionId),
       }))
     );
 
@@ -242,7 +254,7 @@ export default function GenerateSchedulesDialog({
 
     setOpen(false);
     setActiveScheduleIndex(null);
-  }, [activeScheduleIndex, generation, schedule, updateSchedule]);
+  }, [activeScheduleIndex, generation, classes, schedule, updateSchedule]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -374,10 +386,9 @@ export default function GenerateSchedulesDialog({
                   Tip: Lock/Hide courses in schedule to control which schedules
                   are generated.
                 </h3>
-                {generation && !generation.complete && (
+                {generation && describeQuality(generation.quality) && (
                   <p className={styles.hint}>
-                    The search stopped early, so these may not be the best
-                    possible schedules.
+                    {describeQuality(generation.quality)}
                   </p>
                 )}
               </Flex>
@@ -403,6 +414,7 @@ export default function GenerateSchedulesDialog({
                       <Flex justify="center">
                         <Button
                           variant="secondary"
+                          disabled={loading}
                           onClick={() =>
                             setVisibleCount((count) => count + PAGE_SIZE)
                           }
@@ -412,6 +424,14 @@ export default function GenerateSchedulesDialog({
                       </Flex>
                     )}
                   </>
+                ) : loading ? (
+                  <Flex
+                    align="center"
+                    justify="center"
+                    className={styles.emptyState}
+                  >
+                    <LoadingIndicator size="lg" />
+                  </Flex>
                 ) : (
                   <Flex
                     direction="column"
@@ -430,6 +450,11 @@ export default function GenerateSchedulesDialog({
                           {describeReason(reason)}
                         </p>
                       ))
+                    ) : error ? (
+                      <p className={styles.emptyStateMessage}>
+                        Something went wrong while generating schedules. Try
+                        again.
+                      </p>
                     ) : (
                       <p className={styles.emptyStateMessage}>
                         The search ran out of time. Lock or hide a class and try
