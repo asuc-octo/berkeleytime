@@ -5,31 +5,21 @@
 import { bench, describe } from "vitest";
 
 import { adversarialClasses, preferences, realisticClasses } from "./fixtures";
-import { GenerateOptions, generateSchedules } from "./index";
-
-const policies: Record<string, GenerateOptions> = {
-  "exact only": { softBudgetMs: 1e9, hardBudgetMs: 1e9, gap: 0 },
-  default: {},
-  "5% gap from the start": { softBudgetMs: 0, gap: 0.05 },
-};
+import { generateSchedules } from "./index";
 
 const inputs = {
-  realistic: realisticClasses(),
-  "worst case": adversarialClasses(),
+  "realistic: 4 large classes": realisticClasses(),
+  "worst case: 1.7 x 10^14 raw combinations": adversarialClasses(),
 };
 
-const mixed = preferences({
-  fewerGaps: true,
-  fewerDays: true,
-  earliestStart: 10 * 60,
-  latestEnd: 17 * 60,
-  avoidDays: [false, false, false, false, true, false, false],
-});
+const rules = preferences({ earliestStart: 9 * 60, latestEnd: 18 * 60 });
 
-for (const [inputName, classes] of Object.entries(inputs))
-  describe(`${inputName}, 8 results, mixed preferences`, () => {
-    for (const [policyName, options] of Object.entries(policies))
-      bench(policyName, () => {
-        generateSchedules(classes, [], mixed, options);
-      });
+for (const [name, classes] of Object.entries(inputs))
+  describe(name, () => {
+    bench("no rules, fewest gaps", () => {
+      generateSchedules(classes, [], preferences());
+    });
+    bench("no classes before 9 or after 6", () => {
+      generateSchedules(classes, [], rules);
+    });
   });

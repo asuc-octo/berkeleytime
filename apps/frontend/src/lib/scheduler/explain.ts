@@ -1,29 +1,30 @@
+import { enumerateSchedules } from "./enumerate";
 import { Problem } from "./normalize";
-import { Clock, search } from "./search";
 import { Reason } from "./types";
 
 /**
- * Finds why no schedule exists (README.md, "Explain"). Tests each class on
- * its own, then each pair of classes, and reports the smallest groups that
- * cannot fit. With 3-6 classes that is at most 21 small searches, so plain
- * enumeration replaces conflict-search algorithms such as QuickXplain.
+ * Finds why no schedule exists (README.md, "Explaining nothing fits"). Tests
+ * each class on its own, then each pair of classes, and reports the
+ * smallest groups that cannot fit. Six classes make 21 such groups, each a
+ * small search, so plain enumeration replaces conflict-search algorithms
+ * such as QuickXplain.
  */
-export const explain = (
-  problem: Problem,
-  classCount: number,
-  clock: Clock
-): Reason[] => {
+export const explain = (problem: Problem, classCount: number): Reason[] => {
   const byClass = Array.from({ length: classCount }, (_, classIndex) =>
-    problem.variables.flatMap((variable, index) =>
-      variable.classIndex === classIndex ? [index] : []
+    problem.choices.flatMap((choice, index) =>
+      choice.classIndex === classIndex ? [index] : []
     )
   );
 
-  // A search cut short by the budget counts as fitting, so a conflict is
-  // only reported when it is proven.
-  const fits = (variableIds: number[]) => {
-    const outcome = search(problem, variableIds, [], 0, clock, 0);
-    return outcome.choice !== null || outcome.finish === "stopped";
+  // A search that hit the step limit proves nothing, so it does not blame.
+  const fits = (choiceIds: number[]) => {
+    const { count, truncated } = enumerateSchedules(
+      problem,
+      choiceIds,
+      1,
+      () => {}
+    );
+    return count > 0 || truncated;
   };
 
   const reasons: Reason[] = [];

@@ -61,12 +61,11 @@ export const scheduleClass = (
   ...options,
 });
 
-/** Defaults with fewer gaps off, so each test turns on only what it checks. */
+/** Default preferences with the given rules turned on. */
 export const preferences = (
   overrides: Partial<GeneratorPreferences> = {}
 ): GeneratorPreferences => ({
   ...DEFAULT_PREFERENCES,
-  fewerGaps: false,
   ...overrides,
 });
 
@@ -75,8 +74,8 @@ export const sectionsOf = (
   classes: GeneratorClass[],
   schedule: GeneratedSchedule
 ) =>
-  schedule.classes.flatMap(({ classIndex, sections }) =>
-    sections.map(({ sectionId }) => {
+  schedule.classes.flatMap(({ classIndex, sectionIds }) =>
+    sectionIds.map((sectionId) => {
       const { primarySection, sections: all } = classes[classIndex].class;
       const found = [primarySection, ...all].find(
         (candidate) => candidate?.sectionId === sectionId

@@ -7,7 +7,6 @@ import {
   DaySelect,
   Dialog,
   Flex,
-  LoadingIndicator,
   Select,
 } from "@repo/theme";
 
@@ -17,16 +16,24 @@ import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ISchedule, componentMap } from "@/lib/api";
 import { IScheduleListSchedule } from "@/lib/api/schedules";
 import { Component } from "@/lib/generated/graphql";
-import { GeneratedSchedule, Quality, Reason } from "@/lib/scheduler";
+import {
+  GeneratedSchedule,
+  RELAXATION_CAP,
+  Reason,
+  Relaxation,
+  Rule,
+  generateSchedules,
+  turnOff,
+} from "@/lib/scheduler";
 import { applyGeneratedSelection } from "@/lib/scheduler/apply";
 import {
   GeneratorPreferences,
+  SortKey,
   loadPreferences,
   savePreferences,
   toMondayFirst,
   toSundayFirst,
 } from "@/lib/scheduler/preferences";
-import { useScheduleGenerator } from "@/lib/scheduler/useScheduleGenerator";
 
 import styles from "./GenerateSchedulesDialog.module.scss";
 
@@ -37,43 +44,82 @@ interface GenerateSchedulesDialogProps {
 
 const PAGE_SIZE = 8;
 
-const formatHour = (minutes: number) => {
-  const hours = minutes / 60;
-  return `${hours % 12 || 12} ${hours < 12 ? "AM" : "PM"}`;
+const DAY_NAMES = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+/** Minutes after midnight as "10 AM" or "12:30 PM". */
+const formatTime = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const hour = `${hours % 12 || 12}`;
+  const clock = rest > 0 ? `${hour}:${String(rest).padStart(2, "0")}` : hour;
+  return `${clock} ${hours < 12 ? "AM" : "PM"}`;
 };
 
 const toHourOptions = (hours: number[]) =>
-  hours.map((hour) => ({ value: hour * 60, label: formatHour(hour * 60) }));
+  hours.map((hour) => ({ value: hour * 60, label: formatTime(hour * 60) }));
 
 const startOptions = toHourOptions([8, 9, 10, 11, 12]);
 const endOptions = toHourOptions([14, 15, 16, 17, 18, 19]);
 
+const sortOptions: { value: SortKey; label: string }[] = [
+  { value: "fewest-gaps", label: "Fewest gaps between classes" },
+  { value: "fewest-days", label: "Fewest days on campus" },
+  { value: "latest-start", label: "Latest start" },
+  { value: "earliest-finish", label: "Earliest finish" },
+];
+
+const plural = (count: number, word: string) =>
+  `${count.toLocaleString()} ${count === 1 ? word : `${word}s`}`;
+
 const formatGaps = (minutes: number) => {
-  // Berkeley lists a class that ends at 12:00 as ending at 11:59, so round.
-  const rounded = Math.round(minutes / 10) * 10;
-  if (rounded === 0) return "no gaps";
-  const hours = Math.floor(rounded / 60);
-  const rest = rounded % 60;
+  if (minutes === 0) return "no gaps";
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
   const parts = [hours > 0 && `${hours} hr`, rest > 0 && `${rest} min`];
   return `${parts.filter(Boolean).join(" ")} of gaps`;
 };
 
 const summarize = (generated: GeneratedSchedule) =>
   [
-    `${generated.daysOnCampus} ${generated.daysOnCampus === 1 ? "day" : "days"}`,
+    plural(generated.daysOnCampus, "day"),
     formatGaps(generated.gapMinutes),
+    generated.firstStart !== null &&
+      generated.lastEnd !== null &&
+      `${formatTime(generated.firstStart)}–${formatTime(generated.lastEnd)}`,
     generated.closedSections > 0 &&
-      `${generated.closedSections} closed ${generated.closedSections === 1 ? "section" : "sections"}`,
+      `${plural(generated.closedSections, "closed section")}`,
   ]
     .filter(Boolean)
     .join(" · ");
 
-const describeQuality = (quality: Quality) =>
-  quality.kind === "near-optimal"
-    ? `To stay fast, the search settled for schedules within ${Math.round(quality.gap * 100)}% of the best possible.`
-    : quality.kind === "best-found"
-      ? "The search stopped early, so these may not be the best possible schedules."
-      : null;
+const describeRelaxation = (
+  { rule, count }: Relaxation,
+  preferences: GeneratorPreferences
+) => {
+  const action =
+    rule === "earliestStart"
+      ? `Allow classes before ${formatTime(preferences.earliestStart ?? 0)}`
+      : rule === "latestEnd"
+        ? `Allow classes after ${formatTime(preferences.latestEnd ?? 0)}`
+        : rule === "avoidDays"
+          ? `Allow classes on ${preferences.avoidDays
+              .flatMap((avoid, day) => (avoid ? [DAY_NAMES[day]] : []))
+              .join(" and ")}`
+          : "Include closed sections";
+  const schedules =
+    count >= RELAXATION_CAP
+      ? `${RELAXATION_CAP.toLocaleString()}+ schedules`
+      : plural(count, "schedule");
+  return `${action} (${schedules})`;
+};
 
 export default function GenerateSchedulesDialog({
   schedule,
@@ -105,18 +151,14 @@ export default function GenerateSchedulesDialog({
     [schedule.events]
   );
 
-  // Runs in a Web Worker, so the dialog stays responsive while it searches.
-  const {
-    result: generation,
-    loading,
-    error,
-  } = useScheduleGenerator({
-    classes,
-    events,
-    preferences,
-    count: visibleCount,
-    enabled: open && step === "results" && classes.length > 0,
-  });
+  // Fast enough to run on the main thread (README.md in lib/scheduler).
+  const generation = useMemo(() => {
+    if (!open || step !== "results" || classes.length === 0) return null;
+
+    return generateSchedules(classes, events, preferences, {
+      count: visibleCount,
+    });
+  }, [open, step, classes, events, preferences, visibleCount]);
 
   const generatedSchedules = useMemo(
     () =>
@@ -128,9 +170,9 @@ export default function GenerateSchedulesDialog({
           semester: schedule.semester,
           sessionId: schedule.sessionId,
           events: schedule.events,
-          classes: generated.classes.map(({ classIndex, sections }) => ({
+          classes: generated.classes.map(({ classIndex, sectionIds }) => ({
             class: classes[classIndex].class,
-            selectedSections: sections.map(({ sectionId }) => ({ sectionId })),
+            selectedSections: sectionIds.map((sectionId) => ({ sectionId })),
             color: classes[classIndex].color,
           })),
         })
@@ -152,14 +194,13 @@ export default function GenerateSchedulesDialog({
     trackEvent("schedule_generate", "schedule", schedule._id, {
       classCount: classes.length,
       generatedCount: generation.schedules.length,
-      quality: generation.quality.kind,
-      elapsedMs: Math.round(generation.stats.elapsedMs),
-      nodes: generation.stats.nodes,
+      total: generation.total,
+      truncated: generation.truncated,
+      elapsedMs: Math.round(generation.elapsedMs),
+      sortBy: preferences.sortBy,
       earliestStart: preferences.earliestStart,
       latestEnd: preferences.latestEnd,
       avoidDayCount: preferences.avoidDays.filter(Boolean).length,
-      fewerDays: preferences.fewerDays,
-      fewerGaps: preferences.fewerGaps,
       onlyOpenSections: preferences.onlyOpenSections,
     });
   }, [open, generation, classes, preferences, schedule._id, trackEvent]);
@@ -182,21 +223,35 @@ export default function GenerateSchedulesDialog({
     setStep("results");
   };
 
+  const relax = (rule: Rule) => {
+    const next = turnOff(rule, preferences);
+    setPreferences(next);
+    savePreferences(next);
+    setVisibleCount(PAGE_SIZE);
+    setActiveScheduleIndex(null);
+  };
+
   const describeReason = (reason: Reason) => {
     const name = (index: number) =>
       `${classes[index].class.subject} ${classes[index].class.courseNumber}`;
+    const label = (component: string) =>
+      componentMap[component as Component] ?? component;
 
     switch (reason.kind) {
       case "closed":
-        return `Every ${componentMap[reason.component as Component] ?? reason.component} section of ${name(reason.classIndex)} is closed. Turn off "Only use open sections" or lock a section.`;
+        return `Every ${label(reason.component)} section of ${name(reason.classIndex)} is closed.`;
+      case "hours":
+        return `No ${label(reason.component)} section of ${name(reason.classIndex)} fits your class hours.`;
+      case "days":
+        return `Every ${label(reason.component)} section of ${name(reason.classIndex)} meets on a day you keep free.`;
       case "events":
-        return `No ${componentMap[reason.component as Component] ?? reason.component} section of ${name(reason.classIndex)} fits around your events.`;
+        return `No ${label(reason.component)} section of ${name(reason.classIndex)} fits around your events.`;
       case "class":
         return `No combination of ${name(reason.classIndex)}'s own sections fits together.`;
       case "pair":
         return `${name(reason.classIndexes[0])} and ${name(reason.classIndexes[1])} always overlap.`;
       case "all":
-        return "No combination fits all of your classes at once. Try hiding one of them.";
+        return "Couldn't find a combination that fits all of your classes at once. Try hiding one of them.";
     }
   };
 
@@ -212,11 +267,11 @@ export default function GenerateSchedulesDialog({
     // classes and every lock and excluded section survive.
     const nextClasses = applyGeneratedSelection(
       schedule.classes,
-      selected.classes.map(({ classIndex, sections }) => ({
+      selected.classes.map(({ classIndex, sectionIds }) => ({
         subject: classes[classIndex].class.subject,
         courseNumber: classes[classIndex].class.courseNumber,
         number: classes[classIndex].class.number,
-        sectionIds: sections.map(({ sectionId }) => sectionId),
+        sectionIds,
       }))
     );
 
@@ -272,10 +327,10 @@ export default function GenerateSchedulesDialog({
           {step === "preferences" ? (
             <div className={styles.preferences}>
               <div className={styles.field}>
-                <p className={styles.label}>Start no earlier than</p>
+                <p className={styles.label}>No classes before</p>
                 <Select
                   value={preferences.earliestStart}
-                  placeholder="No preference"
+                  placeholder="Any time"
                   clearable
                   onChange={(value) =>
                     updatePreferences({
@@ -286,10 +341,10 @@ export default function GenerateSchedulesDialog({
                 />
               </div>
               <div className={styles.field}>
-                <p className={styles.label}>End no later than</p>
+                <p className={styles.label}>No classes after</p>
                 <Select
                   value={preferences.latestEnd}
-                  placeholder="No preference"
+                  placeholder="Any time"
                   clearable
                   onChange={(value) =>
                     updatePreferences({
@@ -310,27 +365,6 @@ export default function GenerateSchedulesDialog({
                 />
               </div>
               <div className={styles.field}>
-                <p className={styles.label}>Also prefer</p>
-                <label className={styles.option}>
-                  <Checkbox
-                    checked={preferences.fewerDays}
-                    onCheckedChange={(checked) =>
-                      updatePreferences({ fewerDays: checked === true })
-                    }
-                  />
-                  Fewer days on campus
-                </label>
-                <label className={styles.option}>
-                  <Checkbox
-                    checked={preferences.fewerGaps}
-                    onCheckedChange={(checked) =>
-                      updatePreferences({ fewerGaps: checked === true })
-                    }
-                  />
-                  Fewer gaps between classes
-                </label>
-              </div>
-              <div className={styles.field}>
                 <label className={styles.option}>
                   <Checkbox
                     checked={preferences.onlyOpenSections}
@@ -341,9 +375,20 @@ export default function GenerateSchedulesDialog({
                   Only use open sections
                 </label>
                 <p className={styles.hint}>
-                  Preferences rank schedules. Only this option removes sections,
-                  and it never removes locked ones.
+                  These are rules: schedules that break them are left out.
+                  Locked sections always stay.
                 </p>
+              </div>
+              <div className={styles.field}>
+                <p className={styles.label}>Sort by</p>
+                <Select
+                  value={preferences.sortBy}
+                  onChange={(value) => {
+                    const sortBy = Array.isArray(value) ? value[0] : value;
+                    if (sortBy) updatePreferences({ sortBy });
+                  }}
+                  options={sortOptions}
+                />
               </div>
             </div>
           ) : (
@@ -386,9 +431,11 @@ export default function GenerateSchedulesDialog({
                   Tip: Lock/Hide courses in schedule to control which schedules
                   are generated.
                 </h3>
-                {generation && describeQuality(generation.quality) && (
+                {generation && generation.total > 0 && (
                   <p className={styles.hint}>
-                    {describeQuality(generation.quality)}
+                    {generation.truncated
+                      ? `Showing the best of the first ${plural(generation.total, "schedule")} found. Lock or hide a class to narrow it down.`
+                      : `${plural(generation.total, "schedule")} fit your rules.`}
                   </p>
                 )}
               </Flex>
@@ -414,7 +461,6 @@ export default function GenerateSchedulesDialog({
                       <Flex justify="center">
                         <Button
                           variant="secondary"
-                          disabled={loading}
                           onClick={() =>
                             setVisibleCount((count) => count + PAGE_SIZE)
                           }
@@ -424,14 +470,6 @@ export default function GenerateSchedulesDialog({
                       </Flex>
                     )}
                   </>
-                ) : loading ? (
-                  <Flex
-                    align="center"
-                    justify="center"
-                    className={styles.emptyState}
-                  >
-                    <LoadingIndicator size="lg" />
-                  </Flex>
                 ) : (
                   <Flex
                     direction="column"
@@ -444,22 +482,30 @@ export default function GenerateSchedulesDialog({
                       <p className={styles.emptyStateMessage}>
                         Select at least one course to generate schedules.
                       </p>
-                    ) : generation && generation.reasons.length > 0 ? (
-                      generation.reasons.map((reason, index) => (
+                    ) : (
+                      generation?.reasons.map((reason, index) => (
                         <p key={index} className={styles.emptyStateMessage}>
                           {describeReason(reason)}
                         </p>
                       ))
-                    ) : error ? (
-                      <p className={styles.emptyStateMessage}>
-                        Something went wrong while generating schedules. Try
-                        again.
-                      </p>
-                    ) : (
-                      <p className={styles.emptyStateMessage}>
-                        The search ran out of time. Lock or hide a class and try
-                        again.
-                      </p>
+                    )}
+                    {generation && generation.relaxations.length > 0 && (
+                      <Flex
+                        direction="column"
+                        align="center"
+                        gap="2"
+                        className={styles.relaxations}
+                      >
+                        {generation.relaxations.map((relaxation) => (
+                          <Button
+                            key={relaxation.rule}
+                            variant="secondary"
+                            onClick={() => relax(relaxation.rule)}
+                          >
+                            {describeRelaxation(relaxation, preferences)}
+                          </Button>
+                        ))}
+                      </Flex>
                     )}
                   </Flex>
                 )}

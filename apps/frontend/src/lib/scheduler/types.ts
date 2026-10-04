@@ -1,7 +1,7 @@
 /*
  * Public input and output types of the schedule generator. Inputs are a
  * structural subset of the GraphQL schedule types, so `IScheduleClass` and
- * `IScheduleEvent` can be passed in directly. See README.md for the pipeline.
+ * `IScheduleEvent` can be passed in directly. See README.md.
  */
 
 /** One weekly meeting of a section. `days` is Monday first. */
@@ -15,7 +15,7 @@ export interface GeneratorSection {
   sectionId: string;
   /** LEC, DIS, LAB, ... A student takes one section per component. */
   component: string;
-  /** ISO dates. Sections that never run in the same weeks cannot conflict. */
+  /** ISO dates. Sections that never run in the same weeks cannot clash. */
   startDate?: string | null;
   endDate?: string | null;
   meetings: GeneratorMeeting[];
@@ -40,76 +40,69 @@ export interface GeneratorClass {
   lockedComponents?: string[] | null;
 }
 
-/** A busy time the student added. Always a hard constraint. */
+/** A busy time the student added. Never overlapped. */
 export interface GeneratorEvent {
   days: (boolean | null)[];
   startTime: string;
   endTime: string;
 }
 
+/** A preference rule that can be turned off when nothing fits. */
+export type Rule =
+  | "earliestStart"
+  | "latestEnd"
+  | "avoidDays"
+  | "onlyOpenSections";
+
 /** Why no schedule exists. Class indexes refer to the input array. */
 export type Reason =
-  | { kind: "closed" | "events"; classIndex: number; component: string }
+  | {
+      /** Which check removed every section of this component. */
+      kind: "closed" | "hours" | "days" | "events";
+      classIndex: number;
+      component: string;
+    }
   | { kind: "class"; classIndex: number }
   | { kind: "pair"; classIndexes: [number, number] }
   | { kind: "all" };
 
-/**
- * How good the results are guaranteed to be.
- * - optimal: the search finished with exact pruning.
- * - near-optimal: the search finished, but pruned with a relative gap after
- *   the soft budget, so each result costs at most (1 + gap) times the best.
- * - best-found: the hard budget stopped the search; no guarantee.
- */
-export type Quality =
-  | { kind: "optimal" }
-  | { kind: "near-optimal"; gap: number }
-  | { kind: "best-found" };
-
-export interface ChosenSection {
-  sectionId: string;
-  /**
-   * Sections that could replace this one without changing anything else:
-   * same-time sections first, then other times that still fit.
-   */
-  backups: string[];
-}
-
-export interface GeneratedClassChoice {
-  /** Index into the classes passed to generateSchedules. */
-  classIndex: number;
-  sections: ChosenSection[];
+export interface Relaxation {
+  rule: Rule;
+  /** Schedules that fit without this rule, counted up to RELAXATION_CAP. */
+  count: number;
 }
 
 export interface GeneratedSchedule {
-  classes: GeneratedClassChoice[];
-  /** Preference cost; lower is better. Comparable only within one run. */
-  cost: number;
+  classes: { classIndex: number; sectionIds: string[] }[];
   daysOnCampus: number;
   /** Time between classes on the same day, not counting passing time. */
   gapMinutes: number;
+  /** Earliest start and latest end of the week, minutes after midnight. */
+  firstStart: number | null;
+  lastEnd: number | null;
   closedSections: number;
 }
 
 export interface GenerateResult {
+  /** Up to `count` schedules, in the chosen sort order. */
   schedules: GeneratedSchedule[];
-  quality: Quality;
-  /** Filled only when there are no schedules and the search finished. */
+  /** Schedules that pass every rule, counted until the search stops. */
+  total: number;
+  /**
+   * True when the cap or the step limit stopped the search early, so the
+   * sort only covered the `total` schedules found so far.
+   */
+  truncated: boolean;
+  /** Why nothing fits, when there are no schedules. */
   reasons: Reason[];
-  stats: {
-    /** Search nodes visited, across every search in this run. */
-    nodes: number;
-    elapsedMs: number;
-  };
+  /** Rules that, turned off alone, would let schedules fit. */
+  relaxations: Relaxation[];
+  elapsedMs: number;
 }
 
 export interface GenerateOptions {
   /** How many schedules to return. Default 8. */
   count?: number;
-  /** Exact search until this many ms; then prune with `gap`. Default 150. */
-  softBudgetMs?: number;
-  /** Stop every search after this many ms. Default 500. */
-  hardBudgetMs?: number;
-  /** Relative tolerance used after the soft budget. Default 0.05 (5%). */
-  gap?: number;
+  /** Stop listing schedules after this many. Default 20,000. */
+  cap?: number;
 }
