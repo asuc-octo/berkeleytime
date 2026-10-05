@@ -2,8 +2,8 @@
 env: prod
 
 # Paths on the host machine. Must be different for each environment.
-# db83 is a fresh data dir for MongoDB 8.3; the pre-8.3 Bitnami data in /data/<env>/db is
-# left untouched for rollback (8.0 data files cannot be opened directly by 8.3).
+# db83 is a fresh data dir for MongoDB 8.3, filled by dump/restore; the Bitnami 8.2 data in
+# /data/<env>/db is left untouched so rollback is just reinstalling the old chart.
 hostPath: /data/prod/db83
 # mongot keeps its Lucene index segments here. Losing it only forces a full re-index.
 hostPathSearch: /data/prod/mongot

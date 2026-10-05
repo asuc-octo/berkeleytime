@@ -118,9 +118,9 @@ Check `mongot` health with `k exec bt-prod-mongo-search-0 -- curl -s localhost:8
 
 > **Note:** `mongodump` does not include search index definitions, and the restore/reset jobs drop the `bt` database. Search indexes must be recreated after any restore, so keep their definitions in code and create them idempotently (as `docker/mongodb/init/01-create-search-indexes.js` does locally).
 
-### Upgrading an environment from the Bitnami chart (MongoDB 8.0)
+### Upgrading an environment from the Bitnami chart (MongoDB 8.2)
 
-8.0 data files cannot be opened by 8.3, so each environment is migrated with dump and restore into a new data directory (`/data/<env>/db83`). The old directory (`/data/<env>/db`) is left in place for rollback. Do dev, then stage, then prod (prod needs a short maintenance window).
+The Bitnami releases run MongoDB 8.2.5 (FCV 8.2). An in-place 8.2 → 8.3 binary upgrade is supported, but each environment is instead migrated with dump and restore into a new data directory (`/data/<env>/db83`), so the old directory (`/data/<env>/db`) stays untouched and rollback is just reinstalling the old chart. Do dev, then stage, then prod (prod needs a short maintenance window).
 
 1. Create and apply the `bt-<env>-mongo-auth` Secret (see above).
 2. Suspend writers: `k patch cronjob <name> -p '{"spec":{"suspend":true}}'` for each `bt-<env>-app-datapuller-*` cronjob.
