@@ -5,7 +5,10 @@ import { getCloudflareAnalyticsData } from "./controllers/cloudflare";
 import { getCollectionAnalyticsData } from "./controllers/collection";
 import { getDeviceAnalyticsData } from "./controllers/device";
 import { getGeneralActivityAnalytics } from "./controllers/generalActivity";
-import { getGradesSessionUsersData } from "./controllers/grades";
+import {
+  getGradesPercentileSliderUsage,
+  getGradesSessionUsersData,
+} from "./controllers/grades";
 import { getGradTrakAnalyticsData } from "./controllers/plan";
 import {
   getOptionalResponseAnalyticsData,
@@ -279,6 +282,26 @@ const resolvers = {
     ) => {
       try {
         return await getGradesSessionUsersData(context, days);
+      } catch (error: unknown) {
+        if (error instanceof GraphQLError) {
+          throw error;
+        }
+        throw new GraphQLError(
+          typeof error === "object" && error !== null && "message" in error
+            ? String(error.message)
+            : "An unexpected error occurred",
+          { extensions: { code: "INTERNAL_SERVER_ERROR" } }
+        );
+      }
+    },
+
+    gradesPercentileSliderUsage: async (
+      _: unknown,
+      { days }: { days: number },
+      context: RequestContext
+    ) => {
+      try {
+        return await getGradesPercentileSliderUsage(context, days);
       } catch (error: unknown) {
         if (error instanceof GraphQLError) {
           throw error;

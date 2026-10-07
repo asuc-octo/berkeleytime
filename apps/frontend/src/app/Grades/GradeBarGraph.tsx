@@ -20,6 +20,7 @@ import {
 } from "@/components/Chart";
 import { CourseAnalyticsGraphBox } from "@/components/CourseAnalytics/CourseAnalyticsLayout";
 import type { Input } from "@/components/CourseAnalytics/types";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import type { IGradeDistribution } from "@/lib/api";
 import { LETTER_GRADES, PASS_FAIL } from "@/lib/grades";
@@ -32,6 +33,18 @@ const HORIZONTAL_CHART_HEIGHT_RATIO = 0.72;
 const HORIZONTAL_ENTER_WIDTH = 600;
 const HORIZONTAL_EXIT_WIDTH = 640;
 const RANGE_UPDATE_THROTTLE_MS = 100;
+const MIN_PERCENTILE_ADJUSTMENT = 5;
+const ADJUSTMENT_PERSISTENCE_MS = 1_000;
+const SLIDER_KEYS = new Set([
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "ArrowDown",
+  "Home",
+  "End",
+  "PageUp",
+  "PageDown",
+]);
 
 const ordinal = (n: number): string => {
   const s = ["th", "st", "nd", "rd"];
@@ -71,6 +84,19 @@ export default function GradeBarGraph({
   outputs,
   hoveredIndex = null,
 }: GradeBarGraphProps) {
+  const { updateSessionMetadata } = useTracking();
+  const adjustmentTimerRef = useRef<number | null>(null);
+  const cancelPendingAdjustment = useCallback(() => {
+    if (adjustmentTimerRef.current !== null) {
+      window.clearTimeout(adjustmentTimerRef.current);
+      adjustmentTimerRef.current = null;
+    }
+  }, []);
+  const markPercentileSliderTouched = useCallback(() => {
+    cancelPendingAdjustment();
+    // Preserve the original touch flag alongside the stricter adjustment flag.
+    updateSessionMetadata("grades", { percentileSliderUsed: true });
+  }, [cancelPendingAdjustment, updateSessionMetadata]);
   const rootRef = useRef<HTMLDivElement>(null);
   const { height: viewportHeight } = useWindowDimensions();
   const [horizontal, setHorizontal] = useState(false);
@@ -82,6 +108,15 @@ export default function GradeBarGraph({
   const throttleTimeoutRef = useRef<number | null>(null);
   const pendingRangeRef = useRef<[number, number] | null>(null);
   const lastRangeCommitAtRef = useRef(0);
+  const hasOutputs = outputs.length > 0;
+
+  useEffect(() => {
+    window.addEventListener("pagehide", cancelPendingAdjustment);
+    return () => {
+      cancelPendingAdjustment();
+      window.removeEventListener("pagehide", cancelPendingAdjustment);
+    };
+  }, [cancelPendingAdjustment]);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -213,15 +248,19 @@ export default function GradeBarGraph({
 
   const handleSliderLiveChange = useCallback(
     (next: [number, number]) => {
+      // Radix reports keyboard value changes after the commit callback.
+      // Preserve that commit's timer when both callbacks describe the same range.
+      if (!isSameRange(liveRangeRef.current, next)) cancelPendingAdjustment();
       liveRangeRef.current = next;
       updateThumbLabels();
       scheduleSliderRangeUpdate(next);
     },
-    [scheduleSliderRangeUpdate, updateThumbLabels]
+    [cancelPendingAdjustment, scheduleSliderRangeUpdate, updateThumbLabels]
   );
 
   const handleSliderCommit = useCallback(
     (next: [number, number]) => {
+      cancelPendingAdjustment();
       if (throttleTimeoutRef.current !== null) {
         window.clearTimeout(throttleTimeoutRef.current);
         throttleTimeoutRef.current = null;
@@ -230,18 +269,37 @@ export default function GradeBarGraph({
       liveRangeRef.current = next;
       updateThumbLabels();
       commitSliderRange(next);
+
+      // A committed filter must stay at least five points from the default
+      // for a full second. Touches and quick changes remain tracked separately.
+      if (
+        hasOutputs &&
+        (next[0] >= MIN_PERCENTILE_ADJUSTMENT ||
+          100 - next[1] >= MIN_PERCENTILE_ADJUSTMENT)
+      ) {
+        adjustmentTimerRef.current = window.setTimeout(() => {
+          adjustmentTimerRef.current = null;
+          updateSessionMetadata("grades", { percentileSliderAdjusted: true });
+        }, ADJUSTMENT_PERSISTENCE_MS);
+      }
     },
-    [commitSliderRange, updateThumbLabels]
+    [
+      cancelPendingAdjustment,
+      commitSliderRange,
+      hasOutputs,
+      updateSessionMetadata,
+      updateThumbLabels,
+    ]
   );
-  const hasOutputs = outputs.length > 0;
   const shouldAnimateBars = hoveredIndex === null && outputs.length <= 2;
 
   useEffect(() => {
     if (hasOutputs) return;
+    cancelPendingAdjustment();
     setSliderRange([0, 100]);
     liveRangeRef.current = [0, 100];
     updateThumbLabels();
-  }, [hasOutputs, updateThumbLabels]);
+  }, [cancelPendingAdjustment, hasOutputs, updateThumbLabels]);
 
   const cellFills = useMemo(() => {
     return dataKeys.map((key, keyIndex) =>
@@ -447,14 +505,21 @@ export default function GradeBarGraph({
           Drag the slider to highlight grades within a percentile range.
         </p>
         <div className={styles.sliderWrapper}>
-          <Slider
-            min={0}
-            max={100}
-            step={1}
-            defaultValue={sliderRange}
-            onValueChange={handleSliderLiveChange}
-            onValueCommit={handleSliderCommit}
-          />
+          <div
+            onPointerDownCapture={markPercentileSliderTouched}
+            onKeyDownCapture={(event) => {
+              if (SLIDER_KEYS.has(event.key)) markPercentileSliderTouched();
+            }}
+          >
+            <Slider
+              min={0}
+              max={100}
+              step={1}
+              defaultValue={sliderRange}
+              onValueChange={handleSliderLiveChange}
+              onValueCommit={handleSliderCommit}
+            />
+          </div>
           <div className={styles.thumbLabels}>
             <span
               ref={thumbLabelLeftRef}
