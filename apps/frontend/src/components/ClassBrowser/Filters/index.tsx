@@ -328,8 +328,15 @@ export default function Filters() {
             multi
             clearable
             value={selectedRequirements}
+            selectedLabel={
+              selectedRequirements.length > 1
+                ? `${selectedRequirements.length} requirements selected`
+                : undefined
+            }
             placeholder="Filter by requirements"
             disabled={requirementOptions.length === 0}
+            side="bottom"
+            maxListHeight={280}
             onChange={(value) => {
               if (value === null) {
                 updateBreadths([]);
@@ -359,6 +366,12 @@ export default function Filters() {
             options={requirementOptions}
             emptyMessage="No requirements found."
           />
+          {universityRequirements.length > 0 && breadths.length > 0 && (
+            <p className={styles.helperText}>
+              Showing classes that meet a selected University Requirement and a
+              selected L&amp;S Breadth.
+            </p>
+          )}
         </div>
         <div className={styles.formControl}>
           <p className={styles.label}>Class Level</p>

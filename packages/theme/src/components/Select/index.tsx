@@ -406,7 +406,7 @@ export function Select<T>({
       <div className={styles.triggerLabel}>
         {hasSelection
           ? Array.isArray(activeElem)
-            ? getMultiSelectionText(activeElem)
+            ? (selectedLabel ?? getMultiSelectionText(activeElem))
             : (selectedLabel ??
               (activeElem
                 ? (activeElem as OptionItem<T>).label
