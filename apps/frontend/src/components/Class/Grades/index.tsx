@@ -17,6 +17,7 @@ import {
   formatters,
 } from "@/components/Chart";
 import ClassChartBox from "@/components/Class/ClassChartBox";
+import { getInputSearchParam } from "@/components/CourseAnalytics/types";
 import { useGetClassGrades } from "@/hooks/api/classes/useGetClass";
 import useClass from "@/hooks/useClass";
 import { GRADES } from "@/lib/grades";
@@ -110,7 +111,10 @@ export default function Grades() {
 
   const gradeExplorerUrl = useMemo(() => {
     const params = new URLSearchParams();
-    params.set("input", `${subject};${courseId}`);
+    params.set(
+      "input",
+      getInputSearchParam({ subject, courseId, courseNumber })
+    );
 
     if (typeof window !== "undefined") {
       try {
@@ -124,7 +128,7 @@ export default function Grades() {
     }
 
     return `/grades?${params.toString()}`;
-  }, [subject, courseId]);
+  }, [subject, courseId, courseNumber]);
 
   const subtitle = useMemo(() => {
     if (!courseTotal || courseTotal <= 0) return null;

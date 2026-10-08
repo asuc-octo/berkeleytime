@@ -13,6 +13,7 @@ import {
 } from "@repo/theme";
 import type { Option, SelectTab } from "@repo/theme";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { sortByTermDescending } from "@/lib/classes";
 
 import {
@@ -69,6 +70,7 @@ export default function Filters() {
   } = useFilterContext();
 
   const navigate = useNavigate();
+  const { trackEvent } = useTracking();
 
   const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
   const [activeRequirementTab, setActiveRequirementTab] = useState<string>(
@@ -273,7 +275,10 @@ export default function Filters() {
           <div className={styles.sortControls}>
             <Select
               value={sortBy}
-              onChange={(value) => updateSortBy(value as SortBy)}
+              onChange={(value) => {
+                updateSortBy(value as SortBy);
+                trackEvent("search_filter_applied", "catalog_filter", "sort", { value });
+              }}
               options={Object.values(SortBy).map((sortOption) => {
                 return { value: sortOption, label: sortOption };
               })}
@@ -301,7 +306,10 @@ export default function Filters() {
             placeholder="Select class levels"
             disabled={isClassLevelDisabled}
             onChange={(v) => {
-              if (Array.isArray(v)) updateLevels(v);
+              if (Array.isArray(v)) {
+                updateLevels(v);
+                if (v.length > 0) trackEvent("search_filter_applied", "catalog_filter", "level", { value: v });
+              }
             }}
             options={Object.values(Level).map((level) => {
               return {
@@ -334,10 +342,11 @@ export default function Filters() {
               if (value.type === "breadth") {
                 updateBreadths([value.value]);
                 updateUniversityRequirements([]);
-                return;
+              } else {
+                updateUniversityRequirements([value.value]);
+                updateBreadths([]);
               }
-              updateUniversityRequirements([value.value]);
-              updateBreadths([]);
+              trackEvent("search_filter_applied", "catalog_filter", "requirement", { value: value.value, type: value.type });
             }}
             searchPlaceholder="Search requirements..."
             emptyMessage="No requirements found."
@@ -352,7 +361,10 @@ export default function Filters() {
             max={5}
             step={1}
             value={units}
-            onValueChange={updateUnits}
+            onValueChange={(v) => {
+              updateUnits(v);
+              trackEvent("search_filter_applied", "catalog_filter", "units", { value: v });
+            }}
             labels={["0", "1", "2", "3", "4", "5+"]}
           />
         </div>
@@ -362,9 +374,10 @@ export default function Filters() {
             value={enrollmentFilter}
             placeholder="Select enrollment status"
             clearable
-            onChange={(value) =>
-              updateEnrollmentFilter(value as EnrollmentFilter | null)
-            }
+            onChange={(value) => {
+              updateEnrollmentFilter(value as EnrollmentFilter | null);
+              if (value != null) trackEvent("search_filter_applied", "catalog_filter", "enrollment", { value });
+            }}
             options={Object.values(EnrollmentFilter).map((filter) => ({
               value: filter,
               label: filter,
@@ -380,7 +393,10 @@ export default function Filters() {
             placeholder="Filter by grading options"
             disabled={isGradingDisabled}
             onChange={(v) => {
-              if (Array.isArray(v)) updateGradingFilters(v);
+              if (Array.isArray(v)) {
+                updateGradingFilters(v);
+                if (v.length > 0) trackEvent("search_filter_applied", "catalog_filter", "grading", { value: v });
+              }
             }}
             options={gradingOptions}
           />
@@ -391,6 +407,8 @@ export default function Filters() {
             days={daysArray}
             updateDays={(v) => {
               setDaysArray([...v]);
+              const selectedCount = v.filter(Boolean).length;
+              if (selectedCount > 0) trackEvent("search_filter_applied", "catalog_filter", "days", { value: selectedCount });
             }}
             size="sm"
           />
@@ -408,6 +426,7 @@ export default function Filters() {
                 onChange={(e) => {
                   const value = e.target.value || null;
                   updateTimeRange([value, timeRange[1]]);
+                  if (value) trackEvent("search_filter_applied", "catalog_filter", "time_start", { value });
                 }}
                 className={styles.timeInput}
               />
@@ -425,6 +444,7 @@ export default function Filters() {
                 onChange={(e) => {
                   const value = e.target.value || null;
                   updateTimeRange([timeRange[0], value]);
+                  if (value) trackEvent("search_filter_applied", "catalog_filter", "time_end", { value });
                 }}
                 className={styles.timeInput}
               />
