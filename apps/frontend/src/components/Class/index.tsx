@@ -34,6 +34,7 @@ import {
   ErrorDialog,
   SubmitRatingPopup,
 } from "@/components/Class/Ratings/RatingDialog";
+import { getInputSearchParam } from "@/components/CourseAnalytics/types";
 import EnrollmentDisplay from "@/components/EnrollmentDisplay";
 import { ReservedSeatingHoverCard } from "@/components/ReservedSeatingHoverCard";
 import Units from "@/components/Units";
@@ -671,7 +672,11 @@ export default function Class({
                   {hasCourseGradeSummary && (
                     <Link
                       to={`/grades?input=${encodeURIComponent(
-                        `${_class.subject};${_class.courseNumber}`
+                        getInputSearchParam({
+                          subject: _class.subject,
+                          courseId: _class.courseId,
+                          courseNumber: _class.courseNumber,
+                        })
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
