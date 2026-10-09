@@ -1,17 +1,37 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Button, ColoredSquare, Dialog, Flex } from "@repo/theme";
+import {
+  Button,
+  Checkbox,
+  ColoredSquare,
+  DaySelect,
+  Dialog,
+  Flex,
+  Select,
+} from "@repo/theme";
 
 import ScheduleSummary from "@/components/ScheduleSummary";
 import { useUpdateSchedule } from "@/hooks/api";
 import { useTracking } from "@/hooks/api/tracking/useTracking";
-import { ISchedule, IScheduleClass } from "@/lib/api";
-import {
-  IScheduleEvent,
-  IScheduleListClass,
-  IScheduleListSchedule,
-} from "@/lib/api/schedules";
+import { ISchedule, componentMap } from "@/lib/api";
+import { IScheduleListSchedule } from "@/lib/api/schedules";
 import { Component } from "@/lib/generated/graphql";
+import {
+  GeneratedSchedule,
+  Reason,
+  Rule,
+  generateSchedules,
+  turnOff,
+} from "@/lib/scheduler";
+import { applyGeneratedSelection } from "@/lib/scheduler/apply";
+import {
+  GeneratorPreferences,
+  SortKey,
+  loadPreferences,
+  savePreferences,
+  toMondayFirst,
+  toSundayFirst,
+} from "@/lib/scheduler/preferences";
 
 import styles from "./GenerateSchedulesDialog.module.scss";
 
@@ -20,434 +40,93 @@ interface GenerateSchedulesDialogProps {
   children: React.ReactNode;
 }
 
-// Helper function to parse time string "HH:MM" to minutes since midnight
-const parseTime = (time: string): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
+const PAGE_SIZE = 8;
+
+const DAY_NAMES = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+/** Minutes after midnight as "10 AM" or "12:30 PM". */
+const formatTime = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const hour = `${hours % 12 || 12}`;
+  const clock = rest > 0 ? `${hour}:${String(rest).padStart(2, "0")}` : hour;
+  return `${clock} ${hours < 12 ? "AM" : "PM"}`;
 };
 
-interface ComponentIndex {
-  component: Component | undefined;
-  index: number;
-}
+const toHourOptions = (hours: number[]) =>
+  hours.map((hour) => ({ value: hour * 60, label: formatTime(hour * 60) }));
 
-/**
- * Generates all possible combinations (like permutations) of indices
- * where the value at each index i ranges from 0 up to limitArray[i] (exclusive).
- * * @param limitArray An array where limitArray[i] is the exclusive upper limit for the i-th position.
- * @returns An array of number arrays, where each inner array is a generated combination.
- */
-function generatePermutations(
-  limitArray: ComponentIndex[],
-  blockedArray: ComponentIndex[],
-  lockedArray: ComponentIndex[]
-): ComponentIndex[][] {
-  const results: ComponentIndex[][] = [];
+const startOptions = toHourOptions([8, 9, 10, 11, 12]);
+const endOptions = toHourOptions([14, 15, 16, 17, 18, 19]);
 
-  // Helper function for the recursive DFS
-  function dfs(index: number, currentCombination: ComponentIndex[]) {
-    // 1. Base Case: If we've processed all indices, save the combination
-    if (index === limitArray.length) {
-      results.push([...currentCombination]); // Push a copy of the combination
-      return;
-    }
+const sortOptions: { value: SortKey; label: string }[] = [
+  { value: "fewest-gaps", label: "Fewest gaps between classes" },
+  { value: "fewest-days", label: "Fewest days on campus" },
+  { value: "latest-start", label: "Latest start" },
+  { value: "earliest-finish", label: "Earliest finish" },
+];
 
-    // The exclusive upper limit for the current index is limitArray[index] + 1
-    // since your example [4, 2, 1] means 0...4, 0...2, 0...1 (inclusive ranges)
-    // Wait, looking at your prompt again:
-    // index 0 is in range 0...3 (4 possibilities) -> limitArray[0] = 4 is the count
-    // index 1 is in range 0...2 (3 possibilities) -> limitArray[1] = 3 is the count
-    // index 2 is in range 0...1 (2 possibilities) -> limitArray[2] = 2 is the count
-    //
-    // Assuming your input [4, 2, 1] means:
-    // Position 0 has 4 values: {0, 1, 2, 3}
-    // Position 1 has 2 values: {0, 1}
-    // Position 2 has 1 value: {0}
-    //
-    // I will interpret the input L = [4, 2, 1] as the NUMBER OF POSSIBILITIES for each index.
-    const locked = lockedArray.find(
-      (ci) => limitArray[index].component === ci.component
-    );
+const plural = (count: number, word: string) =>
+  `${count.toLocaleString()} ${count === 1 ? word : `${word}s`}`;
 
-    const lowerLimit =
-      (locked?.component ?? -1) === limitArray[index].component
-        ? locked!.index
-        : 0;
-    const upperLimit =
-      (locked?.component ?? -1) === limitArray[index].component
-        ? locked!.index + 1
-        : limitArray[index].index;
-
-    let added = 0;
-    // 2. Recursive Step: Iterate through all possible values for the current index
-    for (let value = lowerLimit; value < upperLimit; value++) {
-      if (
-        blockedArray.find(
-          (ci) =>
-            ci.component === limitArray[index].component && ci.index === value
-        )
-      )
-        continue;
-
-      // Add the current value to the combination
-      currentCombination.push({
-        component: limitArray[index].component,
-        index: value,
-      });
-
-      // Recurse to the next index
-      dfs(index + 1, currentCombination);
-
-      // Backtrack: Remove the last element to prepare for the next iteration
-      // This is crucial for exploring other paths/values at the current index.
-      currentCombination.pop();
-      added++;
-    }
-    // edge case where everything was excluded, we still want this to function
-    if (added === 0) {
-      currentCombination.push({
-        component: limitArray[index].component,
-        index: -1,
-      });
-      dfs(index + 1, currentCombination);
-      currentCombination.pop();
-    }
-  }
-
-  // Start the DFS from the first index (0) with an empty combination
-  dfs(0, []);
-
-  return results;
-}
-
-const detectMeetingOverlap = (
-  section1: IScheduleClass["class"]["primarySection"] | undefined,
-  section2: IScheduleClass["class"]["primarySection"] | undefined,
-  event?: IScheduleEvent
-): boolean => {
-  if (!section1 || (!section2 && !event)) return false;
-  if (
-    section1.meetings.length === 0 ||
-    (section2 && section2.meetings.length === 0)
-  )
-    return false;
-  for (const meeting1 of section1.meetings) {
-    if (section2) {
-      for (const meeting2 of section2.meetings) {
-        // Check if meetings occur on the same day
-        const sameDay = meeting1.days?.some(
-          (day, index) => day && meeting2.days?.[index]
-        );
-        if (!sameDay) continue;
-
-        // Both meetings must have valid times
-        if (
-          !meeting1.startTime ||
-          !meeting1.endTime ||
-          !meeting2.startTime ||
-          !meeting2.endTime
-        )
-          continue;
-
-        const start1 = parseTime(meeting1.startTime);
-        const end1 = parseTime(meeting1.endTime);
-        const start2 = parseTime(meeting2.startTime);
-        const end2 = parseTime(meeting2.endTime);
-
-        // Two time ranges overlap if: start1 < end2 AND start2 < end1
-        // This covers all overlap cases: partial overlap, one containing the other, etc.
-        if (start1 < end2 && start2 < end1) {
-          return true;
-        }
-      }
-    } else if (event) {
-      // Check if meetings occur on the same day
-      const sameDay = meeting1.days?.some(
-        (day, index) => day && event.days?.[index]
-      );
-      if (!sameDay) continue;
-
-      // Both meetings must have valid times
-      if (
-        !meeting1.startTime ||
-        !meeting1.endTime ||
-        !event.startTime ||
-        !event.endTime
-      )
-        continue;
-
-      const start1 = parseTime(meeting1.startTime);
-      const end1 = parseTime(meeting1.endTime);
-      const start2 = parseTime(event.startTime);
-      const end2 = parseTime(event.endTime);
-
-      // Two time ranges overlap if: start1 < end2 AND start2 < end1
-      // This covers all overlap cases: partial overlap, one containing the other, etc.
-      if (start1 < end2 && start2 < end1) {
-        return true;
-      }
-    }
-  }
-  return false;
+const formatGaps = (minutes: number) => {
+  if (minutes === 0) return "no gaps";
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const parts = [hours > 0 && `${hours} hr`, rest > 0 && `${rest} min`];
+  return `${parts.filter(Boolean).join(" ")} of gaps`;
 };
 
-const validCombination = (
-  classes: IScheduleClass[],
-  events: IScheduleEvent[],
-  current: ComponentIndex[][],
-  newClass: ComponentIndex[],
-  newClassIndex: number
-): boolean => {
-  for (const ci1 of newClass) {
-    if (ci1.index === -1) continue;
-    const section1 =
-      ci1.index === classes[newClassIndex].class.sections.length
-        ? classes[newClassIndex].class.primarySection
-        : classes[newClassIndex].class.sections[ci1.index];
-    for (let i = 0; i < current.length; i++) {
-      for (const ci2 of current[i]) {
-        const section2 =
-          ci2.index === classes[i].class.sections.length
-            ? classes[i].class.primarySection
-            : classes[i].class.sections[ci2.index];
-        if (detectMeetingOverlap(section1, section2)) {
-          return false;
-        }
-      }
-    }
-    for (const event of events) {
-      if (detectMeetingOverlap(section1, undefined, event)) {
-        return false;
-      }
-    }
-  }
-  // detect self overlap
-  for (const ci1 of newClass) {
-    if (ci1.index === -1) continue;
-    for (const ci2 of newClass) {
-      if (ci2.index === -1) continue;
-      if (ci1.index === ci2.index) continue;
-      const section1 =
-        ci1.index === classes[newClassIndex].class.sections.length
-          ? classes[newClassIndex].class.primarySection
-          : classes[newClassIndex].class.sections[ci1.index];
-      const section2 =
-        ci2.index === classes[newClassIndex].class.sections.length
-          ? classes[newClassIndex].class.primarySection
-          : classes[newClassIndex].class.sections[ci2.index];
-      if (detectMeetingOverlap(section1, section2)) {
-        return false;
-      }
-    }
-  }
-  return true;
+const summarize = (generated: GeneratedSchedule) =>
+  [
+    plural(generated.daysOnCampus, "day"),
+    formatGaps(generated.gapMinutes),
+    generated.firstStart !== null &&
+      generated.lastEnd !== null &&
+      `${formatTime(generated.firstStart)}–${formatTime(generated.lastEnd)}`,
+    generated.closedSections > 0 &&
+      `${plural(generated.closedSections, "closed section")}`,
+    generated.unannouncedSections > 0 &&
+      `${plural(generated.unannouncedSections, "section")} without a set time`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+/** "Monday", "Monday and Friday", "Monday, Wednesday and Friday". */
+const listDays = (days: boolean[]) => {
+  const names = days.flatMap((on, day) => (on ? [DAY_NAMES[day]] : []));
+  if (names.length === DAY_NAMES.length) return "any day";
+  return names.length > 1
+    ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+    : names[0];
 };
 
-// Generate all combinations of sections from selected classes
-const generateCombinations = (
-  selectedClasses: IScheduleClass[],
-  selectedEvents: IScheduleEvent[]
-): IScheduleListClass[][] | string => {
-  if (selectedClasses.length === 0) return [];
-
-  // expected max number of generated schedules
-  const maxGeneratedSchedules = selectedClasses.reduce((acc, selectedClass) => {
-    if (selectedClass.locked || selectedClass.hidden) return acc;
-    const componentCounts = [
-      selectedClass.class.primarySection,
-      ...selectedClass.class.sections,
-    ]
-      .filter((s) => s && s.component)
-      .reduce(
-        (acc, s) => {
-          if (
-            selectedClass.blockedSections?.includes(s!.sectionId) ||
-            selectedClass.lockedComponents?.includes(s!.component)
-          )
-            return acc;
-          acc[s!.component] = (acc[s!.component] || 0) + 1;
-          return acc;
-        },
-        {} as Record<Component, number>
-      );
-    return acc * Object.values(componentCounts).reduce((acc, c) => acc * c, 1);
-  }, 1);
-
-  if (maxGeneratedSchedules > 500)
-    return "Too many possible schedules. Please lock/hide some courses and/or labs/discussions to generate fewer schedules.";
-
-  const generate = (
-    current: ComponentIndex[][],
-    index: number
-  ): Array<ComponentIndex[][]> => {
-    if (index == selectedClasses.length) return [current];
-
-    const allSections = [
-      ...selectedClasses[index].class.sections,
-      selectedClasses[index].class.primarySection,
-    ];
-
-    // map component index to index in allSections
-    const componentArrays: Map<Component | undefined, number[]> =
-      allSections.reduce((acc, curr, i) => {
-        if (!curr || !curr.component) return acc;
-        if (acc.get(curr.component)) {
-          acc.get(curr.component)?.push(i);
-        } else {
-          acc.set(curr.component, [i]);
-        }
-        return acc;
-      }, new Map<Component, number[]>());
-
-    // map component to list of associated sections
-    const byComponent: Map<Component, IScheduleClass["class"]["sections"]> =
-      allSections.reduce((acc, section) => {
-        if (!section?.component) return acc;
-        if (acc.get(section.component)) {
-          acc.get(section.component)?.push(section);
-        } else {
-          acc.set(section.component, [section]);
-        }
-        return acc;
-      }, new Map<Component, IScheduleClass["class"]["sections"]>());
-
-    // map component to number of sections
-    const componentCounts = Array.from(byComponent.entries()).map(
-      ([component, sections]) => {
-        return {
-          component,
-          index: sections.length,
-        };
-      }
-    );
-
-    // generate all permutations of components
-    const allCombinations = selectedClasses[index].locked
-      ? // if a class is locked, we do not generate any permutations
-        [
-          selectedClasses[index].selectedSections.reduce((acc, sid) => {
-            if (
-              selectedClasses[index].class.primarySection?.sectionId ==
-              sid.sectionId
-            )
-              return [
-                ...acc,
-                {
-                  index: selectedClasses[index].class.sections.length,
-                  component:
-                    selectedClasses[index].class.primarySection?.component,
-                },
-              ];
-            const sectionIndex = selectedClasses[
-              index
-            ].class.sections.findIndex((s) => s.sectionId === sid.sectionId);
-            if (sectionIndex == -1) return acc;
-            return [
-              ...acc,
-              {
-                index: sectionIndex,
-                component:
-                  selectedClasses[index].class.sections[sectionIndex].component,
-              },
-            ];
-          }, [] as ComponentIndex[]),
-        ]
-      : generatePermutations(
-          componentCounts,
-          selectedClasses[index].blockedSections
-            ?.filter(
-              (s) =>
-                s !== undefined &&
-                allSections.find((s1) => s1?.sectionId === s)?.component
-            )
-            .map((s) => ({
-              component: allSections.find((s1) => s1?.sectionId === s)!
-                .component,
-              // find index of section in component
-              index:
-                byComponent
-                  .get(
-                    allSections.find((s1) => s1?.sectionId === s)!.component
-                  )!
-                  .findIndex((s1) => s1.sectionId === s) ?? -1,
-            })) ?? [],
-          selectedClasses[index].lockedComponents?.map((c) => ({
-            component: c,
-            // find index of section in component
-            index:
-              byComponent
-                .get(c)
-                ?.findIndex((s) =>
-                  selectedClasses[index].selectedSections.some(
-                    (sid) => sid.sectionId === s.sectionId
-                  )
-                ) ?? -1,
-          })) ?? []
-        );
-
-    // now, get the true index of each section
-    const adjCombinations = selectedClasses[index].locked
-      ? allCombinations
-      : allCombinations.map((combination) => {
-          return combination.map((ci) => {
-            if (ci.index === -1)
-              return {
-                component: ci.component,
-                index: -1,
-              };
-            return {
-              component: ci.component,
-              index: componentArrays.get(ci.component)![ci.index],
-            };
-          });
-        });
-
-    // filter out combinations that have time conflicts
-    const filtered = adjCombinations.filter((combination) => {
-      return validCombination(
-        selectedClasses,
-        selectedEvents,
-        current,
-        combination,
-        index
-      );
-    });
-    // recurse
-    return filtered
-      .map((c) => [...current, c])
-      .map((c) => {
-        return [...generate(c, index + 1)];
-      })
-      .flat();
-  };
-
-  const combinations = generate([], 0);
-  return combinations.map((c) => {
-    return c.map((cis, index) => {
-      return {
-        class: selectedClasses[index].class,
-        selectedSections: cis
-          .filter((ci) => ci.index !== -1)
-          .map((ci) => {
-            return {
-              sectionId:
-                ci.index === selectedClasses[index].class.sections.length
-                  ? selectedClasses[index].class.primarySection?.sectionId
-                  : selectedClasses[index].class.sections[ci.index]?.sectionId,
-            };
-          }),
-        color: selectedClasses[index].color,
-      };
-    });
-  });
-};
+const describeRelaxation = (rule: Rule, preferences: GeneratorPreferences) =>
+  rule === "earliestStart"
+    ? `Allow classes before ${formatTime(preferences.earliestStart ?? 0)}`
+    : rule === "latestEnd"
+      ? `Allow classes after ${formatTime(preferences.latestEnd ?? 0)}`
+      : rule === "avoidDays"
+        ? `Allow classes on ${listDays(preferences.avoidDays)}`
+        : "Include closed sections";
 
 export default function GenerateSchedulesDialog({
   schedule,
   children,
 }: GenerateSchedulesDialogProps) {
   const [open, setOpen] = useState(false);
-  const [selectedClasses, setSelectedClasses] = useState<IScheduleClass[]>([]);
+  const [step, setStep] = useState<"preferences" | "results">("preferences");
+  const [preferences, setPreferences] =
+    useState<GeneratorPreferences>(loadPreferences);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [activeScheduleIndex, setActiveScheduleIndex] = useState<number | null>(
     null
   );
@@ -455,244 +134,435 @@ export default function GenerateSchedulesDialog({
   const { trackEvent } = useTracking();
 
   // Guards schedule_generate so it fires once per time the dialog is opened,
-  // not on every recomputation of the combinations.
+  // not on every recomputation of the results.
   const trackedOpenRef = useRef(false);
 
-  // Initialize selected classes from schedule when dialog opens
-  useEffect(() => {
-    if (open) {
-      const nonHiddenClasses = schedule.classes.filter((c) => !c.hidden);
-      setSelectedClasses(nonHiddenClasses);
-    }
-  }, [open, schedule.classes]);
+  // Hidden classes and events are left out of generation, as before.
+  const classes = useMemo(
+    () => schedule.classes.filter((c) => !c.hidden),
+    [schedule.classes]
+  );
 
-  // Sync selected classes with schedule changes (when classes are added/removed or properties change)
-  useEffect(() => {
-    if (open) {
-      setSelectedClasses((prevSelectedClasses) => {
-        // Update selected classes to match current schedule
-        // Update existing classes with latest data (including lockedComponents, blockedSections, etc.)
-        const updatedSelectedClasses = prevSelectedClasses
-          .map((selectedClass) => {
-            const scheduleClass = schedule.classes.find(
-              (c) =>
-                c.class.subject === selectedClass.class.subject &&
-                c.class.courseNumber === selectedClass.class.courseNumber &&
-                c.class.number === selectedClass.class.number
-            );
-            // If class still exists, return updated version from schedule
-            return scheduleClass || selectedClass;
-          })
-          .filter(
-            (selectedClass) =>
-              // Remove classes that no longer exist or are now hidden
-              schedule.classes.some(
-                (c) =>
-                  c.class.subject === selectedClass.class.subject &&
-                  c.class.courseNumber === selectedClass.class.courseNumber &&
-                  c.class.number === selectedClass.class.number
-              ) && !selectedClass.hidden
-          );
+  const events = useMemo(
+    () => schedule.events.filter((e) => !e.hidden),
+    [schedule.events]
+  );
 
-        // Add new classes that are not hidden
-        const newClasses = schedule.classes.filter(
-          (c) =>
-            !c.hidden &&
-            !updatedSelectedClasses.some(
-              (sc) =>
-                sc.class.subject === c.class.subject &&
-                sc.class.courseNumber === c.class.courseNumber &&
-                sc.class.number === c.class.number
-            )
-        );
+  const generating = open && step === "results" && classes.length > 0;
 
-        return [...updatedSelectedClasses, ...newClasses];
+  // A few milliseconds on realistic schedules, and bounded by a time budget,
+  // so it runs on the main thread (README.md in lib/scheduler).
+  const generation = useMemo(() => {
+    if (!generating) return null;
+
+    try {
+      return generateSchedules(classes, events, preferences, {
+        count: visibleCount,
       });
+    } catch {
+      return null;
     }
-  }, [schedule.classes, open]);
+  }, [generating, classes, events, preferences, visibleCount]);
 
-  // Generate all valid schedule combinations
-  const generatedSchedules = useMemo(() => {
-    if (selectedClasses.length === 0) return [];
+  const generatedSchedules = useMemo(
+    () =>
+      generation?.schedules.map(
+        (generated): IScheduleListSchedule => ({
+          _id: schedule._id,
+          name: schedule.name,
+          year: schedule.year,
+          semester: schedule.semester,
+          sessionId: schedule.sessionId,
+          events: schedule.events,
+          classes: generated.classes.map(({ classIndex, sectionIds }) => ({
+            class: classes[classIndex].class,
+            selectedSections: sectionIds.map((sectionId) => ({ sectionId })),
+            color: classes[classIndex].color,
+          })),
+        })
+      ) ?? [],
+    [generation, schedule, classes]
+  );
 
-    const combinations = generateCombinations(
-      selectedClasses,
-      schedule.events.filter((e) => !e.hidden)
-    );
-
-    if (typeof combinations === "string") return combinations;
-
-    // Convert combinations to IScheduleListSchedule format for ScheduleSummary
-    return combinations.map((combination) => {
-      const scheduleData: IScheduleListSchedule = {
-        _id: schedule._id,
-        name: schedule.name,
-        year: schedule.year,
-        semester: schedule.semester,
-        sessionId: schedule.sessionId,
-        events: schedule.events,
-        classes: combination,
-      };
-
-      return scheduleData;
-    });
-  }, [selectedClasses, schedule, open]);
-
-  // Record one generation per dialog session, once combinations are computed
+  // Record one generation per dialog session, once results are computed
   useEffect(() => {
     if (!open) {
       trackedOpenRef.current = false;
       return;
     }
 
-    if (trackedOpenRef.current || selectedClasses.length === 0) return;
+    if (trackedOpenRef.current || !generation) return;
 
     trackedOpenRef.current = true;
 
     trackEvent("schedule_generate", "schedule", schedule._id, {
-      classCount: selectedClasses.length,
-      generatedCount: Array.isArray(generatedSchedules)
-        ? generatedSchedules.length
-        : 0,
-      tooManyCombinations: typeof generatedSchedules === "string",
+      classCount: classes.length,
+      generatedCount: generation.schedules.length,
+      stoppedEarly: generation.stoppedEarly,
+      elapsedMs: Math.round(generation.stats.elapsedMs),
+      nodes: generation.stats.nodes,
+      sortBy: preferences.sortBy,
+      earliestStart: preferences.earliestStart,
+      latestEnd: preferences.latestEnd,
+      avoidDayCount: preferences.avoidDays.filter(Boolean).length,
+      onlyOpenSections: preferences.onlyOpenSections,
     });
-  }, [open, selectedClasses, generatedSchedules, schedule._id, trackEvent]);
+  }, [open, generation, classes, preferences, schedule._id, trackEvent]);
+
+  const openDialog = () => {
+    setPreferences(loadPreferences());
+    setStep("preferences");
+    setVisibleCount(PAGE_SIZE);
+    setActiveScheduleIndex(null);
+    setOpen(true);
+  };
+
+  const updatePreferences = (update: Partial<GeneratorPreferences>) =>
+    setPreferences((current) => ({ ...current, ...update }));
+
+  const showResults = () => {
+    savePreferences(preferences);
+    setVisibleCount(PAGE_SIZE);
+    setActiveScheduleIndex(null);
+    setStep("results");
+  };
+
+  const relax = (rule: Rule) => {
+    const next = turnOff(rule, preferences);
+    setPreferences(next);
+    savePreferences(next);
+    setVisibleCount(PAGE_SIZE);
+    setActiveScheduleIndex(null);
+  };
+
+  const describeReason = (reason: Reason) => {
+    const name = (index: number) =>
+      `${classes[index].class.subject} ${classes[index].class.courseNumber}`;
+    const label = (component: string) =>
+      componentMap[component as Component] ?? component;
+
+    // "Lecture of COMPSCI 61A", for a section the student locked.
+    const ofClass = (reason: { classIndex: number; component: string }) =>
+      `${label(reason.component)} of ${name(reason.classIndex)}`;
+
+    switch (reason.kind) {
+      case "closed":
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} is closed.`
+          : `Every ${label(reason.component)} section of ${name(reason.classIndex)} is closed.`;
+      case "hours":
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} is outside your class hours.`
+          : `No ${label(reason.component)} section of ${name(reason.classIndex)} fits your class hours.`;
+      case "days":
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} meets on a day you keep free.`
+          : `Every ${label(reason.component)} section of ${name(reason.classIndex)} meets on a day you keep free.`;
+      case "events":
+        return reason.locked
+          ? `Your locked ${ofClass(reason)} overlaps one of your events.`
+          : `No ${label(reason.component)} section of ${name(reason.classIndex)} fits around your events.`;
+      case "class":
+        return `No combination of ${name(reason.classIndex)}'s own sections fits together.`;
+      case "pair":
+        return `${name(reason.classIndexes[0])} and ${name(reason.classIndexes[1])} always overlap.`;
+      case "all":
+        return "Couldn't find a combination that fits all of your classes at once. Try hiding one of them.";
+    }
+  };
 
   const handleSelectSchedule = useCallback(() => {
-    if (activeScheduleIndex === null || typeof generatedSchedules === "string")
-      return;
+    const selected =
+      activeScheduleIndex === null
+        ? undefined
+        : generation?.schedules[activeScheduleIndex];
 
-    const selectedSchedule = generatedSchedules[activeScheduleIndex];
+    if (!selected) return;
 
-    if (!selectedSchedule) return;
+    // Change only the selected sections of generated classes, so hidden
+    // classes and every lock and excluded section survive.
+    const nextClasses = applyGeneratedSelection(
+      schedule.classes,
+      selected.classes.map(({ classIndex, sectionIds }) => ({
+        subject: classes[classIndex].class.subject,
+        courseNumber: classes[classIndex].class.courseNumber,
+        number: classes[classIndex].class.number,
+        sectionIds,
+      }))
+    );
 
-    // Update the schedule with the selected combination
     updateSchedule(
       schedule._id,
       {
-        classes: selectedSchedule.classes.map(
+        classes: nextClasses.map(
           ({
             selectedSections,
             class: { number, subject, courseNumber },
             color,
+            hidden,
+            locked,
+            blockedSections,
+            lockedComponents,
           }) => ({
             subject,
             courseNumber,
             number,
             sectionIds: selectedSections.map((s) => s.sectionId),
             color,
+            hidden,
+            locked,
+            blockedSections,
+            lockedComponents,
           })
         ),
       },
       {
         optimisticResponse: {
-          updateSchedule: schedule,
+          updateSchedule: { ...schedule, classes: nextClasses },
         },
       }
     );
 
     setOpen(false);
     setActiveScheduleIndex(null);
-  }, [activeScheduleIndex, generatedSchedules, schedule._id, updateSchedule]);
+  }, [activeScheduleIndex, generation, classes, schedule, updateSchedule]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Overlay />
       <Dialog.Card className={styles.card}>
-        <Dialog.Header title="Generated Schedules" hasCloseButton />
+        <Dialog.Header
+          title={
+            step === "preferences"
+              ? "Schedule preferences"
+              : "Generated Schedules"
+          }
+          hasCloseButton
+        />
         <Dialog.Body className={styles.body}>
-          <Flex
-            direction="column"
-            gap="4"
-            width="100%"
-            className={styles.container}
-          >
+          {step === "preferences" ? (
+            <div className={styles.preferences}>
+              <div className={styles.field}>
+                <p className={styles.label}>No classes before</p>
+                <Select
+                  value={preferences.earliestStart}
+                  placeholder="Any time"
+                  clearable
+                  onChange={(value) =>
+                    updatePreferences({
+                      earliestStart: Array.isArray(value) ? value[0] : value,
+                    })
+                  }
+                  options={startOptions}
+                />
+              </div>
+              <div className={styles.field}>
+                <p className={styles.label}>No classes after</p>
+                <Select
+                  value={preferences.latestEnd}
+                  placeholder="Any time"
+                  clearable
+                  onChange={(value) =>
+                    updatePreferences({
+                      latestEnd: Array.isArray(value) ? value[0] : value,
+                    })
+                  }
+                  options={endOptions}
+                />
+              </div>
+              <div className={styles.field}>
+                <p className={styles.label}>Keep these days free</p>
+                <DaySelect
+                  size="sm"
+                  days={toSundayFirst(preferences.avoidDays)}
+                  updateDays={(days) =>
+                    updatePreferences({ avoidDays: toMondayFirst(days) })
+                  }
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.option}>
+                  <Checkbox
+                    checked={preferences.onlyOpenSections}
+                    onCheckedChange={(checked) =>
+                      updatePreferences({ onlyOpenSections: checked === true })
+                    }
+                  />
+                  Only use open sections
+                </label>
+                <p className={styles.hint}>
+                  These are rules: schedules that break them are left out, even
+                  ones that use your locked sections.
+                </p>
+              </div>
+              <div className={styles.field}>
+                <p className={styles.label}>Sort by</p>
+                <Select
+                  value={preferences.sortBy}
+                  onChange={(value) => {
+                    const sortBy = Array.isArray(value) ? value[0] : value;
+                    if (sortBy) updatePreferences({ sortBy });
+                  }}
+                  options={sortOptions}
+                />
+              </div>
+            </div>
+          ) : (
             <Flex
               direction="column"
-              gap="2"
+              gap="4"
               width="100%"
-              className={styles.headerSection}
+              className={styles.container}
             >
               <Flex
-                direction="row"
+                direction="column"
                 gap="2"
-                wrap="wrap"
-                className={styles.selectedClasses}
+                width="100%"
+                className={styles.headerSection}
               >
-                {selectedClasses.map((selectedClass) => {
-                  const courseName = `${selectedClass.class.subject} ${selectedClass.class.courseNumber}`;
-                  return (
-                    <Flex
-                      direction="row"
-                      gap="2"
-                      align="center"
-                      key={courseName}
-                    >
-                      <ColoredSquare
-                        color={`var(--${selectedClass.color}-500)`}
-                      />
-                      <span>{courseName}</span>
-                    </Flex>
-                  );
-                })}
-              </Flex>
-              <h3 className={styles.tip}>
-                Tip: Lock/Hide courses in schedule to control which schedules
-                are generated.
-              </h3>
-            </Flex>
-
-            <div className={styles.scrollableContent}>
-              {generatedSchedules.length > 0 &&
-              typeof generatedSchedules !== "string" ? (
-                <div className={styles.grid}>
-                  {generatedSchedules.map((generatedSchedule, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setActiveScheduleIndex(index)}
-                      className={`${styles.scheduleCard} ${activeScheduleIndex === index ? styles.selected : ""}`}
-                    >
-                      <ScheduleSummary schedule={generatedSchedule} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
                 <Flex
-                  direction="column"
-                  align="center"
-                  justify="center"
-                  className={styles.emptyState}
+                  direction="row"
+                  gap="2"
+                  wrap="wrap"
+                  className={styles.selectedClasses}
                 >
-                  <p>
-                    {typeof generatedSchedules === "string"
-                      ? generatedSchedules
-                      : "No valid schedule combinations found."}
-                  </p>
-                  {typeof generatedSchedules !== "string" && (
-                    <p className={styles.emptyStateMessage}>
-                      {selectedClasses.length === 0
-                        ? "Select at least one course to generate schedules."
-                        : "All section combinations have time conflicts."}
-                    </p>
-                  )}
+                  {classes.map((selectedClass) => {
+                    const courseName = `${selectedClass.class.subject} ${selectedClass.class.courseNumber}`;
+                    return (
+                      <Flex
+                        direction="row"
+                        gap="2"
+                        align="center"
+                        key={courseName}
+                      >
+                        <ColoredSquare
+                          color={`var(--${selectedClass.color}-500)`}
+                        />
+                        <span>{courseName}</span>
+                      </Flex>
+                    );
+                  })}
                 </Flex>
-              )}
-            </div>
-          </Flex>
+                <h3 className={styles.tip}>
+                  Tip: Lock/Hide courses in schedule to control which schedules
+                  are generated.
+                </h3>
+                {generation?.stoppedEarly && (
+                  <p className={styles.hint}>
+                    The search ran out of time, so it may have missed better
+                    schedules. Lock or hide a class to narrow it down.
+                  </p>
+                )}
+              </Flex>
+
+              <div className={styles.scrollableContent}>
+                {generatedSchedules.length > 0 && generation ? (
+                  <>
+                    <div className={styles.grid}>
+                      {generatedSchedules.map((generatedSchedule, index) => (
+                        <div
+                          key={index}
+                          onClick={() => setActiveScheduleIndex(index)}
+                          className={`${styles.scheduleCard} ${activeScheduleIndex === index ? styles.selected : ""}`}
+                        >
+                          <ScheduleSummary schedule={generatedSchedule} />
+                          <p className={styles.caption}>
+                            {summarize(generation.schedules[index])}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    {generation.schedules.length === visibleCount && (
+                      <Flex justify="center">
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            setVisibleCount((count) => count + PAGE_SIZE)
+                          }
+                        >
+                          Show more
+                        </Button>
+                      </Flex>
+                    )}
+                  </>
+                ) : (
+                  <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    className={styles.emptyState}
+                  >
+                    <p>No valid schedule combinations found.</p>
+                    {classes.length === 0 ? (
+                      <p className={styles.emptyStateMessage}>
+                        Select at least one course to generate schedules.
+                      </p>
+                    ) : generating && !generation ? (
+                      <p className={styles.emptyStateMessage}>
+                        Something went wrong while generating schedules. Try
+                        again.
+                      </p>
+                    ) : (
+                      generation?.reasons.map((reason, index) => (
+                        <p key={index} className={styles.emptyStateMessage}>
+                          {describeReason(reason)}
+                        </p>
+                      ))
+                    )}
+                    {generation && generation.relaxations.length > 0 && (
+                      <Flex
+                        direction="column"
+                        align="center"
+                        gap="2"
+                        className={styles.relaxations}
+                      >
+                        {generation.relaxations.map((rule) => (
+                          <Button
+                            key={rule}
+                            variant="secondary"
+                            onClick={() => relax(rule)}
+                          >
+                            {describeRelaxation(rule, preferences)}
+                          </Button>
+                        ))}
+                      </Flex>
+                    )}
+                  </Flex>
+                )}
+              </div>
+            </Flex>
+          )}
         </Dialog.Body>
         <Dialog.Footer>
-          <Button variant="secondary" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSelectSchedule}
-            disabled={activeScheduleIndex === null}
-          >
-            Select Schedule
-          </Button>
+          {step === "preferences" ? (
+            <>
+              <Button variant="secondary" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={showResults}>Show schedules</Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => setStep("preferences")}
+              >
+                Edit preferences
+              </Button>
+              <Button variant="secondary" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSelectSchedule}
+                disabled={activeScheduleIndex === null}
+              >
+                Select Schedule
+              </Button>
+            </>
+          )}
         </Dialog.Footer>
       </Dialog.Card>
-      <div onClick={() => setOpen(true)}>{children}</div>
+      <div onClick={openDialog}>{children}</div>
     </Dialog.Root>
   );
 }
