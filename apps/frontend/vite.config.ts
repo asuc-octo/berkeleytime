@@ -43,6 +43,7 @@ export default defineConfig({
     ],
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": resolve(__dirname, "src"),
       "react-is": reactIsRoot,
