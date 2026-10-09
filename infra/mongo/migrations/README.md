@@ -4,9 +4,9 @@ MongoDB shell (mongosh) scripts to migrate data.
 
 **Docker:** The `migrations` folder is mounted at `/migrations` in the MongoDB container (see `docker-compose.yml`).
 
-**Kubernetes:** The `infra/mongo` Helm chart bundles these files in a ConfigMap named `<release-name>-migrations` and mounts it at `/migrations` in the MongoDB pod (see `values.yaml` → `mongodb.extraVolumes`). No extra `--set` is required for the ConfigMap name.
+**Kubernetes:** The `infra/mongo` Helm chart bundles these files in a ConfigMap named `<release-name>-migrations` and mounts it at `/migrations` in the `mongod` pod (see `templates/mongod.yaml`). Auth is enabled, so run `mongosh` with the root credentials exposed in the pod, e.g. `kubectl exec -it bt-prod-mongo-mongodb-0 -- sh -c 'mongosh $MONGO_AUTH'` (`migrations/run-migration.sh` does this for you).
 
-For staging, prefer `helm upgrade ... ./infra/mongo -f ./infra/mongo/values-staging.yaml` (sets `hostPath`, smaller `mongodb.resources`, and `env: stage`). If you install from default `values.yaml` only, override `hostPath` every upgrade so the PV is not patched (e.g. `--set hostPath=/data/stage/db`).
+For staging and dev, use `helm upgrade ... ./infra/mongo -f ./infra/mongo/values-staging.yaml` (or `values-dev.yaml`), which set `hostPath`, `hostPathSearch`, smaller `resources`, and `env`. If you install from default `values.yaml` only, override `hostPath`/`hostPathSearch` every upgrade so the PVs are not patched.
 
 ## add-selected-plan-requirements.js
 

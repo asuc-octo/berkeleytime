@@ -31,8 +31,10 @@ helm install bt-base oci://registry-1.docker.io/octoberkeleytime/bt-base --names
 # BUILD CHARTS AND PUSH TO REGISTRY
 # ==========
 
-helm package ./infra/mongo --version 1.0.0 --dependency-update
-helm push ./bt-mongo-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
+# Create bt-<env>-mongo-auth Secrets (or seal them into auth.encryptedData) before installing mongo.
+# See infra/mongo/values.yaml → auth.
+helm package ./infra/mongo --version 2.0.0
+helm push ./bt-mongo-2.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 helm package ./infra/redis --version 1.0.0 --dependency-update
 helm push ./bt-redis-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 
@@ -41,24 +43,23 @@ helm push ./bt-redis-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 # ==========
 
 helm install bt-prod-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0 \
-    --set mongodb.resourcesPreset=large
+    --version=2.0.0
 
 helm install bt-prod-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0
 
 helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
     --version=1.0.0 \
-    --set host=berkeleytime.com
+    --set host=berkeleytime.com \
+    --set mongoAuthSecret=bt-prod-mongo-auth
 
 # ==========
 # STAGING
 # ==========
 
 helm install bt-stage-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0 \
-    --set mongodb.commonLabels.env=stage \
-    --set hostPath=/data/stage/db
+    --version=2.0.0 \
+    -f ./infra/mongo/values-staging.yaml
 
 helm install bt-stage-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0 \
@@ -72,6 +73,7 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
     --set backend.image.tag=latest \
     --set host=staging.berkeleytime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
+    --set mongoAuthSecret=bt-stage-mongo-auth \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
 
 # ==========
@@ -79,9 +81,8 @@ helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --n
 # ==========
 
 helm install bt-dev-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0 \
-    --set mongodb.commonLabels.env=dev \
-    --set hostPath=/data/dev/db
+    --version=2.0.0 \
+    -f ./infra/mongo/values-dev.yaml
 
 helm install bt-dev-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
     --version=1.0.0 \
@@ -96,6 +97,7 @@ helm install bt-dev-app oci://registry-1.docker.io/octoberkeleytime/bt-app --nam
     --set backend.image.tag=dev1 \
     --set host=dev1.berkeleytime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb-0.bt-dev-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt \
+    --set mongoAuthSecret=bt-dev-mongo-auth \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
 

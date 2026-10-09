@@ -59,3 +59,21 @@ app.kubernetes.io/name: semantic-search
 {{- define "bt-app.semanticSearchName" -}}
 {{ .Release.Name }}-semantic-search
 {{- end -}}
+
+{{/*
+MongoDB credentials. When mongoAuthSecret is set, MONGODB_URI is rebuilt from mongoUri with the app user's
+password from that Secret (bt-mongo chart's "<release>-auth"); env entries override the ConfigMap's MONGODB_URI.
+Must be included under a container's `env:`.
+*/}}
+{{- define "bt-app.mongoEnv" -}}
+{{- if .Values.mongoAuthSecret }}
+{{- $sep := ternary "&" "?" (contains "?" .Values.mongoUri) }}
+- name: MONGODB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.mongoAuthSecret }}
+      key: app-password
+- name: MONGODB_URI
+  value: {{ printf "mongodb://%s:$(MONGODB_PASSWORD)@%s%sauthSource=admin" .Values.mongoUser (trimPrefix "mongodb://" .Values.mongoUri) $sep | quote }}
+{{- end }}
+{{- end -}}

@@ -32,8 +32,11 @@ if [ "$ENVIRONMENT" = "prod" ]; then
 elif [ "$ENVIRONMENT" = "stage" ]; then
     RELEASE_NAME="bt-stage-mongo"
     VALUES_FILE="$CHART_DIR/values-staging.yaml"
+elif [ "$ENVIRONMENT" = "dev" ]; then
+    RELEASE_NAME="bt-dev-mongo"
+    VALUES_FILE="$CHART_DIR/values-dev.yaml"
 else
-    echo "Error: Unknown environment '$ENVIRONMENT'. Use 'prod' or 'stage'."
+    echo "Error: Unknown environment '$ENVIRONMENT'. Use 'prod', 'stage', or 'dev'."
     exit 1
 fi
 
@@ -46,7 +49,7 @@ if [ -z "$MIGRATION_FILE" ]; then
     echo "Available migrations:"
     ls -1 "$SCRIPT_DIR"/*.js 2>/dev/null | xargs -n1 basename || echo "  (none found)"
     echo ""
-    echo "Environment: prod (default) or stage"
+    echo "Environment: prod (default), stage, or dev"
     exit 1
 fi
 
@@ -85,7 +88,7 @@ sleep 3
 # Step 4: Find the MongoDB pod
 echo ""
 echo "Step 4: Finding MongoDB pod..."
-MONGO_POD=$(kubectl get pods -n "$NAMESPACE" -l "app.kubernetes.io/instance=$RELEASE_NAME" -o jsonpath='{.items[0].metadata.name}')
+MONGO_POD=$(kubectl get pods -n "$NAMESPACE" -l "app.kubernetes.io/instance=$RELEASE_NAME,app.kubernetes.io/component=mongod" -o jsonpath='{.items[0].metadata.name}')
 
 if [ -z "$MONGO_POD" ]; then
     echo "Error: Could not find MongoDB pod for release $RELEASE_NAME"
@@ -100,7 +103,8 @@ echo "  Executing: load(\"/migrations/$MIGRATION_FILE\")"
 echo ""
 echo "--- Migration Output ---"
 
-kubectl exec -it -n "$NAMESPACE" "$MONGO_POD" -- mongosh --quiet --eval "load('/migrations/$MIGRATION_FILE')"
+# $MONGO_AUTH is set in the mongod container and expands to root credentials.
+kubectl exec -it -n "$NAMESPACE" "$MONGO_POD" -- sh -c "mongosh \$MONGO_AUTH --quiet --eval \"load('/migrations/$MIGRATION_FILE')\""
 
 echo "--- End Migration Output ---"
 echo ""
