@@ -7,7 +7,7 @@ export const courseTypeDef = gql`
   type Query {
     course(subject: String!, number: CourseNumber!): Course
     courseById(courseId: CourseIdentifier!): Course
-    courses: [Course!]!
+    courses: [Course!]! @cacheControl(maxAge: 3600, scope: PUBLIC)
   }
 
   type Course {
@@ -40,7 +40,7 @@ export const courseTypeDef = gql`
     academicOrganizationName: String
     departmentNicknames: String
     formerDisplayName: String
-    formerNames: [String!]! @cacheControl(maxAge: 300, scope: PUBLIC)
+    formerNames: [String!]! @cacheControl(maxAge: 3600, scope: PUBLIC)
     title: String!
     primaryInstructionMethod: InstructionMethod!
     toDate: String!
