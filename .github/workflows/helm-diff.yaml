@@ -149,7 +149,7 @@ jobs:
           echo "${{ steps.generate-diff.outputs.raw_diffs }}"
 
       - name: Comment PR with Diff Output
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.createComment({
