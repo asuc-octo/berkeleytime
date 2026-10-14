@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 
+import { NOTIFICATION_EVENT_LABELS, NotificationEvent } from "@repo/common";
+
 let transporter: nodemailer.Transporter | null = null;
 
 const getTransporter = () => {
@@ -26,7 +28,8 @@ export const sendSubscribeConfirmation = async (
   courseNumber: string,
   sectionNumber: string,
   semester: string,
-  year: number
+  year: number,
+  events: NotificationEvent[]
 ) => {
   const mailer = getTransporter();
   if (!mailer) return;
@@ -40,14 +43,12 @@ export const sendSubscribeConfirmation = async (
     subject: `Subscribed to notifications for ${subject} ${courseNumber}`,
     html: `
       <p>Hi ${name},</p>
-      <p>You're now subscribed to enrollment drop notifications for <strong>${classLabel}</strong>.</p>
-      <p>You'll receive an email when all of the following are true:</p>
+      <p>You're now subscribed to enrollment notifications for <strong>${classLabel}</strong>.</p>
+      <p>You'll receive an email:</p>
       <ul>
-        <li>The class is at least 80% full</li>
-        <li>Enrollment drops by at least 5%</li>
-        <li>At least 3 spots open up</li>
+        ${events.map((event) => `<li>${NOTIFICATION_EVENT_LABELS[event]}</li>`).join("")}
       </ul>
-      <p>To unsubscribe, go to the class page on <a href="https://berkeleytime.com">Berkeleytime</a> and click the bell icon again.</p>
+      <p>To change what you're notified about or unsubscribe, use the bell icon on the class page or visit your <a href="https://berkeleytime.com/profile/notifications">notifications</a> on Berkeleytime.</p>
     `,
   });
 };
@@ -73,7 +74,7 @@ export const sendUnsubscribeConfirmation = async (
     subject: `Unsubscribed from notifications for ${subject} ${courseNumber}`,
     html: `
       <p>Hi ${name},</p>
-      <p>You've been unsubscribed from enrollment drop notifications for <strong>${classLabel}</strong>.</p>
+      <p>You've been unsubscribed from enrollment notifications for <strong>${classLabel}</strong>.</p>
       <p>You won't receive any further notifications for this class.</p>
       <p>You can re-subscribe anytime from the class page on <a href="https://berkeleytime.com">Berkeleytime</a>.</p>
     `,

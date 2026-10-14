@@ -1,3 +1,4 @@
+import { NOTIFICATION_EVENTS, NotificationEvent } from "@repo/common";
 import {
   AggregatedMetricsModel,
   CollectionModel,
@@ -48,9 +49,25 @@ export const updateUser = async (
           e.class?.courseNumber === mc.class.courseNumber &&
           e.class?.number === mc.class.number
       );
+      const events = [
+        ...new Set<NotificationEvent>(
+          mc.events ??
+            (existing?.events as NotificationEvent[] | undefined) ??
+            NOTIFICATION_EVENTS
+        ),
+      ];
+      if (events.length === 0)
+        throw new Error("Select at least one notification event");
+
       return {
-        class: mc.class,
+        // The client can't read sessionId back, so keep the stored one
+        class: {
+          ...mc.class,
+          sessionId: mc.class.sessionId ?? existing?.class?.sessionId,
+        },
         notified: existing?.notified ?? false,
+        events,
+        lastNotifiedAt: existing?.lastNotifiedAt ?? {},
       };
     });
   }
@@ -82,7 +99,13 @@ export const updateUser = async (
       (e) => !newKeys.has(classKey(e.class!))
     );
 
-    await Promise.allSettled([
+    const savedEvents = (c: Parameters<typeof classKey>[0]) =>
+      (updatedUser.monitoredClasses?.find(
+        (e) => classKey(e.class!) === classKey(c)
+      )?.events ?? []) as NotificationEvent[];
+
+    // Not awaited so the response isn't held up by SMTP
+    void Promise.allSettled([
       ...added.map((mc) =>
         sendSubscribeConfirmation(
           existingUser.email,
@@ -91,7 +114,8 @@ export const updateUser = async (
           mc.class.courseNumber,
           mc.class.number,
           mc.class.semester,
-          mc.class.year
+          mc.class.year,
+          savedEvents(mc.class)
         )
       ),
       ...removed.map((e) =>

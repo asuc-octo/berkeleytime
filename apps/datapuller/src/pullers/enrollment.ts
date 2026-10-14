@@ -1,7 +1,11 @@
 import { DateTime } from "luxon";
 import nodemailer from "nodemailer";
 
-import { parseTermName } from "@repo/common";
+import {
+  ENROLLMENT_MILESTONES,
+  NOTIFICATION_EVENTS,
+  parseTermName,
+} from "@repo/common";
 import {
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
@@ -11,6 +15,10 @@ import {
 
 import { updateCatalogEnrollment } from "../lib/catalog-denormalize";
 import { GRANULARITY, getEnrollmentSingulars } from "../lib/enrollment";
+import {
+  describeNotificationEvent,
+  detectNotificationEvents,
+} from "../lib/enrollment-notifications";
 import { computeActiveReservedMaxCount } from "../lib/enrollment-utils";
 import { Config } from "../shared/config";
 
@@ -19,10 +27,9 @@ const DATAGAP_THRESHOLD = 4 * GRANULARITY;
 
 const TERMS_PER_API_BATCH = 4;
 
-const HOT_COURSE_THRESHOLD = 0.8;
-const DROP_THRESHOLD = 0.05;
-const MIN_OPEN_SPOTS = 3;
-const MAX_SNAPSHOT_GAP_MS = 30 * 60 * 1000;
+// enrollment changes older than this are too stale to email about
+const MAX_EVENT_AGE_MS = 30 * 60 * 1000;
+const NOTIFICATION_QUERY_BATCH_SIZE = 200;
 
 // enrollmentSingulars are equivalent if their data points are all equal
 const enrollmentSingularsEqual = (
@@ -379,38 +386,70 @@ const updateEnrollmentHistories = async (config: Config) => {
     }
   }
   log.info("Completed catalog cache warming.");
-  await checkEnrollmentDrop(config);
+  await sendEnrollmentNotifications(config);
 };
 
-const checkEnrollmentDrop = async (config: Config) => {
+const classKey = (c: {
+  year: number;
+  semester: string;
+  subject: string;
+  courseNumber: string;
+  number: string;
+}) => `${c.year}:${c.semester}:${c.subject}:${c.courseNumber}:${c.number}`;
+
+const sendEnrollmentNotifications = async (config: Config) => {
   const { log, email } = config;
 
   if (!email) {
-    log.warn("SMTP not configured, skipping enrollment drop notifications.");
+    log.warn("SMTP not configured, skipping enrollment notifications.");
     return;
   }
 
-  log.trace("Starting enrollment drop checks...");
-  // 1. search active terms
-  const terms = await TermModel.find({
-    academicCareerCode: "UGRD",
-    temporalPosition: { $in: ["Current", "Future"] },
+  log.trace("Starting enrollment notification checks...");
+
+  // 1. group subscriptions by class
+  const users = await UserModel.find({
+    notificationsOn: true,
+    "monitoredClasses.0": { $exists: true },
   }).lean();
 
-  if (terms.length === 0) {
-    log.warn("No active terms found, skipping.");
+  const subscriptions = new Map<
+    string,
+    {
+      user: (typeof users)[number];
+      monitoredClass: NonNullable<
+        (typeof users)[number]["monitoredClasses"]
+      >[number];
+    }[]
+  >();
+  for (const user of users) {
+    if (!user.email) continue;
+    for (const monitoredClass of user.monitoredClasses ?? []) {
+      if (!monitoredClass.class) continue;
+      const key = classKey(monitoredClass.class);
+      subscriptions.set(key, [
+        ...(subscriptions.get(key) ?? []),
+        { user, monitoredClass },
+      ]);
+    }
+  }
+
+  if (subscriptions.size === 0) {
+    log.info("No monitored classes, skipping enrollment notifications.");
     return;
   }
 
-  const termIds = terms.map((t) => t.id);
+  // 2. fetch the last two snapshots of every monitored class
+  const classFilters = [...subscriptions.values()].map(
+    ([{ monitoredClass }]) => ({
+      year: monitoredClass.class!.year,
+      semester: monitoredClass.class!.semester,
+      subject: monitoredClass.class!.subject,
+      courseNumber: monitoredClass.class!.courseNumber,
+      sectionNumber: monitoredClass.class!.number,
+    })
+  );
 
-  // 2. search enrollment histories
-  const histories = await NewEnrollmentHistoryModel.find(
-    { termId: { $in: termIds } },
-    { history: { $slice: -2 } }
-  ).lean();
-
-  // 3. setup nodemailer
   const transporter = nodemailer.createTransport({
     host: email.host,
     port: email.port,
@@ -422,88 +461,106 @@ const checkEnrollmentDrop = async (config: Config) => {
     },
   });
 
-  // 4. for every history, check 5 conditions
-  for (const history of histories) {
-    if (!history.history || history.history.length < 2) continue;
+  const now = Date.now();
+  let sent = 0;
 
-    const latest = history.history[history.history.length - 1];
-    const previous = history.history[history.history.length - 2];
+  for (let i = 0; i < classFilters.length; i += NOTIFICATION_QUERY_BATCH_SIZE) {
+    const histories = await NewEnrollmentHistoryModel.find(
+      { $or: classFilters.slice(i, i + NOTIFICATION_QUERY_BATCH_SIZE) },
+      { history: { $slice: -2 } }
+    ).lean();
 
-    if (latest.enrolledCount == null || latest.maxEnroll == null) continue;
-    if (previous.enrolledCount == null || previous.maxEnroll == null) continue;
+    for (const history of histories) {
+      if (!history.history || history.history.length < 2) continue;
 
-    // Condition 1: time protection
-    const gapMs =
-      new Date(latest.endTime).getTime() - new Date(previous.endTime).getTime();
-    if (gapMs > MAX_SNAPSHOT_GAP_MS) continue;
+      const latest = history.history[history.history.length - 1];
+      const previous = history.history[history.history.length - 2];
 
-    // Condition 2: class is popular
-    const currentPct = latest.enrolledCount / latest.maxEnroll;
-    if (currentPct < HOT_COURSE_THRESHOLD) continue;
+      // 3. only announce changes that just happened
+      const changedAt = new Date(latest.startTime).getTime();
+      if (now - changedAt > MAX_EVENT_AGE_MS) continue;
 
-    // Condition 3: significant drop
-    const previousPct = previous.enrolledCount / previous.maxEnroll;
-    const drop = previousPct - currentPct;
-    if (drop < DROP_THRESHOLD) continue;
+      const events = detectNotificationEvents(previous, latest);
+      if (events.length === 0) continue;
 
-    // Condition 4: sufficient empty seats
-    const openSpots = latest.maxEnroll - latest.enrolledCount;
-    if (openSpots < MIN_OPEN_SPOTS) continue;
+      const subscribers =
+        subscriptions.get(
+          classKey({ ...history, number: history.sectionNumber })
+        ) ?? [];
 
-    // 5. search for unnotified users who subscribed to this class
-    const users = await UserModel.find({
-      notificationsOn: true,
-      monitoredClasses: {
-        $elemMatch: {
-          "class.year": history.year,
-          "class.semester": history.semester,
-          "class.subject": history.subject,
-          "class.courseNumber": history.courseNumber,
-          "class.number": history.sectionNumber,
-          notified: false,
-        },
-      },
-    }).lean();
+      for (const { user, monitoredClass } of subscribers) {
+        const sessionId = monitoredClass.class!.sessionId;
+        if (sessionId && sessionId !== history.sessionId) continue;
 
-    // 6. send email + notified = true
-    for (const user of users) {
-      if (!user.email) continue;
+        // lean() returns the lastNotifiedAt map as a plain object
+        const lastNotifiedAt = (monitoredClass.lastNotifiedAt ?? {}) as Record<
+          string,
+          Date | undefined
+        >;
+        const selected = monitoredClass.events?.length
+          ? monitoredClass.events
+          : NOTIFICATION_EVENTS;
 
-      try {
-        await transporter.sendMail({
-          from: email.from,
-          to: user.email,
-          subject: `Spot opened in ${history.subject} ${history.courseNumber}`,
-          html: `
-            <p>Hi ${user.name},</p>
-            <p>${history.subject} ${history.courseNumber} section ${history.sectionNumber}
-            now has ${openSpots} open spot(s) (${Math.round(currentPct * 100)}% full).</p>
-            <p>Go to Calcentral to enroll.</p>
-          `,
+        // 4. skip events the user didn't pick or was already emailed about
+        const due = events.filter((event) => {
+          if (!selected.includes(event)) return false;
+          const last = lastNotifiedAt[event];
+          if (!last) return true;
+          if (ENROLLMENT_MILESTONES[event] !== undefined) return false;
+          return new Date(last).getTime() < changedAt;
         });
+        if (due.length === 0) continue;
 
-        await UserModel.updateOne(
-          {
-            _id: user._id,
-            "monitoredClasses.class.year": history.year,
-            "monitoredClasses.class.semester": history.semester,
-            "monitoredClasses.class.subject": history.subject,
-            "monitoredClasses.class.courseNumber": history.courseNumber,
-            "monitoredClasses.class.number": history.sectionNumber,
-          },
-          { $set: { "monitoredClasses.$.notified": true } }
-        );
+        const classLabel = `${history.subject} ${history.courseNumber}`;
+        const classUrl = `https://berkeleytime.com/catalog/${history.year}/${history.semester}/${encodeURIComponent(history.subject)}/${encodeURIComponent(history.courseNumber)}/${history.sectionNumber}`;
 
-        log.info(
-          `✓ Email sent to ${user.email} for ${history.subject} ${history.courseNumber}`
-        );
-      } catch (err) {
-        log.error(`✗ Failed to send email to ${user.email}:`, err);
+        try {
+          await transporter.sendMail({
+            from: email.from,
+            to: user.email,
+            subject:
+              due.length === 1 && due[0] === "UNRESERVED_SEAT_OPENS"
+                ? `Spot opened in ${classLabel}`
+                : `Enrollment update for ${classLabel}`,
+            html: `
+              <p>Hi ${user.name},</p>
+              <p>There's news about <strong>${classLabel} section ${history.sectionNumber}</strong> (${history.semester} ${history.year}):</p>
+              <ul>
+                ${due.map((event) => `<li>${describeNotificationEvent(event, previous, latest)}</li>`).join("")}
+              </ul>
+              <p>It's currently at ${latest.enrolledCount ?? 0} of ${latest.maxEnroll ?? 0} seats, with ${latest.waitlistedCount ?? 0} waitlisted. Go to CalCentral to enroll.</p>
+              <p><a href="${classUrl}">View the class on Berkeleytime</a> · <a href="https://berkeleytime.com/profile/notifications">Manage notifications</a></p>
+            `,
+          });
+
+          await UserModel.updateOne(
+            { _id: user._id },
+            {
+              $set: {
+                "monitoredClasses.$[mc].notified": true,
+                ...Object.fromEntries(
+                  due.map((event) => [
+                    `monitoredClasses.$[mc].lastNotifiedAt.${event}`,
+                    latest.startTime,
+                  ])
+                ),
+              },
+            },
+            { arrayFilters: [{ "mc._id": monitoredClass._id }] }
+          );
+
+          sent += 1;
+          log.info(
+            `✓ Email sent to ${user.email} for ${classLabel} (${due.join(", ")})`
+          );
+        } catch (err) {
+          log.error(`✗ Failed to send email to ${user.email}:`, err);
+        }
       }
     }
   }
 
-  log.info("Enrollment drop check complete.");
+  log.info(`Enrollment notification check complete: ${sent} emails sent.`);
 };
 
 export default { updateEnrollmentHistories };
