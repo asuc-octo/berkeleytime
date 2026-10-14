@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Separator } from "@radix-ui/themes";
 
+import { DEGREE_PROGRAMS as DEGREES } from "@repo/common/lib/degreePrograms";
 import { Box, Button, Container, Flex } from "@repo/theme";
 
 import MajorSearch from "@/components/MajorSearch";
@@ -9,7 +10,6 @@ import MajorSearch from "@/components/MajorSearch";
 import { DegreeOption } from "../../types";
 import DotsIndicator from "../DotsIndicator";
 import styles from "./AddDegree.module.scss";
-import DEGREES from "./degree-programs-types.json";
 
 type AddDegreeProps = {
   isMajor: boolean;
