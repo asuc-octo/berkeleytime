@@ -4,6 +4,7 @@ import {
   constructor as course_constructor,
   functions as course_functions,
 } from "./lib/course";
+import { functions as course_assignment_functions } from "./lib/course_assignment";
 import { constructor as function_constructor } from "./lib/function";
 import {
   constructor as list_constructor,
@@ -102,6 +103,7 @@ export const FUNCTION_MAP: Map<string, Data<MyFunction>> = new Map([
   ...column_functions,
   ...string_functions,
   ...course_functions,
+  ...course_assignment_functions,
   ...requirement_functions,
   ["get_attr", get_attr_function],
   ["if_else", if_else_function],

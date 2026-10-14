@@ -116,72 +116,22 @@ Function<List<Requirement>>(List<Course>) seven_breadths_requirements (courses){
     boolean return or([contains(br, "Social & Behavioral Sciences"), contains(br, "Social and Behavioral Sciences")])
   })
 
-  // Greedy deduplication: assign courses to categories in order, excluding already-used ones
-  // 1. Arts & Literature
-  List<Course> arts_and_lit_courses slice(arts_and_lit_eligible, 0, 1)
-  NCoursesRequirement arts_and_lit {arts_and_lit_eligible, length(arts_and_lit_courses), 1, "Arts & Literature"}
+  // Optimal assignment — no course used twice, maximizes categories satisfied
+  List<Course> arts_and_lit_courses           assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 0)
+  List<Course> biological_sciences_courses    assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 1)
+  List<Course> historical_studies_courses     assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 2)
+  List<Course> international_studies_courses  assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 3)
+  List<Course> philosophy_and_values_courses  assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 4)
+  List<Course> physical_sciences_courses      assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 5)
+  List<Course> social_and_behavioral_sciences_courses assign_by_count(arts_and_lit_eligible, biological_sciences_eligible, historical_studies_eligible, international_studies_eligible, philosophy_and_values_eligible, physical_sciences_eligible, social_and_behavioral_sciences_eligible, 6)
 
-  // 2. Biological Sciences
-  List<Course> biological_sciences_pool filter(biological_sciences_eligible, (c) {
-    boolean return not(one_common_course([c], arts_and_lit_courses))
-  })
-  List<Course> biological_sciences_courses slice(biological_sciences_pool, 0, 1)
-  NCoursesRequirement biological_sciences {biological_sciences_eligible, length(biological_sciences_courses), 1, "Biological Sciences"}
-
-  // 3. Historical Studies
-  List<Course> historical_studies_pool filter(historical_studies_eligible, (c) {
-    boolean used_arts one_common_course([c], arts_and_lit_courses)
-    boolean used_bio one_common_course([c], biological_sciences_courses)
-    boolean return not(or([used_arts, used_bio]))
-  })
-  List<Course> historical_studies_courses slice(historical_studies_pool, 0, 1)
-  NCoursesRequirement historical_studies {historical_studies_eligible, length(historical_studies_courses), 1, "Historical Studies"}
-
-  // 4. International Studies
-  List<Course> international_studies_pool filter(international_studies_eligible, (c) {
-    boolean used_arts one_common_course([c], arts_and_lit_courses)
-    boolean used_bio one_common_course([c], biological_sciences_courses)
-    boolean used_hist one_common_course([c], historical_studies_courses)
-    boolean return not(or([used_arts, used_bio, used_hist]))
-  })
-  List<Course> international_studies_courses slice(international_studies_pool, 0, 1)
-  NCoursesRequirement international_studies {international_studies_eligible, length(international_studies_courses), 1, "International Studies"}
-
-  // 5. Philosophy & Values
-  List<Course> philosophy_and_values_pool filter(philosophy_and_values_eligible, (c) {
-    boolean used_arts one_common_course([c], arts_and_lit_courses)
-    boolean used_bio one_common_course([c], biological_sciences_courses)
-    boolean used_hist one_common_course([c], historical_studies_courses)
-    boolean used_intl one_common_course([c], international_studies_courses)
-    boolean return not(or([used_arts, used_bio, used_hist, used_intl]))
-  })
-  List<Course> philosophy_and_values_courses slice(philosophy_and_values_pool, 0, 1)
-  NCoursesRequirement philosophy_and_values {philosophy_and_values_eligible, length(philosophy_and_values_courses), 1, "Philosophy & Values"}
-
-  // 6. Physical Sciences
-  List<Course> physical_sciences_pool filter(physical_sciences_eligible, (c) {
-    boolean used_arts one_common_course([c], arts_and_lit_courses)
-    boolean used_bio one_common_course([c], biological_sciences_courses)
-    boolean used_hist one_common_course([c], historical_studies_courses)
-    boolean used_intl one_common_course([c], international_studies_courses)
-    boolean used_phv one_common_course([c], philosophy_and_values_courses)
-    boolean return not(or([used_arts, used_bio, used_hist, used_intl, used_phv]))
-  })
-  List<Course> physical_sciences_courses slice(physical_sciences_pool, 0, 1)
-  NCoursesRequirement physical_sciences {physical_sciences_eligible, length(physical_sciences_courses), 1, "Physical Sciences"}
-
-  // 7. Social & Behavioral Sciences
-  List<Course> social_and_behavioral_sciences_pool filter(social_and_behavioral_sciences_eligible, (c) {
-    boolean used_arts one_common_course([c], arts_and_lit_courses)
-    boolean used_bio one_common_course([c], biological_sciences_courses)
-    boolean used_hist one_common_course([c], historical_studies_courses)
-    boolean used_intl one_common_course([c], international_studies_courses)
-    boolean used_phv one_common_course([c], philosophy_and_values_courses)
-    boolean used_phys one_common_course([c], physical_sciences_courses)
-    boolean return not(or([used_arts, used_bio, used_hist, used_intl, used_phv, used_phys]))
-  })
-  List<Course> social_and_behavioral_sciences_courses slice(social_and_behavioral_sciences_pool, 0, 1)
-  NCoursesRequirement social_and_behavioral_sciences {social_and_behavioral_sciences_eligible, length(social_and_behavioral_sciences_courses), 1, "Social & Behavioral Sciences"}
+  NCoursesRequirement arts_and_lit                   {arts_and_lit_courses, 1, "Arts & Literature"}
+  NCoursesRequirement biological_sciences            {biological_sciences_courses, 1, "Biological Sciences"}
+  NCoursesRequirement historical_studies             {historical_studies_courses, 1, "Historical Studies"}
+  NCoursesRequirement international_studies          {international_studies_courses, 1, "International Studies"}
+  NCoursesRequirement philosophy_and_values          {philosophy_and_values_courses, 1, "Philosophy & Values"}
+  NCoursesRequirement physical_sciences              {physical_sciences_courses, 1, "Physical Sciences"}
+  NCoursesRequirement social_and_behavioral_sciences {social_and_behavioral_sciences_courses, 1, "Social & Behavioral Sciences"}
 
   List<Requirement> return [arts_and_lit, biological_sciences, historical_studies, international_studies, philosophy_and_values, physical_sciences, social_and_behavioral_sciences]
 }
