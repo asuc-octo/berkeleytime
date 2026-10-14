@@ -3,6 +3,9 @@ networks:
   bt:
 services:
   backend:
+    environment:
+      TRACKING_GLOBAL_DAILY_EVENT_LIMIT: ${TRACKING_GLOBAL_DAILY_EVENT_LIMIT:-100000}
+      TRACKING_IP_DAILY_EVENT_LIMIT: ${TRACKING_IP_DAILY_EVENT_LIMIT:-10000}
     build:
       context: .
       dockerfile: ./apps/backend/Dockerfile

@@ -4,11 +4,9 @@ import type { RedisClientType } from "redis";
 
 import { StaffMemberModel } from "@repo/common/models";
 
-import {
-  TrackingEventInput,
-  bufferTrackingEvents,
-  getTrackingEventsTimeSeries,
-} from "./controller";
+import { getTrackingEventsTimeSeries } from "./controller";
+import { bufferTrackingEvents } from "./ingest";
+import { InvalidTrackingBatch, TrackingEventInput } from "./validation";
 
 interface RequestContext {
   user: {
@@ -54,7 +52,16 @@ const resolvers = {
         });
       }
 
-      await bufferTrackingEvents(context.redis, context.req, events);
+      try {
+        await bufferTrackingEvents(context.redis, context.req, events);
+      } catch (error) {
+        if (error instanceof InvalidTrackingBatch) {
+          throw new GraphQLError(error.message, {
+            extensions: { code: "BAD_USER_INPUT" },
+          });
+        }
+        throw error;
+      }
       return true;
     },
   },

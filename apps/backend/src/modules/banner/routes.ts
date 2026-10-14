@@ -3,7 +3,7 @@ import type { RedisClientType } from "redis";
 
 import { BannerModel } from "@repo/common/models";
 
-import { bufferTrackingEvents } from "../tracking/controller";
+import { bufferTrackingEvents } from "../tracking/ingest";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Redirect-based click tracking for all banners
@@ -24,15 +24,20 @@ export default (app: Application, redis?: RedisClientType) => {
       }
 
       if (redis) {
-        bufferTrackingEvents(redis, req, [
-          {
-            eventType: "click",
-            targetType: "banner",
-            targetId: bannerId,
-            metadata: { version: banner.currentVersion },
-            timestamp: new Date().toISOString(),
-          },
-        ]).catch((error) => {
+        bufferTrackingEvents(
+          redis,
+          req,
+          [
+            {
+              eventType: "click",
+              targetType: "banner",
+              targetId: bannerId,
+              metadata: { version: banner.currentVersion },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+          "server-redirect"
+        ).catch((error) => {
           console.error("Error buffering banner tracking event:", error);
         });
       }
