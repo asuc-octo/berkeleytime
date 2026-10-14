@@ -1,0 +1,31 @@
+{
+  "name": "btll-linter",
+  "displayName": "BtLL Linter",
+  "description": "Lints Berkeleytime Logical Language (BtLL) code embedded in multi-line strings",
+  "version": "0.0.1",
+  "publisher": "berkeleytime",
+  "repository": "https://github.com/asuc-octo/berkeleytime",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Linters"],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact",
+    "onLanguage:python"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {},
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "^18.x",
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,9 @@
+.vscode/**
+.vscode-test/**
+src/**
+out/test/**
+!out/extension.js
+!out/linter.js
+node_modules/**
+tsconfig.json
+.gitignore

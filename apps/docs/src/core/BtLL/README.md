@@ -2,6 +2,16 @@
 
 <!-- toc -->
 
+## Editor Support
+
+The **BtLL Linter** VS Code / Cursor extension gives you syntax highlighting and inline diagnostics while writing BtLL code. Install it in three steps:
+
+1. **Build** — from the repo root, run `cd btll-linter && npm run compile`
+2. **Package** — run `npx vsce package` to produce a `.vsix` file
+3. **Install** — open the Command Palette (`Cmd+Shift+P`) → **Extensions: Install from VSIX…** → select the `.vsix`
+
+See [`btll-linter/README.md`](../../../../btll-linter/README.md) for full details.
+
 ## What is BtLL?
 
 Berkeleytime Logical Language (BtLL) is a domain-specific programming language designed to represent and evaluate complex academic requirements. It provides a type-safe, declarative way to express requirements such as course prerequisites, unit requirements, breadth requirements, and composite requirements (AND/OR logic) that are common in academic planning systems.
