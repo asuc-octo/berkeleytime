@@ -36,8 +36,7 @@ const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const Grades = lazy(() => import("@/app/Grades"));
 
-// Legacy pages (preserved for reference during redesign). The legacy Grades
-// page is currently served at /grades; the redesigned one lives at /grades-new.
+// Legacy pages (preserved for reference during redesign)
 const LegacyEnrollment = lazy(() => import("@/app/_legacy/Enrollment"));
 const LegacyGradeDistributions = lazy(
   () => import("@/app/_legacy/GradeDistributions")
@@ -290,7 +289,7 @@ const router = createBrowserRouter([
           {
             element: (
               <SuspenseBoundary key="grades">
-                <LegacyGradeDistributions />
+                <Grades />
               </SuspenseBoundary>
             ),
             path: "grades",
@@ -305,11 +304,11 @@ const router = createBrowserRouter([
           },
           {
             element: (
-              <SuspenseBoundary key="grades-new">
-                <Grades />
+              <SuspenseBoundary key="grades-legacy">
+                <LegacyGradeDistributions />
               </SuspenseBoundary>
             ),
-            path: "grades-new",
+            path: "grades-legacy",
           },
           {
             element: (

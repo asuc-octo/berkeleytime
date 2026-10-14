@@ -8,7 +8,6 @@ import { Button, Flex } from "@repo/theme";
 
 import {
   type CourseOutput,
-  DARK_COLORS,
   type Input,
   InputType,
   LIGHT_COLORS,
@@ -242,7 +241,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
     if (selectedInstructor === "all" && selectedSemester === "all") {
       input = {
         subject: selectedCourse.subject,
-        courseId: selectedCourse.courseId,
         courseNumber: selectedCourse.number,
       };
     }
@@ -255,7 +253,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       if (selectedInstructor === "all") {
         input = {
           subject: selectedCourse.subject,
-          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
           year,
@@ -267,7 +264,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
         input = {
           subject: selectedCourse.subject,
-          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Term,
           year,
@@ -286,7 +282,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       if (selectedSemester === "all") {
         input = {
           subject: selectedCourse.subject,
-          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Instructor,
           familyName,
@@ -299,7 +294,6 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
         input = {
           subject: selectedCourse.subject,
-          courseId: selectedCourse.courseId,
           courseNumber: selectedCourse.number,
           type: InputType.Instructor,
           year,
@@ -332,16 +326,13 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
 
       // first available color
       const usedColors = new Set(outputs.map((output) => output.color));
-      const availableIndex = LIGHT_COLORS.findIndex(
-        (color) => !usedColors.has(color)
-      );
-      const colorIndex = availableIndex !== -1 ? availableIndex : 0;
+      const availableColor =
+        LIGHT_COLORS.find((color) => !usedColors.has(color)) || LIGHT_COLORS[0];
 
       const output: Output = {
         hidden: false,
         active: false,
-        color: LIGHT_COLORS[colorIndex],
-        darkColor: DARK_COLORS[colorIndex],
+        color: availableColor,
         // TODO: Error handling
         data: response.data!.grade,
         input,

@@ -21,17 +21,14 @@ import {
   type Input,
   getInputSearchParam,
 } from "@/components/CourseAnalytics/types";
+import CourseSelectionCard from "@/components/CourseSelectionCard";
 import { type IGradeDistribution } from "@/lib/api";
-import {
-  GetCourseNumberByIdDocument,
-  GetGradeDistributionDocument,
-} from "@/lib/generated/graphql";
+import { GetGradeDistributionDocument } from "@/lib/generated/graphql";
 import { GRADES } from "@/lib/grades";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
 import CourseInput from "./CourseInput";
-import CourseSelectionCard from "./CourseSelectionCard";
 import DataBoard from "./DataBoard";
 
 type Output = CourseOutput<Input, IGradeDistribution>;
@@ -41,31 +38,16 @@ const fetchGradeDistribution = async (
   input: Input
 ): Promise<{ data: IGradeDistribution; input: Input } | null> => {
   try {
-    // The URL carries only courseId; resolve the human-readable course
-    // number so cards and the data board don't render with an empty value.
-    const [response, courseResponse] = await Promise.all([
-      client.query({
-        query: GetGradeDistributionDocument,
-        variables: input,
-      }),
-      input.courseNumber
-        ? null
-        : client
-            .query({
-              query: GetCourseNumberByIdDocument,
-              variables: { courseId: input.courseId },
-            })
-            .catch(() => null),
-    ]);
+    const response = await client.query({
+      query: GetGradeDistributionDocument,
+      variables: input,
+    });
 
     if (!response.data?.grade) return null;
 
-    const courseNumber =
-      courseResponse?.data?.courseById?.number ?? input.courseNumber;
-
     return {
       data: response.data.grade,
-      input: { ...input, courseNumber },
+      input,
     };
   } catch {
     return null;
@@ -340,8 +322,7 @@ const GradeDistributions = () => {
                   color={output.color}
                   subject={output.input.subject}
                   number={output.input.courseNumber}
-                  metadata={`${semester} • ${instructor}`}
-                  gradeDistribution={output.data}
+                  subtitle={`${semester} • ${instructor}`}
                   onClick={() => updateActive(index, !output.active)}
                   onClickDelete={() => remove(index)}
                   onClickHide={() => updateHidden(index, !output.hidden)}
