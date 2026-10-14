@@ -6,7 +6,8 @@ export const MIGRATION_ID = "gradTrakDegreePrefillV1";
 const MARKER = `_migrations.${MIGRATION_ID}`;
 const BATCH_SIZE = 500;
 const FIELDS = ["majors", "minors"] as const;
-type DegreeField = (typeof FIELDS)[number];
+export type DegreeField = (typeof FIELDS)[number];
+export type DegreeChanges = Partial<Record<DegreeField, string[]>>;
 
 type Plan = {
   _id: ObjectId;
@@ -16,7 +17,7 @@ type Plan = {
   createdAt: Date;
 };
 
-type User = {
+export type User = {
   _id: ObjectId;
   email: string;
   majors?: unknown;
@@ -30,6 +31,8 @@ export type BackfillOptions = {
   dryRun: boolean;
   cutoff?: Date;
   log?: (message: string) => void;
+  // Dry-run orchestration uses these proposed values when previewing cleanup.
+  projectedChanges?: Map<string, DegreeChanges>;
 };
 
 function validDegrees(
@@ -228,6 +231,9 @@ export async function runDegreeBackfill(db: Db, options: BackfillOptions) {
 
       if (Object.keys(changes).length) summary.usersWithChanges++;
       else summary.usersRecordedUnchanged++;
+      if (options.dryRun && Object.keys(changes).length) {
+        options.projectedChanges?.set(user._id.toHexString(), changes);
+      }
       summary.majorFieldsFilled += Number(filled.includes("majors"));
       summary.majorFieldsReplaced += Number(replaced.includes("majors"));
       summary.minorFieldsFilled += Number(filled.includes("minors"));

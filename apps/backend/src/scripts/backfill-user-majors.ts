@@ -5,7 +5,7 @@
  */
 import { MongoClient } from "mongodb";
 
-import { runDegreeBackfill } from "./backfill-user-majors-lib";
+import { runProfileDegreeMigration } from "./normalize-user-degrees";
 
 async function migrate() {
   const uri = process.env.MONGODB_URI;
@@ -28,7 +28,7 @@ async function migrate() {
   try {
     await client.connect();
     console.log(dryRun ? "DRY RUN — reads only" : "LIVE RUN");
-    const summary = await runDegreeBackfill(client.db(), {
+    const summary = await runProfileDegreeMigration(client.db(), {
       dryRun,
       cutoff,
       log: console.log,
