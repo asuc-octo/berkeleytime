@@ -561,11 +561,6 @@ Function<boolean>(Course) eecs_lower_div_finder (course){
   boolean return or([is_eecs, is_compsci])
 }
 
-Function<number>(number, Course) add_course_units (acc, course){
-  number units get_attr(course, "units")
-  number return add([acc, units])
-}
-
 Function<boolean>(Course) natural_science_upper_div_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
@@ -643,7 +638,7 @@ Function<List<Requirement>>() main (){
 
   // Upper Division Technical Electives: 20 units from eligible courses
   List<Course> eecs_upper_div_matches filter(courses, eecs_upper_div_finder)
-  number eecs_upper_div_units reduce(eecs_upper_div_matches, add_course_units, 0)
+  number eecs_upper_div_units sum_units(eecs_upper_div_matches)
   NumberRequirement eecs_upper_div {eecs_upper_div_units, 20, "Upper Division Technical Electives"}
 
   // Upper Division Design Requirement: At least one design course
@@ -664,7 +659,7 @@ Function<List<Requirement>>() main (){
 
   // Engineering Units: 40 units (EECS lower div except COMPSCI 70 + 20 units upper div)
   List<Course> eecs_lower_div_matches filter(courses, eecs_lower_div_finder)
-  number eecs_lower_div_units reduce(eecs_lower_div_matches, add_course_units, 0)
+  number eecs_lower_div_units sum_units(eecs_lower_div_matches)
   number total_engineering_units add([eecs_lower_div_units, eecs_upper_div_units])
   NumberRequirement engineering_units {total_engineering_units, 40, "Engineering Units"}
 
@@ -764,11 +759,6 @@ Function<boolean>(Course) meche_tech_elective_lower_div_finder (course){
   boolean return and([is_meceng, not(is_upper_div)])
 }
 
-Function<number>(number, Course) add_course_units (acc, course){
-  number units get_attr(course, "units")
-  number return add([acc, units])
-}
-
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
 
@@ -820,17 +810,17 @@ Function<List<Requirement>>() main (){
   // Technical Electives
   // Upper-div electives: MECENG + ENGIN upper-div (TODO: update from me.berkeley.edu for full approved list)
   List<Course> upper_div_electives filter(courses, meche_tech_elective_upper_div_finder)
-  number upper_div_elective_units reduce(upper_div_electives, add_course_units, 0)
+  number upper_div_elective_units sum_units(upper_div_electives)
   NumberRequirement upper_div_units_req {upper_div_elective_units, 12, "12 Upper-Div Elective Units"}
 
   // ME-sponsored electives: MECENG upper-div only (must be at least 9 of the 12 upper-div units)
   List<Course> meceng_upper_div filter(courses, meceng_upper_div_finder)
-  number meceng_upper_div_units reduce(meceng_upper_div, add_course_units, 0)
+  number meceng_upper_div_units sum_units(meceng_upper_div)
   NumberRequirement meceng_units_req {meceng_upper_div_units, 9, "9 ME-Sponsored Upper-Div Units"}
 
   // Total elective units: upper-div + lower-div (lower-div capped at 3 per policy, not enforced here)
   List<Course> lower_div_electives filter(courses, meche_tech_elective_lower_div_finder)
-  number lower_div_elective_units reduce(lower_div_electives, add_course_units, 0)
+  number lower_div_elective_units sum_units(lower_div_electives)
   number total_elective_units add([upper_div_elective_units, lower_div_elective_units])
   NumberRequirement total_units_req {total_elective_units, 15, "15 Total Technical Elective Units"}
 
@@ -1325,12 +1315,6 @@ Function<boolean>(Course) computational_inferential_depth_finder (course){
 
   boolean return or([is_astron_128, is_bioeng_chem_c142, is_chem_compsci_physics_c191, is_compsci_161, is_compsci_162, is_compsci_164, is_compsci_168, is_compsci_169, is_compsci_169l, is_compsci_170, is_compsci_186, is_compsci_188, is_cph_data_c146, is_data_c101, is_data_144, is_data_145, is_econ_140, is_econ_141, is_eecs_127, is_eleng_120, is_eleng_122, is_eleng_123, is_envecon_c118, is_espm_174, is_indeng_115, is_indeng_135, is_indeng_142b, is_indeng_160, is_indeng_162, is_indeng_164, is_indeng_165, is_indeng_166, is_indeng_173, is_indeng_174, is_info_159, is_info_190_1, is_math_156, is_nuceng_175, is_physics_188, is_stat_135, is_stat_150, is_stat_151a, is_stat_152, is_stat_153, is_stat_158, is_stat_159, is_stat_165, is_ugba_142])
 }
-
-Function<number>(number, Course) add_course_units (acc, course){
-  number units get_attr(course, "units")
-  number return add([acc, units])
-}
-
 
 Function<boolean>(Course) applied_math_lower_div_finder (course){
   List<Course> list [{"MATH 53"}, {"MATH 55"}]
@@ -2592,7 +2576,7 @@ Function<List<Requirement>>() main (){
 
   // Computational & Inferential Depth: 2 courses totaling 7+ units
   List<Course> cid_matches filter(courses, cid_only_finder)
-  number cid_units reduce(cid_matches, add_course_units, 0)
+  number cid_units sum_units(cid_matches)
   NumberRequirement cid_min_units {cid_matches, cid_units, 7, "Computational & Inferential Depth"}
 
   // Mutex Checks
@@ -2619,7 +2603,7 @@ Function<List<Requirement>>() main (){
 
   // Total Upper Division Unit Check (Using combined finder to guarantee unique elements)
   List<Course> any_ud_matches filter(courses, any_ds_upper_div_finder)
-  number total_ud_units reduce(any_ud_matches, add_course_units, 0)
+  number total_ud_units sum_units(any_ud_matches)
   NumberRequirement upper_div_min_units {any_ud_matches, total_ud_units, 28, "Total Upper Division Units"}
 
   // Domain Emphasis
