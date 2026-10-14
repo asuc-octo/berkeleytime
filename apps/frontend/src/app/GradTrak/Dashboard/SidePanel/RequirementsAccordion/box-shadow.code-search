@@ -1,0 +1,219 @@
+# Query: box-shadow
+# ContextLines: 1
+
+47 results - 27 files
+
+apps/api-sandbox/src/main.css:
+   34    border-radius: 8px;
+   35:   box-shadow: var(--shadow-sm);
+   36    margin-bottom: 20px;
+
+   96    border-color: #003262;
+   97:   box-shadow: var(--shadow-focus);
+   98  }
+
+  115    border-radius: 8px;
+  116:   box-shadow: var(--shadow-sm);
+  117    height: fit-content;
+
+  171    border-radius: 8px;
+  172:   box-shadow: var(--shadow-sm);
+  173    overflow: hidden;
+
+apps/frontend/src/app/About/MemberCard/MemberCard.module.scss:
+  47    z-index: 2;
+  48:   box-shadow: var(--shadow-sm);
+  49  }
+
+apps/frontend/src/app/Discover/Discover.module.scss:
+  23          border: 1px solid var(--border-color);
+  24:         box-shadow: var(--shadow-sm);
+  25          display: flex;
+
+  65          gap: 16px;
+  66:         box-shadow: var(--shadow-md);
+  67  
+
+apps/frontend/src/app/GradTrak/Dashboard/Dashboard.module.scss:
+  207    padding-top: 0px;
+  208:   box-shadow: var(--shadow-md);
+  209  
+
+apps/frontend/src/app/GradTrak/Dashboard/AddBlockMenu/AddBlockMenu.module.scss:
+  6    top: 80px;
+  7:   box-shadow: var(--shadow-lg);
+  8    border-radius: 8px;
+
+apps/frontend/src/app/GradTrak/Dashboard/DisplayMenu/DisplayMenu.module.scss:
+  6    top: 80px;
+  7:   box-shadow: var(--shadow-lg);
+  8    border-radius: 8px;
+
+apps/frontend/src/app/GradTrak/Dashboard/SemesterBlock/AddClass/AddClass.module.scss:
+  18      background-color: var(--foreground-color);
+  19:     box-shadow:
+  20        var(--shadow-focus-lg),
+
+  45      border: 1px solid var(--border-color);
+  46:     box-shadow: var(--shadow-focus-sm);
+  47      max-height: 18rem;
+
+apps/frontend/src/app/GradTrak/Dashboard/SemesterBlock/Class/Class.module.scss:
+  13    background-color: var(--foreground-color);
+  14:   box-shadow:
+  15      var(--shadow-focus-lg),
+
+apps/frontend/src/app/GradTrak/Dashboard/SidePanel/RequirementsAccordion/RequirementsAccordion.module.scss:
+  138        border-radius: 0.25rem;
+  139:       box-shadow: 0px 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+  140        padding: 0.25rem;
+
+apps/frontend/src/app/Profile/Bookmarks/CollectionCard/CollectionCard.module.scss:
+  54    box-sizing: border-box;
+  55:   box-shadow: var(--shadow-sm);
+  56  }
+
+apps/frontend/src/app/Schedule/Editor/SideBar/Event/Event.module.scss:
+   6      z-index: var(--z-modal);
+   7:     box-shadow: var(--shadow-md);
+   8    }
+
+  11      background-color: transparent;
+  12:     box-shadow: unset;
+  13      border-style: dashed;
+
+  20    &:not(:global(.draggable-source--is-dragging)) {
+  21:     box-shadow: var(--shadow-sm);
+  22      background-color: var(--foreground-color);
+
+  37      background-color: var(--foreground-color);
+  38:     box-shadow: var(--shadow-sm);
+  39      padding: 16px;
+
+apps/frontend/src/app/Schedule/Editor/Week/Event/Event.module.scss:
+  34    position: absolute;
+  35:   box-shadow: var(--shadow-sm);
+  36    z-index: var(--z-modal);
+
+apps/frontend/src/components/Chart/Chart.module.scss:
+  8    animation: fadeIn 100ms ease-in;
+  9:   box-shadow: var(--shadow-focus-lg);
+  10  }
+
+apps/frontend/src/components/Class/Class.module.scss:
+  129    z-index: var(--z-tooltip);
+  130:   box-shadow: var(--shadow-sm);
+  131  
+
+apps/frontend/src/components/Class/AddToSchedulePopover/AddToSchedulePopover.module.scss:
+  12    overflow: hidden;
+  13:   box-shadow:
+  14      var(--shadow-focus-sm),
+
+  17    @include dark-mode {
+  18:     box-shadow:
+  19        var(--shadow-focus-sm),
+
+apps/frontend/src/components/Class/BookmarkPopover/BookmarkPopover.module.scss:
+  24    overflow: hidden;
+  25:   box-shadow:
+  26      var(--shadow-focus-sm),
+
+  29    @include dark-mode {
+  30:     box-shadow:
+  31        var(--shadow-focus-sm),
+
+apps/frontend/src/components/Class/Ratings/Ratings.module.scss:
+  46  .ratingsSelectContent {
+  47:   box-shadow: none;
+  48  }
+
+  77      background: transparent;
+  78:     box-shadow: none;
+  79      color: var(--label-color);
+
+  90      color: var(--heading-color);
+  91:     box-shadow: none;
+  92    }
+
+apps/frontend/src/components/Class/Sections/Sections.module.scss:
+  20    background-color: var(--foreground-color);
+  21:   box-shadow: inset var(--shadow-focus-sm);
+  22    overflow: hidden;
+
+apps/frontend/src/components/ClassBrowser/Filters/Filters.module.scss:
+  145  .requirementsSelectContent {
+  146:   box-shadow: var(--shadow-sm);
+  147  }
+
+  176      background: transparent;
+  177:     box-shadow: none;
+  178      color: var(--label-color);
+
+  189      color: var(--heading-color);
+  190:     box-shadow: none;
+  191    }
+
+apps/frontend/src/components/ReservedSeatingHoverCard/ReservedSeatingHoverCard.module.scss:
+  43      outline: none;
+  44:     box-shadow: none;
+  45    }
+
+apps/frontend/src/components/Tabs/Tabs.module.scss:
+  66      color: var(--zinc-900);
+  67:     box-shadow:
+  68        var(--shadow-sm),
+
+  73        color: var(--zinc-50);
+  74:       box-shadow:
+  75          var(--shadow-sm),
+
+apps/staff-frontend/src/components/Chart/Chart.module.scss:
+  8    animation: fadeIn 100ms ease-in;
+  9:   box-shadow: var(--shadow-focus-lg);
+  10  }
+
+packages/theme/src/components/DropdownMenu/DropdownMenu.module.scss:
+   9    border-radius: 8px;
+  10:   box-shadow: var(--shadow-md);
+  11    animation-duration: 400ms;
+
+packages/theme/src/components/PillSwitcher/PillSwitcher.module.scss:
+  57      color: var(--heading-color);
+  58:     box-shadow:
+  59        0px 3px 2px 0px rgba(0, 0, 0, 0.06),
+
+  64    [data-theme="dark"] &[data-state="active"] {
+  65:     box-shadow:
+  66        0px 3px 2px 0px rgba(0, 0, 0, 0.2),
+
+  85    background: transparent;
+  86:   box-shadow: none;
+  87    color: var(--label-color);
+
+  97      color: var(--heading-color);
+  98:     box-shadow: none;
+  99    }
+
+packages/theme/src/components/Select/Select.module.scss:
+  11  .menuElevation {
+  12:   box-shadow: var(--shadow-lg);
+  13  
+
+  15    :global([data-theme="dark"]) & {
+  16:     box-shadow:
+  17        var(--shadow-lg),
+
+  22      @media (prefers-color-scheme: dark) {
+  23:       box-shadow:
+  24          var(--shadow-lg),
+
+packages/theme/src/components/Switch/Switch.module.scss:
+  18    border-radius: 9999px;
+  19:   box-shadow: var(--shadow-sm);
+  20    transition: transform 100ms;
+
+packages/theme/src/components/Tooltip/Tooltip.module.scss:
+  7    animation: fadeIn 100ms ease-in;
+  8:   box-shadow: var(--shadow-focus-lg);
+  9  }

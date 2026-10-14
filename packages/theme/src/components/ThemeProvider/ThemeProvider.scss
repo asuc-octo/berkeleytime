@@ -410,6 +410,16 @@
   --fuchsia-badge: var(--fuchsia-500);
   --pink-badge: var(--pink-500);
   --rose-badge: var(--rose-500);
+
+  // shadows
+  --shadow-popup: 0 2px 4px rgb(0 0 0 / 5%);
+  --shadow-dropdown: 0 4px 12px rgb(0 0 0 / 10%);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 16%);
+  --shadow-focus: 0 0 0 2px rgb(0 50 98 / 10%);
+  --shadow-focus-sm:
+    0 0 0 2px --border,
+    rgba(0, 0, 0, 0.1);
+  --shadow-focus-lg: 0 0 0 8px --border, rgba(0, 0, 0, 0.1);
 }
 
 @mixin dark-theme {
@@ -462,6 +472,14 @@
   --fuchsia-badge: var(--fuchsia-300);
   --pink-badge: var(--pink-300);
   --rose-badge: var(--rose-300);
+
+  // shadows
+  --shadow-popup: 0 1px 2px rgb(0 0 0 / 30%);
+  --shadow-dropdown: 0 4px 12px rgb(0 0 0 / 40%);
+  --shadow-lg: 0 8px 24px rgb(0 0 0 / 50%);
+  --shadow-focus: 0 0 0 2px rgb(102 153 204 / 35%);
+  --shadow-focus-sm: 0 0 0 2px rgb(0 0 0 / 35%);
+  --shadow-focus-lg: 0 0 0 8px rgb(0 0 0 / 35%);
 }
 
 body[data-theme="dark"] {
