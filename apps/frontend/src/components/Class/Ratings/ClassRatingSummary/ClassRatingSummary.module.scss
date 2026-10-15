@@ -5,7 +5,7 @@
   display: flex;
   align-items: top;
   // padding: 0px 24px;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
   min-width: 450px;
 
   .body {
@@ -36,7 +36,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 4px;
+      gap: var(--space-1);
       flex: 1 0 0;
     }
     h3,
@@ -50,7 +50,7 @@
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
-      font-weight: 600;
+      font-weight: var(--font-semibold);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -62,7 +62,7 @@
       font-family: Inter;
       font-size: var(--font-sizes-1, 12px);
       font-style: normal;
-      font-weight: var(--font-weight-regular, 400);
+      font-weight: var(--font-normal);
       line-height: 16px;
     }
     h5 {
@@ -71,7 +71,7 @@
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
       font-style: normal;
-      font-weight: 400;
+      font-weight: var(--font-normal);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -84,7 +84,7 @@
       font-feature-settings: "liga" off;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-weight: var(--font-normal);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -100,7 +100,7 @@
         display: inline;
         background: none;
         border: none;
-        padding: 0 0 0 4px;
+        padding: 0 0 0 var(--space-1);
         color: var(--blue-badge);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
@@ -140,7 +140,7 @@
       border-radius: 4px;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-weight: var(--font-normal);
       color: var(--secondary-color);
       cursor: pointer;
 
@@ -160,7 +160,7 @@
       padding: 0;
       font-family: Inter;
       font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-weight: var(--font-normal);
       color: var(--paragraph-color);
       cursor: pointer;
 
@@ -180,7 +180,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
+        gap: var(--space-1);
         flex: 1 0 0;
         padding-right: var(--space-4, 16px);
 
@@ -193,7 +193,7 @@
         color: var(--secondary-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
-        font-weight: 500;
+        font-weight: var(--font-medium);
         line-height: 20px;
         letter-spacing: -0.1px;
       }
@@ -202,7 +202,7 @@
         color: var(--paragraph-color);
         font-family: Inter;
         font-size: var(--font-sizes-2, 14px);
-        font-weight: 400;
+        font-weight: var(--font-normal);
         line-height: 20px;
       }
     }
@@ -258,7 +258,7 @@
   font-family: Inter;
   font-size: var(--font-sizes-2, 14px);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   line-height: 20px;
   letter-spacing: -0.1px;
 }
