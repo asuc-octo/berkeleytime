@@ -128,12 +128,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
-  "1ca3cf6917e03729d6cddb6fdb92a508daa862d82c0ff3c29c06686bb8339cd8": {
-    operationName: "GetCatalogSearch",
-    document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
-    variableNames: ["year","semester","search","filters","sortBy","sortOrder","page","pageSize","semanticSearch"],
-    sources: ["apps/frontend/src/lib/api/catalog.ts"],
-  },
   "21d99c424cfd188b983652d4c063b3f6ec79d463006d91688eb0141541de6be6": {
     operationName: "TrackEvents",
     document: "mutation TrackEvents($events:[TrackingEventInput!]!){trackEvents(events:$events)}",
@@ -751,6 +745,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation CreateNewPlanTerm($planTerm:PlanTermInput!){createNewPlanTerm(planTerm:$planTerm){_id name userEmail year term hidden status pinned __typename}}",
     variableNames: ["planTerm"],
     sources: ["apps/frontend/src/lib/api/plans.ts"],
+  },
+  "da649ef0c48af1e771b1f20c654d2b21a5bfa7d67eca0b849ef7fa68f555cd86": {
+    operationName: "GetCatalogSearch",
+    document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number primaryComponent title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
+    variableNames: ["year","semester","search","filters","sortBy","sortOrder","page","pageSize","semanticSearch"],
+    sources: ["apps/frontend/src/lib/api/catalog.ts"],
   },
   "de284e74096a0b451bc6c97e17c0fb3991cd2e954c33a9d9950f5fa0115a1ddd": {
     operationName: "GetCourseRequirements",

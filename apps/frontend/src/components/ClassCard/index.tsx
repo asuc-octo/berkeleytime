@@ -47,6 +47,13 @@ const formatClassNumber = (number: string | undefined | null): string => {
   return num.toString().padStart(2, "0");
 };
 
+const COMPONENT_LABELS: Record<string, string> = {
+  DIS: "DISC",
+};
+
+const formatComponent = (component: string): string =>
+  COMPONENT_LABELS[component] ?? component;
+
 type BaseClassFields = Pick<
   IClass,
   | "subject"
@@ -78,6 +85,7 @@ type ClassCardClass = Partial<BaseClassFields> & {
   semester?: Semester;
   course?: Partial<CourseSummary> | null;
   decal?: { title?: string | null } | null;
+  primaryComponent?: string | null;
   primarySection?: {
     enrollment?: {
       latest?: Partial<EnrollmentSnapshot> | null;
@@ -132,6 +140,9 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
   const formattedClassNumber = formatClassNumber(_class?.number);
+  const sectionLabel = _class?.primaryComponent
+    ? `${formatComponent(_class.primaryComponent)} #${formattedClassNumber}`
+    : `#${formattedClassNumber}`;
 
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
@@ -186,7 +197,7 @@ export default function ClassCard({
                           <>
                             {" "}
                             <span className={styles.sectionNumber}>
-                              #{formattedClassNumber}
+                              {sectionLabel}
                             </span>
                           </>
                         )}
@@ -199,7 +210,7 @@ export default function ClassCard({
                         <>
                           {" "}
                           <span className={styles.sectionNumber}>
-                            #{formattedClassNumber}
+                            {sectionLabel}
                           </span>
                         </>
                       )}

@@ -36,6 +36,7 @@ export const GET_CATALOG_SEARCH = gql`
         subject
         courseNumber
         number
+        primaryComponent
         title
         unitsMin
         unitsMax
