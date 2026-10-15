@@ -71,6 +71,7 @@ spec:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
             - "--storage.tsdb.retention.time={{ .Values.prometheus.retention }}"
+            - "--storage.tsdb.retention.size={{ .Values.prometheus.retentionSize }}"
             - "--web.enable-lifecycle"
             - "--web.enable-remote-write-receiver"
             - "--query.max-samples={{ .Values.prometheus.queryMaxSamples }}"
