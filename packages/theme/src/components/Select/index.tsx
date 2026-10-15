@@ -212,6 +212,7 @@ export interface SelectProps<T> {
     onClick: () => void;
   };
   searchable?: boolean;
+  combobox?: boolean;
   searchPlaceholder?: string;
   emptyMessage?: string;
   customSearch?: (query: string, options: Option<T>[]) => Option<T>[];
@@ -225,6 +226,9 @@ export interface SelectProps<T> {
   maxListHeight?: number;
   contentClassName?: string;
   tabsWrapperClassName?: string;
+  side?: "top" | "bottom";
+  avoidCollisions?: boolean;
+  dense?: boolean;
 }
 
 export function Select<T>({
@@ -241,6 +245,7 @@ export function Select<T>({
   variant = "default",
   addOption,
   searchable = false,
+  combobox = false,
   searchPlaceholder = "Search...",
   emptyMessage = "No results found.",
   customSearch,
@@ -254,9 +259,13 @@ export function Select<T>({
   maxListHeight,
   contentClassName,
   tabsWrapperClassName,
+  side,
+  avoidCollisions,
+  dense = false,
 }: SelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [comboboxEditing, setComboboxEditing] = useState(false);
   const [internalTab, setInternalTab] = useState<string | undefined>(() =>
     tabs?.length ? (tabValue ?? defaultTab ?? tabs[0]?.value) : undefined
   );
@@ -386,6 +395,8 @@ export function Select<T>({
     } else {
       onChange(optValue);
       setOpen(false);
+      setComboboxEditing(false);
+      setSearchValue("");
     }
   };
 
@@ -395,10 +406,11 @@ export function Select<T>({
       <div className={styles.triggerLabel}>
         {hasSelection
           ? Array.isArray(activeElem)
-            ? getMultiSelectionText(activeElem)
-            : activeElem
-              ? (activeElem as OptionItem<T>).label
-              : selectedLabel
+            ? (selectedLabel ?? getMultiSelectionText(activeElem))
+            : (selectedLabel ??
+              (activeElem
+                ? (activeElem as OptionItem<T>).label
+                : effectivePlaceholder))
           : effectivePlaceholder}
       </div>
       <Flex
@@ -419,7 +431,7 @@ export function Select<T>({
         <div
           style={{
             borderLeft: "1px solid var(--border-color)",
-            paddingLeft: "12px",
+            paddingLeft: dense ? "4px" : "12px",
             display: "flex",
             alignItems: "center",
             height: "24px",
@@ -503,6 +515,9 @@ export function Select<T>({
             key={`${groupIndex}-${itemIndex}-${opt.label}`}
             value={opt.label}
             disabled={opt.disabled}
+            onMouseDown={(event) => {
+              if (combobox) event.preventDefault();
+            }}
             onSelect={() => {
               if (opt.disabled) return;
               handleSelect(opt.value);
@@ -539,6 +554,151 @@ export function Select<T>({
     });
   };
 
+  const selectedOptionLabel =
+    !Array.isArray(activeElem) && activeElem ? activeElem.label : "";
+
+  const closeCombobox = (next: boolean) => {
+    setOpen(next);
+    if (!next) {
+      setComboboxEditing(false);
+      setSearchValue("");
+    }
+  };
+
+  if (combobox) {
+    return (
+      <Command shouldFilter={false} className={styles.comboboxCommand}>
+        <Popover.Root open={open} onOpenChange={closeCombobox}>
+          <Popover.Anchor asChild>
+            <div
+              className={classNames(styles.comboboxField, {
+                [styles.selected]: hasSelection && !comboboxEditing,
+                [styles.disabled]: effectiveDisabled,
+                [styles.foreground]: variant === "foreground",
+              })}
+              ref={triggerRef}
+              onMouseDown={(event) => {
+                if (effectiveDisabled) return;
+                if (
+                  (event.target as HTMLElement).closest("[data-combobox-clear]")
+                ) {
+                  return;
+                }
+                if ((event.target as HTMLElement).tagName !== "INPUT") {
+                  event.preventDefault();
+                }
+                event.currentTarget.querySelector("input")?.focus();
+                if (!comboboxEditing) {
+                  setComboboxEditing(true);
+                  setSearchValue("");
+                }
+                setOpen(true);
+              }}
+            >
+              <Command.Input
+                className={styles.comboboxInput}
+                value={comboboxEditing ? searchValue : selectedOptionLabel}
+                placeholder={
+                  comboboxEditing && selectedOptionLabel
+                    ? selectedOptionLabel
+                    : effectivePlaceholder
+                }
+                disabled={effectiveDisabled}
+                onFocus={() => {
+                  if (effectiveDisabled) return;
+                  setComboboxEditing(true);
+                  setSearchValue("");
+                  setOpen(true);
+                }}
+                onValueChange={(next) => {
+                  if (effectiveDisabled) return;
+                  setComboboxEditing(true);
+                  setSearchValue(next);
+                  setOpen(true);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") closeCombobox(false);
+                }}
+              />
+              <Flex
+                direction="row"
+                gap="8px"
+                align="center"
+                className={styles.triggerActions}
+              >
+                {clearable && hasSelection && (
+                  <Xmark
+                    data-combobox-clear=""
+                    onPointerDown={(event) => {
+                      event.stopPropagation();
+                      event.preventDefault();
+                      onChange(null);
+                      setComboboxEditing(false);
+                      setSearchValue("");
+                      setOpen(false);
+                    }}
+                  />
+                )}
+                <div className={styles.comboboxChevron}>
+                  <NavArrowDown />
+                </div>
+              </Flex>
+            </div>
+          </Popover.Anchor>
+          {!effectiveDisabled && (
+            <Popover.Portal>
+              <Popover.Content
+                className={classNames(
+                  styles.searchableContent,
+                  styles.comboboxContent,
+                  contentClassName
+                )}
+                style={{
+                  width: triggerWidth,
+                  zIndex: contentZIndex,
+                  maxHeight: maxListHeight ?? 280,
+                }}
+                side={side ?? "bottom"}
+                sideOffset={5}
+                align="start"
+                collisionPadding={8}
+                avoidCollisions={avoidCollisions}
+                onOpenAutoFocus={(event) => event.preventDefault()}
+                onCloseAutoFocus={(event) => event.preventDefault()}
+                onFocusOutside={(event) => {
+                  const target = event.target as Node | null;
+                  if (target && triggerRef.current?.contains(target)) {
+                    event.preventDefault();
+                  }
+                }}
+                onInteractOutside={(event) => {
+                  const target = event.target as Node | null;
+                  if (target && triggerRef.current?.contains(target)) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <Command.List
+                  ref={commandListRef}
+                  className={classNames(
+                    styles.commandList,
+                    styles.comboboxList
+                  )}
+                  style={{ maxHeight: maxListHeight ?? 280 }}
+                  onWheelCapture={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  {renderGroupedOptions()}
+                </Command.List>
+              </Popover.Content>
+            </Popover.Portal>
+          )}
+        </Popover.Root>
+      </Command>
+    );
+  }
+
   // SEARCHABLE MODE: Use Popover + Command (cmdk)
   if (isSearchable) {
     return (
@@ -555,7 +715,7 @@ export function Select<T>({
               [styles.foreground]: variant === "foreground",
             })}
             tabIndex={0}
-            gap="12px"
+            gap={dense ? "4px" : "12px"}
             style={style}
           >
             {triggerContent}
@@ -569,6 +729,8 @@ export function Select<T>({
               sideOffset={5}
               align="start"
               collisionPadding={8}
+              side={side}
+              avoidCollisions={avoidCollisions}
             >
               <Command shouldFilter={false}>
                 <div className={styles.searchInputWrapper}>
@@ -639,7 +801,7 @@ export function Select<T>({
             [styles.foreground]: variant === "foreground",
           })}
           tabIndex={0}
-          gap="12px"
+          gap={dense ? "4px" : "12px"}
           style={style}
         >
           {triggerContent}
@@ -653,10 +815,19 @@ export function Select<T>({
             style={{
               width: triggerWidth,
               zIndex: contentZIndex,
-              ...(maxListHeight ? { maxHeight: maxListHeight } : {}),
+              ...(maxListHeight
+                ? {
+                    maxHeight: `min(${maxListHeight}px, var(--radix-dropdown-menu-content-available-height, ${maxListHeight}px))`,
+                  }
+                : {}),
             }}
+            side={side}
             sideOffset={5}
             collisionPadding={8}
+            avoidCollisions={avoidCollisions}
+            onWheelCapture={(event) => {
+              event.stopPropagation();
+            }}
           >
             {currentOptions.length === 0 ? (
               <div className={styles.commandEmpty}>{emptyMessage}</div>
