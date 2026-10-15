@@ -50,6 +50,13 @@ data:
       defaults:
         metrics_generator:
           processors: [service-graphs, span-metrics]
+          max_active_series: {{ .Values.tempo.limits.maxActiveSeries }}
+        ingestion:
+          rate_limit_bytes: {{ .Values.tempo.limits.ingestionRateBytes }}
+          burst_size_bytes: {{ .Values.tempo.limits.ingestionBurstBytes }}
+          max_traces_per_user: {{ .Values.tempo.limits.maxTracesPerUser }}
+        global:
+          max_bytes_per_trace: {{ .Values.tempo.limits.maxBytesPerTrace }}
 
 ---
 
@@ -94,6 +101,9 @@ spec:
           image: {{ .Values.tempo.image }}
           args:
             - "-config.file=/etc/tempo/tempo.yaml"
+          env:
+            - name: GOMEMLIMIT
+              value: {{ .Values.tempo.goMemLimit | quote }}
           ports:
             - name: http
               containerPort: 3200
