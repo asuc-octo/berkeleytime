@@ -33,6 +33,7 @@ spec:
             # Leaves headroom for non-heap memory (buffers, zlib, native).
             - name: NODE_OPTIONS
               value: "--max-old-space-size=1024"
+            {{- include "bt-app.mongoEnv" . | nindent 12 }}
           resources:
             requests:
               # Give the latency-sensitive Node process a CPU floor so it is not

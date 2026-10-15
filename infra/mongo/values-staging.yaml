@@ -3,14 +3,19 @@
 #
 # Default values.yaml is aimed at prod (hostPath, memory). This file keeps smaller limits for stage.
 
-hostPath: /data/stage/db
+env: stage
 
-mongodb:
-  commonLabels:
-    env: stage
+hostPath: /data/stage/db83
+hostPathSearch: /data/stage/mongot
 
-  resources:
-    limits:
-      memory: 2Gi
-    requests:
-      memory: 1Gi
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    memory: 1Gi
+
+searchResources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 512Mi

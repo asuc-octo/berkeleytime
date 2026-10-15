@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-mongo.searchName" . }}-headless
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  # mongod opens a long-lived gRPC connection to mongot; resolve it even while mongot is still indexing.
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "bt-mongo.selectorLabels" (list . "mongot") | nindent 4 }}
+  ports:
+    - name: grpc
+      port: 27028
+      targetPort: 27028
+    - name: metrics
+      port: 9946
+      targetPort: 9946
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "bt-mongo.searchName" . }}
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+    env: {{ .Values.env }}
+spec:
+  serviceName: {{ include "bt-mongo.searchName" . }}-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bt-mongo.selectorLabels" (list . "mongot") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-mongo.selectorLabels" (list . "mongot") | nindent 8 }}
+        env: {{ .Values.env }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mongot-config.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: mongot
+          image: {{ .Values.searchImage }}
+          ports:
+            - name: grpc
+              containerPort: 27028
+            - name: metrics
+              containerPort: 9946
+            - name: health
+              containerPort: 8080
+          resources:
+            {{- toYaml .Values.searchResources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: health
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: health
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /data/mongot
+            - name: config
+              mountPath: /mongot-community/config.default.yml
+              subPath: config.default.yml
+              readOnly: true
+            # mongot runs as root; it requires the password file to be 0400.
+            - name: auth
+              mountPath: /etc/mongot-secret
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "bt-mongo.searchName" . }}-config
+        - name: auth
+          secret:
+            secretName: {{ include "bt-mongo.authSecretName" . }}
+            defaultMode: 0400
+            items:
+              - key: mongot-password
+                path: mongot-password
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: manual
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.persistence.searchSize }}
