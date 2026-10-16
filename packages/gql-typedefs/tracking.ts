@@ -18,7 +18,7 @@ export const trackingTypeDef = gql`
     "Arbitrary JSON payload for event-specific context."
     metadata: JSON
 
-    "Client-set ISO 8601 timestamp for accurate timing."
+    "Client clock for diagnostics only. Reporting uses server receipt time."
     timestamp: String!
   }
 
@@ -34,6 +34,7 @@ export const trackingTypeDef = gql`
     """
     Record tracking events. Accepts up to 50 events per call.
     Server enriches each event with session, user, and request metadata.
+    Collection is best-effort and subject to paced event budgets.
     """
     trackEvents(events: [TrackingEventInput!]!): Boolean
   }
@@ -41,6 +42,8 @@ export const trackingTypeDef = gql`
   type Query {
     """
     Get event counts per day for a given filter. Staff only.
+    Outreach clicks include only server-observed redirects, excluding historical
+    records with unknown provenance. Other client events remain unverified.
     """
     trackingEventsTimeSeries(
       eventType: String

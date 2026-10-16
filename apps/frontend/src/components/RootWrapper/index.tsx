@@ -4,11 +4,7 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 import DevAuthBanner from "@/components/DevAuthBanner";
 import RouteTracker from "@/components/RouteTracker";
-import {
-  useAllRouteRedirects,
-  useIncrementRouteRedirectClick,
-} from "@/hooks/api/route-redirect";
-import { useTracking } from "@/hooks/api/tracking/useTracking";
+import { useAllRouteRedirects } from "@/hooks/api/route-redirect";
 
 // Module-level tracking to prevent duplicate increments
 let lastIncrementedPath: string | null = null;
@@ -21,8 +17,6 @@ let lastIncrementTime = 0;
 export default function RootWrapper() {
   const location = useLocation();
   const { data: redirects, loading } = useAllRouteRedirects();
-  const { incrementClick } = useIncrementRouteRedirectClick();
-  const { trackClick, flushBeacon } = useTracking();
 
   // Check for redirects immediately on route change
   useEffect(() => {
@@ -46,19 +40,16 @@ export default function RootWrapper() {
     if (matchingRedirect) {
       lastIncrementedPath = currentPath;
       lastIncrementTime = now;
-      incrementClick(matchingRedirect.id);
-      trackClick("redirect", matchingRedirect.id, { fromPath: currentPath });
-      flushBeacon();
-      window.location.href = matchingRedirect.toPath;
+      // The server resolves the destination and records one observed redirect.
+      // Encode each segment so encoded separators and Unicode survive routing.
+      const path = matchingRedirect.fromPath
+        .slice(1)
+        .split("/")
+        .map(encodeURIComponent)
+        .join("/");
+      window.location.href = `/go/${path}`;
     }
-  }, [
-    location.pathname,
-    redirects,
-    loading,
-    incrementClick,
-    trackClick,
-    flushBeacon,
-  ]);
+  }, [location.pathname, redirects, loading]);
 
   return (
     <>
