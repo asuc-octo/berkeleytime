@@ -103,7 +103,7 @@ export default function Header() {
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
             >
-              {expanded ? "Close Filters" : "Open Filters"}
+              {expanded ? "Save Filters" : "Open Filters"}
             </motion.span>
           </AnimatePresence>
         </Button>
