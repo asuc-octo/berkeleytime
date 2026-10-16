@@ -33,6 +33,7 @@ import {
   UtilizationRatioBlock,
 } from "./components/GradTrakAnalytics";
 import {
+  GradesPercentileSliderBlock,
   GradesSearchesBlock,
   GradesUsersBlock,
 } from "./components/GradesAnalytics";
@@ -261,6 +262,9 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <GradesSearchesBlock />
+            </div>
+            <div className={styles.cell}>
+              <GradesPercentileSliderBlock />
             </div>
             <div className={styles.cell}>
               <DevicesBlock targetType="grades" scopeLabel="Grades" />

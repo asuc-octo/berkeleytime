@@ -602,6 +602,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["subject","courseNumber","semester","year","classNumber"],
     sources: ["apps/ag-frontend/src/lib/api/ratings.ts","apps/frontend/src/lib/api/ratings.ts"],
   },
+  "9ccdbb676701a4b05792668e32f5aac4fb7009ae304b7f7d2a80961aabd19784": {
+    operationName: "GradesPercentileSliderUsage",
+    document: "query GradesPercentileSliderUsage($days:Int!){gradesPercentileSliderUsage(days:$days){usedSessions touchedSessions unusedSessions totalSessions usagePercent touchPercent __typename}}",
+    variableNames: ["days"],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "9d64fb0136d28325822a321e61969fbd9bf8387ec1e5a8df4c9416557c5c085f": {
     operationName: "CreateNewPlan",
     document: "mutation CreateNewPlan($colleges:[Colleges!]!$startYear:Int!$endYear:Int!$majors:[String!]!$minors:[String!]!){createNewPlan(colleges:$colleges startYear:$startYear endYear:$endYear majors:$majors minors:$minors){_id planTerms{_id name year term courses{courseID courseName courseTitle courseUnits pnp transfer labels{name color __typename}__typename}hidden status pinned __typename}majors minors colleges labels{name color __typename}__typename}}",

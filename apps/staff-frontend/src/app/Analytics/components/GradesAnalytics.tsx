@@ -4,6 +4,10 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -16,7 +20,10 @@ import {
   ChartTooltip,
   createChartConfig,
 } from "@/components/Chart";
-import { useGradesSessionUsersData } from "@/hooks/api";
+import {
+  useGradesPercentileSliderUsage,
+  useGradesSessionUsersData,
+} from "@/hooks/api";
 
 import { AnalyticsCard, TimeRange } from "./AnalyticsCard";
 import { EventCard } from "./EngagementAnalytics";
@@ -59,6 +66,110 @@ export function GradesSearchesBlock() {
       valueLabel="lookups"
       variant="area"
     />
+  );
+}
+
+export function GradesPercentileSliderBlock() {
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const { data, loading, error } = useGradesPercentileSliderUsage(
+    getTimeRangeDays(timeRange)
+  );
+  const chartData = [
+    {
+      name: "used",
+      sessions: data?.usedSessions ?? 0,
+      fill: "var(--blue-500)",
+    },
+    {
+      name: "unused",
+      sessions: data?.unusedSessions ?? 0,
+      fill: "var(--border-color)",
+    },
+  ];
+  const chartConfig = createChartConfig(["used", "unused"], {
+    labels: { used: "Meaningfully adjusted", unused: "Not adjusted" },
+    colors: { used: "var(--blue-500)", unused: "var(--border-color)" },
+  });
+
+  return (
+    <AnalyticsCard
+      title="Percentile Slider Usage"
+      description="≥5-point change kept for ≥1s"
+      currentValue={
+        data
+          ? data.totalSessions > 0
+            ? `${data.usagePercent.toFixed(1)}%`
+            : "—"
+          : undefined
+      }
+      subtitle={
+        data
+          ? `${data.usedSessions.toLocaleString()} / ${data.totalSessions.toLocaleString()} sessions · touched ${data.touchPercent.toFixed(1)}%`
+          : undefined
+      }
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={setTimeRange}
+    >
+      {loading || error || !data || data.totalSessions === 0 ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: error ? "var(--red-500)" : "var(--label-color)",
+          }}
+        >
+          {loading ? (
+            <LoadingIndicator />
+          ) : error || !data ? (
+            "Error loading data"
+          ) : (
+            "No completed sessions with slider tracking in this time range"
+          )}
+        </div>
+      ) : (
+        <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                dataKey="sessions"
+                nameKey="name"
+                innerRadius="50%"
+                outerRadius="80%"
+                stroke="var(--background-color)"
+                isAnimationActive={false}
+              >
+                {chartData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Pie>
+              <ChartTooltip
+                cursor={false}
+                tooltipConfig={{
+                  hideLabel: true,
+                  valueFormatter: (value: number) =>
+                    `${value.toLocaleString()} sessions`,
+                }}
+              />
+              <Legend
+                iconType="circle"
+                iconSize={8}
+                formatter={(value: string) => (
+                  <span
+                    style={{ color: "var(--paragraph-color)", fontSize: 12 }}
+                  >
+                    {chartConfig[value]?.label ?? value}
+                  </span>
+                )}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      )}
+    </AnalyticsCard>
   );
 }
 
