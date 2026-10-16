@@ -9,3 +9,5 @@ export { useCollectionAnalyticsData } from "./useCollectionAnalyticsData";
 export { useSchedulerAnalyticsData } from "./useSchedulerAnalyticsData";
 export { useGeneralActivityAnalyticsData } from "./useGeneralActivityAnalyticsData";
 export { useActivityScoreDistribution } from "./useActivityScoreDistribution";
+export { useGradesSessionUsersData } from "./useGradesSessionUsersData";
+export { useDeviceAnalyticsData } from "./useDeviceAnalyticsData";

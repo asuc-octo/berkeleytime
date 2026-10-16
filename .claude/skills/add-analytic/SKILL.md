@@ -84,6 +84,7 @@ nobody can see it yet** — that's a one-block addition (Path B).
 | `click` | `apply-button` | position | `app/Apply/index.tsx` | none |
 | `view` | `class` | course id | `components/Class/index.tsx` | none |
 | `search` / `search_click` | `course` | — / result id | `components/CourseSearch/index.tsx` | none |
+| `session_start` / `session_end` | `grades` | client-generated session id (pairs start with end; `session_end` metadata has `durationMs`) | `app/Grades/index.tsx` via `trackSessionStart`/`trackSessionEnd` | `GradesUsersBlock` in `GradesAnalytics.tsx` (Analytics -> Grades tab), backed by the `gradesSessionUsers` query |
 
 Two naming conventions are visible: `course-discovery` / `catalog_filter`
 name the *surface*; everything else names the *entity being acted on*

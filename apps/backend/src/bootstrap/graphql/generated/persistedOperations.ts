@@ -134,6 +134,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester","search","filters","sortBy","sortOrder","page","pageSize","semanticSearch"],
     sources: ["apps/frontend/src/lib/api/catalog.ts"],
   },
+  "214475dd26940cf418054ebfd2049d55377d212e0e9d0505bdee66ce8528182d": {
+    operationName: "DeviceAnalyticsData",
+    document: "query DeviceAnalyticsData($days:Int!$targetType:String){deviceAnalyticsData(days:$days targetType:$targetType){devices{category users vendors{name users __typename}__typename}totalUsers __typename}}",
+    variableNames: ["days","targetType"],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "21d99c424cfd188b983652d4c063b3f6ec79d463006d91688eb0141541de6be6": {
     operationName: "TrackEvents",
     document: "mutation TrackEvents($events:[TrackingEventInput!]!){trackEvents(events:$events)}",
@@ -571,6 +577,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetCourseNames{courses{courseId subject departmentNicknames formerNames number title __typename}}",
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/courses.ts"],
+  },
+  "94aee53b8a6b8fdc10d4c2916d6c295dfaa2fb0f8a448177a90f686e9bc306a2": {
+    operationName: "GradesSessionUsers",
+    document: "query GradesSessionUsers($days:Int!){gradesSessionUsers(days:$days){dataPoints{date loggedInUsers anonymousUsers totalUsers __typename}uniqueLoggedInUsers uniqueAnonymousUsers uniqueUsers __typename}}",
+    variableNames: ["days"],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
   },
   "975a079d64a086e0d443cda072718ffa067e834ba78e362f48779333513248e8": {
     operationName: "GetCourseGradeDist",
