@@ -236,7 +236,7 @@ export default function Filters() {
             onClick={() => setExpanded(false)}
           >
             <Filter />
-            <span>Close Filters</span>
+            <span>Save Filters</span>
           </Button>
         )}
         <div className={styles.sortControls}>
