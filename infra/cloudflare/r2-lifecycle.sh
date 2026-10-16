@@ -27,10 +27,10 @@ add_rule() {
     --expire-days "$days" --abort-multipart-days 1 --force
 }
 
-add_rule "$PRIVATE_BUCKET" hourly/ 1
-add_rule "$PRIVATE_BUCKET" daily/ 30
-add_rule "$PRIVATE_BUCKET" weekly/ 91
-add_rule "$PRIVATE_BUCKET" persistent/ 730
+add_rule "$PRIVATE_BUCKET" hourly/ 1 # 24 at a time
+add_rule "$PRIVATE_BUCKET" daily/ 30 # 30 at a time
+add_rule "$PRIVATE_BUCKET" weekly/ 91 # 13 at a time
+add_rule "$PRIVATE_BUCKET" persistent/ # 24 at a time
 add_rule "$PUBLIC_BUCKET" daily/ 7
 
 $WRANGLER r2 bucket lifecycle list "$PRIVATE_BUCKET"
