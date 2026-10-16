@@ -11,6 +11,3 @@ spec:
     - berkeleytime.com
     - "*.berkeleytime.com"
     - "*.dev.berkeleytime.com"
-    - stanfurdtime.com
-    - "*.stanfurdtime.com"
-    - "*.dev.stanfurdtime.com"
