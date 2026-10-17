@@ -182,6 +182,9 @@ export const planSchema = new Schema(
   { timestamps: true }
 );
 
+// for enforcing one plan per user
+planSchema.index({ userEmail: 1 }, { unique: true });
+
 export type SelectedCourseType = InferSchemaType<typeof selectedCourseSchema> &
   Document;
 export const SelectedCourseModel = mongoose.model<SelectedCourseType>(
