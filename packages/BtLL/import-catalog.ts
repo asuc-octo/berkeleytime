@@ -4,9 +4,10 @@
  * catalog (Coursedog) and writes them to catalog_reqs.generated.ts, which
  * generate-mongosh-commands.ts seeds alongside the hand-written programs.
  *
- * MVP scope: only published programs whose catalog name exactly matches a
- * GradTrak major/minor, whose rules are all structured (no free text), and
- * that have no rule descriptions or option/track-style rules.
+ * MVP scope: a curated, diverse set of programs (PROGRAMS below). Output is
+ * best-effort: structured rules are converted, and anything that can't be
+ * converted (free text, major-specific requirement sets, unsupported rules)
+ * becomes an unmet placeholder requirement students can check off manually.
  * See .claude/docs/features/gradtrak/catalog-requirements-source.md.
  *
  * Usage: npm run import:catalog
@@ -19,45 +20,24 @@ const API = "https://app.coursedog.com/api/v1";
 const SCHOOL = "ucberkeley_peoplesoft";
 const CATALOG_ID = "hMSTjlpIK6VX5nnJn7ZE"; // 2026-27 undergraduate catalog
 
-// The filter the public catalog site applies (pinia.settings.programsFilters)
-const PUBLISHED_FILTER = {
-  condition: "and",
-  filters: [
-    {
-      condition: "field",
-      name: "NMGlH",
-      group: "program",
-      type: "is",
-      value: true,
-      customField: true,
-    },
-    {
-      condition: "field",
-      name: "status",
-      group: "program",
-      type: "is",
-      value: "Active",
-    },
-    {
-      condition: "field",
-      name: "3iK2Q",
-      group: "program",
-      type: "is",
-      value: "Undergraduate",
-      customField: true,
-    },
-  ],
-};
-
-// Chemistry: the BA and BS both map to GradTrak's single "Chemistry" major.
-// Data Science: already has a hand-written program.
-const EXCLUDED_MAJORS = ["Chemistry", "Data Science"];
-
-const OPTION_NAME = /option|track|concentration|either/i;
+// Programs to generate, by programGroupId. Their catalog names must exactly
+// match a GradTrak major/minor so the generated program can be seeded.
+const PROGRAMS = [
+  "25345U", // English major: fully structured
+  "25I071U", // Mathematics minor: fully structured (catalog data known to be wrong)
+  "16I020U", // Structural Engineering minor: fully structured, option-style rules
+  "25179U", // Cognitive Science major: mostly structured, some free text
+  "16279U", // Aerospace Engineering major: option-style rules, some free text
+  "25699U", // Political Science major: course sets, option-style rules
+  "25I072U", // Physics minor: course sets, minimum units, rule descriptions
+  "04779U", // Environmental Economics and Policy major: course sets, free text, major-specific requirement set
+  "z5SVnW3RWZv5syG4KuEY", // Ecosystem Management and Forestry major: free text only
+  "25I034U", // Chinese Language minor: free text only
+];
 
 // UC, campus and college requirement sets, which GradTrak's UC and college
 // programs already cover. Rules that reference only these are dropped; any
-// other (major-specific) set excludes the program.
+// other (major-specific) set becomes a placeholder.
 const SKIPPABLE_REQUISITE_SETS = new Set([
   "kYxMvh1XxU", // 1/3 Passed Grade Limit
   "Ir9XEqkeEu", // American Cultures
@@ -103,9 +83,12 @@ const RULE_CONDITIONS = [
   "minimumCredits",
 ];
 
+// Flagged in the summary for the refinement agent; converted literally for now
+const OPTION_NAME = /option|track|concentration|either/i;
+
 interface Rule {
   name: string;
-  condition: string;
+  condition: string; // a catalog rule condition, or "placeholder"
   n: number; // courses (groups) or units required
   groups: string[][]; // course IDs, later codes; each group is a set of alternatives
 }
@@ -114,6 +97,7 @@ interface Program {
   name: string;
   kind: "major" | "minor";
   rules: Rule[];
+  flags: string[];
 }
 
 async function api(path: string, body?: unknown) {
@@ -142,37 +126,56 @@ const sanitize = (s: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-/** Returns the program's rules, or a reason it's out of scope. */
-function parseProgram(p: any): Rule[] | string {
+const placeholder = (name: string): Rule => ({
+  name,
+  condition: "placeholder",
+  n: 0,
+  groups: [],
+});
+
+/** Converts a catalog program's rules, best-effort. */
+function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
   const rules: Rule[] = [];
+  const flags = new Set<string>();
   for (const block of p.requisites?.requisitesSimple ?? []) {
     if (block.type === "Narrative Text") continue;
     for (const r of block.rules ?? []) {
-      if (r.condition === "freeformText") return "free-text rule";
-      if (!RULE_CONDITIONS.includes(r.condition))
-        return `unsupported condition ${r.condition}`;
-      if (stripHtml(r.description)) return `rule description on "${r.name}"`;
-      if (OPTION_NAME.test(r.name ?? ""))
-        return `option-style rule "${r.name}"`;
+      const name =
+        sanitize(r.name ?? "") || sanitize(block.name ?? "") || "Requirement";
+      if (stripHtml(r.description)) flags.add("rule descriptions");
+      if (OPTION_NAME.test(r.name ?? "")) flags.add("option-style rules");
 
-      const ids: string[][] = r.value.values.map((g: any) => g.value);
-      if (r.value.condition === "requisiteSets") {
-        const unknown = ids
-          .flat()
-          .find((id) => !SKIPPABLE_REQUISITE_SETS.has(id));
-        if (unknown) return `major-specific requirement set ${unknown}`;
+      if (r.condition === "freeformText") {
+        flags.add("free text");
+        rules.push(placeholder(name));
         continue;
       }
-      if (!["courses", "courseSets"].includes(r.value.condition))
-        return `unsupported value ${r.value.condition}`;
+      const ids: string[][] = r.value?.values?.map((g: any) => g.value) ?? [];
+      if (r.value?.condition === "requisiteSets") {
+        if (ids.flat().every((id) => SKIPPABLE_REQUISITE_SETS.has(id)))
+          continue;
+        flags.add("major-specific requirement set");
+        rules.push(placeholder(name));
+        continue;
+      }
+      if (
+        !RULE_CONDITIONS.includes(r.condition) ||
+        !["courses", "courseSets"].includes(r.value?.condition)
+      ) {
+        flags.add(`unsupported rule (${r.condition}/${r.value?.condition})`);
+        rules.push(placeholder(name));
+        continue;
+      }
 
+      if (r.value.condition === "courseSets") flags.add("course sets");
+      if (r.condition === "completedAtLeastXOf" && r.restriction == null)
+        flags.add(`missing count on "${name}", assumed 1`);
       const groups =
         r.value.condition === "courseSets"
           ? ids.flat().map((id) => [`set:${id}`])
           : ids;
       rules.push({
-        name:
-          sanitize(r.name ?? "") || sanitize(block.name ?? "") || "Requirement",
+        name,
         condition: r.condition,
         n:
           r.condition === "minimumCredits"
@@ -181,12 +184,12 @@ function parseProgram(p: any): Rule[] | string {
               ? groups.length
               : r.condition === "completedAnyOf"
                 ? 1
-                : r.restriction,
+                : (r.restriction ?? 1),
         groups,
       });
     }
   }
-  return rules.length ? rules : "no structured rules";
+  return { rules, flags: [...flags] };
 }
 
 const courseLiteral = (code: string) => {
@@ -201,6 +204,12 @@ function toBtLL(rules: Rule[]) {
     '  List<Course> courses get_attr(this, "allCourses")',
   ];
   rules.forEach((rule, i) => {
+    if (rule.condition === "placeholder") {
+      lines.push(
+        `  BooleanRequirement r${i} {false, "${rule.name} - manual check, see catalog"}`
+      );
+      return;
+    }
     const all = [...new Set(rule.groups.flat())].map(courseLiteral).join(", ");
     lines.push(
       `  List<Course> r${i}_m filter(courses, (c) { boolean return one_common_course([c], [${all}]) })`
@@ -271,24 +280,20 @@ async function main() {
 
   const { data: programs } = await api(
     `/cm/${SCHOOL}/programs/search/%24filters?catalogId=${CATALOG_ID}&skip=0&limit=500&columns=catalogDisplayName,programGroupId,type,requisites`,
-    PUBLISHED_FILTER
+    { programGroupIds: PROGRAMS }
   );
 
-  const skipped: string[] = [];
   const selected: Program[] = [];
-  for (const p of programs) {
-    const kind =
-      p.type === "Minor" ? "minor" : /Major/.test(p.type) ? "major" : null;
+  for (const id of PROGRAMS) {
+    const p = programs.find((x: any) => x.programGroupId === id);
+    if (!p) throw new Error(`Program ${id} not found in the catalog`);
+    const kind = p.type === "Minor" ? "minor" : "major";
     const name = (p.catalogDisplayName ?? "").trim();
-    if (!kind || !gradtrak[`${kind}s`].includes(name)) continue; // name doesn't match GradTrak
-    const label = `${name} (${kind})`;
-    if (kind === "major" && EXCLUDED_MAJORS.includes(name)) {
-      skipped.push(`${label}: excluded`);
-      continue;
-    }
-    const rules = parseProgram(p);
-    if (typeof rules === "string") skipped.push(`${label}: ${rules}`);
-    else selected.push({ name, kind, rules });
+    if (!gradtrak[`${kind}s`].includes(name))
+      throw new Error(
+        `"${name}" (${kind}) doesn't match a GradTrak ${kind} name`
+      );
+    selected.push({ name, kind, ...parseProgram(p) });
   }
 
   // Expand course sets into their courses, one group per course
@@ -341,45 +346,59 @@ async function main() {
     code: string;
   }[] = [];
   for (const p of selected) {
-    const label = `${p.name} (${p.kind})`;
-    const missing = p.rules
+    // Drop courses the catalog can't resolve; a rule left with nothing becomes a placeholder
+    const unresolved = p.rules
       .flatMap((r) => r.groups.flat())
-      .find((id) => !codes[id]);
-    if (missing) {
-      skipped.push(`${label}: unresolved course ${missing}`);
-      continue;
-    }
-    if (p.rules.some((r) => r.groups.length === 0)) {
-      skipped.push(`${label}: empty rule`);
-      continue;
-    }
-    const rules = p.rules.map((r) => ({
-      ...r,
-      groups: r.groups.map((g) => [
-        ...new Set(
-          g.flatMap((id) => [
-            codes[id],
-            ...(EQUIVALENT_COURSES[codes[id]] ?? []),
-          ])
-        ),
-      ]),
-    }));
+      .filter((id) => !codes[id]);
+    if (unresolved.length)
+      p.flags.push(`${unresolved.length} unresolved course IDs dropped`);
+    const rules = p.rules.map((r) => {
+      if (r.condition === "placeholder") return r;
+      const groups = r.groups
+        .map((g) => [
+          ...new Set(
+            g
+              .filter((id) => codes[id])
+              .flatMap((id) => [
+                codes[id],
+                ...(EQUIVALENT_COURSES[codes[id]] ?? []),
+              ])
+          ),
+        ])
+        .filter((g) => g.length);
+      if (!groups.length) {
+        p.flags.push(`no resolvable courses in "${r.name}"`);
+        return placeholder(r.name);
+      }
+      // A catalog rule asking for more courses than it lists can never be met
+      if (r.condition !== "minimumCredits" && r.n > groups.length) {
+        p.flags.push(
+          `unsatisfiable catalog rule "${r.name}" (${r.n} of ${groups.length})`
+        );
+        return placeholder(r.name);
+      }
+      return { ...r, groups };
+    });
     const code = toBtLL(rules);
 
-    // Sanity check: nothing met on an empty plan, everything met when the
-    // first option of every group is taken
-    try {
-      const empty = evaluate(code, []);
-      const full = evaluate(
-        code,
-        rules.flatMap((r) => r.groups.map((g) => g[0]))
+    // Sanity check: nothing met on an empty plan; every non-placeholder rule met
+    // when the first option of every group is taken (placeholders stay unmet)
+    const isPlaceholder = rules.map((r) => r.condition === "placeholder");
+    const empty = evaluate(code, []);
+    const full = evaluate(
+      code,
+      rules.flatMap((r) => r.groups.map((g) => g[0]))
+    );
+    const failed = rules
+      .filter((_, i) => empty[i] || full[i] === isPlaceholder[i])
+      .map(
+        (r) =>
+          `"${r.name}" (${r.condition} ${r.n} of ${r.groups.length} groups)`
       );
-      if (empty.some(Boolean) || !full.every(Boolean))
-        throw new Error("unexpected results");
-    } catch (e) {
-      skipped.push(`${label}: failed sanity check (${(e as Error).message})`);
-      continue;
-    }
+    if (failed.length)
+      throw new Error(
+        `${p.name} (${p.kind}) failed the sanity check: ${failed.join(", ")}`
+      );
 
     output.push({
       name: `${p.name} ${p.kind === "major" ? "Major" : "Minor"} Requirements`,
@@ -387,6 +406,11 @@ async function main() {
       minor: p.kind === "minor" ? p.name : null,
       code,
     });
+    const placeholders = isPlaceholder.filter(Boolean).length;
+    console.log(
+      `+ ${output.at(-1)!.name}: ${rules.length - placeholders} converted, ${placeholders} placeholders` +
+        (p.flags.length ? ` [${p.flags.join("; ")}]` : "")
+    );
   }
 
   const file = `// GENERATED by import-catalog.ts from the Berkeley catalog (catalog ${CATALOG_ID}). Do not edit.
@@ -400,11 +424,7 @@ export const CATALOG_REQUIREMENTS: {
 }[] = ${JSON.stringify(output, null, 2)};
 `;
   writeFileSync(new URL("./catalog_reqs.generated.ts", import.meta.url), file);
-
-  console.log(`Wrote ${output.length} programs to catalog_reqs.generated.ts:`);
-  output.forEach((o) => console.log(`  + ${o.name}`));
-  console.log(`\nSkipped ${skipped.length} name-matched programs:`);
-  skipped.forEach((s) => console.log(`  - ${s}`));
+  console.log(`\nWrote ${output.length} programs to catalog_reqs.generated.ts`);
 }
 
 main().catch((e) => {
