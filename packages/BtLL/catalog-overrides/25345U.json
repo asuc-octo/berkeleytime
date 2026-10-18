@@ -1,0 +1,189 @@
+{
+  "programGroupId": "25345U",
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "okt58TlQ",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Shakespeare",
+        "n": 1,
+        "groups": [
+          ["ENGLISH R17"],
+          ["ENGLISH 17"],
+          ["ENGLISH 117A"],
+          ["ENGLISH 117B"],
+          ["ENGLISH 117F"],
+          ["ENGLISH 117J"],
+          ["ENGLISH 117S"],
+          ["ENGLISH N117S"]
+        ]
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "English R17, 17, 117A, 117B, 117F, 117J, or 117S all satisfy the Shakespeare requirement. English 117T does not satisfy the Shakespeare requirement.",
+        "reasoning": "The catalog list lacks R17 and 117F, which the department names explicitly. 117T stays out, as the department says (the summary list at the top of the page includes 117T, but the detailed section is explicit that it does not count). The catalog's N117S (the summer version of 117S) is kept."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "ZaLxXqa6",
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "English 190 The Research Seminar or H195A/B - The Honors Seminar",
+        "reasoning": "This rule is replaced by the Research Seminar rule added next, which also accepts the Honors Seminar. It also moves ahead of the Pre-1800 and Literatures in English rules: the catalog's Literatures in English list includes ENGLISH 190, so with the catalog order a student's only 190 would be used there and the Research Seminar rule would fail."
+      }
+    },
+    {
+      "op": "add",
+      "before": "jzYla7Fg",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Research Seminar or Honors Seminar",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "allOf",
+            "name": "Research Seminar",
+            "groups": [["ENGLISH 190"]]
+          },
+          {
+            "kind": "allOf",
+            "name": "Honors Seminar",
+            "groups": [["ENGLISH H195A"], ["ENGLISH H195B"]]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "English H195A/B is a year-long seminar that always begins in the fall and may be taken instead of English 190.",
+        "reasoning": "The catalog accepts only ENGLISH 190 for the capstone. The department lets the two-semester honors sequence (H195A and H195B) replace it. The rule is placed right after English 90 and 100, before the area electives, so the seminar courses are used for the seminar requirement first."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "jzYla7Fg",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Pre-1800",
+        "n": 1,
+        "groups": [
+          ["ENGLISH 100"],
+          ["ENGLISH 104"],
+          ["ENGLISH 105"],
+          ["ENGLISH 110"],
+          ["ENGLISH 111"],
+          ["ENGLISH 112"],
+          ["ENGLISH 114A"],
+          ["ENGLISH 114B"],
+          ["ENGLISH 115A"],
+          ["ENGLISH 115B"],
+          ["ENGLISH 118"],
+          ["ENGLISH 119"],
+          ["ENGLISH 120"],
+          ["ENGLISH 121"],
+          ["ENGLISH 125A"],
+          ["ENGLISH 130A"]
+        ]
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "Standard course offerings that would meet this requirement include but are not limited to: English 104, 105, 110, 111, 112, 114A, 114B, 115A, 115B, 118, 119, 120, 125A, 130A.",
+        "reasoning": "Adds ENGLISH 118 (Milton), which the department lists but the catalog lacks. The catalog's ENGLISH 121 is kept: the department list is 'not limited to', so leaving 121 out isn't an explicit exclusion. ENGLISH 100 is also kept, but the earlier seminar rule always uses it first."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "eNNPz7qy",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Literatures in English",
+        "n": 1,
+        "groups": [
+          ["ENGLISH 31AC"],
+          ["ENGLISH 33"],
+          ["ENGLISH 37"],
+          ["ENGLISH 53"],
+          ["ENGLISH 90"],
+          ["ENGLISH 100"],
+          ["ENGLISH 132"],
+          ["ENGLISH 133A"],
+          ["ENGLISH 133B"],
+          ["ENGLISH 133T"],
+          ["ENGLISH 134"],
+          ["ENGLISH 135AC"],
+          ["ENGLISH 137A"],
+          ["ENGLISH 137B"],
+          ["ENGLISH 137T"],
+          ["ENGLISH 138"],
+          ["ENGLISH 139"],
+          ["ENGLISH 152"],
+          ["ENGLISH 153T"],
+          ["ENGLISH 154"],
+          ["ENGLISH 165AC"],
+          ["ENGLISH 166"],
+          ["ENGLISH 166AC"],
+          ["ENGLISH 175"],
+          ["ENGLISH 177"],
+          ["ENGLISH 190"]
+        ]
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "Standard course offerings that would meet this requirement include but are not limited to: 31AC, 33, 37, 53, 133A, 133B, 133T, 135AC, 137A, 137B, 137T, 138, 139, 154, 166AC, 175, 177.",
+        "reasoning": "Adds 33, 135AC, 137A, 137B and 139, which the department lists but the catalog lacks. The catalog's other courses (132, 134, 152, 153T, 165AC, 166, and the seminars 90/100/190) are kept because the list is 'not limited to', and the page says special-topics courses (165/166) and seminars may be designated for this area."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "gD4pxAVk",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Remaining English Electives",
+        "n": 3,
+        "groups": [["ENGLISH 10"],["ENGLISH 15"],["ENGLISH 17"],["ENGLISH 20"],["ENGLISH 25"],["ENGLISH 25A"],["ENGLISH 25E"],["ENGLISH 26"],["ENGLISH 27"],["ENGLISH 28"],["ENGLISH 29"],["ENGLISH 30"],["ENGLISH 30A"],["ENGLISH 30B"],["ENGLISH 31"],["ENGLISH 31AC"],["ENGLISH 33"],["ENGLISH 37"],["ENGLISH 39"],["ENGLISH 39A"],["ENGLISH 39B"],["ENGLISH 39C"],["ENGLISH 39D"],["ENGLISH 39E"],["ENGLISH 39F"],["ENGLISH 39G"],["ENGLISH 39H"],["ENGLISH 39I"],["ENGLISH 39J"],["ENGLISH 39K"],["ENGLISH 39L"],["ENGLISH 39M"],["ENGLISH 39N"],["ENGLISH 39O"],["ENGLISH 39P"],["ENGLISH 39Q"],["ENGLISH 39R"],["ENGLISH 39S"],["ENGLISH 39T"],["ENGLISH 39U"],["ENGLISH 39V"],["ENGLISH 39W"],["ENGLISH 39X"],["ENGLISH 39Y"],["ENGLISH 39Z"],["ENGLISH 40"],["ENGLISH 42"],["ENGLISH 43A"],["ENGLISH 43B"],["ENGLISH 43D"],["ENGLISH 43N"],["ENGLISH 44A"],["ENGLISH 44B"],["ENGLISH 44C"],["ENGLISH 46A"],["ENGLISH 46B"],["ENGLISH 50"],["ENGLISH 53"],["ENGLISH 80K"],["ENGLISH 90"],["ENGLISH 91A"],["ENGLISH 96"],["ENGLISH 100"],["ENGLISH 101"],["ENGLISH 102"],["ENGLISH 104"],["ENGLISH 105"],["ENGLISH 105A"],["ENGLISH 105B"],["ENGLISH 106A"],["ENGLISH 106B"],["ENGLISH 107"],["ENGLISH 110"],["ENGLISH 110A"],["ENGLISH 110B"],["ENGLISH 111"],["ENGLISH 112"],["ENGLISH 114A"],["ENGLISH 114B"],["ENGLISH 115A"],["ENGLISH 115B"],["ENGLISH 116"],["ENGLISH 117A"],["ENGLISH 117B"],["ENGLISH 117E"],["ENGLISH 117F"],["ENGLISH 117J"],["ENGLISH 117S"],["ENGLISH 117T"],["ENGLISH 118"],["ENGLISH 119"],["ENGLISH 120"],["ENGLISH 121"],["ENGLISH 122"],["ENGLISH 124"],["ENGLISH 125A"],["ENGLISH 125B"],["ENGLISH 125C"],["ENGLISH 125D"],["ENGLISH 125E"],["ENGLISH 126"],["ENGLISH 127"],["ENGLISH 128"],["ENGLISH 130A"],["ENGLISH 130B"],["ENGLISH 130C"],["ENGLISH 130D"],["ENGLISH 131"],["ENGLISH 132"],["ENGLISH 133"],["ENGLISH 133A"],["ENGLISH 133B"],["ENGLISH 133T"],["ENGLISH 134"],["ENGLISH 135"],["ENGLISH 135AC"],["ENGLISH 136"],["ENGLISH 137"],["ENGLISH 137A"],["ENGLISH 137B"],["ENGLISH 137T"],["ENGLISH 138"],["ENGLISH 139"],["ENGLISH 141"],["ENGLISH 142A"],["ENGLISH 142D"],["ENGLISH 143A"],["ENGLISH 143B"],["ENGLISH 143C"],["ENGLISH 143D"],["ENGLISH 143E"],["ENGLISH 143N"],["ENGLISH 143T"],["ENGLISH 144"],["ENGLISH 145"],["ENGLISH 150"],["ENGLISH 150AC"],["ENGLISH 151C"],["ENGLISH 151G"],["ENGLISH 151M"],["ENGLISH 151S"],["ENGLISH 152"],["ENGLISH 153T"],["ENGLISH 154"],["ENGLISH 160"],["ENGLISH 161"],["ENGLISH 162"],["ENGLISH 165"],["ENGLISH 165AC"],["ENGLISH 166"],["ENGLISH 166AC"],["ENGLISH 170"],["ENGLISH 171"],["ENGLISH 172"],["ENGLISH 173"],["ENGLISH 174"],["ENGLISH 175"],["ENGLISH 176"],["ENGLISH 177"],["ENGLISH 177A"],["ENGLISH 178"],["ENGLISH 178A"],["ENGLISH 178AC"],["ENGLISH 179"],["ENGLISH 180A"],["ENGLISH 180C"],["ENGLISH 180E"],["ENGLISH 180H"],["ENGLISH 180J"],["ENGLISH 180L"],["ENGLISH 180N"],["ENGLISH 180R"],["ENGLISH 180S"],["ENGLISH 180T"],["ENGLISH 180Z"],["ENGLISH 190"],["ENGLISH 191P"],["ENGLISH 193"],["ENGLISH 196A"],["ENGLISH 196B"],["ENGLISH C77"],["ENGLISH C107"],["ENGLISH C136"],["ENGLISH C143V"],["ENGLISH C181"],["ENGLISH H195A"],["ENGLISH H195B"],["ENGLISH N166"],["ENGLISH R17"],["ENGLISH R50"]]
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "An elective course is any four-unit English Department course.",
+        "reasoning": "The catalog's fixed list leaves out many four-unit English courses (e.g. the 180 series, 162, 172, 117F, R17, freshman seminars, additional sections of 190). The list is now every fixed 4-unit ENGLISH course below 200 in the catalog, plus the catalog's own list. It excludes R1A/R1B and the 45 series, as the FAQ (https://english.berkeley.edu/undergraduate/major-requirements/faqs) says: 'The only 4 unit classes that do not count as electives would be 45 series courses, or any R1A/R1B courses.' The FAQ also says 'in the instances when you take N166 (the Department's Summer Study Abroad Course which is 6 units) ... both courses can be counted towards the major', so ENGLISH N166 is included. Two catalog entries are dropped because they aren't four-unit English Department courses: ENGLISH 84A (a 2-unit sophomore seminar) and ENGIN 184 (another department). Variable-unit independent/group study (98, 99, 198, 199) is left out; the department treats those separately ('non-typical electives')."
+      }
+    },
+    {
+      "op": "add",
+      "before": null,
+      "rule": {
+        "kind": "matching",
+        "name": "12 courses in the major",
+        "n": 12,
+        "fromProgram": true
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "The English Major consists of no less than 12 separate courses, and a minimum of 7 must be Upper Division (#100-199)",
+        "reasoning": "Program-wide total of 12 separate courses."
+      }
+    },
+    {
+      "op": "add",
+      "before": null,
+      "rule": {
+        "kind": "matching",
+        "name": "7 upper-division courses",
+        "n": 7,
+        "fromProgram": true,
+        "upperDivision": true
+      },
+      "why": {
+        "url": "https://english.berkeley.edu/major-requirements",
+        "quote": "The English Major consists of no less than 12 separate courses, and a minimum of 7 must be Upper Division (#100-199)",
+        "reasoning": "The catalog rules have no upper-division minimum. Only 100, the research/honors seminar and the pre-1800 course are always upper division, so the 7-course minimum is a real extra constraint on the Shakespeare, Literatures in English and elective choices."
+      }
+    }
+  ],
+  "notStated": [
+    "Which specific sections of special-topics courses (165/166) or seminars (90/100/190) are designated pre-1800 or Literatures in English in a given term: the department publishes this per semester on its Classes page, so GradTrak can't tell from the course code.",
+    "Whether courses outside the English Department, or extra-departmental/study-abroad courses approved by petition, appear on any fixed list: they are accepted only by petition, so none are encoded.",
+    "Whether the 6-unit W versions of lower-division courses (e.g. 17W, 20W, 26W) count as electives: the department says 'four-unit' courses, and these aren't mentioned, so they are left out."
+  ]
+}

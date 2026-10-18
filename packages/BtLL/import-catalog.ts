@@ -1,18 +1,10 @@
 /// <reference types="node" />
 /**
- * Generates GradTrak requirement programs (BtLL) from the Berkeley undergraduate
- * catalog (Coursedog) and writes them to catalog_reqs.generated.ts, which
- * generate-mongosh-commands.ts seeds alongside the hand-written programs.
- *
- * MVP scope: a curated, diverse set of programs (PROGRAMS below). Output is
- * best-effort: structured rules are converted, and anything that can't be
- * converted (free text, major-specific requirement sets, unsupported rules)
- * becomes an unmet placeholder requirement students can check off manually.
- * See .claude/docs/features/gradtrak/catalog-requirements-source.md.
- *
- * Usage: npm run import:catalog
+ * Generates GradTrak requirement programs (BtLL) from the Berkeley catalog
+ * (Coursedog API), applies the overrides in catalog-overrides/, and writes
+ * catalog_reqs.generated.ts. Usage: npm run import:catalog
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 
 import { init } from "./src/index";
 
@@ -20,24 +12,21 @@ const API = "https://app.coursedog.com/api/v1";
 const SCHOOL = "ucberkeley_peoplesoft";
 const CATALOG_ID = "hMSTjlpIK6VX5nnJn7ZE"; // 2026-27 undergraduate catalog
 
-// Programs to generate, by programGroupId. Their catalog names must exactly
-// match a GradTrak major/minor so the generated program can be seeded.
+// Catalog names must exactly match a GradTrak major/minor
 const PROGRAMS = [
-  "25345U", // English major: fully structured
-  "25I071U", // Mathematics minor: fully structured (catalog data known to be wrong)
-  "16I020U", // Structural Engineering minor: fully structured, option-style rules
-  "25179U", // Cognitive Science major: mostly structured, some free text
-  "16279U", // Aerospace Engineering major: option-style rules, some free text
-  "25699U", // Political Science major: course sets, option-style rules
-  "25I072U", // Physics minor: course sets, minimum units, rule descriptions
-  "04779U", // Environmental Economics and Policy major: course sets, free text, major-specific requirement set
-  "z5SVnW3RWZv5syG4KuEY", // Ecosystem Management and Forestry major: free text only
-  "25I034U", // Chinese Language minor: free text only
+  "25345U", // English major
+  "25I071U", // Mathematics minor
+  "16I020U", // Structural Engineering minor
+  "25179U", // Cognitive Science major
+  "16279U", // Aerospace Engineering major
+  "25699U", // Political Science major
+  "25I072U", // Physics minor
+  "04779U", // Environmental Economics and Policy major
+  "z5SVnW3RWZv5syG4KuEY", // Ecosystem Management and Forestry major
+  "25I034U", // Chinese Language minor
 ];
 
-// UC, campus and college requirement sets, which GradTrak's UC and college
-// programs already cover. Rules that reference only these are dropped; any
-// other (major-specific) set becomes a placeholder.
+// Covered by GradTrak's UC and college programs; other requirement sets become placeholders
 const SKIPPABLE_REQUISITE_SETS = new Set([
   "kYxMvh1XxU", // 1/3 Passed Grade Limit
   "Ir9XEqkeEu", // American Cultures
@@ -83,17 +72,36 @@ const RULE_CONDITIONS = [
   "minimumCredits",
 ];
 
-// Flagged in the summary for the refinement agent; converted literally for now
+// Flagged for review, converted literally
 const OPTION_NAME = /option|track|concentration|either/i;
 
+const KINDS = [
+  "allOf",
+  "atLeast",
+  "minUnits",
+  "placeholder",
+  "chooseRules",
+  "matching",
+] as const;
+
 interface Rule {
+  id?: string; // catalog rule id
   name: string;
-  condition: string; // a catalog rule condition, or "placeholder"
-  n: number; // courses (groups) or units required
-  groups: string[][]; // course IDs, later codes; each group is a set of alternatives
+  kind: (typeof KINDS)[number];
+  n: number; // groups, units or sub-rules required
+  groups: string[][]; // each group is a set of alternatives
+  shared?: boolean; // may reuse courses other rules counted
+  rules?: Rule[];
+  subjects?: string[];
+  upperDivision?: boolean; // numbered 100-199
+  fromProgram?: boolean; // only courses listed in this program's other rules
+  units?: boolean; // n is units, not courses
+  description?: string;
+  text?: string; // placeholder's catalog text
 }
 
 interface Program {
+  id: string; // programGroupId
   name: string;
   kind: "major" | "minor";
   rules: Rule[];
@@ -117,6 +125,8 @@ const stripHtml = (html?: string) =>
   (html ?? "")
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
     .trim();
 
 // Drop characters that confuse the BtLL line parser (brackets, quotes)
@@ -126,14 +136,23 @@ const sanitize = (s: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const placeholder = (name: string): Rule => ({
-  name,
-  condition: "placeholder",
+const placeholder = (r: Partial<Rule> & { name: string }): Rule => ({
+  id: r.id,
+  name: r.name,
+  kind: "placeholder",
   n: 0,
   groups: [],
+  description: r.description,
+  text: r.text,
 });
 
-/** Converts a catalog program's rules, best-effort. */
+const KIND_OF: Record<string, Rule["kind"]> = {
+  completedAllOf: "allOf",
+  completedAtLeastXOf: "atLeast",
+  completedAnyOf: "atLeast",
+  minimumCredits: "minUnits",
+};
+
 function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
   const rules: Rule[] = [];
   const flags = new Set<string>();
@@ -142,12 +161,13 @@ function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
     for (const r of block.rules ?? []) {
       const name =
         sanitize(r.name ?? "") || sanitize(block.name ?? "") || "Requirement";
-      if (stripHtml(r.description)) flags.add("rule descriptions");
+      const description = stripHtml(r.description) || undefined;
+      if (description) flags.add("rule descriptions");
       if (OPTION_NAME.test(r.name ?? "")) flags.add("option-style rules");
 
       if (r.condition === "freeformText") {
         flags.add("free text");
-        rules.push(placeholder(name));
+        rules.push(placeholder({ id: r.id, name, text: description }));
         continue;
       }
       const ids: string[][] = r.value?.values?.map((g: any) => g.value) ?? [];
@@ -155,7 +175,7 @@ function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
         if (ids.flat().every((id) => SKIPPABLE_REQUISITE_SETS.has(id)))
           continue;
         flags.add("major-specific requirement set");
-        rules.push(placeholder(name));
+        rules.push(placeholder({ id: r.id, name, description }));
         continue;
       }
       if (
@@ -163,29 +183,30 @@ function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
         !["courses", "courseSets"].includes(r.value?.condition)
       ) {
         flags.add(`unsupported rule (${r.condition}/${r.value?.condition})`);
-        rules.push(placeholder(name));
+        rules.push(placeholder({ id: r.id, name, description }));
         continue;
       }
 
       if (r.value.condition === "courseSets") flags.add("course sets");
       if (r.condition === "completedAtLeastXOf" && r.restriction == null)
         flags.add(`missing count on "${name}", assumed 1`);
-      const groups =
-        r.value.condition === "courseSets"
-          ? ids.flat().map((id) => [`set:${id}`])
-          : ids;
+      const kind = KIND_OF[r.condition];
       rules.push({
+        id: r.id,
         name,
-        condition: r.condition,
+        kind,
+        // allOf counts are set once course sets are expanded (see main)
         n:
-          r.condition === "minimumCredits"
+          kind === "minUnits"
             ? r.credits
-            : r.condition === "completedAllOf"
-              ? groups.length
-              : r.condition === "completedAnyOf"
-                ? 1
-                : (r.restriction ?? 1),
-        groups,
+            : r.condition === "completedAtLeastXOf"
+              ? (r.restriction ?? 1)
+              : 1,
+        groups:
+          r.value.condition === "courseSets"
+            ? ids.flat().map((id) => [`set:${id}`])
+            : ids,
+        description,
       });
     }
   }
@@ -197,49 +218,188 @@ const courseLiteral = (code: string) => {
   return `{"${subject}", "${number.join(" ")}"}`;
 };
 
-/** Builds the BtLL program; here each rule's groups hold course codes ("MATH 53"). */
+const allCodes = (rules: Rule[]): string[] => [
+  ...new Set(
+    rules.flatMap((r) => [...r.groups.flat(), ...allCodes(r.rules ?? [])])
+  ),
+];
+
+// Each rule only sees courses earlier rules didn't use (p0, p1, ...), so a
+// course counts toward at most one rule
 function toBtLL(rules: Rule[]) {
   const lines = [
     "Function<List<Requirement>>() main (){",
     '  List<Course> courses get_attr(this, "allCourses")',
+    "  List<Course> p0 courses",
   ];
-  rules.forEach((rule, i) => {
-    if (rule.condition === "placeholder") {
+  const programCodes = allCodes(rules).map(courseLiteral).join(", ");
+  let pool = 0;
+
+  const emit = (rule: Rule, v: string) => {
+    const name = rule.name;
+    if (rule.kind === "placeholder") {
       lines.push(
-        `  BooleanRequirement r${i} {false, "${rule.name} - manual check, see catalog"}`
+        `  BooleanRequirement ${v} {false, "${name} - manual check, see catalog"}`
       );
-      return;
+    } else if (rule.kind === "chooseRules") {
+      const subs = (rule.rules ?? []).map((sub, k) => {
+        emit(sub, `${v}_s${k}`);
+        return `${v}_s${k}`;
+      });
+      if (rule.n === 1) {
+        lines.push(`  OrRequirement ${v} {[${subs.join(", ")}], "${name}"}`);
+        return;
+      }
+      const count = subs.map((s) => `if_else(get_attr(${s}, "result"), 1, 0)`);
+      lines.push(
+        `  NumberRequirement ${v}_count {add([${count.join(", ")}]), ${rule.n}, "${name}: complete ${rule.n}"}`,
+        `  OrRequirement ${v}_options {[${subs.join(", ")}], "Options"}`,
+        `  AndRequirement ${v} {[${v}_count, ${v}_options], "${name}"}`
+      );
+    } else {
+      const from = rule.shared ? "courses" : `p${pool}`;
+      const byUnits = rule.kind === "minUnits" || rule.units;
+      if (rule.kind === "matching") {
+        const conditions = [
+          rule.fromProgram && `one_common_course([c], [${programCodes}])`,
+          rule.subjects?.length &&
+            `contains([${rule.subjects.map((s) => `"${s}"`).join(", ")}], get_attr(c, "subject"))`,
+          rule.upperDivision &&
+            `regex_match(get_attr(c, "number"), "^[A-Z]*1[0-9][0-9]")`,
+        ].filter(Boolean);
+        lines.push(
+          `  List<Course> ${v}_m filter(${from}, (c) { boolean return and([${conditions.join(", ")}]) })`,
+          byUnits
+            ? `  NumberRequirement ${v} {${v}_m, sum_units(${v}_m), ${rule.n}, "${name}"}`
+            : `  NCoursesRequirement ${v} {${v}_m, ${rule.n}, "${name}"}`
+        );
+      } else if (rule.kind === "minUnits") {
+        const all = allCodes([rule]).map(courseLiteral).join(", ");
+        lines.push(
+          `  List<Course> ${v}_m filter(${from}, (c) { boolean return one_common_course([c], [${all}]) })`,
+          `  NumberRequirement ${v} {${v}_m, sum_units(${v}_m), ${rule.n}, "${name}"}`
+        );
+      } else {
+        // One course per group (its first match), so alternatives in the same
+        // group (e.g. MATH 104 and H104) can't use up another group's slot
+        rule.groups.forEach((group, j) =>
+          lines.push(
+            `  List<Course> ${v}_f${j} slice(filter(${from}, (c) { boolean return one_common_course([c], [${group.map(courseLiteral).join(", ")}]) }), 0, 1)`
+          )
+        );
+        const picked = rule.groups.map(
+          (_, j) => `one_common_course([c], ${v}_f${j})`
+        );
+        const count = rule.groups.map((_, j) => `length(${v}_f${j})`);
+        lines.push(
+          `  List<Course> ${v}_m filter(${from}, (c) { boolean return or([${picked.join(", ")}]) })`,
+          `  NCoursesRequirement ${v} {${v}_m, add([${count.join(", ")}]), ${rule.n}, "${name}"}`
+        );
+      }
+      if (rule.shared) return;
+      // Remove the courses this rule counted from the pool for later rules
+      lines.push(
+        byUnits
+          ? `  List<Course> ${v}_used take_until_units(${v}_m, ${rule.n})`
+          : `  List<Course> ${v}_used slice(${v}_m, 0, ${rule.n})`,
+        `  List<Course> p${pool + 1} filter(p${pool}, (c) { boolean return not(one_common_course([c], ${v}_used)) })`
+      );
+      pool++;
     }
-    const all = [...new Set(rule.groups.flat())].map(courseLiteral).join(", ");
-    lines.push(
-      `  List<Course> r${i}_m filter(courses, (c) { boolean return one_common_course([c], [${all}]) })`
-    );
-    if (rule.condition === "minimumCredits") {
-      lines.push(
-        `  NumberRequirement r${i} {r${i}_m, sum_units(r${i}_m), ${rule.n}, "${rule.name}"}`
-      );
-      return;
-    }
-    rule.groups.forEach((group, j) => {
-      lines.push(
-        `  boolean r${i}_g${j} one_common_course(courses, [${group.map(courseLiteral).join(", ")}])`
-      );
-    });
-    const count = rule.groups
-      .map((_, j) => `if_else(r${i}_g${j}, 1, 0)`)
-      .join(", ");
-    lines.push(
-      `  NCoursesRequirement r${i} {r${i}_m, add([${count}]), ${rule.n}, "${rule.name}"}`
-    );
-  });
+  };
+
+  rules.forEach((rule, i) => emit(rule, `r${i}`));
   lines.push(
-    `  List<Requirement> return [${rules.map((_, i) => `r${i}`).join(", ")}]`
+    `  List<Requirement> return [${rules.map((_, i) => `r${i}`).join(", ")}]`,
+    "}"
   );
-  lines.push("}");
   return lines.join("\n");
 }
 
-/** Evaluates the program on a plan with the given courses; returns each requirement's result. */
+const withEquivalents = (group: string[]) => [
+  ...new Set(group.flatMap((c) => [c, ...(EQUIVALENT_COURSES[c] ?? [])])),
+];
+
+function checkRule(r: any, valid: Set<string>, where: string): Rule {
+  const fail = (msg: string): never => {
+    throw new Error(`${where}: ${msg}`);
+  };
+  if (!KINDS.includes(r?.kind)) fail(`unknown rule kind ${r?.kind}`);
+  const name = sanitize(String(r.name ?? ""));
+  if (!name) fail("rule needs a name");
+  const n = r.kind === "allOf" ? r.groups?.length : r.n; // allOf needs every group
+  const rule: Rule = { id: r.id, name, kind: r.kind, n, groups: [] };
+  if (r.kind === "placeholder") return { ...rule, n: 0 };
+  if (!Number.isInteger(n) || n < 1)
+    fail(`"${name}": n must be a positive integer`);
+  if (r.kind === "chooseRules") {
+    if (!Array.isArray(r.rules) || n > r.rules.length)
+      fail(`"${name}": needs at least n sub-rules`);
+    return {
+      ...rule,
+      rules: r.rules.map((s: any) => checkRule(s, valid, where)),
+    };
+  }
+  if (r.kind === "matching") {
+    if (!r.fromProgram && !r.subjects?.length)
+      fail(`"${name}": matching needs subjects or fromProgram`);
+    const { fromProgram, subjects, upperDivision, units } = r;
+    // Program-wide totals ("12 courses overall") look at courses other rules counted
+    const shared = fromProgram === true || r.shared === true || undefined;
+    return { ...rule, shared, fromProgram, subjects, upperDivision, units };
+  }
+  if (
+    !Array.isArray(r.groups) ||
+    !r.groups.length ||
+    r.groups.some((g: any) => !g?.length)
+  )
+    fail(`"${name}": groups must be non-empty lists of course codes`);
+  for (const code of r.groups.flat())
+    if (!valid.has(code)) fail(`"${name}": unknown course code "${code}"`);
+  return {
+    ...rule,
+    groups: r.groups.map(withEquivalents),
+    shared: r.shared === true || undefined,
+  };
+}
+
+function applyOverrides(
+  rules: Rule[],
+  ov: any,
+  valid: Set<string>,
+  label: string
+) {
+  const out = [...rules];
+  (ov.changes ?? []).forEach((ch: any, i: number) => {
+    const where = `${label} override change ${i + 1}`;
+    if (
+      !/^https:\/\//.test(ch.why?.url ?? "") ||
+      !String(ch.why?.quote ?? "").trim()
+    )
+      throw new Error(
+        `${where}: needs why.url (https) and a verbatim why.quote`
+      );
+    const at = (id: string) => {
+      const k = out.findIndex((r) => r.id === id);
+      if (k < 0) throw new Error(`${where}: unknown rule id "${id}"`);
+      return k;
+    };
+    if (ch.op === "remove") out.splice(at(ch.ruleId), 1);
+    else if (ch.op === "replace")
+      out[at(ch.ruleId)] = {
+        ...checkRule(ch.rule, valid, where),
+        id: ch.ruleId,
+      };
+    else if (ch.op === "add")
+      out.splice(ch.before ? at(ch.before) : out.length, 0, {
+        ...checkRule(ch.rule, valid, where),
+        id: ch.rule?.id ?? `added-${i + 1}`,
+      });
+    else throw new Error(`${where}: unknown op "${ch.op}"`);
+  });
+  return out;
+}
+
 function evaluate(code: string, courseCodes: string[]): boolean[] {
   const courses = courseCodes.map((c) => {
     const [subject, ...number] = c.split(" ");
@@ -265,6 +425,64 @@ function evaluate(code: string, courseCodes: string[]): boolean[] {
     ["columns", { data: [], type: "List<Column>" }],
   ]);
   return init(code, vars).map((r: any) => r.result.data);
+}
+
+// Nothing is met on an empty plan, every course rule can be met, and a course
+// listed in two rules counts toward only one
+function sanityCheck(code: string, rules: Rule[], label: string) {
+  const picked = new Set<string>();
+  const pick = (r: Rule): boolean | undefined => {
+    if (r.kind === "chooseRules") r.rules?.forEach(pick);
+    if (!["allOf", "atLeast", "minUnits"].includes(r.kind)) return undefined;
+    let fresh = 0;
+    for (const g of r.groups) {
+      const c = g.find((x) => !picked.has(x));
+      if (!c) continue;
+      picked.add(c);
+      if (r.kind === "minUnits" ? ++fresh * 10 >= r.n : ++fresh >= r.n) break;
+    }
+    return r.kind === "minUnits" ? fresh * 10 >= r.n : fresh >= r.n;
+  };
+  const expected = rules.map((r) =>
+    r.kind === "placeholder" ? false : pick(r)
+  );
+  const empty = evaluate(code, []);
+  const full = evaluate(code, [...picked]);
+  const failed = rules
+    .filter(
+      (_, i) =>
+        empty[i] || (expected[i] !== undefined && full[i] !== expected[i])
+    )
+    .map((r) => `"${r.name}" (${r.kind} ${r.n})`);
+
+  // A course in two non-shared course rules may satisfy at most one of them
+  const basic = rules
+    .map((r, i) => ({ r, i }))
+    .filter(({ r }) => ["allOf", "atLeast"].includes(r.kind) && !r.shared);
+  const shared = allCodes(basic.map(({ r }) => r)).filter(
+    (c) => basic.filter(({ r }) => r.groups.flat().includes(c)).length > 1
+  );
+  for (const c of shared.slice(0, 3)) {
+    const met = evaluate(code, [c]);
+    const counted = basic.filter(
+      ({ r, i }) => met[i] && r.groups.flat().includes(c)
+    );
+    if (counted.length > 1) failed.push(`"${c}" counted twice`);
+  }
+  if (failed.length)
+    throw new Error(`${label} failed the sanity check: ${failed.join(", ")}`);
+}
+
+async function catalogCourseCodes() {
+  const codes = new Set<string>();
+  for (let skip = 0; ; skip += 5000) {
+    const { data, listLength } = await api(
+      `/cm/${SCHOOL}/courses/search/%24filters?catalogId=${CATALOG_ID}&skip=${skip}&limit=5000&columns=subjectCode,courseNumber`,
+      {}
+    );
+    for (const c of data) codes.add(`${c.subjectCode} ${c.courseNumber}`);
+    if (!data.length || skip + data.length >= listLength) return codes;
+  }
 }
 
 async function main() {
@@ -293,7 +511,7 @@ async function main() {
       throw new Error(
         `"${name}" (${kind}) doesn't match a GradTrak ${kind} name`
       );
-    selected.push({ name, kind, ...parseProgram(p) });
+    selected.push({ id, name, kind, ...parseProgram(p) });
   }
 
   // Expand course sets into their courses, one group per course
@@ -339,66 +557,64 @@ async function main() {
         if (id) codes[id] = `${c.subjectCode} ${c.courseNumber}`;
   }
 
+  // Only needed to validate overrides
+  const overridePath = (id: string) =>
+    new URL(`./catalog-overrides/${id}.json`, import.meta.url);
+  const validCodes = selected.some((p) => existsSync(overridePath(p.id)))
+    ? await catalogCourseCodes()
+    : new Set<string>();
+
   const output: {
     name: string;
     major: string | null;
     minor: string | null;
     code: string;
   }[] = [];
+  const catalogRules: object[] = [];
   for (const p of selected) {
+    const label = `${p.name} (${p.kind})`;
     // Drop courses the catalog can't resolve; a rule left with nothing becomes a placeholder
     const unresolved = p.rules
       .flatMap((r) => r.groups.flat())
       .filter((id) => !codes[id]);
     if (unresolved.length)
       p.flags.push(`${unresolved.length} unresolved course IDs dropped`);
-    const rules = p.rules.map((r) => {
-      if (r.condition === "placeholder") return r;
+    let rules = p.rules.map((r) => {
+      if (r.kind === "placeholder") return r;
       const groups = r.groups
-        .map((g) => [
-          ...new Set(
-            g
-              .filter((id) => codes[id])
-              .flatMap((id) => [
-                codes[id],
-                ...(EQUIVALENT_COURSES[codes[id]] ?? []),
-              ])
-          ),
-        ])
+        .map((g) =>
+          withEquivalents(g.filter((id) => codes[id]).map((id) => codes[id]))
+        )
         .filter((g) => g.length);
       if (!groups.length) {
         p.flags.push(`no resolvable courses in "${r.name}"`);
-        return placeholder(r.name);
+        return placeholder(r);
       }
+      const n = r.kind === "allOf" ? groups.length : r.n;
       // A catalog rule asking for more courses than it lists can never be met
-      if (r.condition !== "minimumCredits" && r.n > groups.length) {
+      if (r.kind === "atLeast" && n > groups.length) {
         p.flags.push(
-          `unsatisfiable catalog rule "${r.name}" (${r.n} of ${groups.length})`
+          `unsatisfiable catalog rule "${r.name}" (${n} of ${groups.length})`
         );
-        return placeholder(r.name);
+        return placeholder(r);
       }
-      return { ...r, groups };
+      return { ...r, n, groups };
     });
-    const code = toBtLL(rules);
+    catalogRules.push({
+      programGroupId: p.id,
+      name: p.name,
+      kind: p.kind,
+      flags: [...p.flags],
+      rules,
+    });
 
-    // Sanity check: nothing met on an empty plan; every non-placeholder rule met
-    // when the first option of every group is taken (placeholders stay unmet)
-    const isPlaceholder = rules.map((r) => r.condition === "placeholder");
-    const empty = evaluate(code, []);
-    const full = evaluate(
-      code,
-      rules.flatMap((r) => r.groups.map((g) => g[0]))
-    );
-    const failed = rules
-      .filter((_, i) => empty[i] || full[i] === isPlaceholder[i])
-      .map(
-        (r) =>
-          `"${r.name}" (${r.condition} ${r.n} of ${r.groups.length} groups)`
-      );
-    if (failed.length)
-      throw new Error(
-        `${p.name} (${p.kind}) failed the sanity check: ${failed.join(", ")}`
-      );
+    if (existsSync(overridePath(p.id))) {
+      const ov = JSON.parse(readFileSync(overridePath(p.id), "utf8"));
+      rules = applyOverrides(rules, ov, validCodes, label);
+      p.flags.push(`override applied (${ov.changes?.length ?? 0} changes)`);
+    }
+    const code = toBtLL(rules);
+    sanityCheck(code, rules, label);
 
     output.push({
       name: `${p.name} ${p.kind === "major" ? "Major" : "Minor"} Requirements`,
@@ -406,13 +622,17 @@ async function main() {
       minor: p.kind === "minor" ? p.name : null,
       code,
     });
-    const placeholders = isPlaceholder.filter(Boolean).length;
+    const placeholders = rules.filter((r) => r.kind === "placeholder").length;
     console.log(
       `+ ${output.at(-1)!.name}: ${rules.length - placeholders} converted, ${placeholders} placeholders` +
         (p.flags.length ? ` [${p.flags.join("; ")}]` : "")
     );
   }
 
+  writeFileSync(
+    new URL("./catalog_rules.generated.json", import.meta.url),
+    JSON.stringify(catalogRules, null, 2) + "\n"
+  );
   const file = `// GENERATED by import-catalog.ts from the Berkeley catalog (catalog ${CATALOG_ID}). Do not edit.
 // Regenerate with: npm run import:catalog -w @repo/BtLL
 

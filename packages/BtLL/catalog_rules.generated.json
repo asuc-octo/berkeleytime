@@ -1,0 +1,3936 @@
+[
+  {
+    "programGroupId": "25345U",
+    "name": "English",
+    "kind": "major",
+    "flags": [],
+    "rules": [
+      {
+        "id": "n8cVe1t0",
+        "name": "Literature in English",
+        "kind": "allOf",
+        "n": 3,
+        "groups": [
+          [
+            "ENGLISH 45A"
+          ],
+          [
+            "ENGLISH 45B"
+          ],
+          [
+            "ENGLISH 45C"
+          ]
+        ]
+      },
+      {
+        "id": "okt58TlQ",
+        "name": "Shakespeare",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 17"
+          ],
+          [
+            "ENGLISH 117A"
+          ],
+          [
+            "ENGLISH 117B"
+          ],
+          [
+            "ENGLISH 117J"
+          ],
+          [
+            "ENGLISH 117S"
+          ],
+          [
+            "ENGLISH N117S"
+          ]
+        ]
+      },
+      {
+        "id": "c8oDo7Ug",
+        "name": "Practices of Literary Study",
+        "kind": "allOf",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 90"
+          ]
+        ]
+      },
+      {
+        "id": "AJn3daMD",
+        "name": "Seminar in Criticism",
+        "kind": "allOf",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 100"
+          ]
+        ]
+      },
+      {
+        "id": "jzYla7Fg",
+        "name": "Pre-1800",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 100"
+          ],
+          [
+            "ENGLISH 104"
+          ],
+          [
+            "ENGLISH 105"
+          ],
+          [
+            "ENGLISH 110"
+          ],
+          [
+            "ENGLISH 111"
+          ],
+          [
+            "ENGLISH 112"
+          ],
+          [
+            "ENGLISH 114A"
+          ],
+          [
+            "ENGLISH 114B"
+          ],
+          [
+            "ENGLISH 115A"
+          ],
+          [
+            "ENGLISH 115B"
+          ],
+          [
+            "ENGLISH 119"
+          ],
+          [
+            "ENGLISH 120"
+          ],
+          [
+            "ENGLISH 121"
+          ],
+          [
+            "ENGLISH 125A"
+          ],
+          [
+            "ENGLISH 130A"
+          ]
+        ]
+      },
+      {
+        "id": "eNNPz7qy",
+        "name": "Literatures in English",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 31AC"
+          ],
+          [
+            "ENGLISH 37"
+          ],
+          [
+            "ENGLISH 53"
+          ],
+          [
+            "ENGLISH 90"
+          ],
+          [
+            "ENGLISH 100"
+          ],
+          [
+            "ENGLISH 132"
+          ],
+          [
+            "ENGLISH 133A"
+          ],
+          [
+            "ENGLISH 133B"
+          ],
+          [
+            "ENGLISH 133T"
+          ],
+          [
+            "ENGLISH 134"
+          ],
+          [
+            "ENGLISH 137T"
+          ],
+          [
+            "ENGLISH 138"
+          ],
+          [
+            "ENGLISH 152"
+          ],
+          [
+            "ENGLISH 153T"
+          ],
+          [
+            "ENGLISH 154"
+          ],
+          [
+            "ENGLISH 165AC"
+          ],
+          [
+            "ENGLISH 166"
+          ],
+          [
+            "ENGLISH 166AC"
+          ],
+          [
+            "ENGLISH 175"
+          ],
+          [
+            "ENGLISH 177"
+          ],
+          [
+            "ENGLISH 190"
+          ]
+        ]
+      },
+      {
+        "id": "ZaLxXqa6",
+        "name": "Research Seminar Course",
+        "kind": "allOf",
+        "n": 1,
+        "groups": [
+          [
+            "ENGLISH 190"
+          ]
+        ]
+      },
+      {
+        "id": "gD4pxAVk",
+        "name": "Remaining English Electives",
+        "kind": "atLeast",
+        "n": 3,
+        "groups": [
+          [
+            "ENGIN 184"
+          ],
+          [
+            "ENGLISH C136"
+          ],
+          [
+            "ENGLISH C143V"
+          ],
+          [
+            "ENGLISH C181"
+          ],
+          [
+            "ENGLISH H195B"
+          ],
+          [
+            "ENGLISH 17"
+          ],
+          [
+            "ENGLISH 20"
+          ],
+          [
+            "ENGLISH 25"
+          ],
+          [
+            "ENGLISH 26"
+          ],
+          [
+            "ENGLISH 27"
+          ],
+          [
+            "ENGLISH 28"
+          ],
+          [
+            "ENGLISH 29"
+          ],
+          [
+            "ENGLISH 31AC"
+          ],
+          [
+            "ENGLISH 33"
+          ],
+          [
+            "ENGLISH 37"
+          ],
+          [
+            "ENGLISH 43A"
+          ],
+          [
+            "ENGLISH 43B"
+          ],
+          [
+            "ENGLISH 43N"
+          ],
+          [
+            "ENGLISH 53"
+          ],
+          [
+            "ENGLISH 80K"
+          ],
+          [
+            "ENGLISH 84A"
+          ],
+          [
+            "ENGLISH 90"
+          ],
+          [
+            "ENGLISH 100"
+          ],
+          [
+            "ENGLISH 101"
+          ],
+          [
+            "ENGLISH 102"
+          ],
+          [
+            "ENGLISH 104"
+          ],
+          [
+            "ENGLISH 105"
+          ],
+          [
+            "ENGLISH 107"
+          ],
+          [
+            "ENGLISH 110"
+          ],
+          [
+            "ENGLISH 111"
+          ],
+          [
+            "ENGLISH 112"
+          ],
+          [
+            "ENGLISH 114A"
+          ],
+          [
+            "ENGLISH 114B"
+          ],
+          [
+            "ENGLISH 115A"
+          ],
+          [
+            "ENGLISH 115B"
+          ],
+          [
+            "ENGLISH 116"
+          ],
+          [
+            "ENGLISH 117A"
+          ],
+          [
+            "ENGLISH 117B"
+          ],
+          [
+            "ENGLISH 117J"
+          ],
+          [
+            "ENGLISH 117S"
+          ],
+          [
+            "ENGLISH 117T"
+          ],
+          [
+            "ENGLISH 118"
+          ],
+          [
+            "ENGLISH 119"
+          ],
+          [
+            "ENGLISH 120"
+          ],
+          [
+            "ENGLISH 121"
+          ],
+          [
+            "ENGLISH 122"
+          ],
+          [
+            "ENGLISH 125A"
+          ],
+          [
+            "ENGLISH 125B"
+          ],
+          [
+            "ENGLISH 125C"
+          ],
+          [
+            "ENGLISH 125D"
+          ],
+          [
+            "ENGLISH 125E"
+          ],
+          [
+            "ENGLISH 126"
+          ],
+          [
+            "ENGLISH 127"
+          ],
+          [
+            "ENGLISH 128"
+          ],
+          [
+            "ENGLISH 130A"
+          ],
+          [
+            "ENGLISH 130B"
+          ],
+          [
+            "ENGLISH 130C"
+          ],
+          [
+            "ENGLISH 130D"
+          ],
+          [
+            "ENGLISH 131"
+          ],
+          [
+            "ENGLISH 132"
+          ],
+          [
+            "ENGLISH 133A"
+          ],
+          [
+            "ENGLISH 133B"
+          ],
+          [
+            "ENGLISH 133T"
+          ],
+          [
+            "ENGLISH 134"
+          ],
+          [
+            "ENGLISH 135AC"
+          ],
+          [
+            "ENGLISH 137A"
+          ],
+          [
+            "ENGLISH 137B"
+          ],
+          [
+            "ENGLISH 137T"
+          ],
+          [
+            "ENGLISH 138"
+          ],
+          [
+            "ENGLISH 139"
+          ],
+          [
+            "ENGLISH 141"
+          ],
+          [
+            "ENGLISH 143A"
+          ],
+          [
+            "ENGLISH 143B"
+          ],
+          [
+            "ENGLISH 143C"
+          ],
+          [
+            "ENGLISH 143D"
+          ],
+          [
+            "ENGLISH 143E"
+          ],
+          [
+            "ENGLISH 143N"
+          ],
+          [
+            "ENGLISH 152"
+          ],
+          [
+            "ENGLISH 153T"
+          ],
+          [
+            "ENGLISH 154"
+          ],
+          [
+            "ENGLISH 160"
+          ],
+          [
+            "ENGLISH 161"
+          ],
+          [
+            "ENGLISH 165"
+          ],
+          [
+            "ENGLISH 166"
+          ],
+          [
+            "ENGLISH 166AC"
+          ],
+          [
+            "ENGLISH 170"
+          ],
+          [
+            "ENGLISH 171"
+          ],
+          [
+            "ENGLISH 173"
+          ],
+          [
+            "ENGLISH 174"
+          ],
+          [
+            "ENGLISH 175"
+          ],
+          [
+            "ENGLISH 176"
+          ],
+          [
+            "ENGLISH 177"
+          ],
+          [
+            "ENGLISH 177A"
+          ],
+          [
+            "ENGLISH 178"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "programGroupId": "25I071U",
+    "name": "Mathematics",
+    "kind": "minor",
+    "flags": [],
+    "rules": [
+      {
+        "id": "xUlNe86B",
+        "name": "Core",
+        "kind": "allOf",
+        "n": 4,
+        "groups": [
+          [
+            "MATH 104",
+            "MATH H104"
+          ],
+          [
+            "MATH 110",
+            "MATH H110"
+          ],
+          [
+            "MATH 113",
+            "MATH H113"
+          ],
+          [
+            "MATH 185",
+            "MATH H185"
+          ]
+        ]
+      },
+      {
+        "id": "ocLf0FP4",
+        "name": "Upper Division",
+        "kind": "atLeast",
+        "n": 3,
+        "groups": [
+          [
+            "CHMENG 141"
+          ],
+          [
+            "COMPSCI 162"
+          ],
+          [
+            "COMPSCI 164"
+          ],
+          [
+            "COMPSCI 170"
+          ],
+          [
+            "COMPSCI 172"
+          ],
+          [
+            "COMPSCI 174"
+          ],
+          [
+            "COMPSCI 184"
+          ],
+          [
+            "COMPSCI 188"
+          ],
+          [
+            "COMPSCI 189"
+          ],
+          [
+            "ECON 104"
+          ],
+          [
+            "ECON 141"
+          ],
+          [
+            "ELENG 120"
+          ],
+          [
+            "ELENG 122"
+          ],
+          [
+            "ELENG 123"
+          ],
+          [
+            "ENGIN 115"
+          ],
+          [
+            "EPS 104"
+          ],
+          [
+            "EPS 108"
+          ],
+          [
+            "EPS 121"
+          ],
+          [
+            "EPS 122"
+          ],
+          [
+            "EPS 130"
+          ],
+          [
+            "INDENG 130"
+          ],
+          [
+            "INDENG 160"
+          ],
+          [
+            "INDENG 161"
+          ],
+          [
+            "INDENG 162"
+          ],
+          [
+            "MECENG 104"
+          ],
+          [
+            "MECENG 106"
+          ],
+          [
+            "MECENG 163"
+          ],
+          [
+            "PHYSICS 105"
+          ],
+          [
+            "PHYSICS 137A"
+          ],
+          [
+            "PHYSICS 137B"
+          ],
+          [
+            "PHYSICS 139"
+          ],
+          [
+            "STAT 134"
+          ],
+          [
+            "STAT 135"
+          ],
+          [
+            "STAT 150"
+          ],
+          [
+            "STAT 151A"
+          ],
+          [
+            "STAT 153"
+          ],
+          [
+            "STAT 154"
+          ],
+          [
+            "STAT 155"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "programGroupId": "16I020U",
+    "name": "Structural Engineering",
+    "kind": "minor",
+    "flags": [
+      "option-style rules"
+    ],
+    "rules": [
+      {
+        "id": "s9Z8KBnc",
+        "name": "Mathematics Options",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "MATH 51",
+            "MATH 1A",
+            "MATH 52",
+            "MATH 1B"
+          ],
+          [
+            "MATH 16A",
+            "MATH 16B"
+          ]
+        ]
+      },
+      {
+        "id": "zo2EBePf",
+        "name": "Phyics and Engineering",
+        "kind": "allOf",
+        "n": 3,
+        "groups": [
+          [
+            "PHYSICS 7A",
+            "PHYSICS 8A"
+          ],
+          [
+            "CIVENG C30",
+            "CIVENG W30"
+          ],
+          [
+            "MECENG C85",
+            "MECENG W85"
+          ]
+        ]
+      },
+      {
+        "id": "XyKmjYbS",
+        "name": "Upper Division Core",
+        "kind": "allOf",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 60"
+          ],
+          [
+            "CIVENG 120"
+          ]
+        ]
+      },
+      {
+        "id": "yYTS5Yuc",
+        "name": "Structural Electives",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 121"
+          ],
+          [
+            "CIVENG 124"
+          ],
+          [
+            "CIVENG 140"
+          ],
+          [
+            "CIVENG 165"
+          ],
+          [
+            "CIVENG 166"
+          ],
+          [
+            "CIVENG 175"
+          ],
+          [
+            "CIVENG 193"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "programGroupId": "25179U",
+    "name": "Cognitive Science",
+    "kind": "major",
+    "flags": [
+      "rule descriptions",
+      "free text"
+    ],
+    "rules": [
+      {
+        "id": "LZLjZHoM",
+        "name": "Computer Science",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COMPSCI 61A"
+          ],
+          [
+            "COMPSCI C88C",
+            "DATA C88C"
+          ],
+          [
+            "ENGIN 7"
+          ]
+        ]
+      },
+      {
+        "id": "Lw0hOOEH",
+        "name": "Mathematics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "MATH 51",
+            "MATH 1A",
+            "XMATH 51"
+          ],
+          [
+            "MATH 16A",
+            "XMATH 16A"
+          ],
+          [
+            "MATH 1A",
+            "MATH N1A"
+          ]
+        ]
+      },
+      {
+        "id": "junNkIQo",
+        "name": "Statistical Thinking",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COMPSCI C8",
+            "DATA C8",
+            "INFO C8",
+            "STAT C8"
+          ],
+          [
+            "STAT 2"
+          ],
+          [
+            "STAT 20"
+          ]
+        ],
+        "description": "AP: Statistics, score 3+"
+      },
+      {
+        "id": "DzmpV1WQ",
+        "name": "Quantitative",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COMPSCI 70"
+          ],
+          [
+            "MATH 55",
+            "MATH N55"
+          ]
+        ]
+      },
+      {
+        "id": "sWyW8yLo",
+        "name": "Biology",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "MCELLBI 61",
+            "NEU 61",
+            "NEU C61",
+            "PSYCH C61"
+          ],
+          [
+            "NEU C64",
+            "PSYCH C64"
+          ],
+          [
+            "PSYCH 110",
+            "PSYCH N110"
+          ]
+        ]
+      },
+      {
+        "id": "YM1uogVO",
+        "name": "Cognitive Science",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COGSCI N1"
+          ],
+          [
+            "COGSCI 1"
+          ],
+          [
+            "COGSCI 1B"
+          ]
+        ]
+      },
+      {
+        "id": "WUUnO4YT",
+        "name": "Cognitive Neuroscience",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ANTHRO 107"
+          ],
+          [
+            "COGSCI 132"
+          ],
+          [
+            "COGSCI 170"
+          ],
+          [
+            "COGSCI 171"
+          ],
+          [
+            "COGSCI 172"
+          ],
+          [
+            "COGSCI C126",
+            "PSYCH C126"
+          ],
+          [
+            "COGSCI C127",
+            "PSYCH C127"
+          ],
+          [
+            "NEU 128"
+          ],
+          [
+            "NEU 162"
+          ],
+          [
+            "NEU 164"
+          ],
+          [
+            "PSYCH 114"
+          ],
+          [
+            "PSYCH 117",
+            "PSYCH N117"
+          ],
+          [
+            "PSYCH 133",
+            "PSYCH N133"
+          ]
+        ]
+      },
+      {
+        "id": "ZrkU7rmc",
+        "name": "Cognitive Psychology",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COGSCI 115"
+          ],
+          [
+            "COGSCI 146"
+          ],
+          [
+            "COGSCI 181"
+          ],
+          [
+            "COGSCI 182"
+          ],
+          [
+            "COGSCI C100"
+          ],
+          [
+            "COGSCI C126",
+            "PSYCH C126"
+          ],
+          [
+            "COGSCI N100",
+            "PSYCH C120"
+          ],
+          [
+            "LINGUIS C146",
+            "LINGUIS 146",
+            "PSYCH C143"
+          ],
+          [
+            "PSYCH 125"
+          ],
+          [
+            "PSYCH 140"
+          ],
+          [
+            "PSYCH 147"
+          ],
+          [
+            "PSYCH 164"
+          ],
+          [
+            "PSYCH N120"
+          ],
+          [
+            "PSYCH N140"
+          ]
+        ]
+      },
+      {
+        "id": "RlwE3w5U",
+        "name": "Computational Modeling",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COGSCI C131",
+            "COGSCI 131",
+            "PSYCH C123"
+          ],
+          [
+            "COGSCI 132"
+          ],
+          [
+            "COGSCI 190"
+          ],
+          [
+            "COMPSCI 188"
+          ]
+        ]
+      },
+      {
+        "id": "vBoevYmf",
+        "name": "Linguistics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COGSCI 144"
+          ],
+          [
+            "COGSCI C101",
+            "LINGUIS C105"
+          ],
+          [
+            "COGSCI C142",
+            "LINGUIS C142"
+          ],
+          [
+            "COGSCI C147",
+            "LINGUIS C147"
+          ],
+          [
+            "LINGUIS 100"
+          ],
+          [
+            "LINGUIS 108"
+          ]
+        ]
+      },
+      {
+        "id": "Y0mPPNA1",
+        "name": "Philosophy",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "AGRS 36"
+          ],
+          [
+            "COGSCI 180"
+          ],
+          [
+            "COGSCI 181"
+          ],
+          [
+            "PHILOS W12A"
+          ],
+          [
+            "PHILOS 3"
+          ],
+          [
+            "PHILOS 12A"
+          ],
+          [
+            "PHILOS 25A"
+          ],
+          [
+            "PHILOS 25B"
+          ],
+          [
+            "PHILOS 122"
+          ],
+          [
+            "PHILOS 132"
+          ],
+          [
+            "PHILOS 133"
+          ],
+          [
+            "PHILOS 135"
+          ],
+          [
+            "PHILOS 136"
+          ]
+        ]
+      },
+      {
+        "id": "YAgvijmi",
+        "name": "Society, Culture, and Cognition",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "AFRICAM 115"
+          ],
+          [
+            "ANTHRO 149"
+          ],
+          [
+            "ANTHRO 166"
+          ],
+          [
+            "COGSCI 181"
+          ],
+          [
+            "COGSCI C103",
+            "INFO 103",
+            "INFO C103",
+            "HISTORY C192",
+            "MEDIAST C104C"
+          ],
+          [
+            "COGSCI C104",
+            "LINGUIS C104"
+          ],
+          [
+            "ECON 119"
+          ],
+          [
+            "EDUC 132"
+          ],
+          [
+            "EDUC 140A",
+            "EDUC 140AC"
+          ],
+          [
+            "EDUC 130"
+          ],
+          [
+            "LINGUIS 109"
+          ],
+          [
+            "LINGUIS 150"
+          ],
+          [
+            "LINGUIS 150A"
+          ],
+          [
+            "PSYCH 160"
+          ],
+          [
+            "PSYCH 166"
+          ],
+          [
+            "PSYCH 164"
+          ],
+          [
+            "PSYCH 166AC"
+          ],
+          [
+            "PSYCH N160",
+            "SOCIOL 150"
+          ]
+        ]
+      },
+      {
+        "id": "w56dOfQl",
+        "name": "Electives",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Complete at least 3 of: AFRICAM 115 AFRICAM C134 AMERSTD C134 ANTHRO 107 ANTHRO 111 ANTHRO 149 ANTHRO 160AC ANTHRO 161 ANTHRO 166 ART 178 BIOENG C171 COGSCI 115 COGSCI 131 COGSCI 132 COGSCI 144 COGSCI 146 COGSCI 150 COGSCI 170 COGSCI 171 COGSCI 172 COGSCI 180 COGSCI 181 COGSCI 182 COGSCI C100 COGSCI C101 COGSCI C103 COGSCI C104 COGSCI C124 COGSCI C126 COGSCI C127 COGSCI C131 COGSCI C140 COGSCI C142 COGSCI C147 COGSCI N100 COMPSCI 160 COMPSCI 170 COMPSCI 176 COMPSCI 186 COMPSCI 188 COMPSCI 189 COMPSCI 287 COMPSCI 288 COMPSCI C100 COMPSCI C280 DATA C100 DATA C104 DATA C140 ECON 119 ECON C110 EDUC 130 EDUC 132 EDUC 140A EDUC 140AC EDUC 224A EDUC C229A ENGLISH 172 ESPM 161 FILM 179 HISTORY C182C HISTORY C184D HISTORY C192 INDENG 170 INFO 103 INFO 146 INFO 159 INFO 188 INFO 213 INFO 232 INFO 290 INFO 290A INFO C103 INFO C262 INFO C265 INTEGBI 139 INTEGBI C143A ISF 100J ISF C100G JOURN C141 LEGALST 181 LEGALST 183 LINGUIS 100 LINGUIS 106 LINGUIS 108 LINGUIS 109 LINGUIS 110 LINGUIS 115 LINGUIS 120 LINGUIS 121 LINGUIS 123 LINGUIS 124 LINGUIS 125 LINGUIS 130 LINGUIS 146 LINGUIS 150 LINGUIS 150A LINGUIS 151 LINGUIS 158 LINGUIS 170 LINGUIS 181 LINGUIS 187 LINGUIS C104 LINGUIS C105 LINGUIS C139 LINGUIS C142 LINGUIS C146 LINGUIS C147 LINGUIS C160 LS 124 LS C160T MATH 110 MCELLBI 163 MECENG C205 MEDIAST 101 MEDIAST 102 MEDIAST 103 MEDIAST 104B MEDIAST 111 MEDIAST 111B MEDIAST 111C MEDIAST 112 MEDIAST C103 MEDIAST C104C MELC 156 MUSIC 108 MUSIC 108M MUSIC 109 MUSIC 109M NATAMST 151 NEU 100A NEU 100B NEU 128 NEU 152 NEU 162 NEU 164 NEU 165 NEU 171L NEU 173L NEU C121 NEU C124 NEU C125 NEU C126 NEUROSC C129 NWMEDIA 190 NWMEDIA C203 NWMEDIA C262 NWMEDIA C265 PBHLTH C129 PHILOS 107 PHILOS 110 PHILOS 122 PHILOS 125 PHILOS 126 PHILOS 128 PHILOS 132 PHILOS 133 PHILOS 135 PHILOS 136 PHILOS 138 PHILOS 140A PHILOS 140B PHILOS 141 PHILOS 151 PHILOS 153 PHILOS 154 PHILOS 170 PHILOS 176 PHILOS 178 PHILOS 185 PHILOS 186 PHILOS 186B PHILOS 188 PHILOS C132 PHILOS W12A POLSCI 161 POLSCI 164A POLSCI C135 PSYCH 101 PSYCH 114 PSYCH 115 PSYCH 117 PSYCH 121 PSYCH 124 PSYCH 125 PSYCH 128 PSYCH 130 PSYCH 131 PSYCH 133 PSYCH 134 PSYCH 135 PSYCH 136 PSYCH 137 PSYCH 140 PSYCH 144 PSYCH 147 PSYCH 150 PSYCH 156 PSYCH 160 PSYCH 163 PSYCH 164 PSYCH 166AC PSYCH 167AC PSYCH 169 PSYCH C111 PSYCH C113 PSYCH C115C PSYCH C116 PSYCH C120 PSYCH C123 PSYCH C124 PSYCH C126 PSYCH C127 PSYCH C143 PSYCH C223 PSYCH N117 PSYCH N120 PSYCH N130 PSYCH N133 PSYCH N140 PSYCH N150 PSYCH N160 PSYCH N162 RHETOR 103A RHETOR 103B RHETOR 110 RHETOR 170 SLAVIC C139 SOCIOL 150 SOCIOL 166 SOCIOL 167 SPANISH 100 SPANISH 166 STAT 133 STAT 134 STAT 155 STAT C100 STAT C140 STS C100 STS C104D UGBA 105 UGBA 136F UGBA 143 UGBA 160 UGBA 167 UGBA 177 UGBA 192AC UGIS 120 VISSCI 265 VISSCI C280"
+      }
+    ]
+  },
+  {
+    "programGroupId": "16279U",
+    "name": "Aerospace Engineering",
+    "kind": "major",
+    "flags": [
+      "rule descriptions",
+      "option-style rules",
+      "free text",
+      "unsatisfiable catalog rule \"Fluid Mechanics\" (2 of 1)"
+    ],
+    "rules": [
+      {
+        "id": "wGqQ0dAp",
+        "name": "Prerequisites",
+        "kind": "allOf",
+        "n": 4,
+        "groups": [
+          [
+            "MATH 51",
+            "MATH 1A"
+          ],
+          [
+            "MATH 52",
+            "MATH 1B"
+          ],
+          [
+            "MATH 53"
+          ],
+          [
+            "MATH 54",
+            "PHYSICS 89"
+          ]
+        ]
+      },
+      {
+        "id": "TGsnwXIs",
+        "name": "Physics A",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "PHYSICS 7A",
+            "PHYSICS H7A"
+          ],
+          [
+            "PHYSICS 5A"
+          ]
+        ]
+      },
+      {
+        "id": "x4PC7Fog",
+        "name": "Physics B: Option 1 Only for students who completed PHYSICS 7A",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "PHYSICS 7B",
+            "PHYSICS H7B"
+          ]
+        ],
+        "description": "Note: Students who take PHYSICS 5A to satisfy the Physics A requirement must take PHYSICS 5B and PHYSICS 5BL to complete the Physics B requirement."
+      },
+      {
+        "id": "v5vMy5QJ",
+        "name": "Physics B Option 2 Only for students who completed PHYSICS 5A",
+        "kind": "allOf",
+        "n": 2,
+        "groups": [
+          [
+            "PHYSICS 5B"
+          ],
+          [
+            "PHYSICS 5BL"
+          ]
+        ]
+      },
+      {
+        "id": "G0WeiKTr",
+        "name": "Engineering",
+        "kind": "allOf",
+        "n": 7,
+        "groups": [
+          [
+            "AEROENG 1"
+          ],
+          [
+            "AEROENG 2"
+          ],
+          [
+            "AEROENG 10"
+          ],
+          [
+            "CIVENG C30",
+            "CIVENG W30",
+            "MECENG C85",
+            "MECENG W85"
+          ],
+          [
+            "COMPSCI 61A",
+            "ENGIN 7",
+            "ENGIN W7"
+          ],
+          [
+            "ENGIN 40",
+            "MECENG 40"
+          ],
+          [
+            "MATSCI 45",
+            "MATSCI 45L"
+          ]
+        ]
+      },
+      {
+        "id": "V0mlaUiM",
+        "name": "Science Elective",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ASTRON 7A"
+          ],
+          [
+            "ASTRON C10",
+            "LS C70U"
+          ],
+          [
+            "BIOLOGY 1A",
+            "BIOLOGY 1AL"
+          ],
+          [
+            "CHEM 1A",
+            "CHEM 1AL"
+          ],
+          [
+            "CHEM 1B"
+          ],
+          [
+            "CHEM 3A",
+            "CHEM 3AL"
+          ],
+          [
+            "CHEM 4A"
+          ],
+          [
+            "CHEM 4B"
+          ],
+          [
+            "MCELLBI 32"
+          ],
+          [
+            "PHYSICS 7C"
+          ]
+        ]
+      },
+      {
+        "id": "YG3mwAjD",
+        "name": "Aerospace Engineering",
+        "kind": "allOf",
+        "n": 1,
+        "groups": [
+          [
+            "AEROENG 100"
+          ]
+        ]
+      },
+      {
+        "id": "MYcm7uud",
+        "name": "Mechanical Engineering",
+        "kind": "allOf",
+        "n": 3,
+        "groups": [
+          [
+            "MECENG 103"
+          ],
+          [
+            "MECENG 106"
+          ],
+          [
+            "MECENG 163"
+          ]
+        ]
+      },
+      {
+        "id": "aeorj5wU",
+        "name": "Statistics and Data Science",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "CIVENG 93"
+          ],
+          [
+            "COMPSCI C100",
+            "DATA C100",
+            "STAT C100"
+          ],
+          [
+            "ENGIN 178"
+          ]
+        ]
+      },
+      {
+        "id": "wkCgU586",
+        "name": "Dynamics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "CIVENG 126"
+          ],
+          [
+            "MECENG 104"
+          ]
+        ]
+      },
+      {
+        "id": "JhK47UE6",
+        "name": "Controls",
+        "kind": "allOf",
+        "n": 1,
+        "groups": [
+          [
+            "MECENG 132"
+          ]
+        ]
+      },
+      {
+        "id": "SFFayKT2",
+        "name": "Electronics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "EECS 149"
+          ],
+          [
+            "ELENG 120"
+          ],
+          [
+            "MECENG 100"
+          ]
+        ]
+      },
+      {
+        "id": "pLZ324LC",
+        "name": "Requirements",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Four courses are required from two different areas: Two courses from one area, and two courses from another area."
+      },
+      {
+        "id": "s4F2Y9Ya",
+        "name": "Communication Systems",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "COMPSCI 168"
+          ],
+          [
+            "ELENG 117"
+          ],
+          [
+            "ELENG 121"
+          ],
+          [
+            "ELENG 122"
+          ],
+          [
+            "ELENG 142"
+          ]
+        ]
+      },
+      {
+        "id": "mrdhHx66",
+        "name": "Computational Tools",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG C133",
+            "MECENG C180"
+          ],
+          [
+            "ENGIN 150"
+          ],
+          [
+            "INDENG 174"
+          ],
+          [
+            "NUCENG 155"
+          ]
+        ]
+      },
+      {
+        "id": "zVx9KA4a",
+        "name": "Control, Autonomy, and Artificial Intelligence",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "COMPSCI 188"
+          ],
+          [
+            "COMPSCI 189"
+          ],
+          [
+            "EECS C106A",
+            "BIOENG C106A",
+            "MECENG C106A"
+          ],
+          [
+            "EECS C106B",
+            "BIOENG C106B",
+            "MECENG C106B"
+          ],
+          [
+            "INDENG 142A"
+          ],
+          [
+            "MECENG C136"
+          ]
+        ]
+      },
+      {
+        "id": "qoZV9rXJ",
+        "name": "Design",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "ELENG 192"
+          ],
+          [
+            "MECENG 135"
+          ],
+          [
+            "MECENG 139"
+          ]
+        ]
+      },
+      {
+        "id": "nHDU9ySu",
+        "name": "Dynamical Systems",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "MECENG 170"
+          ],
+          [
+            "MECENG 175"
+          ],
+          [
+            "AEROENG C162",
+            "MECENG C162"
+          ]
+        ]
+      },
+      {
+        "id": "QAMy9TI7",
+        "name": "Fluid Mechanics",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": []
+      },
+      {
+        "id": "EVOjZ3HD",
+        "name": "Humans and Automation",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "COGSCI 131"
+          ],
+          [
+            "COMPSCI 160"
+          ],
+          [
+            "INDENG 170"
+          ]
+        ]
+      },
+      {
+        "id": "lpeHHkhq",
+        "name": "Manufacturing",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "INDENG 130"
+          ],
+          [
+            "MATSCI 121"
+          ],
+          [
+            "MECENG 122"
+          ],
+          [
+            "MECENG C127"
+          ]
+        ]
+      },
+      {
+        "id": "AKnWyQF1",
+        "name": "Materials",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "AEROENG C124",
+            "MATSCI C135"
+          ],
+          [
+            "MATSCI 102"
+          ],
+          [
+            "MATSCI 104",
+            "MATSCI 104L"
+          ],
+          [
+            "MATSCI 112"
+          ],
+          [
+            "MATSCI 113"
+          ],
+          [
+            "MATSCI 131"
+          ],
+          [
+            "MATSCI 136"
+          ],
+          [
+            "MECENG 108"
+          ],
+          [
+            "MECENG C127"
+          ],
+          [
+            "NUCENG 120"
+          ]
+        ]
+      },
+      {
+        "id": "FHq5vVjw",
+        "name": "Mechanics",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 132"
+          ],
+          [
+            "MECENG C184",
+            "AEROENG C184",
+            "CIVENG C138"
+          ],
+          [
+            "MECENG 185"
+          ]
+        ]
+      },
+      {
+        "id": "LJCNkrkJ",
+        "name": "Operations and Project Management",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 167"
+          ],
+          [
+            "INDENG 120"
+          ],
+          [
+            "INDENG 130"
+          ],
+          [
+            "INDENG 150"
+          ],
+          [
+            "INDENG 153"
+          ]
+        ]
+      },
+      {
+        "id": "UFU2Jn9K",
+        "name": "Optimization",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "EECS 127"
+          ],
+          [
+            "INDENG 160"
+          ],
+          [
+            "INDENG 162"
+          ],
+          [
+            "INDENG 164"
+          ]
+        ]
+      },
+      {
+        "id": "YmnbwdPU",
+        "name": "Power",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "MECENG 140"
+          ],
+          [
+            "MECENG 146"
+          ],
+          [
+            "MECENG 154"
+          ],
+          [
+            "NUCENG 150"
+          ],
+          [
+            "NUCENG 161"
+          ]
+        ]
+      },
+      {
+        "id": "BeCz18Gk",
+        "name": "Propulsion",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "MECENG 109"
+          ],
+          [
+            "MECENG 140"
+          ],
+          [
+            "MECENG 151A"
+          ],
+          [
+            "MECENG 151B"
+          ],
+          [
+            "MECENG 154"
+          ]
+        ]
+      },
+      {
+        "id": "NCIdWpKQ",
+        "name": "Risk Management",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 193"
+          ],
+          [
+            "INDENG 165"
+          ],
+          [
+            "INDENG 166"
+          ],
+          [
+            "INDENG 172"
+          ],
+          [
+            "NUCENG 167"
+          ],
+          [
+            "NUCENG 175"
+          ]
+        ]
+      },
+      {
+        "id": "DXBHcRSy",
+        "name": "Space Technologies",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "AEROENG 120"
+          ],
+          [
+            "NUCENG 140"
+          ],
+          [
+            "NUCENG 162"
+          ]
+        ]
+      },
+      {
+        "id": "WWJHoXBp",
+        "name": "Air Transportation/Aviation",
+        "kind": "allOf",
+        "n": 2,
+        "groups": [
+          [
+            "CIVENG 157"
+          ],
+          [
+            "CIVENG 160D"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "programGroupId": "25699U",
+    "name": "Political Science",
+    "kind": "major",
+    "flags": [
+      "option-style rules",
+      "missing count on \"Methods: Option 1\", assumed 1",
+      "course sets",
+      "rule descriptions",
+      "free text"
+    ],
+    "rules": [
+      {
+        "id": "OGHkmhYsgB5hGaJW2Pme",
+        "name": "Prerequisites",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "POLSCI 1",
+            "XPOLSCI 1"
+          ],
+          [
+            "POLSCI 2",
+            "XPOLSCI 2"
+          ],
+          [
+            "POLSCI 4"
+          ],
+          [
+            "POLSCI 5"
+          ]
+        ]
+      },
+      {
+        "id": "GrDdSIXm",
+        "name": "Methods: Option 1",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 3"
+          ]
+        ]
+      },
+      {
+        "id": "pK8lRBcJ",
+        "name": "Methods: Option 2",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "COMPSCI C8",
+            "DATA C8",
+            "INFO C8",
+            "STAT C8"
+          ],
+          [
+            "POLSCI 88"
+          ]
+        ]
+      },
+      {
+        "id": "EKH71vmi",
+        "name": "History",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "AFRICAM 4A",
+            "AFRICAM N4A"
+          ],
+          [
+            "AFRICAM 4B"
+          ],
+          [
+            "AFRICAM 111"
+          ],
+          [
+            "AGRS 10A"
+          ],
+          [
+            "AGRS 10B"
+          ],
+          [
+            "AMERSTD 139AC"
+          ],
+          [
+            "CELTIC 70"
+          ],
+          [
+            "ECON 113"
+          ],
+          [
+            "ECON 115"
+          ],
+          [
+            "ETHSTD 10A",
+            "ETHSTD 10AC"
+          ],
+          [
+            "ETHSTD 21AC"
+          ],
+          [
+            "GEOG C55"
+          ],
+          [
+            "GERMAN 160A"
+          ],
+          [
+            "GERMAN 160C"
+          ],
+          [
+            "GLOBAL 45"
+          ],
+          [
+            "HISTORY C139C"
+          ],
+          [
+            "HISTORY C157"
+          ],
+          [
+            "HISTORY C159A"
+          ],
+          [
+            "HISTORY N106A"
+          ],
+          [
+            "HISTORY N106B"
+          ],
+          [
+            "HISTORY N112B"
+          ],
+          [
+            "HISTORY N124A"
+          ],
+          [
+            "HISTORY N124B"
+          ],
+          [
+            "HISTORY N131B"
+          ],
+          [
+            "HISTORY N143"
+          ],
+          [
+            "HISTORY N151C"
+          ],
+          [
+            "HISTORY N158C"
+          ],
+          [
+            "HISTORY N162A"
+          ],
+          [
+            "HISTORY 4A"
+          ],
+          [
+            "HISTORY 4B"
+          ],
+          [
+            "HISTORY 5"
+          ],
+          [
+            "HISTORY 6A"
+          ],
+          [
+            "HISTORY 6B"
+          ],
+          [
+            "HISTORY 7A"
+          ],
+          [
+            "HISTORY 7B"
+          ],
+          [
+            "HISTORY 8A"
+          ],
+          [
+            "HISTORY 8B"
+          ],
+          [
+            "HISTORY 10"
+          ],
+          [
+            "HISTORY 11"
+          ],
+          [
+            "HISTORY 12"
+          ],
+          [
+            "HISTORY 14"
+          ],
+          [
+            "HISTORY 105A"
+          ],
+          [
+            "HISTORY 105B"
+          ],
+          [
+            "HISTORY 106A"
+          ],
+          [
+            "HISTORY 106B"
+          ],
+          [
+            "HISTORY 108"
+          ],
+          [
+            "HISTORY 112B"
+          ],
+          [
+            "HISTORY 122AC"
+          ],
+          [
+            "HISTORY 123"
+          ],
+          [
+            "HISTORY 124A"
+          ],
+          [
+            "HISTORY 124B"
+          ],
+          [
+            "HISTORY 130"
+          ],
+          [
+            "HISTORY 131B"
+          ],
+          [
+            "HISTORY 133A"
+          ],
+          [
+            "HISTORY 137AC"
+          ],
+          [
+            "HISTORY 140B"
+          ],
+          [
+            "HISTORY 141B"
+          ],
+          [
+            "HISTORY 143"
+          ],
+          [
+            "HISTORY 149B"
+          ],
+          [
+            "HISTORY 150B"
+          ],
+          [
+            "HISTORY 151A"
+          ],
+          [
+            "HISTORY 151B"
+          ],
+          [
+            "HISTORY 151C"
+          ],
+          [
+            "HISTORY 155A"
+          ],
+          [
+            "HISTORY 155B"
+          ],
+          [
+            "HISTORY 158A"
+          ],
+          [
+            "HISTORY 158B"
+          ],
+          [
+            "HISTORY 158C"
+          ],
+          [
+            "HISTORY 159B"
+          ],
+          [
+            "HISTORY 160"
+          ],
+          [
+            "HISTORY 162A"
+          ],
+          [
+            "HISTORY 162B"
+          ],
+          [
+            "HISTORY 164A"
+          ],
+          [
+            "HISTORY 165A"
+          ],
+          [
+            "HISTORY 165B"
+          ],
+          [
+            "HISTORY 166A"
+          ],
+          [
+            "HISTORY 166B"
+          ],
+          [
+            "HISTORY 166C"
+          ],
+          [
+            "HISTORY 167A"
+          ],
+          [
+            "HISTORY 167B"
+          ],
+          [
+            "HISTORY 167C"
+          ],
+          [
+            "HISTORY 168A"
+          ],
+          [
+            "HISTORY 169A"
+          ],
+          [
+            "HISTORY 170"
+          ],
+          [
+            "HISTORY 171A"
+          ],
+          [
+            "HISTORY 171B"
+          ],
+          [
+            "HISTORY 171C"
+          ],
+          [
+            "HISTORY 173B"
+          ],
+          [
+            "HISTORY 173C"
+          ],
+          [
+            "HISTORY 174B"
+          ],
+          [
+            "HISTORY 185A"
+          ],
+          [
+            "HISTORY 185B"
+          ],
+          [
+            "IAS 45"
+          ],
+          [
+            "MELC C26"
+          ],
+          [
+            "MELC 10"
+          ],
+          [
+            "MELC 109"
+          ],
+          [
+            "MELC 147"
+          ],
+          [
+            "MELC 173"
+          ],
+          [
+            "MELC 175"
+          ],
+          [
+            "PACS 125AC"
+          ],
+          [
+            "POLECON C160"
+          ],
+          [
+            "PORTUG 113"
+          ],
+          [
+            "RELIGST C124"
+          ],
+          [
+            "SCANDIN 123"
+          ],
+          [
+            "XAGRS 10A"
+          ],
+          [
+            "XETHSTD 21AC"
+          ],
+          [
+            "XHISTOR 7B"
+          ]
+        ]
+      },
+      {
+        "id": "dxozHBx0",
+        "name": "American Politics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 1"
+          ],
+          [
+            "POLSCI 102"
+          ],
+          [
+            "POLSCI 103"
+          ],
+          [
+            "POLSCI 103W"
+          ],
+          [
+            "POLSCI 104"
+          ],
+          [
+            "POLSCI 105"
+          ],
+          [
+            "POLSCI 106A"
+          ],
+          [
+            "POLSCI 107"
+          ],
+          [
+            "POLSCI 109"
+          ],
+          [
+            "POLSCI 109A"
+          ],
+          [
+            "POLSCI 109B"
+          ],
+          [
+            "POLSCI 109D"
+          ],
+          [
+            "POLSCI 109E"
+          ],
+          [
+            "POLSCI 109G"
+          ],
+          [
+            "POLSCI 109H"
+          ],
+          [
+            "POLSCI 109L"
+          ],
+          [
+            "POLSCI 109M"
+          ],
+          [
+            "POLSCI 109P"
+          ],
+          [
+            "POLSCI 109Q"
+          ],
+          [
+            "POLSCI 109R"
+          ],
+          [
+            "POLSCI 109S"
+          ],
+          [
+            "POLSCI 109W"
+          ],
+          [
+            "POLSCI 109Z"
+          ],
+          [
+            "POLSCI 111AC"
+          ],
+          [
+            "POLSCI 116J"
+          ],
+          [
+            "POLSCI 150"
+          ],
+          [
+            "POLSCI 152A"
+          ],
+          [
+            "POLSCI 157A"
+          ],
+          [
+            "POLSCI 157B"
+          ],
+          [
+            "POLSCI 160"
+          ],
+          [
+            "POLSCI 161"
+          ],
+          [
+            "POLSCI 164A"
+          ],
+          [
+            "POLSCI 166"
+          ],
+          [
+            "POLSCI 167"
+          ],
+          [
+            "POLSCI 167AC"
+          ],
+          [
+            "POLSCI 169"
+          ],
+          [
+            "POLSCI 171"
+          ],
+          [
+            "POLSCI 173S"
+          ],
+          [
+            "POLSCI 175A"
+          ],
+          [
+            "POLSCI 181"
+          ]
+        ]
+      },
+      {
+        "id": "fjNrx29j",
+        "name": "Comparative Politics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 141A"
+          ],
+          [
+            "POLSCI 137A"
+          ],
+          [
+            "POLSCI 138C"
+          ],
+          [
+            "POLSCI 138D"
+          ],
+          [
+            "POLSCI 138E"
+          ],
+          [
+            "POLSCI 138F"
+          ],
+          [
+            "POLSCI 138G"
+          ],
+          [
+            "POLSCI 139B"
+          ],
+          [
+            "POLSCI 139D"
+          ],
+          [
+            "POLSCI 140E"
+          ],
+          [
+            "POLSCI 140F"
+          ],
+          [
+            "POLSCI 140L"
+          ],
+          [
+            "POLSCI 140M"
+          ],
+          [
+            "POLSCI 140O"
+          ],
+          [
+            "POLSCI 140R"
+          ],
+          [
+            "POLSCI 140S"
+          ],
+          [
+            "POLSCI 140W"
+          ],
+          [
+            "POLSCI 140Z"
+          ],
+          [
+            "POLSCI 141C"
+          ],
+          [
+            "POLSCI 142A"
+          ],
+          [
+            "POLSCI 143A"
+          ],
+          [
+            "POLSCI 143B"
+          ],
+          [
+            "POLSCI 143C"
+          ],
+          [
+            "POLSCI 143E"
+          ],
+          [
+            "POLSCI 143T"
+          ],
+          [
+            "POLSCI 144"
+          ],
+          [
+            "POLSCI 144B"
+          ],
+          [
+            "POLSCI 145A"
+          ],
+          [
+            "POLSCI 145B"
+          ],
+          [
+            "POLSCI 146A"
+          ],
+          [
+            "POLSCI 146D"
+          ],
+          [
+            "POLSCI 147F"
+          ],
+          [
+            "POLSCI 147G"
+          ],
+          [
+            "POLSCI 147T"
+          ],
+          [
+            "POLSCI 148A"
+          ],
+          [
+            "POLSCI 149"
+          ],
+          [
+            "POLSCI 149B"
+          ],
+          [
+            "POLSCI 149E"
+          ],
+          [
+            "POLSCI 149F"
+          ],
+          [
+            "POLSCI 149I"
+          ],
+          [
+            "POLSCI 149K"
+          ],
+          [
+            "POLSCI 149M"
+          ],
+          [
+            "POLSCI 149N"
+          ],
+          [
+            "POLSCI 149P"
+          ],
+          [
+            "POLSCI 149R"
+          ],
+          [
+            "POLSCI 149S"
+          ],
+          [
+            "POLSCI 149W"
+          ],
+          [
+            "POLSCI 2"
+          ],
+          [
+            "POLSCI 139W"
+          ],
+          [
+            "POLSCI 139M"
+          ],
+          [
+            "POLSCI 138S"
+          ],
+          [
+            "POLSCI 138Z"
+          ],
+          [
+            "POLSCI 138M"
+          ],
+          [
+            "POLSCI 138J"
+          ],
+          [
+            "POLSCI 136B"
+          ],
+          [
+            "POLSCI 137H"
+          ],
+          [
+            "POLSCI 137L"
+          ],
+          [
+            "POLSCI 143F"
+          ],
+          [
+            "POLSCI 137R"
+          ]
+        ]
+      },
+      {
+        "id": "VIHcf0Ay",
+        "name": "Empirical Theory & Quantitative Methods",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 3"
+          ],
+          [
+            "POLSCI W3"
+          ]
+        ]
+      },
+      {
+        "id": "yquJ0n4d",
+        "name": "Political Theory",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 112A"
+          ],
+          [
+            "POLSCI 112B"
+          ],
+          [
+            "POLSCI 112C"
+          ],
+          [
+            "POLSCI 112D"
+          ],
+          [
+            "POLSCI 114A"
+          ],
+          [
+            "POLSCI 116"
+          ],
+          [
+            "POLSCI 116A"
+          ],
+          [
+            "POLSCI 116B"
+          ],
+          [
+            "POLSCI 116C"
+          ],
+          [
+            "POLSCI 116D"
+          ],
+          [
+            "POLSCI 116E"
+          ],
+          [
+            "POLSCI 116F"
+          ],
+          [
+            "POLSCI 116G"
+          ],
+          [
+            "POLSCI 116H"
+          ],
+          [
+            "POLSCI 116I"
+          ],
+          [
+            "POLSCI 116J"
+          ],
+          [
+            "POLSCI 116K"
+          ],
+          [
+            "POLSCI 116L"
+          ],
+          [
+            "POLSCI 116M"
+          ],
+          [
+            "POLSCI 116N"
+          ],
+          [
+            "POLSCI 116O"
+          ],
+          [
+            "POLSCI 116Q"
+          ],
+          [
+            "POLSCI 116R"
+          ],
+          [
+            "POLSCI 116S"
+          ],
+          [
+            "POLSCI 116T"
+          ],
+          [
+            "POLSCI 116U"
+          ],
+          [
+            "POLSCI 116V"
+          ],
+          [
+            "POLSCI 116W"
+          ],
+          [
+            "POLSCI 116X"
+          ],
+          [
+            "POLSCI 116Y"
+          ],
+          [
+            "POLSCI 116Z"
+          ],
+          [
+            "POLSCI 117"
+          ],
+          [
+            "POLSCI 117D"
+          ],
+          [
+            "POLSCI 112L"
+          ],
+          [
+            "POLSCI 117L"
+          ],
+          [
+            "POLSCI 116P"
+          ]
+        ]
+      },
+      {
+        "id": "ca1exfz3",
+        "name": "International Relations",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 122A"
+          ],
+          [
+            "POLSCI 123"
+          ],
+          [
+            "POLSCI 123A"
+          ],
+          [
+            "POLSCI 123C"
+          ],
+          [
+            "POLSCI 123F"
+          ],
+          [
+            "POLSCI 123G"
+          ],
+          [
+            "POLSCI 123H"
+          ],
+          [
+            "POLSCI 125"
+          ],
+          [
+            "POLSCI 123J"
+          ],
+          [
+            "POLSCI 123L"
+          ],
+          [
+            "POLSCI 123M"
+          ],
+          [
+            "POLSCI 123P"
+          ],
+          [
+            "POLSCI 123R"
+          ],
+          [
+            "POLSCI 123S"
+          ],
+          [
+            "POLSCI 123W"
+          ],
+          [
+            "POLSCI 123Y"
+          ],
+          [
+            "POLSCI 124A"
+          ],
+          [
+            "POLSCI 124C"
+          ],
+          [
+            "POLSCI 124I"
+          ],
+          [
+            "POLSCI 124M"
+          ],
+          [
+            "POLSCI 124N"
+          ],
+          [
+            "POLSCI 126A"
+          ],
+          [
+            "POLSCI 128"
+          ],
+          [
+            "POLSCI 128A"
+          ],
+          [
+            "POLSCI 129B"
+          ],
+          [
+            "POLSCI 124B"
+          ],
+          [
+            "POLSCI 124G"
+          ],
+          [
+            "POLSCI 124D"
+          ],
+          [
+            "POLSCI 124H"
+          ],
+          [
+            "POLSCI 124R"
+          ],
+          [
+            "POLSCI 124W"
+          ]
+        ]
+      },
+      {
+        "id": "ZCzCqcag",
+        "name": "American Politics: Lower Division",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 1"
+          ],
+          [
+            "XPOLSCI 1"
+          ]
+        ]
+      },
+      {
+        "id": "M7gzeeEG",
+        "name": "American Politics: Upper Division",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "POLSCI 102"
+          ],
+          [
+            "POLSCI 103"
+          ],
+          [
+            "POLSCI 103W"
+          ],
+          [
+            "POLSCI 104"
+          ],
+          [
+            "POLSCI 105"
+          ],
+          [
+            "POLSCI 106A"
+          ],
+          [
+            "POLSCI 109"
+          ],
+          [
+            "POLSCI 109A"
+          ],
+          [
+            "POLSCI 109B"
+          ],
+          [
+            "POLSCI 109D"
+          ],
+          [
+            "POLSCI 109E"
+          ],
+          [
+            "POLSCI 109G"
+          ],
+          [
+            "POLSCI 109H"
+          ],
+          [
+            "POLSCI 109L"
+          ],
+          [
+            "POLSCI 109M"
+          ],
+          [
+            "POLSCI 109P"
+          ],
+          [
+            "POLSCI 109Q"
+          ],
+          [
+            "POLSCI 109R"
+          ],
+          [
+            "POLSCI 109S"
+          ],
+          [
+            "POLSCI 109W"
+          ],
+          [
+            "POLSCI 109Z"
+          ],
+          [
+            "POLSCI 111AC"
+          ],
+          [
+            "POLSCI 111B"
+          ],
+          [
+            "POLSCI 116J"
+          ],
+          [
+            "POLSCI 150"
+          ],
+          [
+            "POLSCI 152A"
+          ],
+          [
+            "POLSCI 157A"
+          ],
+          [
+            "POLSCI 157B"
+          ],
+          [
+            "POLSCI 161"
+          ],
+          [
+            "POLSCI 164A"
+          ],
+          [
+            "POLSCI 166"
+          ],
+          [
+            "POLSCI 167"
+          ],
+          [
+            "POLSCI 167AC"
+          ],
+          [
+            "POLSCI 169"
+          ],
+          [
+            "POLSCI 171"
+          ],
+          [
+            "POLSCI 173S"
+          ],
+          [
+            "POLSCI 175A"
+          ],
+          [
+            "POLSCI 181"
+          ],
+          [
+            "POLSCI 160"
+          ],
+          [
+            "POLSCI 107"
+          ],
+          [
+            "POLSCI 188"
+          ]
+        ]
+      },
+      {
+        "id": "abBTikbP",
+        "name": "Comparative Politics: Lower Division",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 2"
+          ],
+          [
+            "XPOLSCI 2"
+          ]
+        ]
+      },
+      {
+        "id": "hKtuDhRa",
+        "name": "Comparative Politics: Upper Division",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "POLSCI 141A"
+          ],
+          [
+            "POLSCI 136A"
+          ],
+          [
+            "POLSCI 137A"
+          ],
+          [
+            "POLSCI 137C"
+          ],
+          [
+            "POLSCI 138A"
+          ],
+          [
+            "POLSCI 138B"
+          ],
+          [
+            "POLSCI 138C"
+          ],
+          [
+            "POLSCI 138D"
+          ],
+          [
+            "POLSCI 138E"
+          ],
+          [
+            "POLSCI 138F"
+          ],
+          [
+            "POLSCI 138G"
+          ],
+          [
+            "POLSCI 139A"
+          ],
+          [
+            "POLSCI 139B"
+          ],
+          [
+            "POLSCI 139C"
+          ],
+          [
+            "POLSCI 139D"
+          ],
+          [
+            "POLSCI 140"
+          ],
+          [
+            "POLSCI 140A"
+          ],
+          [
+            "POLSCI 140B"
+          ],
+          [
+            "POLSCI 140C"
+          ],
+          [
+            "POLSCI 140D"
+          ],
+          [
+            "POLSCI 140E"
+          ],
+          [
+            "POLSCI 140F"
+          ],
+          [
+            "POLSCI 140G"
+          ],
+          [
+            "POLSCI 140H"
+          ],
+          [
+            "POLSCI 140I"
+          ],
+          [
+            "POLSCI 140K"
+          ],
+          [
+            "POLSCI 140L"
+          ],
+          [
+            "POLSCI 140M"
+          ],
+          [
+            "POLSCI 140N"
+          ],
+          [
+            "POLSCI 140O"
+          ],
+          [
+            "POLSCI 140P"
+          ],
+          [
+            "POLSCI 140Q"
+          ],
+          [
+            "POLSCI 140R"
+          ],
+          [
+            "POLSCI 140S"
+          ],
+          [
+            "POLSCI 140T"
+          ],
+          [
+            "POLSCI 140U"
+          ],
+          [
+            "POLSCI 140V"
+          ],
+          [
+            "POLSCI 140W"
+          ],
+          [
+            "POLSCI 140X"
+          ],
+          [
+            "POLSCI 140Y"
+          ],
+          [
+            "POLSCI 140Z"
+          ],
+          [
+            "POLSCI 141A"
+          ],
+          [
+            "POLSCI 141B"
+          ],
+          [
+            "POLSCI 141C"
+          ],
+          [
+            "POLSCI 142A"
+          ],
+          [
+            "POLSCI 142B"
+          ],
+          [
+            "POLSCI 143A"
+          ],
+          [
+            "POLSCI 143B"
+          ],
+          [
+            "POLSCI 143C"
+          ],
+          [
+            "POLSCI 143D"
+          ],
+          [
+            "POLSCI 143E"
+          ],
+          [
+            "POLSCI 143T"
+          ],
+          [
+            "POLSCI 144"
+          ],
+          [
+            "POLSCI 144A"
+          ],
+          [
+            "POLSCI 144B"
+          ],
+          [
+            "POLSCI 145A"
+          ],
+          [
+            "POLSCI 145B"
+          ],
+          [
+            "POLSCI 146A"
+          ],
+          [
+            "POLSCI 146B"
+          ],
+          [
+            "POLSCI 146C"
+          ],
+          [
+            "POLSCI 146D"
+          ],
+          [
+            "POLSCI 147B"
+          ],
+          [
+            "POLSCI 147C"
+          ],
+          [
+            "POLSCI 147D"
+          ],
+          [
+            "POLSCI 147F"
+          ],
+          [
+            "POLSCI 147G"
+          ],
+          [
+            "POLSCI 147H"
+          ],
+          [
+            "POLSCI 147T"
+          ],
+          [
+            "POLSCI 148A"
+          ],
+          [
+            "POLSCI 148B"
+          ],
+          [
+            "POLSCI 149"
+          ],
+          [
+            "POLSCI 149A"
+          ],
+          [
+            "POLSCI 149B"
+          ],
+          [
+            "POLSCI 149C"
+          ],
+          [
+            "POLSCI 149D"
+          ],
+          [
+            "POLSCI 149E"
+          ],
+          [
+            "POLSCI 149F"
+          ],
+          [
+            "POLSCI 149G"
+          ],
+          [
+            "POLSCI 149H"
+          ],
+          [
+            "POLSCI 149I"
+          ],
+          [
+            "POLSCI 149J"
+          ],
+          [
+            "POLSCI 149K"
+          ],
+          [
+            "POLSCI 149L"
+          ],
+          [
+            "POLSCI 149M"
+          ],
+          [
+            "POLSCI 149N"
+          ],
+          [
+            "POLSCI 149O"
+          ],
+          [
+            "POLSCI 149P"
+          ],
+          [
+            "POLSCI 149Q"
+          ],
+          [
+            "POLSCI 149R"
+          ],
+          [
+            "POLSCI 149S"
+          ],
+          [
+            "POLSCI 149T"
+          ],
+          [
+            "POLSCI 149U"
+          ],
+          [
+            "POLSCI 149V"
+          ],
+          [
+            "POLSCI 149W"
+          ],
+          [
+            "POLSCI 149X"
+          ],
+          [
+            "POLSCI 149Y"
+          ],
+          [
+            "POLSCI 149Z"
+          ],
+          [
+            "POLSCI 139W"
+          ],
+          [
+            "POLSCI 139M"
+          ],
+          [
+            "POLSCI 138S"
+          ],
+          [
+            "POLSCI 138Z"
+          ],
+          [
+            "POLSCI 138M"
+          ],
+          [
+            "POLSCI 138J"
+          ],
+          [
+            "POLSCI 136B"
+          ],
+          [
+            "POLSCI 137H"
+          ],
+          [
+            "POLSCI 137L"
+          ],
+          [
+            "POLSCI 143F"
+          ],
+          [
+            "POLSCI 137R"
+          ]
+        ]
+      },
+      {
+        "id": "VFMg9AUp",
+        "name": "Empirical Theory & Quantitative Methods: Lower Division",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 3"
+          ],
+          [
+            "POLSCI W3"
+          ]
+        ]
+      },
+      {
+        "id": "cDdg7IJm",
+        "name": "Empirical Theory & Quantitative Methods: Upper Division",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "ECON C110"
+          ],
+          [
+            "ECON C142"
+          ],
+          [
+            "POLSCI C131A"
+          ],
+          [
+            "POLSCI C135",
+            "POLSCI W135"
+          ],
+          [
+            "POLSCI 132A"
+          ],
+          [
+            "POLSCI 132B"
+          ],
+          [
+            "POLSCI 133"
+          ],
+          [
+            "POLSCI 134"
+          ],
+          [
+            "PUBPOL C142"
+          ]
+        ]
+      },
+      {
+        "id": "TpIFFDp6",
+        "name": "Political Theory: Lower Division",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 4"
+          ]
+        ]
+      },
+      {
+        "id": "eYsy8k9a",
+        "name": "Political Theory Upper Division",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "POLSCI 111AC"
+          ],
+          [
+            "POLSCI 112A"
+          ],
+          [
+            "POLSCI 112B"
+          ],
+          [
+            "POLSCI 112C"
+          ],
+          [
+            "POLSCI 112D"
+          ],
+          [
+            "POLSCI 113A"
+          ],
+          [
+            "POLSCI 113B"
+          ],
+          [
+            "POLSCI 114"
+          ],
+          [
+            "POLSCI 114A"
+          ],
+          [
+            "POLSCI 115A"
+          ],
+          [
+            "POLSCI 115B"
+          ],
+          [
+            "POLSCI 115C"
+          ],
+          [
+            "POLSCI 116"
+          ],
+          [
+            "POLSCI 116A"
+          ],
+          [
+            "POLSCI 116B"
+          ],
+          [
+            "POLSCI 116C"
+          ],
+          [
+            "POLSCI 116D"
+          ],
+          [
+            "POLSCI 116E"
+          ],
+          [
+            "POLSCI 116F"
+          ],
+          [
+            "POLSCI 116G"
+          ],
+          [
+            "POLSCI 116H"
+          ],
+          [
+            "POLSCI 116I"
+          ],
+          [
+            "POLSCI 116J"
+          ],
+          [
+            "POLSCI 116K"
+          ],
+          [
+            "POLSCI 116L"
+          ],
+          [
+            "POLSCI 116M"
+          ],
+          [
+            "POLSCI 116N"
+          ],
+          [
+            "POLSCI 116O"
+          ],
+          [
+            "POLSCI 116Q"
+          ],
+          [
+            "POLSCI 116R"
+          ],
+          [
+            "POLSCI 116S"
+          ],
+          [
+            "POLSCI 116T"
+          ],
+          [
+            "POLSCI 116U"
+          ],
+          [
+            "POLSCI 116V"
+          ],
+          [
+            "POLSCI 116W"
+          ],
+          [
+            "POLSCI 116X"
+          ],
+          [
+            "POLSCI 116Y"
+          ],
+          [
+            "POLSCI 116Z"
+          ],
+          [
+            "POLSCI 118AC"
+          ],
+          [
+            "POLSCI 117"
+          ],
+          [
+            "POLSCI 118B"
+          ],
+          [
+            "POLSCI 117D"
+          ],
+          [
+            "POLSCI 112L"
+          ],
+          [
+            "POLSCI 117L"
+          ],
+          [
+            "POLSCI 116P"
+          ]
+        ]
+      },
+      {
+        "id": "zfJUwWf2",
+        "name": "International Relations Lower Division",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "POLSCI 5"
+          ]
+        ]
+      },
+      {
+        "id": "M0VnLNyH",
+        "name": "International Relations Upper Division",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "POLSCI 122"
+          ],
+          [
+            "POLSCI 122A"
+          ],
+          [
+            "POLSCI 122AW"
+          ],
+          [
+            "POLSCI 123"
+          ],
+          [
+            "POLSCI 123A"
+          ],
+          [
+            "POLSCI 123B"
+          ],
+          [
+            "POLSCI 123C"
+          ],
+          [
+            "POLSCI 123D"
+          ],
+          [
+            "POLSCI 123E"
+          ],
+          [
+            "POLSCI 123F"
+          ],
+          [
+            "POLSCI 123G"
+          ],
+          [
+            "POLSCI 123H"
+          ],
+          [
+            "POLSCI 125"
+          ],
+          [
+            "POLSCI 123J"
+          ],
+          [
+            "POLSCI 123K"
+          ],
+          [
+            "POLSCI 123L"
+          ],
+          [
+            "POLSCI 123M"
+          ],
+          [
+            "POLSCI 123N"
+          ],
+          [
+            "POLSCI 123O"
+          ],
+          [
+            "POLSCI 123P"
+          ],
+          [
+            "POLSCI 123Q"
+          ],
+          [
+            "POLSCI 123R"
+          ],
+          [
+            "POLSCI 123S"
+          ],
+          [
+            "POLSCI 123T"
+          ],
+          [
+            "POLSCI 123U"
+          ],
+          [
+            "POLSCI 123V"
+          ],
+          [
+            "POLSCI 123W"
+          ],
+          [
+            "POLSCI 123X"
+          ],
+          [
+            "POLSCI 123Y"
+          ],
+          [
+            "POLSCI 123Z"
+          ],
+          [
+            "POLSCI 124A"
+          ],
+          [
+            "POLSCI 124B"
+          ],
+          [
+            "POLSCI 124C"
+          ],
+          [
+            "POLSCI 124I"
+          ],
+          [
+            "POLSCI 124M"
+          ],
+          [
+            "POLSCI 124N"
+          ],
+          [
+            "POLSCI 125"
+          ],
+          [
+            "POLSCI 126A"
+          ],
+          [
+            "POLSCI 126B"
+          ],
+          [
+            "POLSCI 127"
+          ],
+          [
+            "POLSCI 127A"
+          ],
+          [
+            "POLSCI 127B"
+          ],
+          [
+            "POLSCI 128"
+          ],
+          [
+            "POLSCI 128A"
+          ],
+          [
+            "POLSCI 128B"
+          ],
+          [
+            "POLSCI 129A"
+          ],
+          [
+            "POLSCI 129B"
+          ],
+          [
+            "POLSCI 129C"
+          ],
+          [
+            "POLSCI 124B"
+          ],
+          [
+            "POLSCI 124G"
+          ],
+          [
+            "POLSCI 124D"
+          ],
+          [
+            "POLSCI 124H"
+          ],
+          [
+            "POLSCI 124R"
+          ],
+          [
+            "POLSCI 124W"
+          ]
+        ]
+      },
+      {
+        "id": "olf0e1Wb",
+        "name": "Courses",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Complete at least 8 of: Any 4-unit POLSCI 100–191-level course (excluding POLSCI 110 and POLSCI 179)"
+      }
+    ]
+  },
+  {
+    "programGroupId": "25I072U",
+    "name": "Physics",
+    "kind": "minor",
+    "flags": [
+      "rule descriptions",
+      "course sets",
+      "no resolvable courses in \"Electives\""
+    ],
+    "rules": [
+      {
+        "id": "EzZvEu96",
+        "name": "Core",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "PHYSICS 105",
+            "PHYSICS 110A"
+          ],
+          [
+            "PHYSICS 137A"
+          ]
+        ],
+        "description": "Students must complete each course with a letter grade of C- or higher."
+      },
+      {
+        "id": "Vic6QTUX",
+        "name": "Electives",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "description": "Students must complete each course with a letter grade of C- or higher."
+      }
+    ]
+  },
+  {
+    "programGroupId": "04779U",
+    "name": "Environmental Economics and Policy",
+    "kind": "major",
+    "flags": [
+      "rule descriptions",
+      "free text",
+      "course sets",
+      "major-specific requirement set"
+    ],
+    "rules": [
+      {
+        "id": "s7EVENKT",
+        "name": "Economics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ECON 1"
+          ],
+          [
+            "ECON 2"
+          ],
+          [
+            "ECON C3"
+          ],
+          [
+            "ENVECON C1"
+          ]
+        ]
+      },
+      {
+        "id": "YQgZuja5",
+        "name": "Mathematics",
+        "kind": "atLeast",
+        "n": 2,
+        "groups": [
+          [
+            "MATH 16A",
+            "XMATH 16A"
+          ],
+          [
+            "MATH 16B"
+          ],
+          [
+            "MATH 51",
+            "MATH 1A"
+          ],
+          [
+            "MATH 52",
+            "MATH 1B"
+          ]
+        ]
+      },
+      {
+        "id": "UBUIcB7J",
+        "name": "Statistics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "COMPSCI C8",
+            "DATA C8",
+            "INFO C8",
+            "STAT C8"
+          ],
+          [
+            "STAT 20",
+            "STAT W21"
+          ]
+        ]
+      },
+      {
+        "id": "4CfgLgiUFB6kROei1WY4",
+        "name": "Upper Division",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "8 Upper Division courses are required for the Environmental Economics & Policy Major (3 Core courses + 5 Elective courses). Of these 8 Upper Division courses, students must complete at least 5 Upper Division ENVECON courses. These 5 Upper Division ENVECON courses may be satisfied with both Core Requirement courses and Elective Requirement courses. Courses that are cross-listed with ENVECON will also count towards this 5 Upper Division ENVECON course requirement."
+      },
+      {
+        "id": "sObLEwTn",
+        "name": "Microeconomics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ECON 100A"
+          ],
+          [
+            "ECON 100A"
+          ],
+          [
+            "ENVECON 100"
+          ]
+        ]
+      },
+      {
+        "id": "bdClGSs5",
+        "name": "Environmental Economics or Natural Resources Economics",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ECON C102"
+          ],
+          [
+            "ECON C125"
+          ],
+          [
+            "ENVECON C101"
+          ],
+          [
+            "ENVECON C102"
+          ]
+        ]
+      },
+      {
+        "id": "uvicxvpJ",
+        "name": "Quantitative Methods",
+        "kind": "atLeast",
+        "n": 1,
+        "groups": [
+          [
+            "ECON 140"
+          ],
+          [
+            "ECON 141"
+          ],
+          [
+            "ENVECON C115"
+          ],
+          [
+            "ENVECON C118"
+          ],
+          [
+            "ENVECON C183"
+          ],
+          [
+            "ESPM C104"
+          ],
+          [
+            "ESPM C183"
+          ],
+          [
+            "IAS C118"
+          ]
+        ]
+      },
+      {
+        "id": "IeRYyV0m",
+        "name": "Electives",
+        "kind": "atLeast",
+        "n": 5,
+        "groups": [
+          [
+            "ENVECON 131"
+          ],
+          [
+            "ENVECON 140AC"
+          ],
+          [
+            "ENVECON 141"
+          ],
+          [
+            "ENVECON 142"
+          ],
+          [
+            "ENVECON 143"
+          ],
+          [
+            "ENVECON 145"
+          ],
+          [
+            "ENVECON 147"
+          ],
+          [
+            "ENVECON 152"
+          ],
+          [
+            "ENVECON 153"
+          ],
+          [
+            "ENVECON 154"
+          ],
+          [
+            "ENVECON 161"
+          ],
+          [
+            "ENVECON 162"
+          ],
+          [
+            "ENVECON H196"
+          ],
+          [
+            "ENVECON C180"
+          ],
+          [
+            "ECON C171"
+          ],
+          [
+            "ENVECON C151"
+          ],
+          [
+            "ECON C181"
+          ],
+          [
+            "ENVECON C181"
+          ],
+          [
+            "ECON C102"
+          ],
+          [
+            "ENVECON C102"
+          ],
+          [
+            "ECON C125"
+          ],
+          [
+            "ENVECON C101"
+          ],
+          [
+            "ENVECON C176"
+          ],
+          [
+            "ENVECON C132"
+          ],
+          [
+            "ECON C184"
+          ],
+          [
+            "ENVECON 104"
+          ],
+          [
+            "ENVECON 105"
+          ],
+          [
+            "ENVECON C188"
+          ],
+          [
+            "ECON C188"
+          ]
+        ],
+        "description": "Upper Division Elective Requirements: Must complete 5 elective courses. The number of ENVECON elective courses required versus non-ENVECON elective courses allowed for this requirement is directly related to the number of ENVECON versus non-ENVECON courses completed from the above Core Requirements. EEP students must complete at least 5 ENVECON courses for the entire major . Therefore; If you complete all 3 core requirements with ENVECON courses then you need only complete 2 ENVECON elective courses and are allowed to use 3 non-ENVECON elective courses. If you complete 2 core requirements with ENVECON courses then you need to complete 3 ENVECON elective courses and are allowed to use 2 non-ENVECON elective courses. If you complete only 1 core requirement with an ENVECON course then you need to complete 4 ENVECON elective courses and are only allowed to use 1 non-ENVECON elective course. For a complete list of pre-approved elective courses for the EEP major please review on this page."
+      },
+      {
+        "id": "qWEnTg2r",
+        "name": "Course Requirements",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": []
+      }
+    ]
+  },
+  {
+    "programGroupId": "z5SVnW3RWZv5syG4KuEY",
+    "name": "Ecosystem Management and Forestry",
+    "kind": "major",
+    "flags": [
+      "rule descriptions",
+      "free text"
+    ],
+    "rules": [
+      {
+        "id": "WoJXP2bi",
+        "name": "Requirements for both specializations",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Lower division courses Chemistry (Select one of the following): CHEM 1A & 1AL General Chemistry and General Chemistry Laboratory CHEM 3A & 3AL Chemical Structure and Reactivity and Organic Chemistry Laboratory Biology BIOLOGY 1B General Biology Lecture and Laboratory [4] Calculus (A-B series required) MATH 16A & MATH 16B Analytic Geometry and Calculus and Analytic Geometry and Calculus MATH 51 & MATH 52 Calculus I Calculus II MATH 10A & MATH 10B Methods of Mathematics: Calculus, Statistics, and Combinatorics and Methods of Mathematics: Calculus, Statistics, and Combinatorics Statistics (Select one of the following): Note: Students who take Math 10A/B are exempt from the Statistics requirement. STAT 20 Introduction to Probability and Statistics [4] STAT 21 Introductory Probability and Statistics for Business [4] ESPM 173 Introduction to Ecological Data Analysis [3] DATA C8 & C88S Foundations of Data Science and Probability and Mathematical Statistics in Data Science Economics (Select one of the following): ENVECON C1 Introduction to Environmental Economics and Policy [4] ECON 1 ___________ ECON 2 Introduction to Economics [4] __________________________ Introduction to Economics (Lecture Format) [4] Physical Science (Select one of the following): GEOG 40 Introduction to Earth System Science [4] or EPS 50 The Planet Earth or GEOG 1 Global Environmental Change GIS (Select one of the following): ESPM 72 Introduction to Geographic Information Systems [3] (offered every other year) or GEOG 80 An Introduction to Geospatial Technologies: Mapping, Space and Power ESPM Core Requirements ESPM Environmental Sciences Core (Select one of the following): ESPM 2 The Biosphere [3] ESPM 6 Environmental Biology [3] ESPM C10 Environmental Issues [4] ESPM 15 Introduction to Environmental Sciences [3] ESPM C46 Climate Change and the Future of California [4] ESPM Social Sciences Core (Select one of the following): ESPM C11 Americans and the Global Forest [4] ESPM C22AC Fire: Past, Present and Future Interactions with the People and Ecosystems of California [4] ESPM 50AC Introduction to Culture and Natural Resource Management [4] ESPM C52 History of Native American Land, Colonialism, and Heritage Preservation [3] ESPM 60 Environmental Policy, Administration, and Law [4] Upper Division Core Courses Upper division requirements for both specializations ESPM 137 Landscape Ecology [3] or ESPM C153 Ecology ESPM 102C Resource Management [4] ESPM 183 Forest Ecosystem Management and Planning [4]"
+      },
+      {
+        "id": "DKpxhcJG",
+        "name": "Requirements",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "The Forestry specialization provides students with the ecological, quantitative, and social foundation to be the managers and leaders in the management of forests and forest resources. The Forestry specialization is accredited by the Society of American Foresters and provides four years of qualifying education or professional experience for licensing as a professional forester in California. The goals of the Forestry specialization are very closely associated with the educational requirements of the forestry profession and prepare our students for a variety of careers in forestry or closely related natural resource fields. Course List Code Title Units Forestry Field Program ESPM 105A Sierra Nevada Ecology [4] ESPM 105B Forest Measurements [1] ESPM 105C Silviculture and Utilization [3] ESPM 105D Forest Management and Assessment [3] Forestry Required Courses ESPM 102D Climate and Energy Policy [4] or ESPM 60 Environmental Policy, Administration, and Law ESPM 108A Trees: Taxonomy, Growth, and Structures [3] ESPM 134 Fire, Insects, and Diseases in Forest Ecosystems [3] ESPM 182 Forest Operations Management [3] (offered every other year) ESPM 185 Applied Forest Ecology [4] ESPM 102B Natural Resource Sampling [2] (&) ESPM 102BL Laboratory in Natural Resource Sampling [2] or ESPM C110A Ecological Analysis Forestry Elective Select two: ESPM 116B Grassland and Woodland Ecology 4 ESPM 120 Science of Soils [3] ESPM 121 Development and Classification of Soils [3] ESPM C129 Biometeorology [3] ESPM 130A Forest Hydrology 4 ESPM 131 Soil Microbiology and Biogeochemistry [3] ESPM 157 Data Science in Global Change Ecology [4] ESPM 164 GIS and Environmental Science [3] ESPM C172 Remote Sensing of the Environment [4] ESPM 173 Introduction to Ecological Data Analysis [3] ESPM 174A Applied Time Series Analysis for Ecology and Environmental Sciences 3 ESPM 181A Fire Ecology [3] ESPM 186 Grassland and Woodland Management and Conservation [4] ESPM 190 Seminar in Environmental Issues 3 GEOG 180 Field Methods for Physical Geography [5] GEOG 185 Earth System Remote Sensing [3] GEOG C188 Geographic Information Science 4"
+      },
+      {
+        "id": "kFbAG01b",
+        "name": "Requirements",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "The Natural Resource Management specialization provides students with greater flexibility to explore subjects in ecology, physical environment, monitoring and measurement, and management and policy. Students can choose to concentrate their studies in water management, ecology, climates change or design their own concentration based on interest. Choose One: Choice A Either the Forestry Field program (ESPM 105A-D) or Biology and Geomorphology of Tropical Islands (ESPM C107) or UCNRS CA Ecology (BIO/ENVS 188) AND Three additional approved courses by and Ecosystem Management and Forestry Faculty Choice B Design your own six course concentration with NMR faculty approval with at least one elective from each of the following categories Course List Code Title Units Electives by Concentration for Natural Resource Management Specialization Ecosystem Knowledge ESPM 108A Trees: Taxonomy, Growth, and Structures [3] ESPM 108B Environmental Change Genetics [3] ESPM 111 Ecosystem Ecology [4] ESPM 112 Microbial Ecology [3] ESPM 113 Insect Ecology [3] ESPM 114 Wildlife Ecology [3] ESPM C115A Freshwater Ecology [3] ESPM 115C Fish Ecology [3] ESPM 116B Grassland and Woodland Ecology [4] ESPM 120 Science of Soils [3] ESPM 121 Development and Classification of Soils [3] ESPM C129 Biometeorology [3] ESPM 130A Forest Hydrology [4] ESPM 131 Soil Microbiology and Biogeochemistry [3] ESPM C180 Air Pollution [3] INTEGBI 157LF Ecosystems of California [4] Ecosystem Measurement and Assessment ESPM 102B & 102BL Natural Resource Sampling and Laboratory in Natural Resource Sampling ESPM C110A Ecological Analysis [4] ESPM 157 Data Science in Global Change Ecology [4] ESPM 164 GIS and Environmental Science [3] ESPM C172 Remote Sensing of the Environment [4] ESPM 173 Introduction to Ecological Data Analysis [3] ESPM 174A Applied Time Series Analysis for Ecology and Environmental Sciences [3] GEOG 180 Field Methods for Physical Geography [5] GEOG C188 Geographic Information Science [4] Ecosystems Value and Policy ESPM 101A The Politics and Practice of Sustainability Transitions [4] ESPM 102D Climate and Energy Policy [4] ESPM 155AC Sociology and Political Ecology of Agro-Food Systems [4] ESPM 161 Environmental Philosophy and Ethics [4] ESPM 162A Health, Medicine, Society and Environment [4] ESPM 163AC Environmental Justice: Race, Class, Equity, and the Environment [4] ESPM 168 Political Ecology [4] ESPM 169 International Environmental Politics [4] ESPM C176 CLIMATE JUSTICE [4] Ecosystem Management ESPM C103 Principles of Conservation Biology [4] ESPM 106 American Wildlife: Management and Policy in the 21st Century [3] ESPM 134 Fire, Insects, and Diseases in Forest Ecosystems [3] ESPM 152 Global Change Biology [3] ESPM 162 Bioethics and Society [4] ESPM C167 Environmental Health and Development [4] ESPM 181A Fire Ecology [3] ESPM 182 Forest Operations Management [3] ESPM 185 Applied Forest Ecology [4] ESPM 186 Grassland and Woodland Management and Conservation [4]"
+      }
+    ]
+  },
+  {
+    "programGroupId": "25I034U",
+    "name": "Chinese Language",
+    "kind": "minor",
+    "flags": [
+      "rule descriptions",
+      "free text"
+    ],
+    "rules": [
+      {
+        "id": "oa7U9GHS",
+        "name": "Core",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Complete at least 2 of: CHINESE 7A or CHINESE 7B (only one can satisfy the Core requirement) Any CHINESE 100-194 course Any CHINESE 200-296 course"
+      },
+      {
+        "id": "cqkEF7LX",
+        "name": "Electives",
+        "kind": "placeholder",
+        "n": 0,
+        "groups": [],
+        "text": "Complete at least 2 of: CHINESE 7A or CHINESE 7B (only one can satisfy the Elective requirement, and only if it has not been used to satisfy the Core requirement) Any CHINESE 100-194 course Any CHINESE 200-296 course Any JAPANESE 100-194 course Any JAPANESE 200-296 course Any KOREAN 100-194 course Any KOREAN 200-296 course Any EALANG 100-194 course Any EALANG 200-296 course Any TIBETAN 100-194 course Any TIBETAN 200-296 course Any MONGOLN 100-194 course Any MONGOLN 200-296 course"
+      }
+    ]
+  }
+]
