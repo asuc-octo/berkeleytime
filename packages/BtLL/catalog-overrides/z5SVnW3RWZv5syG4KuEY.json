@@ -1,0 +1,245 @@
+{
+  "programGroupId": "z5SVnW3RWZv5syG4KuEY",
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "WoJXP2bi",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Chemistry",
+        "n": 1,
+        "rules": [
+          { "kind": "allOf", "name": "CHEM 1A and 1AL", "groups": [["CHEM 1A"], ["CHEM 1AL"]] },
+          { "kind": "allOf", "name": "CHEM 3A and 3AL", "groups": [["CHEM 3A"], ["CHEM 3AL"]] }
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Chemistry (Chem 1A/1AL or Chem 3A/3AL)",
+        "reasoning": "The catalog's only shared requirement is a free-text placeholder covering the whole lower division and the upper-division core. It is split into one structured rule per block (this one and the nine added next), following the department's EMF Major Snapshot (linked as 'EMF Major Snapshot' from https://nature.berkeley.edu/advising/majors/ecosystem-management-and-forestry). The lecture and its lab must be taken together."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "allOf", "name": "Biology", "groups": [["BIOLOGY 1B"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "General Biology Lecture and Laboratory",
+        "reasoning": "The Biology block of the snapshot lists only BIO 1B (General Biology Lecture and Laboratory), as does the catalog text."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Calculus",
+        "n": 1,
+        "rules": [
+          { "kind": "allOf", "name": "MATH 16A and 16B", "groups": [["MATH 16A"], ["MATH 16B"]] },
+          { "kind": "allOf", "name": "MATH 51 and 52", "groups": [["MATH 51"], ["MATH 52"]] },
+          { "kind": "allOf", "name": "MATH 10A and 10B", "groups": [["MATH 10A"], ["MATH 10B"]] }
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Calculus (Math 16A/16B OR Math 10A/10B OR Math 51/52 — formerly 1A/1B)",
+        "reasoning": "One complete two-course series. The old numbers MATH 1A/1B are added automatically as equivalents of 51/52."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Statistics",
+        "n": 1,
+        "rules": [
+          { "kind": "atLeast", "name": "One statistics course", "n": 1, "groups": [["STAT 20"], ["STAT 21"], ["ESPM 173"], ["PBHLTH 142"]] },
+          { "kind": "allOf", "name": "DATA C8 and C88S", "groups": [["DATA C8"], ["DATA C88S"]] },
+          { "kind": "allOf", "name": "Exempt: MATH 10A and 10B", "groups": [["MATH 10A"], ["MATH 10B"]], "shared": true }
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Students who take MATH 10A and MATH 10B do not need to take a statistics course",
+        "reasoning": "The snapshot lists STAT 20, ESPM 173, DATA C8 + DATA C88S ('**Note: Data C8 and Data C88S must both taken in order to fulfill the statistics requirement') and PBHLTH 142, which the catalog lacks, so PBHLTH 142 is added. The catalog's STAT 21 is kept because the department doesn't exclude it explicitly. The Math 10 exemption is a sub-rule that re-reads MATH 10A/10B (shared), because the Calculus rule already counted them. ESPM 173 counts only once ('*Note: ESPM 173 cannot be used for both statistics and elective requirement'), which is the default."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "atLeast", "name": "Economics", "n": 1, "groups": [["ENVECON C1"], ["ECON 1"], ["ECON 2"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Economics (Complete one of the following)",
+        "reasoning": "ENVECON C1 (recommended), ECON 1 or ECON 2, the same list as the catalog text."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "atLeast", "name": "Physical Science", "n": 1, "groups": [["GEOG 40"], ["EPS 50"], ["GEOG 1"], ["GEOG N1"], ["GEOG 180"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "*Note: GEOG 180 cannot be used for both Physical Science and elective requirement",
+        "reasoning": "The snapshot's Physical Science list ('Physical Science (Complete one of the following)') is EPS 50, GEOG N1, GEOG 40 and GEOG 180. GEOG 180 is new (the catalog lacks it). The department lists GEOG N1, the summer version of the catalog's GEOG 1 (same title, Global Environmental Change), so both are accepted. Counting GEOG 180 once is the default."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "atLeast", "name": "Geographic Information Systems", "n": 1, "groups": [["ESPM 72"], ["GEOG 80"], ["GEOG 185"], ["GEOG C188"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "*Note: GEOG 185 and GEOG C188 cannot be used for both GIS and elective requirement",
+        "reasoning": "The snapshot's GIS list ('Geographic Information Systems (Complete one of the following)') adds GEOG 185 and GEOG C188 to the catalog's ESPM 72 and GEOG 80. Counting them once is the default."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "atLeast", "name": "ESPM Environmental Science Core", "n": 1, "groups": [["ESPM 2"], ["ESPM 6"], ["ESPM C10", "ESPM 10"], ["ESPM 15"], ["ESPM C46"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "ESPM Environmental Science Core Course (Complete one of the following)",
+        "reasoning": "ESPM 2, 6, 10, 15 or C46. The catalog lists ESPM C10 and the department lists ESPM 10. Both exist in the catalog as 'Environmental Issues', so they are grouped as one alternative."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "atLeast", "name": "ESPM Social Science Core", "n": 1, "groups": [["ESPM C11"], ["ESPM C22AC"], ["ESPM 50AC"], ["ESPM C52"], ["ESPM 60"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "ESPM Social Science Core Course (Complete one of the following)",
+        "reasoning": "Same five courses as the catalog text. ESPM 60 can't also count toward the Forestry policy requirement ('*Note: ESPM 60 cannot be used for both ESPM Social Science and the Forestry Specialization policy requirement'), which is the default."
+      }
+    },
+    {
+      "op": "add",
+      "before": "DKpxhcJG",
+      "rule": { "kind": "allOf", "name": "Upper Division Core", "groups": [["ESPM 102C"], ["ESPM 183"], ["ESPM 137", "ESPM C153"]] },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Upper Division Requirements for ALL EMF majors:",
+        "reasoning": "ESPM 102C, ESPM 183, and 'ONE of the following Ecology courses:' ESPM 137 or ESPM C153. This matches the catalog text and the advising page ('three core upper division courses in ecology, resource management, and a capstone course')."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "DKpxhcJG",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Specialization",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "chooseRules",
+            "name": "Forestry Specialization",
+            "n": 5,
+            "rules": [
+              { "kind": "allOf", "name": "Forestry Field Program", "groups": [["ESPM 105A"], ["ESPM 105B"], ["ESPM 105C"], ["ESPM 105D"]], "shared": true },
+              {
+                "kind": "chooseRules",
+                "name": "Sampling or Ecological Analysis",
+                "n": 1,
+                "rules": [
+                  { "kind": "allOf", "name": "ESPM 102B and 102BL", "groups": [["ESPM 102B"], ["ESPM 102BL"]], "shared": true },
+                  { "kind": "allOf", "name": "ESPM C110A", "groups": [["ESPM C110A"]], "shared": true }
+                ]
+              },
+              { "kind": "allOf", "name": "Forestry Required Courses", "groups": [["ESPM 108A"], ["ESPM 134"], ["ESPM 182"], ["ESPM 185"]], "shared": true },
+              { "kind": "atLeast", "name": "Policy", "n": 1, "groups": [["ESPM 102D"], ["ESPM 60"]], "shared": true },
+              {
+                "kind": "atLeast",
+                "name": "Forestry Electives",
+                "n": 2,
+                "groups": [["ESPM C110A"], ["ESPM 116B"], ["ESPM 120"], ["ESPM 121"], ["ESPM C129"], ["ESPM C130"], ["ESPM 130A"], ["ESPM 131"], ["ESPM 157"], ["ESPM 164"], ["ESPM C172"], ["ESPM 173"], ["ESPM 174A"], ["ESPM 181A"], ["ESPM 186"], ["ESPM 190"], ["GEOG 180"], ["GEOG 185"], ["GEOG C188"], ["GEOG C183"]],
+                "shared": true
+              }
+            ]
+          },
+          {
+            "kind": "chooseRules",
+            "name": "Natural Resource Management Specialization",
+            "n": 1,
+            "rules": [
+              {
+                "kind": "chooseRules",
+                "name": "Choice A: field studies and three electives",
+                "n": 2,
+                "rules": [
+                  {
+                    "kind": "chooseRules",
+                    "name": "One field studies experience",
+                    "n": 1,
+                    "rules": [
+                      { "kind": "allOf", "name": "Forestry Field Program", "groups": [["ESPM 105A"], ["ESPM 105B"], ["ESPM 105C"], ["ESPM 105D"]], "shared": true },
+                      { "kind": "allOf", "name": "Tropical Islands (Moorea)", "groups": [["ESPM C107"]], "shared": true },
+                      { "kind": "allOf", "name": "UCNRS California Ecology", "groups": [["ENVSCI 188"]], "shared": true }
+                    ]
+                  },
+                  {
+                    "kind": "atLeast",
+                    "name": "Three NRM electives",
+                    "n": 3,
+                    "groups": [["ESPM 108A"], ["ESPM 108B"], ["ESPM 111"], ["ESPM 112"], ["ESPM 113"], ["ESPM 114"], ["ESPM C115A"], ["ESPM 115B"], ["ESPM 115C"], ["ESPM 116B"], ["ESPM 120"], ["ESPM 121"], ["ESPM C129"], ["ESPM 130A"], ["ESPM C130"], ["ESPM 131"], ["ESPM C180"], ["INTEGBI 157LF"], ["ESPM 102B"], ["ESPM 102BL"], ["ESPM C110A"], ["ESPM 139A"], ["ESPM 157"], ["ESPM 164"], ["ESPM C172"], ["ESPM 173"], ["ESPM 174A"], ["GEOG 180"], ["GEOG C188"], ["ESPM 101A"], ["ESPM 102D"], ["ESPM 155AC"], ["ESPM 161"], ["ESPM 162"], ["ESPM 162A"], ["ESPM C162A"], ["ESPM 163AC"], ["ESPM 168"], ["ESPM 169"], ["ESPM C176"], ["ESPM C103"], ["ESPM 106"], ["ESPM 134"], ["ESPM 152"], ["ESPM C167"], ["ESPM 181A"], ["ESPM 182"], ["ESPM 185"], ["ESPM 186"]],
+                    "shared": true
+                  }
+                ]
+              },
+              {
+                "kind": "chooseRules",
+                "name": "Choice B: six-course concentration",
+                "n": 5,
+                "rules": [
+                  { "kind": "atLeast", "name": "Ecosystem Knowledge", "n": 1, "groups": [["ESPM 108A"], ["ESPM 108B"], ["ESPM 111"], ["ESPM 112"], ["ESPM 113"], ["ESPM 114"], ["ESPM C115A"], ["ESPM 115B"], ["ESPM 115C"], ["ESPM 116B"], ["ESPM 120"], ["ESPM 121"], ["ESPM C129"], ["ESPM 130A"], ["ESPM C130"], ["ESPM 131"], ["ESPM C180"], ["INTEGBI 157LF"]] },
+                  {
+                    "kind": "chooseRules",
+                    "name": "Ecosystem Measurement and Assessment",
+                    "n": 1,
+                    "rules": [
+                      { "kind": "allOf", "name": "ESPM 102B and 102BL", "groups": [["ESPM 102B"], ["ESPM 102BL"]] },
+                      { "kind": "atLeast", "name": "One measurement course", "n": 1, "groups": [["ESPM C110A"], ["ESPM 139A"], ["ESPM 157"], ["ESPM 164"], ["ESPM C172"], ["ESPM 173"], ["ESPM 174A"], ["GEOG 180"], ["GEOG C188"]] }
+                    ]
+                  },
+                  { "kind": "atLeast", "name": "Ecosystem Value and Policy", "n": 1, "groups": [["ESPM 101A"], ["ESPM 102D"], ["ESPM 155AC"], ["ESPM 161"], ["ESPM 162"], ["ESPM 162A"], ["ESPM C162A"], ["ESPM 163AC"], ["ESPM 168"], ["ESPM 169"], ["ESPM C176"]] },
+                  { "kind": "atLeast", "name": "Ecosystem Management", "n": 1, "groups": [["ESPM C103"], ["ESPM 106"], ["ESPM 134"], ["ESPM 152"], ["ESPM C167"], ["ESPM 181A"], ["ESPM 182"], ["ESPM 185"], ["ESPM 186"]] },
+                  {
+                    "kind": "atLeast",
+                    "name": "Two more concentration courses",
+                    "n": 2,
+                    "groups": [["ESPM 108A"], ["ESPM 108B"], ["ESPM 111"], ["ESPM 112"], ["ESPM 113"], ["ESPM 114"], ["ESPM C115A"], ["ESPM 115B"], ["ESPM 115C"], ["ESPM 116B"], ["ESPM 120"], ["ESPM 121"], ["ESPM C129"], ["ESPM 130A"], ["ESPM C130"], ["ESPM 131"], ["ESPM C180"], ["INTEGBI 157LF"], ["ESPM 102B"], ["ESPM 102BL"], ["ESPM C110A"], ["ESPM 139A"], ["ESPM 157"], ["ESPM 164"], ["ESPM C172"], ["ESPM 173"], ["ESPM 174A"], ["GEOG 180"], ["GEOG C188"], ["ESPM 101A"], ["ESPM 102D"], ["ESPM 155AC"], ["ESPM 161"], ["ESPM 162"], ["ESPM 162A"], ["ESPM C162A"], ["ESPM 163AC"], ["ESPM 168"], ["ESPM 169"], ["ESPM C176"], ["ESPM C103"], ["ESPM 106"], ["ESPM 134"], ["ESPM 152"], ["ESPM C167"], ["ESPM 181A"], ["ESPM 182"], ["ESPM 185"], ["ESPM 186"]]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Design your own six course concentration with NRM faculty approval",
+        "reasoning": "The catalog lists the two specializations as separate free-text placeholders, which made both look required. Students complete one, so they are now a choice of one. Forestry: field program ESPM 105A-D; 'ESPM 102B & 102BL or ESPM C110A'; ESPM 108A, 134, 182, 185; 'ESPM 102D or ESPM 60*'; and 'Electives 6-8 Units. Two courses from the following:'. The department's elective list adds ESPM C110A, ESPM C130 (Terrestrial Hydrology) and GEOG C183 to the catalog's list. The catalog's ESPM 130A and ESPM 190 are kept because the department doesn't exclude them explicitly. NRM, 'Two Options (Choose A or B)': 'Choice A: Select ONE field studies experience' (ESPM 105A-D, ESPM C107, or 'BIO/ENVS 188' UCNRS CA Ecology, which is ENVSCI 188 'Calif Ecology & Conservation' in the catalog; no BIOLOGY 188 exists) plus 'Three additional electives approved by NRM affiliated Faculty (see list below)'. Choice B: the quoted six-course concentration 'with at least one elective from each of the following categories', encoded as one course from each of the four category lists plus two more from any of them. The category lists combine the catalog and the department snapshot. The department adds ESPM 115B, ESPM C130, ESPM 139A and ESPM C162A (the catalog's ESPM 162A is kept too). It lists ESPM 162 under Value & Policy, not Management (where the catalog put it), so it was moved. Evaluator workaround: GradTrak counts courses greedily across every sub-rule, even in options a student doesn't pursue. If the Forestry and Choice A rules consumed courses, they would take courses from NRM/Choice B students, and the reverse. So the Forestry and Choice A sub-rules are `shared` (they re-read all courses), and Choice B is the exact path. This is a workaround, not a department double-counting allowance. See the log for the consequences."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "kFbAG01b",
+      "why": {
+        "url": "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit",
+        "quote": "Restricted Electives by Concentration for Natural Resource Management Specialization",
+        "reasoning": "The NRM specialization placeholder is now the second option of the 'Specialization' rule above."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether STAT 21 (listed in the catalog) still satisfies the statistics requirement: the department snapshot omits it but doesn't exclude it, so it is kept.",
+    "Whether ESPM 130A (Forest Hydrology) and ESPM 190 (listed in the catalog) still count as Forestry electives: the department lists ESPM C130 instead and doesn't mention 190. Both are kept.",
+    "Whether the last two courses of an NRM Choice B concentration must come from the four category lists, or can be any faculty-approved course: they are encoded as coming from the lists.",
+    "Whether NRM Choice A's 'three additional electives' must come from the category lists: the page says 'approved by NRM affiliated Faculty (see list below)', so they are encoded as any course on those lists.",
+    "Whether ESPM 102B and ESPM 102BL count as one or two NRM electives when not used for the Measurement category: each is listed separately in the 'additional' lists."
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "programGroupId": "25I071U",
+  "changes": [
+    {
+      "op": "add",
+      "before": "xUlNe86B",
+      "rule": {
+        "kind": "allOf",
+        "name": "Lower Division",
+        "groups": [
+          ["MATH 51"],
+          ["MATH 52"],
+          ["MATH 53"],
+          ["MATH 54", "MATH 56"]
+        ]
+      },
+      "why": {
+        "url": "https://math.berkeley.edu/programs/undergraduate/minoring-mathematics",
+        "quote": "The requirements for the Minor in Mathematics consists of four lower-division and five upper-division courses: ... Math 51 (formerly 1A): Calculus I ... Math 52 (formerly 1B): Calculus II ... Math 53: Multivariable Calculus ... Math 54: Linear Algebra and Differential Equations or Math 56 Linear Algebra*",
+        "reasoning": "The catalog rules have no lower-division block, but the department lists four required lower-division courses. The major-specific substitutions for Math 54 (Physics 89 for Physics majors; EECS 16A+16B for CS/EECS majors) are left out because GradTrak can't condition on the student's major; they are noted in the log."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "ocLf0FP4",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Upper Division Elective",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "matching",
+            "name": "Additional upper-division Math course",
+            "n": 1,
+            "subjects": ["MATH"],
+            "upperDivision": true
+          },
+          {
+            "kind": "atLeast",
+            "name": "Applied Mathematics elective (non-Math)",
+            "n": 1,
+            "groups": [
+              ["CHMENG 141"],
+              ["COMPSCI 162"],
+              ["COMPSCI 164"],
+              ["COMPSCI 170"],
+              ["COMPSCI 172"],
+              ["COMPSCI 174"],
+              ["COMPSCI 184"],
+              ["COMPSCI 188"],
+              ["COMPSCI 189"],
+              ["ECON 104"],
+              ["ECON 141"],
+              ["ELENG 120"],
+              ["ELENG 122"],
+              ["ELENG 123"],
+              ["ENGIN 115"],
+              ["EPS 104"],
+              ["EPS 108"],
+              ["EPS 121"],
+              ["EPS 122"],
+              ["EPS 130"],
+              ["INDENG 130"],
+              ["INDENG 160"],
+              ["INDENG 161"],
+              ["INDENG 162"],
+              ["MECENG 104"],
+              ["MECENG 106"],
+              ["MECENG 163"],
+              ["PHYSICS 105"],
+              ["PHYSICS 137A"],
+              ["PHYSICS 137B"],
+              ["PHYSICS 139"],
+              ["STAT 134"],
+              ["STAT 135"],
+              ["STAT 150"],
+              ["STAT 151A"],
+              ["STAT 153"],
+              ["STAT 154"],
+              ["STAT 155"]
+            ]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://math.berkeley.edu/programs/undergraduate/minoring-mathematics",
+        "quote": "One additional upper-division mathematics course, or a non-Math upper-division class from the pre-approved list of Applied Mathematics electives.",
+        "reasoning": "The catalog requires 3 courses from a non-Math list. The department requires only one elective (5 upper-division courses = 4 required + 1), and that elective may be any upper-division Math course. The catalog's non-Math list is kept unchanged: the linked Applied Math page only shows 'sample clusters' rather than a definitive pre-approved list, so it gives no explicit basis for changing it."
+      }
+    }
+  ],
+  "notStated": [
+    "Which non-Math courses are on the definitive 'pre-approved list of Applied Mathematics electives': the linked page (https://math.berkeley.edu/undergraduate/major/applied) shows only sample clusters, which differ from the catalog list (e.g. it includes COMPSCI C100, COMPSCI 176, ECON 103, MCB 160/166, STAT 133/140/151B/156 and omits COMPSCI 162/164/170, ELENG 120/122/123, EPS 121).",
+    "Whether honors versions (MATH H104, H110, H113, H185) are accepted for the core; the catalog accepts them and the department page doesn't say."
+  ]
+}

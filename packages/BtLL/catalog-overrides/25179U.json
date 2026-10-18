@@ -1,0 +1,199 @@
+{
+  "programGroupId": "25179U",
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "Lw0hOOEH",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Mathematics",
+        "n": 1,
+        "groups": [
+          ["MATH 51", "MATH 1A", "XMATH 51"],
+          ["MATH 10A"],
+          ["MATH 16A", "XMATH 16A"],
+          ["MATH 1A", "MATH N1A"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "Math 1A, Math 10A, Math 16A, Math 51 OR 3 or higher in AP Calculus AB or BC",
+        "reasoning": "The department's calculus prerequisite accepts Math 10A, which the catalog list lacks. The catalog's other options are kept. The AP Calculus score can't be checked from courses."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "sWyW8yLo",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Biology",
+        "n": 1,
+        "groups": [
+          ["MCELLBI 61", "MCELLBI C61", "NEU 61", "NEU C61", "PSYCH C61"],
+          ["NEU C64", "PSYCH C64", "MCELLBI C64"],
+          ["MCELLBI W61"],
+          ["PSYCH 110", "PSYCH N110"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "Molecular Cell Biology/Psychology C61 OR Molecular Cell Biology C64 OR Molecular Cell Biology W61, OR Neuroscience 61, OR Neuroscience C64, OR Psych 110 Introduction to Biological Psychology",
+        "reasoning": "The department's neuroscience requirement also accepts MCB W61 (the online 'Brain, Mind, and Behavior') and the MCB-numbered versions of C61 and C64, which the catalog list lacks. All three codes exist in the catalog. The catalog's other options are kept."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "ZrkU7rmc",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Cognitive Psychology",
+        "n": 1,
+        "groups": [
+          ["COGSCI 115"],
+          ["COGSCI 146"],
+          ["COGSCI 181"],
+          ["COGSCI 182"],
+          ["COGSCI C100"],
+          ["COGSCI C102", "PSYCH C129"],
+          ["COGSCI C126", "PSYCH C126"],
+          ["COGSCI N100", "PSYCH C120"],
+          ["LINGUIS C146", "LINGUIS 146", "PSYCH C143"],
+          ["PSYCH 122"],
+          ["PSYCH 125"],
+          ["PSYCH 140"],
+          ["PSYCH 147"],
+          ["PSYCH N120"],
+          ["PSYCH N140"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "CogSci C100/Psychology C120; CogSci C102/Psychology C129; CogSci 115, CogSci/Psychology C126; CogSci 146; Psychology 122;",
+        "reasoning": "Adds CogSci C102/Psych C129 (Scientific Approaches to Consciousness) and Psych 122 (Human Learning and Memory), which the department lists but the catalog lacks. Removes PSYCH 164 (Social Cognition): the department lists it only under Society, Culture, and Cognition, and says the distribution courses 'must be selected from the listed options' (same page). The rest of the department list ('Psychology C143/Ling C146; CogSci 181; CogSci 182; Psychology 147; Psychology 125; Psychology 140') matches the catalog. The summer versions PSYCH N120 and N140 of listed courses are kept."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "RlwE3w5U",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Computational Modeling",
+        "n": 1,
+        "groups": [
+          ["COGSCI C131", "COGSCI 131", "PSYCH C123"],
+          ["COGSCI 132"],
+          ["COGSCI C133", "LINGUIS C189"],
+          ["COMPSCI 188"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "CogSci 131; CogSci C131; Computer Science 188; CogSci 132, Linguistics C189; Cognitive Science C133",
+        "reasoning": "Adds CogSci C133/Linguistics C189 (Computational Modeling of Language, cross-listed), which the catalog lacks. Removes COGSCI 190 (Special Topics in Cognitive Science): the department doesn't list it, and says the distribution courses 'must be selected from the listed options'. It isn't on the catalog's own comprehensive elective list either."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "Y0mPPNA1",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Philosophy",
+        "n": 1,
+        "groups": [
+          ["AGRS 36", "CLASSIC 36"],
+          ["COGSCI 180"],
+          ["COGSCI 181"],
+          ["PHILOS W12A"],
+          ["PHILOS 3"],
+          ["PHILOS 12A"],
+          ["PHILOS 25A"],
+          ["PHILOS 25B"],
+          ["PHILOS 122"],
+          ["PHILOS 132"],
+          ["PHILOS 133"],
+          ["PHILOS 135"],
+          ["PHILOS 136"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "Philosophy 3; 12A; 25A; 25B; 122; 132; 133; 135; 136; Classics/AGRS 36; CogSci 180, CogSci 181",
+        "reasoning": "The department accepts 'Classics/AGRS 36' (Greek Philosophy). The catalog lists only AGRS 36, so CLASSIC 36, its former code that is still in the catalog, is added as an alternative for students who took it under that number. The catalog's PHILOS W12A (the online Introduction to Logic, same course as 12A) is kept."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "YAgvijmi",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Society, Culture, and Cognition",
+        "n": 1,
+        "groups": [
+          ["AFRICAM 115"],
+          ["ANTHRO 149"],
+          ["ANTHRO 166"],
+          ["COGSCI 181"],
+          ["COGSCI C103", "INFO 103", "INFO C103", "HISTORY C192", "MEDIAST C104C"],
+          ["COGSCI C104", "LINGUIS C104"],
+          ["ECON 119"],
+          ["EDUC 132"],
+          ["EDUC 140A", "EDUC 140AC"],
+          ["EDUC 130"],
+          ["LINGUIS 109"],
+          ["LINGUIS 150"],
+          ["LINGUIS 150A"],
+          ["PSYCH 107"],
+          ["PSYCH 160"],
+          ["PSYCH 163"],
+          ["PSYCH 164"],
+          ["PSYCH 166AC"],
+          ["PSYCH 167AC"],
+          ["PSYCH N160", "SOCIOL 150"]
+        ]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "Linguistics 150; Linguistics 150A; Psychology 107; Psychology 160; Psychology 167AC; Psychology 163;",
+        "reasoning": "Adds Psych 107 (Buddhist Psychology), Psych 163 and Psych 167AC, which the department lists but the catalog lacks. Removes PSYCH 166 (Socialization and Personality): the department lists 'Psychology 166AC' (Cultural Psychology), a different course, and says the distribution courses 'must be selected from the listed options'. The rest of the department list matches the catalog."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "w56dOfQl",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Electives",
+        "n": 3,
+        "groups": [["AFRICAM 115"],["AFRICAM C134"],["AMERSTD C134"],["ANTHRO 107"],["ANTHRO 111"],["ANTHRO 149"],["ANTHRO 160AC"],["ANTHRO 161"],["ANTHRO 166"],["ART 178"],["BIOENG C171"],["COGSCI 115"],["COGSCI 131"],["COGSCI 132"],["COGSCI 144"],["COGSCI 146"],["COGSCI 150"],["COGSCI 170"],["COGSCI 171"],["COGSCI 172"],["COGSCI 180"],["COGSCI 181"],["COGSCI 182"],["COGSCI C100"],["COGSCI C101"],["COGSCI C103"],["COGSCI C104"],["COGSCI C124"],["COGSCI C126"],["COGSCI C127"],["COGSCI C131"],["COGSCI C140"],["COGSCI C142"],["COGSCI C147"],["COGSCI N100"],["COMPSCI 160"],["COMPSCI 170"],["COMPSCI 176"],["COMPSCI 186"],["COMPSCI 188"],["COMPSCI 189"],["COMPSCI 287"],["COMPSCI 288"],["COMPSCI C100"],["COMPSCI C280"],["DATA C100"],["DATA C104"],["DATA C140"],["ECON 119"],["ECON C110"],["EDUC 130"],["EDUC 132"],["EDUC 140A"],["EDUC 140AC"],["EDUC 224A"],["EDUC C229A"],["ENGLISH 172"],["ESPM 161"],["FILM 179"],["HISTORY C182C"],["HISTORY C184D"],["HISTORY C192"],["INDENG 170"],["INFO 103"],["INFO 146"],["INFO 159"],["INFO 188"],["INFO 213"],["INFO 232"],["INFO 290"],["INFO 290A"],["INFO C103"],["INFO C262"],["INFO C265"],["INTEGBI 139"],["INTEGBI C143A"],["ISF 100J"],["ISF C100G"],["JOURN C141"],["LEGALST 181"],["LEGALST 183"],["LINGUIS 100"],["LINGUIS 106"],["LINGUIS 108"],["LINGUIS 109"],["LINGUIS 110"],["LINGUIS 115"],["LINGUIS 120"],["LINGUIS 121"],["LINGUIS 123"],["LINGUIS 124"],["LINGUIS 125"],["LINGUIS 130"],["LINGUIS 146"],["LINGUIS 150"],["LINGUIS 150A"],["LINGUIS 151"],["LINGUIS 158"],["LINGUIS 170"],["LINGUIS 181"],["LINGUIS 187"],["LINGUIS C104"],["LINGUIS C105"],["LINGUIS C139"],["LINGUIS C142"],["LINGUIS C146"],["LINGUIS C147"],["LINGUIS C160"],["LS 124"],["LS C160T"],["MATH 110"],["MCELLBI 163"],["MECENG C205"],["MEDIAST 101"],["MEDIAST 102"],["MEDIAST 103"],["MEDIAST 104B"],["MEDIAST 111"],["MEDIAST 111B"],["MEDIAST 111C"],["MEDIAST 112"],["MEDIAST C103"],["MEDIAST C104C"],["MELC 156"],["MUSIC 108"],["MUSIC 108M"],["MUSIC 109"],["MUSIC 109M"],["NATAMST 151"],["NEU 100A"],["NEU 100B"],["NEU 128"],["NEU 152"],["NEU 162"],["NEU 164"],["NEU 165"],["NEU 171L"],["NEU 173L"],["NEU C121"],["NEU C124"],["NEU C125"],["NEU C126"],["NEUROSC C129"],["NWMEDIA 190"],["NWMEDIA C203"],["NWMEDIA C262"],["NWMEDIA C265"],["PBHLTH C129"],["PHILOS 107"],["PHILOS 110"],["PHILOS 122"],["PHILOS 125"],["PHILOS 126"],["PHILOS 128"],["PHILOS 132"],["PHILOS 133"],["PHILOS 135"],["PHILOS 136"],["PHILOS 138"],["PHILOS 140A"],["PHILOS 140B"],["PHILOS 141"],["PHILOS 151"],["PHILOS 153"],["PHILOS 154"],["PHILOS 170"],["PHILOS 176"],["PHILOS 178"],["PHILOS 185"],["PHILOS 186"],["PHILOS 186B"],["PHILOS 188"],["PHILOS C132"],["POLSCI 161"],["POLSCI 164A"],["POLSCI C135"],["PSYCH 101"],["PSYCH 114"],["PSYCH 115"],["PSYCH 117"],["PSYCH 121"],["PSYCH 124"],["PSYCH 125"],["PSYCH 128"],["PSYCH 130"],["PSYCH 131"],["PSYCH 133"],["PSYCH 134"],["PSYCH 135"],["PSYCH 136"],["PSYCH 137"],["PSYCH 140"],["PSYCH 144"],["PSYCH 147"],["PSYCH 150"],["PSYCH 156"],["PSYCH 160"],["PSYCH 163"],["PSYCH 164"],["PSYCH 166AC"],["PSYCH 167AC"],["PSYCH 169"],["PSYCH C111"],["PSYCH C113"],["PSYCH C115C"],["PSYCH C116"],["PSYCH C120"],["PSYCH C123"],["PSYCH C124"],["PSYCH C126"],["PSYCH C127"],["PSYCH C143"],["PSYCH C223"],["PSYCH N117"],["PSYCH N120"],["PSYCH N130"],["PSYCH N133"],["PSYCH N140"],["PSYCH N150"],["PSYCH N160"],["PSYCH N162"],["RHETOR 103A"],["RHETOR 103B"],["RHETOR 110"],["RHETOR 170"],["SLAVIC C139"],["SOCIOL 150"],["SOCIOL 166"],["SOCIOL 167"],["SPANISH 100"],["SPANISH 166"],["STAT 133"],["STAT 134"],["STAT 155"],["STAT C100"],["STAT C140"],["STS C100"],["STS C104D"],["UGBA 105"],["UGBA 136F"],["UGBA 143"],["UGBA 160"],["UGBA 167"],["UGBA 177"],["UGBA 192AC"],["UGIS 120"],["VISSCI 265"],["VISSCI C280"],["COGSCI C102","PSYCH C129"],["PSYCH 122"],["COGSCI C133","LINGUIS C189"],["PSYCH 107"]]
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "If a student takes more than one course from any distribution group, the additional courses can count as upper div electives (with the exception of lower division Philosophy options).",
+        "reasoning": "Turns the catalog's free-text placeholder ('Complete at least 3 of: ...') into a real rule, matching the department's 'Complete at least three electives found on the comprehensive CogSci course list' (same page). The catalog's 249-course list is kept, with two changes. PHILOS W12A, the only lower-division course on it, is dropped because the quote excludes lower-division Philosophy options. The upper-division distribution courses added above (CogSci C102/Psych C129, Psych 122, CogSci C133/Ling C189, Psych 107) are added because extra distribution courses count as electives. Graduate courses on the catalog list (e.g. COMPSCI 287) are kept because they are on the comprehensive list."
+      }
+    },
+    {
+      "op": "add",
+      "before": null,
+      "rule": {
+        "kind": "matching",
+        "name": "26 upper-division units in the major",
+        "n": 26,
+        "fromProgram": true,
+        "upperDivision": true,
+        "units": true
+      },
+      "why": {
+        "url": "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+        "quote": "Complete at least 26 upper division units in the major",
+        "reasoning": "The catalog rules have no unit total. Six distribution courses and three electives are usually around 36 units, but several Philosophy options are lower division, and some electives carry fewer units, so the 26-unit minimum can bind."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether one course can satisfy two distribution groups at once (CogSci 132 is listed under both Cognitive Neuroscience and Computational Modeling, CogSci/Psych C126 under Cognitive Neuroscience and Cognitive Psychology, CogSci 181 under Cognitive Psychology, Philosophy and Society, Culture, and Cognition, and Psych 164 appears in two groups in the catalog). The page is silent, so the default (each course counts once) is kept.",
+    "Whether graduate-level courses on the catalog's elective list (COMPSCI 287/288, INFO 213, etc.) are really on the department's current comprehensive list: the department's spreadsheet couldn't be fetched (HTTP 410).",
+    "Whether 'Stat 2 or 3 or higher on AP Stats Exam' means the course STAT 2 or only the AP exam: the catalog's STAT 2 option is kept.",
+    "Whether courses approved by elective petition count toward the 26 upper-division units: they can't be listed, so they aren't counted."
+  ]
+}

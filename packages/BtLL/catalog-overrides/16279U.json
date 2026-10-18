@@ -1,0 +1,323 @@
+{
+  "programGroupId": "16279U",
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "TGsnwXIs",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Physics",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "allOf",
+            "name": "Physics 7A and 7B",
+            "groups": [
+              ["PHYSICS 7A", "PHYSICS H7A"],
+              ["PHYSICS 7B", "PHYSICS H7B"]
+            ]
+          },
+          {
+            "kind": "allOf",
+            "name": "Physics 5A, 5B and 5BL",
+            "groups": [["PHYSICS 5A"], ["PHYSICS 5B"], ["PHYSICS 5BL"]]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://undergraduate.catalog.berkeley.edu/programs/16279U/requirements-krhha",
+        "quote": "Note: Students who take PHYSICS 5A to satisfy the Physics A requirement must take PHYSICS 5B and PHYSICS 5BL to complete the Physics B requirement.",
+        "reasoning": "The catalog splits Physics B into 'Option 1 (Only for students who completed PHYSICS 7A)' and 'Option 2 (Only for students who completed PHYSICS 5A)' but emits both as required rules, so nobody could satisfy both. The two options are really two sequences: 7A+7B or 5A+5B+5BL. The department's flowcharts (https://aero.berkeley.edu/curriculum-flowchart-class-of-2027-and-beyond-2/) show only PHYS 7A and 7B, but they don't rule out the 5 series, so the catalog's 5-series path is kept. This one rule replaces Physics A and both Physics B rules."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "x4PC7Fog",
+      "why": {
+        "url": "https://undergraduate.catalog.berkeley.edu/programs/16279U/requirements-krhha",
+        "quote": "Note: Students who take PHYSICS 5A to satisfy the Physics A requirement must take PHYSICS 5B and PHYSICS 5BL to complete the Physics B requirement.",
+        "reasoning": "Merged into the Physics rule (7A+7B path)."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "v5vMy5QJ",
+      "why": {
+        "url": "https://undergraduate.catalog.berkeley.edu/programs/16279U/requirements-krhha",
+        "quote": "Note: Students who take PHYSICS 5A to satisfy the Physics A requirement must take PHYSICS 5B and PHYSICS 5BL to complete the Physics B requirement.",
+        "reasoning": "Merged into the Physics rule (5A+5B+5BL path)."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "G0WeiKTr",
+      "rule": {
+        "kind": "allOf",
+        "name": "Engineering",
+        "groups": [
+          ["AEROENG 1"],
+          ["AEROENG 2"],
+          ["AEROENG 10"],
+          ["CIVENG C30", "CIVENG W30", "MECENG C85", "MECENG W85"],
+          ["COMPSCI 61A", "ENGIN 7", "ENGIN W7"],
+          ["ENGIN 40", "MECENG 40"],
+          ["MATSCI 45"],
+          ["MATSCI 45L"]
+        ]
+      },
+      "why": {
+        "url": "https://aero.berkeley.edu/curriculum-flowchart/",
+        "quote": "MAT SCI 45L (the 1-unit laboratory component of MAT SCI 45) is required as of Fall 2023.",
+        "reasoning": "The catalog lists MATSCI 45 and MATSCI 45L as alternatives in one group, so the 1-unit lab alone would satisfy it. The department requires both, and the Class of 2027 flowchart shows the box as 'MAT SCI 45 + MAT SCI 45L'. Split into two required groups; the rest of the rule is unchanged."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "V0mlaUiM",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Science Elective",
+        "n": 1,
+        "groups": [
+          ["ASTRON 7A"],
+          ["ASTRON C10", "LS C70U"],
+          ["BIOLOGY 1A", "BIOLOGY 1AL"],
+          ["BIOLOGY 1B"],
+          ["CHEM 1A", "CHEM 1AL"],
+          ["CHEM 1B"],
+          ["CHEM 3A", "CHEM 3AL"],
+          ["CHEM 3B", "CHEM 3BL"],
+          ["CHEM 4A"],
+          ["CHEM 4B"],
+          ["MCELLBI 32"],
+          ["PHYSICS 7C"]
+        ]
+      },
+      "why": {
+        "url": "https://aero.berkeley.edu/curriculum-flowchart/",
+        "quote": "Choose one of ASTRON 7A, ASTRON 10, BIOLOGY 1A/1AL, BIOLOGY 1B, CHEM 1A/1AL, CHEM 1B, CHEM 3A/3AL, CHEM 3B/3BL, CHEM 4A,",
+        "reasoning": "The department's list includes BIOLOGY 1B and CHEM 3B/3BL, which the catalog lacks. The Class of 2027 flowchart (https://aero.berkeley.edu/curriculum-flowchart-class-of-2027-and-beyond-2/) agrees: 'Science Elective Course Options: Choose one of the following: ASTRON 7A, C10; BIOLOGY 1A+1AL, 1B; CHEM 1A/1AL, 1B,'. The catalog's other groups are kept as they are."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "pLZ324LC",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Technical Electives (two courses from each of two areas)",
+        "n": 2,
+        "rules": [
+          {
+            "kind": "atLeast",
+            "name": "Air Transportation/Aviation",
+            "n": 2,
+            "groups": [["CIVENG 157"], ["CIVENG 160D"]]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Communication Systems",
+            "n": 2,
+            "groups": [
+              ["COMPSCI 168"],
+              ["ELENG 117"],
+              ["ELENG 121"],
+              ["ELENG 122"],
+              ["ELENG 142"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Computational Tools",
+            "n": 2,
+            "groups": [
+              ["CIVENG C133", "MECENG C180"],
+              ["ENGIN 150"],
+              ["INDENG 174"],
+              ["MECENG C144", "AEROENG C144"],
+              ["NUCENG 155"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Control, Autonomy, and Artificial Intelligence",
+            "n": 2,
+            "groups": [
+              ["COMPSCI 188"],
+              ["COMPSCI 189"],
+              ["EECS C106A", "BIOENG C106A", "MECENG C106A"],
+              ["EECS C106B", "BIOENG C106B", "MECENG C106B"],
+              ["INDENG 142A"],
+              ["MECENG C136"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Design",
+            "n": 2,
+            "groups": [["ELENG 192"], ["MECENG 135"], ["MECENG 139"]]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Dynamical Systems",
+            "n": 2,
+            "groups": [
+              ["MECENG 170"],
+              ["MECENG 175"],
+              ["AEROENG C162", "MECENG C162"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Fluid Mechanics",
+            "n": 2,
+            "groups": [["AEROENG C166", "MECENG C166"]]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Humans and Automation",
+            "n": 2,
+            "groups": [["COGSCI 131"], ["COMPSCI 160"], ["INDENG 170"]]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Manufacturing",
+            "n": 2,
+            "groups": [
+              ["INDENG 130"],
+              ["MATSCI 121"],
+              ["MECENG 122"],
+              ["MECENG C127"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Materials",
+            "n": 2,
+            "groups": [
+              ["AEROENG C124", "MATSCI C135"],
+              ["MATSCI 102"],
+              ["MATSCI 104", "MATSCI 104L"],
+              ["MATSCI 112"],
+              ["MATSCI 113"],
+              ["MATSCI 131"],
+              ["MATSCI 136"],
+              ["MECENG 108"],
+              ["MECENG C127"],
+              ["NUCENG 120"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Mechanics",
+            "n": 2,
+            "groups": [
+              ["CIVENG 132"],
+              ["MECENG C184", "AEROENG C184", "CIVENG C138"],
+              ["MECENG 185"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Operations and Project Management",
+            "n": 2,
+            "groups": [
+              ["CIVENG 167"],
+              ["INDENG 120"],
+              ["INDENG 130"],
+              ["INDENG 150"],
+              ["INDENG 153"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Optimization",
+            "n": 2,
+            "groups": [
+              ["EECS 127"],
+              ["INDENG 160"],
+              ["INDENG 162"],
+              ["INDENG 164"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Power",
+            "n": 2,
+            "groups": [
+              ["MECENG 140"],
+              ["MECENG 146"],
+              ["MECENG 154"],
+              ["NUCENG 150"],
+              ["NUCENG 161"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Propulsion",
+            "n": 2,
+            "groups": [
+              ["MECENG 109"],
+              ["MECENG 140"],
+              ["MECENG 151A"],
+              ["MECENG 151B"],
+              ["MECENG 154"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Risk Management",
+            "n": 2,
+            "groups": [
+              ["CIVENG 193"],
+              ["INDENG 165"],
+              ["INDENG 166"],
+              ["INDENG 172"],
+              ["NUCENG 167"],
+              ["NUCENG 175"]
+            ]
+          },
+          {
+            "kind": "atLeast",
+            "name": "Space Technologies",
+            "n": 2,
+            "groups": [
+              ["AEROENG 120"],
+              ["AEROENG 122"],
+              ["NUCENG 140"],
+              ["NUCENG 162"]
+            ]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://aero.berkeley.edu/technical-electives/",
+        "quote": "Students must take four elective courses from two of the areas listed below:",
+        "reasoning": "The catalog placeholder says 'Four courses are required from two different areas: Two courses from one area, and two courses from another area.', but the catalog then emits all 17 areas as separate required 'at least 2' rules, which would require 34 courses. Encoded as two of the area sub-rules, each needing two courses. Area lists follow the department's Technical Electives page, which adds MECENG 144 (catalog code MECENG C144/AEROENG C144; Computational Tools) and AEROENG 122 (Space Technologies), and fills the catalog's empty Fluid Mechanics area with 'Fluid Mechanics: AEROENG C166/MECENG C166,'. Air Transportation/Aviation was 'allOf' of its two courses, which is the same as at least 2. Fluid Mechanics has only one listed course, so as an area it can't currently supply two courses; it's kept for completeness. The department also lists CIVENG 190 (topic-specific, under Humans and Automation and Power) and MECENG 193B (topic 'Feedback Control of Legged Robots', under Control/AI and Dynamical Systems). These aren't encoded because GradTrak can't check special-topic titles. The department also lists AEROENG 143 under Propulsion, but that course isn't in the 2026-27 catalog, so it's left out."
+      }
+    },
+    { "op": "remove", "ruleId": "s4F2Y9Ya", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "mrdhHx66", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "zVx9KA4a", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "qoZV9rXJ", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "nHDU9ySu", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "QAMy9TI7", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Empty catalog placeholder. It's now the Fluid Mechanics area (AEROENG C166/MECENG C166) inside the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "EVOjZ3HD", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "lpeHHkhq", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "AKnWyQF1", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "FHq5vVjw", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "LJCNkrkJ", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "UFU2Jn9K", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "YmnbwdPU", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "BeCz18Gk", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "NCIdWpKQ", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "DXBHcRSy", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } },
+    { "op": "remove", "ruleId": "WWJHoXBp", "why": { "url": "https://aero.berkeley.edu/technical-electives/", "quote": "Students must take four elective courses from two of the areas listed below:", "reasoning": "Moved into the Technical Electives chooseRules." } }
+  ],
+  "notStated": [
+    "Whether a course listed in two areas (INDENG 130: Manufacturing and Operations; MECENG C127: Manufacturing and Materials; MECENG 140 and 154: Power and Propulsion) may count toward both chosen areas. The four courses are assumed to be distinct.",
+    "Whether the Fluid Mechanics area, which lists only AEROENG C166/MECENG C166, can be chosen as an area (it can't supply two courses), and whether other courses can be petitioned in.",
+    "Whether the PHYSICS 5A/5B/5BL sequence is accepted: the catalog allows it, but the department flowcharts show only PHYSICS 7A/7B.",
+    "Whether BIOLOGY 1A must be paired with 1AL (the Class of 2027 flowchart writes 'BIOLOGY 1A+1AL') and CHEM 1A/3A/3B with their labs for the Science Elective: the catalog groups these as alternatives, and that's kept.",
+    "Whether the CIVENG 190 and MECENG 193B special-topics offerings listed on the Technical Electives page should count (only specific topic titles qualify)."
+  ]
+}
