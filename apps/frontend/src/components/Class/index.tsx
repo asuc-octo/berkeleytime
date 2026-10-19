@@ -426,6 +426,14 @@ export default function Class({
     setIsUnlockThankYouOpen(false);
   }, [ratingsLocked, ratingsNeeded, user]);
 
+  const openRatingsTab = useCallback(() => {
+    if (ratingsLocked) {
+      handleLockedTabClick();
+      return;
+    }
+    setActiveTab("ratings");
+  }, [handleLockedTabClick, ratingsLocked]);
+
   const handleUnlockModalClose = useCallback(() => {
     setIsUnlockModalOpen(false);
     setUnlockModalGoalCount(0);
@@ -864,6 +872,9 @@ export default function Class({
               value={{
                 class: _class as IClassDetails,
                 course: _course as IClassCourse,
+                openRatingsTab: shouldShowRatingsTab
+                  ? openRatingsTab
+                  : undefined,
               }}
             >
               {dialog ? (
