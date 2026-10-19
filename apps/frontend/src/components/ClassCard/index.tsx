@@ -22,6 +22,7 @@ import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
 import { Color, Semester } from "@/lib/generated/graphql";
+import { formatClassNumber, formatSectionLabel } from "@/lib/section";
 
 import styles from "./ClassCard.module.scss";
 
@@ -37,22 +38,6 @@ const formatSemester = (semester: Semester): string => {
       return semester;
   }
 };
-
-const formatClassNumber = (number: string | undefined | null): string => {
-  if (!number) return "";
-  const num = parseInt(number, 10);
-  if (isNaN(num)) return number;
-  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
-  if (num > 99) return num.toString();
-  return num.toString().padStart(2, "0");
-};
-
-const COMPONENT_LABELS: Record<string, string> = {
-  DIS: "DISC",
-};
-
-const formatComponent = (component: string): string =>
-  COMPONENT_LABELS[component] ?? component;
 
 type BaseClassFields = Pick<
   IClass,
@@ -140,9 +125,10 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
   const formattedClassNumber = formatClassNumber(_class?.number);
-  const sectionLabel = _class?.primaryComponent
-    ? `${formatComponent(_class.primaryComponent)} #${formattedClassNumber}`
-    : `#${formattedClassNumber}`;
+  const sectionLabel = formatSectionLabel(
+    _class?.primaryComponent,
+    _class?.number
+  );
 
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
