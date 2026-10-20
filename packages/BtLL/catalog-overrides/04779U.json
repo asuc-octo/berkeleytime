@@ -1,5 +1,12 @@
 {
   "programGroupId": "04779U",
+  "sources": [
+    "https://www.are.berkeley.edu/undergraduate-program/eep-courses (points to the catalog for requirements)",
+    "https://undergraduate.catalog.berkeley.edu/programs/04779U/requirements-krhha",
+    "https://docs.google.com/spreadsheets/d/1a6ca5UQaPWKflENURPZZIkvadO1aLxmAf9bMwda55kc (pre-approved electives, read via /export?format=csv&gid=0)",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), subjectCode is ENVECON, with units",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), all courses: cross-listings (grouped by equivalentCourseGroup) and validating the spreadsheet's codes"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -77,5 +84,11 @@
     "What the asterisk on ECON 134*, ECON C125*, ESPM 100* and ESPM 175A* in the pre-approved elective sheet means. The sheet has no legend, so these courses are included like the others.",
     "Which course the elective-sheet row labeled 'Spring 2027' (WATER & DEVELOPMENT, CNR, 4 units, last offered Spring 2016) is.",
     "What the empty catalog placeholder 'Course Requirements' (qWEnTg2r) refers to. It has no text and no page explains it, so it stays as a manual check."
+  ],
+  "notEncoded": [
+    "Minimum 2.0 cumulative and 2.0 upper-division major GPA; Rausser residency (15 of 36 upper-division units); P/NP and independent-study unit limits",
+    "Conditionally approved electives left out: ECON 155 (only after ENVECON C102), ESPM 102C (CRS double majors), ESPM 120 (ES double majors)",
+    "Spreadsheet rows dropped: NUSCTX 105 and 108A (not in the catalog)",
+    "The 5-ENVECON rule re-counts listed ENVECON courses, so a core-eligible ENVECON course not on the elective list can count there"
   ]
 }

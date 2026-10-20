@@ -1,5 +1,9 @@
 {
   "programGroupId": "25I034U",
+  "sources": [
+    "https://ealc.berkeley.edu/node/5533",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): CHINESE courses numbered 100-199 (91 courses); checked subject codes (JAPAN exists, JAPANESE doesn't)"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -52,5 +56,12 @@
     "Whether graduate-level (200-296) EALC courses count as upper-division core or elective courses. The catalog allows them; the department page only says 'upper-division'.",
     "Whether 195-199 courses (honors thesis H195A/B, group study 198, independent study 199) count. The catalog's ranges (100-194) leave them out; the department's 'any upper-division courses' seems to include them.",
     "Whether CHINESE 7A/7B may count as an elective when not used for the core. The catalog says yes; the department page doesn't mention it."
+  ],
+  "notEncoded": [
+    "20-unit minimum across the five courses",
+    "Letter grades, 2.0 minimum GPA; P/NP only for CHINESE 10B/10X",
+    "One outside or study-abroad course by petition",
+    "One-course major/minor overlap limit",
+    "Declaration prerequisite: CHINESE 10B/10X, or placing out"
   ]
 }

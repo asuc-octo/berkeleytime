@@ -1,5 +1,10 @@
 {
   "programGroupId": "25179U",
+  "sources": [
+    "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
+    "https://docs.google.com/spreadsheets/d/1T_Lp-NKmtlJTmzh0ZjwXQJ8AARxt3unaXmpHkxCYa0g (department course list; HTTP 410, not used)",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): checked added codes and looked up course titles"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -195,5 +200,11 @@
     "Whether graduate-level courses on the catalog's elective list (COMPSCI 287/288, INFO 213, etc.) are really on the department's current comprehensive list: the department's spreadsheet couldn't be fetched (HTTP 410).",
     "Whether 'Stat 2 or 3 or higher on AP Stats Exam' means the course STAT 2 or only the AP exam: the catalog's STAT 2 option is kept.",
     "Whether courses approved by elective petition count toward the 26 upper-division units: they can't be listed, so they aren't counted."
+  ],
+  "notEncoded": [
+    "Letter grades in all major courses, C- or better in prerequisites, at most two attempts per prerequisite category, 2.0 upper-division major GPA",
+    "Distribution courses must be taken on campus",
+    "AP credit (AP Statistics 3+, AP Calculus 3+)",
+    "Elective petitions for upper-division courses connected to the study of the mind"
   ]
 }

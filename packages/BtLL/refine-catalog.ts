@@ -32,7 +32,7 @@ const allowedTools = [
 ];
 
 for (const id of programs) {
-  if (!force && existsSync(here(`./catalog-overrides/${id}.md`))) {
+  if (!force && existsSync(here(`./catalog-overrides/${id}.json`))) {
     console.log(`- ${id}: already refined (use --force to redo)`);
     continue;
   }

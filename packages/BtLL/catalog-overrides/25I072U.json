@@ -1,5 +1,9 @@
 {
   "programGroupId": "25I072U",
+  "sources": [
+    "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): PHYSICS courses numbered 100-199, excluding 100, H190, 198, S198, 199 and S199 (48 codes)"
+  ],
   "changes": [
     {
       "op": "add",
@@ -102,5 +106,12 @@
     "Whether Physics W89 (online) is accepted for Physics 89; the page mentions only 'Physics 89'.",
     "Whether the summer (S105, S112, S137A) and other variant numbers (Q137C, 153, H195A/B) count as upper-division physics courses; they are included because the page only excludes Physics 100, H190, 198 and 199.",
     "Whether cross-listed courses taken under another department's code (e.g. ASTRON C161, NUCENG C142) count; only the PHYSICS codes are listed."
+  ],
+  "notEncoded": [
+    "C- or higher in each course; 2.0 GPA in the prerequisites, in all University courses, and in the upper-division minor courses",
+    "At least 3 upper-division courses completed at Berkeley",
+    "9-unit minimum for the three electives (implied by the 17-unit total)",
+    "Substitutions: AP/IB/A-level for Math 51/52, Math 54 for Physics 89 (Math double majors only), Math 54 equivalents for transfers; Math N53 isn't accepted",
+    "Declaration: petition after the lower division, declare by the last day of classes in the semester before graduation"
   ]
 }

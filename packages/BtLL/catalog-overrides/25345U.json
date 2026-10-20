@@ -1,5 +1,10 @@
 {
   "programGroupId": "25345U",
+  "sources": [
+    "https://english.berkeley.edu/major-requirements",
+    "https://english.berkeley.edu/undergraduate/major-requirements/faqs",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): every fixed 4-unit ENGLISH course below 200, for the electives list"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -185,5 +190,14 @@
     "Which specific sections of special-topics courses (165/166) or seminars (90/100/190) are designated pre-1800 or Literatures in English in a given term: the department publishes this per semester on its Classes page, so GradTrak can't tell from the course code.",
     "Whether courses outside the English Department, or extra-departmental/study-abroad courses approved by petition, appear on any fixed list: they are accepted only by petition, so none are encoded.",
     "Whether the 6-unit W versions of lower-division courses (e.g. 17W, 20W, 26W) count as electives: the department says 'four-unit' courses, and these aren't mentioned, so they are left out."
+  ],
+  "notEncoded": [
+    "Letter grades for 45A/B/C, Shakespeare, pre-1800, Literatures in English and 90/100/190; up to 2 other electives may be P/NP",
+    "GPA of at least 2.0 overall, in the major, and in upper-division major courses",
+    "At least 7 upper-division courses taken in the UC Berkeley English Department",
+    "Caps: at most 2 Creative Writing courses, 2 four-unit Summer Session courses, 5 courses taken elsewhere or outside the department, 1 UC Extension course",
+    "Sequencing: 90, then 100 in a separate semester, before 190; 90 only once",
+    "A seminar designated pre-1800 or Literatures in English may satisfy both, but then needs an extra elective to reach 12",
+    "Independent/group study (98/99/198/199), Berkeley Connect and DeCals as non-typical electives"
   ]
 }

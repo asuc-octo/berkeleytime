@@ -1,5 +1,11 @@
 {
   "programGroupId": "25699U",
+  "sources": [
+    "https://polisci.berkeley.edu/node/983",
+    "https://polisci.berkeley.edu/sites/default/files/2023-12/History%20Courses%202024_0.pdf",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), subjectCode is POLSCI, with units and titles: subfield and upper-division lists are the course numbers in each department range (C/N/S/W prefixes kept, H dropped)",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), all courses: checked the history PDF's courses and looked up titles"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -361,5 +367,12 @@
     "Whether the Empirical Theory specialization's introductory course can be met by Data C8 + PS 88 instead of PS 3: the page says 'the introductory course', so only PS 3 (or W3) is accepted.",
     "Whether the history list PDF (created 2023) is current: the catalog's extra history courses are kept.",
     "Course lists for the optional Political Behavior, Public Law and Jurisprudence, and Public Organization and Policy specializations: the page doesn't give them."
+  ],
+  "notEncoded": [
+    "All 12 requirements need a letter grade; declaring needs a 2.0 GPA in major courses",
+    "P/NP, independent study, honors, DeCal, labs and simulations don't count (H courses, 191S/191U and 290-299 are left off the lists)",
+    "AP American Government 4/5 lets an upper-division American Politics course replace PS 1, which then doesn't count toward the 8",
+    "At most 3 upper-division requirements from other 4-year institutions; at most one non-Berkeley course toward specialization, none toward distribution; PS 3 must be taken at Berkeley",
+    "Sequencing: PS 88 with or after Data C8"
   ]
 }

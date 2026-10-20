@@ -2,4 +2,4 @@ apps/backend/src/bootstrap/graphql/generated/persistedOperations.ts text eol=lf
 apps/semantic-search/app/generated_operations.py text eol=lf
 packages/BtLL/catalog_reqs.generated.ts linguist-generated
 packages/BtLL/catalog_rules.generated.json linguist-generated
-packages/BtLL/catalog-overrides/*.md linguist-generated
+packages/BtLL/catalog-overrides/*.json linguist-generated

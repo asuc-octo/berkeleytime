@@ -1,5 +1,13 @@
 {
   "programGroupId": "16279U",
+  "sources": [
+    "https://aero.berkeley.edu/technical-electives/",
+    "https://aero.berkeley.edu/curriculum-flowchart/ (Class of 2026)",
+    "https://aero.berkeley.edu/curriculum-flowchart-class-of-2027-and-beyond-2/",
+    "https://aero.berkeley.edu/degree-requirements/ (2022-23, cross-checking only)",
+    "https://undergraduate.catalog.berkeley.edu/programs/16279U/requirements-krhha",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): checked course codes (MECENG 144 is C144, AEROENG 143 doesn't exist)"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -319,5 +327,10 @@
     "Whether the PHYSICS 5A/5B/5BL sequence is accepted: the catalog allows it, but the department flowcharts show only PHYSICS 7A/7B.",
     "Whether BIOLOGY 1A must be paired with 1AL (the Class of 2027 flowchart writes 'BIOLOGY 1A+1AL') and CHEM 1A/3A/3B with their labs for the Science Elective: the catalog groups these as alternatives, and that's kept.",
     "Whether the CIVENG 190 and MECENG 193B special-topics offerings listed on the Technical Electives page should count (only specific topic titles qualify)."
+  ],
+  "notEncoded": [
+    "Reading & Composition courses need a letter grade of C- or better",
+    "AEROENG 143 (Propulsion) is on the department page but not in the 2026-27 catalog, so it's omitted",
+    "Sequencing: fall-only courses, CHEM 1A/1AL before MECENG 40"
   ]
 }

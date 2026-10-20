@@ -1,5 +1,10 @@
 {
   "programGroupId": "z5SVnW3RWZv5syG4KuEY",
+  "sources": [
+    "https://nature.berkeley.edu/advising/majors/ecosystem-management-and-forestry",
+    "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit (EMF Major Snapshot, read via /export?format=txt)",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): checked codes and looked up titles of ambiguous codes"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -241,5 +246,10 @@
     "Whether the last two courses of an NRM Choice B concentration must come from the four category lists, or can be any faculty-approved course: they are encoded as coming from the lists.",
     "Whether NRM Choice A's 'three additional electives' must come from the category lists: the page says 'approved by NRM affiliated Faculty (see list below)', so they are encoded as any course on those lists.",
     "Whether ESPM 102B and ESPM 102BL count as one or two NRM electives when not used for the Measurement category: each is listed separately in the 'additional' lists."
+  ],
+  "notEncoded": [
+    "Forestry and NRM Choice A rules are shared (only NRM Choice B consumes courses) so one track can't take courses the other needs; within those, the department's no-double-count notes aren't enforced",
+    "NRM courses needing faculty approval",
+    "No grade below C- in major requirements; 2.0 GPA in upper-division major requirements and 2.0 cumulative"
   ]
 }
