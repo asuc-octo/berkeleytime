@@ -274,3 +274,35 @@ export const GENERAL_ACTIVITY_ANALYTICS = gql`
     }
   }
 `;
+
+export interface WrittenReviewClassCount {
+  subject: string;
+  courseNumber: string;
+  semester: string;
+  year: number;
+  classNumber: string;
+  count: number;
+}
+
+export interface WrittenReviewAnalyticsData {
+  totalWrittenReviews: number;
+  reviewDates: string[];
+  classes: WrittenReviewClassCount[];
+}
+
+export const WRITTEN_REVIEW_ANALYTICS = gql`
+  query WrittenReviewAnalytics {
+    writtenReviewAnalytics {
+      totalWrittenReviews
+      reviewDates
+      classes {
+        subject
+        courseNumber
+        semester
+        year
+        classNumber
+        count
+      }
+    }
+  }
+`;
