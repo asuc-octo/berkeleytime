@@ -1,5 +1,10 @@
 {
   "programGroupId": "25I071U",
+  "sources": [
+    "https://math.berkeley.edu/programs/undergraduate/minoring-mathematics",
+    "https://math.berkeley.edu/undergraduate/minor-mathematics (same content)",
+    "https://math.berkeley.edu/undergraduate/major/applied (pre-approved Applied Mathematics electives)"
+  ],
   "changes": [
     {
       "op": "add",
@@ -92,5 +97,12 @@
   "notStated": [
     "Which non-Math courses are on the definitive 'pre-approved list of Applied Mathematics electives': the linked page (https://math.berkeley.edu/undergraduate/major/applied) shows only sample clusters, which differ from the catalog list (e.g. it includes COMPSCI C100, COMPSCI 176, ECON 103, MCB 160/166, STAT 133/140/151B/156 and omits COMPSCI 162/164/170, ELENG 120/122/123, EPS 121).",
     "Whether honors versions (MATH H104, H110, H113, H185) are accepted for the core; the catalog accepts them and the department page doesn't say."
+  ],
+  "notEncoded": [
+    "Math 54 substitutes that depend on the major: PHYSICS 89 for Physics majors, EECS 16A + 16B for CS/EECS majors (grade C or better)",
+    "Letter grades; 2.0 GPA in the lower division and in the five upper-division courses",
+    "Only one upper-division course may overlap with the student's major",
+    "At least 3 of the 5 upper-division courses taken at UC Berkeley",
+    "Eligibility: declared in a major other than Mathematics, declare no later than one semester before graduation"
   ]
 }

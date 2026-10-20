@@ -6,7 +6,7 @@ The prompt gives you a `programGroupId`. Work from the repository root.
 
 ## Inputs
 - `packages/BtLL/catalog_rules.generated.json`: find the entry whose `programGroupId` matches. It has the program's `name`, `kind` (major/minor), `flags` (known catalog problems) and `rules`. Each rule has a stable `id`, a `name`, a `kind`, a count `n`, and `groups` of course codes. A group is a list of alternatives, any one of which satisfies it. Placeholders carry the catalog's free text in `text`; other rules may have a catalog `description`.
-- `packages/BtLL/catalog-overrides/<programGroupId>.json` and `.md`, if they exist: a previous refinement. Revise it rather than starting over.
+- `packages/BtLL/catalog-overrides/<programGroupId>.json`, if it exists: a previous refinement. Revise it rather than starting over.
 
 How rules are evaluated: rules are checked in order, and **each course counts toward at most one rule** (the first rule that uses it), unless a rule is `shared`. Requirement sets that every student has (university, campus and college requirements) are handled elsewhere; ignore them.
 
@@ -14,13 +14,13 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 - Use WebSearch, e.g. `"<program name> <major|minor> requirements" UC Berkeley`.
 - Prefer the department's own site (a `*.berkeley.edu` department domain) over the catalog, third-party sites or old PDFs.
 - Follow links within that site (requirements, FAQ, "declaring", course lists) with WebFetch. Answers are often a level or two deep. Visit at most about 10 pages.
-- If you can't find a department page, write only the `.md` log saying so, and make no override.
+- If you can't find a department page, write the override with no `changes` and say so in `notStated`.
 
 ## 2. Check, in this order
 1. **Totals:** an overall number of courses or units, and upper-division minimums (e.g. "12 courses, 7 upper division").
 2. **Double counting:** can one course satisfy two requirements? The default (each course counts once) is usually right.
 3. **Electives:** how broad they really are (e.g. "any upper-division course in the department" vs. the catalog's fixed list).
-4. **Caps:** limits on courses from outside the department, transfer courses, etc. Only encode them if a rule kind below can express them; otherwise note them in the log.
+4. **Caps:** limits on courses from outside the department, transfer courses, etc. Only encode them if a rule kind below can express them; otherwise list them in `notEncoded`.
 5. **Missing blocks:** requirements the department lists that the catalog rules lack entirely (e.g. lower division).
 6. **Either/or paths:** options, tracks, "choose N areas". The catalog often lists every option as a separate required rule.
 7. **Placeholders:** read their `text` and convert them into real rules when the meaning is clear.
@@ -33,9 +33,9 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 - **No changes from inference alone.** If the page doesn't answer a question, don't guess: list it under `notStated`.
 - Keep the catalog's course lists unless the department page explicitly says otherwise. Use current course numbers (`MATH 51`, not `MATH 1A`); old numbers are added automatically.
 - Course codes are `"SUBJECT NUMBER"` using catalog subject codes (`MATH 104`, `COMPSCI 61A`, `ENGLISH C177`). The generator rejects codes that aren't in the catalog.
-- Grades, GPA, letter-grade and residency rules can't be checked by GradTrak. Mention them in the log only.
+- Grades, GPA, letter-grade and residency rules can't be checked by GradTrak. List them in `notEncoded`.
 - When the department page and the catalog disagree, decide which is right and explain why in `reasoning`.
-- Only edit `packages/BtLL/catalog-overrides/<programGroupId>.json` and `.md`. Never edit code or generated files.
+- Only edit `packages/BtLL/catalog-overrides/<programGroupId>.json`. Never edit code or generated files.
 
 ## Rule kinds you can write
 - `{ "kind": "allOf", "name", "groups": [[...], ...] }`: every group (its count is implied).
@@ -51,21 +51,17 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 ```json
 {
   "programGroupId": "25I071U",
+  "sources": ["every page used, plus any catalog or API query used to build a course list"],
   "changes": [
     { "op": "add", "before": "<rule id or null to append>", "rule": { ... }, "why": { "url": "https://...", "quote": "...", "reasoning": "..." } },
     { "op": "replace", "ruleId": "<rule id>", "rule": { ... }, "why": { ... } },
     { "op": "remove", "ruleId": "<rule id>", "why": { ... } }
   ],
-  "notStated": ["questions the department pages don't answer"]
+  "notStated": ["questions the department pages don't answer"],
+  "notEncoded": ["requirements GradTrak can't check: grades, GPA, residency, caps, petitions"]
 }
 ```
-Changes apply in order; `ruleId`/`before` refer to ids in `catalog_rules.generated.json` (a replaced rule keeps its id). Rules are checked in list order, so put specific rules before broad ones such as electives and totals.
-
-**`packages/BtLL/catalog-overrides/<programGroupId>.md`**, a short human log:
-- **Pages visited:** each URL, one line each, **including any catalog or API queries** used to build course lists (e.g. how you found "every 4-unit ENGLISH course"), so a reviewer can reproduce them.
-- **Checklist:** the result for each of the 8 items (a sentence each, or "nothing found").
-- **Changes:** a one-line summary per change.
-- **Not encoded / open questions:** anything GradTrak can't check, and anything unanswered.
+Changes apply in order; `ruleId`/`before` refer to ids in `catalog_rules.generated.json` (a replaced rule keeps its id). Rules are checked in list order, so put specific rules before broad ones such as electives and totals. List each catalog or API query in `sources` precisely enough for a reviewer to repeat it (e.g. how you found "every 4-unit ENGLISH course"). Keep `notStated` and `notEncoded` items to one line each.
 
 ## Finish
 Run `npm run import:catalog -w @repo/BtLL`. If it reports an error about your override, fix the override and run it again until it succeeds. Then stop, and reply with a one-paragraph summary.

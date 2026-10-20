@@ -1,5 +1,10 @@
 {
   "programGroupId": "16I020U",
+  "sources": [
+    "https://ce.berkeley.edu/undergrad/cee-minors",
+    "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit (department instructions for the minor, read via /export?format=txt)",
+    "https://undergraduate.catalog.berkeley.edu/programs/16I020U"
+  ],
   "changes": [
     {
       "op": "replace",
@@ -92,5 +97,10 @@
   "notStated": [
     "Whether CE 121 (Advanced Structural Analysis), which the catalog and the 2013 department petition list as an elective, is still accepted: the current Instructions document omits it, so it was dropped; a reviewer may want to confirm with the CEE Academic Affairs Office.",
     "Whether courses taken before admission to the minor count toward the five courses: the document says 'Upon admission to the minor, completion of a minimum of five (5) courses', which GradTrak can't check because it has no admission date."
+  ],
+  "notEncoded": [
+    "Admission: 3.0 overall GPA and 3.0 GPA in the prerequisites; the minor needs letter grades and a 2.0 GPA",
+    "No more than one minor course may count toward the major",
+    "The five courses must be completed after admission, and the minor can't delay graduation"
   ]
 }
