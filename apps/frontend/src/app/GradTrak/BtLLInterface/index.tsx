@@ -67,16 +67,17 @@ export function evaluateEffectiveMet(
         isManuallyNotMet: false,
       };
     } else {
-      // OrRequirement
-      let anyMet = false;
+      // OrRequirement, optionally "at least n of"
+      let metCount = 0;
       let anyManual = false;
       for (const sub of subReqs) {
         const subRes = evaluateEffectiveMet(sub, overrides);
         if (subRes.isMet) {
-          anyMet = true;
+          metCount++;
           if (subRes.isManuallyMet) anyManual = true;
         }
       }
+      const anyMet = metCount >= (req.required?.data ?? 1);
       return {
         isMet: anyMet,
         isManuallyMet: anyMet && anyManual,
@@ -277,12 +278,33 @@ const renderRequirementDetails = (
 
     const isAnd = req.type?.data === "AndRequirement";
     const isOr = req.type?.data === "OrRequirement";
-    const connector = isAnd ? "AND" : isOr ? "OR" : null;
+    const requiredCount: number | undefined = isOr
+      ? req.required?.data
+      : undefined;
+    const connector = isAnd
+      ? "AND"
+      : isOr && requiredCount === undefined
+        ? "OR"
+        : null;
 
     return (
       <div
         style={{ marginTop: "0.25rem", width: "100%", boxSizing: "border-box" }}
       >
+        {requiredCount !== undefined && (
+          <p
+            className={styles.metadata}
+            style={{ marginLeft: `${textIndent + depth * 24}px` }}
+          >
+            {Math.min(
+              subRequirements.filter(
+                (sub) => evaluateEffectiveMet(sub, allOverrides).isMet
+              ).length,
+              requiredCount
+            )}{" "}
+            / {requiredCount} completed
+          </p>
+        )}
         {subRequirements.map((subReq, index) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const flatIndex = (subReq as any).flatIndex;
