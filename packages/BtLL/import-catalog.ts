@@ -233,6 +233,7 @@ function toBtLL(rules: Rule[]) {
     "  List<Course> p0 courses",
   ];
   const programCodes = allCodes(rules).map(courseLiteral).join(", ");
+  let programList = false;
   let pool = 0;
 
   const emit = (rule: Rule, v: string) => {
@@ -246,62 +247,82 @@ function toBtLL(rules: Rule[]) {
         emit(sub, `${v}_s${k}`);
         return `${v}_s${k}`;
       });
-      if (rule.n === 1) {
-        lines.push(`  OrRequirement ${v} {[${subs.join(", ")}], "${name}"}`);
-        return;
-      }
-      const count = subs.map((s) => `if_else(get_attr(${s}, "result"), 1, 0)`);
+      const list = `[${subs.join(", ")}]`;
       lines.push(
-        `  NumberRequirement ${v}_count {add([${count.join(", ")}]), ${rule.n}, "${name}: complete ${rule.n}"}`,
-        `  OrRequirement ${v}_options {[${subs.join(", ")}], "Options"}`,
-        `  AndRequirement ${v} {[${v}_count, ${v}_options], "${name}"}`
+        rule.n === 1
+          ? `  OrRequirement ${v} {${list}, "${name}"}`
+          : rule.n >= subs.length
+            ? `  AndRequirement ${v} {${list}, "${name}"}`
+            : `  OrRequirement ${v} {${list}, ${rule.n}, "${name}"}`
       );
     } else {
       const from = rule.shared ? "courses" : `p${pool}`;
       const byUnits = rule.kind === "minUnits" || rule.units;
+      let countOf: string | undefined;
       if (rule.kind === "matching") {
+        if (rule.fromProgram && !programList) {
+          lines.push(`  List<Course> program [${programCodes}]`);
+          programList = true;
+        }
         const conditions = [
-          rule.fromProgram && `one_common_course([c], [${programCodes}])`,
+          rule.fromProgram && `one_common_course([c], program)`,
           rule.subjects?.length &&
             `contains([${rule.subjects.map((s) => `"${s}"`).join(", ")}], get_attr(c, "subject"))`,
           rule.upperDivision &&
             `regex_match(get_attr(c, "number"), "^[A-Z]*1[0-9][0-9]")`,
         ].filter(Boolean);
         lines.push(
-          `  List<Course> ${v}_m filter(${from}, (c) { boolean return and([${conditions.join(", ")}]) })`,
-          byUnits
-            ? `  NumberRequirement ${v} {${v}_m, sum_units(${v}_m), ${rule.n}, "${name}"}`
-            : `  NCoursesRequirement ${v} {${v}_m, ${rule.n}, "${name}"}`
+          `  List<Course> ${v}_m filter(${from}, (c) { boolean return and([${conditions.join(", ")}]) })`
         );
       } else if (rule.kind === "minUnits") {
         const all = allCodes([rule]).map(courseLiteral).join(", ");
         lines.push(
-          `  List<Course> ${v}_m filter(${from}, (c) { boolean return one_common_course([c], [${all}]) })`,
-          `  NumberRequirement ${v} {${v}_m, sum_units(${v}_m), ${rule.n}, "${name}"}`
+          `  List<Course> ${v}_m filter(${from}, (c) { boolean return one_common_course([c], [${all}]) })`
         );
       } else {
-        // One course per group (its first match), so alternatives in the same
-        // group (e.g. MATH 104 and H104) can't use up another group's slot
-        rule.groups.forEach((group, j) =>
+        // A group with alternatives takes one course (its first match), so e.g.
+        // MATH 104 and H104 can't use up another group's slot. Single-course
+        // groups are matched together, since a variable per group is slow
+        const singles = rule.groups.filter((g) => g.length === 1).flat();
+        const multi = rule.groups.filter((g) => g.length > 1);
+        const parts: string[] = [];
+        if (singles.length) {
+          lines.push(
+            `  List<Course> ${v}_s filter(${from}, (c) { boolean return one_common_course([c], [${singles.map(courseLiteral).join(", ")}]) })`
+          );
+          parts.push(`${v}_s`);
+        }
+        multi.forEach((group, j) => {
           lines.push(
             `  List<Course> ${v}_f${j} slice(filter(${from}, (c) { boolean return one_common_course([c], [${group.map(courseLiteral).join(", ")}]) }), 0, 1)`
-          )
-        );
-        const picked = rule.groups.map(
-          (_, j) => `one_common_course([c], ${v}_f${j})`
-        );
-        const count = rule.groups.map((_, j) => `length(${v}_f${j})`);
+          );
+          parts.push(`${v}_f${j}`);
+        });
         lines.push(
-          `  List<Course> ${v}_m filter(${from}, (c) { boolean return or([${picked.join(", ")}]) })`,
-          `  NCoursesRequirement ${v} {${v}_m, add([${count.join(", ")}]), ${rule.n}, "${name}"}`
+          parts.length === 1
+            ? `  List<Course> ${v}_m ${parts[0]}`
+            : `  List<Course> ${v}_m filter(${from}, (c) { boolean return or([${parts.map((x) => `one_common_course([c], ${x})`).join(", ")}]) })`
+        );
+        countOf = `add([${parts.map((x) => `length(${x})`).join(", ")}])`;
+      }
+      // A rule lists only the courses it uses, so extras show up in later rules
+      // instead of in both
+      let shown = `${v}_m`;
+      if (!rule.shared) {
+        shown = `${v}_used`;
+        lines.push(
+          byUnits
+            ? `  List<Course> ${v}_used take_until_units(${v}_m, ${rule.n})`
+            : `  List<Course> ${v}_used slice(${v}_m, 0, ${rule.n})`
         );
       }
-      if (rule.shared) return;
-      // Remove the courses this rule counted from the pool for later rules
       lines.push(
         byUnits
-          ? `  List<Course> ${v}_used take_until_units(${v}_m, ${rule.n})`
-          : `  List<Course> ${v}_used slice(${v}_m, 0, ${rule.n})`,
+          ? `  NumberRequirement ${v} {${shown}, sum_units(${shown}), ${rule.n}, "${name}"}`
+          : `  NCoursesRequirement ${v} {${shown}, ${countOf ?? `length(${shown})`}, ${rule.n}, "${name}"}`
+      );
+      if (rule.shared) return;
+      lines.push(
         `  List<Course> p${pool + 1} filter(p${pool}, (c) { boolean return not(one_common_course([c], ${v}_used)) })`
       );
       pool++;

@@ -210,9 +210,11 @@ A composite requirement that is satisfied when ANY sub-requirement is met. The `
 | Additional Field | Type | Description |
 |------------------|------|-------------|
 | `requirements` | `List<Requirement>` | List of requirements where at least one must be satisfied |
+| `required` | `number` | Optional. When given, at least this many requirements must be satisfied |
 
 ```
 OrRequirement req OrRequirement([option_a, option_b], "Complete one of the following")
+OrRequirement areas {[area_a, area_b, area_c], 2, "Complete two areas"}
 ```
 
 #### NumberRequirement

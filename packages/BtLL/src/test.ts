@@ -370,13 +370,18 @@ const TESTS = [
         BooleanRequirement req1 {false, "First"}
         BooleanRequirement req2 {true, "Second"}
         BooleanRequirement req3 {false, "Third"}
+        BooleanRequirement req4 {true, "Fourth"}
         List<Requirement> has_true [req1, req2, req3]
         List<Requirement> all_false [req1, req3]
         OrRequirement or1 {has_true, "Has true"}
         OrRequirement or2 {all_false, "All false"}
+        OrRequirement or3 {[req1, req2, req4], 2, "Two of three"}
+        OrRequirement or4 {has_true, 2, "Two of three, one met"}
         boolean result1 get_attr(or1, "result")
         boolean result2 get_attr(or2, "result")
-        boolean return and([result1, not(result2)])
+        boolean result3 get_attr(or3, "result")
+        boolean result4 get_attr(or4, "result")
+        boolean return and([result1, not(result2), result3, not(result4)])
       }
       `;
       try {
