@@ -172,10 +172,14 @@ function parseProgram(p: any): { rules: Rule[]; flags: string[] } {
       }
       const ids: string[][] = r.value?.values?.map((g: any) => g.value) ?? [];
       if (r.value?.condition === "requisiteSets") {
-        if (ids.flat().every((id) => SKIPPABLE_REQUISITE_SETS.has(id)))
-          continue;
+        const setIds = ids
+          .flat()
+          .filter((id) => !SKIPPABLE_REQUISITE_SETS.has(id));
+        if (!setIds.length) continue;
         flags.add("major-specific requirement set");
-        rules.push(placeholder({ id: r.id, name, description }));
+        // Named after the referenced sets in main
+        const text = setIds.map((id) => `set:${id}`).join(" ");
+        rules.push(placeholder({ id: r.id, name, description, text }));
         continue;
       }
       if (
@@ -559,6 +563,42 @@ async function main() {
           ? (sets[g[0].slice(4)] ?? []).map((id) => [id])
           : [g]
       );
+
+  // Name requirement-set placeholders after their sets, with the sets' narrative text
+  const isSetPlaceholder = (r: Rule) =>
+    r.kind === "placeholder" && !!r.text?.startsWith("set:");
+  const reqSetIds = [
+    ...new Set(
+      selected.flatMap((p) =>
+        p.rules
+          .filter(isSetPlaceholder)
+          .flatMap((r) => r.text!.split(" ").map((id) => id.slice(4)))
+      )
+    ),
+  ];
+  if (reqSetIds.length) {
+    const res: any[] = await api(
+      `/${SCHOOL}/requisite-sets/?list=${reqSetIds.join(",")}&effectiveDatesRange=`
+    );
+    const reqSets = new Map(res.map((s) => [s.requisiteSetGroupId, s]));
+    for (const r of selected.flatMap((p) => p.rules.filter(isSetPlaceholder))) {
+      const found = r
+        .text!.split(" ")
+        .map((id) => reqSets.get(id.slice(4)))
+        .filter(Boolean);
+      if (found.length) r.name = sanitize(found.map((s) => s.name).join(", "));
+      r.text =
+        found
+          .map((s) => {
+            const notes = (s.requisites ?? [])
+              .filter((b: any) => b.type === "Narrative Text")
+              .map((b: any) => stripHtml(b.notes))
+              .join(" ");
+            return notes ? `${s.name}: ${notes}` : s.name;
+          })
+          .join("\n") || undefined;
+    }
+  }
 
   // Resolve course IDs to "SUBJECT NUMBER"
   const courseIds = [
