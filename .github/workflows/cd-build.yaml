@@ -48,6 +48,7 @@ jobs:
             VITE_OTEL_ENDPOINT=/otlp
             VITE_SERVICE_VERSION=${{ inputs.image_tag }}
             VITE_DEPLOYMENT_ENV=production
+            VITE_GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}
           platforms: linux/amd64
           push: true
 
