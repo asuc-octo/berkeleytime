@@ -37,7 +37,7 @@ spec:
             requests:
               # Give the latency-sensitive Node process a CPU floor so it is not
               # the lowest-priority workload on the node during contention.
-              cpu: "500m"
+              cpu: {{ .Values.backend.resources.requests.cpu | quote }}
               memory: "768Mi"
               ephemeral-storage: "500Mi"
             limits:

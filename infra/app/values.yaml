@@ -37,6 +37,10 @@ backend:
   cacheWarmingPort: 8080
   path: /api
 
+  resources:
+    requests:
+      cpu: "500m"
+
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-backend
