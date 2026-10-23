@@ -83,71 +83,36 @@ export const requestGoogleToken = () =>
     client.requestAccessToken();
   });
 
-const MAX_RETRIES = 5;
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Google asks for exponential backoff on per-minute rate limits and server
-// errors. A 403 with any other reason (such as the hours-long "Calendar
-// usage limits exceeded") won't clear by retrying.
-const isRetryable = async (response: Response) => {
-  if (response.status === 429 || response.status >= 500) return true;
-  if (response.status !== 403) return false;
-
-  try {
-    const body = (await response.clone().json()) as {
-      error?: { errors?: { reason?: string }[] };
-    };
-    const reason = body.error?.errors?.[0]?.reason;
-    return reason === "rateLimitExceeded" || reason === "userRateLimitExceeded";
-  } catch {
-    return false;
-  }
-};
-
-const request = async (
-  token: string,
-  method: string,
-  path: string,
-  body?: unknown
-) => {
-  for (let attempt = 0; ; attempt++) {
-    const response = await fetch(`${API}${path}`, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
-
-    if (attempt === MAX_RETRIES || !(await isRetryable(response))) {
-      return response;
-    }
-
-    // 1s, 2s, 4s, 8s, 16s plus jitter so many users who hit the limit at the
-    // same moment don't all retry together
-    const retryAfter = Number(response.headers.get("Retry-After"));
-    const delay =
-      retryAfter > 0
-        ? retryAfter * 1000
-        : 2 ** attempt * 1000 + Math.random() * 1000;
-
-    await sleep(delay);
-  }
-};
+const request = (token: string, method: string, path: string, body?: unknown) =>
+  fetch(`${API}${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
 
 const describeFailure = async (response: Response, fallback: string) => {
-  if (response.status === 429 || (await isRetryable(response))) {
+  if (response.status === 401) {
+    return "Your Google sign-in expired. Try again.";
+  }
+
+  if (response.status === 429) {
     return "Google Calendar is busy right now. Try again in a few minutes.";
   }
 
   if (response.status === 403) {
-    return "Your Google account has hit a Google Calendar limit. Try again in a few hours.";
-  }
+    // Per-minute rate limits clear quickly; any other 403 reason (such as
+    // "Calendar usage limits exceeded") lasts hours
+    const body = (await response.json().catch(() => null)) as {
+      error?: { errors?: { reason?: string }[] };
+    } | null;
+    const reason = body?.error?.errors?.[0]?.reason;
 
-  if (response.status === 401) {
-    return "Your Google sign-in expired. Try again.";
+    return reason === "rateLimitExceeded" || reason === "userRateLimitExceeded"
+      ? "Google Calendar is busy right now. Try again in a few minutes."
+      : "Your Google account has hit a Google Calendar limit. Try again in a few hours.";
   }
 
   return fallback;
