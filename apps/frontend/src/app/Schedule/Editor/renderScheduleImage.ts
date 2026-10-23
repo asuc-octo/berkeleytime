@@ -170,7 +170,8 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
 
         const start = toMinutes(meeting.startTime);
         const end = toMinutes(meeting.endTime);
-        if (end <= start) continue;
+        // A midnight start means the time is TBA, not a 12 AM class
+        if (start === 0 || end <= start) continue;
 
         meeting.days.forEach((active, day) => {
           if (!active) return;
@@ -220,12 +221,16 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
   // Only show weekends when something is scheduled on them
   const dayCount = blocks.some((block) => block.day >= 5) ? 7 : 5;
 
-  // Fit the visible hours to the schedule, defaulting to a typical school day
+  // Span from the hour of the first meeting to the hour the last one ends,
+  // defaulting to a typical school day when nothing has a time
   const firstHour = blocks.length
-    ? Math.min(8, Math.floor(Math.min(...blocks.map((b) => b.start)) / 60))
+    ? Math.floor(Math.min(...blocks.map((b) => b.start)) / 60)
     : 8;
   const lastHour = blocks.length
-    ? Math.max(18, Math.ceil(Math.max(...blocks.map((b) => b.end)) / 60))
+    ? Math.max(
+        firstHour + 1,
+        Math.ceil(Math.max(...blocks.map((b) => b.end)) / 60)
+      )
     : 18;
 
   for (let day = 0; day < 7; day++) {
