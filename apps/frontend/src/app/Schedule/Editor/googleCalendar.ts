@@ -83,22 +83,74 @@ export const requestGoogleToken = () =>
     client.requestAccessToken();
   });
 
+const MAX_RETRIES = 5;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Google asks for exponential backoff on per-minute rate limits and server
+// errors. A 403 with any other reason (such as the hours-long "Calendar
+// usage limits exceeded") won't clear by retrying.
+const isRetryable = async (response: Response) => {
+  if (response.status === 429 || response.status >= 500) return true;
+  if (response.status !== 403) return false;
+
+  try {
+    const body = (await response.clone().json()) as {
+      error?: { errors?: { reason?: string }[] };
+    };
+    const reason = body.error?.errors?.[0]?.reason;
+    return reason === "rateLimitExceeded" || reason === "userRateLimitExceeded";
+  } catch {
+    return false;
+  }
+};
+
 const request = async (
   token: string,
   method: string,
   path: string,
   body?: unknown
 ) => {
-  const response = await fetch(`${API}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(`${API}${path}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
 
-  return response;
+    if (attempt === MAX_RETRIES || !(await isRetryable(response))) {
+      return response;
+    }
+
+    // 1s, 2s, 4s, 8s, 16s plus jitter so many users who hit the limit at the
+    // same moment don't all retry together
+    const retryAfter = Number(response.headers.get("Retry-After"));
+    const delay =
+      retryAfter > 0
+        ? retryAfter * 1000
+        : 2 ** attempt * 1000 + Math.random() * 1000;
+
+    await sleep(delay);
+  }
+};
+
+const describeFailure = async (response: Response, fallback: string) => {
+  if (response.status === 429 || (await isRetryable(response))) {
+    return "Google Calendar is busy right now. Try again in a few minutes.";
+  }
+
+  if (response.status === 403) {
+    return "Your Google account has hit a Google Calendar limit. Try again in a few hours.";
+  }
+
+  if (response.status === 401) {
+    return "Your Google sign-in expired. Try again.";
+  }
+
+  return fallback;
 };
 
 // YYYYMMDDTHHMMSS -> YYYY-MM-DDTHH:MM:SS
@@ -116,13 +168,17 @@ const readCalendarId = (scheduleId: string) => {
   }
 };
 
-const writeCalendarId = (scheduleId: string, calendarId: string) => {
+const writeCalendarId = (scheduleId: string, calendarId: string | null) => {
   try {
-    localStorage.setItem(storageKey(scheduleId), calendarId);
+    if (calendarId) localStorage.setItem(storageKey(scheduleId), calendarId);
+    else localStorage.removeItem(storageKey(scheduleId));
   } catch {
     // Re-exporting will create a separate calendar instead of replacing it
   }
 };
+
+const deleteCalendar = (token: string, calendarId: string) =>
+  request(token, "DELETE", `/calendars/${encodeURIComponent(calendarId)}`);
 
 export interface GoogleCalendarExport {
   eventCount: number;
@@ -131,22 +187,15 @@ export interface GoogleCalendarExport {
 }
 
 // Puts the schedule in its own Google calendar, replacing the one from a
-// previous export of the same schedule so re-exporting doesn't duplicate it
+// previous export of the same schedule so re-exporting doesn't duplicate it.
+// The previous calendar is only removed once the new one is complete, and a
+// half-built calendar is removed if the export fails.
 export const exportToGoogleCalendar = async (
   schedule: ISchedule,
   token: string
 ): Promise<GoogleCalendarExport> => {
   const events = getCalendarEvents(schedule);
-
   const previous = readCalendarId(schedule._id);
-  if (previous) {
-    // The calendar may already be gone if the user deleted it
-    await request(
-      token,
-      "DELETE",
-      `/calendars/${encodeURIComponent(previous)}`
-    );
-  }
 
   const created = await request(token, "POST", "/calendars", {
     summary: `${schedule.name} (Berkeleytime)`,
@@ -154,37 +203,61 @@ export const exportToGoogleCalendar = async (
     timeZone: CALENDAR_TIME_ZONE,
   });
 
-  if (!created.ok) throw new Error("Couldn't create the Google calendar.");
+  if (!created.ok) {
+    throw new Error(
+      await describeFailure(created, "Couldn't create the Google calendar.")
+    );
+  }
 
   const { id: calendarId } = (await created.json()) as { id: string };
-  writeCalendarId(schedule._id, calendarId);
 
   const path = `/calendars/${encodeURIComponent(calendarId)}/events`;
 
-  // A few at a time to stay under Google's per-user rate limit
-  for (let i = 0; i < events.length; i += 5) {
-    const responses = await Promise.all(
-      events.slice(i, i + 5).map((event) =>
-        request(token, "POST", path, {
-          summary: event.summary,
-          description: event.description,
-          location: event.location,
-          start: {
-            dateTime: toDateTime(event.start),
-            timeZone: CALENDAR_TIME_ZONE,
-          },
-          end: {
-            dateTime: toDateTime(event.end),
-            timeZone: CALENDAR_TIME_ZONE,
-          },
-          recurrence: [event.rrule],
-        })
-      )
-    );
+  try {
+    // A few at a time to stay under Google's per-user rate limit
+    for (let i = 0; i < events.length; i += 5) {
+      const responses = await Promise.all(
+        events.slice(i, i + 5).map((event) =>
+          request(token, "POST", path, {
+            summary: event.summary,
+            description: event.description,
+            location: event.location,
+            start: {
+              dateTime: toDateTime(event.start),
+              timeZone: CALENDAR_TIME_ZONE,
+            },
+            end: {
+              dateTime: toDateTime(event.end),
+              timeZone: CALENDAR_TIME_ZONE,
+            },
+            recurrence: [event.rrule],
+          })
+        )
+      );
 
-    if (responses.some((response) => !response.ok)) {
-      throw new Error("Couldn't add every class to Google Calendar.");
+      const failed = responses.find((response) => !response.ok);
+      if (failed) {
+        throw new Error(
+          await describeFailure(
+            failed,
+            "Couldn't add every class to Google Calendar."
+          )
+        );
+      }
     }
+  } catch (error) {
+    // Don't leave a calendar with only some of the classes behind. If even
+    // this fails, remember it so the next export replaces it.
+    const removed = await deleteCalendar(token, calendarId).catch(() => null);
+    if (!removed?.ok) writeCalendarId(schedule._id, calendarId);
+    throw error;
+  }
+
+  writeCalendarId(schedule._id, calendarId);
+
+  if (previous && previous !== calendarId) {
+    // The previous calendar may already be gone if the user deleted it
+    await deleteCalendar(token, previous).catch(() => null);
   }
 
   const first = events.map((event) => event.start).sort()[0];
