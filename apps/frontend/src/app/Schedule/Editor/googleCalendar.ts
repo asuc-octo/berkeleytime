@@ -7,10 +7,6 @@ import { CALENDAR_TIME_ZONE, getCalendarEvents } from "./exportToCalendar";
 const SCOPE = "https://www.googleapis.com/auth/calendar.app.created";
 const API = "https://www.googleapis.com/calendar/v3";
 
-export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as
-  | string
-  | undefined;
-
 interface TokenResponse {
   access_token?: string;
   error?: string;
@@ -41,9 +37,7 @@ export class GoogleCalendarCancelled extends Error {}
 
 let identityScript: Promise<void> | null = null;
 
-// The token popup has to open in the same click that requests it, so the
-// script is loaded ahead of time
-export const loadGoogleIdentity = () => {
+const loadIdentityScript = () => {
   identityScript ??= new Promise<void>((resolve, reject) => {
     if (window.google?.accounts) return resolve();
 
@@ -61,16 +55,40 @@ export const loadGoogleIdentity = () => {
   return identityScript;
 };
 
-// Must be called synchronously from a click handler after loadGoogleIdentity
-export const requestGoogleToken = () =>
+let clientId: Promise<string | null> | null = null;
+
+// Uses the same OAuth client as Berkeleytime login. Resolves to null when
+// this deployment has no Google client configured.
+const loadClientId = () => {
+  clientId ??= fetch("/api/login/google-client")
+    .then((response) => (response.ok ? response.json() : { clientId: null }))
+    .then((body: { clientId: string | null }) => body.clientId)
+    .catch(() => {
+      clientId = null;
+      return null;
+    });
+
+  return clientId;
+};
+
+// The token popup has to open in the same click that requests it, so the
+// client ID and script are loaded ahead of time
+export const loadGoogle = async () => {
+  const id = await loadClientId();
+  if (id) await loadIdentityScript();
+  return id;
+};
+
+// Must be called synchronously from a click handler after loadGoogle
+export const requestGoogleToken = (clientId: string) =>
   new Promise<string>((resolve, reject) => {
-    if (!GOOGLE_CLIENT_ID || !window.google?.accounts) {
+    if (!window.google?.accounts) {
       reject(new Error("Google sign-in isn't available."));
       return;
     }
 
     const client = window.google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
+      client_id: clientId,
       scope: SCOPE,
       callback: (response) => {
         if (response.access_token) resolve(response.access_token);

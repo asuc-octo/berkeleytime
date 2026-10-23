@@ -8,11 +8,10 @@ import useSchedule from "@/hooks/useSchedule";
 
 import exportToCalendar from "../exportToCalendar";
 import {
-  GOOGLE_CLIENT_ID,
   GoogleCalendarCancelled,
   GoogleCalendarExport,
   exportToGoogleCalendar,
-  loadGoogleIdentity,
+  loadGoogle,
   requestGoogleToken,
 } from "../googleCalendar";
 
@@ -29,26 +28,28 @@ type ExportState =
 export default function ExportDialog({ children }: ExportDialogProps) {
   const { schedule } = useSchedule();
   const [state, setState] = useState<ExportState>({ status: "idle" });
-  const [googleReady, setGoogleReady] = useState(false);
+  // undefined while loading, null when this deployment has no Google client
+  const [clientId, setClientId] = useState<string | null>();
 
   const handleOpenChange = (open: boolean) => {
     if (!open) return;
 
     setState({ status: "idle" });
 
-    if (GOOGLE_CLIENT_ID) {
-      loadGoogleIdentity()
-        .then(() => setGoogleReady(true))
-        .catch((error: Error) =>
-          setState({ status: "error", message: error.message })
-        );
-    }
+    loadGoogle()
+      .then(setClientId)
+      .catch((error: Error) => {
+        setClientId(null);
+        setState({ status: "error", message: error.message });
+      });
   };
 
   const handleGoogle = async () => {
+    if (!clientId) return;
+
     // Requested before any await so the browser treats the popup as part of
     // this click
-    const token = requestGoogleToken();
+    const token = requestGoogleToken(clientId);
 
     try {
       const accessToken = await token;
@@ -79,11 +80,7 @@ export default function ExportDialog({ children }: ExportDialogProps) {
         <Dialog.Card>
           <Dialog.Header
             title="Export schedule"
-            subtitle={
-              GOOGLE_CLIENT_ID
-                ? "Add your classes to Google Calendar as a new calendar"
-                : "Download your classes as a calendar file"
-            }
+            subtitle="Add your classes to Google Calendar as a new calendar"
             hasCloseButton
           />
           <Dialog.Body gap="3">
@@ -98,9 +95,9 @@ export default function ExportDialog({ children }: ExportDialogProps) {
               <Text>{state.message}</Text>
             ) : (
               <Text>
-                {GOOGLE_CLIENT_ID
-                  ? "Berkeleytime only gets access to the calendar it creates, not the rest of your Google Calendar."
-                  : "Open the .ics file with any calendar app to import your classes."}
+                {clientId === null
+                  ? "Google Calendar export isn't set up on this site yet. You can still download an .ics file and import it into any calendar app."
+                  : "Berkeleytime only gets access to the calendar it creates, not the rest of your Google Calendar."}
               </Text>
             )}
           </Dialog.Body>
@@ -112,28 +109,27 @@ export default function ExportDialog({ children }: ExportDialogProps) {
               <Download />
               Download .ics
             </Button>
-            {GOOGLE_CLIENT_ID &&
-              (state.status === "done" ? (
-                <Button
-                  as="a"
-                  href={state.result.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open Google Calendar
-                  <OpenNewWindow />
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleGoogle}
-                  disabled={!googleReady || state.status === "exporting"}
-                >
-                  <Calendar />
-                  {state.status === "exporting"
-                    ? "Adding to Google Calendar…"
-                    : "Add to Google Calendar"}
-                </Button>
-              ))}
+            {state.status === "done" ? (
+              <Button
+                as="a"
+                href={state.result.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Open Google Calendar
+                <OpenNewWindow />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleGoogle}
+                disabled={!clientId || state.status === "exporting"}
+              >
+                <Calendar />
+                {state.status === "exporting"
+                  ? "Adding to Google Calendar…"
+                  : "Add to Google Calendar"}
+              </Button>
+            )}
           </Dialog.Footer>
         </Dialog.Card>
       </Dialog.Portal>
