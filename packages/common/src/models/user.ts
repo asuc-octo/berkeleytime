@@ -1,5 +1,7 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
+import { NOTIFICATION_EVENTS } from "../utils/notification-events";
+
 export const userSchema = new Schema(
   {
     googleId: {
@@ -111,6 +113,17 @@ export const userSchema = new Schema(
             type: Boolean,
             required: true,
             default: false,
+          },
+          events: {
+            type: [String],
+            enum: [...NOTIFICATION_EVENTS],
+            default: [...NOTIFICATION_EVENTS],
+          },
+          // event -> start time of the last enrollment snapshot emailed about
+          lastNotifiedAt: {
+            type: Map,
+            of: Date,
+            default: {},
           },
         },
       ],
