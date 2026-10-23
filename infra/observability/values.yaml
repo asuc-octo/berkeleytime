@@ -34,9 +34,10 @@ tempo:
     maxTracesPerUser: 5000 # live traces held in memory
     maxBytesPerTrace: 5000000 # drop single traces larger than 5MB
     maxActiveSeries: 10000 # metrics generator series cap
-  # hostPath: size is not enforced, only documents the expected usage
+  # hostPath: size is not enforced, only documents the expected usage.
+  # PVCs cannot shrink, so never lower this below the deployed value.
   storage:
-    size: 2Gi
+    size: 10Gi
   resources:
     limits:
       memory: 512Mi
@@ -58,9 +59,10 @@ loki:
     # Query limits: stop a single large Grafana query from exhausting memory
     maxQuerySeries: 500
     maxEntriesLimitPerQuery: 5000
-  # hostPath: size is not enforced, only documents the expected usage
+  # hostPath: size is not enforced, only documents the expected usage.
+  # PVCs cannot shrink, so never lower this below the deployed value.
   storage:
-    size: 2Gi
+    size: 10Gi
   resources:
     limits:
       memory: 512Mi
@@ -82,7 +84,7 @@ prometheus:
   # Max samples a single query may load into memory
   queryMaxSamples: 5000000
   storage:
-    size: 5Gi
+    size: 10Gi
   resources:
     limits:
       memory: 768Mi
