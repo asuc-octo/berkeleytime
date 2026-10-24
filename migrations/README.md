@@ -1,6 +1,6 @@
 # Berkeleytime migrations
 
-MongoDB shell (mongosh) scripts to migrate data.
+MongoDB shell (mongosh) scripts to migrate data. **This directory is the source of truth.** `infra/mongo/migrations/` is a copy that the Helm chart packages into a ConfigMap; `npm run check:migrations` (run by CI) fails when the copies differ. After editing a script here, run `cp migrations/*.js infra/mongo/migrations/`.
 
 ## Running Migrations
 

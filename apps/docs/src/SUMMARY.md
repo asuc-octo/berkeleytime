@@ -7,7 +7,7 @@
 # Getting Started
 
 - [Local Development](./getting-started/local-development.md)
-- [Contributing](./getting-started/contributing.md)
+- [Contributing & Development Workflow](./getting-started/contributing.md)
 
 ---
 
@@ -16,13 +16,24 @@
 - [Backend](./core/backend/README.md)
 
 - [Data](./core/data/README.md)
+  - [Migrations](./core/data/migrations.md)
 
 - [Datapuller](./core/datapuller/README.md)
   - [Local & Remote Development](./core/datapuller/local-remote-development.md)
 
 - [Frontend](./core/frontend/README.md)
 
+- [Semantic Search](./core/semantic-search/README.md)
+
 - [Staff Dashboard](./core/staff-dashboard/README.md)
+
+- [AG Dashboard (Curated Classes)](./core/ag-frontend/README.md)
+
+- [Testing](./core/testing/README.md)
+
+- [Observability](./core/observability/README.md)
+
+- [Architecture Decision Log](./core/architecture/decisions.md)
 
 - [Infrastructure](./core/infrastructure/README.md)
   - [Onboarding](./core/infrastructure/onboarding.md)
@@ -30,7 +41,7 @@
   - [DNS & Certificates](./core/infrastructure/dns-certificates.md)
   - [Runbooks](./core/infrastructure/runbooks.md)
 
- - [API Sandbox](./core/api-sandbox/README.md)
+- [API Sandbox](./core/api-sandbox/README.md)
 
 - [Packages](./core/packages/README.md)
   - [@repo/BtLL](./core/BtLL/README.md)
@@ -53,16 +64,3 @@
 # Features
 
 - [DeCal Classes](./features/decal-classes.md)
-
-<!--
----
-
-# Fall 2024 Pods
-
-- [Crowd Sourced Data](./fa24/crowd-sourced-data/README.md)
-
-- [DeCals](./fa24/decals/README.md)
-
-- [GradTrak](./fa24/gradtrak/README.md)
-
-- [Semantic Search](./fa24/semantic-search/README.md) -->

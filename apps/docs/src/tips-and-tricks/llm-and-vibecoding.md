@@ -4,16 +4,21 @@ This repo is set up to work well with AI-assisted development. Cursor, Claude Co
 
 ## Repo Features for AI-Assisted Development
 
-### Cursorrules (`.cursorrules`)
+### `AGENTS.md` (and `CLAUDE.md`, `.cursorrules`)
 
-The repo includes a **`.cursorrules`** file at the repo root. It describes:
+The repo has one canonical context file at the root: **`AGENTS.md`**. Cursor, Claude Code, Codex and most other agents read it automatically (`CLAUDE.md` imports it and `.cursorrules` points to it). It describes:
 
-- **Architecture**: Monorepo layout (apps, packages, infra), backend module structure, frontend folder layout.
-- **Tech stack**: Backend (Node, Express, Apollo, MongoDB, Redis), frontend (React, Vite, Apollo, SCSS modules), and shared packages.
-- **Conventions**: TypeScript/GraphQL usage, SCSS modules, file naming, where to put new code.
-- **Workflow**: Type generation, lint/format, Docker, Turbo commands.
+- **Repository map**: every app and package, what it does and where it runs.
+- **Commands**: bootstrap, codegen, the `npm run check` gate, ports.
+- **Patterns**: backend module pipeline, frontend folder layout, how a request flows through the persisted-operation gateway.
+- **Rules**: authorization (what `@auth` does and does not check), generated code, formatting, tests, docs.
+- **Known traps**: the things that bite new contributors.
 
-When you (or an agent) work in this repo, Cursor and other tools that read `.cursorrules` get this context automatically. That reduces wrong-path suggestions (e.g. putting resolvers in the wrong place or editing generated types). Keep `.cursorrules` updated when the project's patterns change.
+Keep `AGENTS.md` updated in the same PR that changes a pattern; stale rules are worse than no rules because agents follow them confidently.
+
+### Skills (`.claude/skills/`)
+
+Repeatable, multi-step recipes live in `.claude/skills/<name>/SKILL.md` (for example `add-analytic`, which explains the tracking pipeline and how to add a staff dashboard card). When you find yourself explaining the same procedure to an agent twice, write it down as a skill.
 
 ### Git Worktree Support & Parameterized Ports
 
@@ -59,7 +64,7 @@ With specific prompts, we risk sacrificing a potentially more optimal solution a
 ### Always Test
 
 - **Run the app.** After agent-generated changes, use the feature yourself (run the frontend, hit the backend, run the datapullers locally etc.)
-- **Use the existing pipeline.** Run type-check, lint, and build (`npm run type-check`, `npm run lint`, `npm run build` / Turbo) and fix any failures. This is also done automatically pre-push. 
+- **Use the existing pipeline.** Run `npm run check` (format, type-check, lint, unit tests, allowlist) and fix any failures. CI runs the same gate and blocks the merge if it fails.
 
 ### Never Settle
 

@@ -73,7 +73,7 @@ Once a DeCal is matched to a `ClassModel`, we populate the `decal` field on that
 This data flows through the stack as follows:
 
 - Backend formatters expose `Class.decal` via the GraphQL schema (`packages/gql-typedefs/class.ts`).
-- The canonical catalog query (`packages/shared/queries.ts`) includes `decal { title }` so catalog cards can show a “DeCal” badge and DeCal title.
+- The catalog search query (`apps/frontend/src/lib/api/catalog.ts`) includes DeCal fields so catalog cards can show a “DeCal” badge and DeCal title.
 - The class details queries (`apps/frontend/src/lib/api/classes.ts`) fetch `decal` so the class overview can:
   - show a dedicated “DeCal Application” section (application link, syllabus link, and formatted deadline),
   - prefer the DeCal description over SIS description when present,

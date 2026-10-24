@@ -10,7 +10,7 @@ Welcome to the Berkeleytime Docs! This is the documentation source for developer
 > [!NOTE]
 > The following are instructions to set up the documentation locally. To set up the Berkeleytime app locally, go to the [Local Development](./getting-started/local-development.md) section.
 
-The docs are provided as a service with the root `docker-compose.yml` file, so if you have the Berkeleytime app running locally, you can access the docs at `http://localhost:3000/`. Below are (mainly deprecated) ways of running the docs without the Berkeleytime app.
+The docs are a service in the root `docker-compose.yml` under the `docs` profile. Start them with `docker compose --profile docs up -d` and open `http://localhost:3003/` (the same profile also starts Storybook on `3005`). Below are ways of running the docs without the rest of the Berkeleytime stack.
 
 ### Developing and Building Locally
 
@@ -29,7 +29,7 @@ git pull
 docker build --target=docs-dev --tag="docs:dev" --file="./apps/docs/Dockerfile" .
 
 # Run the container
-docker run --publish 3000:3000 --volume ./docs:/docs "docs:dev"
+docker run --publish 3000:3000 --volume ./apps/docs:/apps/docs "docs:dev"
 ```
 
 The docs should be available at `http://localhost:3000/` with live reload. To kill the container, you can use the Docker Desktop UI or run `docker kill [container id]`. You can find the container ID from `docker ps`.
@@ -37,7 +37,7 @@ The docs should be available at `http://localhost:3000/` with live reload. To ki
 > [!TIP]
 > To change the port from the above `3000`, modify the `docker run` command as follows, replacing the `XXXX` with your desired port:
 > ```sh
-> docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
+> docker run --publish XXXX:3000 --volume ./apps/docs:/apps/docs "docs:dev"
 > ```
 
 #### Without Containerization
@@ -54,7 +54,7 @@ cargo install mdbook-toc
 git pull
 
 # Navigate into the docs directory
-cd docs
+cd apps/docs
 
 # Build the book and serve at http://localhost:3000/
 mdbook serve --port=3000 --open
@@ -68,13 +68,13 @@ As these docs are primarily written with markdown, feel free to check [this quic
 
 To add new pages to the docs, check out the [`mdBook` guide](https://rust-lang.github.io/mdBook/guide/creating.html). Below is a step-by-step guide on creating a new page:
 
-1. Create a new `.md` file in the `src` directory. For example, if you want your new page to be in the Infrastructure section, you should put the new file in `src/infrastructure`.
+1. Create a new `.md` file in the `src` directory. For example, if you want your new page to be in the Infrastructure section, you should put the new file in `src/core/infrastructure`.
 
 2. Add this file to `SUMMARY.md`. The indentation indicates which section your file will go under. For example:
 
     ```md
-    - [Infrastructure](./infrastructure/README.md)
-        - [My New File's Title](./infrastructure/my-new-file.md)
+    - [Infrastructure](./core/infrastructure/README.md)
+        - [My New File's Title](./core/infrastructure/my-new-file.md)
     ```
 
 3. Add content to your file and see the results!

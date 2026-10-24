@@ -1,34 +1,27 @@
-# [Berkeleytime Frontend](http://berkeleytime.com/)
+# frontend
 
-# Structure
+React 19 + Vite single-page app served at berkeleytime.com. Full documentation:
+[docs.berkeleytime.com/core/frontend](https://docs.berkeleytime.com/core/frontend/) and
+the repository `AGENTS.md`.
 
 ```
 src/
-  assets/        - scss, images, svgs
-  bt/            - widely imported modules
-  components/    - react components
-  redux/
-  views/
+  main.tsx            entrypoint (imports ./instrumentation for browser tracing)
+  App.tsx             routes (React Router) and Apollo client using persistedOperationFetch
+  app/                one folder per page; _legacy/ holds the previous Grades/Enrollment pages
+  components/         reusable Berkeleytime-specific components
+  hooks/api/          one hook per GraphQL operation
+  lib/api/            gql`` operations, one file per domain
+  lib/generated/      generated client types (git-ignored; npm run generate)
+  providers/          UserProvider, TrackingProvider
+  contexts/ lib/ utils/ types/
 ```
 
-# Common Practices
+```sh
+npm run generate -w apps/frontend   # regenerate query types (also run `npm run generate:operations` at the root)
+npm run test -w apps/frontend       # vitest
+npm run lint -w apps/frontend
+```
 
-- For simple structural margin and padding, try to use bootstrap's `m` and `p` classes
-  for simplicity, either in the `className` prop or `@extend` the class in scss.
-  ([doc](https://getbootstrap.com/docs/4.5/utilities/spacing/#notation))
-
-# Important Scripts
-
-- `npm run lint`: Outputs ESLint warnings
-- `npm run analyze`: Analyzes bundle size
-
-# Recommended VSCode Plugins
-
-- [VSCode GraphQL](https://marketplace.visualstudio.com/items?itemName=GraphQL.vscode-graphql)
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-# Issues
-
-- If custom module resolution using `tsconfig.json`'s `baseUrl` doesn't work in
-  VSCode, try restarting VSCode.
+Styling: SCSS modules + tokens and components from `@repo/theme`. Storybook for
+the design system runs with `docker compose --profile docs up -d` on port 3005.

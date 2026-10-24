@@ -1,0 +1,27 @@
+# Code owners are requested for review automatically when a PR touches their paths.
+#
+# This file is a DRAFT: GitHub validates team handles, so the lines below are
+# commented out until the org creates matching teams (Settings > Teams) and a lead
+# fills them in. Keep the mapping by pod/area, not by person, so it survives
+# member turnover. Uncomment one line at a time and check the "CODEOWNERS" tab
+# under Settings for validation errors.
+#
+# Suggested mapping:
+#
+# *                                   @asuc-octo/berkeleytime-leads
+# /apps/backend/                      @asuc-octo/berkeleytime-backend
+# /packages/common/src/models/        @asuc-octo/berkeleytime-backend
+# /packages/gql-typedefs/             @asuc-octo/berkeleytime-backend
+# /apps/datapuller/                   @asuc-octo/berkeleytime-backend
+# /apps/semantic-search/              @asuc-octo/berkeleytime-backend
+# /apps/frontend/                     @asuc-octo/berkeleytime-frontend
+# /packages/theme/                    @asuc-octo/berkeleytime-design-system
+# /apps/storybook/                    @asuc-octo/berkeleytime-design-system
+# /apps/staff-frontend/               @asuc-octo/berkeleytime-staff-tools
+# /apps/ag-frontend/                  @asuc-octo/berkeleytime-staff-tools
+# /packages/BtLL/                     @asuc-octo/berkeleytime-gradtrak
+# /infra/                             @asuc-octo/berkeleytime-infra
+# /.github/                           @asuc-octo/berkeleytime-infra
+# /docker-compose*.yml                @asuc-octo/berkeleytime-infra
+# /docs/security/                     @asuc-octo/berkeleytime-leads
+# /AGENTS.md                          @asuc-octo/berkeleytime-leads

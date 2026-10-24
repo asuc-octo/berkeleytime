@@ -7,11 +7,12 @@ This directory contains end-to-end and API tests for Berkeleytime using Playwrig
 ```
 tests/
 ├── sanity/       # Fast smoke tests (run on every PR)
-├── api/          # GraphQL API unit tests
-├── e2e/          # Comprehensive end-to-end user flows
-├── fixtures/     # Shared test data and fixtures
-└── utils/        # Test utilities and helpers
+├── api/          # GraphQL API tests through the persisted-operation gateway (run on every PR)
+├── e2e/          # Comprehensive end-to-end user flows (manual, four browsers)
+└── helpers/      # persisted-operation.ts: look up operation IDs from the generated allowlist
 ```
+
+Unit tests (backend `node:test`, frontend Vitest, BtLL) live next to the code and run with `npm run test`; see the [Testing docs page](../apps/docs/src/core/testing/README.md).
 
 ## Running Tests Locally
 
@@ -126,8 +127,8 @@ test('can search and view course details', async ({ page }) => {
 
 When you open a PR, GitHub Actions automatically:
 1. Checks out your code
-2. Runs `docker compose up --build` to build your changes
-3. Runs sanity tests against the built code
+2. Runs `docker compose up --build` to build your changes (Playwright's `webServer`)
+3. Runs the `sanity` and `api` projects against the built code
 4. Reports results in the PR
 
 See [`.github/workflows/ci-playwright.yaml`](../.github/workflows/ci-playwright.yaml)
@@ -143,7 +144,7 @@ The `TEST_ENV` environment variable controls this:
 
 ## Test Data & Fixtures
 
-For tests that need specific data (courses, users, ratings), add fixtures in `tests/fixtures/`:
+For tests that need specific data (courses, users, ratings), add fixtures in a new `tests/fixtures/` folder:
 
 ```typescript
 // tests/fixtures/test-data.ts

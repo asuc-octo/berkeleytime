@@ -10,11 +10,11 @@ This package is automatically available to all apps in the monorepo. No separate
 
 ```
 packages/shared/
-├── index.ts              # Package entrypoint
-├── metrics.ts            # Rating metric definitions
-├── ratingsConfig.ts      # Rating system configuration
-├── queries.ts            # Shared GraphQL queries
-└── staff.ts              # Staff-related utilities
+├── index.ts                   # Package entrypoint
+├── metrics.ts                 # Rating metric definitions
+├── ratingsConfig.ts           # Rating system configuration
+├── persistedOperationFetch.ts # fetch() wrapper that sends persisted-operation IDs instead of GraphQL text
+└── staff.ts                   # Staff-related utilities
 ```
 
 ## Usage
@@ -67,6 +67,6 @@ export const METRIC_MAPPINGS = {
 };
 ```
 
-## Shared Queries
+## Persisted-operation transport
 
-The `queries.ts` file contains GraphQL queries that are used by both the frontend codegen and potentially other applications, ensuring query consistency across the codebase.
+`persistedOperationFetch` is the client half of the public GraphQL boundary. Every frontend's Apollo `HttpLink` uses it as its `fetch`: it hashes the GraphQL document and sends `{ id, variables }` to `/api/graphql`. The backend only executes documents whose hash is in its generated allowlist. See [the security guide](https://github.com/asuc-octo/berkeleytime/blob/main/docs/security/public-graphql-boundary.md).

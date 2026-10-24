@@ -6,17 +6,17 @@ After cloning the repo, run bootstrap script from the repo root:
 
 ```sh
 # ./berkeleytime
-bash apps/docs/src/getting-started/bootstrap-local.sh      
+bash scripts/bootstrap-local.sh
 ```
 
 Optional flags:
 
 ```sh
 # Skip database seeding 
-bash apps/docs/src/getting-started/bootstrap-local.sh --no-seed-db
+bash scripts/bootstrap-local.sh --no-seed-db
 
 # Don't start Docker services
-bash apps/docs/src/getting-started/bootstrap-local.sh --no-docker
+bash scripts/bootstrap-local.sh --no-docker
 ```
 
 If the script completes successfully, your local development environment is fully set up. You don't need to run any of the manual steps below until GraphQL typedefs change or a new dependency is added.
@@ -37,9 +37,10 @@ Local development has a few local dependencies:
     - [(Preferred for MacOS users): With brew](https://formulae.brew.sh/formula/pre-commit)
     - [With pip](https://pre-commit.com/#install)
 
-First, set up Node locally:
+First, set up Node locally (the version comes from `.nvmrc` at the repo root):
 ```sh
-nvm install --lts
+nvm install
+nvm use
 ```
 
 After installing these dependencies, make sure you are on the `main` branch:
@@ -55,9 +56,9 @@ pre-commit install
 cp .env.template .env
 node scripts/initialize-local-env.mjs
 
-# Setup local code editor intellisense.
+# Install dependencies and generate code (GraphQL types, SIS API client).
 npm install
-npx turbo run generate
+npm run generate
 ```
 
 Open the docker desktop application, then run:
@@ -74,17 +75,24 @@ MongoDB creates its initial authenticated user only when its local data volume i
 
 ```sh
 docker compose down --volumes
-bash apps/docs/src/getting-started/bootstrap-local.sh
+bash scripts/bootstrap-local.sh
 ```
 
 This removes local Docker volumes only; it does not affect production or staging data.
 
 ## Common Commands
 
-Upon changing any [GraphQL](https://www.graphql-js.org/docs/) typedefs in the backend, the generated types must be regenerated:
+Upon changing any [GraphQL](https://www.graphql-js.org/docs/) typedefs, the generated types must be regenerated. After adding or editing a `gql` operation in a frontend, also regenerate the persisted-operation allowlist and commit it:
 ```sh
 # ./berkeleytime
-npx turbo run generate
+npm run generate
+npm run generate:operations
+```
+
+Before pushing, run the same gate CI runs:
+```sh
+npm run check   # format, type-check, lint, unit tests, allowlist and migration checks
+npm run format  # fix formatting
 ```
 
 Errors can occur when installing new `npm` packages. If they aren't automatically reflected in an already running docker compose:
@@ -136,7 +144,8 @@ The following ports are used by default (`DEV_PORT_PREFIX=30`):
 - **3006**: MinIO API (requires `--profile dev`)
 - **3007**: MinIO Console (requires `--profile dev`)
 - **3008**: MongoDB
-- **3009**: API Sandbox (requires SIS API keys)
+- **3009**: API Sandbox (requires SIS API keys, `docker compose -f docker-compose.api-sandbox.yml up`)
+- **3010**: Semantic search (requires `--profile semantic-search`)
 
 To use a different port prefix, set the `DEV_PORT_PREFIX` environment variable before running `docker compose up`:
 ```sh
@@ -155,8 +164,11 @@ A seeded database is required for some pages on the frontend. The bootstrap scri
 # Ensure the MongoDB instance is already running.
 docker compose up -d
 
-# Download the public data
+# Download the public data (backups are cut at 05:00 Pacific; the date is yesterday or today)
+# macOS:
 curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d).gz"
+# Linux / WSL:
+curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -d '-6 hours' +%Y%m%d).gz"
 
 # Copy the data, restore, and seed fake user
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz

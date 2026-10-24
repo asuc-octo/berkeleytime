@@ -19,19 +19,21 @@ docker run --volume ./.env:/datapuller/apps/datapuller/.env \
     --network berkeleytime_bt "datapuller-dev" "--puller=courses"
 ```
 
-The valid pullers are:
-- `courses`
-- `sections-active`
-- `sections-last-five-years`
-- `classes-active`
-- `classes-last-five-years`
-- `grades-recent`
-- `grades-last-five-years`
-- `enrollments`
-- `enrollment-calendar`
-- `terms-all`
-- `terms-nearby`
-- `decals`
+The valid pullers (the keys of `pullerMap` in `apps/datapuller/src/main.ts`) are:
+
+| Puller | What it loads | Production schedule (`infra/app/values.yaml`) |
+| --- | --- | --- |
+| `terms-all` | every term from the SIS Terms API | monthly |
+| `terms-nearby` | terms around today | twice daily |
+| `courses` | course catalog | twice daily |
+| `sections-active` / `sections-last-five-years` | sections for active terms / last five years | twice daily / monthly |
+| `classes-active` / `classes-last-five-years` | classes for active terms / last five years | twice daily / monthly |
+| `grades-recent` / `grades-last-five-years` | grade distributions from AWS Athena | daily / monthly |
+| `enrollments` | enrollment snapshots for the current term | every 15 minutes |
+| `enrollment-timeframe` | enrollment phase dates from the Registrar calendar | daily |
+| `decals` | DeCal board listings matched onto classes | daily |
+| `catalog-sync-grades` | refreshes grade summaries on the denormalized `catalog_classes` collection | manual |
+| `migrate-aggregated-metrics-classid` | one-off data migration helper | manual |
 
 > [!TIP]
 >  If you do not need any other services (backend, frontend), then you can run a Mongo instance independently from the `docker-compose.yml` configuration. However, the below commands do not allow data persistence.

@@ -1,3 +1,5 @@
+> **Generated copy.** Edit scripts in `/migrations` at the repository root, then run `cp migrations/*.js infra/mongo/migrations/` (or `migrations/run-migration.sh`, which does this). `npm run check:migrations` fails CI when the copies differ.
+
 # Berkeleytime migrations
 
 MongoDB shell (mongosh) scripts to migrate data.

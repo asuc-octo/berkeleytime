@@ -4,6 +4,8 @@
 
 ## Manually Run `datapuller` (and Other CronJobs)
 
+The easiest way is the **Datapuller: Manual Trigger** workflow in GitHub Actions (`.github/workflows/datapuller-trigger.yaml`): pick the puller, and it creates the job and streams its logs. From a shell on `hozer-51`:
+
 1. First, list all cronjob instances:
 
    ```sh
@@ -52,7 +54,10 @@ Public backups are meant for local development and include only a redacted subse
 - `enrollmenttimeframes`
 
 ```sh
+# macOS (BSD date)
 curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d).gz"
+# Linux / WSL (GNU date)
+curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -d '-6 hours' +%Y%m%d).gz"
 ```
 
 ### Private backup (Cloudflare Access)
@@ -65,6 +70,7 @@ cloudflared access login https://backups.berkeleytime.com
 
 You can then fetch the backup
 ```sh
+# macOS; on Linux replace `date -v -6H` with `date -d '-6 hours'`
 cloudflared access curl \
   "https://backups.berkeleytime.com/private/hourly/prod_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d%H).gz" \
   -o "prod-backup.gz"
@@ -77,6 +83,16 @@ docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
 docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/prod-backup.gz
 docker exec berkeleytime-mongodb-1 mongosh bt --eval 'const r = db.users.findOneAndUpdate({ email: "dev@berkeleytime.local" }, { $setOnInsert: { googleId: "dev-fake-public-backup", email: "dev@berkeleytime.local", name: "Dev User", staff: false, lastSeenAt: new Date() } }, { upsert: true, returnDocument: "after" }); print("Dev user id: " + r._id); print("Login URL: http://localhost:3000/api/dev/login?userId=" + r._id + "&redirect_uri=/");'
 ```
+
+## Run a Mongo migration
+
+Migration scripts live in `migrations/` (source of truth). On `hozer-51`, from the repo root:
+
+```sh
+./migrations/run-migration.sh <migration-file.js> [prod|stage]
+```
+
+The script copies the scripts into the Helm chart's ConfigMap, upgrades the `bt-<env>-mongo` release and runs `load()` inside the MongoDB pod. See [Data > Migrations](../data/migrations.md).
 
 ## Secrets
 
@@ -102,7 +118,7 @@ Useful when adding new environment variables to `.env`. To ensure our env variab
 
    If the name of the secret might change across installations, add `--scope=namespace-wide` to the `kubeseal` command. For example, `bt-dev-secret` and `bt-prod-secret` are different names. Deployment without `--scope=namespace-wide` will cause a `no key could decrypt secret` error. More details on [the kubeseal documentation](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#scopes).
 
-4. The newly created sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub. You will need to paste the generated values into `infra/apps/templates/backend.yaml` or similar. Just edit the relevant variables, and keep the rest of the settings the same (ie. minimize the git diff).
+4. The newly created sealed secret encrypts the key-value pairs, allowing it to be safely pushed to GitHub. You will need to paste the generated values into `infra/app/templates/backend.yaml` or similar. Just edit the relevant variables, and keep the rest of the settings the same (ie. minimize the git diff).
 
 Steps 2 and 3 are derived from [the sealed-secrets docs](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#usage).
 

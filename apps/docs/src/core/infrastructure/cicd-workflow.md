@@ -10,9 +10,24 @@ Berkeleytime has three deployment environments: production, staging, and develop
 - **Staging**: Changes already merged in `main` are *automatically* deployed here at [staging.berkeleytime.com](https://staging.berkeleytime.com)
 - **Development**: Specific git branches can be *manually* deployed here.
 
-## The CI/CD Github Actions
+## Checks on every pull request (CI)
 
-We use GitHub actions to build our CI/CD workflows.[^1] All three CI/CD workflows[^2] are fairly similar to each other and can all be broken into two phases: the build and the deploy phase.
+Before anything is deployed, four workflows run on each non-draft pull request:
+
+| Workflow | File | What it does | Blocking |
+| --- | --- | --- | --- |
+| CI: Check Lint | `ci-lint.yaml` | the quality gate: persisted-operation allowlist, migration sync, Prettier, TypeScript (all workspaces), ESLint, unit tests (backend, frontend, BtLL). Same as `npm run check` locally. Posts one comment per PR with failing output. | yes |
+| CI: Check Build | `ci-build.yaml` | builds every production Docker image (no push) when app, package or root manifest files change | yes |
+| CI: GraphQL Boundary Tests | `ci-playwright.yaml` | starts the stack with `docker compose` and runs the Playwright `sanity` and `api` projects | yes |
+| CI: Compose Security | `ci-compose-security.yaml` | checks local services stay bound to localhost with authentication | yes |
+
+"Blocking" means the check should be required in the `main` branch protection rule; without that setting a red check is only advisory.
+
+Other automation: Dependabot opens grouped weekly PRs for npm, pip, Docker base images, docker-compose images and GitHub Actions (`.github/dependabot.yml`); commenting `/helm-diff` on a PR renders the Helm changes it would make (`helm-diff.yaml`).
+
+## The CD GitHub Actions
+
+We use GitHub actions to build our CI/CD workflows.[^1] All three CD workflows[^2] are fairly similar to each other and can all be broken into two phases: the build and the deploy phase.
 
 1. **Build Phase**: An application container and Helm chart are *built* and *pushed* to a registry. We use [Docker Hub](https://hub.docker.com/). This process is what `.github/workflows/cd-build.yaml` is responsible for and is run in the Github Action environment.
 

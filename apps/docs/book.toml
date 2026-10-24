@@ -7,8 +7,8 @@ multilingual = false
 src = "src"
 
 [output.html]
-git-repository-url = "https://github.com/asuc-octo/berkeleytime/tree/main/docs"
-edit-url-template = "https://github.com/asuc-octo/berkeleytime/tree/main/docs/{path}"
+git-repository-url = "https://github.com/asuc-octo/berkeleytime/tree/main/apps/docs"
+edit-url-template = "https://github.com/asuc-octo/berkeleytime/edit/main/apps/docs/{path}"
 
 [preprocessor.alerts]
 
