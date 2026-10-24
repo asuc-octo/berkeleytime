@@ -27,7 +27,7 @@ interface CourseListingTerms extends CourseListing {
  * over-matches. A listing under another subject counts as a former name only
  * if (1) no current catalog course with this courseId uses that subject, so
  * a sibling's history stays with the sibling, and (2) it never ran in the
- * same term as this subject, so it was a predecessor, not a cross-listing.
+ * same term as this subject, so it isn't a cross-listing running alongside it.
  */
 const selectCourseListings = (
   listings: CourseListingTerms[],
