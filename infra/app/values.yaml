@@ -53,6 +53,10 @@ semanticSearch:
   defaultYear: 2026
   defaultSemester: "Spring"
 
+  # Unset by default (prod runs without requests or limits). Dev sets small
+  # numbers in cd-dev.yaml so each copy is bounded on the shared node.
+  resources: {}
+
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-semantic-search

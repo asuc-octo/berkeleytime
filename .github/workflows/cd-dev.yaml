@@ -98,6 +98,12 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         semanticSearch:
+          resources:
+            requests:
+              cpu: '50m'
+              memory: '1Gi'
+            limits:
+              memory: '2Gi'
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
@@ -124,22 +130,25 @@ jobs:
           script: |
             set -e  # Exit immediately if a command fails
 
-            # Get bt-dev-app- deployments sorted by creation timestamp
+            # Dev, stage and prod share a single node, so keep only a few dev
+            # deployments alive at once.
+            max_deployments=3
+
+            # Get bt-dev-app- deployments sorted by release date, oldest first
             deployments=$(helm list \
               --namespace=bt \
               --date \
-              --short | grep '^bt-dev-app') || true
-            deployment_count=$(echo "$deployments" | wc -l)
+              --short | grep '^bt-dev-app-') || true
+            deployment_count=$(printf '%s\n' "$deployments" | grep -c .) || true
 
-            # Check if deployment count > 8
-            if [ "$deployment_count" -gt 8 ]; then
-              echo "Too many deployments. Deleting the oldest deployment."
+            # Uninstall every deployment over the cap, oldest first
+            if [ "$deployment_count" -gt "$max_deployments" ]; then
+              excess=$((deployment_count - max_deployments))
+              echo "Found $deployment_count deployments. Deleting the $excess oldest."
 
-              # Get oldest deployment from first line of deployments
-              oldest_deployment=$(echo "$deployments" | head -n 1)
-
-              # Uninstall deployment
-              helm uninstall "${oldest_deployment}"
+              for deployment in $(printf '%s\n' "$deployments" | head -n "$excess"); do
+                helm uninstall "$deployment" --namespace=bt
+              done
             else
-              echo "Deployment count is <= 8."
+              echo "Deployment count is <= $max_deployments."
             fi

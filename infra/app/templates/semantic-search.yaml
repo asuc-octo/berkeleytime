@@ -24,6 +24,10 @@ spec:
           {{- end }}
           ports:
             - containerPort: {{ .Values.semanticSearch.port }}
+          {{- with .Values.semanticSearch.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "bt-app.semanticSearchName" . }}-env
