@@ -111,7 +111,7 @@ grafana:
   # Optional ingress for external access
   ingress:
     enabled: True
-    # className: nginx
+    className: nginx
     host: grafana.berkeleytime.com
     annotations: {}
     # tls:
