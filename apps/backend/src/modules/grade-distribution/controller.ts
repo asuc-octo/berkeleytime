@@ -164,16 +164,12 @@ export const getGradeDistributionsByCourseIds = async (courseIds: string[]) => {
 
 // --- Convenience functions that resolve sections, then delegate ---
 
-/**
- * Matches primary sections offered under any of the course's names, so a
- * renamed course (e.g. "EECS 16B" -> "ELENG 64") keeps its grade history
- * without pulling in cross-listed courses that share its courseId.
- */
 const buildCourseSectionQuery = async (subject: string, courseId: string) => {
   const listings = await getCourseListings(courseId, subject);
 
   return {
     courseId,
+    // A course with no classes has no listings, and $or can't be empty.
     $or:
       listings.length > 0
         ? listings
