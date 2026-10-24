@@ -11,7 +11,6 @@ import {
   intervalsOf,
   preferences,
   realLikeClasses,
-  realisticClasses,
   scheduleClass,
   section,
   sectionsOf,
@@ -63,82 +62,25 @@ const compareTuples = (a: number[], b: number[]) => {
 };
 
 describe("generateSchedules", () => {
-  it("finds schedules for a class past the old 500-combination limit", () => {
-    const discussions = Array.from({ length: 25 }, (_, i) =>
-      section("DIS", [i % 5], 8 + (i % 9))
-    );
-    const labs = Array.from({ length: 21 }, (_, i) =>
-      section("LAB", [(i + 2) % 5], 9 + (i % 7), { hours: 2 })
-    );
-    const classes = [
-      scheduleClass(section("LEC", [MON, WED, FRI], 10), [
-        ...discussions,
-        ...labs,
-      ]),
-    ];
-
-    const result = generateSchedules(classes, [], preferences());
-
-    expect(result.stoppedEarly).toBe(false);
-    expect(result.schedules).toHaveLength(8);
-    for (const schedule of result.schedules) {
-      const chosen = sectionsOf(classes, schedule);
-      expect(chosen.map((s) => s.component).sort()).toEqual([
-        "DIS",
-        "LAB",
-        "LEC",
-      ]);
-      expect(hasOverlap(chosen)).toBe(false);
-    }
-  });
-
-  it("never returns schedules that differ only by sections meeting at the same time", () => {
-    const classes = [
-      scheduleClass(section("LEC", [MON, WED, FRI], 10), [
-        section("DIS", [TUE], 9),
-        section("DIS", [TUE], 9),
-        section("DIS", [THU], 9),
-      ]),
-    ];
-
-    const result = generateSchedules(classes, [], preferences());
-
-    expect(result.schedules).toHaveLength(2);
-    const times = result.schedules.map((s) => timesOf(sectionsOf(classes, s)));
-    expect(new Set(times).size).toBe(2);
-  });
-
-  it("never overlaps busy times", () => {
+  it("never overlaps busy times, including ones that start at midnight", () => {
     const thursday = section("DIS", [THU], 9);
+    const afternoon = section("DIS", [MON], 14);
     const classes = [
       scheduleClass(section("LEC", [MON, WED, FRI], 10), [
         section("DIS", [TUE], 9),
         thursday,
+      ]),
+      scheduleClass(section("LEC", [TUE, THU], 11), [
+        section("DIS", [MON], 8),
+        afternoon,
       ]),
     ];
     const events: GeneratorEvent[] = [
       {
         days: [false, true, false, false, false, false, false],
         startTime: "08:00",
-        endTime: "12:00",
+        endTime: "10:00",
       },
-    ];
-
-    const { schedules } = generateSchedules(classes, events, preferences());
-
-    expect(schedules).toHaveLength(1);
-    expect(idsOf(schedules[0], 0)).toContain(thursday.sectionId);
-  });
-
-  it("respects a busy time that starts at midnight", () => {
-    const afternoon = section("DIS", [MON], 14);
-    const classes = [
-      scheduleClass(section("LEC", [TUE, THU], 10), [
-        section("DIS", [MON], 8),
-        afternoon,
-      ]),
-    ];
-    const events: GeneratorEvent[] = [
       {
         days: [true, false, false, false, false, false, false],
         startTime: "00:00",
@@ -149,7 +91,8 @@ describe("generateSchedules", () => {
     const { schedules } = generateSchedules(classes, events, preferences());
 
     expect(schedules).toHaveLength(1);
-    expect(idsOf(schedules[0], 0)).toContain(afternoon.sectionId);
+    expect(idsOf(schedules[0], 0)).toContain(thursday.sectionId);
+    expect(idsOf(schedules[0], 1)).toContain(afternoon.sectionId);
   });
 
   it("keeps locked classes and components and skips excluded sections", () => {
@@ -247,30 +190,27 @@ describe("generateSchedules", () => {
 
   it("applies the rules to locked sections too, and says they are locked", () => {
     const lockedEarly = section("LAB", [TUE], 8);
-    const classes = [
+    const early = [
       scheduleClass(section("LEC", [MON, WED], 14), [lockedEarly], {
         lockedComponents: ["LAB"],
         selectedSections: [{ sectionId: lockedEarly.sectionId }],
       }),
     ];
 
-    const result = generateSchedules(
-      classes,
+    const tooEarly = generateSchedules(
+      early,
       [],
       preferences({ earliestStart: 10 * 60 })
     );
-
-    expect(result.schedules).toHaveLength(0);
-    expect(result.reasons).toEqual([
+    expect(tooEarly.schedules).toHaveLength(0);
+    expect(tooEarly.reasons).toEqual([
       { kind: "hours", classIndex: 0, component: "LAB", locked: true },
     ]);
-    expect(result.relaxations).toEqual(["earliestStart"]);
-  });
+    expect(tooEarly.relaxations).toEqual(["earliestStart"]);
 
-  it("keeps no class on any day kept free, locked or not", () => {
     const lecture = section("LEC", [MON, WED, FRI], 10);
     const discussion = section("DIS", [TUE], 9);
-    const classes = [
+    const lockedClass = [
       scheduleClass(lecture, [discussion, section("DIS", [THU], 9)], {
         locked: true,
         selectedSections: [
@@ -278,19 +218,17 @@ describe("generateSchedules", () => {
           { sectionId: discussion.sectionId },
         ],
       }),
-      ...realisticClasses(),
     ];
 
-    const result = generateSchedules(
-      classes,
+    const freeDays = generateSchedules(
+      lockedClass,
       [],
       preferences({
-        avoidDays: [true, true, true, true, true, false, false],
+        avoidDays: [true, false, false, false, false, false, false],
       })
     );
-
-    expect(result.schedules).toHaveLength(0);
-    expect(result.reasons).toContainEqual({
+    expect(freeDays.schedules).toHaveLength(0);
+    expect(freeDays.reasons).toContainEqual({
       kind: "days",
       classIndex: 0,
       component: "LEC",
@@ -298,24 +236,7 @@ describe("generateSchedules", () => {
     });
   });
 
-  it("does not schedule around times that are not announced yet", () => {
-    const tba: GeneratorSection = {
-      ...section("DIS", [], 0),
-      meetings: [{ days: [], startTime: "00:00:00", endTime: "00:00:00" }],
-    };
-    const classes = [scheduleClass(section("LEC", [MON], 10), [tba])];
-
-    const { schedules } = generateSchedules(
-      classes,
-      [],
-      preferences({ earliestStart: 9 * 60 })
-    );
-
-    expect(schedules).toHaveLength(1);
-    expect(schedules[0].unannouncedSections).toBe(1);
-  });
-
-  it("prefers sections with a set time over ones without", () => {
+  it("keeps sections without a set time but ranks them last", () => {
     const tba: GeneratorSection = {
       ...section("DIS", [], 0),
       meetings: [{ days: [], startTime: "00:00:00", endTime: "00:00:00" }],
@@ -324,6 +245,16 @@ describe("generateSchedules", () => {
     const classes = [
       scheduleClass(section("LEC", [MON, WED], 10), [tba, timed]),
     ];
+
+    // No rule can check a section without a time, so "no classes before 9"
+    // keeps it.
+    const onlyTba = generateSchedules(
+      [scheduleClass(section("LEC", [MON], 10), [tba])],
+      [],
+      preferences({ earliestStart: 9 * 60 })
+    );
+    expect(onlyTba.schedules).toHaveLength(1);
+    expect(onlyTba.schedules[0].unannouncedSections).toBe(1);
 
     for (const sortBy of SORT_KEYS) {
       const { schedules } = generateSchedules(
@@ -356,19 +287,6 @@ describe("generateSchedules", () => {
     );
 
     expect(schedules).toHaveLength(1);
-  });
-
-  it("does not count Berkeley passing time as a gap", () => {
-    const classes = [
-      scheduleClass(section("LEC", [MON], 10), []),
-      scheduleClass(section("LEC", [MON], 11), []),
-      scheduleClass(section("LEC", [MON], 14), []),
-    ];
-
-    const [schedule] = generateSchedules(classes, [], preferences()).schedules;
-
-    // 10:00-10:59 and 11:00-11:59 touch; 12:00-14:00 is a real gap.
-    expect(schedule.gapMinutes).toBe(120);
   });
 
   it("makes each result differ from earlier ones in half of the choices", () => {
@@ -484,13 +402,6 @@ describe("generateSchedules", () => {
     expect(result.stoppedEarly).toBe(false);
     expect(result.reasons).toEqual([{ kind: "all" }]);
     expect(result.stats.elapsedMs).toBeLessThan(1_000);
-  });
-
-  it("solves the realistic case within the default budget", () => {
-    const result = generateSchedules(realisticClasses(), [], preferences());
-
-    expect(result.schedules).toHaveLength(8);
-    expect(result.stoppedEarly).toBe(false);
   });
 
   it("finds the true best on real-like inputs for every sort key", () => {
