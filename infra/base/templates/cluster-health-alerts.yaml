@@ -1,6 +1,6 @@
 {{- if .Values.alerts.enabled }}
 # Checks the node and prod every few minutes and posts problems to a Slack or
-# Discord webhook: disk and memory, node conditions, prod pod restarts and
+# Discord webhook: disk, memory and CPU features, node conditions, prod pod restarts and
 # evictions, stale backups and the TLS certificate. Each alert is posted once,
 # repeated every repeatHours while it lasts, and followed by a resolved
 # message. State is kept in a ConfigMap.
@@ -41,6 +41,9 @@ spec:
                   if [ "${disk:-0}" -ge "$DISK_PERCENT" ]; then
                     add disk "Node disk is ${disk}% full (alert at ${DISK_PERCENT}%)"
                   fi
+
+                  # CPU: MongoDB needs AVX; without it mongod dies with SIGILL (Oct 22)
+                  grep -qw avx /proc/cpuinfo || add cpu-avx "Node CPU has no AVX, so MongoDB can't start ($(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2))"
 
                   # Memory, as a share of allocatable, from metrics-server
                   memory=$(kubectl top node --no-headers 2>/dev/null | awk '{ sub("%", "", $5); print $1, $5 }')
