@@ -350,6 +350,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["redirectId","input"],
     sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
   },
+  "55a68b4d090051a355c169b95e0088cb35ba5483d705d7a7a966d30cafcd30f5": {
+    operationName: "WrittenReviewAnalytics",
+    document: "query WrittenReviewAnalytics{writtenReviewAnalytics{totalWrittenReviews reviewDates classes{subject courseNumber semester year classNumber count __typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "5758c759e679eb9005c3aaeaf54504f2b6fb7995cee2a411116fef7b171ad746": {
     operationName: "GetTerms",
     document: "query GetTerms{terms{year semester temporalPosition sessions{id name startDate endDate temporalPosition __typename}startDate endDate __typename}}",

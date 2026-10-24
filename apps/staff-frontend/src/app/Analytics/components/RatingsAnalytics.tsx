@@ -29,6 +29,7 @@ import {
   useOptionalResponseAnalyticsData,
   useRatingAnalyticsData,
   useRatingMetricsAnalyticsData,
+  useWrittenReviewAnalyticsData,
 } from "@/hooks/api";
 
 import { AnalyticsCard, Granularity, TimeRange } from "./AnalyticsCard";
@@ -2247,6 +2248,327 @@ export function RecentRatingsBlock() {
             ))}
           </tbody>
         </table>
+      </div>
+    </AnalyticsCard>
+  );
+}
+
+// Written Reviews Count Block - cumulative written reviews over time
+export function WrittenReviewsCountBlock() {
+  const { data, loading, error } = useWrittenReviewAnalyticsData();
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+  const [granularity, setGranularity] = useState<Granularity>("day");
+
+  const { chartData, current, absoluteChange, percentChange } = useMemo(() => {
+    if (!data || data.reviewDates.length === 0) {
+      return {
+        chartData: [] as DailyDataPoint[],
+        current: 0,
+        absoluteChange: 0,
+        percentChange: 0,
+      };
+    }
+
+    const days = getTimeRangeDays(timeRange);
+    const now = new Date();
+    const rangeStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    // Baseline count before the window
+    let baselineCount = 0;
+    data.reviewDates.forEach((createdAt) => {
+      if (new Date(createdAt) < rangeStart) {
+        baselineCount++;
+      }
+    });
+
+    // Initialize buckets
+    const bucketMap = new Map<string, number>();
+    for (let d = new Date(rangeStart); d <= now; ) {
+      const key = getGranularityKey(d, granularity);
+      bucketMap.set(key, 0);
+      if (granularity === "hour") {
+        d.setHours(d.getHours() + 1);
+      } else {
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    // Fill buckets
+    data.reviewDates.forEach((createdAt) => {
+      const date = new Date(createdAt);
+      if (date >= rangeStart && date <= now) {
+        const key = getGranularityKey(date, granularity);
+        bucketMap.set(key, (bucketMap.get(key) || 0) + 1);
+      }
+    });
+
+    // Build cumulative data
+    const sortedKeys = Array.from(bucketMap.keys()).sort();
+    let cumulative = baselineCount;
+    const chartData: DailyDataPoint[] = sortedKeys.map((key) => {
+      cumulative += bucketMap.get(key) || 0;
+      return {
+        date: formatDisplayDate(key, granularity),
+        dateKey: key,
+        value: cumulative,
+      };
+    });
+
+    const current =
+      chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const start = chartData.length > 0 ? chartData[0].value : 0;
+    const absoluteChange = current - start;
+    const percentChange =
+      start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
+
+    return { chartData, current, absoluteChange, percentChange };
+  }, [data, timeRange, granularity]);
+
+  const chartConfig = createChartConfig(["value"], {
+    labels: { value: "Written Reviews" },
+    colors: { value: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Total Written Reviews"
+        description="Cumulative reviews with a title or content"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <AnalyticsCard
+        title="Total Written Reviews"
+        description="Cumulative reviews with a title or content"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Total Written Reviews"
+      description={`Cumulative reviews with a title and content (${timeRange})`}
+      currentValue={current}
+      currentValueLabel="reviews"
+      absoluteChange={absoluteChange}
+      percentChange={percentChange}
+      changeTimescale={timeRange}
+      isCumulative
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(val) => {
+        setTimeRange(val);
+        setGranularity(val === "7d" ? "hour" : "day");
+      }}
+      granularity={granularity}
+      onGranularityChange={setGranularity}
+    >
+      <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData}>
+            <defs>
+              <linearGradient
+                id="writtenReviewsGradient"
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="5%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0.3}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--heading-color)"
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            </defs>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border-color)"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 10 }}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fill: "var(--label-color)", fontSize: 12 }}
+              width={40}
+              domain={["auto", "auto"]}
+              allowDecimals={false}
+            />
+            <ChartTooltip />
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="var(--heading-color)"
+              strokeWidth={2}
+              fill="url(#writtenReviewsGradient)"
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </AnalyticsCard>
+  );
+}
+
+// Classes With Reviews Block - horizontal bars, most written reviews first
+const CLASS_BAR_ROW_HEIGHT = 28;
+
+export function ClassesWithReviewsBlock() {
+  const { data, loading, error } = useWrittenReviewAnalyticsData();
+
+  // Backend already sorts by count descending; first row renders at the top
+  const chartData = useMemo(
+    () =>
+      (data?.classes ?? []).map((c) => ({
+        name: `${c.subject} ${c.courseNumber}`,
+        fullName: `${c.subject} ${c.courseNumber} · ${c.semester} ${c.year} · ${c.classNumber}`,
+        count: c.count,
+      })),
+    [data]
+  );
+
+  const chartConfig = createChartConfig(["count"], {
+    labels: { count: "Written Reviews" },
+    colors: { count: "var(--heading-color)" },
+  });
+
+  if (loading) {
+    return (
+      <AnalyticsCard
+        title="Classes with Reviews"
+        description="Written reviews per class"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+          }}
+        >
+          <LoadingIndicator />
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <AnalyticsCard
+        title="Classes with Reviews"
+        description="Written reviews per class"
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flex: 1,
+            color: "var(--red-500)",
+          }}
+        >
+          Error loading data
+        </div>
+      </AnalyticsCard>
+    );
+  }
+
+  return (
+    <AnalyticsCard
+      title="Classes with Reviews"
+      description="Written reviews per class, most to least"
+      currentValue={chartData.length}
+      currentValueLabel="classes"
+    >
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+        <ChartContainer
+          config={chartConfig}
+          style={{
+            width: "100%",
+            height: Math.max(chartData.length * CLASS_BAR_ROW_HEIGHT, 120),
+          }}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 0, right: 16, bottom: 0, left: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border-color)"
+                horizontal={false}
+              />
+              <XAxis
+                type="number"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "var(--label-color)", fontSize: 10 }}
+                allowDecimals={false}
+                orientation="top"
+              />
+              <YAxis
+                type="category"
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "var(--label-color)", fontSize: 10 }}
+                width={100}
+                interval={0}
+              />
+              <ChartTooltip
+                cursor={false}
+                tooltipConfig={{
+                  labelFormatter: (_label, payload) =>
+                    payload?.[0]?.payload?.fullName ?? _label,
+                }}
+              />
+              <Bar
+                dataKey="count"
+                fill="var(--heading-color)"
+                radius={[0, 2, 2, 0]}
+                barSize={16}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartContainer>
       </div>
     </AnalyticsCard>
   );
