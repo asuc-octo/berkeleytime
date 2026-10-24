@@ -1,5 +1,6 @@
 import { CourseModel, ICourseItem } from "@repo/common/models";
 
+import { updateCourseFormerNames } from "../lib/course-former-names";
 import { getCourses } from "../lib/courses";
 import { Config } from "../shared/config";
 
@@ -72,6 +73,8 @@ const updateCourses = async (config: Config) => {
   log.info(
     `Completed updating database with ${courses.length.toLocaleString()} courses.`
   );
+
+  await updateCourseFormerNames(log);
 };
 
 export default { updateCourses };
