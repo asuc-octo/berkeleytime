@@ -14,6 +14,7 @@ COPY --from=backend-builder /backend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
 
 COPY --from=backend-builder /backend/out/full/ .
+RUN ["turbo", "run", "build", "--filter=backend^..."]
 ENTRYPOINT ["turbo", "run", "dev", "--filter=backend"]
 
 FROM backend-dev AS backend-prod
