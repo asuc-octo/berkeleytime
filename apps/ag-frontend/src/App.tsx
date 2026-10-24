@@ -2,7 +2,9 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { HttpLink } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client/react";
 import { Theme } from "@radix-ui/themes";
+
 import "@radix-ui/themes/styles.css";
+
 import { IconoirProvider } from "iconoir-react";
 import {
   RouterProvider,
