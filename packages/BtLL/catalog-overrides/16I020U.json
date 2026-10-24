@@ -1,0 +1,106 @@
+{
+  "programGroupId": "16I020U",
+  "sources": [
+    "https://ce.berkeley.edu/undergrad/cee-minors",
+    "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit (department instructions for the minor, read via /export?format=txt)",
+    "https://undergraduate.catalog.berkeley.edu/programs/16I020U"
+  ],
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "s9Z8KBnc",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Mathematics Prerequisites",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "allOf",
+            "name": "Math 51 and 52",
+            "groups": [["MATH 51"], ["MATH 52"]]
+          },
+          {
+            "kind": "allOf",
+            "name": "Math 16A and 16B",
+            "groups": [["MATH 16A"], ["MATH 16B"]]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit?usp=sharing",
+        "quote": "These courses are: Math 51 and 52 (formerly 1A and 1B) (or Math 16A and 16B), Physics 7A (or Physics 8A), and CE C30/ME C85.",
+        "reasoning": "The catalog rule ('at least 2 of [one of 51/1A/52/1B] and [one of 16A/16B]') requires one course from each sequence, so a student with Math 51 and 52 alone would fail. The department requires either the 51+52 sequence or the 16A+16B sequence. Old numbers 1A/1B are added automatically as equivalents. This Instructions document is the one linked from the department's minors page (https://ce.berkeley.edu/undergrad/cee-minors) under 'Structural Engineering'."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "zo2EBePf",
+      "rule": {
+        "kind": "allOf",
+        "name": "Physics and Engineering Prerequisites",
+        "groups": [
+          ["PHYSICS 7A", "PHYSICS 8A"],
+          ["CIVENG C30", "CIVENG W30", "MECENG C85", "MECENG W85"]
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit?usp=sharing",
+        "quote": "These courses are: Math 51 and 52 (formerly 1A and 1B) (or Math 16A and 16B), Physics 7A (or Physics 8A), and CE C30/ME C85.",
+        "reasoning": "CE C30 and ME C85 are the same cross-listed course ('CE C30/ME C85'), but the catalog rule lists them as two separate required groups, so a student would need to take the course twice. Merged into one group; the catalog's online W30/W85 versions are kept as alternatives."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "XyKmjYbS",
+      "rule": {
+        "kind": "allOf",
+        "name": "Required Courses",
+        "groups": [
+          ["CIVENG 60"],
+          ["CIVENG 120"],
+          ["CIVENG 122", "CIVENG 123"]
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit?usp=sharing",
+        "quote": "CE 122 or CE 123 3 Design of Steel Structures or Design of Reinforced Concrete Structures CE 120",
+        "reasoning": "The department's required-course table lists CE 60, CE 120, and 'CE 122 or CE 123'; the catalog rule lacks the steel/concrete design requirement entirely. Renamed from 'Upper Division Core' because CE 60 is lower division."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "yYTS5Yuc",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Structural Electives",
+        "n": 2,
+        "groups": [
+          ["CIVENG 122"],
+          ["CIVENG 123"],
+          ["CIVENG 124"],
+          ["CIVENG 132"],
+          ["CIVENG C133", "MECENG C180"],
+          ["CIVENG 140"],
+          ["CIVENG 165"],
+          ["CIVENG 166"],
+          ["CIVENG 175"],
+          ["CIVENG 193"]
+        ]
+      },
+      "why": {
+        "url": "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit?usp=sharing",
+        "quote": "TWO additional courses from the following list:",
+        "reasoning": "The department's list is CE 122 or 123 (whichever wasn't used for the required course), CE 124, CE 132, CE C133/ME C180, CE 140, CE 165, CE 166, CE 175 and CE 193. The catalog list lacks 122, 123, 132 and C133/ME C180, and includes CE 121, which isn't on the department's list (it appeared on a 2013 department form, so the catalog is likely out of date). Because 'from the following list' is a closed list, CE 121 is dropped. The Required Courses rule comes first, so it takes one of 122/123 and the other can count here."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether CE 121 (Advanced Structural Analysis), which the catalog and the 2013 department petition list as an elective, is still accepted: the current Instructions document omits it, so it was dropped; a reviewer may want to confirm with the CEE Academic Affairs Office.",
+    "Whether courses taken before admission to the minor count toward the five courses: the document says 'Upon admission to the minor, completion of a minimum of five (5) courses', which GradTrak can't check because it has no admission date."
+  ],
+  "notEncoded": [
+    "Admission: 3.0 overall GPA and 3.0 GPA in the prerequisites; the minor needs letter grades and a 2.0 GPA",
+    "No more than one minor course may count toward the major",
+    "The five courses must be completed after admission, and the minor can't delay graduation"
+  ]
+}

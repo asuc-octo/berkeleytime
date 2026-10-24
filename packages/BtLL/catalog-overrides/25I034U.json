@@ -1,0 +1,67 @@
+{
+  "programGroupId": "25I034U",
+  "sources": [
+    "https://ealc.berkeley.edu/node/5533",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): CHINESE courses numbered 100-199 (91 courses); checked subject codes (JAPAN exists, JAPANESE doesn't)"
+  ],
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "oa7U9GHS",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Chinese Advanced Core Courses",
+        "n": 3,
+        "groups": [
+          ["CHINESE 7A", "CHINESE 7B"],
+          ["CHINESE 100"], ["CHINESE 100A"], ["CHINESE 100AB"], ["CHINESE 100AX"], ["CHINESE 100B"], ["CHINESE 100BX"], ["CHINESE 100S"],
+          ["CHINESE 100XA"], ["CHINESE 100XB"], ["CHINESE 100YA"], ["CHINESE 100YB"], ["CHINESE 101"], ["CHINESE 102"], ["CHINESE 102A"],
+          ["CHINESE 102B"], ["CHINESE 102C"], ["CHINESE 102D"], ["CHINESE 105"], ["CHINESE 107"], ["CHINESE 109"], ["CHINESE 110"],
+          ["CHINESE 110A"], ["CHINESE 110AB"], ["CHINESE 110B"], ["CHINESE 111"], ["CHINESE 112"], ["CHINESE C116"], ["CHINESE C118"],
+          ["CHINESE 120"], ["CHINESE 122"], ["CHINESE 130"], ["CHINESE 132"], ["CHINESE 134"], ["CHINESE 136"], ["CHINESE 138"],
+          ["CHINESE 140"], ["CHINESE 140A"], ["CHINESE 140B"], ["CHINESE C140"], ["CHINESE 142"], ["CHINESE 145"], ["CHINESE 148"],
+          ["CHINESE 150"], ["CHINESE 151"], ["CHINESE 152"], ["CHINESE 152A"], ["CHINESE 152B"], ["CHINESE 152C"], ["CHINESE 152D"],
+          ["CHINESE 153"], ["CHINESE 153A"], ["CHINESE 153B"], ["CHINESE 154"], ["CHINESE 155"], ["CHINESE 156"], ["CHINESE 157"],
+          ["CHINESE 158"], ["CHINESE 159"], ["CHINESE 161"], ["CHINESE 163"], ["CHINESE 165"], ["CHINESE 167"], ["CHINESE 169"],
+          ["CHINESE 170"], ["CHINESE 170A"], ["CHINESE 170B"], ["CHINESE 172"], ["CHINESE 176"], ["CHINESE 178"], ["CHINESE 179"],
+          ["CHINESE 180"], ["CHINESE 181"], ["CHINESE 181A"], ["CHINESE 181B"], ["CHINESE 182"], ["CHINESE 183"], ["CHINESE N183"],
+          ["CHINESE S183"], ["CHINESE S183X"], ["CHINESE 184"], ["CHINESE C184"], ["CHINESE 185"], ["CHINESE C185"], ["CHINESE 186"],
+          ["CHINESE 187"], ["CHINESE 188"], ["CHINESE 189"], ["CHINESE H195A"], ["CHINESE H195B"], ["CHINESE 198"], ["CHINESE 199"]
+        ]
+      },
+      "why": {
+        "url": "https://ealc.berkeley.edu/node/5533",
+        "quote": "Take three upper-division CHINESE courses.",
+        "reasoning": "The catalog left this as a free-text placeholder saying 'at least 2'. The department requires three core courses, and the same section says: 'You may use CHINESE 7A (Introduction to Pre-modern Chinese Literature and Culture) or CHINESE 7B (Introduction to Modern Chinese Literature and Culture) to satisfy one of these three course requirements'. CHINESE 7A and 7B are therefore one shared group, so at most one of them counts. Each other group is one CHINESE course numbered 100-199 in the 2026-27 catalog (same upper-division test the generator's matching rules use). The department says 'upper-division', so this follows it rather than the catalog's ranges (100-194 plus graduate 200-296)."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "cqkEF7LX",
+      "rule": {
+        "kind": "matching",
+        "name": "Departmental Electives",
+        "n": 2,
+        "subjects": ["CHINESE", "EALANG", "JAPAN", "KOREAN", "MONGOLN", "TIBETAN"],
+        "upperDivision": true
+      },
+      "why": {
+        "url": "https://ealc.berkeley.edu/node/5533",
+        "quote": "Take two upper-division elective courses offered by the Department of East Asian Languages & Cultures (EALC).",
+        "reasoning": "The catalog left this as a free-text placeholder. The department page goes on: 'Eligible electives include any upper-division courses with the following prefixes:' CHINESE, EALANG, JAPAN, KOREAN, MONGOLN, TIBETAN, which is what this matching rule checks (the catalog's 'JAPANESE' is the JAPAN subject code). Courses the core already counted are skipped. The catalog also allows CHINESE 7A/7B as an elective, but the department page says electives must be upper-division and mentions 7A/7B only for the core, so they're left out here. Graduate 200-level courses (which the catalog allows) aren't counted, because the department says 'upper-division'."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether graduate-level (200-296) EALC courses count as upper-division core or elective courses. The catalog allows them; the department page only says 'upper-division'.",
+    "Whether 195-199 courses (honors thesis H195A/B, group study 198, independent study 199) count. The catalog's ranges (100-194) leave them out; the department's 'any upper-division courses' seems to include them.",
+    "Whether CHINESE 7A/7B may count as an elective when not used for the core. The catalog says yes; the department page doesn't mention it."
+  ],
+  "notEncoded": [
+    "20-unit minimum across the five courses",
+    "Letter grades, 2.0 minimum GPA; P/NP only for CHINESE 10B/10X",
+    "One outside or study-abroad course by petition",
+    "One-course major/minor overlap limit",
+    "Declaration prerequisite: CHINESE 10B/10X, or placing out"
+  ]
+}

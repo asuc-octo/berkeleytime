@@ -7,6 +7,7 @@
  * Then run the generated commands in mongosh:
  *   mongosh <connection-string> --file seed-requirements.js
  */
+import { CATALOG_REQUIREMENTS } from "./catalog_reqs.generated";
 import {
   APPLIED_MATH_REQ_BTLL,
   BUSINESS_REQ_BTLL,
@@ -200,6 +201,20 @@ const requirements: PlanRequirementSeed[] = [
   },
 ];
 
+// Programs generated from the catalog by import-catalog.ts. A hand-written
+// program for the same major/minor takes precedence.
+const handWritten = new Set(requirements.map((r) => `${r.major}|${r.minor}`));
+for (const req of CATALOG_REQUIREMENTS) {
+  if (handWritten.has(`${req.major}|${req.minor}`)) continue;
+  requirements.push({
+    ...req,
+    isUcReq: false,
+    college: null,
+    createdBy: "system",
+    isOfficial: true,
+  });
+}
+
 function escapeForMongosh(str: string): string {
   // Escape backslashes, quotes, and handle newlines for mongosh
   return str.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
@@ -242,7 +257,7 @@ function generateMongoshCommands(): void {
     "db.planrequirements.find({ isOfficial: true }).forEach(doc => {"
   );
   console.log(
-    "  print(`  - ${doc.major || doc.college || 'UC'}: ${doc._id}`);"
+    "  print(`  - ${doc.major || doc.minor || doc.college || 'UC'}: ${doc._id}`);"
   );
   console.log("});");
 }
