@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { Download } from "iconoir-react";
+
 import {
   Button,
   Checkbox,
@@ -34,11 +36,13 @@ import {
 } from "@/lib/scheduler/preferences";
 import { formatMinutes } from "@/lib/scheduler/time";
 
+import { downloadBlob, renderScheduleImage } from "../renderScheduleImage";
 import styles from "./GenerateSchedulesDialog.module.scss";
 
 interface GenerateSchedulesDialogProps {
   schedule: ISchedule;
   children: React.ReactNode;
+  onSelect?: () => void;
 }
 
 const PAGE_SIZE = 8;
@@ -113,9 +117,17 @@ const describeRelaxation = (rule: Rule, preferences: GeneratorPreferences) =>
 export default function GenerateSchedulesDialog({
   schedule,
   children,
+  onSelect,
 }: GenerateSchedulesDialogProps) {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<"preferences" | "results">("preferences");
+  const [step, setStep] = useState<"preferences" | "results" | "applied">(
+    "preferences"
+  );
+  // Snapshot of the applied schedule, shown once a generated one is selected
+  const [preview, setPreview] = useState<{
+    canvas: HTMLCanvasElement;
+    url: string;
+  } | null>(null);
   const [preferences, setPreferences] =
     useState<GeneratorPreferences>(loadPreferences);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -206,6 +218,7 @@ export default function GenerateSchedulesDialog({
     setStep("preferences");
     setVisibleCount(PAGE_SIZE);
     setActiveScheduleIndex(null);
+    setPreview(null);
     setOpen(true);
   };
 
@@ -315,9 +328,35 @@ export default function GenerateSchedulesDialog({
       }
     );
 
-    setOpen(false);
+    const canvas = renderScheduleImage({ ...schedule, classes: nextClasses });
+    setPreview({ canvas, url: canvas.toDataURL("image/png") });
+    setStep("applied");
     setActiveScheduleIndex(null);
-  }, [activeScheduleIndex, generation, classes, schedule, updateSchedule]);
+    onSelect?.();
+  }, [
+    activeScheduleIndex,
+    generation,
+    classes,
+    schedule,
+    updateSchedule,
+    onSelect,
+  ]);
+
+  const fileName = useMemo(
+    () =>
+      schedule.name
+        .trim()
+        .replace(/[^a-z0-9]+/gi, "-")
+        .replace(/^-|-$/g, "")
+        .toLowerCase() || "schedule",
+    [schedule.name]
+  );
+
+  const handleDownloadPng = useCallback(() => {
+    preview?.canvas.toBlob((blob) => {
+      if (blob) downloadBlob(blob, `${fileName}.png`);
+    }, "image/png");
+  }, [preview, fileName]);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -327,12 +366,23 @@ export default function GenerateSchedulesDialog({
           title={
             step === "preferences"
               ? "Schedule preferences"
-              : "Generated Schedules"
+              : step === "results"
+                ? "Generated Schedules"
+                : "Schedule applied"
           }
           hasCloseButton
         />
         <Dialog.Body className={styles.body}>
-          {step === "preferences" ? (
+          {step === "applied" ? (
+            preview && (
+              <div className={styles.preview}>
+                <img
+                  src={preview.url}
+                  alt={`${schedule.name} weekly schedule`}
+                />
+              </div>
+            )
+          ) : step === "preferences" ? (
             <div className={styles.preferences}>
               <div className={styles.field}>
                 <p className={styles.label}>No classes before</p>
@@ -526,7 +576,15 @@ export default function GenerateSchedulesDialog({
           )}
         </Dialog.Body>
         <Dialog.Footer>
-          {step === "preferences" ? (
+          {step === "applied" ? (
+            <>
+              <Button variant="secondary" onClick={handleDownloadPng}>
+                <Download />
+                Download PNG
+              </Button>
+              <Button onClick={() => setOpen(false)}>Done</Button>
+            </>
+          ) : step === "preferences" ? (
             <>
               <Button variant="secondary" onClick={() => setOpen(false)}>
                 Cancel
