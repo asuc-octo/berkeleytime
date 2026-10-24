@@ -324,15 +324,7 @@ Function<List<Requirement>>() main (){
       {"RHETOR 173"},
       {"STS C100"},
       {"HISTORY C182C"},
-      {"ISF C100G"},
-      {"COMPSCI C8"},
-      {"DATA C8"},
-      {"STAT C8"},
-      {"COMPSCI 10"},
-      {"COMPSCI W10"},
-      {"COMPSCI 61A"},
-      {"COMPSCI 61B"},
-      {"COMPSCI 61C"}
+      {"ISF C100G"}
     ]
     boolean return one_common_course([c], hsddt_req)
   })
