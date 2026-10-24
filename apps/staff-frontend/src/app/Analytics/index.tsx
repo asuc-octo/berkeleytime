@@ -13,6 +13,7 @@ import {
   UsersWithBookmarksBlock,
   UsersWithCustomCollectionsBlock,
 } from "./components/CollectionAnalytics";
+import { DevicesBlock } from "./components/DeviceAnalytics";
 import {
   CourseResultsClickedBlock,
   DataLoadFailuresBlock,
@@ -31,6 +32,10 @@ import {
   TotalGradTraksBlock,
   UtilizationRatioBlock,
 } from "./components/GradTrakAnalytics";
+import {
+  GradesSearchesBlock,
+  GradesUsersBlock,
+} from "./components/GradesAnalytics";
 import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   AverageScoresOverTimeBlock,
@@ -65,6 +70,7 @@ type Tab =
   | "ratings"
   | "bookmarks"
   | "gradtrak"
+  | "grades"
   | "scheduler"
   | "outreach"
   | "engagement";
@@ -76,6 +82,7 @@ export default function Analytics() {
   const showScheduler = activeTab === "all" || activeTab === "scheduler";
   const showRatings = activeTab === "all" || activeTab === "ratings";
   const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
+  const showGrades = activeTab === "all" || activeTab === "grades";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
   const showOutreach = activeTab === "all" || activeTab === "outreach";
   const showEngagement = activeTab === "all" || activeTab === "engagement";
@@ -113,6 +120,12 @@ export default function Analytics() {
             onClick={() => setActiveTab("gradtrak")}
           >
             GradTrak
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "grades" ? styles.active : ""}`}
+            onClick={() => setActiveTab("grades")}
+          >
+            Grades
           </button>
           <button
             className={`${styles.tab} ${activeTab === "bookmarks" ? styles.active : ""}`}
@@ -157,6 +170,9 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <ActivityScoreDistributionBlock />
+            </div>
+            <div className={styles.cell}>
+              <DevicesBlock />
             </div>
           </>
         )}
@@ -235,6 +251,19 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <TopUsersTableBlock />
+            </div>
+          </>
+        )}
+        {showGrades && (
+          <>
+            <div className={styles.cell}>
+              <GradesUsersBlock />
+            </div>
+            <div className={styles.cell}>
+              <GradesSearchesBlock />
+            </div>
+            <div className={styles.cell}>
+              <DevicesBlock targetType="grades" scopeLabel="Grades" />
             </div>
           </>
         )}
