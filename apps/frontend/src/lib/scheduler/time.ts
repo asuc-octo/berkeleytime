@@ -78,6 +78,15 @@ export const toDateRange = (section: GeneratorSection): DateRange => ({
 export const rangesOverlap = (a: DateRange, b: DateRange) =>
   a.first <= b.last && b.first <= a.last;
 
+/** Minutes after midnight as "10 AM" or "12:30 PM". */
+export const formatMinutes = (minutes: number) => {
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  const hour = `${hours % 12 || 12}`;
+  const clock = rest > 0 ? `${hour}:${String(rest).padStart(2, "0")}` : hour;
+  return `${clock} ${hours < 12 ? "AM" : "PM"}`;
+};
+
 export const intervalsOverlap = (a: Interval[], b: Interval[]) =>
   a.some((x) =>
     b.some((y) => x.day === y.day && x.start < y.end && y.start < x.end)

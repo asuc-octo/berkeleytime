@@ -1,5 +1,7 @@
 import { ISchedule } from "@/lib/api";
 
+import { findSelectedSections } from "../schedule";
+
 export const CALENDAR_TIME_ZONE = "America/Los_Angeles";
 
 // A weekly recurring calendar entry, shared by the .ics and Google exports
@@ -75,15 +77,8 @@ export const getCalendarEvents = (schedule: ISchedule): CalendarEvent[] => {
 
     const { class: classInfo, selectedSections } = scheduleClass;
 
-    selectedSections?.forEach((selectedSection) => {
-      const section =
-        classInfo.primarySection?.sectionId === selectedSection.sectionId
-          ? classInfo.primarySection
-          : classInfo.sections?.find(
-              (s) => s.sectionId === selectedSection.sectionId
-            );
-
-      if (!section || !section.meetings) return;
+    findSelectedSections(classInfo, selectedSections).forEach((section) => {
+      if (!section.meetings) return;
 
       section.meetings.forEach((meeting) => {
         if (!meeting.days || !meeting.startTime || !meeting.endTime) return;

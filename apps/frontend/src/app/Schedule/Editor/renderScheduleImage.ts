@@ -1,5 +1,12 @@
 import { componentMap } from "@/lib/api";
 import { Component } from "@/lib/generated/graphql";
+import {
+  formatMinutes,
+  toBusyIntervals,
+  toIntervals,
+} from "@/lib/scheduler/time";
+
+import { findSelectedSections } from "../schedule";
 
 interface ImageMeeting {
   days?: boolean[] | null;
@@ -65,21 +72,6 @@ const TIME_COLUMN_WIDTH = 56;
 const DAY_WIDTH = 180;
 const HOUR_HEIGHT = 64;
 const FOOTER_LINE_HEIGHT = 20;
-
-const toMinutes = (time: string) => {
-  const [hour, minute] = time.split(":").map(Number);
-  return hour * 60 + minute;
-};
-
-const formatTime = (minutes: number) => {
-  const hour = Math.floor(minutes / 60);
-  const minute = minutes % 60;
-  const suffix = hour >= 12 ? "PM" : "AM";
-  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
-  return minute === 0
-    ? `${displayHour} ${suffix}`
-    : `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
-};
 
 const resolveColor = (color: string | null | undefined) => {
   const value = color
@@ -154,27 +146,20 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
   const blocks: Block[] = [];
   const unscheduled: string[] = [];
 
-  for (const scheduleClass of schedule.classes) {
-    if (scheduleClass.hidden) continue;
+  for (const {
+    class: _class,
+    selectedSections,
+    color,
+    hidden,
+  } of schedule.classes) {
+    if (hidden) continue;
 
-    const { class: _class, selectedSections, color } = scheduleClass;
-    const allSections = [_class.primarySection, ..._class.sections];
     let hasMeeting = false;
 
-    for (const { sectionId } of selectedSections) {
-      const section = allSections.find((s) => s?.sectionId === sectionId);
-      if (!section) continue;
-
+    for (const section of findSelectedSections(_class, selectedSections)) {
       for (const meeting of section.meetings) {
-        if (!meeting.startTime || !meeting.endTime || !meeting.days) continue;
-
-        const start = toMinutes(meeting.startTime);
-        const end = toMinutes(meeting.endTime);
-        // A midnight start means the time is TBA, not a 12 AM class
-        if (start === 0 || end <= start) continue;
-
-        meeting.days.forEach((active, day) => {
-          if (!active) return;
+        // Skips meetings whose time isn't announced yet (a 00:00 start)
+        for (const { day, start, end } of toIntervals([meeting])) {
           hasMeeting = true;
           blocks.push({
             day,
@@ -187,7 +172,7 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
             column: 0,
             columns: 1,
           });
-        });
+        }
       }
     }
 
@@ -198,12 +183,7 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
   for (const event of schedule.events) {
     if (event.hidden) continue;
 
-    const start = toMinutes(event.startTime);
-    const end = toMinutes(event.endTime);
-    if (end <= start) continue;
-
-    event.days.forEach((active, day) => {
-      if (!active) return;
+    for (const { day, start, end } of toBusyIntervals([event])) {
       blocks.push({
         day,
         start,
@@ -215,7 +195,7 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
         column: 0,
         columns: 1,
       });
-    });
+    }
   }
 
   // Only show weekends when something is scheduled on them
@@ -306,7 +286,7 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
 
     if (hour < lastHour) {
       context.fillStyle = "#9ca3af";
-      context.fillText(formatTime(hour * 60), gridLeft - 8, y + 12);
+      context.fillText(formatMinutes(hour * 60), gridLeft - 8, y + 12);
     }
   }
 
@@ -345,7 +325,10 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
     const lines: [string, string][] = [
       [font(700, 12), block.title],
       [font(500, 11), block.subtitle],
-      [font(500, 11), `${formatTime(block.start)} – ${formatTime(block.end)}`],
+      [
+        font(500, 11),
+        `${formatMinutes(block.start)} – ${formatMinutes(block.end)}`,
+      ],
       [font(500, 11), block.detail],
     ];
 
@@ -374,66 +357,6 @@ export const renderScheduleImage = (schedule: ImageSchedule) => {
   }
 
   return canvas;
-};
-
-const dataUrlToBytes = (dataUrl: string) => {
-  const binary = atob(dataUrl.split(",")[1]);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes;
-};
-
-// Wraps the canvas as a JPEG in a single-page PDF sized to the image, so no
-// PDF library is needed
-export const canvasToPdf = (canvas: HTMLCanvasElement) => {
-  const jpeg = dataUrlToBytes(canvas.toDataURL("image/jpeg", 0.92));
-  const pageWidth = canvas.width / SCALE;
-  const pageHeight = canvas.height / SCALE;
-
-  const encoder = new TextEncoder();
-  const content = `q ${pageWidth} 0 0 ${pageHeight} 0 0 cm /Im0 Do Q`;
-
-  const objects: (string | Uint8Array)[][] = [
-    ["<< /Type /Catalog /Pages 2 0 R >>"],
-    ["<< /Type /Pages /Kids [3 0 R] /Count 1 >>"],
-    [
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`,
-    ],
-    [
-      `<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
-      jpeg,
-      "\nendstream",
-    ],
-    [`<< /Length ${content.length} >>\nstream\n${content}\nendstream`],
-  ];
-
-  const chunks: Uint8Array[] = [];
-  let length = 0;
-  const push = (part: string | Uint8Array) => {
-    const bytes = typeof part === "string" ? encoder.encode(part) : part;
-    chunks.push(bytes);
-    length += bytes.length;
-  };
-
-  push("%PDF-1.4\n");
-  const offsets: number[] = [];
-  objects.forEach((parts, index) => {
-    offsets.push(length);
-    push(`${index + 1} 0 obj\n`);
-    parts.forEach(push);
-    push("\nendobj\n");
-  });
-
-  const xrefOffset = length;
-  push(`xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`);
-  for (const offset of offsets) {
-    push(`${String(offset).padStart(10, "0")} 00000 n \n`);
-  }
-  push(
-    `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`
-  );
-
-  return new Blob(chunks as BlobPart[], { type: "application/pdf" });
 };
 
 export const downloadBlob = (blob: Blob, filename: string) => {

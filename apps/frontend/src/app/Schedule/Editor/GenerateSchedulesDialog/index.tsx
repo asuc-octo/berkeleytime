@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { Download, Page } from "iconoir-react";
+import { Download } from "iconoir-react";
 
 import {
   Button,
@@ -34,12 +34,9 @@ import {
   toMondayFirst,
   toSundayFirst,
 } from "@/lib/scheduler/preferences";
+import { formatMinutes } from "@/lib/scheduler/time";
 
-import {
-  canvasToPdf,
-  downloadBlob,
-  renderScheduleImage,
-} from "../renderScheduleImage";
+import { downloadBlob, renderScheduleImage } from "../renderScheduleImage";
 import styles from "./GenerateSchedulesDialog.module.scss";
 
 interface GenerateSchedulesDialogProps {
@@ -60,17 +57,8 @@ const DAY_NAMES = [
   "Sunday",
 ];
 
-/** Minutes after midnight as "10 AM" or "12:30 PM". */
-const formatTime = (minutes: number) => {
-  const hours = Math.floor(minutes / 60);
-  const rest = minutes % 60;
-  const hour = `${hours % 12 || 12}`;
-  const clock = rest > 0 ? `${hour}:${String(rest).padStart(2, "0")}` : hour;
-  return `${clock} ${hours < 12 ? "AM" : "PM"}`;
-};
-
 const toHourOptions = (hours: number[]) =>
-  hours.map((hour) => ({ value: hour * 60, label: formatTime(hour * 60) }));
+  hours.map((hour) => ({ value: hour * 60, label: formatMinutes(hour * 60) }));
 
 const startOptions = toHourOptions([8, 9, 10, 11, 12]);
 const endOptions = toHourOptions([14, 15, 16, 17, 18, 19]);
@@ -99,7 +87,7 @@ const summarize = (generated: GeneratedSchedule) =>
     formatGaps(generated.gapMinutes),
     generated.firstStart !== null &&
       generated.lastEnd !== null &&
-      `${formatTime(generated.firstStart)}–${formatTime(generated.lastEnd)}`,
+      `${formatMinutes(generated.firstStart)}–${formatMinutes(generated.lastEnd)}`,
     generated.closedSections > 0 &&
       `${plural(generated.closedSections, "closed section")}`,
     generated.unannouncedSections > 0 &&
@@ -119,9 +107,9 @@ const listDays = (days: boolean[]) => {
 
 const describeRelaxation = (rule: Rule, preferences: GeneratorPreferences) =>
   rule === "earliestStart"
-    ? `Allow classes before ${formatTime(preferences.earliestStart ?? 0)}`
+    ? `Allow classes before ${formatMinutes(preferences.earliestStart ?? 0)}`
     : rule === "latestEnd"
-      ? `Allow classes after ${formatTime(preferences.latestEnd ?? 0)}`
+      ? `Allow classes after ${formatMinutes(preferences.latestEnd ?? 0)}`
       : rule === "avoidDays"
         ? `Allow classes on ${listDays(preferences.avoidDays)}`
         : "Include closed sections";
@@ -370,10 +358,6 @@ export default function GenerateSchedulesDialog({
     }, "image/png");
   }, [preview, fileName]);
 
-  const handleDownloadPdf = useCallback(() => {
-    if (preview) downloadBlob(canvasToPdf(preview.canvas), `${fileName}.pdf`);
-  }, [preview, fileName]);
-
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Overlay />
@@ -594,10 +578,6 @@ export default function GenerateSchedulesDialog({
         <Dialog.Footer>
           {step === "applied" ? (
             <>
-              <Button variant="secondary" onClick={handleDownloadPdf}>
-                <Page />
-                Download PDF
-              </Button>
               <Button variant="secondary" onClick={handleDownloadPng}>
                 <Download />
                 Download PNG
