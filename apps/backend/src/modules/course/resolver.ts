@@ -15,6 +15,7 @@ import {
   getClassesByCourse,
   getCourse,
   getCourseById,
+  getCourseListings,
   getCourses,
 } from "./controller";
 import { IntermediateCourse } from "./formatter";
@@ -29,12 +30,10 @@ interface SortableClass {
 interface ClassIdentityFields {
   subject?: string | null;
   courseNumber?: string | null;
-  year?: number | null;
-  semester?: string | null;
 }
 
-const getClassTermKey = (courseClass: ClassIdentityFields) =>
-  `${courseClass.year}|${courseClass.semester}`;
+const getListingKey = (listing: ClassIdentityFields) =>
+  `${listing.subject} ${listing.courseNumber}`;
 
 const SEMESTER_RECENCY_ORDER: Record<string, number> = {
   Spring: 0,
@@ -135,31 +134,23 @@ const resolvers: CourseModule.Resolvers = {
       // Cross-listed courses share a courseId, so filter to only classes
       // matching this specific course's subject. We don't filter by number
       // to allow renamed courses (same subject, different number) to match.
-      // includeFormerNames also matches classes from terms that only ran
-      // under the course's former name. The former subject text is
-      // unreliable, so those classes match on the former number only.
-      const formerNumber = includeFormerNames
-        ? parent.formerDisplayName?.trim().split(/\s+/).pop() || undefined
-        : undefined;
+      // includeFormerNames also matches classes offered under the course's
+      // former names (see getCourseListings).
+      const listingKeys = new Set(
+        includeFormerNames
+          ? (await getCourseListings(parent.courseId, parent.subject)).map(
+              getListingKey
+            )
+          : []
+      );
 
-      const buildMatchesCourse = (allClasses: ClassIdentityFields[]) => {
-        const termsWithCurrentSubject = new Set(
-          allClasses
-            .filter((courseClass) => courseClass.subject === parent.subject)
-            .map(getClassTermKey)
-        );
-
-        return (courseClass: ClassIdentityFields) => {
-          if (courseClass.subject === parent.subject) return true;
-          if (!formerNumber || courseClass.courseNumber !== formerNumber)
-            return false;
-          return !termsWithCurrentSubject.has(getClassTermKey(courseClass));
-        };
-      };
+      const matchesCourse = (courseClass: ClassIdentityFields) =>
+        courseClass.subject === parent.subject ||
+        listingKeys.has(getListingKey(courseClass));
 
       if (parent.classes) {
         let classes = [...parent.classes];
-        classes = classes.filter(buildMatchesCourse(parent.classes));
+        classes = classes.filter(matchesCourse);
         if (printInScheduleOnly) {
           classes = classes.filter(
             (courseClass) => courseClass.anyPrintInScheduleOfClasses !== false
@@ -179,9 +170,7 @@ const resolvers: CourseModule.Resolvers = {
         limit: boundedLimit,
       });
 
-      return classes.filter(
-        buildMatchesCourse(classes)
-      ) as unknown as CourseModule.Class[];
+      return classes.filter(matchesCourse) as unknown as CourseModule.Class[];
     },
 
     mostRecentClass: async (
