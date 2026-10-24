@@ -29,11 +29,11 @@ import Calendar from "./Calendar";
 import CloneDialog from "./CloneDialog";
 import EditDialog from "./EditDialog";
 import styles from "./Editor.module.scss";
-import ExportDialog from "./ExportDialog";
 import GenerateSchedulesDialog from "./GenerateSchedulesDialog";
 import Map from "./Map";
 import ShareDialog from "./ShareDialog";
 import SideBar from "./SideBar";
+import exportToCalendar from "./exportToCalendar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
@@ -1189,10 +1189,7 @@ export default function Editor() {
           </MenuItem> */}
         </div>
         {editing && (
-          <GenerateSchedulesDialog
-            schedule={schedule}
-            onSelect={() => setTab(0)}
-          >
+          <GenerateSchedulesDialog schedule={schedule}>
             <Button variant="secondary">
               <Shuffle />
               Generate
@@ -1211,12 +1208,10 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
-        <ExportDialog>
-          <Button variant="secondary">
-            <Upload />
-            Export
-          </Button>
-        </ExportDialog>
+        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
+          <Upload />
+          Export
+        </Button>
         {editing && (
           <ShareDialog>
             <Button>

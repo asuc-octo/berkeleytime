@@ -43,29 +43,34 @@ export const getUnits = (schedule?: ISchedule) => {
   ) ?? defaultUnits) as [minimum: number, maximum: number];
 };
 
-/** The section objects a class has selected, skipping ones it no longer has. */
-export const findSelectedSections = <S extends { sectionId: string }>(
-  _class: { primarySection?: S | null; sections: S[] },
-  selectedSections: { sectionId?: string | null }[]
-): S[] =>
-  selectedSections.flatMap(({ sectionId }) => {
-    const section =
-      _class.primarySection?.sectionId === sectionId
-        ? _class.primarySection
-        : _class.sections.find((s) => s.sectionId === sectionId);
-    return section ? [section] : [];
-  });
+export const getSelectedSections = (schedule?: ISchedule) => {
+  return (
+    schedule?.classes.flatMap(
+      ({ selectedSections, class: _class, color, hidden }) =>
+        hidden
+          ? []
+          : selectedSections.reduce((acc, section) => {
+              const _section =
+                _class.primarySection?.sectionId === section.sectionId
+                  ? _class.primarySection
+                  : _class.sections.find(
+                      (currentSection) =>
+                        currentSection.sectionId === section.sectionId
+                    );
 
-export const getSelectedSections = (schedule?: ISchedule): SectionColor[] =>
-  schedule?.classes.flatMap(
-    ({ selectedSections, class: _class, color, hidden }) =>
-      hidden
-        ? []
-        : findSelectedSections(_class, selectedSections).map((section) => ({
-            section,
-            color: color as Color,
-          }))
-  ) ?? [];
+              return _section
+                ? [
+                    ...acc,
+                    {
+                      section: _section,
+                      color: color as Color,
+                    },
+                  ]
+                : acc;
+            }, [] as SectionColor[])
+    ) ?? []
+  );
+};
 
 /**
  * Categorical colors for schedule classes and events.
