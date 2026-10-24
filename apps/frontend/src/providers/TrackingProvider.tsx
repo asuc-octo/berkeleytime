@@ -68,6 +68,11 @@ export interface TrackingContextValue {
     targetType: string,
     metadata?: Record<string, unknown>
   ) => void;
+  /** Merge metadata into an active session's eventual session_end event. */
+  updateSessionMetadata: (
+    targetType: string,
+    metadata: Record<string, unknown>
+  ) => void;
   flushBeacon: () => void;
 }
 
@@ -77,7 +82,10 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
   const queueRef = useRef<TrackingEventInput[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionsRef = useRef(
-    new Map<string, { id: string; startedAt: number }>()
+    new Map<
+      string,
+      { id: string; startedAt: number; metadata: Record<string, unknown> }
+    >()
   );
 
   const [mutate] = useMutation<
@@ -198,7 +206,11 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
 
       // create session happens in provider so future Bt devs can use this
       const id = crypto.randomUUID();
-      sessionsRef.current.set(targetType, { id, startedAt: Date.now() });
+      sessionsRef.current.set(targetType, {
+        id,
+        startedAt: Date.now(),
+        metadata: { ...metadata },
+      });
 
       enqueue({
         eventType: "session_start",
@@ -222,10 +234,26 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         eventType: "session_end",
         targetType,
         targetId: session.id, // defined in trackSessionStart
-        metadata: { ...metadata, durationMs: Date.now() - session.startedAt },
+        metadata: {
+          ...session.metadata,
+          ...metadata,
+          durationMs: Date.now() - session.startedAt,
+        },
       });
     },
     [enqueue]
+  );
+
+  // Keep session flags in the provider so pagehide includes the latest values.
+  // Interactions outside an active session are ignored.
+  const updateSessionMetadata = useCallback(
+    (targetType: string, metadata: Record<string, unknown>) => {
+      const session = sessionsRef.current.get(targetType);
+      if (session) {
+        session.metadata = { ...session.metadata, ...metadata };
+      }
+    },
+    []
   );
 
   useEffect(() => {
@@ -253,6 +281,7 @@ export function TrackingProvider({ children }: { children: ReactNode }) {
         trackEvent,
         trackSessionStart,
         trackSessionEnd,
+        updateSessionMetadata,
         flushBeacon,
       }}
     >

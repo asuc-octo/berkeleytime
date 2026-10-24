@@ -960,7 +960,11 @@ export default function Grades() {
     hydratedOnceRef.current = true;
 
     if (outputs.length > 0) {
-      trackSessionStart("grades", { restored });
+      trackSessionStart("grades", {
+        restored,
+        percentileSliderUsed: false,
+        percentileSliderAdjusted: false,
+      });
     } else {
       trackSessionEnd("grades");
     }

@@ -305,6 +305,28 @@ export const GRADES_SESSION_USERS = gql`
   }
 `;
 
+export interface GradesPercentileSliderUsage {
+  usedSessions: number;
+  touchedSessions: number;
+  unusedSessions: number;
+  totalSessions: number;
+  usagePercent: number;
+  touchPercent: number;
+}
+
+export const GRADES_PERCENTILE_SLIDER_USAGE = gql`
+  query GradesPercentileSliderUsage($days: Int!) {
+    gradesPercentileSliderUsage(days: $days) {
+      usedSessions
+      touchedSessions
+      unusedSessions
+      totalSessions
+      usagePercent
+      touchPercent
+    }
+  }
+`;
+
 export interface DeviceVendorCount {
   name: string;
   users: number;

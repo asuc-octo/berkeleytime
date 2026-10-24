@@ -60,6 +60,23 @@ export const analyticsTypeDef = gql`
   }
 
   """
+  Percentile slider usage among completed Grades sessions with adjustment tracking.
+  A meaningful adjustment is a committed range at least five percentile points
+  from the default, kept for one second. Sessions are counted by their end date;
+  older sessions without the adjustment flag are excluded from both rates.
+  """
+  type GradesPercentileSliderUsage @cacheControl(maxAge: 0) {
+    "Sessions with at least one meaningful adjustment."
+    usedSessions: Int!
+    "Sessions with any pointer or slider-key interaction, including accidental touches."
+    touchedSessions: Int!
+    unusedSessions: Int!
+    totalSessions: Int!
+    usagePercent: Float!
+    touchPercent: Float!
+  }
+
+  """
   Vendor (or OS, when the user agent carries no manufacturer) slice within one
   device category
   """
@@ -158,6 +175,9 @@ export const analyticsTypeDef = gql`
     Staff-only: Daily unique users who started a Grades session (added their first course)
     """
     gradesSessionUsers(days: Int!): GradesSessionUsersData! @auth
+
+    "Staff-only: Percentile slider usage among completed Grades sessions."
+    gradesPercentileSliderUsage(days: Int!): GradesPercentileSliderUsage! @auth
 
     """
     Staff-only: Unique visitors by device category, parsed from
