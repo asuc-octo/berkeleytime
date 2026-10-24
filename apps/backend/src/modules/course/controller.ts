@@ -5,10 +5,62 @@ import {
   ICourseItem,
 } from "@repo/common/models";
 
-import { buildSubjectQuery } from "../../utils/subject";
+import { buildSubjectQuery, normalizeSubject } from "../../utils/subject";
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
+
+export interface CourseListing {
+  subject: string;
+  courseNumber: string;
+}
+
+/**
+ * Returns the subject/number listings that make up a course's history.
+ *
+ * SIS keeps a course's courseId across renames (e.g. "EECS 16B" -> "ELENG
+ * 64"), but cross-listed courses share a courseId too, so courseId alone
+ * over-matches. A listing under another subject counts as a former name only
+ * if (1) no current catalog course with this courseId uses that subject, so
+ * a sibling's history stays with the sibling, and (2) it never ran in the
+ * same term as this subject, so it was a predecessor, not a cross-listing.
+ */
+export const getCourseListings = async (
+  courseId: string,
+  subject: string
+): Promise<CourseListing[]> => {
+  const currentSubject = normalizeSubject(subject);
+
+  const [listings, catalogSubjects] = await Promise.all([
+    ClassModel.aggregate<{ _id: CourseListing; termIds: string[] }>([
+      { $match: { courseId } },
+      {
+        $group: {
+          _id: { subject: "$subject", courseNumber: "$courseNumber" },
+          termIds: { $addToSet: "$termId" },
+        },
+      },
+    ]),
+    CourseModel.distinct("subject", { courseId, printInCatalog: true }),
+  ]);
+
+  const isCurrent = (listing: CourseListing) =>
+    normalizeSubject(listing.subject) === currentSubject;
+
+  const catalogSubjectSet = new Set(catalogSubjects.map(normalizeSubject));
+  const currentTermIds = new Set(
+    listings.filter(({ _id }) => isCurrent(_id)).flatMap((l) => l.termIds)
+  );
+
+  return listings
+    .filter(
+      ({ _id, termIds }) =>
+        isCurrent(_id) ||
+        (!catalogSubjectSet.has(normalizeSubject(_id.subject)) &&
+          !termIds.some((termId) => currentTermIds.has(termId)))
+    )
+    .map(({ _id }) => _id);
+};
 
 const buildFormerNamesByCourseId = async () => {
   const classNames = await ClassModel.aggregate<{
