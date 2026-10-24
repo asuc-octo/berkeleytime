@@ -1,4 +1,9 @@
+# Used by editor GraphQL extensions (e.g. VSCode GraphQL) for schema-aware
+# autocomplete in gql`` documents. Not used by the build.
 schema:
-  - ./frontend/schema.graphql
-  - ./frontend/client.graphql
-documents: "frontend/src/**/*.{graphql,js,ts,jsx,tsx}"
+  - ./packages/gql-typedefs/*.ts
+documents:
+  - ./apps/frontend/src/lib/api/*.ts
+  - ./apps/ag-frontend/src/lib/api/*.ts
+  - ./apps/staff-frontend/src/lib/api/*.ts
+  - ./apps/semantic-search/app/graphql/*.graphql

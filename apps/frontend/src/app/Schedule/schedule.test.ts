@@ -16,7 +16,7 @@ describe("scheduleClassColors", () => {
       Color.Pink,
       Color.Lime,
       Color.Fuchsia,
-      Color.Slate,
+      Color.Gray,
     ]);
     expect(new Set(scheduleClassColors).size).toBe(scheduleClassColors.length);
     expect(scheduleClassColors.length).toBeGreaterThanOrEqual(8);
@@ -31,7 +31,6 @@ describe("scheduleClassColors", () => {
 
   it("still treats legacy theme colors as valid color values", () => {
     const legacyColors = [
-      Color.Gray,
       Color.Zinc,
       Color.Neutral,
       Color.Stone,

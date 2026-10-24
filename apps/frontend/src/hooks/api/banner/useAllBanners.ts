@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 
 import "@/lib/api/banner";
+
 import {
   GetAllBannersDocument,
   GetAllBannersQuery,

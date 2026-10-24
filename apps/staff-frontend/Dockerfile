@@ -1,5 +1,5 @@
-FROM node:alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+FROM node:22-alpine AS base
+RUN ["npm", "install", "-g", "turbo@2.5.8"]
 
 FROM base AS staff-frontend-builder
 WORKDIR /staff-frontend

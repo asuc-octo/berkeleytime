@@ -190,7 +190,7 @@ services:
         condition: service_healthy
       frontend:
         condition: service_started
-    image: nginx:1.21
+    image: nginx:1.28-alpine
     networks:
       - bt
     ports:

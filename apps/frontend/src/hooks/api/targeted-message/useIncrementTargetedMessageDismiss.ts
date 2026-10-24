@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import "@/lib/api/targeted-message";
+
 import { IncrementTargetedMessageDismissDocument } from "@/lib/generated/graphql";
 
 export const useIncrementTargetedMessageDismiss = () => {

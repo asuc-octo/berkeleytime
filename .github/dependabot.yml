@@ -1,10 +1,61 @@
+# Dependabot keeps dependencies current. Updates are grouped so the team reviews
+# one PR per ecosystem per week instead of dozens. Major version bumps for npm
+# arrive as their own PRs because they usually need code changes.
 version: 2
 updates:
-  - package-ecosystem: docker
+  - package-ecosystem: npm
     directory: "/"
     schedule:
       interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-and-patch:
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: npm
+    directory: "/infra/cloudflare/backups-worker"
+    schedule:
+      interval: monthly
+
+  - package-ecosystem: pip
+    directory: "/apps/semantic-search"
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      pip-all:
+        patterns: ["*"]
+
+  - package-ecosystem: docker
+    directories:
+      - "/apps/ag-frontend"
+      - "/apps/api-sandbox"
+      - "/apps/backend"
+      - "/apps/datapuller"
+      - "/apps/docs"
+      - "/apps/frontend"
+      - "/apps/semantic-search"
+      - "/apps/staff-frontend"
+      - "/apps/storybook"
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      docker-base-images:
+        patterns: ["*"]
+
+  - package-ecosystem: docker-compose
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns: ["*"]

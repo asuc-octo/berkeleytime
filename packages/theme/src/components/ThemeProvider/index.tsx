@@ -2,13 +2,16 @@ import { ReactNode, useEffect, useState } from "react";
 
 // https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage
 import { Theme } from "@radix-ui/themes";
+
 import "@radix-ui/themes/layout.css";
+
 import { IconoirProvider } from "iconoir-react";
 import { Tooltip } from "radix-ui";
 
 import { ThemeContext, Theme as ThemeType } from "@repo/theme";
 
 import { StackContext } from "../../contexts/StackContext";
+
 import "./ThemeProvider.scss";
 
 export interface ThemeProviderProps {

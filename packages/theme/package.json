@@ -18,5 +18,8 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
   }
 }

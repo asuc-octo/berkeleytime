@@ -1,5 +1,5 @@
 FROM node:22-alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+RUN ["npm", "install", "-g", "turbo@2.5.8"]
 
 FROM base AS datapuller-builder
 WORKDIR /datapuller

@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useMutation } from "@apollo/client/react";
 
 import "@/lib/api/route-redirect";
+
 import { IncrementRouteRedirectClickDocument } from "@/lib/generated/graphql";
 
 export const useIncrementRouteRedirectClick = () => {

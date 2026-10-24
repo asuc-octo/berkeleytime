@@ -10,6 +10,14 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  # Set by the dispatch input, or taken from the issue when triggered by a `/helm-diff` comment.
+  PR_NUMBER: ${{ inputs.pr_number || github.event.issue.number }}
+
 jobs:
   helm-diff:
     if: |
@@ -18,9 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
-          ref: refs/pull/${{ inputs.pr_number }}/head
+          ref: refs/pull/${{ env.PR_NUMBER }}/head
 
       - name: Set up Helm
         uses: azure/setup-helm@v5
@@ -149,7 +157,7 @@ jobs:
           echo "${{ steps.generate-diff.outputs.raw_diffs }}"
 
       - name: Comment PR with Diff Output
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.createComment({
@@ -159,5 +167,4 @@ jobs:
               body: process.env.DIFF
             });
         env:
-          PR_NUMBER: ${{ inputs.pr_number }}
           DIFF: ${{ steps.generate-diff.outputs.diff }}

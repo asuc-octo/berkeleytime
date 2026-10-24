@@ -14,5 +14,8 @@
   "dependencies": {
     "mongoose": "^8.19.1",
     "dotenv": "^17.2.3"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
   }
 }

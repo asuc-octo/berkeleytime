@@ -27,11 +27,17 @@
     },
     "type-check": {
       "cache": false,
-      "dependsOn": []
+      "dependsOn": [
+        "generate",
+        "^generate"
+      ]
     },
     "test": {
       "cache": false,
-      "dependsOn": []
+      "dependsOn": [
+        "generate",
+        "^generate"
+      ]
     },
     "start": {
       "dependsOn": [

@@ -36,5 +36,6 @@ generated-typedefs/
 /playwright/.cache/
 /playwright/.auth/
 
-# Claude Code
-.claude/
+# Claude Code: ignore per-user runtime state, keep shared skills tracked
+.claude/*
+!.claude/skills/

@@ -1,5 +1,5 @@
 FROM node:22-alpine AS base
-RUN ["npm", "install", "-g", "turbo@latest"]
+RUN ["npm", "install", "-g", "turbo@2.5.8"]
 
 FROM base AS api-sandbox-builder
 WORKDIR /api-sandbox
@@ -8,7 +8,6 @@ RUN ["turbo", "prune", "api-sandbox", "--docker"]
 
 FROM base AS api-sandbox-dev
 WORKDIR /api-sandbox
-RUN ["npm", "install", "-g", "turbo@latest"]
 
 COPY --from=api-sandbox-builder /api-sandbox/out/json/ .
 COPY --from=api-sandbox-builder /api-sandbox/out/package-lock.json ./package-lock.json

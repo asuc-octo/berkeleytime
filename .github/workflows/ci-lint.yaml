@@ -1,3 +1,12 @@
+# Quality gate for every pull request.
+#
+# One job, several checks, all of them blocking. Each check runs even if an
+# earlier one failed so a contributor sees everything at once, then the last
+# step fails the job if anything failed. The same checks run locally with
+# `npm run check`.
+#
+# The job name "Lint Codebase" is kept on purpose: branch protection rules
+# reference checks by name.
 name: "CI: Check Lint"
 
 concurrency:
@@ -6,86 +15,142 @@ concurrency:
 
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
-    paths:
-      - ".github/workflows/ci-lint.yaml"
-      - "apps/backend/**"
-      - "apps/frontend/**"
-      - "apps/ag-frontend/**"
-      - "apps/staff-frontend/**"
-      - "apps/semantic-search/**"
-      - "apps/datapuller/**"
-      - "packages/**"
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   lint:
     if: github.event.pull_request.draft == false
     name: Lint Codebase
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22.12.0"
-          cache: "npm"
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install Dependencies
         run: npm ci
 
-      - name: Check persisted operation allowlist
-        run: npm run check:operations
+      - name: Generate code (GraphQL types, SIS API client)
+        run: npm run generate
 
-      - name: Run backend security tests
-        run: npm run test -w apps/backend
+      - name: Check persisted operation allowlist
+        id: operations
+        run: npm run check:operations > operations-output.txt 2>&1
+        continue-on-error: true
+
+      - name: Check migration copies are in sync
+        id: migrations
+        run: npm run check:migrations > migrations-output.txt 2>&1
+        continue-on-error: true
+
+      - name: Check formatting
+        id: format
+        run: npm run format:check > format-output.txt 2>&1
+        continue-on-error: true
+
+      - name: Type-check
+        id: typecheck
+        run: npm run type-check -- --continue --output-logs=errors-only > typecheck-output.txt 2>&1
+        continue-on-error: true
 
       - name: Lint
         id: lint
         run: npm run lint -- --continue --output-logs=errors-only > lint-output.txt 2>&1
         continue-on-error: true
 
-      - name: Post Lint Report
-        if: steps.lint.outcome == 'failure'
-        uses: actions/github-script@v7
+      - name: Unit tests
+        id: test
+        run: npm run test -- --continue --output-logs=errors-only > test-output.txt 2>&1
         continue-on-error: true
+
+      # Keeps one up-to-date comment per PR instead of one per push. Fork PRs
+      # have a read-only token, so this step may fail; the job result below is
+      # what gates the merge.
+      - name: Post quality report
+        if: always()
+        uses: actions/github-script@v9
+        continue-on-error: true
+        env:
+          RESULTS: |
+            ${{ toJSON({
+              "Persisted operation allowlist (npm run check:operations)": steps.operations.outcome,
+              "Migration copies in sync (npm run check:migrations)": steps.migrations.outcome,
+              "Formatting (npm run format:check)": steps.format.outcome,
+              "Type-check (npm run type-check)": steps.typecheck.outcome,
+              "Lint (npm run lint)": steps.lint.outcome,
+              "Unit tests (npm run test)": steps.test.outcome
+            }) }}
         with:
           script: |
-            const fs = require('fs');
-            const output = fs.readFileSync('lint-output.txt', 'utf8');
+            const fs = require("fs");
+            const marker = "<!-- ci-quality-report -->";
+            const files = {
+              "Persisted operation allowlist (npm run check:operations)": "operations-output.txt",
+              "Migration copies in sync (npm run check:migrations)": "migrations-output.txt",
+              "Formatting (npm run format:check)": "format-output.txt",
+              "Type-check (npm run type-check)": "typecheck-output.txt",
+              "Lint (npm run lint)": "lint-output.txt",
+              "Unit tests (npm run test)": "test-output.txt",
+            };
+            const results = JSON.parse(process.env.RESULTS);
+            const failed = Object.entries(results).filter(([, outcome]) => outcome === "failure");
 
-            // Truncate if too long to avoid API limits
-            const maxLength = 60000;
-            let cleanOutput = output;
-            if (output.length > maxLength) {
-              cleanOutput = output.substring(0, maxLength) + '\n... (output truncated)';
+            const rows = Object.entries(results)
+              .map(([name, outcome]) => `| ${outcome === "success" ? "✅" : "❌"} | ${name} |`)
+              .join("\n");
+
+            let body = `${marker}\n### CI quality report\n\n| | Check |\n|---|---|\n${rows}\n`;
+            if (failed.length === 0) {
+              body += "\nAll checks passed.\n";
+            } else {
+              body += "\nFix locally with `npm run check` (format with `npm run format`).\n";
+              for (const [name] of failed) {
+                let output = "";
+                try { output = fs.readFileSync(files[name], "utf8"); } catch {}
+                const limit = 15000;
+                if (output.length > limit) output = output.slice(0, limit) + "\n... (truncated)";
+                body += `\n<details>\n<summary>${name}</summary>\n\n\`\`\`\n${output}\n\`\`\`\n\n</details>\n`;
+              }
             }
 
-            const body = `### Linting Failed
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.find((c) => c.body && c.body.startsWith(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else if (failed.length > 0) {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
 
-            Note: The status check will always pass. Run \`npm run lint -- --continue\` to see the full output locally.
-
-            <details>
-            <summary>Click to expand lint output</summary>
-
-            \`\`\`
-            ${cleanOutput}
-            \`\`\`
-
-            </details>
-            `;
-
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            });
-
-            core.setFailed('Linting failed');
+      - name: Fail if any check failed
+        if: always()
+        env:
+          OUTCOMES: >-
+            operations=${{ steps.operations.outcome }}
+            migrations=${{ steps.migrations.outcome }}
+            format=${{ steps.format.outcome }}
+            typecheck=${{ steps.typecheck.outcome }}
+            lint=${{ steps.lint.outcome }}
+            test=${{ steps.test.outcome }}
+        run: |
+          failed=""
+          for entry in $OUTCOMES; do
+            case "$entry" in *=failure) failed="$failed ${entry%=*}" ;; esac
+          done
+          if [ -n "$failed" ]; then
+            echo "::error::Failed checks:$failed"
+            exit 1
+          fi
+          echo "All checks passed."

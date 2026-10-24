@@ -9,15 +9,18 @@ on:
       - "scripts/check-compose-network-security.mjs"
       - ".github/workflows/ci-compose-security.yaml"
 
+permissions:
+  contents: read
+
 jobs:
   compose-security:
     name: Check local-service exposure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: "22.12.0"
+          node-version-file: .nvmrc
       - name: Generate ephemeral local credentials
         run: |
           cp .env.template .env

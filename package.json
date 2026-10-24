@@ -6,10 +6,15 @@
     "generate": "turbo run generate",
     "generate:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs",
     "check:operations": "node apps/backend/scripts/generate-operation-allowlist.mjs --check",
+    "check:migrations": "node scripts/check-migrations-synced.mjs",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
+    "test": "turbo run test",
+    "test:e2e": "playwright test",
     "start": "turbo run start",
     "format": "prettier --write \"**/*.{ts,tsx,scss}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,scss}\"",
+    "check": "npm run check:operations && npm run check:migrations && npm run format:check && npm run type-check && npm run lint && npm run test",
     "postinstall": "patch-package"
   },
   "engines": {
@@ -36,10 +41,5 @@
     "@rollup/rollup-linux-x64-gnu": "4.52.4",
     "@rollup/rollup-linux-x64-musl": "4.52.4"
   },
-  "name": "berkeleytime",
-  "dependencies": {
-    "mimic-fn": "^2.1.0",
-    "opentelemetry": "^0.1.0",
-    "react-markdown": "^10.1.0"
-  }
+  "name": "berkeleytime"
 }

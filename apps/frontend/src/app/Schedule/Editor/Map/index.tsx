@@ -2,9 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // @ts-expect-error - MapboxDirections does not provide types
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
+
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
+
 import { ArrowSeparateVertical, Walking, ZoomIn, ZoomOut } from "iconoir-react";
 import mapboxgl from "mapbox-gl";
+
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { Button, IconButton, useColorScheme, useTheme } from "@repo/theme";

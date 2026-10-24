@@ -23,6 +23,9 @@ on:
       - "nginx.conf"
       - "playwright.config.ts"
 
+permissions:
+  contents: read
+
 jobs:
   boundary:
     if: github.event.pull_request.draft == false
@@ -32,13 +35,13 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22.12.0"
-          cache: "npm"
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install Dependencies
         run: npm ci

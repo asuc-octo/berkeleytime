@@ -10,7 +10,7 @@ usage() {
 Bootstrap Berkeleytime local development.
 
 Usage:
-  ./scripts/bootstrap-local.sh [options]
+  bash scripts/bootstrap-local.sh [options]
 
 Options:
   --no-seed-db     Do not seed the database.
@@ -82,10 +82,11 @@ setup_node() {
     # nvm sometimes needs TMPDIR set explicitly in constrained environments
     export TMPDIR="${TMPDIR:-/tmp}"
     set +u
-    if ! nvm install --lts; then
-      warn "nvm install --lts failed. Ensure your nvm installation is healthy or install Node manually (>= 22.12.0)."
+    # `nvm install` with no version reads the Node major from .nvmrc at the repo root.
+    if ! nvm install; then
+      warn "nvm install failed. Ensure your nvm installation is healthy or install Node manually (see .nvmrc)."
     else
-      nvm use --lts || warn "nvm use --lts failed; falling back to existing node on PATH."
+      nvm use || warn "nvm use failed; falling back to existing node on PATH."
     fi
     set -u
   fi
@@ -140,12 +141,23 @@ start_services() {
   $compose_cmd up -d
 }
 
+# Date (YYYYMMDD, Pacific time) of the newest public backup. Backups are cut
+# at 05:00 Pacific, so step back six hours to avoid asking for a file that does
+# not exist yet. `date -v` is BSD/macOS; `date -d` is GNU/Linux.
+backup_date() {
+  if date -v -6H +%Y%m%d >/dev/null 2>&1; then
+    TZ=America/Los_Angeles date -v -6H +%Y%m%d
+  else
+    TZ=America/Los_Angeles date -d '-6 hours' +%Y%m%d
+  fi
+}
+
 seed_database() {
   step "Seeding local MongoDB"
   require_cmd curl "Install curl, then re-run."
 
   local backup_file="prod-backup.gz"
-  curl -f -o "$backup_file" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d).gz"
+  curl -f -o "$backup_file" "https://backups.berkeleytime.com/public/daily/prod_public_backup-$(backup_date).gz"
 
   local compose_cmd
   compose_cmd="$(detect_compose_cmd)" || die "Docker Compose not found."

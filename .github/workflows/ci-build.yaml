@@ -13,6 +13,10 @@ on:
       - ready_for_review
     paths:
       - ".github/workflows/ci-build.yaml"
+      - "package.json"
+      - "package-lock.json"
+      - "turbo.json"
+      - "patches/**"
       - "apps/backend/**"
       - "apps/frontend/**"
       - "apps/ag-frontend/**"
@@ -20,6 +24,9 @@ on:
       - "apps/semantic-search/**"
       - "apps/datapuller/**"
       - "packages/**"
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -40,10 +47,10 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build
         uses: docker/build-push-action@v7

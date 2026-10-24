@@ -7,7 +7,19 @@ concurrency:
 on:
   push:
     branches: [main]
-    paths-ignore: ["docs/**"]
+    paths-ignore:
+      - "docs/**"
+      - "apps/docs/**"
+      - "infra/docs/**"
+      - "apps/storybook/**"
+      - "infra/storybook/**"
+      - "**.md"
+      - ".github/workflows/ci-*.yaml"
+      - ".github/workflows/cd-deploy-docs.yaml"
+      - ".github/workflows/cd-deploy-storybook.yaml"
+      - ".github/dependabot.yml"
+      - ".github/pull_request_template.md"
+      - ".github/CODEOWNERS"
 
 jobs:
   build-push:
