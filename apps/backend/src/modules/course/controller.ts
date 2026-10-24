@@ -1,6 +1,5 @@
 import {
   type CourseListing,
-  computeFormerNames,
   normalizeCourseNameKey,
   selectCourseListings,
 } from "@repo/common";
@@ -40,118 +39,21 @@ export const getCourseListings = async (
   ).map(({ subject, courseNumber }) => ({ subject, courseNumber }));
 };
 
-interface CourseIdentity {
-  courseId: string;
-  subject: string;
-  number: string;
-}
-
-export const getCourseKey = ({ courseId, subject, number }: CourseIdentity) =>
-  `${courseId} ${subject} ${number}`;
-
-interface FormerNameIndex {
-  formerNamesByCourse: Map<string, string[]>;
-  courseByFormerNameKey: Map<string, CourseIdentity>;
-}
-
-const buildFormerNameIndex = async (): Promise<FormerNameIndex> => {
-  const [listingRows, courses] = await Promise.all([
-    ClassModel.aggregate<{
-      _id: CourseListing & { courseId: string };
-      termIds: string[];
-    }>([
-      {
-        $group: {
-          _id: {
-            courseId: "$courseId",
-            subject: "$subject",
-            courseNumber: "$courseNumber",
-          },
-          termIds: { $addToSet: "$termId" },
-        },
-      },
-    ]),
-    CourseModel.find(
-      {},
-      { courseId: 1, subject: 1, number: 1, printInCatalog: 1 }
-    ).lean(),
-  ]);
-
-  const results = computeFormerNames(
-    listingRows.map(({ _id, termIds }) => ({ ..._id, termIds })),
-    courses
-  );
-
-  const formerNamesByCourse = new Map<string, string[]>();
-  const courseByFormerNameKey = new Map<string, CourseIdentity>();
-  courses.forEach((course, index) => {
-    const { formerNames, formerNameKeys } = results[index];
-    const identity = {
-      courseId: course.courseId,
-      subject: course.subject,
-      number: course.number,
-    };
-    formerNamesByCourse.set(getCourseKey(identity), formerNames);
-    for (const key of formerNameKeys) courseByFormerNameKey.set(key, identity);
-  });
-
-  return { formerNamesByCourse, courseByFormerNameKey };
-};
-
-const FORMER_NAMES_CACHE_TTL_MS = 60 * 60 * 1000;
-
-interface FormerNameIndexCacheEntry {
-  promise: Promise<FormerNameIndex>;
-  expiresAt: number;
-}
-
-let formerNameIndexCache: FormerNameIndexCacheEntry | null = null;
-
-export const getFormerNameIndex = () => {
-  const now = Date.now();
-
-  if (formerNameIndexCache && now < formerNameIndexCache.expiresAt) {
-    return formerNameIndexCache.promise;
-  }
-
-  const entry: FormerNameIndexCacheEntry = {
-    promise: buildFormerNameIndex(),
-    expiresAt: now + FORMER_NAMES_CACHE_TTL_MS,
-  };
-  formerNameIndexCache = entry;
-
-  void entry.promise.catch(() => {
-    if (formerNameIndexCache === entry) {
-      formerNameIndexCache = null;
-    }
-  });
-
-  return entry.promise;
-};
-
 export const getCourse = async (subject: string, number: string) => {
-  const { formerNamesByCourse, courseByFormerNameKey } =
-    await getFormerNameIndex();
-
   // Renamed courses (e.g. "EECS 16A" -> "ELENG 66") keep their classes under
   // one courseId, while the defunct name's own course entry has none. Former
   // names never collide with current courses, so resolve them first.
-  const renamedCourse = courseByFormerNameKey.get(
-    normalizeCourseNameKey(`${subject} ${number}`)
-  );
-
-  const course = await CourseModel.findOne(
-    renamedCourse ?? { subject: buildSubjectQuery(subject), number }
-  )
-    .sort({ fromDate: -1 })
-    .lean();
+  const course =
+    (await CourseModel.findOne({
+      formerNameKeys: normalizeCourseNameKey(`${subject} ${number}`),
+    }).lean()) ??
+    (await CourseModel.findOne({ subject: buildSubjectQuery(subject), number })
+      .sort({ fromDate: -1 })
+      .lean());
 
   if (!course) return null;
 
-  return {
-    ...formatCourse(course as ICourseItem),
-    formerNames: formerNamesByCourse.get(getCourseKey(course)) ?? [],
-  };
+  return formatCourse(course as ICourseItem);
 };
 
 export const getCourseById = async (
@@ -169,14 +71,7 @@ export const getCourseById = async (
       .sort({ fromDate: -1 })
       .lean();
 
-    if (exactMatch) {
-      const { formerNamesByCourse } = await getFormerNameIndex();
-
-      return {
-        ...formatCourse(exactMatch as ICourseItem),
-        formerNames: formerNamesByCourse.get(getCourseKey(exactMatch)) ?? [],
-      };
-    }
+    if (exactMatch) return formatCourse(exactMatch as ICourseItem);
   }
 
   // Fall back to any course with the courseId
@@ -186,12 +81,7 @@ export const getCourseById = async (
 
   if (!course) return null;
 
-  const { formerNamesByCourse } = await getFormerNameIndex();
-
-  return {
-    ...formatCourse(course as ICourseItem),
-    formerNames: formerNamesByCourse.get(getCourseKey(course)) ?? [],
-  };
+  return formatCourse(course as ICourseItem);
 };
 
 interface GetClassesByCourseOptions {
@@ -359,12 +249,9 @@ export const getCourses = async () => {
   //   }
   // }
 
-  const { formerNamesByCourse } = await getFormerNameIndex();
-
   return courses.map((c) => ({
     ...formatCourse(c),
     gradeDistribution: null,
-    formerNames: formerNamesByCourse.get(getCourseKey(c)) ?? [],
   })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
     gradeDistribution: CourseModule.Course["gradeDistribution"];
   })[];
