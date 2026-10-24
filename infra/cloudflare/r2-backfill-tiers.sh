@@ -81,7 +81,8 @@ while read -r tier src dst; do
   fi
   echo "copy   $src -> $dst"
   if [ "$DRY_RUN" != "--dry-run" ]; then
-    s3 cp "s3://$BUCKET_NAME/$src" "s3://$BUCKET_NAME/$dst" > /dev/null
+    # R2 does not implement GetObjectTagging, which cp uses to copy tags
+    s3 cp "s3://$BUCKET_NAME/$src" "s3://$BUCKET_NAME/$dst" --copy-props none > /dev/null
   fi
   copied=$((copied + 1))
 done <<< "$plan"
