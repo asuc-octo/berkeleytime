@@ -278,23 +278,19 @@ export function RatingsContainer() {
           Boolean(category)
         ) ?? [];
 
-      let maxCount = 1;
-      RATING_VALUES.forEach((rating) => {
-        const category = categories.find(
-          (cat: MetricCategory) => cat.value === rating
-        );
-        maxCount = Math.max(maxCount, clampCount(category?.count));
-      });
+      const counts = RATING_VALUES.map((rating) =>
+        clampCount(
+          categories.find((cat: MetricCategory) => cat.value === rating)?.count
+        )
+      );
+      const totalCount = counts.reduce((sum, count) => sum + count, 0);
 
-      const stats = RATING_VALUES.map((rating) => {
-        const category = categories.find(
-          (cat: MetricCategory) => cat.value === rating
-        );
-        const count = clampCount(category?.count);
+      const stats = RATING_VALUES.map((rating, index) => {
+        const count = counts[index];
         return {
           rating,
           count,
-          barPercentage: maxCount > 0 ? (count / maxCount) * 100 : 0,
+          barPercentage: totalCount > 0 ? (count / totalCount) * 100 : 0,
         };
       });
 

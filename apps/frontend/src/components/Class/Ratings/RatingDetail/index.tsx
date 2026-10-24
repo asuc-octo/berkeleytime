@@ -128,18 +128,20 @@ export function RatingDetailView({
                 }
                 content={
                   <>
-                    <span
-                      style={{ color: "var(--blue-500)" }}
-                    >{`${Math.round((stat.count * 100) / reviewCount)}%`}</span>
-                    {` of users left this rating`}
+                    <span style={{ color: "var(--blue-500)" }}>
+                      {stat.count}
+                    </span>
+                    {` of ${reviewCount} ${reviewCount === 1 ? "user" : "users"} left this rating`}
                   </>
                 }
                 hasArrow={false}
               />
               <span
-                className={`${styles.count} ${stat.count === 0 ? styles.empty : ""}`}
+                className={classNames(styles.percentage, {
+                  [styles.empty]: stat.count === 0,
+                })}
               >
-                {shouldAnimate ? `${stat.count}` : "0%"}
+                {`${Math.round(stat.barPercentage)}%`}
               </span>
             </div>
           ))}
