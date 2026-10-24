@@ -30,7 +30,7 @@ add_rule() {
 add_rule "$PRIVATE_BUCKET" hourly/ 1 # 24 at a time
 add_rule "$PRIVATE_BUCKET" daily/ 30 # 30 at a time
 add_rule "$PRIVATE_BUCKET" weekly/ 91 # 13 at a time
-add_rule "$PRIVATE_BUCKET" persistent/ # 24 at a time
+add_rule "$PRIVATE_BUCKET" persistent/ 730 # 24 at a time
 add_rule "$PUBLIC_BUCKET" daily/ 7
 
 $WRANGLER r2 bucket lifecycle list "$PRIVATE_BUCKET"
