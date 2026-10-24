@@ -29,6 +29,11 @@ spec:
                   }
                   trap cleanup EXIT
 
+                  # Capture the timestamp before dumping so a slow dump can't
+                  # roll the backup into the next hour
+                  backup_timestamp=$(date +%Y%m%d%H)
+                  day_of_week=$(date +%u) # 7 = Sunday
+
                   # Find production MongoDB pod
                   prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
 
@@ -42,22 +47,36 @@ spec:
                     "$prod_pod" -- rm /tmp/prod_backup.gz
 
                   # Upload production MongoDB backup
+                  # Retention is enforced by R2 lifecycle rules per prefix
+                  # (see infra/cloudflare/r2-lifecycle.sh):
+                  #   hourly/ 1d, daily/ 30d, weekly/ 91d, persistent/ 730d
                   echo "Uploading backup to s3 bucket..."
-                  now=$(date +%Y%m%d%H)
-                  backup_timestamp=$now
-                  backup_date=${now%??}
+                  backup_date=${backup_timestamp%??}
                   date_day=${backup_date#??????}
-                  date_hour=${now#????????}
+                  date_hour=${backup_timestamp#????????}
+                  hourly_key="hourly/prod_backup-$backup_timestamp.gz"
 
-                  aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/hourly/prod_backup-$backup_timestamp.gz \
+                  aws s3 cp /tmp/prod_backup.gz "s3://$BUCKET_NAME/$hourly_key" \
                     --endpoint-url=$ENDPOINT_URL \
                     --checksum-algorithm CRC32
 
-                  if [ "$date_day" = "01" ] && [ "$date_hour" = "05" ]; then
-                    echo "Also uploading to persistent storage"
-                    aws s3 cp /tmp/prod_backup.gz s3://$BUCKET_NAME/persistent/prod_backup-$backup_date.gz \
-                      --endpoint-url=$ENDPOINT_URL \
-                      --checksum-algorithm CRC32
+                  # Promote the 5 AM backup into the longer-lived tiers via
+                  # server-side copy (no re-upload)
+                  promote() {
+                    echo "Also copying to $1/"
+                    aws s3 cp "s3://$BUCKET_NAME/$hourly_key" \
+                      "s3://$BUCKET_NAME/$1/prod_backup-$backup_date.gz" \
+                      --endpoint-url=$ENDPOINT_URL
+                  }
+
+                  if [ "$date_hour" = "05" ]; then
+                    promote daily
+                    if [ "$day_of_week" = "7" ]; then
+                      promote weekly
+                    fi
+                    if [ "$date_day" = "01" ]; then
+                      promote persistent
+                    fi
                   fi
 
                   echo "MongoDB backup completed successfully!"
