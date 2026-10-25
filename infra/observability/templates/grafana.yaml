@@ -104,6 +104,8 @@ spec:
               value: "true"
             - name: GF_AUTH_ANONYMOUS_ORG_ROLE
               value: Viewer
+            - name: GOMEMLIMIT
+              value: {{ .Values.grafana.goMemLimit | quote }}
           resources:
             {{- toYaml .Values.grafana.resources | nindent 12 }}
           securityContext:
