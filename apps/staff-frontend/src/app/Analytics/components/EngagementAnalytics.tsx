@@ -221,6 +221,18 @@ export function SchedulesGeneratedBlock() {
   );
 }
 
+export function SchedulesExportedBlock() {
+  return (
+    <EventCard
+      title="Schedules exported"
+      description="Schedules downloaded as an .ics calendar file"
+      eventType="schedule_exported"
+      targetType="schedule"
+      valueLabel="exported"
+    />
+  );
+}
+
 export function CourseResultsClickedBlock() {
   return (
     <EventCard
