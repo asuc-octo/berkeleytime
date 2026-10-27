@@ -1189,7 +1189,10 @@ export default function Editor() {
           </MenuItem> */}
         </div>
         {editing && (
-          <GenerateSchedulesDialog schedule={schedule}>
+          <GenerateSchedulesDialog
+            schedule={schedule}
+            onSelect={() => setTab(0)}
+          >
             <Button variant="secondary">
               <Shuffle />
               Generate
