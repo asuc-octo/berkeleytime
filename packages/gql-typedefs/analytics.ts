@@ -37,6 +37,27 @@ export const analyticsTypeDef = gql`
     percent: Float!
   }
 
+  """
+  Number of written reviews on one course, across all of its offerings
+  """
+  type WrittenReviewClassCount @cacheControl(maxAge: 0) {
+    subject: String!
+    courseNumber: String!
+    count: Int!
+  }
+
+  """
+  Live written reviews (non-empty title or content) over time and by class
+  """
+  type WrittenReviewAnalyticsData @cacheControl(maxAge: 0) {
+    "Live written reviews across all classes"
+    totalWrittenReviews: Int!
+    "createdAt (ISO) of every live written review, oldest first"
+    reviewDates: [String!]!
+    "Classes with at least one written review, most reviewed first"
+    classes: [WrittenReviewClassCount!]!
+  }
+
   extend type Query {
     """
     Dashboard statistics aggregation
@@ -77,6 +98,11 @@ export const analyticsTypeDef = gql`
     Staff-only: Optional response data for analytics (Recording/Attendance completion)
     """
     optionalResponseAnalyticsData: [OptionalResponseDataPoint!]! @auth
+
+    """
+    Staff-only: Written review counts over time and by class
+    """
+    writtenReviewAnalytics: WrittenReviewAnalyticsData! @auth
 
     """
     Staff-only: Collection analytics data
