@@ -8,7 +8,14 @@ import {
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import { Bookmark, BookmarkSolid, Folder, PinSolid, Plus } from "iconoir-react";
+import {
+  Bookmark,
+  BookmarkSolid,
+  Check,
+  Folder,
+  PinSolid,
+  Plus,
+} from "iconoir-react";
 import { Popover } from "radix-ui";
 
 import { Button, Color, IconButton, Tooltip } from "@repo/theme";
@@ -107,6 +114,9 @@ export default function BookmarkPopover({
       if (!collection._id) continue;
       const hasClass = collection.classes?.some(
         (entry) =>
+          entry.class?.year === classInfo.year &&
+          entry.class?.semester === classInfo.semester &&
+          entry.class?.sessionId === classInfo.sessionId &&
           entry.class?.subject === classInfo.subject &&
           entry.class?.courseNumber === classInfo.courseNumber &&
           entry.class?.number === classInfo.classNumber
@@ -409,6 +419,9 @@ export default function BookmarkPopover({
                   const collectionFolderStyle = collectionFolderColor
                     ? ({ color: collectionFolderColor } as CSSProperties)
                     : undefined;
+                  const toggleLabel = isSaved
+                    ? `Remove from ${collection.name}`
+                    : `Add to ${collection.name}`;
                   return (
                     <motion.div
                       key={collection.id}
@@ -447,17 +460,27 @@ export default function BookmarkPopover({
                           />
                         )}
                       </span>
-                      <IconButton
-                        className={classNames(styles.bookmark, {
-                          [styles.active]: isSaved,
-                        })}
-                        disabled={mutatingCollections.has(collection.id)}
-                        onClick={() =>
-                          handleToggleCollection(collection.id, isSaved)
+                      <Tooltip
+                        title={toggleLabel}
+                        trigger={
+                          <IconButton
+                            className={classNames(styles.bookmark, {
+                              [styles.active]: isSaved,
+                            })}
+                            aria-label={toggleLabel}
+                            disabled={mutatingCollections.has(collection.id)}
+                            onClick={() =>
+                              handleToggleCollection(collection.id, isSaved)
+                            }
+                          >
+                            {isSaved ? (
+                              <Check width={16} height={16} />
+                            ) : (
+                              <Plus width={16} height={16} />
+                            )}
+                          </IconButton>
                         }
-                      >
-                        <Plus width={16} height={16} />
-                      </IconButton>
+                      />
                     </motion.div>
                   );
                 })}
