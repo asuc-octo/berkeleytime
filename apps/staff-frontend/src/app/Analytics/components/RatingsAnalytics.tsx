@@ -728,7 +728,7 @@ export function CourseDistributionBlock() {
       title="Rated Courses"
       description={`Courses with ratings (${timeRange})`}
       currentValue={current}
-      currentValueLabel="courses"
+      currentValueLabel="classes"
       absoluteChange={absoluteChange}
       percentChange={percentChange}
       changeTimescale={timeRange}
@@ -1187,7 +1187,7 @@ export function CourseRatingsDistributionBlock() {
       title="Course Ratings Treemap"
       description={`Area = rating count, by subject`}
       currentValue={totalCourses}
-      currentValueLabel="courses"
+      currentValueLabel="classes"
       subtitle={`avg. ${avgPerClass.toFixed(1)} ratings/class`}
       customControls={
         <>
@@ -2316,7 +2316,7 @@ export function WrittenReviewsCountBlock() {
 
     const current =
       chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
-    const start = chartData.length > 0 ? chartData[0].value : 0;
+    const start = baselineCount;
     const absoluteChange = current - start;
     const percentChange =
       start > 0 ? ((current - start) / start) * 100 : current > 0 ? 100 : 0;
@@ -2458,7 +2458,6 @@ export function ClassesWithReviewsBlock() {
     () =>
       (data?.classes ?? []).map((c) => ({
         name: `${c.subject} ${c.courseNumber}`,
-        fullName: `${c.subject} ${c.courseNumber} · ${c.semester} ${c.year} · ${c.classNumber}`,
         count: c.count,
       })),
     [data]
@@ -2553,13 +2552,7 @@ export function ClassesWithReviewsBlock() {
                 width={100}
                 interval={0}
               />
-              <ChartTooltip
-                cursor={false}
-                tooltipConfig={{
-                  labelFormatter: (_label, payload) =>
-                    payload?.[0]?.payload?.fullName ?? _label,
-                }}
-              />
+              <ChartTooltip cursor={false} />
               <Bar
                 dataKey="count"
                 fill="var(--heading-color)"

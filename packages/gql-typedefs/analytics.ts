@@ -38,14 +38,11 @@ export const analyticsTypeDef = gql`
   }
 
   """
-  Number of written reviews left on one class offering
+  Number of written reviews on one course, across all of its offerings
   """
   type WrittenReviewClassCount @cacheControl(maxAge: 0) {
     subject: String!
     courseNumber: String!
-    semester: String!
-    year: Int!
-    classNumber: String!
     count: Int!
   }
 

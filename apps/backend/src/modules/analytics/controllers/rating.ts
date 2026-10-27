@@ -150,26 +150,16 @@ export const getWrittenReviewAnalyticsData = async (
       .select("createdAt")
       .sort({ createdAt: 1 })
       .lean(),
+    // Grouped by subject + course number, the same key the catalog uses to
+    // list a course's reviews across all of its offerings
     ReviewModel.aggregate<{
-      _id: {
-        subject: string;
-        courseNumber: string;
-        semester: string;
-        year: number;
-        classNumber: string;
-      };
+      _id: { subject: string; courseNumber: string };
       count: number;
     }>([
       { $match: writtenReviewMatch },
       {
         $group: {
-          _id: {
-            subject: "$subject",
-            courseNumber: "$courseNumber",
-            semester: "$semester",
-            year: "$year",
-            classNumber: "$classNumber",
-          },
+          _id: { subject: "$subject", courseNumber: "$courseNumber" },
           count: { $sum: 1 },
         },
       },

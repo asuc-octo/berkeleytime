@@ -278,9 +278,6 @@ export const GENERAL_ACTIVITY_ANALYTICS = gql`
 export interface WrittenReviewClassCount {
   subject: string;
   courseNumber: string;
-  semester: string;
-  year: number;
-  classNumber: string;
   count: number;
 }
 
@@ -298,9 +295,6 @@ export const WRITTEN_REVIEW_ANALYTICS = gql`
       classes {
         subject
         courseNumber
-        semester
-        year
-        classNumber
         count
       }
     }

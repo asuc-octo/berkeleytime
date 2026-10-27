@@ -8,6 +8,12 @@ export interface PersistedOperation {
 }
 
 export const persistedOperations: Readonly<Record<string, PersistedOperation>> = {
+  "00fc6cb62e41c4b9c89fc29b49065750bfea185ef5ad4284ab87cc8869cbac1a": {
+    operationName: "WrittenReviewAnalytics",
+    document: "query WrittenReviewAnalytics{writtenReviewAnalytics{totalWrittenReviews reviewDates classes{subject courseNumber count __typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "0117817462719371e7dbd006b53ed0f5b72ec24fb063fbfc9b2a391d8d63e614": {
     operationName: "GetCollectionById",
     document: "query GetCollectionById($id:ID!){myCollectionById(id:$id){name classes{class{subject courseNumber number sessionId title year semester unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll endTime activeReservedMaxCount __typename}__typename}__typename}__typename}error __typename}__typename}}",
@@ -349,12 +355,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation UpdateRouteRedirect($redirectId:ID!$input:UpdateRouteRedirectInput!){updateRouteRedirect(redirectId:$redirectId input:$input){id fromPath toPath clickCount createdAt updatedAt __typename}}",
     variableNames: ["redirectId","input"],
     sources: ["apps/staff-frontend/src/lib/api/route-redirect.ts"],
-  },
-  "55a68b4d090051a355c169b95e0088cb35ba5483d705d7a7a966d30cafcd30f5": {
-    operationName: "WrittenReviewAnalytics",
-    document: "query WrittenReviewAnalytics{writtenReviewAnalytics{totalWrittenReviews reviewDates classes{subject courseNumber semester year classNumber count __typename}__typename}}",
-    variableNames: [],
-    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
   },
   "5758c759e679eb9005c3aaeaf54504f2b6fb7995cee2a411116fef7b171ad746": {
     operationName: "GetTerms",
