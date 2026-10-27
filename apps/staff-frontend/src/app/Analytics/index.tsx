@@ -17,7 +17,7 @@ import {
   CourseResultsClickedBlock,
   DataLoadFailuresBlock,
   PageErrorsBlock,
-  SchedulesGeneratedBlock,
+  ScheduleGenerationBlock,
   SchedulesSavedBlock,
   SearchFailuresBlock,
   SearchFiltersAppliedBlock,
@@ -279,7 +279,7 @@ export default function Analytics() {
               <SchedulesSavedBlock />
             </div>
             <div className={styles.cell}>
-              <SchedulesGeneratedBlock />
+              <ScheduleGenerationBlock />
             </div>
             <div className={styles.cell}>
               <CourseResultsClickedBlock />

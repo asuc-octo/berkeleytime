@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import {
   CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -47,26 +48,12 @@ function formatDisplayDate(dateKey: string): string {
   return `${MONTH_NAMES[month - 1]} ${day}`;
 }
 
-interface EventCardProps {
-  title: string;
-  description: string;
-  /** Tracking event type, e.g. "schedule_saved" */
-  eventType: string;
-  /** Tracking target type; the staff query skips unless this is set */
-  targetType: string;
-  /** Unit shown next to the headline number, e.g. "saved" */
-  valueLabel: string;
-}
-
-function EventCard({
-  title,
-  description,
-  eventType,
-  targetType,
-  valueLabel,
-}: EventCardProps) {
-  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
-
+// Daily counts for one event over a time range, keyed by UTC date
+function useDailyCounts(
+  eventType: string,
+  targetType: string,
+  timeRange: TimeRange
+) {
   const days = getTimeRangeDays(timeRange);
   const endDate = useMemo(() => new Date(), []);
   const startDate = useMemo(() => {
@@ -92,29 +79,64 @@ function EventCard({
   });
 
   // Fill every day in the range so gaps read as zero rather than disappearing
-  const chartData = useMemo(() => {
-    const countByDate = new Map<string, number>();
+  const countByDate = useMemo(() => {
+    const counts = new Map<string, number>();
 
     for (
       let d = new Date(startDate);
       d <= endDate;
       d.setDate(d.getDate() + 1)
     ) {
-      countByDate.set(d.toISOString().slice(0, 10), 0);
+      counts.set(d.toISOString().slice(0, 10), 0);
     }
 
     for (const point of seriesData) {
-      countByDate.set(point.date, point.count);
+      counts.set(point.date, point.count);
     }
 
-    return Array.from(countByDate.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([dateKey, count]) => ({
-        dateKey,
-        date: formatDisplayDate(dateKey),
-        count,
-      }));
+    return counts;
   }, [seriesData, startDate, endDate]);
+
+  return { countByDate, loading, error };
+}
+
+interface EventCardProps {
+  title: string;
+  description: string;
+  /** Tracking event type, e.g. "schedule_saved" */
+  eventType: string;
+  /** Tracking target type; the staff query skips unless this is set */
+  targetType: string;
+  /** Unit shown next to the headline number, e.g. "saved" */
+  valueLabel: string;
+}
+
+function EventCard({
+  title,
+  description,
+  eventType,
+  targetType,
+  valueLabel,
+}: EventCardProps) {
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+
+  const { countByDate, loading, error } = useDailyCounts(
+    eventType,
+    targetType,
+    timeRange
+  );
+
+  const chartData = useMemo(
+    () =>
+      Array.from(countByDate.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([dateKey, count]) => ({
+          dateKey,
+          date: formatDisplayDate(dateKey),
+          count,
+        })),
+    [countByDate]
+  );
 
   const total = useMemo(
     () => chartData.reduce((sum, point) => sum + point.count, 0),
@@ -209,15 +231,150 @@ export function SchedulesSavedBlock() {
   );
 }
 
-export function SchedulesGeneratedBlock() {
+const GENERATION_COLORS = {
+  clicks: "#4e79a7",
+  succeeded: "#f28e2c",
+};
+
+export function ScheduleGenerationBlock() {
+  const [timeRange, setTimeRange] = useState<TimeRange>("30d");
+
+  const clicks = useDailyCounts("schedule_generate", "schedule", timeRange);
+  const succeeded = useDailyCounts(
+    "schedule_generate_succeeded",
+    "schedule",
+    timeRange
+  );
+
+  const loading = clicks.loading || succeeded.loading;
+  const error = clicks.error || succeeded.error;
+
+  const chartData = useMemo(
+    () =>
+      Array.from(clicks.countByDate.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([dateKey, count]) => ({
+          dateKey,
+          date: formatDisplayDate(dateKey),
+          clicks: count,
+          succeeded: succeeded.countByDate.get(dateKey) ?? 0,
+        })),
+    [clicks.countByDate, succeeded.countByDate]
+  );
+
+  const { totalSucceeded, comparedClicks } = useMemo(() => {
+    // Clicks were tracked before successes were, so the rate only compares
+    // days from the first recorded success onward
+    const firstSuccess = chartData.findIndex((point) => point.succeeded > 0);
+    const compared =
+      firstSuccess === -1 ? chartData : chartData.slice(firstSuccess);
+
+    return {
+      totalSucceeded: chartData.reduce((sum, p) => sum + p.succeeded, 0),
+      comparedClicks: compared.reduce((sum, p) => sum + p.clicks, 0),
+    };
+  }, [chartData]);
+
+  const subtitle =
+    totalSucceeded > 0 && comparedClicks > 0
+      ? `${Math.round((totalSucceeded / comparedClicks) * 100)}% of ${comparedClicks.toLocaleString()} clicks`
+      : `${comparedClicks.toLocaleString()} clicks`;
+
+  const chartConfig = createChartConfig(["clicks", "succeeded"], {
+    labels: { clicks: "Generate clicks", succeeded: "Schedules generated" },
+    colors: GENERATION_COLORS,
+  });
+
   return (
-    <EventCard
-      title="Schedules generated"
-      description="Times the schedule generator produced combinations"
-      eventType="schedule_generate"
-      targetType="schedule"
-      valueLabel="generated"
-    />
+    <AnalyticsCard
+      title="Schedule generation"
+      description={`Generate button clicks vs. runs that produced at least one schedule (${timeRange})`}
+      currentValue={totalSucceeded}
+      currentValueLabel="generated"
+      subtitle={subtitle}
+      showTimeRangeSelector
+      timeRange={timeRange}
+      onTimeRangeChange={(value) => setTimeRange(value)}
+    >
+      {loading && (
+        <div className={styles.state}>
+          <LoadingIndicator />
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className={`${styles.state} ${styles.error}`}>
+          Error loading data
+        </div>
+      )}
+
+      {!loading && !error && (
+        <ChartContainer config={chartConfig} style={{ flex: 1, minHeight: 0 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border-color)"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "var(--label-color)", fontSize: 10 }}
+                interval="preserveStartEnd"
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: "var(--label-color)", fontSize: 12 }}
+                width={40}
+                domain={[0, "auto"]}
+                allowDecimals={false}
+              />
+              <Legend
+                layout="horizontal"
+                verticalAlign="bottom"
+                align="center"
+                wrapperStyle={{ paddingTop: 8 }}
+                formatter={(value: string) => (
+                  <span style={{ color: "var(--label-color)", fontSize: 12 }}>
+                    {chartConfig[value]?.label ?? value}
+                  </span>
+                )}
+              />
+              <ChartTooltip
+                tooltipConfig={{
+                  sortBy: "none",
+                  valueFormatter: (value: number) =>
+                    typeof value === "number" && Number.isFinite(value)
+                      ? String(Math.round(value))
+                      : "-",
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="clicks"
+                stroke={GENERATION_COLORS.clicks}
+                strokeWidth={2}
+                dot={false}
+                connectNulls
+                activeDot={{ r: 4, fill: GENERATION_COLORS.clicks }}
+              />
+              <Line
+                type="monotone"
+                dataKey="succeeded"
+                stroke={GENERATION_COLORS.succeeded}
+                strokeWidth={2}
+                dot={false}
+                connectNulls
+                activeDot={{ r: 4, fill: GENERATION_COLORS.succeeded }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      )}
+    </AnalyticsCard>
   );
 }
 

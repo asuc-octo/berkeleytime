@@ -36,6 +36,12 @@
   color: var(--paragraph-color);
 }
 
+.note {
+  font-size: 12px;
+  margin: 0 0 12px;
+  color: var(--label-color);
+}
+
 .scrollableContent {
   flex: 1;
   overflow-y: auto;
