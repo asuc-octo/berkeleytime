@@ -48,9 +48,6 @@ data:
 
     overrides:
       defaults:
-        metrics_generator:
-          processors: [service-graphs, span-metrics]
-          max_active_series: {{ .Values.tempo.limits.maxActiveSeries }}
         ingestion:
           rate_limit_bytes: {{ .Values.tempo.limits.ingestionRateBytes }}
           burst_size_bytes: {{ .Values.tempo.limits.ingestionBurstBytes }}
