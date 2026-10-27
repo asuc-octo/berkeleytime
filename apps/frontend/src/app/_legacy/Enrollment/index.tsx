@@ -32,7 +32,6 @@ import {
 import { ChartContainer } from "@/components/CourseAnalytics/ChartContainer";
 import { CourseAnalyticsPage } from "@/components/CourseAnalytics/CourseAnalyticsPage";
 import { useCourseManager } from "@/components/CourseAnalytics/CourseManager/useCourseManager";
-import CourseSelectionCard from "@/components/CourseSelectionCard";
 import {
   GetEnrollmentDocument,
   GetEnrollmentTimeframesDocument,
@@ -40,6 +39,7 @@ import {
 } from "@/lib/generated/graphql";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 
+import CourseSelectionCard from "../CourseSelectionCard";
 import CourseInput from "./CourseManager/CourseInput";
 import DataBoard from "./DataBoard";
 import {
@@ -74,6 +74,7 @@ const getDarkColor = (lightColor: string): string => {
   const colorIndex = LIGHT_COLORS.indexOf(lightColor);
   return colorIndex !== -1 ? DARK_COLORS[colorIndex] : lightColor;
 };
+const ACTIVITY_THRESHOLD_PERCENT = 5;
 
 type PhaseLine = {
   timeDelta: number;
@@ -114,6 +115,36 @@ const EnrollmentChart = memo(function EnrollmentChart({
     },
     [onHoverDuration]
   );
+
+  const seriesActivityByOutput = useMemo(() => {
+    const activity = new Map<
+      number,
+      { hasEnrolledActivity: boolean; hasWaitlistedActivity: boolean }
+    >();
+    if (!data || outputs.length === 0) return activity;
+
+    outputs.forEach((_, outputIndex) => {
+      const enrollKey = `enroll_${outputIndex}`;
+      const waitlistKey = `waitlist_${outputIndex}`;
+
+      const hasEnrolledActivity = data.some((point) => {
+        const value = point[enrollKey];
+        return typeof value === "number" && value > ACTIVITY_THRESHOLD_PERCENT;
+      });
+
+      const hasWaitlistedActivity = data.some((point) => {
+        const value = point[waitlistKey];
+        return typeof value === "number" && value > ACTIVITY_THRESHOLD_PERCENT;
+      });
+
+      activity.set(outputIndex, {
+        hasEnrolledActivity,
+        hasWaitlistedActivity,
+      });
+    });
+
+    return activity;
+  }, [data, outputs]);
 
   return (
     <ChartContainer config={chartConfig} hasData={filteredOutputs.length > 0}>
@@ -230,29 +261,43 @@ const EnrollmentChart = memo(function EnrollmentChart({
               activeOutput && !output.active
                 ? getDarkColor(output.color)
                 : output.color;
+            const { hasEnrolledActivity, hasWaitlistedActivity } =
+              seriesActivityByOutput.get(originalIndex) ?? {
+                hasEnrolledActivity: false,
+                hasWaitlistedActivity: false,
+              };
+
             return (
               <React.Fragment key={index}>
-                <Line
-                  dataKey={`enroll_${originalIndex}`}
-                  stroke={lineColor}
-                  name={`${output.input.subject} ${output.input.courseNumber}`}
-                  isAnimationActive={shouldAnimateLine}
-                  dot={false}
-                  strokeWidth={3}
-                  type="monotone"
-                  connectNulls
-                />
-                <Line
-                  dataKey={`waitlist_${originalIndex}`}
-                  stroke={lineColor}
-                  name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
-                  isAnimationActive={shouldAnimateLine}
-                  dot={false}
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  type="monotone"
-                  connectNulls
-                />
+                {hasEnrolledActivity && (
+                  <Line
+                    dataKey={`enroll_${originalIndex}`}
+                    stroke={lineColor}
+                    name={`${output.input.subject} ${output.input.courseNumber}`}
+                    isAnimationActive={shouldAnimateLine}
+                    dot={false}
+                    strokeWidth={3}
+                    type="monotone"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    connectNulls
+                  />
+                )}
+                {hasWaitlistedActivity && (
+                  <Line
+                    dataKey={`waitlist_${originalIndex}`}
+                    stroke={lineColor}
+                    name={`${output.input.subject} ${output.input.courseNumber} (Waitlist)`}
+                    isAnimationActive={shouldAnimateLine}
+                    dot={false}
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    type="monotone"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    connectNulls
+                  />
+                )}
               </React.Fragment>
             );
           })}
@@ -501,7 +546,7 @@ export default function Enrollment() {
       return map;
     });
 
-    return Array.from(timeDeltas)
+    const sortedData = Array.from(timeDeltas)
       .map((timeDelta) => {
         const datapoint: { timeDelta: number; [key: string]: number | null } = {
           timeDelta,
@@ -516,6 +561,7 @@ export default function Enrollment() {
         return datapoint;
       })
       .sort((a, b) => a.timeDelta - b.timeDelta); // set doesn't guarantee order, so we sort by timeDelta
+    return sortedData;
   }, [outputs]);
 
   useEffect(() => {
@@ -723,7 +769,9 @@ export default function Enrollment() {
                   key={`${index}-${input.subject}-${input.courseNumber}-${semester} • ${instructor}`}
                   subject={input.subject}
                   number={input.courseNumber}
-                  subtitle={`${semester} • ${instructor}`}
+                  metadata={`${semester} • ${instructor}`}
+                  gradeDistribution={undefined}
+                  loadGradeDistribution={false}
                   onClick={() => updateActive(index, !rest.active)}
                   onClickDelete={() => remove(index)}
                   onClickHide={() => updateHidden(index, !rest.hidden)}

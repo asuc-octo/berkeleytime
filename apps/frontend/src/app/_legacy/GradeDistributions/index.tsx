@@ -30,8 +30,8 @@ import { GRADES } from "@/lib/grades";
 import { RecentType, getPageUrl, savePageUrl } from "@/lib/recent";
 import { parseInputsFromUrl } from "@/utils/url-course-parser";
 
+import CourseSelectionCard from "../CourseSelectionCard";
 import CourseInput from "./CourseInput";
-import CourseSelectionCard from "./CourseSelectionCard";
 import DataBoard from "./DataBoard";
 
 type Output = CourseOutput<Input, IGradeDistribution>;

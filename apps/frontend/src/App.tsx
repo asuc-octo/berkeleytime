@@ -33,15 +33,8 @@ const CollectionDetail = lazy(
 );
 
 const Catalog = lazy(() => import("@/app/Catalog"));
-const Enrollment = lazy(() => import("@/app/Enrollment"));
-const Grades = lazy(() => import("@/app/Grades"));
-
-// Legacy pages (preserved for reference during redesign). The legacy Grades
-// page is currently served at /grades; the redesigned one lives at /grades-new.
-const LegacyEnrollment = lazy(() => import("@/app/_legacy/Enrollment"));
-const LegacyGradeDistributions = lazy(
-  () => import("@/app/_legacy/GradeDistributions")
-);
+const Enrollment = lazy(() => import("@/app/_legacy/Enrollment"));
+const Grades = lazy(() => import("@/app/_legacy/GradeDistributions"));
 const About = lazy(() => import("@/app/About"));
 const Apply = lazy(() => import("@/app/Apply"));
 // const Discover = lazy(() => import("@/app/Discover"));
@@ -290,7 +283,7 @@ const router = createBrowserRouter([
           {
             element: (
               <SuspenseBoundary key="grades">
-                <LegacyGradeDistributions />
+                <Grades />
               </SuspenseBoundary>
             ),
             path: "grades",
@@ -302,22 +295,6 @@ const router = createBrowserRouter([
               </SuspenseBoundary>
             ),
             path: "enrollment",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="grades-new">
-                <Grades />
-              </SuspenseBoundary>
-            ),
-            path: "grades-new",
-          },
-          {
-            element: (
-              <SuspenseBoundary key="enrollment-legacy">
-                <LegacyEnrollment />
-              </SuspenseBoundary>
-            ),
-            path: "enrollment-legacy",
           },
           {
             element: (
