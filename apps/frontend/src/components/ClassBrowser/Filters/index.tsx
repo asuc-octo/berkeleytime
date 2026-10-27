@@ -16,7 +16,8 @@ import styles from "./Filters.module.scss";
 
 type RequirementSelection =
   | { type: "breadth"; value: string }
-  | { type: "university"; value: string };
+  | { type: "university"; value: string }
+  | { type: "coe"; value: "hss" };
 
 const TIME_LABELS = [
   "8:00 AM",
@@ -84,6 +85,8 @@ export default function Filters() {
     updateBreadths,
     universityRequirements,
     updateUniversityRequirements,
+    coeHss,
+    updateCoEHss,
     updateGradingFilters,
     department,
     updateDepartment,
@@ -156,6 +159,16 @@ export default function Filters() {
       );
     }
 
+    if (filterOptions) {
+      options.push(
+        { type: "label", label: "College of Engineering" },
+        {
+          value: { type: "coe", value: "hss" },
+          label: "Humanities and Social Sciences (H/SS)",
+        }
+      );
+    }
+
     return options;
   }, [filterOptions]);
 
@@ -166,8 +179,9 @@ export default function Filters() {
         value,
       })),
       ...breadths.map((value) => ({ type: "breadth" as const, value })),
+      ...(coeHss ? [{ type: "coe" as const, value: "hss" as const }] : []),
     ],
-    [breadths, universityRequirements]
+    [breadths, universityRequirements, coeHss]
   );
 
   const departmentOptions = useMemo(
@@ -205,6 +219,7 @@ export default function Filters() {
     updateLevels([]);
     updateBreadths([]);
     updateUniversityRequirements([]);
+    updateCoEHss(false);
     updateGradingFilters([]);
     updateDepartment(null);
     updateUnits([0, 5]);
@@ -341,6 +356,7 @@ export default function Filters() {
               if (value === null) {
                 updateBreadths([]);
                 updateUniversityRequirements([]);
+                updateCoEHss(false);
                 return;
               }
               if (!Array.isArray(value)) return;
@@ -353,6 +369,9 @@ export default function Filters() {
                 value
                   .filter((requirement) => requirement.type === "university")
                   .map((requirement) => requirement.value)
+              );
+              updateCoEHss(
+                value.some((requirement) => requirement.type === "coe")
               );
               if (value.length > 0) {
                 trackEvent(

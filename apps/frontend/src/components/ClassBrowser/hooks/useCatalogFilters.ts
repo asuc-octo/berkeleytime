@@ -111,6 +111,7 @@ export interface CatalogFilterState {
   timeRange: TimeRange;
   breadths: string[];
   universityRequirements: string[];
+  coeHss: boolean;
   gradingFilters: GradingFilter[];
   department: string | null;
   sortBy: SortBy;
@@ -131,6 +132,7 @@ export interface CatalogFilterUpdaters {
   updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
+  updateCoEHss: Dispatch<boolean>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
   updateDepartment: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
@@ -156,6 +158,7 @@ export default function useCatalogFilters({
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localTimeRange, setLocalTimeRange] = useState<TimeRange>([null, null]);
   const [localBreadths, setLocalBreadths] = useState<string[]>([]);
+  const [localCoEHss, setLocalCoEHss] = useState(false);
   const [localUniversityRequirements, setLocalUniversityRequirements] =
     useState<string[]>([]);
   const [localGradingFilters, setLocalGradingFilters] = useState<
@@ -233,6 +236,8 @@ export default function useCatalogFilters({
         : localUniversityRequirements,
     [searchParams, localUniversityRequirements, persistent]
   );
+
+  const coeHss = persistent ? searchParams.has("coeHss") : localCoEHss;
 
   const gradingFilters = useMemo(() => {
     if (!persistent) return localGradingFilters;
@@ -320,6 +325,7 @@ export default function useCatalogFilters({
       filters.universityRequirements = universityRequirements;
     }
 
+    if (coeHss) filters.coeHss = true;
     if (online) filters.online = true;
 
     return Object.keys(filters).length > 0 ? filters : undefined;
@@ -333,6 +339,7 @@ export default function useCatalogFilters({
     department,
     breadths,
     universityRequirements,
+    coeHss,
     online,
   ]);
 
@@ -345,6 +352,7 @@ export default function useCatalogFilters({
     timeRange[1] !== null ||
     breadths.length > 0 ||
     universityRequirements.length > 0 ||
+    coeHss ||
     gradingFilters.length > 0 ||
     department !== null ||
     enrollmentFilter !== null ||
@@ -440,6 +448,7 @@ export default function useCatalogFilters({
     timeRange,
     breadths,
     universityRequirements,
+    coeHss,
     gradingFilters,
     department,
     sortBy,
@@ -456,6 +465,7 @@ export default function useCatalogFilters({
     updateDays: (d) => updateArray("days", setLocalDays, d),
     updateTimeRange: updateTimeRangeFn,
     updateBreadths: (b) => updateArray("breadths", setLocalBreadths, b),
+    updateCoEHss: (value) => updateBoolean("coeHss", setLocalCoEHss, value),
     updateUniversityRequirements: (reqs) =>
       updateArray(
         "universityRequirements",
