@@ -2471,8 +2471,8 @@ export function ClassesWithReviewsBlock() {
   if (loading) {
     return (
       <AnalyticsCard
-        title="Classes with Reviews"
-        description="Written reviews per class"
+        title="Courses with Reviews"
+        description="Written reviews per course"
       >
         <div
           style={{
@@ -2491,8 +2491,8 @@ export function ClassesWithReviewsBlock() {
   if (error || !data) {
     return (
       <AnalyticsCard
-        title="Classes with Reviews"
-        description="Written reviews per class"
+        title="Courses with Reviews"
+        description="Written reviews per course"
       >
         <div
           style={{
@@ -2511,10 +2511,10 @@ export function ClassesWithReviewsBlock() {
 
   return (
     <AnalyticsCard
-      title="Classes with Reviews"
-      description="Written reviews per class, most to least"
+      title="Courses with Reviews"
+      description="Written reviews per course, most to least"
       currentValue={chartData.length}
-      currentValueLabel="classes"
+      currentValueLabel="courses"
     >
       <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         <ChartContainer
