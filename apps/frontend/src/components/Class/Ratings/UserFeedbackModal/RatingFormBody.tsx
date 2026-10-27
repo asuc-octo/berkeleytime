@@ -66,7 +66,7 @@ export function RatingFormBody({
   return (
     <Flex direction="column">
       <div className={styles.mainSection}>
-        <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>¥
+        <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
           <div className={styles.formGroup}>
             <div className={styles.questionPair}>
               <h3>
@@ -124,28 +124,24 @@ export function RatingFormBody({
             setMetricData={setMetricData}
             startQuestionNumber={questionNumbers.ratingsStartNumber}
           />
+          <ReviewTitleForm
+            reviewTitle={reviewTitle}
+            setReviewTitle={setReviewTitle}
+            showRequiredAsterisk={reviewContent.trim().length > 0}
+          />
+          <ReviewContentForm
+            reviewContent={reviewContent}
+            setReviewContent={setReviewContent}
+            showRequiredAsterisk={reviewTitle.trim().length > 0}
+          />
         </Flex>
       </div>
-
-      <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
-        <ReviewTitleForm
-          reviewTitle={reviewTitle}
-          setReviewTitle={setReviewTitle}
-          showRequiredAsterisk={reviewContent.trim().length > 0}
-        />
-        <ReviewContentForm
-          reviewContent={reviewContent}
-          setReviewContent={setReviewContent}
-          showRequiredAsterisk={reviewTitle.trim().length > 0}
-        />
-      </Flex>
 
       <AttendanceForm
         metricData={metricData}
         setMetricData={setMetricData}
         startQuestionNumber={questionNumbers.attendanceStartNumber}
       />
-
     </Flex>
   );
 }

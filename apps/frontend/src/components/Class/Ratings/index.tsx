@@ -730,7 +730,7 @@ export function RatingsContainer() {
         isOpen={isModalOpen}
         onClose={() => handleModalStateChange(false)}
         title={userRatings ? "Edit Rating" : "Rate Course"}
-        subtitle=""
+        subtitle={`${currentClass.subject} ${currentClass.courseNumber}`}
         showSelectedCourseSubtitle={false}
         initialCourse={{
           subject: currentClass.subject,
