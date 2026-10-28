@@ -34,7 +34,7 @@ enum Consensus {
 
 export function UserSubmittedData() {
   const { user } = useUser();
-  const { course } = useClass();
+  const { course, openRatingsTab } = useClass();
   const handleFeedbackClick = (e: ReactMouseEvent<HTMLAnchorElement>) => {
     if (!user) {
       e.preventDefault();
@@ -122,13 +122,23 @@ export function UserSubmittedData() {
             })}
           </div>
           <div>
-            <Link
-              to="?feedbackModal=true"
-              className={styles.suggestEdit}
-              onClick={handleFeedbackClick}
-            >
-              Look inaccurate? Suggest an edit →{" "}
-            </Link>
+            {openRatingsTab ? (
+              <button
+                type="button"
+                className={styles.suggestEdit}
+                onClick={openRatingsTab}
+              >
+                Taken this course? Help others by adding what you know →
+              </button>
+            ) : (
+              <Link
+                to="?feedbackModal=true"
+                className={styles.suggestEdit}
+                onClick={handleFeedbackClick}
+              >
+                Taken this course? Help others by adding what you know →
+              </Link>
+            )}
           </div>
         </div>
       )}
