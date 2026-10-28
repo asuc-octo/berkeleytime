@@ -18,7 +18,7 @@
     width: 384px;
 
     .body {
-      padding-top: 12px;
+      padding-top: var(--space-3);
     }
   }
 
@@ -27,14 +27,14 @@
     width: 100%;
 
     .body {
-      padding-top: 12px;
+      padding-top: var(--space-3);
     }
   }
 
   .body {
     display: flex;
     flex-direction: column;
-    padding: 24px 16px 80px;
+    padding: var(--space-5) var(--space-4) 80px;
     gap: 20px;
 
     .closeFiltersButton {
@@ -73,11 +73,11 @@
       font-size: var(--text-14);
       line-height: 20px;
       color: var(--heading-color);
-      margin-bottom: 8px;
+      margin-bottom: var(--space-2);
     }
 
     .helperText {
-      margin-top: 8px;
+      margin-top: var(--space-2);
       font-size: var(--text-12);
       line-height: 16px;
       color: var(--paragraph-color);
@@ -85,7 +85,7 @@
 
     .sortControls {
       display: flex;
-      gap: 8px;
+      gap: var(--space-2);
       align-items: stretch;
 
       > :first-child {
@@ -105,8 +105,8 @@
     .timeRangeInputs {
       display: flex;
       align-items: stretch;
-      gap: 8px;
-      margin-top: 8px;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
     }
 
     .timeField {
