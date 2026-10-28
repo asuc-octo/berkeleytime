@@ -1,6 +1,8 @@
 .root {
   position: relative;
   height: 100%;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
 
   &:not([data-mode="full"]) {

@@ -11,6 +11,7 @@ import {
 import { persistedOperationFetch } from "@repo/shared";
 import { ThemeProvider } from "@repo/theme";
 
+import CatalogErrorBoundary from "@/components/CatalogErrorBoundary";
 import Layout from "@/components/Layout";
 import RootWrapper from "@/components/RootWrapper";
 import SuspenseBoundary from "@/components/SuspenseBoundary";
@@ -35,7 +36,8 @@ const Catalog = lazy(() => import("@/app/Catalog"));
 const Enrollment = lazy(() => import("@/app/Enrollment"));
 const Grades = lazy(() => import("@/app/Grades"));
 
-// Legacy pages (preserved for reference during redesign)
+// Legacy pages (preserved for reference during redesign). The legacy Grades
+// page is currently served at /grades; the redesigned one lives at /grades-new.
 const LegacyEnrollment = lazy(() => import("@/app/_legacy/Enrollment"));
 const LegacyGradeDistributions = lazy(
   () => import("@/app/_legacy/GradeDistributions")
@@ -174,14 +176,6 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "apply",
-            element: (
-              <SuspenseBoundary key="apply">
-                <Apply />
-              </SuspenseBoundary>
-            ),
-          },
-          {
             path: "legal/privacy",
             element: (
               <SuspenseBoundary key="privacy">
@@ -194,6 +188,19 @@ const router = createBrowserRouter([
             element: (
               <SuspenseBoundary key="terms">
                 <Terms />
+              </SuspenseBoundary>
+            ),
+          },
+        ],
+      },
+      {
+        element: <Layout bannerFallback={false} />,
+        children: [
+          {
+            path: "apply",
+            element: (
+              <SuspenseBoundary key="apply">
+                <Apply />
               </SuspenseBoundary>
             ),
           },
@@ -283,7 +290,7 @@ const router = createBrowserRouter([
           {
             element: (
               <SuspenseBoundary key="grades">
-                <Grades />
+                <LegacyGradeDistributions />
               </SuspenseBoundary>
             ),
             path: "grades",
@@ -298,11 +305,11 @@ const router = createBrowserRouter([
           },
           {
             element: (
-              <SuspenseBoundary key="grades-legacy">
-                <LegacyGradeDistributions />
+              <SuspenseBoundary key="grades-new">
+                <Grades />
               </SuspenseBoundary>
             ),
-            path: "grades-legacy",
+            path: "grades-new",
           },
           {
             element: (
@@ -318,7 +325,9 @@ const router = createBrowserRouter([
                 key="catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?"
                 fallback={<></>}
               >
-                <Catalog />
+                <CatalogErrorBoundary>
+                  <Catalog />
+                </CatalogErrorBoundary>
               </SuspenseBoundary>
             ),
             path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?/:sessionId?",

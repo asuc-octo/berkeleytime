@@ -33,6 +33,7 @@ import type { EnrollmentModule } from "../enrollment/generated-types/module-type
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 import { searchSemantic } from "../semantic-search/client";
 import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
+import { buildCoEHssQuery, matchesCoEHss } from "./coe-hss";
 
 export interface CatalogQueryParams {
   year: number;
@@ -50,6 +51,7 @@ export interface CatalogQueryParams {
     gradingFilters?: string[] | null;
     breadths?: string[] | null;
     universityRequirements?: string[] | null;
+    coeHss?: boolean | null;
     online?: boolean | null;
   } | null;
   sortBy?: string | null;
@@ -384,6 +386,8 @@ const applyInMemoryFilters = (
       return false;
     }
 
+    if (filters.coeHss && !matchesCoEHss(item)) return false;
+
     // Online filter
     if (filters.online && item.primaryOnline !== true) {
       return false;
@@ -514,6 +518,10 @@ const buildFilterQuery = (
     filters.universityRequirements.length > 0
   ) {
     query.universityRequirements = { $in: filters.universityRequirements };
+  }
+
+  if (filters.coeHss) {
+    appendAndCondition(query, buildCoEHssQuery());
   }
 
   // Online filter

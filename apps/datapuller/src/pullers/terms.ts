@@ -20,31 +20,34 @@ const updateTerms = async (config: Config, allTerms: boolean) => {
     log.info("No terms found.");
     return;
   }
-  const termIds = terms.map((term) => term.id);
-
-  log.trace("Deleting terms to be replaced...");
-
-  const { deletedCount } = await TermModel.deleteMany({
-    id: { $in: termIds },
-  });
-
-  log.info(`Deleted ${deletedCount.toLocaleString()} terms.`);
-
-  // Insert terms in batches of 5000
+  // Update terms in batches of 5000. hasCatalogData is derived from class
+  // data, so a SIS term refresh must not overwrite it for existing terms.
+  // New terms remain hidden until the classes puller confirms catalog data.
   const insertBatchSize = 5000;
   for (let i = 0; i < terms.length; i += insertBatchSize) {
     const batch = terms.slice(i, i + insertBatchSize);
 
-    log.trace(`Inserting batch ${i / insertBatchSize + 1}...`);
+    log.trace(`Updating batch ${i / insertBatchSize + 1}...`);
 
     await TermModel.bulkWrite(
-      batch.map((term) => ({
-        updateOne: {
-          filter: { id: term.id, academicCareerCode: term.academicCareerCode },
-          update: { $set: term },
-          upsert: true,
-        },
-      }))
+      batch.map((term) => {
+        const sisTermFields: Partial<typeof term> = { ...term };
+        delete sisTermFields.hasCatalogData;
+
+        return {
+          updateOne: {
+            filter: {
+              id: term.id,
+              academicCareerCode: term.academicCareerCode,
+            },
+            update: {
+              $set: sisTermFields,
+              $setOnInsert: { hasCatalogData: false },
+            },
+            upsert: true,
+          },
+        };
+      })
     );
   }
 
