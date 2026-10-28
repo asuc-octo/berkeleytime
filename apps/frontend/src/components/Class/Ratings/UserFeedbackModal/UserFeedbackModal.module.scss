@@ -181,7 +181,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 16px;
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background: none;
