@@ -1,5 +1,5 @@
 query SemanticSearchTerms {
-  terms {
+  terms(withCatalogData: true) {
     year
     semester
   }

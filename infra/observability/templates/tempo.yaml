@@ -27,7 +27,7 @@ data:
 
     compactor:
       compaction:
-        block_retention: 72h
+        block_retention: {{ .Values.tempo.retention}}
 
     storage:
       trace:
@@ -48,8 +48,12 @@ data:
 
     overrides:
       defaults:
-        metrics_generator:
-          processors: [service-graphs, span-metrics]
+        ingestion:
+          rate_limit_bytes: {{ .Values.tempo.limits.ingestionRateBytes }}
+          burst_size_bytes: {{ .Values.tempo.limits.ingestionBurstBytes }}
+          max_traces_per_user: {{ .Values.tempo.limits.maxTracesPerUser }}
+        global:
+          max_bytes_per_trace: {{ .Values.tempo.limits.maxBytesPerTrace }}
 
 ---
 
@@ -94,6 +98,9 @@ spec:
           image: {{ .Values.tempo.image }}
           args:
             - "-config.file=/etc/tempo/tempo.yaml"
+          env:
+            - name: GOMEMLIMIT
+              value: {{ .Values.tempo.goMemLimit | quote }}
           ports:
             - name: http
               containerPort: 3200

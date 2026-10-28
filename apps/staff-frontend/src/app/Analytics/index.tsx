@@ -14,6 +14,15 @@ import {
   UsersWithCustomCollectionsBlock,
 } from "./components/CollectionAnalytics";
 import {
+  CourseResultsClickedBlock,
+  DataLoadFailuresBlock,
+  PageErrorsBlock,
+  SchedulesGeneratedBlock,
+  SchedulesSavedBlock,
+  SearchFailuresBlock,
+  SearchFiltersAppliedBlock,
+} from "./components/EngagementAnalytics";
+import {
   CourseCountHistogramBlock,
   DailyGradTraksBlock,
   MajorDistributionBlock,
@@ -25,6 +34,7 @@ import {
 import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   AverageScoresOverTimeBlock,
+  ClassesWithReviewsBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
   OptionalResponseRatioBlock,
@@ -33,6 +43,7 @@ import {
   RecentRatingsBlock,
   ScoreDistributionBlock,
   UniqueUsersGrowthBlock,
+  WrittenReviewsCountBlock,
 } from "./components/RatingsAnalytics";
 import {
   ClassesPerScheduleBlock,
@@ -57,7 +68,8 @@ type Tab =
   | "bookmarks"
   | "gradtrak"
   | "scheduler"
-  | "outreach";
+  | "outreach"
+  | "engagement";
 
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState<Tab>("general");
@@ -68,6 +80,7 @@ export default function Analytics() {
   const showGradTrak = activeTab === "all" || activeTab === "gradtrak";
   const showBookmarks = activeTab === "all" || activeTab === "bookmarks";
   const showOutreach = activeTab === "all" || activeTab === "outreach";
+  const showEngagement = activeTab === "all" || activeTab === "engagement";
 
   return (
     <div className={styles.root}>
@@ -114,6 +127,12 @@ export default function Analytics() {
             onClick={() => setActiveTab("outreach")}
           >
             Outreach
+          </button>
+          <button
+            className={`${styles.tab} ${activeTab === "engagement" ? styles.active : ""}`}
+            onClick={() => setActiveTab("engagement")}
+          >
+            Engagement
           </button>
         </div>
       </div>
@@ -194,6 +213,12 @@ export default function Analytics() {
             <div className={styles.cell}>
               <RecentRatingsBlock />
             </div>
+            <div className={styles.cell}>
+              <WrittenReviewsCountBlock />
+            </div>
+            <div className={styles.cell}>
+              <ClassesWithReviewsBlock />
+            </div>
           </>
         )}
         {showGradTrak && (
@@ -247,6 +272,31 @@ export default function Analytics() {
           <div className={styles.cell}>
             <OutreachPanelBlock />
           </div>
+        )}
+        {showEngagement && (
+          <>
+            <div className={styles.cell}>
+              <SchedulesSavedBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulesGeneratedBlock />
+            </div>
+            <div className={styles.cell}>
+              <CourseResultsClickedBlock />
+            </div>
+            <div className={styles.cell}>
+              <SearchFiltersAppliedBlock />
+            </div>
+            <div className={styles.cell}>
+              <PageErrorsBlock />
+            </div>
+            <div className={styles.cell}>
+              <DataLoadFailuresBlock />
+            </div>
+            <div className={styles.cell}>
+              <SearchFailuresBlock />
+            </div>
+          </>
         )}
       </div>
     </div>

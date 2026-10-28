@@ -7,6 +7,7 @@ export const GET_ALL_BANNERS = gql`
       text
       link
       linkText
+      hiddenOn
       persistent
       reappearing
       clickCount
