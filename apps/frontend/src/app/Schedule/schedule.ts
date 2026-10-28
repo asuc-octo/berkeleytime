@@ -88,7 +88,7 @@ export const scheduleClassColors: Color[] = [
   Color.Pink,
   Color.Lime,
   Color.Fuchsia,
-  Color.Gray,
+  Color.Slate,
 ];
 
 export const acceptedColors = scheduleClassColors;
