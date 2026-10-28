@@ -91,6 +91,10 @@ jobs:
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         backend:
+          replicas: 1
+          resources:
+            requests:
+              cpu: '100m'
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         semanticSearch:

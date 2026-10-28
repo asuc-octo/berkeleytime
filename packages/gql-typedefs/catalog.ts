@@ -31,6 +31,8 @@ export const catalogTypeDef = gql`
     gradingFilters: [String!]
     breadths: [String!]
     universityRequirements: [String!]
+    "College of Engineering Humanities and Social Sciences course eligibility."
+    coeHss: Boolean
     online: Boolean
   }
 

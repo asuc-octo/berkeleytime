@@ -1,4 +1,4 @@
-import { RatingModel, UserModel } from "@repo/common/models";
+import { RatingModel, ReviewModel, UserModel } from "@repo/common/models";
 
 import { MetricName } from "../../../generated-types/graphql";
 import { RequestContext } from "../../../types/request-context";
@@ -126,4 +126,50 @@ export const getOptionalResponseAnalyticsData = async (
     );
 
   return dataPoints;
+};
+
+/**
+ * Staff-only endpoint for written review analytics
+ * A review counts as written if it is live (valid is not false, which also
+ * matches legacy docs missing the field) and has a non-blank title or content.
+ * Cleared reviews are soft-deleted with their old text kept, so the valid
+ * check is what excludes them.
+ */
+export const getWrittenReviewAnalyticsData = async (
+  context: RequestContext
+) => {
+  await requireStaffAuth(context);
+
+  const writtenReviewMatch = {
+    valid: { $ne: false },
+    $or: [{ reviewTitle: /\S/ }, { reviewContent: /\S/ }],
+  };
+
+  const [reviews, classCounts] = await Promise.all([
+    ReviewModel.find(writtenReviewMatch)
+      .select("createdAt")
+      .sort({ createdAt: 1 })
+      .lean(),
+    // Grouped by subject + course number, the same key the catalog uses to
+    // list a course's reviews across all of its offerings
+    ReviewModel.aggregate<{
+      _id: { subject: string; courseNumber: string };
+      count: number;
+    }>([
+      { $match: writtenReviewMatch },
+      {
+        $group: {
+          _id: { subject: "$subject", courseNumber: "$courseNumber" },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1, "_id.subject": 1, "_id.courseNumber": 1 } },
+    ]),
+  ]);
+
+  return {
+    totalWrittenReviews: reviews.length,
+    reviewDates: reviews.map((r) => r.createdAt.toISOString()),
+    classes: classCounts.map((c) => ({ ...c._id, count: c.count })),
+  };
 };
