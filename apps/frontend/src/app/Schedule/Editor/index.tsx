@@ -434,7 +434,7 @@ export default function Editor() {
       //   selectedSections.push(section);
       // }
 
-      _schedule.classes.push({
+      _schedule.classes.unshift({
         class: _class,
         selectedSections: selectedSections.map((s) => {
           return {
@@ -448,6 +448,8 @@ export default function Editor() {
         blockedSections: [],
         lockedComponents: [],
       });
+
+      setExpanded((expandedClasses) => [false, ...expandedClasses]);
 
       // Update the schedule
       updateSchedule(
