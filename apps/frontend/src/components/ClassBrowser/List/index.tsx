@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { EmptyPage } from "iconoir-react";
+import { EmptyPage, Plus } from "iconoir-react";
+
+import { IconButton } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
+import ClassDrawer from "@/components/ClassDrawer";
 import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { ICatalogClassServer } from "@/lib/api/catalog";
 
@@ -64,18 +67,22 @@ interface ListProps {
     number: string,
     sessionId: string
   ) => void;
+  previewCards?: boolean;
 }
 
 const LOAD_MORE_THRESHOLD_PX = 320;
 
-export default function List({ onSelect }: ListProps) {
+export default function List({ onSelect, previewCards = false }: ListProps) {
   const { classes, loading, hasNextPage, loadNextPage, isLoadingNextPage } =
     useListContext();
 
-  const { aiSearchActive, query } = useLayoutContext();
+  const { aiSearchActive, query, semester, year } = useLayoutContext();
   const { trackEvent } = useTracking();
 
   const [showTopFade, setShowTopFade] = useState(false);
+  const [previewedClass, setPreviewedClass] =
+    useState<ICatalogClassServer | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const catalogScrollRef = useRef<HTMLDivElement>(null);
 
@@ -139,6 +146,24 @@ export default function List({ onSelect }: ListProps) {
     );
   };
 
+  const handleClassPreview = (index: number) => {
+    const selected = classes[index];
+    if (!selected) return;
+
+    trackEvent(
+      "course_result_clicked",
+      "class",
+      `${selected.subject}-${selected.courseNumber}`,
+      {
+        position: index,
+        query: query || null,
+        aiSearch: aiSearchActive,
+      }
+    );
+    setPreviewedClass(selected);
+    setPreviewOpen(true);
+  };
+
   return (
     <div className={styles.root}>
       <div
@@ -171,16 +196,46 @@ export default function List({ onSelect }: ListProps) {
             >
               {items.map(({ key, index }) => {
                 const _class = classes[index];
-
-                return (
+                const card = (
                   <ClassCard
                     class={adaptForClassCard(_class)}
                     data-index={index}
                     key={key}
                     ref={virtualizer.measureElement}
-                    onClick={() => handleClassClick(index)}
+                    onClick={
+                      previewCards
+                        ? () => handleClassPreview(index)
+                        : () => handleClassClick(index)
+                    }
+                    active={
+                      previewCards &&
+                      previewOpen &&
+                      previewedClass?.subject === _class.subject &&
+                      previewedClass.courseNumber === _class.courseNumber &&
+                      previewedClass.number === _class.number &&
+                      previewedClass.sessionId === _class.sessionId
+                    }
+                    infoContent={
+                      previewCards ? (
+                        <IconButton
+                          className={styles.addButton}
+                          type="button"
+                          aria-label={`Add ${_class.subject} ${_class.courseNumber} to schedule`}
+                          title="Add class to schedule"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleClassClick(index);
+                          }}
+                        >
+                          <Plus width={18} height={18} />
+                        </IconButton>
+                      ) : undefined
+                    }
                   />
                 );
+
+                return card;
               })}
             </div>
           </div>
@@ -193,6 +248,19 @@ export default function List({ onSelect }: ListProps) {
           </div>
         )}
       </div>
+      {previewCards && previewedClass && (
+        <ClassDrawer
+          subject={previewedClass.subject}
+          courseNumber={previewedClass.courseNumber}
+          number={previewedClass.number}
+          semester={semester}
+          year={year}
+          sessionId={previewedClass.sessionId}
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
+          modal={false}
+        />
+      )}
     </div>
   );
 }

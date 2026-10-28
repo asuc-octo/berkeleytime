@@ -15,6 +15,7 @@ interface Props {
   year: number;
   sessionId: string;
   dialog?: boolean;
+  modal?: boolean;
 }
 
 interface Props {
@@ -43,13 +44,19 @@ export default function ClassDrawer({
   sessionId,
   open,
   onOpenChange,
+  modal = true,
 }: ClassDrawerProps) {
   return (
-    <Dialog.Root onOpenChange={onOpenChange} open={open}>
+    <Dialog.Root modal={modal} onOpenChange={onOpenChange} open={open}>
       {children && <Dialog.Trigger asChild>{children}</Dialog.Trigger>}
       <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Drawer className={styles.drawer}>
+        {modal && <Dialog.Overlay />}
+        <Dialog.Drawer
+          className={styles.drawer}
+          onOpenAutoFocus={
+            modal ? undefined : (event) => event.preventDefault()
+          }
+        >
           <Class
             subject={subject}
             courseNumber={courseNumber}
@@ -58,6 +65,7 @@ export default function ClassDrawer({
             year={year}
             sessionId={sessionId}
             dialog
+            scrollWithinContent
           />
         </Dialog.Drawer>
       </Dialog.Portal>

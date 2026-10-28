@@ -58,7 +58,7 @@ export default function Catalog({
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay />
+        <Dialog.PassiveOverlay />
         <Dialog.Drawer align="start" className={styles.drawer}>
           <div className={styles.header}>
             Add a course to this schedule
@@ -74,6 +74,8 @@ export default function Catalog({
               year={year}
               onSelect={handleSelect}
               forceMode="semi-compact"
+              showSemesterFilter={false}
+              previewCards
             />
           </div>
         </Dialog.Drawer>

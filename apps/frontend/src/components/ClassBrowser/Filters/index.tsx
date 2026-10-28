@@ -69,7 +69,11 @@ const SORT_OPTION_LABELS: Record<SortBy, string> = {
   [SortBy.OpenSeats]: "Open Seats",
 };
 
-export default function Filters() {
+interface FiltersProps {
+  showSemesterFilter?: boolean;
+}
+
+export default function Filters({ showSemesterFilter = true }: FiltersProps) {
   const { mode, setExpanded } = useLayoutContext();
 
   const {
@@ -269,33 +273,35 @@ export default function Filters() {
             )}
           </IconButton>
         </div>
-        <div className={styles.formControl}>
-          <p className={styles.label}>Semester</p>
-          <Select
-            combobox
-            disabled={!terms || terms.length === 0}
-            value={currentTermLabel}
-            placeholder="Select a semester"
-            side="bottom"
-            maxListHeight={280}
-            onChange={(value) => {
-              if (typeof value !== "string") return;
-              const selectedTerm = availableTerms.find(
-                (term) => `${term.semester} ${term.year}` === value
-              );
-              if (selectedTerm) {
-                navigate(
-                  `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+        {showSemesterFilter && (
+          <div className={styles.formControl}>
+            <p className={styles.label}>Semester</p>
+            <Select
+              combobox
+              disabled={!terms || terms.length === 0}
+              value={currentTermLabel}
+              placeholder="Select a semester"
+              side="bottom"
+              maxListHeight={280}
+              onChange={(value) => {
+                if (typeof value !== "string") return;
+                const selectedTerm = availableTerms.find(
+                  (term) => `${term.semester} ${term.year}` === value
                 );
-              }
-            }}
-            options={availableTerms.map((term) => ({
-              value: `${term.semester} ${term.year}`,
-              label: `${term.semester} ${term.year}`,
-            }))}
-            emptyMessage="No semesters found."
-          />
-        </div>
+                if (selectedTerm) {
+                  navigate(
+                    `/catalog/${selectedTerm.year}/${selectedTerm.semester}`
+                  );
+                }
+              }}
+              options={availableTerms.map((term) => ({
+                value: `${term.semester} ${term.year}`,
+                label: `${term.semester} ${term.year}`,
+              }))}
+              emptyMessage="No semesters found."
+            />
+          </div>
+        )}
         <div className={styles.formControl}>
           <p className={styles.label}>Department</p>
           <Select
