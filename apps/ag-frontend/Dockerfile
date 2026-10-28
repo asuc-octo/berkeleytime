@@ -14,6 +14,7 @@ COPY --from=ag-frontend-builder /ag-frontend/out/package-lock.json ./package-loc
 RUN ["npm", "install"]
 
 COPY --from=ag-frontend-builder /ag-frontend/out/full/ .
+RUN ["turbo", "run", "build", "--filter=ag-frontend^..."]
 ENTRYPOINT ["turbo", "run", "dev", "--filter=ag-frontend"]
 
 FROM ag-frontend-dev AS ag-frontend-prod

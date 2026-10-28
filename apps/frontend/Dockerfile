@@ -14,6 +14,7 @@ COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
 RUN ["npm", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
+RUN ["turbo", "run", "build", "--filter=frontend^..."]
 ENTRYPOINT ["turbo", "run", "dev", "--filter=frontend"]
 
 FROM frontend-dev AS frontend-prod
