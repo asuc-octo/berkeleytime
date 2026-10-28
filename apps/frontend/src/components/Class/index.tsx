@@ -700,7 +700,7 @@ export default function Class({
                     unitsMin={_class.unitsMin}
                   />
                   {primarySection?.sectionId && (
-                    <CCN sectionId={primarySection.sectionId} />
+                    <CCN sectionId={primarySection.sectionId} showLabel />
                   )}
                   {activeReservedMaxCount > 0 && (
                     <div className={styles.reservedSeatingBadgeContainer}>
