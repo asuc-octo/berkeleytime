@@ -24,7 +24,9 @@ export interface FilterContextType {
   timeRange: TimeRange;
   breadths: string[];
   universityRequirements: string[];
+  coeHss: boolean;
   gradingFilters: GradingFilter[];
+  department: string | null;
   sortBy: SortBy;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
@@ -38,7 +40,9 @@ export interface FilterContextType {
   updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
+  updateCoEHss: Dispatch<boolean>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;

@@ -8,6 +8,12 @@ export interface PersistedOperation {
 }
 
 export const persistedOperations: Readonly<Record<string, PersistedOperation>> = {
+  "00fc6cb62e41c4b9c89fc29b49065750bfea185ef5ad4284ab87cc8869cbac1a": {
+    operationName: "WrittenReviewAnalytics",
+    document: "query WrittenReviewAnalytics{writtenReviewAnalytics{totalWrittenReviews reviewDates classes{subject courseNumber count __typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
+  },
   "0117817462719371e7dbd006b53ed0f5b72ec24fb063fbfc9b2a391d8d63e614": {
     operationName: "GetCollectionById",
     document: "query GetCollectionById($id:ID!){myCollectionById(id:$id){name classes{class{subject courseNumber number sessionId title year semester unitsMin unitsMax course{title gradeDistribution{average __typename}__typename}gradeDistribution{average __typename}primarySection{enrollment{latest{enrolledCount maxEnroll endTime activeReservedMaxCount __typename}__typename}__typename}__typename}error __typename}__typename}}",
@@ -494,12 +500,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
     sources: ["apps/frontend/src/lib/api/classes.ts"],
   },
-  "79a338430a26a6af1a57a2b7c80c0c6be1ed00c9ec0cd217c3610cea23d79320": {
-    operationName: "GetCatalogFilterOptions",
-    document: "query GetCatalogFilterOptions($year:Int!$semester:Semester!){catalogFilterOptions(year:$year semester:$semester){levels gradingOptions breadthRequirements universityRequirements timeRange{minStartTime maxEndTime __typename}__typename}}",
-    variableNames: ["year","semester"],
-    sources: ["apps/frontend/src/lib/api/catalog.ts"],
-  },
   "79f6ab65b35f5767598fed23f16d78182031ceca56abce5b6921ec8b4b8872d3": {
     operationName: "GetAllCollections",
     document: "query GetAllCollections{myCollections{_id name color pinnedAt isSystem lastAdd classes{class{subject courseNumber number __typename}__typename}__typename}}",
@@ -547,6 +547,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetCuratedClasses{curatedClasses{_id text image subject courseNumber number semester year sessionId publishedAt createdAt updatedAt class{number sessionId title unitsMax unitsMin finalExam gradingBasis primarySection{component online instructionMode attendanceRequired lecturesRecorded enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist activeReservedMaxCount endTime __typename}__typename}meetings{days __typename}__typename}course{subject number title gradeDistribution{average __typename}academicCareer __typename}__typename}__typename}}",
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/curated-classes.ts"],
+  },
+  "86f89d0e46600a42295564b2922954dbabb2ef7587fb5ade4b21b0bd19942637": {
+    operationName: "GetCatalogFilterOptions",
+    document: "query GetCatalogFilterOptions($year:Int!$semester:Semester!){catalogFilterOptions(year:$year semester:$semester){departments{code name __typename}levels gradingOptions breadthRequirements universityRequirements timeRange{minStartTime maxEndTime __typename}__typename}}",
+    variableNames: ["year","semester"],
+    sources: ["apps/frontend/src/lib/api/catalog.ts"],
   },
   "8926d0e58d6bdc7dab6ea6e31b8195bd047de98652601fe5ab942b67f3e340e2": {
     operationName: "GetClassReviews",
