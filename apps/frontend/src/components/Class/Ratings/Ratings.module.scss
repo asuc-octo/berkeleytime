@@ -5,13 +5,13 @@
 }
 
 .ratingsBox {
-  padding: 20px 24px;
+  padding: 20px var(--space-5);
 }
 
 .containerContents {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5, 24px);
+  gap: var(--space-5);
   align-self: stretch;
   min-width: 0;
 }
@@ -19,7 +19,7 @@
 .ratingsHeaderToolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   text-align: left;
 }
 
@@ -31,10 +31,10 @@
     width: 100%;
     min-height: 0;
     height: 32px;
-    padding: 0 8px;
+    padding: 0 var(--space-2);
     justify-content: flex-start;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
 
     > div:last-of-type > div:last-child {
       border-left: none !important;
@@ -72,7 +72,7 @@
 
   :global([role="tab"]) {
     border-radius: 4px 4px 0 0;
-    padding: 6px 8px;
+    padding: 6px var(--space-2);
     min-height: 28px;
     background: transparent;
     box-shadow: none;
@@ -95,7 +95,7 @@
 .ratingsBody {
   background-color: var(--foreground-color);
   border-radius: 8px;
-  padding: 0 24px;
+  padding: 0 var(--space-5);
   border: 1px solid var(--border-color);
   width: 100%;
   min-width: 0;
@@ -105,14 +105,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 12px;
+  padding-bottom: var(--space-3);
 }
 
 .ratingsSummary {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3);
   align-self: stretch;
 }
 
@@ -120,14 +120,14 @@
   display: flex;
   height: 32px;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   align-self: stretch;
 }
 
 .ratingsSummaryBottom {
   display: flex;
   align-items: center;
-  gap: var(--space-5, 24px);
+  gap: var(--space-5);
   align-self: stretch;
 }
 
@@ -145,9 +145,9 @@
 
   /* Web UI (Desktop)/Heading/Heading Medium */
   font-family: Inter;
-  font-size: var(--font-sizes-5, 20px);
+  font-size: var(--text-20);
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   line-height: 24px; /* 120% */
   letter-spacing: -0.2px;
 }
@@ -161,15 +161,15 @@
   color: var(--secondary-color);
   font-feature-settings: "liga" off;
   font-family: Inter;
-  font-size: var(--font-sizes-2, 14px);
+  font-size: var(--text-14);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   line-height: 1.25;
 }
 
 .noWrittenReviews {
   display: flex;
-  padding: 80px var(--space-4, 16px);
+  padding: 80px var(--space-4);
   justify-content: center;
   align-items: center;
 }
@@ -177,8 +177,8 @@
 .noWrittenReviewsText {
   color: var(--paragraph-color);
   font-family: Inter;
-  font-size: var(--font-sizes-2, 14px);
-  font-weight: 400;
+  font-size: var(--text-14);
+  font-weight: var(--font-normal);
   line-height: 20px;
   text-align: center;
   margin: 0;

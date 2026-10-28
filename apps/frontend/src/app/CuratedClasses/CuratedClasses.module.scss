@@ -1,6 +1,6 @@
 .title {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
   align-items: center;
   font-size: var(--text-14);
   font-weight: var(--font-medium);

@@ -82,14 +82,14 @@
   }
 
   .ratingsMenuItem {
-    padding: 0 12px;
+    padding: 0 var(--space-3);
   }
 
   .ratingsTabContent {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .ratingsLockIcon {
@@ -120,7 +120,7 @@
 
 .tooltipContent {
   border-radius: 4px;
-  padding: 12px;
+  padding: var(--space-3);
   background-color: var(--tooltip-color);
   color: var(--description-color);
   max-width: 256px;

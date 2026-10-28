@@ -13,12 +13,12 @@
     top: 24px;
     left: 24px;
     z-index: 1;
-    padding: 12px;
+    padding: var(--space-3);
     border: 1px solid var(--border-color);
     background-color: var(--foreground-color);
     border-radius: 8px;
     display: flex;
-    gap: 8px;
+    gap: var(--space-2);
   }
 
   .sideBar {
@@ -27,7 +27,7 @@
     border-radius: 8px;
     border: 1px solid var(--border-color);
     flex-shrink: 0;
-    padding: 16px;
+    padding: var(--space-4);
     position: absolute;
     top: 24px;
     right: 24px;
@@ -37,12 +37,12 @@
     .leg {
       height: 32px;
       display: flex;
-      gap: 8px;
+      gap: var(--space-2);
       align-items: center;
       background-color: var(--slate-100);
       width: fit-content;
       border-radius: 16px;
-      padding: 0 12px;
+      padding: 0 var(--space-3);
       color: var(--paragraph-color);
       margin: 24px 0;
       position: relative;
@@ -69,7 +69,7 @@
 
     .waypoint {
       display: flex;
-      gap: 12px;
+      gap: var(--space-3);
       color: var(--paragraph-color);
       position: relative;
 
@@ -140,7 +140,7 @@
 :global(.tooltip) {
   position: absolute;
   border-radius: 4px;
-  padding: 12px;
+  padding: var(--space-3);
   background-color: var(--background-color);
   width: 256px;
   animation: fadeIn 100ms ease-in;

@@ -1,9 +1,9 @@
 .button {
   display: flex;
   height: 32px;
-  padding: var(--space-1, 4px) var(--space-3, 12px);
+  padding: var(--space-1) var(--space-3);
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--space-2);
   color: white !important;
   background-color: var(--blue-500) !important;
 

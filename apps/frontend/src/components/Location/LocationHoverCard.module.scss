@@ -27,7 +27,7 @@
 }
 
 .header {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
   color: var(--heading-color);
@@ -44,7 +44,7 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 
   &:hover {
     color: var(--blue-hover);
@@ -80,7 +80,7 @@
       display: block;
       color: var(--paragraph-color);
       background-color: var(--background-color);
-      padding: 2px 4px;
+      padding: 2px var(--space-1);
       border-radius: 2px;
       white-space: nowrap;
 

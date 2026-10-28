@@ -1,7 +1,7 @@
 .root {
   display: flex;
   flex-direction: column;
-  padding: 32px 48px;
+  padding: var(--space-6) var(--space-8);
   flex: 1;
   width: 100%;
 }
@@ -14,9 +14,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
+  padding: var(--space-8) var(--space-5);
   color: var(--label-color);
-  font-size: 14px;
+  font-size: var(--text-14);
 }
 
 .searchContainer {
@@ -30,14 +30,14 @@
 .userSearchRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   max-width: 480px;
 }
 
 .staffSearchRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   max-width: 480px;
 }
 
@@ -54,8 +54,8 @@
   background-color: var(--foreground-color);
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 16px;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
 
   &:has(.searchInput:focus) {
     outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
@@ -72,7 +72,7 @@
 .searchInput {
   flex: 1;
   color: var(--heading-color);
-  font-size: 14px;
+  font-size: var(--text-14);
   height: 100%;
   border: none;
   background: transparent;
@@ -84,7 +84,7 @@
 }
 
 .selectedUser {
-  padding: 20px 24px;
+  padding: 20px var(--space-5);
   border-radius: 12px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -96,7 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .staffList {
@@ -106,7 +106,7 @@
 }
 
 .staffCard {
-  padding: 20px 24px;
+  padding: 20px var(--space-5);
   border-radius: 12px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
@@ -121,16 +121,16 @@
 }
 
 .staffCardName {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-18);
+  font-weight: var(--font-semibold);
   color: var(--heading-color);
 }
 
 .staffCardNameInput {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-18);
+  font-weight: var(--font-semibold);
   color: var(--heading-color);
-  padding: 4px 8px;
+  padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   background-color: var(--foreground-color);
@@ -139,22 +139,22 @@
 .staffCardEmail {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  gap: var(--space-3);
+  font-size: var(--text-14);
   color: var(--label-color);
 }
 
 .selectedUserName {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: var(--text-18);
+  font-weight: var(--font-semibold);
   color: var(--heading-color);
 }
 
 .selectedUserEmail {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  gap: var(--space-3);
+  font-size: var(--text-14);
   color: var(--label-color);
   margin-top: 6px;
 }
@@ -162,19 +162,19 @@
 .unaffiliatedWarning {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   color: var(--orange-500);
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--text-12);
+  font-weight: var(--font-medium);
 }
 
 .staffStatus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
   margin-top: 16px;
-  padding-top: 16px;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border-color);
 }
 
@@ -188,7 +188,7 @@
 .staffStatusBadges {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .staffBadge,
@@ -197,7 +197,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
 }
 
 .staffBadge {
@@ -225,13 +225,13 @@
 
 .semesterRoles {
   margin-top: 16px;
-  padding-top: 16px;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border-color);
 }
 
 .semesterRolesHeader {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--text-12);
+  font-weight: var(--font-semibold);
   color: var(--label-color);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -241,7 +241,7 @@
 .semesterRole {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 
   & + & {
     margin-top: 12px;
@@ -278,12 +278,12 @@
 .semesterRoleMain {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .semesterRoleTerm {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--heading-color);
 }
 
@@ -299,9 +299,9 @@
 }
 
 .semesterRoleTeam {
-  font-size: 12px;
+  font-size: var(--text-12);
   color: var(--label-color);
-  padding: 2px 8px;
+  padding: 2px var(--space-2);
   background-color: var(--border-color);
   border-radius: 4px;
 }
@@ -326,15 +326,15 @@
 }
 
 .addedByText {
-  font-size: 12px;
+  font-size: var(--text-12);
   color: var(--label-color);
 }
 
 .leadBadge {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--text-12);
+  font-weight: var(--font-medium);
   color: var(--yellow-500);
-  padding: 2px 8px;
+  padding: 2px var(--space-2);
   background-color: color-mix(in srgb, var(--yellow-500) 20%, transparent);
   border-radius: 4px;
 }
@@ -350,7 +350,7 @@
   border: 1px dashed var(--border-color);
   border-radius: 8px;
   background: transparent;
-  font-size: 14px;
+  font-size: var(--text-14);
   color: var(--label-color);
   cursor: pointer;
   transition:
@@ -366,7 +366,7 @@
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-4);
   width: 100%;
 }
 
@@ -385,12 +385,12 @@
 
 .formLabel {
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--heading-color);
 }
 
 .formHint {
-  font-size: 12px;
+  font-size: var(--text-12);
   color: var(--label-color);
   margin-top: 6px;
 }
@@ -398,14 +398,14 @@
 .photoUploadRow {
   grid-column: 1 / -1;
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   justify-content: center;
 }
 
 .photoUploadContainer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   flex: 1;
   max-width: 160px;
 }
@@ -415,7 +415,7 @@
   align-items: center;
   gap: 6px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   color: var(--heading-color);
 }
 
@@ -476,12 +476,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--label-color);
 
   span {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: var(--text-14);
+    font-weight: var(--font-medium);
   }
 }
 
@@ -504,26 +504,26 @@
 }
 
 .podSemesterHeader {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--text-16);
+  font-weight: var(--font-semibold);
   margin: 0 0 12px 0;
 }
 
 .podList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .podItem {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-radius: 6px;
   background-color: var(--foreground-color);
   border: 1px solid var(--border-color);
-  font-size: 14px;
+  font-size: var(--text-14);
   max-width: 320px;
 }
 

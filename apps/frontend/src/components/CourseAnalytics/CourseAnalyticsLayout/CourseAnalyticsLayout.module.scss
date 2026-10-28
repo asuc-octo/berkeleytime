@@ -30,8 +30,8 @@ $analytics-sidebar-width: 248px;
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px 20px 20px;
+  gap: var(--space-4);
+  padding: var(--space-4) 20px 20px;
 }
 
 .drawer {
@@ -96,14 +96,14 @@ $analytics-sidebar-width: 248px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: var(--space-4);
   border-bottom: 1px solid var(--border-color);
 }
 
 .sidebarBody {
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: var(--space-4);
   gap: 14px;
 }
 
@@ -131,7 +131,7 @@ $analytics-sidebar-width: 248px;
 .cardGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 12px;
+  gap: var(--space-3);
   align-items: stretch;
   width: 100%;
 }
@@ -139,5 +139,5 @@ $analytics-sidebar-width: 248px;
 .graphBox {
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 16px;
+  padding: var(--space-4);
 }

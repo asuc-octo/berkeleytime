@@ -3,7 +3,7 @@
 .tabs {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .tabsList {
@@ -15,7 +15,7 @@
   border-radius: 18px;
   background-color: var(--zinc-100);
   padding: 3px;
-  gap: 4px;
+  gap: var(--space-1);
 
   @include dark-mode {
     background-color: var(--zinc-800);
@@ -30,7 +30,7 @@
   gap: 6px;
   border-radius: 14px;
   border: none;
-  padding: 6px 16px;
+  padding: 6px var(--space-4);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
   white-space: nowrap;

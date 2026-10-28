@@ -10,10 +10,10 @@
 
   .body {
     display: flex;
-    padding: var(--space-4, 16px) var(--space-5, 24px);
+    padding: var(--space-4) var(--space-5);
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-6, 32px);
+    gap: var(--space-6);
     align-self: stretch;
   }
 
@@ -29,14 +29,14 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-4, 16px);
+    gap: var(--space-4);
     align-self: stretch;
 
     .titleDate {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 4px;
+      gap: var(--space-1);
       flex: 1 0 0;
     }
     h3,
@@ -48,9 +48,9 @@
       color: var(--secondary-color);
       font-feature-settings: "liga" off;
       font-family: Inter;
-      font-size: var(--font-sizes-2, 14px);
+      font-size: var(--text-14);
       font-style: normal;
-      font-weight: 600;
+      font-weight: var(--font-semibold);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -60,18 +60,18 @@
       color: var(--paragraph-color);
       font-feature-settings: "liga" off;
       font-family: Inter;
-      font-size: var(--font-sizes-1, 12px);
+      font-size: var(--text-12);
       font-style: normal;
-      font-weight: var(--font-weight-regular, 400);
+      font-weight: var(--font-normal);
       line-height: 16px;
     }
     h5 {
       color: var(--secondary-color);
       font-feature-settings: "liga" off;
       font-family: Inter;
-      font-size: var(--font-sizes-2, 14px);
+      font-size: var(--text-14);
       font-style: normal;
-      font-weight: 400;
+      font-weight: var(--font-normal);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -83,8 +83,8 @@
       color: var(--secondary-color);
       font-feature-settings: "liga" off;
       font-family: Inter;
-      font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
       line-height: 20px;
       letter-spacing: -0.1px;
       word-break: break-word;
@@ -100,10 +100,10 @@
         display: inline;
         background: none;
         border: none;
-        padding: 0 0 0 4px;
+        padding: 0 0 0 var(--space-1);
         color: var(--blue-badge);
         font-family: Inter;
-        font-size: var(--font-sizes-2, 14px);
+        font-size: var(--text-14);
         line-height: 20px;
         cursor: pointer;
       }
@@ -117,7 +117,7 @@
         padding: 0 0 0 6px;
         color: var(--blue-badge);
         font-family: Inter;
-        font-size: var(--font-sizes-2, 14px);
+        font-size: var(--text-14);
         line-height: 20px;
         cursor: pointer;
       }
@@ -125,22 +125,22 @@
 
     .actions {
       display: flex;
-      gap: var(--space-3, 12px);
+      gap: var(--space-3);
     }
 
     .helpfulButton {
       display: flex;
       height: 32px;
-      padding: var(--space-1, 4px) var(--space-3, 12px);
+      padding: var(--space-1) var(--space-3);
       justify-content: center;
       align-items: center;
-      gap: var(--space-2, 8px);
+      gap: var(--space-2);
       background: none;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       font-family: Inter;
-      font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
       color: var(--secondary-color);
       cursor: pointer;
 
@@ -159,8 +159,8 @@
       border: none;
       padding: 0;
       font-family: Inter;
-      font-size: var(--font-sizes-2, 14px);
-      font-weight: 400;
+      font-size: var(--text-14);
+      font-weight: var(--font-normal);
       color: var(--paragraph-color);
       cursor: pointer;
 
@@ -172,17 +172,17 @@
     .metricsRow {
       display: flex;
       align-items: flex-start;
-      gap: var(--space-4, 16px);
+      gap: var(--space-4);
       align-self: stretch;
-      margin-top: var(--space-2, 8px);
+      margin-top: var(--space-2);
 
       .metricItem {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
+        gap: var(--space-1);
         flex: 1 0 0;
-        padding-right: var(--space-4, 16px);
+        padding-right: var(--space-4);
 
         &:not(:last-child) {
           border-right: 1px solid var(--border-color);
@@ -192,8 +192,8 @@
       .metricLabel {
         color: var(--secondary-color);
         font-family: Inter;
-        font-size: var(--font-sizes-2, 14px);
-        font-weight: 500;
+        font-size: var(--text-14);
+        font-weight: var(--font-medium);
         line-height: 20px;
         letter-spacing: -0.1px;
       }
@@ -201,8 +201,8 @@
       .metricValue {
         color: var(--paragraph-color);
         font-family: Inter;
-        font-size: var(--font-sizes-2, 14px);
-        font-weight: 400;
+        font-size: var(--text-14);
+        font-weight: var(--font-normal);
         line-height: 20px;
       }
     }
@@ -211,7 +211,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-1, 4px);
+    gap: var(--space-1);
     align-self: flex-start;
 
     > * {
@@ -219,12 +219,12 @@
     }
 
     > :nth-child(3) {
-      margin-top: var(--space-5, 24px);
+      margin-top: var(--space-5);
     }
 
     .rating {
       display: flex;
-      padding: 2px var(--space-2, 8px);
+      padding: 2px var(--space-2);
       justify-content: center;
       align-items: center;
       align-self: center;
@@ -256,9 +256,9 @@
   color: var(--secondary-color);
   font-feature-settings: "liga" off;
   font-family: Inter;
-  font-size: var(--font-sizes-2, 14px);
+  font-size: var(--text-14);
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--font-medium);
   line-height: 20px;
   letter-spacing: -0.1px;
 }

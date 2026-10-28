@@ -166,7 +166,7 @@
   align-items: center;
 }
 .headerTitle {
-  font-size: 20px;
+  font-size: var(--text-20);
   color: var(--heading-color);
   font-weight: 580;
 }

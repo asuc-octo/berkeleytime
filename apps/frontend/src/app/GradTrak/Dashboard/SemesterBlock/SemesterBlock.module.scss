@@ -42,8 +42,8 @@ body:not([data-theme]) {
     background-color: var(--semesterblock-color);
     border-radius: 0.5rem;
     width: 226px;
-    padding: 16px 8px;
-    gap: 8px;
+    padding: var(--space-4) var(--space-2);
+    gap: var(--space-2);
     flex-shrink: 0;
 
     &[data-layout="grid"] {
@@ -65,7 +65,7 @@ body:not([data-theme]) {
     .semester-counter {
       display: flex;
       align-items: baseline;
-      gap: 8px;
+      gap: var(--space-2);
 
       .pin {
         position: relative;
@@ -85,9 +85,9 @@ body:not([data-theme]) {
         background-color: var(--button-active-color);
         color: var(--heading-color);
         text-align: center;
-        font-size: 0.75rem;
+        font-size: var(--text-12);
         font-weight: var(--font-medium);
-        padding: 4px 6px;
+        padding: var(--space-1) 6px;
         border-radius: 4px;
       }
     }

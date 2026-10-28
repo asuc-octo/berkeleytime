@@ -14,7 +14,7 @@
   position: sticky;
   top: calc(
     var(--sections-tabs-sticky-height, 42px) +
-      var(--sections-sticky-top-gap, var(--space-5, 24px))
+      var(--sections-sticky-top-gap, var(--space-5))
   );
   z-index: 2;
   background-color: var(--foreground-color);
@@ -29,18 +29,18 @@
 
 .tabsSticky {
   position: sticky;
-  top: var(--sections-sticky-top-gap, var(--space-5, 24px));
+  top: var(--sections-sticky-top-gap, var(--space-5));
   z-index: 3;
   background-color: var(--foreground-color);
-  padding: 0 8px 10px;
+  padding: 0 var(--space-2) 10px;
 
   &::before {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    top: calc(-1 * var(--sections-sticky-top-gap, var(--space-5, 24px)));
-    height: var(--sections-sticky-top-gap, var(--space-5, 24px));
+    top: calc(-1 * var(--sections-sticky-top-gap, var(--space-5)));
+    height: var(--sections-sticky-top-gap, var(--space-5));
     background-color: var(--foreground-color);
     pointer-events: none;
   }
@@ -69,7 +69,7 @@
 }
 
 .headerCell {
-  padding: 8px;
+  padding: var(--space-2);
   font-weight: var(--font-semibold);
   font-size: var(--text-14);
   line-height: 20px;
@@ -92,7 +92,7 @@
 }
 
 .cell {
-  padding: 12px 8px;
+  padding: var(--space-3) var(--space-2);
   font-weight: var(--font-normal);
   font-size: var(--text-14);
   line-height: 20px;

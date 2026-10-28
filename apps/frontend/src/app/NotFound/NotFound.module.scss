@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: var(--space-7) 20px;
 }
 
 .content {
@@ -14,7 +14,7 @@
 
 .errorCode {
   font-size: 120px;
-  font-weight: 700;
+  font-weight: var(--font-bold);
   line-height: 1;
   color: var(--heading-color);
   opacity: 0.1;
@@ -23,13 +23,13 @@
 
 .title {
   font-size: 32px;
-  font-weight: 600;
+  font-weight: var(--font-semibold);
   color: var(--heading-color);
   margin: 0;
 }
 
 .description {
-  font-size: 16px;
+  font-size: var(--text-16);
   color: var(--paragraph-color);
   margin: 0;
   line-height: 1.5;

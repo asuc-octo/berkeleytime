@@ -4,13 +4,13 @@
   flex-shrink: 0;
   background-color: var(--background-color);
   overflow: auto;
-  padding-bottom: 12px;
+  padding-bottom: var(--space-3);
 
   .header {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: var(--space-3);
+    padding: var(--space-3);
     position: sticky;
     top: 0;
     background: var(--background-color);
@@ -18,7 +18,7 @@
 
     .button {
       height: 48px;
-      padding: 0 16px;
+      padding: 0 var(--space-4);
       width: 100%;
       justify-content: space-between;
     }
@@ -39,8 +39,8 @@
   .body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 0 12px;
+    gap: var(--space-3);
+    padding: 0 var(--space-3);
     z-index: 1;
   }
 }

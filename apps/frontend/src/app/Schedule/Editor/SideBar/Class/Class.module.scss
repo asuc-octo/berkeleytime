@@ -1,10 +1,10 @@
 .group {
   border-top: 1px solid var(--border-color);
-  padding-top: 16px;
+  padding-top: var(--space-4);
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
 
   .label {
     font-size: var(--text-14);
@@ -15,7 +15,7 @@
     .componentRow {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--space-2);
       margin-left: 28px;
 
       .component {
@@ -25,13 +25,13 @@
       .componentIcons {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--space-1);
 
         .iconButton {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 4px;
+          padding: var(--space-1);
           border: none;
           background: transparent;
           cursor: pointer;

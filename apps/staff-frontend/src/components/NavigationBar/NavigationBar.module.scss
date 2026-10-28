@@ -1,7 +1,7 @@
 .root {
   border-bottom: 1px solid var(--border-color);
   background-color: var(--foreground-color);
-  padding: 12px;
+  padding: var(--space-3);
 
   .brand {
     margin-left: 10px;

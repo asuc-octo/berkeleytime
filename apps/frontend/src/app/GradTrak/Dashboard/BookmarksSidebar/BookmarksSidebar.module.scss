@@ -85,7 +85,7 @@
 .classList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
   padding: 0.3rem 0;
 }
 

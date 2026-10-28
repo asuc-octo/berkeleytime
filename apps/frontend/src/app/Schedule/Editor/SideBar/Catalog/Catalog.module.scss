@@ -18,7 +18,7 @@
 
   .header {
     border-bottom: 1px solid var(--border-color);
-    padding: 12px;
+    padding: var(--space-3);
     background-color: var(--foreground-color);
     display: flex;
     align-items: center;

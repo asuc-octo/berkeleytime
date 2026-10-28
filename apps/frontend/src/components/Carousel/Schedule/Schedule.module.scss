@@ -3,10 +3,10 @@
   border-radius: 8px;
   flex-shrink: 0;
   background-color: var(--foreground-color);
-  padding: 16px;
+  padding: var(--space-4);
   display: flex;
   width: 320px;
-  gap: 16px;
+  gap: var(--space-4);
   cursor: pointer;
 
   &:hover .column .icon {
@@ -16,7 +16,7 @@
   .column {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
     flex-shrink: 0;
 
     .icon {
