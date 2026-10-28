@@ -21,11 +21,6 @@
   }
 }
 
-.sliderArea {
-  flex-shrink: 0;
-  padding: 0;
-}
-
 .graphHeader {
   display: flex;
   justify-content: flex-end;
@@ -41,41 +36,6 @@
 .switchLabel {
   font-size: var(--text-14);
   color: var(--paragraph-color);
-}
-
-.sliderTitle {
-  font-weight: var(--font-medium);
-  font-size: var(--text-18);
-  line-height: 20px;
-  color: var(--heading-color);
-  margin: 0 0 4px 0;
-}
-
-.sliderDescription {
-  font-weight: var(--font-medium);
-  font-size: var(--text-14);
-  line-height: 20px;
-  color: var(--paragraph-color);
-  margin: 0 0 10px 0;
-}
-
-.sliderWrapper {
-  position: relative;
-  padding: 0 16px;
-}
-
-.thumbLabels {
-  position: relative;
-  height: 20px;
-  margin-top: 6px;
-}
-
-.thumbLabel {
-  position: absolute;
-  transform: translateX(-50%);
-  font-size: var(--text-12);
-  color: var(--paragraph-color);
-  white-space: nowrap;
 }
 
 .emptyGraphPrompt {

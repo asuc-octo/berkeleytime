@@ -216,6 +216,20 @@ export async function createPlan(
         pinned: false,
       })
     );
+    // Summer is always planned (usually left empty) so the columns stay
+    // contiguous and can only be added or removed at the end.
+    planTerms.push(
+      new PlanTermModel({
+        name: "Summer " + i,
+        courses: [],
+        userEmail,
+        year: i,
+        term: "Summer",
+        hidden: false,
+        status: "Incomplete",
+        pinned: false,
+      })
+    );
     planTerms.push(
       new PlanTermModel({
         name: "Fall " + i,
