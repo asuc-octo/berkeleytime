@@ -31,6 +31,8 @@ frontend:
     tag: prod
 
 backend:
+  trackingGlobalDailyEventLimit: 100000
+  trackingIpDailyEventLimit: 10000
   replicas: 2
 
   port: 5001
