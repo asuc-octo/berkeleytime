@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "name": "berkeley-course-semantic-search-v1",
+  "description": "Starter relevance set for comparing the current BGE model with MiniLM on the Fall 2026 catalog.",
+  "queries": [
+    {
+      "id": "course-code-cs61a",
+      "category": "course_code",
+      "query": "CS 61A",
+      "relevant_courses": ["COMPSCI 61A"]
+    },
+    {
+      "id": "course-title-sicp",
+      "category": "course_title",
+      "query": "structure and interpretation of computer programs",
+      "relevant_courses": ["COMPSCI 61A"]
+    },
+    {
+      "id": "topic-data-structures",
+      "category": "topic",
+      "query": "data structures",
+      "relevant_courses": ["COMPSCI 61B"]
+    },
+    {
+      "id": "topic-computer-architecture",
+      "category": "topic",
+      "query": "computer architecture and machine structures",
+      "relevant_courses": ["COMPSCI 61C"]
+    },
+    {
+      "id": "topic-discrete-math",
+      "category": "topic",
+      "query": "discrete mathematics for computer science",
+      "relevant_courses": ["COMPSCI 70"]
+    },
+    {
+      "id": "topic-security",
+      "category": "topic",
+      "query": "computer security",
+      "relevant_courses": ["COMPSCI 161"]
+    },
+    {
+      "id": "topic-operating-systems",
+      "category": "topic",
+      "query": "operating systems and systems programming",
+      "relevant_courses": ["COMPSCI 162"]
+    },
+    {
+      "id": "topic-databases",
+      "category": "topic",
+      "query": "database systems",
+      "relevant_courses": ["COMPSCI 186"]
+    },
+    {
+      "id": "topic-ai",
+      "category": "topic",
+      "query": "artificial intelligence",
+      "relevant_courses": ["COMPSCI 188"]
+    },
+    {
+      "id": "topic-machine-learning",
+      "category": "topic",
+      "query": "machine learning",
+      "relevant_courses": ["COMPSCI 189"]
+    },
+    {
+      "id": "natural-data-science",
+      "category": "natural_language",
+      "query": "an introduction to data science using computation and statistics",
+      "relevant_courses": ["DATA C8"]
+    },
+    {
+      "id": "natural-data-ethics",
+      "category": "natural_language",
+      "query": "ethical and social impacts of data and algorithms",
+      "relevant_courses": ["DATA C104"]
+    },
+    {
+      "id": "topic-linear-algebra",
+      "category": "topic",
+      "query": "linear algebra and differential equations",
+      "relevant_courses": ["MATH 54"]
+    },
+    {
+      "id": "topic-probability",
+      "category": "topic",
+      "query": "probability theory",
+      "relevant_courses": ["STAT 134", "COMPSCI 70"]
+    },
+    {
+      "id": "natural-economics",
+      "category": "natural_language",
+      "query": "an introductory course in microeconomics and macroeconomics",
+      "relevant_courses": ["ECON 1", "ECON 2"]
+    },
+    {
+      "id": "topic-general-chemistry",
+      "category": "topic",
+      "query": "general chemistry",
+      "relevant_courses": ["CHEM 1A"]
+    },
+    {
+      "id": "topic-organic-chemistry",
+      "category": "topic",
+      "query": "organic chemistry and chemical structure",
+      "relevant_courses": ["CHEM 3A", "CHEM 3B"]
+    },
+    {
+      "id": "topic-classical-mechanics",
+      "category": "topic",
+      "query": "classical and analytic mechanics",
+      "relevant_courses": ["PHYSICS 105", "PHYSICS 7A"]
+    },
+    {
+      "id": "topic-quantum-mechanics",
+      "category": "topic",
+      "query": "quantum mechanics",
+      "relevant_courses": ["PHYSICS 137A", "PHYSICS 137B"]
+    },
+    {
+      "id": "natural-general-biology",
+      "category": "natural_language",
+      "query": "introductory molecular and cell biology",
+      "relevant_courses": ["BIOLOGY 1A"]
+    },
+    {
+      "id": "topic-human-anatomy",
+      "category": "topic",
+      "query": "human anatomy",
+      "relevant_courses": ["INTEGBI 131"]
+    }
+  ]
+}

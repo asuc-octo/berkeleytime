@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import threading
@@ -9,14 +8,12 @@ from functools import lru_cache
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import numpy as np
-import redis
 import requests
-from redisvl.index import SearchIndex
-from redisvl.query import VectorQuery
-from redisvl.redis.utils import array_to_buffer
 from sentence_transformers import SentenceTransformer
 
+from .config import EMBEDDING_CONFIG, PURGE_LEGACY_INDEXES, EmbeddingConfig
 from .generated_operations import SEMANTIC_SEARCH_OPERATION_IDS
+from .vector_store import RedisVectorStore, VectorIndex, VectorRecord, VectorStore
 
 logger = logging.getLogger("semantic-search")
 
@@ -26,21 +23,9 @@ SEMESTER_ORDER = {"Spring": 0, "Summer": 1, "Fall": 2, "Winter": 3}
 # Redis connection — shared with the rest of the codebase via REDIS_URI
 REDIS_URI = os.getenv("REDIS_URI", "redis://redis:6379")
 
-# Namespace prefix keeps all semantic-search keys isolated in the shared Redis instance
-INDEX_PREFIX = "semantic_search"
-
 # Backend URL for fetching course catalog (configurable for K8s vs Docker)
 BACKEND_INTERNAL_URL = os.getenv("BACKEND_URL", "http://backend:5001")
 DEFAULT_CATALOG_URL = f"{BACKEND_INTERNAL_URL}/api/graphql"
-
-# Semantic search embedding model options:
-#   BAAI/bge-base-en-v1.5        (Current - best for retrieval, 109M params)
-#   BAAI/bge-small-en-v1.5       (Faster, smaller, 33M params)
-#   BAAI/bge-large-en-v1.5       (Most accurate, slower, 335M params)
-#   sentence-transformers/all-mpnet-base-v2   (Good general purpose, 110M params)
-#   sentence-transformers/all-MiniLM-L6-v2    (Fastest, lightweight, 22M params)
-MODEL_NAME = "BAAI/bge-base-en-v1.5"
-QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 DEFAULT_YEAR_ENV = os.getenv("SEMANTIC_SEARCH_YEAR")
 DEFAULT_SEMESTER_ENV = os.getenv("SEMANTIC_SEARCH_SEMESTER")
 DEFAULT_ALLOWED_SUBJECTS = {
@@ -68,7 +53,7 @@ DEFAULT_TERM = resolve_default_term(DEFAULT_YEAR_ENV, DEFAULT_SEMESTER_ENV)
 
 @dataclass
 class TermIndex:
-    index: SearchIndex
+    index: VectorIndex
     size: int
     last_refreshed: datetime
     year: int
@@ -77,9 +62,24 @@ class TermIndex:
 
 
 class SemanticSearchEngine:
-    def __init__(self) -> None:
-        self.model = SentenceTransformer(MODEL_NAME)
+    def __init__(
+        self,
+        model=None,
+        vector_store: Optional[VectorStore] = None,
+        embedding_config: EmbeddingConfig = EMBEDDING_CONFIG,
+    ) -> None:
+        self.embedding_config = embedding_config
+        self.model = (
+            model
+            if model is not None
+            else SentenceTransformer(
+                embedding_config.model_name,
+                revision=embedding_config.model_revision,
+            )
+        )
         self._embedding_dims = self.model.get_sentence_embedding_dimension()
+        self._embedding_fingerprint = embedding_config.fingerprint(self._embedding_dims)
+        self._index_prefix = f"semantic_search:v2:{self._embedding_fingerprint}"
         self.catalog_url = DEFAULT_CATALOG_URL
         self.default_allowed_subjects = set(DEFAULT_ALLOWED_SUBJECTS) if DEFAULT_ALLOWED_SUBJECTS else None
         self._indices: Dict[str, TermIndex] = {}
@@ -89,43 +89,29 @@ class SemanticSearchEngine:
         self._last_error: Optional[str] = None
         self._build_thread: Optional[threading.Thread] = None
         self._build_queue: List[Tuple[int, str]] = []  # Queue of (year, semester) to build
-        self._redis = redis.from_url(REDIS_URI, decode_responses=True)
+        self._store = vector_store or RedisVectorStore(REDIS_URI)
+        self._legacy_migration_completed = False
+        self._legacy_indexes_removed = 0
+        self._stale_migration_completed = False
+        self._stale_indexes_removed = 0
 
     def _get_index_name(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
         suffix = ",".join(allowed_subjects) if allowed_subjects else "all"
-        return f"{INDEX_PREFIX}:{year}:{semester}:{suffix}"
+        return f"{self._index_prefix}:index:{year}:{semester}:{suffix}"
 
     def _meta_key(self, index_name: str) -> str:
-        return f"{INDEX_PREFIX}:meta:{index_name}"
-
-    def _build_schema(self, index_name: str) -> dict:
-        return {
-            "index": {
-                "name": index_name,
-                "prefix": f"{index_name}:doc",
-            },
-            "fields": [
-                {"name": "subject", "type": "tag"},
-                {"name": "course_number", "type": "tag"},
-                {"name": "title", "type": "text"},
-                {"name": "description", "type": "text"},
-                {"name": "course_text", "type": "text"},
-                {
-                    "name": "embedding",
-                    "type": "vector",
-                    "attrs": {
-                        "dims": self._embedding_dims,
-                        "algorithm": "hnsw",
-                        "datatype": "float32",
-                        "distance_metric": "cosine",
-                    },
-                },
-            ],
-        }
+        return f"{self._index_prefix}:meta:{index_name}"
 
     def _save_index_metadata(self, entry: TermIndex) -> None:
         index_name = self._get_index_name(entry.year, entry.semester, entry.allowed_subjects)
         meta = {
+            "index_name": index_name,
+            "embedding_fingerprint": self._embedding_fingerprint,
+            "model_name": self.embedding_config.model_name,
+            "model_revision": self.embedding_config.model_revision,
+            "dimensions": self._embedding_dims,
+            "vector_algorithm": self.embedding_config.vector_algorithm,
+            "schema_version": self.embedding_config.schema_version,
             "last_refreshed": entry.last_refreshed.isoformat(),
             "size": entry.size,
             "year": entry.year,
@@ -133,25 +119,27 @@ class SemanticSearchEngine:
             "allowed_subjects": entry.allowed_subjects,
         }
         try:
-            self._redis.set(self._meta_key(index_name), json.dumps(meta))
+            self._store.set_metadata(self._meta_key(index_name), meta)
         except Exception as exc:
-            logger.warning("Failed to save index metadata to Redis: %s", exc)
+            logger.warning("Failed to save vector index metadata: %s", exc)
 
-    def _load_redis_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
-        """Load an existing RedisVL index from Redis if it exists."""
+    def _load_vector_index(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> Optional[TermIndex]:
+        """Load a compatible index from the configured vector store if it exists."""
         try:
             index_name = self._get_index_name(year, semester, allowed_subjects)
-            schema = self._build_schema(index_name)
-            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-
-            if not search_index.exists():
+            meta = self._store.get_metadata(self._meta_key(index_name))
+            if not meta:
                 return None
-
-            meta_raw = self._redis.get(self._meta_key(index_name))
-            if not meta_raw:
+            if meta.get("embedding_fingerprint") != self._embedding_fingerprint:
+                logger.warning("Ignoring incompatible vector index metadata: %s", index_name)
                 return None
-
-            meta = json.loads(meta_raw)
+            search_index = self._store.open_index(
+                index_name,
+                self._embedding_dims,
+                self.embedding_config.vector_algorithm,
+            )
+            if search_index is None:
+                return None
             entry = TermIndex(
                 index=search_index,
                 size=meta["size"],
@@ -160,10 +148,10 @@ class SemanticSearchEngine:
                 semester=meta["semester"],
                 allowed_subjects=meta["allowed_subjects"],
             )
-            logger.info("Loaded from Redis: %s %s (%d courses)", entry.semester, entry.year, entry.size)
+            logger.info("Loaded vector index: %s %s (%d courses)", entry.semester, entry.year, entry.size)
             return entry
         except Exception as exc:
-            logger.warning("Failed to load index from Redis: %s", exc)
+            logger.warning("Failed to load vector index: %s", exc)
             return None
 
     def refresh(
@@ -183,48 +171,54 @@ class SemanticSearchEngine:
             if not courses:
                 raise RuntimeError("Catalog response did not contain any courses")
 
-            course_texts: List[str] = []
             filtered_courses: List[Dict] = []
 
             for course in courses:
                 subj = (course.get("subject") or "").strip()
                 if allowed and subj and subj.upper() not in allowed:
                     continue
-                course_texts.append(self._build_course_text(course))
                 filtered_courses.append(course)
 
-            if not course_texts:
+            if not filtered_courses:
                 logger.warning("Subject filter removed every course; rebuilding without filter")
-                course_texts = [self._build_course_text(course) for course in courses]
                 filtered_courses = list(courses)
 
-            logger.info("Encoding %d courses...", len(course_texts))
-            embeddings = np.asarray(self.model.encode(course_texts, batch_size=128, convert_to_numpy=True), dtype="float32")
-
-            # Create (or overwrite) the RedisVL index
             sorted_allowed = sorted(allowed) if allowed else None
             index_name = self._get_index_name(year, term_semester, sorted_allowed)
-            schema = self._build_schema(index_name)
-            search_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-            search_index.create(overwrite=True)
+            search_index = self._store.create_index(
+                index_name,
+                self._embedding_dims,
+                self.embedding_config.vector_algorithm,
+            )
 
-            # Load course vectors into Redis
-            data = []
-            for i, (course, text) in enumerate(zip(filtered_courses, course_texts)):
-                course_meta = course.get("course") or {}
-                data.append({
-                    "subject": course.get("subject") or "",
-                    "course_number": course.get("courseNumber") or "",
-                    "title": (course_meta.get("title") or "").strip(),
-                    "description": (course_meta.get("description") or "").strip(),
-                    "course_text": text,
-                    "embedding": array_to_buffer(embeddings[i], dtype="float32"),
-                })
-            search_index.load(data)
+            # Encode and upload one batch at a time. This avoids holding the full
+            # catalog text, embeddings, and Redis payloads in memory together.
+            total = len(filtered_courses)
+            logger.info("Encoding %d courses in batches of %d...", total, self.embedding_config.batch_size)
+            for start in range(0, total, self.embedding_config.batch_size):
+                batch = filtered_courses[start:start + self.embedding_config.batch_size]
+                texts = [self._build_course_text(course) for course in batch]
+                embeddings = np.asarray(
+                    self.model.encode(
+                        texts,
+                        batch_size=self.embedding_config.batch_size,
+                        convert_to_numpy=True,
+                    ),
+                    dtype="float32",
+                )
+                records = [
+                    VectorRecord(
+                        subject=(course.get("subject") or "").strip(),
+                        course_number=(course.get("courseNumber") or "").strip(),
+                        embedding=embeddings[i],
+                    )
+                    for i, course in enumerate(batch)
+                ]
+                self._store.load_batch(search_index, records)
 
             entry = TermIndex(
                 index=search_index,
-                size=len(course_texts),
+                size=total,
                 last_refreshed=datetime.utcnow(),
                 year=year,
                 semester=term_semester,
@@ -235,11 +229,12 @@ class SemanticSearchEngine:
                 self._indices[self._key(entry.year, entry.semester, entry.allowed_subjects)] = entry
 
             self._save_index_metadata(entry)
+            self._purge_stale_indexes()
 
             # Clean up indexes beyond the 2 most recent terms
             self._evict_old_indexes()
 
-            logger.info("Index ready: %s %s (%d courses)", term_semester, year, len(course_texts))
+            logger.info("Index ready: %s %s (%d courses)", term_semester, year, total)
             return entry
         finally:
             self._building = None
@@ -307,26 +302,18 @@ class SemanticSearchEngine:
             return [], entry
 
         # BGE models work better with instruction prefix for queries
-        prefixed_query = QUERY_PREFIX + query
+        prefixed_query = self.embedding_config.query_prefix + query
         query_vec = self._encode_query(prefixed_query)
+        raw_results = entry.index.search(query_vec, search_k)
 
-        vq = VectorQuery(
-            vector=query_vec.tolist(),
-            vector_field_name="embedding",
-            return_fields=["subject", "course_number"],
-            num_results=search_k,
-        )
-
-        raw_results = entry.index.query(vq)
-
-        # RedisVL COSINE distance = 1 - cosine_similarity, so convert threshold accordingly
+        # Vector-store adapters return cosine distance (1 - cosine similarity).
         distance_threshold = 1.0 - threshold
         scored = []
-        for r in raw_results:
-            dist = float(r.get("vector_distance", 1.0))
+        for result in raw_results:
+            dist = result.distance
             if dist > distance_threshold:
                 continue
-            scored.append((1.0 - dist, r.get("subject") or None, r.get("course_number") or None))
+            scored.append((1.0 - dist, result.subject, result.course_number))
 
         # Sort by score descending — backend preserves this order for ranking
         scored.sort(key=lambda x: x[0], reverse=True)
@@ -348,6 +335,23 @@ class SemanticSearchEngine:
             for entry in entries
         ]
 
+    def describe_configuration(self) -> Dict:
+        return {
+            "vector_store": self._store.backend_name,
+            "embedding_profile": self.embedding_config.profile,
+            "embedding_model": self.embedding_config.model_name,
+            "embedding_model_revision": self.embedding_config.model_revision,
+            "embedding_dimensions": self._embedding_dims,
+            "embedding_fingerprint": self._embedding_fingerprint,
+            "vector_algorithm": self.embedding_config.vector_algorithm,
+            "index_schema_version": self.embedding_config.schema_version,
+            "embedding_batch_size": self.embedding_config.batch_size,
+            "legacy_migration_completed": self._legacy_migration_completed,
+            "legacy_indexes_removed": self._legacy_indexes_removed,
+            "stale_migration_completed": self._stale_migration_completed,
+            "stale_indexes_removed": self._stale_indexes_removed,
+        }
+
     def _get_or_build_index(
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]]
     ) -> TermIndex:
@@ -362,7 +366,7 @@ class SemanticSearchEngine:
             return entry
 
         # Try loading from Redis before building
-        loaded = self._load_redis_index(year, canonical_semester, sorted(allowed) if allowed else None)
+        loaded = self._load_vector_index(year, canonical_semester, sorted(allowed) if allowed else None)
         if loaded:
             with self._lock:
                 self._indices[key] = loaded
@@ -421,7 +425,7 @@ class SemanticSearchEngine:
     @staticmethod
     def _build_course_text(course: Dict) -> str:
         subj = (course.get("subject") or "").strip()
-        num = course.get("number", "")
+        num = course.get("courseNumber") or course.get("number", "")
         title = ((course.get("course") or {}).get("title") or "").strip()
         desc = ((course.get("course") or {}).get("description") or "").strip()
         return f"SUBJECT: {subj} NUMBER: {num}\nTITLE: {title}\nDESCRIPTION: {desc}\n"
@@ -483,24 +487,9 @@ class SemanticSearchEngine:
             return []
 
     def _evict_old_indexes(self, max_terms: int = 2) -> None:
-        """Delete Redis indexes beyond the most recent max_terms terms."""
+        """Delete vector indexes beyond the most recent max_terms terms."""
         try:
-            all_meta = []
-            cursor = 0
-            while True:
-                cursor, keys = self._redis.scan(cursor, match=f"{INDEX_PREFIX}:meta:*", count=100)
-                for key in keys:
-                    raw = self._redis.get(key)
-                    if not raw:
-                        continue
-                    try:
-                        meta = json.loads(raw)
-                        meta["_meta_key"] = key
-                        all_meta.append(meta)
-                    except Exception:
-                        pass
-                if cursor == 0:
-                    break
+            all_meta = self._store.scan_metadata(f"{self._index_prefix}:meta:*")
 
             # Retention is based on distinct academic terms, not index variants.
             # Otherwise filtered indexes for one term can crowd the production
@@ -520,12 +509,11 @@ class SemanticSearchEngine:
                 if (meta.get("year", 0), meta.get("semester", "")) in keep_terms:
                     continue
                 try:
-                    index_name = self._get_index_name(meta["year"], meta["semester"], meta.get("allowed_subjects"))
-                    schema = self._build_schema(index_name)
-                    old_index = SearchIndex.from_dict(schema, redis_url=REDIS_URI)
-                    if old_index.exists():
-                        old_index.delete(drop=True)
-                    self._redis.delete(meta["_meta_key"])
+                    index_name = meta.get("index_name") or self._get_index_name(
+                        meta["year"], meta["semester"], meta.get("allowed_subjects")
+                    )
+                    self._store.delete_index(index_name)
+                    self._store.delete_metadata(meta["_meta_key"])
                     # Also evict from in-memory cache
                     stale_key = self._key(meta["year"], meta["semester"], meta.get("allowed_subjects"))
                     with self._lock:
@@ -536,8 +524,35 @@ class SemanticSearchEngine:
         except Exception as exc:
             logger.warning("Failed to scan for old indexes: %s", exc)
 
+    def _migrate_legacy_indexes(self) -> None:
+        if self._legacy_migration_completed:
+            return
+        if PURGE_LEGACY_INDEXES:
+            self._legacy_indexes_removed = self._store.purge_legacy_indexes()
+            if self._legacy_indexes_removed:
+                logger.info(
+                    "Removed %d legacy semantic-search index(es)",
+                    self._legacy_indexes_removed,
+                )
+        self._legacy_migration_completed = True
+
+    def _purge_stale_indexes(self) -> None:
+        if self._stale_migration_completed:
+            return
+        if PURGE_LEGACY_INDEXES:
+            self._stale_indexes_removed = self._store.purge_stale_indexes(
+                self._index_prefix
+            )
+            if self._stale_indexes_removed:
+                logger.info(
+                    "Removed %d stale semantic-search index(es)",
+                    self._stale_indexes_removed,
+                )
+        self._stale_migration_completed = True
+
     def build_startup_indexes(self, max_startup_terms: int = 2) -> None:
-        """Load indexes from Redis and queue builds for the 2 most recent terms only."""
+        """Load vector indexes and queue builds for the 2 most recent terms only."""
+        self._migrate_legacy_indexes()
         # Fetch available terms
         available_terms = self.fetch_available_terms()
         if not available_terms:
@@ -555,11 +570,12 @@ class SemanticSearchEngine:
         # Load from Redis if available, otherwise queue for building
         terms_to_build = []
         for year, semester in keep_terms:
-            loaded = self._load_redis_index(year, semester, None)
+            loaded = self._load_vector_index(year, semester, None)
             if loaded:
                 key = self._key(loaded.year, loaded.semester, loaded.allowed_subjects)
                 with self._lock:
                     self._indices[key] = loaded
+                self._purge_stale_indexes()
             else:
                 terms_to_build.append((year, semester))
 

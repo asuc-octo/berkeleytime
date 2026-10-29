@@ -52,6 +52,12 @@ semanticSearch:
   logLevel: INFO
   defaultYear: 2026
   defaultSemester: "Spring"
+  embeddingProfile: "minilm-l6-v2"
+  model: "sentence-transformers/all-MiniLM-L6-v2"
+  modelRevision: "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+  vectorAlgorithm: "flat"
+  embeddingBatchSize: 128
+  purgeLegacyIndexes: true
 
   image:
     registry: docker.io

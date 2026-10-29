@@ -44,16 +44,10 @@ spec:
           volumeMounts:
             - name: indexes
               mountPath: /app/indexes
-            - name: model-cache
-              mountPath: /root/.cache/huggingface
       volumes:
         - name: indexes
           hostPath:
             path: /data/semantic-search-indexes
-            type: DirectoryOrCreate
-        - name: model-cache
-          hostPath:
-            path: /data/semantic-search-model-cache
             type: DirectoryOrCreate
 
 ---
@@ -67,6 +61,12 @@ metadata:
 data:
   INDEX_STORAGE_DIR: "/app/indexes"
   SEMANTIC_SEARCH_LOG_LEVEL: {{ .Values.semanticSearch.logLevel | quote }}
+  SEMANTIC_SEARCH_EMBEDDING_PROFILE: {{ .Values.semanticSearch.embeddingProfile | quote }}
+  SEMANTIC_SEARCH_MODEL: {{ .Values.semanticSearch.model | quote }}
+  SEMANTIC_SEARCH_MODEL_REVISION: {{ .Values.semanticSearch.modelRevision | quote }}
+  SEMANTIC_SEARCH_VECTOR_ALGORITHM: {{ .Values.semanticSearch.vectorAlgorithm | quote }}
+  SEMANTIC_SEARCH_EMBEDDING_BATCH_SIZE: {{ .Values.semanticSearch.embeddingBatchSize | quote }}
+  SEMANTIC_SEARCH_PURGE_LEGACY_INDEXES: {{ .Values.semanticSearch.purgeLegacyIndexes | quote }}
   REDIS_URI: {{ .Values.redisUri }}
   BACKEND_URL: {{ printf "http://%s-svc:%d" (include "bt-app.backendName" .) (.Values.port | int) | quote }}
   {{- if .Values.semanticSearch.defaultYear }}

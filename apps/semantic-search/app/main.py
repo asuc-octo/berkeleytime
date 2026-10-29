@@ -117,6 +117,7 @@ def health(response: Response):
         "build_duration_seconds": round(build_duration, 1) if build_duration else None,
         "queue": queue,
         "last_error": last_error,
+        "configuration": engine.describe_configuration(),
         "indexes": indexes,
     }
 

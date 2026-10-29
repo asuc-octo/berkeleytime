@@ -34,6 +34,7 @@ import type { GradeDistributionModule } from "../grade-distribution/generated-ty
 import { searchSemantic } from "../semantic-search/client";
 import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
 import { buildCoEHssQuery, matchesCoEHss } from "./coe-hss";
+import { rankHybridCatalog } from "./hybrid-ranking";
 
 export interface CatalogQueryParams {
   year: number;
@@ -164,36 +165,23 @@ const getCatalogWithSemanticSearch = async ({
   limit: number;
   skip: number;
 }) => {
-  const response = await searchSemantic(searchTerm, year, semester);
-
-  if (response.results.length === 0) {
-    return { results: [], totalCount: 0 };
-  }
-
-  // Python already returns results sorted by score descending — preserve that order.
-  // Build a rank map: "subject-courseNumber" → position in Python's ranked list
-  const rankMap = new Map<string, number>();
-  response.results.forEach(({ subject, courseNumber }, index) => {
-    rankMap.set(`${subject}-${courseNumber}`, index);
-  });
-
-  // Reuse the server-side catalog cache (same one fuzzy search uses) to avoid
-  // a redundant MongoDB round-trip.
+  // Lexical and semantic retrieval run in parallel. Their raw scores are not
+  // comparable, so merge their ordered results with reciprocal-rank fusion.
+  const [response, lexicalIndex] = await Promise.all([
+    searchSemantic(searchTerm, year, semester),
+    getSearchIndex(year, semester),
+  ]);
   const allCatalog = await getCachedCatalog(year, semester);
-
-  const semanticMatches = allCatalog.filter((item) =>
-    rankMap.has(`${item.subject}-${item.courseNumber}`)
-  );
-
-  const filtered = applyInMemoryFilters(semanticMatches, filters);
-
-  // Sort by Python's relevance rank, then by section number within the same course
-  filtered.sort((a, b) => {
-    const rankA = rankMap.get(`${a.subject}-${a.courseNumber}`) ?? 999;
-    const rankB = rankMap.get(`${b.subject}-${b.courseNumber}`) ?? 999;
-    if (rankA !== rankB) return rankA - rankB;
-    return a.number.localeCompare(b.number);
+  const lexicalMatches = lexicalIndex
+    .search(searchTerm)
+    .map(({ item }) => item);
+  const ranked = rankHybridCatalog({
+    query: searchTerm,
+    catalog: allCatalog,
+    lexicalMatches,
+    semanticMatches: response.results,
   });
+  const filtered = applyInMemoryFilters(ranked, filters);
 
   const totalCount = filtered.length;
   const results = filtered.slice(skip, skip + limit);
