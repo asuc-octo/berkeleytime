@@ -12,6 +12,7 @@ import {
 } from "@repo/common/models";
 
 import { buildSubjectQuery } from "../../utils/subject";
+import { getCourseListings } from "../course/controller";
 
 const EMA_ALPHA = 0.1;
 
@@ -163,15 +164,27 @@ export const getGradeDistributionsByCourseIds = async (courseIds: string[]) => {
 
 // --- Convenience functions that resolve sections, then delegate ---
 
+const buildCourseSectionQuery = async (subject: string, courseId: string) => {
+  const listings = await getCourseListings(courseId, subject);
+
+  return {
+    courseId,
+    // A course with no classes has no listings, and $or can't be empty.
+    $or:
+      listings.length > 0
+        ? listings
+        : [{ subject: buildSubjectQuery(subject) }],
+  };
+};
+
 export const getGradeDistributionByCourse = async (
   subject: string,
   courseId: string
 ) => {
-  const subjectQuery = buildSubjectQuery(subject);
+  const courseQuery = await buildCourseSectionQuery(subject, courseId);
 
   const sections = await SectionModel.find({
-    subject: subjectQuery,
-    courseId,
+    ...courseQuery,
     primary: true,
   })
     .select({ sectionId: 1, termId: 1, sessionId: 1 })
@@ -214,14 +227,13 @@ export const getGradeDistributionBySemester = async (
   subject: string,
   courseId: string
 ) => {
-  const subjectQuery = buildSubjectQuery(subject);
+  const courseQuery = await buildCourseSectionQuery(subject, courseId);
 
   const sections = await SectionModel.find({
     year,
     semester,
     sessionId,
-    subject: subjectQuery,
-    courseId,
+    ...courseQuery,
     primary: true,
   })
     .select({ sectionId: 1, termId: 1, sessionId: 1 })
@@ -236,11 +248,10 @@ export const getGradeDistributionByInstructor = async (
   familyName: string,
   givenName: string
 ) => {
-  const subjectQuery = buildSubjectQuery(subject);
+  const courseQuery = await buildCourseSectionQuery(subject, courseId);
 
   const sections = await SectionModel.find({
-    subject: subjectQuery,
-    courseId,
+    ...courseQuery,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,
     primary: true,
@@ -262,14 +273,13 @@ export const getGradeDistributionByInstructorAndSemester = async (
   familyName: string,
   givenName: string
 ) => {
-  const subjectQuery = buildSubjectQuery(subject);
+  const courseQuery = await buildCourseSectionQuery(subject, courseId);
 
   const sections = await SectionModel.find({
     year,
     semester,
     sessionId,
-    subject: subjectQuery,
-    courseId,
+    ...courseQuery,
     "meetings.instructors.familyName": familyName,
     "meetings.instructors.givenName": givenName,
     primary: true,
