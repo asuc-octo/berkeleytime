@@ -1,0 +1,378 @@
+{
+  "programGroupId": "25699U",
+  "sources": [
+    "https://polisci.berkeley.edu/node/983",
+    "https://polisci.berkeley.edu/sites/default/files/2023-12/History%20Courses%202024_0.pdf",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), subjectCode is POLSCI, with units and titles: subfield and upper-division lists are the course numbers in each department range (C/N/S/W prefixes kept, H dropped)",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE), all courses: checked the history PDF's courses and looked up titles"
+  ],
+  "changes": [
+    {
+      "op": "replace",
+      "ruleId": "GrDdSIXm",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Methods",
+        "n": 1,
+        "rules": [
+          { "kind": "allOf", "name": "PS 3", "groups": [["POLSCI 3", "POLSCI W3"]] },
+          {
+            "kind": "allOf",
+            "name": "Data Science C8 and PS 88",
+            "groups": [["DATA C8", "COMPSCI C8", "INFO C8", "STAT C8"], ["POLSCI 88"]]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "the combination of Data Science C8 and PS 88",
+        "reasoning": "The sentence begins 'Students must take PS 3, Intro to Empirical Theory and Quantitative Methods, or, for those who want more advanced Data Science' and offers the combination of Data Science C8 and PS 88 as the alternative. The page also says 'PS 88 must be taken concurrently with, or after taking, Data Science C8.' The catalog had the two methods options as two separate required rules, and flagged a missing count on Option 1. This makes them one either/or rule. POLSCI W3 (the online PS 3, from the catalog's Empirical Theory list) and the catalog's cross-listings of Data C8 are kept."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "pK8lRBcJ",
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "the combination of Data Science C8 and PS 88",
+        "reasoning": "Methods Option 2 is now the second option of the Methods rule."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "EKH71vmi",
+      "rule": {
+        "kind": "atLeast",
+        "name": "History",
+        "n": 1,
+        "groups": [
+          ["AFRICAM 4A", "AFRICAM N4A"], ["AFRICAM 4B"], ["AFRICAM 111"], ["AGRS 10A"], ["AGRS 10B"], ["AMERSTD 139AC"], ["CELTIC 70"], ["ECON 113"], ["ECON 115"], ["ETHSTD 10A", "ETHSTD 10AC"], ["ETHSTD 21AC"], ["GEOG C55"], ["GERMAN 160A"], ["GERMAN 160C"], ["GLOBAL 45"],
+          ["HISTORY C139C"], ["HISTORY C157"], ["HISTORY C159A"], ["HISTORY N106A"], ["HISTORY N106B"], ["HISTORY N112B"], ["HISTORY N124A"], ["HISTORY N124B"], ["HISTORY N131B"], ["HISTORY N143"], ["HISTORY N151C"], ["HISTORY N158C"], ["HISTORY N162A"],
+          ["HISTORY 4A"], ["HISTORY 4B"], ["HISTORY 5"], ["HISTORY 6A"], ["HISTORY 6B"], ["HISTORY 7A"], ["HISTORY 7B"], ["HISTORY 8A"], ["HISTORY 8B"], ["HISTORY 10"], ["HISTORY 11"], ["HISTORY 12"], ["HISTORY 14"],
+          ["HISTORY 105A"], ["HISTORY 105B"], ["HISTORY 106A"], ["HISTORY 106B"], ["HISTORY 108"], ["HISTORY 112B"], ["HISTORY 122AC"], ["HISTORY 123"], ["HISTORY 124A"], ["HISTORY 124B"], ["HISTORY 130"], ["HISTORY 131B"], ["HISTORY 133A"], ["HISTORY 137AC"], ["HISTORY 140B"], ["HISTORY 141B"], ["HISTORY 143"], ["HISTORY 149B"], ["HISTORY 150B"], ["HISTORY 151A"], ["HISTORY 151B"], ["HISTORY 151C"], ["HISTORY 155A"], ["HISTORY 155B"], ["HISTORY 158A"], ["HISTORY 158B"], ["HISTORY 158C"], ["HISTORY 159B"], ["HISTORY 160"], ["HISTORY 162A"], ["HISTORY 162B"], ["HISTORY 164A"], ["HISTORY 165A"], ["HISTORY 165B"], ["HISTORY 166A"], ["HISTORY 166B"], ["HISTORY 166C"], ["HISTORY 167A"], ["HISTORY 167B"], ["HISTORY 167C"], ["HISTORY 168A"], ["HISTORY 169A"], ["HISTORY 170"], ["HISTORY 171A"], ["HISTORY 171B"], ["HISTORY 171C"], ["HISTORY 173B"], ["HISTORY 173C"], ["HISTORY 174B"], ["HISTORY 185A"], ["HISTORY 185B"],
+          ["IAS 45"], ["MELC C26"], ["MELC 10"], ["MELC 109"], ["MELC 147"], ["MELC 173"], ["MELC 175"], ["PACS 125AC"], ["POLECON C160"], ["PORTUG 113"], ["RELIGST C124"], ["SCANDIN 123"], ["XAGRS 10A"], ["XETHSTD 21AC"], ["XHISTOR 7B"],
+          ["HISTORY 1"], ["HISTORY 142"], ["HISTORY 159A"], ["HISTORY 164B"], ["HISTORY 175B"], ["HISTORY 177A"], ["HISTORY 177B"], ["HISTORY C139B"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "Students must take one history course from the pre-approved course list",
+        "reasoning": "The pre-approved list linked from the page (https://polisci.berkeley.edu/sites/default/files/2023-12/History%20Courses%202024_0.pdf, 'COURSES APPROVED FOR THE HISTORY REQUIREMENT') includes History 1, 142, 159A, 164B, 175B, 177A, 177B and C139B, which the catalog list lacks, so they are added. The catalog's extra courses (HISTORY 166A and 174B, PACS 125AC, MELC 173, IAS 45, POLECON C160, RELIGST C124, the summer N-versions and the Extension X-versions) are kept. The catalog is the 2026-27 edition, while the PDF was created in 2023. Several of the extras are cross-listings or renumberings of courses on the PDF (POLECON C160 = HISTORY C159A, RELIGST C124 = HISTORY C157, IAS 45 = GLOBAL 45)."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "dxozHBx0",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Distribution: American Politics",
+        "n": 1,
+        "shared": true,
+        "groups": [
+          ["POLSCI 1", "XPOLSCI 1"],
+          ["POLSCI 102"], ["POLSCI S102"], ["POLSCI 102W"], ["POLSCI S102X"], ["POLSCI 103"], ["POLSCI S103"], ["POLSCI 103A"], ["POLSCI 103B"], ["POLSCI 103W"], ["POLSCI 104"], ["POLSCI S104"], ["POLSCI 104W"], ["POLSCI 105"], ["POLSCI 105W"], ["POLSCI 106"], ["POLSCI 106A"], ["POLSCI 106B"], ["POLSCI 107"], ["POLSCI 107A"], ["POLSCI S107A"], ["POLSCI 107B"], ["POLSCI 108"], ["POLSCI S108"], ["POLSCI 108A"], ["POLSCI 108AW"], ["POLSCI 108W"],
+          ["POLSCI 109"], ["POLSCI S109"], ["POLSCI 109A"], ["POLSCI 109B"], ["POLSCI 109C"], ["POLSCI 109D"], ["POLSCI 109E"], ["POLSCI 109F"], ["POLSCI 109G"], ["POLSCI 109H"], ["POLSCI 109I"], ["POLSCI 109J"], ["POLSCI 109K"], ["POLSCI 109L"], ["POLSCI 109M"], ["POLSCI 109N"], ["POLSCI 109O"], ["POLSCI 109P"], ["POLSCI 109Q"], ["POLSCI 109R"], ["POLSCI 109S"], ["POLSCI 109T"], ["POLSCI 109U"], ["POLSCI 109V"], ["POLSCI 109W"], ["POLSCI 109X"], ["POLSCI 109Y"], ["POLSCI 109Z"],
+          ["POLSCI 111"], ["POLSCI 111A"], ["POLSCI 111AC"], ["POLSCI 111B"], ["POLSCI 116J"],
+          ["POLSCI 150"], ["POLSCI S150"], ["POLSCI 150A"], ["POLSCI S150A"], ["POLSCI 150B"], ["POLSCI 151"], ["POLSCI 152"], ["POLSCI 152A"], ["POLSCI 152B"], ["POLSCI 152C"], ["POLSCI 152D"], ["POLSCI 152E"], ["POLSCI 152F"], ["POLSCI 152G"], ["POLSCI 152H"], ["POLSCI 152I"], ["POLSCI 152J"], ["POLSCI 152K"], ["POLSCI 152L"], ["POLSCI 152M"], ["POLSCI 152N"], ["POLSCI 152O"], ["POLSCI 152P"], ["POLSCI 152Q"], ["POLSCI 152R"], ["POLSCI 152S"], ["POLSCI 152T"], ["POLSCI 152U"], ["POLSCI 152V"], ["POLSCI 152W"], ["POLSCI 152X"], ["POLSCI 152Y"], ["POLSCI 152Z"],
+          ["POLSCI 153"], ["POLSCI S153"], ["POLSCI 157A"], ["POLSCI S157A"], ["POLSCI 157B"], ["POLSCI 158"], ["POLSCI 160"], ["POLSCI 161"], ["POLSCI S161"], ["POLSCI 162"], ["POLSCI 163"], ["POLSCI 163A"], ["POLSCI C163A"], ["POLSCI 163B"], ["POLSCI C163B"], ["POLSCI 164"], ["POLSCI 164A"], ["POLSCI N164A"], ["POLSCI W164A"], ["POLSCI 164B"], ["POLSCI 166"], ["POLSCI 167"], ["POLSCI 167AC"], ["POLSCI 168A"], ["POLSCI 168B"], ["POLSCI 169"], ["POLSCI 170"], ["POLSCI 171"], ["POLSCI S171"], ["POLSCI 171A"], ["POLSCI 171B"], ["POLSCI 172"], ["POLSCI 173S"], ["POLSCI 175A"], ["POLSCI 175B"], ["POLSCI 176"], ["POLSCI 176A"], ["POLSCI 176B"], ["POLSCI 177A"], ["POLSCI 177B"], ["POLSCI 178"], ["POLSCI 181"], ["POLSCI S181"], ["POLSCI 182"], ["POLSCI 183"], ["POLSCI S183X"], ["POLSCI 184"], ["POLSCI 185"], ["POLSCI 186"], ["POLSCI 187A"], ["POLSCI 187B"], ["POLSCI 187C"], ["POLSCI 188"], ["POLSCI 189"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "American Politics: PS 1, 102-111B, 116J, 150-189",
+        "reasoning": "Distribution: 'Students are required to complete at least one course from each of the five primary subfields listed below.' and 'Courses fulfilling the distribution requirement may be either introductory (i.e. PS 1-5) or upper-division.' The list is the introductory course plus every catalog POLSCI course in this subfield's range. Honors H-courses are left out, and 110 and 179 are left out because they can't count toward the major. The rule is shared, because the same courses also count toward the introductory, specialization and upper-division requirements (upper-division courses 'can satisfy the distribution and specialization requirements in the major')."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "fjNrx29j",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Distribution: Comparative Politics",
+        "n": 1,
+        "shared": true,
+        "groups": [
+          ["POLSCI 2", "XPOLSCI 2"],
+          ["POLSCI 136A"], ["POLSCI 136B"], ["POLSCI S136X"], ["POLSCI 137A"], ["POLSCI S137A"], ["POLSCI 137B"], ["POLSCI 137C"], ["POLSCI 137H"], ["POLSCI 137L"], ["POLSCI 137R"], ["POLSCI 138A"], ["POLSCI 138B"], ["POLSCI 138C"], ["POLSCI 138D"], ["POLSCI 138E"], ["POLSCI 138F"], ["POLSCI 138G"], ["POLSCI 138J"], ["POLSCI 138M"], ["POLSCI 138S"], ["POLSCI 138Z"], ["POLSCI C139"], ["POLSCI 139A"], ["POLSCI 139B"], ["POLSCI 139C"], ["POLSCI 139D"], ["POLSCI 139M"], ["POLSCI 139W"],
+          ["POLSCI 140"], ["POLSCI 140A"], ["POLSCI S140AX"], ["POLSCI 140B"], ["POLSCI 140C"], ["POLSCI S140C"], ["POLSCI 140D"], ["POLSCI 140E"], ["POLSCI 140F"], ["POLSCI 140G"], ["POLSCI N140G"], ["POLSCI 140H"], ["POLSCI 140I"], ["POLSCI 140J"], ["POLSCI 140K"], ["POLSCI 140L"], ["POLSCI 140M"], ["POLSCI 140N"], ["POLSCI 140O"], ["POLSCI 140P"], ["POLSCI 140Q"], ["POLSCI 140R"], ["POLSCI 140S"], ["POLSCI 140T"], ["POLSCI 140U"], ["POLSCI 140V"], ["POLSCI 140W"], ["POLSCI 140X"], ["POLSCI 140Y"], ["POLSCI 140Z"],
+          ["POLSCI 141A"], ["POLSCI S141AX"], ["POLSCI 141B"], ["POLSCI 141C"], ["POLSCI 142A"], ["POLSCI S142A"], ["POLSCI 142B"], ["POLSCI 143A"], ["POLSCI S143A"], ["POLSCI 143B"], ["POLSCI S143B"], ["POLSCI 143C"], ["POLSCI 143D"], ["POLSCI 143E"], ["POLSCI 143F"], ["POLSCI 143T"], ["POLSCI 144"], ["POLSCI 144A"], ["POLSCI 144B"], ["POLSCI 145A"], ["POLSCI W145A"], ["POLSCI 145B"], ["POLSCI 146A"], ["POLSCI S146A"], ["POLSCI 146B"], ["POLSCI 146C"], ["POLSCI N146C"], ["POLSCI S146C"], ["POLSCI 146D"], ["POLSCI S146X"], ["POLSCI 147A"], ["POLSCI S147A"], ["POLSCI 147B"], ["POLSCI 147C"], ["POLSCI 147D"], ["POLSCI 147E"], ["POLSCI S147E"], ["POLSCI 147F"], ["POLSCI S147F"], ["POLSCI 147G"], ["POLSCI 147H"], ["POLSCI 147T"], ["POLSCI 148A"], ["POLSCI S148A"], ["POLSCI 148B"],
+          ["POLSCI 149"], ["POLSCI 149A"], ["POLSCI 149B"], ["POLSCI 149C"], ["POLSCI 149D"], ["POLSCI 149E"], ["POLSCI 149F"], ["POLSCI 149G"], ["POLSCI N149G"], ["POLSCI 149H"], ["POLSCI 149I"], ["POLSCI 149J"], ["POLSCI 149K"], ["POLSCI 149L"], ["POLSCI 149M"], ["POLSCI 149N"], ["POLSCI 149O"], ["POLSCI 149P"], ["POLSCI 149Q"], ["POLSCI 149R"], ["POLSCI 149S"], ["POLSCI 149T"], ["POLSCI 149U"], ["POLSCI 149V"], ["POLSCI 149W"], ["POLSCI 149X"], ["POLSCI 149Y"], ["POLSCI 149Z"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "Comparative Politics: PS 2, 136A-149Z",
+        "reasoning": "Distribution: 'Students are required to complete at least one course from each of the five primary subfields listed below.' and 'Courses fulfilling the distribution requirement may be either introductory (i.e. PS 1-5) or upper-division.' The catalog's distribution list was a partial subset. The new list is PS 2 plus every catalog POLSCI course in 136A-149Z, with honors H-courses left out. The rule is shared, because these courses also count toward the introductory, specialization and upper-division requirements."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "VIHcf0Ay",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Distribution: Empirical Theory and Quantitative Methods",
+        "n": 1,
+        "shared": true,
+        "groups": [
+          ["POLSCI 3", "POLSCI W3"],
+          ["POLSCI C131A", "ECON C142", "PUBPOL C142"], ["POLSCI 132A"], ["POLSCI 132B"], ["POLSCI 132C"], ["POLSCI 133"], ["POLSCI 134"], ["POLSCI 135", "POLSCI C135", "POLSCI W135", "ECON C110"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "Empirical Theory and Quantitative Methods: PS 3, 131A-C135",
+        "reasoning": "Distribution: 'Courses fulfilling the distribution requirement may be either introductory (i.e. PS 1-5) or upper-division.' The catalog's list had only PS 3 and W3. The upper-division courses in 131A-C135 are added. The catalog's ECON C110, ECON C142 and PUBPOL C142 are kept, grouped with their POLSCI cross-listings C135 and C131A. The rule is shared, because PS 3 also satisfies Methods and the upper-division courses also count toward the eight upper-division courses."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "yquJ0n4d",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Distribution: Political Theory",
+        "n": 1,
+        "shared": true,
+        "groups": [
+          ["POLSCI 4"],
+          ["POLSCI 112A"], ["POLSCI N112A"], ["POLSCI 112B"], ["POLSCI 112C"], ["POLSCI S112C"], ["POLSCI 112D"], ["POLSCI 112L"], ["POLSCI S112X"], ["POLSCI 113A"], ["POLSCI N113A"], ["POLSCI S113A"], ["POLSCI 113B"], ["POLSCI S113X"], ["POLSCI 114"], ["POLSCI 114A"], ["POLSCI 115A"], ["POLSCI 115B"], ["POLSCI 115C"],
+          ["POLSCI 116"], ["POLSCI 116A"], ["POLSCI 116B"], ["POLSCI 116C"], ["POLSCI 116D"], ["POLSCI 116E"], ["POLSCI 116F"], ["POLSCI 116G"], ["POLSCI 116H"], ["POLSCI 116I"], ["POLSCI 116J"], ["POLSCI 116K"], ["POLSCI 116L"], ["POLSCI 116M"], ["POLSCI 116N"], ["POLSCI 116O"], ["POLSCI 116P"], ["POLSCI 116Q"], ["POLSCI 116R"], ["POLSCI 116S"], ["POLSCI 116T"], ["POLSCI 116U"], ["POLSCI 116V"], ["POLSCI 116W"], ["POLSCI 116X"], ["POLSCI 116Y"], ["POLSCI 116Z"],
+          ["POLSCI 117"], ["POLSCI 117D"], ["POLSCI 117L"], ["POLSCI 118"], ["POLSCI 118A"], ["POLSCI 118AC"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "Political Theory: PS 4, 112A-118AC",
+        "reasoning": "Distribution: 'Courses fulfilling the distribution requirement may be either introductory (i.e. PS 1-5) or upper-division.' The new list is PS 4 plus every catalog POLSCI course in 112A-118AC, with honors H-courses left out. The catalog's upper-division list also had POLSCI 111AC and 118B. Both fall outside the department's Political Theory range (111AC is in American Politics' 102-111B; 118B comes after 118AC), so they are dropped. The rule is shared, as for the other subfields."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "ca1exfz3",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Distribution: International Relations",
+        "n": 1,
+        "shared": true,
+        "groups": [
+          ["POLSCI 5"],
+          ["POLSCI 122A"], ["POLSCI 122AW"], ["POLSCI 123"], ["POLSCI 123A"], ["POLSCI 123B"], ["POLSCI 123C"], ["POLSCI 123D"], ["POLSCI 123E"], ["POLSCI 123F"], ["POLSCI 123G"], ["POLSCI 123H"], ["POLSCI 123J"], ["POLSCI 123K"], ["POLSCI 123L"], ["POLSCI 123M"], ["POLSCI 123N"], ["POLSCI 123O"], ["POLSCI 123P"], ["POLSCI 123Q"], ["POLSCI 123R"], ["POLSCI 123S"], ["POLSCI 123T"], ["POLSCI 123U"], ["POLSCI 123V"], ["POLSCI 123W"], ["POLSCI 123X"], ["POLSCI 123Y"], ["POLSCI 123Z"],
+          ["POLSCI 124A"], ["POLSCI 124B"], ["POLSCI 124C"], ["POLSCI 124D"], ["POLSCI 124G"], ["POLSCI 124H"], ["POLSCI 124I"], ["POLSCI 124M"], ["POLSCI 124N"], ["POLSCI 124R"], ["POLSCI 124W"], ["POLSCI 125"], ["POLSCI 126A"], ["POLSCI 126B"], ["POLSCI 127"], ["POLSCI S127"], ["POLSCI 127A"], ["POLSCI 127B"], ["POLSCI 128"], ["POLSCI 128A"], ["POLSCI S128AX"], ["POLSCI 128B"], ["POLSCI 129A"], ["POLSCI S129A"], ["POLSCI 129B"], ["POLSCI 129C"], ["POLSCI S129C"], ["POLSCI 138F"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "International Relations: PS 5, 122A-129C, 138F",
+        "reasoning": "Distribution: 'Courses fulfilling the distribution requirement may be either introductory (i.e. PS 1-5) or upper-division.' The new list is PS 5 plus every catalog POLSCI course in 122A-129C, and 138F, which the heading lists explicitly. The catalog's POLSCI 122 (no letter) falls outside 122A-129C, so it is dropped. The rule is shared, as for the other subfields."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "ZCzCqcag",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Subfield specialization",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "chooseRules",
+            "name": "American Politics",
+            "n": 2,
+            "rules": [
+              { "kind": "allOf", "name": "American Politics: introductory course", "shared": true, "groups": [["POLSCI 1", "XPOLSCI 1"]] },
+              {
+                "kind": "atLeast",
+                "name": "American Politics: two upper-division courses",
+                "n": 2,
+                "shared": true,
+                "groups": [
+                  ["POLSCI 102"], ["POLSCI S102"], ["POLSCI 102W"], ["POLSCI S102X"], ["POLSCI 103"], ["POLSCI S103"], ["POLSCI 103A"], ["POLSCI 103B"], ["POLSCI 103W"], ["POLSCI 104"], ["POLSCI S104"], ["POLSCI 104W"], ["POLSCI 105"], ["POLSCI 105W"], ["POLSCI 106"], ["POLSCI 106A"], ["POLSCI 106B"], ["POLSCI 107"], ["POLSCI 107A"], ["POLSCI S107A"], ["POLSCI 107B"], ["POLSCI 108"], ["POLSCI S108"], ["POLSCI 108A"], ["POLSCI 108AW"], ["POLSCI 108W"],
+                  ["POLSCI 109"], ["POLSCI S109"], ["POLSCI 109A"], ["POLSCI 109B"], ["POLSCI 109C"], ["POLSCI 109D"], ["POLSCI 109E"], ["POLSCI 109F"], ["POLSCI 109G"], ["POLSCI 109H"], ["POLSCI 109I"], ["POLSCI 109J"], ["POLSCI 109K"], ["POLSCI 109L"], ["POLSCI 109M"], ["POLSCI 109N"], ["POLSCI 109O"], ["POLSCI 109P"], ["POLSCI 109Q"], ["POLSCI 109R"], ["POLSCI 109S"], ["POLSCI 109T"], ["POLSCI 109U"], ["POLSCI 109V"], ["POLSCI 109W"], ["POLSCI 109X"], ["POLSCI 109Y"], ["POLSCI 109Z"],
+                  ["POLSCI 111"], ["POLSCI 111A"], ["POLSCI 111AC"], ["POLSCI 111B"], ["POLSCI 116J"],
+                  ["POLSCI 150"], ["POLSCI S150"], ["POLSCI 150A"], ["POLSCI S150A"], ["POLSCI 150B"], ["POLSCI 151"], ["POLSCI 152"], ["POLSCI 152A"], ["POLSCI 152B"], ["POLSCI 152C"], ["POLSCI 152D"], ["POLSCI 152E"], ["POLSCI 152F"], ["POLSCI 152G"], ["POLSCI 152H"], ["POLSCI 152I"], ["POLSCI 152J"], ["POLSCI 152K"], ["POLSCI 152L"], ["POLSCI 152M"], ["POLSCI 152N"], ["POLSCI 152O"], ["POLSCI 152P"], ["POLSCI 152Q"], ["POLSCI 152R"], ["POLSCI 152S"], ["POLSCI 152T"], ["POLSCI 152U"], ["POLSCI 152V"], ["POLSCI 152W"], ["POLSCI 152X"], ["POLSCI 152Y"], ["POLSCI 152Z"],
+                  ["POLSCI 153"], ["POLSCI S153"], ["POLSCI 157A"], ["POLSCI S157A"], ["POLSCI 157B"], ["POLSCI 158"], ["POLSCI 160"], ["POLSCI 161"], ["POLSCI S161"], ["POLSCI 162"], ["POLSCI 163"], ["POLSCI 163A"], ["POLSCI C163A"], ["POLSCI 163B"], ["POLSCI C163B"], ["POLSCI 164"], ["POLSCI 164A"], ["POLSCI N164A"], ["POLSCI W164A"], ["POLSCI 164B"], ["POLSCI 166"], ["POLSCI 167"], ["POLSCI 167AC"], ["POLSCI 168A"], ["POLSCI 168B"], ["POLSCI 169"], ["POLSCI 170"], ["POLSCI 171"], ["POLSCI S171"], ["POLSCI 171A"], ["POLSCI 171B"], ["POLSCI 172"], ["POLSCI 173S"], ["POLSCI 175A"], ["POLSCI 175B"], ["POLSCI 176"], ["POLSCI 176A"], ["POLSCI 176B"], ["POLSCI 177A"], ["POLSCI 177B"], ["POLSCI 178"], ["POLSCI 181"], ["POLSCI S181"], ["POLSCI 182"], ["POLSCI 183"], ["POLSCI S183X"], ["POLSCI 184"], ["POLSCI 185"], ["POLSCI 186"], ["POLSCI 187A"], ["POLSCI 187B"], ["POLSCI 187C"], ["POLSCI 188"], ["POLSCI 189"]
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "chooseRules",
+            "name": "Comparative Politics",
+            "n": 2,
+            "rules": [
+              { "kind": "allOf", "name": "Comparative Politics: introductory course", "shared": true, "groups": [["POLSCI 2", "XPOLSCI 2"]] },
+              {
+                "kind": "atLeast",
+                "name": "Comparative Politics: two upper-division courses",
+                "n": 2,
+                "shared": true,
+                "groups": [
+                  ["POLSCI 136A"], ["POLSCI 136B"], ["POLSCI S136X"], ["POLSCI 137A"], ["POLSCI S137A"], ["POLSCI 137B"], ["POLSCI 137C"], ["POLSCI 137H"], ["POLSCI 137L"], ["POLSCI 137R"], ["POLSCI 138A"], ["POLSCI 138B"], ["POLSCI 138C"], ["POLSCI 138D"], ["POLSCI 138E"], ["POLSCI 138F"], ["POLSCI 138G"], ["POLSCI 138J"], ["POLSCI 138M"], ["POLSCI 138S"], ["POLSCI 138Z"], ["POLSCI C139"], ["POLSCI 139A"], ["POLSCI 139B"], ["POLSCI 139C"], ["POLSCI 139D"], ["POLSCI 139M"], ["POLSCI 139W"],
+                  ["POLSCI 140"], ["POLSCI 140A"], ["POLSCI S140AX"], ["POLSCI 140B"], ["POLSCI 140C"], ["POLSCI S140C"], ["POLSCI 140D"], ["POLSCI 140E"], ["POLSCI 140F"], ["POLSCI 140G"], ["POLSCI N140G"], ["POLSCI 140H"], ["POLSCI 140I"], ["POLSCI 140J"], ["POLSCI 140K"], ["POLSCI 140L"], ["POLSCI 140M"], ["POLSCI 140N"], ["POLSCI 140O"], ["POLSCI 140P"], ["POLSCI 140Q"], ["POLSCI 140R"], ["POLSCI 140S"], ["POLSCI 140T"], ["POLSCI 140U"], ["POLSCI 140V"], ["POLSCI 140W"], ["POLSCI 140X"], ["POLSCI 140Y"], ["POLSCI 140Z"],
+                  ["POLSCI 141A"], ["POLSCI S141AX"], ["POLSCI 141B"], ["POLSCI 141C"], ["POLSCI 142A"], ["POLSCI S142A"], ["POLSCI 142B"], ["POLSCI 143A"], ["POLSCI S143A"], ["POLSCI 143B"], ["POLSCI S143B"], ["POLSCI 143C"], ["POLSCI 143D"], ["POLSCI 143E"], ["POLSCI 143F"], ["POLSCI 143T"], ["POLSCI 144"], ["POLSCI 144A"], ["POLSCI 144B"], ["POLSCI 145A"], ["POLSCI W145A"], ["POLSCI 145B"], ["POLSCI 146A"], ["POLSCI S146A"], ["POLSCI 146B"], ["POLSCI 146C"], ["POLSCI N146C"], ["POLSCI S146C"], ["POLSCI 146D"], ["POLSCI S146X"], ["POLSCI 147A"], ["POLSCI S147A"], ["POLSCI 147B"], ["POLSCI 147C"], ["POLSCI 147D"], ["POLSCI 147E"], ["POLSCI S147E"], ["POLSCI 147F"], ["POLSCI S147F"], ["POLSCI 147G"], ["POLSCI 147H"], ["POLSCI 147T"], ["POLSCI 148A"], ["POLSCI S148A"], ["POLSCI 148B"],
+                  ["POLSCI 149"], ["POLSCI 149A"], ["POLSCI 149B"], ["POLSCI 149C"], ["POLSCI 149D"], ["POLSCI 149E"], ["POLSCI 149F"], ["POLSCI 149G"], ["POLSCI N149G"], ["POLSCI 149H"], ["POLSCI 149I"], ["POLSCI 149J"], ["POLSCI 149K"], ["POLSCI 149L"], ["POLSCI 149M"], ["POLSCI 149N"], ["POLSCI 149O"], ["POLSCI 149P"], ["POLSCI 149Q"], ["POLSCI 149R"], ["POLSCI 149S"], ["POLSCI 149T"], ["POLSCI 149U"], ["POLSCI 149V"], ["POLSCI 149W"], ["POLSCI 149X"], ["POLSCI 149Y"], ["POLSCI 149Z"]
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "chooseRules",
+            "name": "Empirical Theory and Quantitative Methods",
+            "n": 2,
+            "rules": [
+              { "kind": "allOf", "name": "Empirical Theory and Quantitative Methods: introductory course", "shared": true, "groups": [["POLSCI 3", "POLSCI W3"]] },
+              {
+                "kind": "atLeast",
+                "name": "Empirical Theory and Quantitative Methods: two upper-division courses",
+                "n": 2,
+                "shared": true,
+                "groups": [
+                  ["POLSCI C131A", "ECON C142", "PUBPOL C142"], ["POLSCI 132A"], ["POLSCI 132B"], ["POLSCI 132C"], ["POLSCI 133"], ["POLSCI 134"], ["POLSCI 135", "POLSCI C135", "POLSCI W135", "ECON C110"]
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "chooseRules",
+            "name": "Political Theory",
+            "n": 2,
+            "rules": [
+              { "kind": "allOf", "name": "Political Theory: introductory course", "shared": true, "groups": [["POLSCI 4"]] },
+              {
+                "kind": "atLeast",
+                "name": "Political Theory: two upper-division courses",
+                "n": 2,
+                "shared": true,
+                "groups": [
+                  ["POLSCI 112A"], ["POLSCI N112A"], ["POLSCI 112B"], ["POLSCI 112C"], ["POLSCI S112C"], ["POLSCI 112D"], ["POLSCI 112L"], ["POLSCI S112X"], ["POLSCI 113A"], ["POLSCI N113A"], ["POLSCI S113A"], ["POLSCI 113B"], ["POLSCI S113X"], ["POLSCI 114"], ["POLSCI 114A"], ["POLSCI 115A"], ["POLSCI 115B"], ["POLSCI 115C"],
+                  ["POLSCI 116"], ["POLSCI 116A"], ["POLSCI 116B"], ["POLSCI 116C"], ["POLSCI 116D"], ["POLSCI 116E"], ["POLSCI 116F"], ["POLSCI 116G"], ["POLSCI 116H"], ["POLSCI 116I"], ["POLSCI 116J"], ["POLSCI 116K"], ["POLSCI 116L"], ["POLSCI 116M"], ["POLSCI 116N"], ["POLSCI 116O"], ["POLSCI 116P"], ["POLSCI 116Q"], ["POLSCI 116R"], ["POLSCI 116S"], ["POLSCI 116T"], ["POLSCI 116U"], ["POLSCI 116V"], ["POLSCI 116W"], ["POLSCI 116X"], ["POLSCI 116Y"], ["POLSCI 116Z"],
+                  ["POLSCI 117"], ["POLSCI 117D"], ["POLSCI 117L"], ["POLSCI 118"], ["POLSCI 118A"], ["POLSCI 118AC"]
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "chooseRules",
+            "name": "International Relations",
+            "n": 2,
+            "rules": [
+              { "kind": "allOf", "name": "International Relations: introductory course", "shared": true, "groups": [["POLSCI 5"]] },
+              {
+                "kind": "atLeast",
+                "name": "International Relations: two upper-division courses",
+                "n": 2,
+                "shared": true,
+                "groups": [
+                  ["POLSCI 122A"], ["POLSCI 122AW"], ["POLSCI 123"], ["POLSCI 123A"], ["POLSCI 123B"], ["POLSCI 123C"], ["POLSCI 123D"], ["POLSCI 123E"], ["POLSCI 123F"], ["POLSCI 123G"], ["POLSCI 123H"], ["POLSCI 123J"], ["POLSCI 123K"], ["POLSCI 123L"], ["POLSCI 123M"], ["POLSCI 123N"], ["POLSCI 123O"], ["POLSCI 123P"], ["POLSCI 123Q"], ["POLSCI 123R"], ["POLSCI 123S"], ["POLSCI 123T"], ["POLSCI 123U"], ["POLSCI 123V"], ["POLSCI 123W"], ["POLSCI 123X"], ["POLSCI 123Y"], ["POLSCI 123Z"],
+                  ["POLSCI 124A"], ["POLSCI 124B"], ["POLSCI 124C"], ["POLSCI 124D"], ["POLSCI 124G"], ["POLSCI 124H"], ["POLSCI 124I"], ["POLSCI 124M"], ["POLSCI 124N"], ["POLSCI 124R"], ["POLSCI 124W"], ["POLSCI 125"], ["POLSCI 126A"], ["POLSCI 126B"], ["POLSCI 127"], ["POLSCI S127"], ["POLSCI 127A"], ["POLSCI 127B"], ["POLSCI 128"], ["POLSCI 128A"], ["POLSCI S128AX"], ["POLSCI 128B"], ["POLSCI 129A"], ["POLSCI S129A"], ["POLSCI 129B"], ["POLSCI 129C"], ["POLSCI S129C"], ["POLSCI 138F"]
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.",
+        "reasoning": "The catalog required a lower-division course and two upper-division courses in all five subfields (10 separate rules). The department requires this for one subfield of the student's choice. Course lists follow the subfield headings on the same page (e.g. 'American Politics: PS 1, 102-111B, 116J, 150-189') and match the Distribution rules. All parts are shared, because these courses also count toward the introductory, methods and eight upper-division requirements (upper-division courses 'can satisfy the distribution and specialization requirements in the major'). The page also mentions Political Behavior, Public Law and Jurisprudence, and Public Organization and Policy as possible specializations 'contingent on course availability'. The page gives no course lists for those, so they aren't encoded."
+      }
+    },
+    {
+      "op": "remove",
+      "ruleId": "M7gzeeEG",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield upper-division rule, now part of the single Subfield specialization choice (one subfield, not all five)." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "abBTikbP",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield lower-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "hKtuDhRa",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield upper-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "VFMg9AUp",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield lower-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "cDdg7IJm",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield upper-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "TpIFFDp6",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield lower-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "eYsy8k9a",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield upper-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "zfJUwWf2",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield lower-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "remove",
+      "ruleId": "M0VnLNyH",
+      "why": { "url": "https://polisci.berkeley.edu/node/983", "quote": "Students must specialize in one of the five primary subfields by completing the introductory course and taking two upper-division courses in that subfield.", "reasoning": "Per-subfield upper-division rule, now part of the single Subfield specialization choice." }
+    },
+    {
+      "op": "replace",
+      "ruleId": "olf0e1Wb",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Eight upper-division Political Science courses",
+        "n": 8,
+        "groups": [
+          ["POLSCI 102"], ["POLSCI S102"], ["POLSCI 102W"], ["POLSCI S102X"], ["POLSCI 103"], ["POLSCI S103"], ["POLSCI 103A"], ["POLSCI 103B"], ["POLSCI 103W"], ["POLSCI 104"], ["POLSCI S104"], ["POLSCI 104W"], ["POLSCI 105"], ["POLSCI 105W"], ["POLSCI 106"], ["POLSCI 106A"], ["POLSCI 106B"], ["POLSCI 107"], ["POLSCI 107A"], ["POLSCI S107A"], ["POLSCI 107B"], ["POLSCI 108"], ["POLSCI S108"], ["POLSCI 108A"], ["POLSCI 108AW"], ["POLSCI 108W"],
+          ["POLSCI 109"], ["POLSCI S109"], ["POLSCI 109A"], ["POLSCI 109B"], ["POLSCI 109C"], ["POLSCI 109D"], ["POLSCI 109E"], ["POLSCI 109F"], ["POLSCI 109G"], ["POLSCI 109H"], ["POLSCI 109I"], ["POLSCI 109J"], ["POLSCI 109K"], ["POLSCI 109L"], ["POLSCI 109M"], ["POLSCI 109N"], ["POLSCI 109O"], ["POLSCI 109P"], ["POLSCI 109Q"], ["POLSCI 109R"], ["POLSCI 109S"], ["POLSCI 109T"], ["POLSCI 109U"], ["POLSCI 109V"], ["POLSCI 109W"], ["POLSCI 109X"], ["POLSCI 109Y"], ["POLSCI 109Z"],
+          ["POLSCI 111"], ["POLSCI 111A"], ["POLSCI 111AC"], ["POLSCI 111B"], ["POLSCI 111W"], ["POLSCI S111X"],
+          ["POLSCI 112"], ["POLSCI 112A"], ["POLSCI N112A"], ["POLSCI 112B"], ["POLSCI 112C"], ["POLSCI S112C"], ["POLSCI 112D"], ["POLSCI 112L"], ["POLSCI S112X"], ["POLSCI 113A"], ["POLSCI N113A"], ["POLSCI S113A"], ["POLSCI 113B"], ["POLSCI S113X"], ["POLSCI 114"], ["POLSCI 114A"], ["POLSCI 115A"], ["POLSCI 115B"], ["POLSCI 115C"],
+          ["POLSCI 116"], ["POLSCI 116A"], ["POLSCI 116B"], ["POLSCI 116C"], ["POLSCI 116D"], ["POLSCI 116E"], ["POLSCI 116F"], ["POLSCI 116G"], ["POLSCI 116H"], ["POLSCI 116I"], ["POLSCI 116J"], ["POLSCI 116K"], ["POLSCI 116L"], ["POLSCI 116M"], ["POLSCI 116N"], ["POLSCI 116O"], ["POLSCI 116P"], ["POLSCI 116Q"], ["POLSCI 116R"], ["POLSCI 116S"], ["POLSCI 116T"], ["POLSCI 116U"], ["POLSCI 116V"], ["POLSCI 116W"], ["POLSCI 116X"], ["POLSCI 116Y"], ["POLSCI 116Z"],
+          ["POLSCI 117"], ["POLSCI 117D"], ["POLSCI 117L"], ["POLSCI 118"], ["POLSCI 118A"], ["POLSCI 118AC"], ["POLSCI 118B"], ["POLSCI 118C"], ["POLSCI S118X"],
+          ["POLSCI 120A"], ["POLSCI S120A"], ["POLSCI S120AX"], ["POLSCI 120B"], ["POLSCI 121"], ["POLSCI 121A"], ["POLSCI 121B"], ["POLSCI 121C"], ["POLSCI 122"], ["POLSCI 122A"], ["POLSCI 122AW"],
+          ["POLSCI 123"], ["POLSCI 123A"], ["POLSCI 123B"], ["POLSCI 123C"], ["POLSCI 123D"], ["POLSCI 123E"], ["POLSCI 123F"], ["POLSCI 123G"], ["POLSCI 123H"], ["POLSCI 123J"], ["POLSCI 123K"], ["POLSCI 123L"], ["POLSCI 123M"], ["POLSCI 123N"], ["POLSCI 123O"], ["POLSCI 123P"], ["POLSCI 123Q"], ["POLSCI 123R"], ["POLSCI 123S"], ["POLSCI 123T"], ["POLSCI 123U"], ["POLSCI 123V"], ["POLSCI 123W"], ["POLSCI 123X"], ["POLSCI 123Y"], ["POLSCI 123Z"],
+          ["POLSCI 124A"], ["POLSCI 124B"], ["POLSCI 124C"], ["POLSCI 124D"], ["POLSCI 124G"], ["POLSCI 124H"], ["POLSCI 124I"], ["POLSCI 124M"], ["POLSCI 124N"], ["POLSCI 124R"], ["POLSCI 124W"], ["POLSCI 125"], ["POLSCI 126A"], ["POLSCI 126B"], ["POLSCI 127"], ["POLSCI S127"], ["POLSCI 127A"], ["POLSCI 127B"], ["POLSCI 128"], ["POLSCI 128A"], ["POLSCI S128AX"], ["POLSCI 128B"], ["POLSCI 129A"], ["POLSCI S129A"], ["POLSCI 129B"], ["POLSCI 129C"], ["POLSCI S129C"],
+          ["POLSCI 131"], ["POLSCI C131A", "ECON C142", "PUBPOL C142"], ["POLSCI 132A"], ["POLSCI 132B"], ["POLSCI 132C"], ["POLSCI 133"], ["POLSCI 134"], ["POLSCI 135", "POLSCI C135", "POLSCI W135", "ECON C110"],
+          ["POLSCI 136A"], ["POLSCI 136B"], ["POLSCI S136X"], ["POLSCI 137A"], ["POLSCI S137A"], ["POLSCI 137B"], ["POLSCI 137C"], ["POLSCI 137H"], ["POLSCI 137L"], ["POLSCI 137R"], ["POLSCI 138A"], ["POLSCI 138B"], ["POLSCI 138C"], ["POLSCI 138D"], ["POLSCI 138E"], ["POLSCI 138F"], ["POLSCI 138G"], ["POLSCI 138J"], ["POLSCI 138M"], ["POLSCI 138S"], ["POLSCI 138Z"], ["POLSCI C139"], ["POLSCI 139A"], ["POLSCI 139B"], ["POLSCI 139C"], ["POLSCI 139D"], ["POLSCI 139M"], ["POLSCI 139W"],
+          ["POLSCI 140"], ["POLSCI 140A"], ["POLSCI S140AX"], ["POLSCI 140B"], ["POLSCI 140C"], ["POLSCI S140C"], ["POLSCI 140D"], ["POLSCI 140E"], ["POLSCI 140F"], ["POLSCI 140G"], ["POLSCI N140G"], ["POLSCI 140H"], ["POLSCI 140I"], ["POLSCI 140J"], ["POLSCI 140K"], ["POLSCI 140L"], ["POLSCI 140M"], ["POLSCI 140N"], ["POLSCI 140O"], ["POLSCI 140P"], ["POLSCI 140Q"], ["POLSCI 140R"], ["POLSCI 140S"], ["POLSCI 140T"], ["POLSCI 140U"], ["POLSCI 140V"], ["POLSCI 140W"], ["POLSCI 140X"], ["POLSCI 140Y"], ["POLSCI 140Z"],
+          ["POLSCI 141A"], ["POLSCI S141AX"], ["POLSCI 141B"], ["POLSCI 141C"], ["POLSCI 142A"], ["POLSCI S142A"], ["POLSCI 142B"], ["POLSCI 143A"], ["POLSCI S143A"], ["POLSCI 143B"], ["POLSCI S143B"], ["POLSCI 143C"], ["POLSCI 143D"], ["POLSCI 143E"], ["POLSCI 143F"], ["POLSCI 143T"], ["POLSCI 144"], ["POLSCI 144A"], ["POLSCI 144B"], ["POLSCI 145A"], ["POLSCI W145A"], ["POLSCI 145B"], ["POLSCI 146A"], ["POLSCI S146A"], ["POLSCI 146B"], ["POLSCI 146C"], ["POLSCI N146C"], ["POLSCI S146C"], ["POLSCI 146D"], ["POLSCI S146X"], ["POLSCI 147A"], ["POLSCI S147A"], ["POLSCI 147B"], ["POLSCI 147C"], ["POLSCI 147D"], ["POLSCI 147E"], ["POLSCI S147E"], ["POLSCI 147F"], ["POLSCI S147F"], ["POLSCI 147G"], ["POLSCI 147H"], ["POLSCI 147T"], ["POLSCI 148A"], ["POLSCI S148A"], ["POLSCI 148B"],
+          ["POLSCI 149"], ["POLSCI 149A"], ["POLSCI 149B"], ["POLSCI 149C"], ["POLSCI 149D"], ["POLSCI 149E"], ["POLSCI 149F"], ["POLSCI 149G"], ["POLSCI N149G"], ["POLSCI 149H"], ["POLSCI 149I"], ["POLSCI 149J"], ["POLSCI 149K"], ["POLSCI 149L"], ["POLSCI 149M"], ["POLSCI 149N"], ["POLSCI 149O"], ["POLSCI 149P"], ["POLSCI 149Q"], ["POLSCI 149R"], ["POLSCI 149S"], ["POLSCI 149T"], ["POLSCI 149U"], ["POLSCI 149V"], ["POLSCI 149W"], ["POLSCI 149X"], ["POLSCI 149Y"], ["POLSCI 149Z"],
+          ["POLSCI 150"], ["POLSCI S150"], ["POLSCI 150A"], ["POLSCI S150A"], ["POLSCI 150B"], ["POLSCI 151"], ["POLSCI 152"], ["POLSCI 152A"], ["POLSCI 152B"], ["POLSCI 152C"], ["POLSCI 152D"], ["POLSCI 152E"], ["POLSCI 152F"], ["POLSCI 152G"], ["POLSCI 152H"], ["POLSCI 152I"], ["POLSCI 152J"], ["POLSCI 152K"], ["POLSCI 152L"], ["POLSCI 152M"], ["POLSCI 152N"], ["POLSCI 152O"], ["POLSCI 152P"], ["POLSCI 152Q"], ["POLSCI 152R"], ["POLSCI 152S"], ["POLSCI 152T"], ["POLSCI 152U"], ["POLSCI 152V"], ["POLSCI 152W"], ["POLSCI 152X"], ["POLSCI 152Y"], ["POLSCI 152Z"],
+          ["POLSCI 153"], ["POLSCI S153"], ["POLSCI 157A"], ["POLSCI S157A"], ["POLSCI 157B"], ["POLSCI 158"], ["POLSCI 160"], ["POLSCI 161"], ["POLSCI S161"], ["POLSCI 162"], ["POLSCI 163"], ["POLSCI 163A"], ["POLSCI C163A"], ["POLSCI 163B"], ["POLSCI C163B"], ["POLSCI 164"], ["POLSCI 164A"], ["POLSCI N164A"], ["POLSCI W164A"], ["POLSCI 164B"], ["POLSCI 166"], ["POLSCI 167"], ["POLSCI 167AC"], ["POLSCI 168A"], ["POLSCI 168B"], ["POLSCI 169"], ["POLSCI 170"], ["POLSCI 171"], ["POLSCI S171"], ["POLSCI 171A"], ["POLSCI 171B"], ["POLSCI 172"], ["POLSCI 173S"], ["POLSCI 175A"], ["POLSCI 175B"], ["POLSCI 176"], ["POLSCI 176A"], ["POLSCI 176B"], ["POLSCI 177A"], ["POLSCI 177B"], ["POLSCI 178"], ["POLSCI 181"], ["POLSCI S181"], ["POLSCI 182"], ["POLSCI 183"], ["POLSCI S183X"], ["POLSCI 184"], ["POLSCI 185"], ["POLSCI 186"], ["POLSCI 187A"], ["POLSCI 187B"], ["POLSCI 187C"], ["POLSCI 188"], ["POLSCI 189"],
+          ["POLSCI 191"],
+          ["POLSCI 200"], ["POLSCI 200A"], ["POLSCI 200B"], ["POLSCI 201A"], ["POLSCI 201B"], ["POLSCI 201C"], ["POLSCI 201D"], ["POLSCI 201E"], ["POLSCI 202A"], ["POLSCI 202B"], ["POLSCI 203"], ["POLSCI C203"], ["POLSCI 204"], ["POLSCI 204B"], ["POLSCI 205"], ["POLSCI 206"], ["POLSCI 207"], ["POLSCI 208"], ["POLSCI 209A"], ["POLSCI 209B"], ["POLSCI 210"], ["POLSCI 211"], ["POLSCI 211A"], ["POLSCI 212A"], ["POLSCI 212B"], ["POLSCI 212C"], ["POLSCI 213"], ["POLSCI 214"], ["POLSCI 214A"], ["POLSCI 215A"], ["POLSCI 215B"], ["POLSCI 216"], ["POLSCI 217"], ["POLSCI 218A"], ["POLSCI 218B"], ["POLSCI 219"],
+          ["POLSCI 220A"], ["POLSCI 220B"], ["POLSCI 221"], ["POLSCI 222"], ["POLSCI 223"], ["POLSCI 224"], ["POLSCI 224B"], ["POLSCI 225"], ["POLSCI 225A"], ["POLSCI 226A"], ["POLSCI 226B"], ["POLSCI 227"], ["POLSCI 227A"], ["POLSCI 227B"], ["POLSCI 228"], ["POLSCI 229A"], ["POLSCI 229B"], ["POLSCI 229C"], ["POLSCI 230"], ["POLSCI 231A"], ["POLSCI 231B"], ["POLSCI 231C"], ["POLSCI 231D"], ["POLSCI 232"], ["POLSCI 232A"], ["POLSCI 232B"], ["POLSCI 232H"], ["POLSCI 233"], ["POLSCI 234"], ["POLSCI 234A"], ["POLSCI 235"], ["POLSCI 236"], ["POLSCI 236A"], ["POLSCI 236B"], ["POLSCI C237A"], ["POLSCI C237B"], ["POLSCI 239"], ["POLSCI 239T"],
+          ["POLSCI 240"], ["POLSCI C240"], ["POLSCI 241A"], ["POLSCI 241B"], ["POLSCI 241C"], ["POLSCI 241D"], ["POLSCI 242"], ["POLSCI 243A"], ["POLSCI 243B"], ["POLSCI 243C"], ["POLSCI 243D"], ["POLSCI 244A"], ["POLSCI 244B"], ["POLSCI 244C"], ["POLSCI 244D"], ["POLSCI 244E"], ["POLSCI 245A"], ["POLSCI 245B"], ["POLSCI 245C"], ["POLSCI 246"], ["POLSCI 246B"], ["POLSCI 247A"], ["POLSCI 247B"], ["POLSCI 247C"], ["POLSCI 247G"], ["POLSCI 248A"], ["POLSCI 248B"],
+          ["POLSCI 249"], ["POLSCI 249A"], ["POLSCI 249B"], ["POLSCI 249C"], ["POLSCI 249D"], ["POLSCI 249E"], ["POLSCI 249F"], ["POLSCI 249G"], ["POLSCI 249H"], ["POLSCI 249I"], ["POLSCI 249J"], ["POLSCI 249K"], ["POLSCI 249L"], ["POLSCI 249M"], ["POLSCI 249N"], ["POLSCI 249O"], ["POLSCI 249P"], ["POLSCI 249Q"], ["POLSCI 249R"], ["POLSCI 249S"], ["POLSCI 249T"], ["POLSCI 249U"], ["POLSCI 249V"], ["POLSCI 249W"], ["POLSCI 249X"], ["POLSCI 249Y"], ["POLSCI 249Z"],
+          ["POLSCI 250"], ["POLSCI 252"], ["POLSCI 257"], ["POLSCI 258"], ["POLSCI 259"], ["POLSCI 261"], ["POLSCI 262"], ["POLSCI 263"], ["POLSCI 269"], ["POLSCI 271"], ["POLSCI 271A"], ["POLSCI 271B"], ["POLSCI 272"], ["POLSCI 272A"], ["POLSCI 272B"], ["POLSCI 273"], ["POLSCI 274"], ["POLSCI 275"], ["POLSCI 276"], ["POLSCI 277"], ["POLSCI 278A"], ["POLSCI 278B"], ["POLSCI 279"], ["POLSCI 280A"], ["POLSCI 280B"], ["POLSCI 280C"], ["POLSCI 281A"], ["POLSCI 281B"], ["POLSCI 282"], ["POLSCI 283"], ["POLSCI 284"], ["POLSCI 287"], ["POLSCI 288"], ["POLSCI 289"]
+        ]
+      },
+      "why": {
+        "url": "https://polisci.berkeley.edu/node/983",
+        "quote": "from those numbered 102-189, PS 191 (the junior seminars), but excluding 179 and any 110.",
+        "reasoning": "The sentence begins 'Students must complete a total of eight upper-division courses within the Political Science Department', and the page adds 'Graduate political science courses (numbered 200/above) may be counted.' This replaces the catalog placeholder with a list: every catalog POLSCI course numbered 102-189 except 110, 110B, 110F and 179, POLSCI 191, graduate courses 200-289, and the ECON/PUBPOL cross-listings of POLSCI C135 and C131A. Some courses are left out because the page says 'Independent studies, honors, De-Cal, and P/NP courses, labs, simulations, and similar non-lecture courses cannot fulfill' requirements: H-prefixed honors courses, 191S (Cal-in-the-Capital), 191U (Model U.N.), and graduate 290-299 (dissertation research, directed or special study, research workshops). The placeholder's '4-unit' restriction isn't on the department page, so it isn't applied. The rule isn't shared. The Distribution and Specialization rules are shared, so they still see these courses."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether older or summer variants in a subfield's number range (e.g. 3-unit POLSCI 102W, S-prefixed courses, 5-unit 107/160/164) still count: the page gives number ranges only, so every catalog code in range is included.",
+    "Whether graduate research workshops (POLSCI 291 series) or 290-series seminars count as 'graduate political science courses': they are left out as non-lecture or independent work, which the page doesn't confirm.",
+    "Whether ECON C110, ECON C142 and PUBPOL C142 (cross-listings of POLSCI C135 and C131A) count as courses 'within the Political Science Department' when taken under the other subject: treated as the same course.",
+    "Whether the Empirical Theory specialization's introductory course can be met by Data C8 + PS 88 instead of PS 3: the page says 'the introductory course', so only PS 3 (or W3) is accepted.",
+    "Whether the history list PDF (created 2023) is current: the catalog's extra history courses are kept.",
+    "Course lists for the optional Political Behavior, Public Law and Jurisprudence, and Public Organization and Policy specializations: the page doesn't give them."
+  ],
+  "notEncoded": [
+    "All 12 requirements need a letter grade; declaring needs a 2.0 GPA in major courses",
+    "P/NP, independent study, honors, DeCal, labs and simulations don't count (H courses, 191S/191U and 290-299 are left off the lists)",
+    "AP American Government 4/5 lets an upper-division American Politics course replace PS 1, which then doesn't count toward the 8",
+    "At most 3 upper-division requirements from other 4-year institutions; at most one non-Berkeley course toward specialization, none toward distribution; PS 3 must be taken at Berkeley",
+    "Sequencing: PS 88 with or after Data C8"
+  ]
+}

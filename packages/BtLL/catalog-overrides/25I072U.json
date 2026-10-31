@@ -1,0 +1,117 @@
+{
+  "programGroupId": "25I072U",
+  "sources": [
+    "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+    "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): PHYSICS courses numbered 100-199, excluding 100, H190, 198, S198, 199 and S199 (48 codes)"
+  ],
+  "changes": [
+    {
+      "op": "add",
+      "before": "EzZvEu96",
+      "rule": {
+        "kind": "chooseRules",
+        "name": "Lower Division Physics Series",
+        "n": 1,
+        "rules": [
+          {
+            "kind": "allOf",
+            "name": "Physics 5 Series",
+            "groups": [
+              ["PHYSICS 5A"],
+              ["PHYSICS 5B"],
+              ["PHYSICS 5BL"],
+              ["PHYSICS 5C"],
+              ["PHYSICS 5CL"]
+            ]
+          },
+          {
+            "kind": "allOf",
+            "name": "Physics 7 Series",
+            "groups": [["PHYSICS 7A"], ["PHYSICS 7B"], ["PHYSICS 7C"]]
+          }
+        ]
+      },
+      "why": {
+        "url": "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+        "quote": "The Physics 5 or 7 Series",
+        "reasoning": "The catalog rules have no lower-division block. Under 'Lower Division Minor Requirements (Prerequisites)', the department lists the Physics 5 or 7 series, with the sub-bullets 'Physics 5A, 5B/5BL, 5C/5CL' and 'OR 7A, 7B, and 7C'. Students may petition for the minor only after completing these, so they are part of the minor requirements. Honors versions (H7A-C) aren't mentioned, so they aren't added (see notStated)."
+      }
+    },
+    {
+      "op": "add",
+      "before": "EzZvEu96",
+      "rule": {
+        "kind": "allOf",
+        "name": "Lower Division Math",
+        "groups": [["MATH 51"], ["MATH 52"], ["MATH 53"], ["PHYSICS 89"]]
+      },
+      "why": {
+        "url": "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+        "quote": "Math 51*, 52*, 53** and Physics 89*** or their equivalent",
+        "reasoning": "This lower-division prerequisite block is missing from the catalog rules. The footnoted substitutions are left out because they depend on exam scores, a Math double major, or transfer status: AP/IB/A-level scores for Math 51/52, Math 54 for Physics 89 (Math double majors only), and a Math 54 equivalent for transfers. They are noted in the log. Math N53 is explicitly not accepted, and it isn't listed."
+      }
+    },
+    {
+      "op": "replace",
+      "ruleId": "Vic6QTUX",
+      "rule": {
+        "kind": "atLeast",
+        "name": "Electives",
+        "n": 3,
+        "groups": [
+          ["PHYSICS C101"], ["PHYSICS 105"], ["PHYSICS S105"], ["PHYSICS 108"], ["PHYSICS 110A"], ["PHYSICS 110B"],
+          ["PHYSICS 111"], ["PHYSICS 111A"], ["PHYSICS 111B"], ["PHYSICS 112"], ["PHYSICS S112"], ["PHYSICS 123"],
+          ["PHYSICS 124"], ["PHYSICS 129"], ["PHYSICS 129A"], ["PHYSICS 129B"], ["PHYSICS 130"], ["PHYSICS 132"],
+          ["PHYSICS 136"], ["PHYSICS 137A"], ["PHYSICS 137B"], ["PHYSICS Q137C"], ["PHYSICS S137A"], ["PHYSICS 138"],
+          ["PHYSICS 139"], ["PHYSICS 141A"], ["PHYSICS 141B"], ["PHYSICS 142"], ["PHYSICS C142"], ["PHYSICS 150"],
+          ["PHYSICS 151"], ["PHYSICS 153"], ["PHYSICS 160A"], ["PHYSICS 160B"], ["PHYSICS C160A"], ["PHYSICS C160B"],
+          ["PHYSICS C161"], ["PHYSICS 177"], ["PHYSICS 180"], ["PHYSICS C180"], ["PHYSICS 188"], ["PHYSICS 191"],
+          ["PHYSICS 191A"], ["PHYSICS C191"], ["PHYSICS C191A"], ["PHYSICS C191B"], ["PHYSICS H195A"], ["PHYSICS H195B"]
+        ]
+      },
+      "why": {
+        "url": "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+        "quote": "Three additional upper-division physics courses (to total at least 9 units, for an upper-division physics unit total of at least 17 units).",
+        "reasoning": "The catalog left this as a placeholder because its course set didn't resolve. The department allows any three upper-division Physics courses, except that the same page says '(thus Physics 100, H190, 198 and 199 will not count toward the minor program).' A plain `matching` rule can't exclude courses, so the list is every upper-division PHYSICS course in the 2026-27 catalog except 100, H190, 198/198BC/198F/S198 and 199/S199 (see the log for the query). Because Core takes its courses first, an unused 105/110A still counts here. The unit minimum is encoded by the next rule."
+      }
+    },
+    {
+      "op": "add",
+      "before": null,
+      "rule": {
+        "kind": "minUnits",
+        "name": "Upper Division Physics Units",
+        "n": 17,
+        "shared": true,
+        "groups": [
+          ["PHYSICS C101"], ["PHYSICS 105"], ["PHYSICS S105"], ["PHYSICS 108"], ["PHYSICS 110A"], ["PHYSICS 110B"],
+          ["PHYSICS 111"], ["PHYSICS 111A"], ["PHYSICS 111B"], ["PHYSICS 112"], ["PHYSICS S112"], ["PHYSICS 123"],
+          ["PHYSICS 124"], ["PHYSICS 129"], ["PHYSICS 129A"], ["PHYSICS 129B"], ["PHYSICS 130"], ["PHYSICS 132"],
+          ["PHYSICS 136"], ["PHYSICS 137A"], ["PHYSICS 137B"], ["PHYSICS Q137C"], ["PHYSICS S137A"], ["PHYSICS 138"],
+          ["PHYSICS 139"], ["PHYSICS 141A"], ["PHYSICS 141B"], ["PHYSICS 142"], ["PHYSICS C142"], ["PHYSICS 150"],
+          ["PHYSICS 151"], ["PHYSICS 153"], ["PHYSICS 160A"], ["PHYSICS 160B"], ["PHYSICS C160A"], ["PHYSICS C160B"],
+          ["PHYSICS C161"], ["PHYSICS 177"], ["PHYSICS 180"], ["PHYSICS C180"], ["PHYSICS 188"], ["PHYSICS 191"],
+          ["PHYSICS 191A"], ["PHYSICS C191"], ["PHYSICS C191A"], ["PHYSICS C191B"], ["PHYSICS H195A"], ["PHYSICS H195B"]
+        ]
+      },
+      "why": {
+        "url": "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
+        "quote": "Three additional upper-division physics courses (to total at least 9 units, for an upper-division physics unit total of at least 17 units).",
+        "reasoning": "This is a total over all upper-division physics courses that count for the minor, core included, so it is `shared`: it re-reads the courses Core and Electives already counted. The core is 8 units (137A plus 105 or 110A, 4 units each), so a 17-unit total implies the 9 elective units. The separate 9-unit elective minimum can't be expressed without double-consuming courses."
+      }
+    }
+  ],
+  "notStated": [
+    "Whether honors Physics H7A/H7B/H7C may replace 7A/7B/7C; the page lists only '7A, 7B, and 7C'.",
+    "Whether Physics W89 (online) is accepted for Physics 89; the page mentions only 'Physics 89'.",
+    "Whether the summer (S105, S112, S137A) and other variant numbers (Q137C, 153, H195A/B) count as upper-division physics courses; they are included because the page only excludes Physics 100, H190, 198 and 199.",
+    "Whether cross-listed courses taken under another department's code (e.g. ASTRON C161, NUCENG C142) count; only the PHYSICS codes are listed."
+  ],
+  "notEncoded": [
+    "C- or higher in each course; 2.0 GPA in the prerequisites, in all University courses, and in the upper-division minor courses",
+    "At least 3 upper-division courses completed at Berkeley",
+    "9-unit minimum for the three electives (implied by the 17-unit total)",
+    "Substitutions: AP/IB/A-level for Math 51/52, Math 54 for Physics 89 (Math double majors only), Math 54 equivalents for transfers; Math N53 isn't accepted",
+    "Declaration: petition after the lower division, declare by the last day of classes in the semester before graduation"
+  ]
+}
