@@ -14,6 +14,7 @@ COPY --from=staff-frontend-builder /staff-frontend/out/package-lock.json ./packa
 RUN ["npm", "install"]
 
 COPY --from=staff-frontend-builder /staff-frontend/out/full/ .
+RUN ["turbo", "run", "build", "--filter=staff-frontend^..."]
 ENTRYPOINT ["turbo", "run", "dev", "--filter=staff-frontend"]
 
 FROM staff-frontend-dev AS staff-frontend-prod
