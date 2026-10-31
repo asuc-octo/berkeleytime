@@ -1,0 +1,71 @@
+.active[data-variant="outline"] {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  color: var(--blue-500);
+  border-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-color: color-mix(in srgb, currentColor 10%, transparent);
+
+  &:hover {
+    color: var(--blue-500);
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+  }
+
+  &:focus-visible {
+    border-color: var(--blue-500);
+  }
+}
+
+.item {
+  font-size: var(--text-14);
+  line-height: 1;
+  color: var(--paragraph-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  margin: 2px;
+  padding: 0 12px;
+  border-radius: 6px;
+  user-select: none;
+  outline: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--button-active-color);
+  }
+
+  &[data-highlighted] {
+    color: var(--heading-color);
+  }
+
+  &[data-disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  border: 2px solid var(--paragraph-color);
+
+  &[data-checked="true"] {
+    border: none;
+    background-color: var(--blue-500);
+    color: white;
+  }
+}
+
+.separator {
+  height: 1px;
+  margin: 4px 2px;
+  background-color: var(--border-color);
+}
