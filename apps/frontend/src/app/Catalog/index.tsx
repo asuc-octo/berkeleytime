@@ -222,11 +222,10 @@ function SavedCollectionSection({
                       <span>
                         {savedClass.subject} {savedClass.courseNumber}
                       </span>
-                      {isUnavailable && (
-                        <span className={styles.bookmarkUnavailableHint}>
-                          Unavailable for term
-                        </span>
-                      )}
+                      <span className={styles.bookmarkClassHint}>
+                        {savedClass.semester} {savedClass.year}
+                        {isUnavailable && " · Unavailable for term"}
+                      </span>
                     </span>
                   </DropdownMenu.Item>
                 );

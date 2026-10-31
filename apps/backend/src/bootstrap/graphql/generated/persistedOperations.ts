@@ -56,6 +56,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["roleId"],
     sources: ["apps/staff-frontend/src/lib/api/staff.ts"],
   },
+  "0a5c6443d0e7c76624cf4a8a7511f690b6319b967e2b56c6ee7cf639a7a3efea": {
+    operationName: "GetAllCollections",
+    document: "query GetAllCollections{myCollections{_id name color pinnedAt isSystem lastAdd classes{class{year semester sessionId subject courseNumber number __typename}__typename}__typename}}",
+    variableNames: [],
+    sources: ["apps/frontend/src/lib/api/collection.ts"],
+  },
   "0a8925cb6a0a308f08991eaec9ae51e09220312d98d4d47b627863d3b06f417b": {
     operationName: "GetCourses",
     document: "query GetCourses{courses{subject number title gradeDistribution{average distribution{letter count __typename}__typename}academicCareer finalExam gradingBasis typicallyOffered primaryInstructionMethod __typename}}",
@@ -499,12 +505,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GetClass($year:Int!$semester:Semester!$sessionId:SessionIdentifier!$subject:String!$courseNumber:CourseNumber!$number:ClassNumber!){class(year:$year semester:$semester sessionId:$sessionId subject:$subject courseNumber:$courseNumber number:$number){year semester subject sessionId courseNumber number title description decal{title syllabus description syllabusUrl applicationUrl applicationDueDate instructors{name email __typename}__typename}unitsMax unitsMin gradingBasis finalExam gradeDistribution{average pnpPercentage distribution{letter count __typename}__typename}course{title description aggregatedRatings{metrics{categories{count value __typename}count metricName weightedAverage __typename}__typename}gradeDistribution{average pnpPercentage distribution{letter count __typename}__typename}academicCareer requirements requiredCourses{subject number __typename}classes{semester year number anyPrintInScheduleOfClasses primarySection{startDate meetings{instructors{familyName givenName __typename}__typename}__typename}__typename}__typename}primarySection{number sectionId component online attendanceRequired lecturesRecorded startDate endDate sectionAttributes(attributeCode:\"NOTE\"){attribute{code description formalDescription __typename}value{code description formalDescription __typename}__typename}enrollment{history{startTime endTime granularitySeconds status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}latest{startTime endTime granularitySeconds status enrolledCount maxEnroll waitlistedCount maxWaitlist activeReservedMaxCount seatReservationCount{enrolledCount maxEnroll requirementGroup{description __typename}isValid __typename}__typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}sections{number sectionId component online attendanceRequired lecturesRecorded startDate endDate sectionAttributes(attributeCode:\"NOTE\"){attribute{code description formalDescription __typename}value{code description formalDescription __typename}__typename}enrollment{latest{startTime endTime granularitySeconds status enrolledCount maxEnroll waitlistedCount maxWaitlist activeReservedMaxCount __typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}__typename}}",
     variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
     sources: ["apps/frontend/src/lib/api/classes.ts"],
-  },
-  "79f6ab65b35f5767598fed23f16d78182031ceca56abce5b6921ec8b4b8872d3": {
-    operationName: "GetAllCollections",
-    document: "query GetAllCollections{myCollections{_id name color pinnedAt isSystem lastAdd classes{class{subject courseNumber number __typename}__typename}__typename}}",
-    variableNames: [],
-    sources: ["apps/frontend/src/lib/api/collection.ts"],
   },
   "7b4d53d3b5a46ad93c0c20f8cdb6c3972cc18bde2d5f7a624e74f959bfac7f52": {
     operationName: "AllBannersForStaff",
