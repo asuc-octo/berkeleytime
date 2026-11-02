@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { EmptyPage } from "iconoir-react";
+import { EmptyPage, Plus } from "iconoir-react";
+
+import { IconButton } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
@@ -212,6 +214,23 @@ export default function List({ onSelect, previewCards = false }: ListProps) {
                       previewedClass.courseNumber === _class.courseNumber &&
                       previewedClass.number === _class.number &&
                       previewedClass.sessionId === _class.sessionId
+                    }
+                    infoContent={
+                      previewCards ? (
+                        <IconButton
+                          className={styles.addButton}
+                          type="button"
+                          aria-label={`Add ${_class.subject} ${_class.courseNumber} to schedule`}
+                          title="Add class to schedule"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleClassClick(index);
+                          }}
+                        >
+                          <Plus width={18} height={18} />
+                        </IconButton>
+                      ) : undefined
                     }
                   />
                 );
