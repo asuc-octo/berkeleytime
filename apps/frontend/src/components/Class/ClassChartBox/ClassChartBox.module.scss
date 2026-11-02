@@ -9,11 +9,11 @@
   background-color: var(--foreground-color);
   border-radius: 8px;
   border: 1px solid var(--border-color);
-  padding: 24px;
+  padding: var(--space-5);
   min-width: 450px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-5);
   position: relative;
 }
 
@@ -21,7 +21,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
@@ -32,7 +32,7 @@
 .titleBlock {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .title {
@@ -61,14 +61,14 @@
 }
 
 .emptyHeading {
-  margin: 24px 0 0;
+  margin: var(--space-5) 0 0;
   color: var(--heading-color);
   font-weight: var(--font-medium);
   font-size: var(--text-16);
 }
 
 .emptyParagraph {
-  margin-top: 8px;
+  margin-top: var(--space-2);
   margin-bottom: 0;
   max-width: 448px;
   color: var(--paragraph-color);

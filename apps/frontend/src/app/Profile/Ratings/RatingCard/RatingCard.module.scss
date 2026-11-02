@@ -17,7 +17,7 @@
   .metricRow {
     display: flex;
     align-items: center;
-    padding: 24px 0;
+    padding: var(--space-5) 0;
     gap: 20px;
 
     &:not(:last-child) {
@@ -44,7 +44,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 16px;
+  padding: var(--space-4);
   border-bottom: 1px solid var(--border-color);
   box-sizing: border-box;
 }
@@ -52,12 +52,12 @@
 .classInfo {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .className {

@@ -6,8 +6,8 @@
   background-color: var(--foreground-color);
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 0 16px;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
 
   &:has(.searchInput:focus) {
     outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
