@@ -115,6 +115,10 @@ export interface ICourseItem {
   contactHours?: number;
   // NOTE: Replace with cs-course-id of former course
   formerDisplayName?: string;
+  // Computed by the datapuller from classes sharing this courseId; see
+  // computeFormerNames in @repo/common.
+  formerNames?: string[];
+  formerNameKeys?: string[];
   // createdDate?: string;
   updatedDate?: string;
   allTimeAverageGrade?: number | null;
@@ -215,6 +219,8 @@ const courseSchema = new Schema<ICourseItem>({
   workloadHours: { type: Number },
   contactHours: { type: Number },
   formerDisplayName: { type: String },
+  formerNames: { type: [String] },
+  formerNameKeys: { type: [String] },
   // createdDate: { type: String },
   updatedDate: { type: String },
   allTimeAverageGrade: { type: Number, default: null },
@@ -225,6 +231,9 @@ const courseSchema = new Schema<ICourseItem>({
 // for catalog, associated courses by id, curated class controllers
 courseSchema.index({ courseId: 1 });
 courseSchema.index({ courseId: 1, printInCatalog: 1 });
+
+// for course lookup by former name
+courseSchema.index({ formerNameKeys: 1 });
 
 // for associated courses by subject number and bookmarked courses controllers
 courseSchema.index({

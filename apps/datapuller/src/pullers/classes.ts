@@ -8,6 +8,7 @@ import {
   refreshCatalogClasses,
 } from "../lib/catalog-denormalize";
 import { getClasses } from "../lib/classes";
+import { updateCourseFormerNames } from "../lib/course-former-names";
 import { Config } from "../shared/config";
 import {
   type TermSelector,
@@ -262,6 +263,8 @@ const updateClasses = async (
       await refreshCatalogClasses(log, term.year, term.semester);
     }
   }
+
+  await updateCourseFormerNames(log);
 
   // Refresh semantic search index only for current/future terms
   // Past terms don't change, so no need to rebuild their indexes
