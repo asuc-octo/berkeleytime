@@ -49,9 +49,9 @@ const buildRankMap = (
   values: readonly SemanticCourseIdentity[]
 ): Map<string, number> => {
   const ranks = new Map<string, number>();
-  values.forEach((value, index) => {
+  values.forEach((value) => {
     const key = courseKey(value);
-    if (!ranks.has(key)) ranks.set(key, index + 1);
+    if (!ranks.has(key)) ranks.set(key, ranks.size + 1);
   });
   return ranks;
 };

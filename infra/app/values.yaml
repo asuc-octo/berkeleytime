@@ -57,7 +57,8 @@ semanticSearch:
   modelRevision: "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
   vectorAlgorithm: "flat"
   embeddingBatchSize: 128
-  purgeLegacyIndexes: true
+  # Enable only for a post-cutover cleanup after all pods using old indexes stop.
+  purgeLegacyIndexes: false
 
   image:
     registry: docker.io
