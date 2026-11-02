@@ -106,6 +106,10 @@
   .panel {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
     border-right: 1px solid var(--border-color);
   }
 }

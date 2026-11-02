@@ -1,5 +1,3 @@
-import { Color as ThemeColor } from "@repo/theme";
-
 import { ISchedule, IScheduleClass } from "@/lib/api";
 import { Color, Event, Section } from "@/lib/generated/graphql";
 
@@ -45,50 +43,52 @@ export const getUnits = (schedule?: ISchedule) => {
   ) ?? defaultUnits) as [minimum: number, maximum: number];
 };
 
-export const getSelectedSections = (schedule?: ISchedule) => {
-  return (
-    schedule?.classes.flatMap(
-      ({ selectedSections, class: _class, color, hidden }) =>
-        hidden
-          ? []
-          : selectedSections.reduce((acc, section) => {
-              const _section =
-                _class.primarySection?.sectionId === section.sectionId
-                  ? _class.primarySection
-                  : _class.sections.find(
-                      (currentSection) =>
-                        currentSection.sectionId === section.sectionId
-                    );
+/** The section objects a class has selected, skipping ones it no longer has. */
+export const findSelectedSections = <S extends { sectionId: string }>(
+  _class: { primarySection?: S | null; sections: S[] },
+  selectedSections: { sectionId?: string | null }[]
+): S[] =>
+  selectedSections.flatMap(({ sectionId }) => {
+    const section =
+      _class.primarySection?.sectionId === sectionId
+        ? _class.primarySection
+        : _class.sections.find((s) => s.sectionId === sectionId);
+    return section ? [section] : [];
+  });
 
-              return _section
-                ? [
-                    ...acc,
-                    {
-                      section: _section,
-                      color: color as Color,
-                    },
-                  ]
-                : acc;
-            }, [] as SectionColor[])
-    ) ?? []
-  );
-};
+export const getSelectedSections = (schedule?: ISchedule): SectionColor[] =>
+  schedule?.classes.flatMap(
+    ({ selectedSections, class: _class, color, hidden }) =>
+      hidden
+        ? []
+        : findSelectedSections(_class, selectedSections).map((section) => ({
+            section,
+            color: color as Color,
+          }))
+  ) ?? [];
 
-export const acceptedColors = Object.values(ThemeColor);
-
-// DARK_MODE colors from grades mapped to Color enum
-const COLOR_ORDER: Color[] = [
+/**
+ * Categorical colors for schedule classes and events.
+ * Consecutive entries alternate warm and cool hues so neighboring
+ * blocks stay distinguishable. Legacy theme colors are still valid
+ * on saved schedules; this list only limits new choices.
+ */
+export const scheduleClassColors: Color[] = [
   Color.Blue,
-  Color.Green,
-  Color.Red,
-  Color.Teal,
-  Color.Orange,
-  Color.Emerald,
-  Color.Sky,
+  Color.Amber,
   Color.Violet,
+  Color.Emerald,
+  Color.Rose,
+  Color.Cyan,
+  Color.Pink,
+  Color.Lime,
+  Color.Fuchsia,
+  Color.Slate,
 ];
 
+export const acceptedColors = scheduleClassColors;
+
 export const getNextClassColor = (classIndex: number): Color => {
-  const colorIndex = classIndex % COLOR_ORDER.length;
-  return COLOR_ORDER[colorIndex];
+  const colorIndex = classIndex % scheduleClassColors.length;
+  return scheduleClassColors[colorIndex];
 };

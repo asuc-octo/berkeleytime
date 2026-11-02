@@ -22,6 +22,7 @@ import {
   useGetAllCollections,
   useGetCollectionById,
 } from "@/hooks/api/collections";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useUser from "@/hooks/useUser";
 import { getColorCSSVar } from "@/lib/colors";
 import {
@@ -363,6 +364,20 @@ export default function Catalog() {
       skip: !subject || !courseNumber || !number || !sessionId || !term,
     }
   );
+
+  // Report a failed class-detail load once per distinct error so a broken
+  // fetch shows up in course-discovery reliability metrics.
+  const { trackEvent } = useTracking();
+  const trackedClassErrorRef = useRef<typeof classError>(undefined);
+  useEffect(() => {
+    if (classError && trackedClassErrorRef.current !== classError) {
+      trackedClassErrorRef.current = classError;
+      trackEvent("data_load_failed", "course-discovery", undefined, {
+        query: "GetClassDetails",
+        message: classError.message?.slice(0, 200),
+      });
+    }
+  }, [classError, trackEvent]);
 
   // Keep reference to last valid class to prevent blank frames during transitions
   const lastClassRef = useRef(_class);
