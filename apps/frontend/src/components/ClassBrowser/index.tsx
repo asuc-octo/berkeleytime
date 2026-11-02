@@ -25,6 +25,7 @@ interface ClassBrowserProps {
   year: number;
   terms?: ITerm[];
   persistent?: boolean;
+  showSemesterFilter?: boolean;
 }
 
 export default function ClassBrowser({
@@ -34,6 +35,7 @@ export default function ClassBrowser({
   year,
   terms,
   persistent,
+  showSemesterFilter = true,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -71,7 +73,7 @@ export default function ClassBrowser({
             })}
             data-mode={forceMode}
           >
-            <Filters />
+            <Filters showSemesterFilter={showSemesterFilter} />
             <List onSelect={onSelect} />
           </div>
         </LayoutContext>

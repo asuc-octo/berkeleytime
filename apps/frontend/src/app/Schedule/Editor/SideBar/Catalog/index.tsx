@@ -74,6 +74,7 @@ export default function Catalog({
               year={year}
               onSelect={handleSelect}
               forceMode="semi-compact"
+              showSemesterFilter={false}
             />
           </div>
         </Dialog.Drawer>
