@@ -91,9 +91,7 @@ class SemanticSearchEngine:
         self._build_queue: List[Tuple[int, str]] = []  # Queue of (year, semester) to build
         self._store = vector_store or RedisVectorStore(REDIS_URI)
         self._legacy_migration_completed = False
-        self._legacy_indexes_removed = 0
         self._stale_migration_completed = False
-        self._stale_indexes_removed = 0
 
     def _get_index_name(self, year: int, semester: str, allowed_subjects: Optional[List[str]]) -> str:
         suffix = ",".join(allowed_subjects) if allowed_subjects else "all"
@@ -335,23 +333,6 @@ class SemanticSearchEngine:
             for entry in entries
         ]
 
-    def describe_configuration(self) -> Dict:
-        return {
-            "vector_store": self._store.backend_name,
-            "embedding_profile": self.embedding_config.profile,
-            "embedding_model": self.embedding_config.model_name,
-            "embedding_model_revision": self.embedding_config.model_revision,
-            "embedding_dimensions": self._embedding_dims,
-            "embedding_fingerprint": self._embedding_fingerprint,
-            "vector_algorithm": self.embedding_config.vector_algorithm,
-            "index_schema_version": self.embedding_config.schema_version,
-            "embedding_batch_size": self.embedding_config.batch_size,
-            "legacy_migration_completed": self._legacy_migration_completed,
-            "legacy_indexes_removed": self._legacy_indexes_removed,
-            "stale_migration_completed": self._stale_migration_completed,
-            "stale_indexes_removed": self._stale_indexes_removed,
-        }
-
     def _get_or_build_index(
         self, year: int, semester: str, allowed_subjects: Optional[Iterable[str]]
     ) -> TermIndex:
@@ -528,11 +509,11 @@ class SemanticSearchEngine:
         if self._legacy_migration_completed:
             return
         if PURGE_LEGACY_INDEXES:
-            self._legacy_indexes_removed = self._store.purge_legacy_indexes()
-            if self._legacy_indexes_removed:
+            removed = self._store.purge_legacy_indexes()
+            if removed:
                 logger.info(
                     "Removed %d legacy semantic-search index(es)",
-                    self._legacy_indexes_removed,
+                    removed,
                 )
         self._legacy_migration_completed = True
 
@@ -540,13 +521,11 @@ class SemanticSearchEngine:
         if self._stale_migration_completed:
             return
         if PURGE_LEGACY_INDEXES:
-            self._stale_indexes_removed = self._store.purge_stale_indexes(
-                self._index_prefix
-            )
-            if self._stale_indexes_removed:
+            removed = self._store.purge_stale_indexes(self._index_prefix)
+            if removed:
                 logger.info(
                     "Removed %d stale semantic-search index(es)",
-                    self._stale_indexes_removed,
+                    removed,
                 )
         self._stale_migration_completed = True
 
