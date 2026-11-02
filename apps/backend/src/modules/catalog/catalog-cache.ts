@@ -1,7 +1,7 @@
 import { FuzzySearch } from "@repo/common";
 import { CatalogClassModel, type ICatalogClassItem } from "@repo/common/models";
 
-import { getFormerNamesByCourseId } from "../course/controller";
+import { getCourseKey, getFormerNameIndex } from "../course/controller";
 
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const MAX_CACHE_ENTRIES = 5;
@@ -73,10 +73,12 @@ export const getSearchIndex = async (
   }
 
   const data = await getCachedCatalog(year, semester);
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
+  const { formerNamesByCourse } = await getFormerNameIndex();
 
   const indexedData = data.map((item) => {
-    const formerNames = formerNamesByCourseId.get(item.courseId);
+    const formerNames = formerNamesByCourse.get(
+      getCourseKey({ ...item, number: item.courseNumber })
+    );
     if (!formerNames?.length) return item;
 
     const formerNameVariants = formerNames.flatMap((name) => [
