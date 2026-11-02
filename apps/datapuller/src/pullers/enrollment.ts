@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 
 import { parseTermName } from "@repo/common";
 import {
+  EnrollmentPullModel,
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
@@ -16,11 +17,6 @@ import { Config } from "../shared/config";
 
 // duration of time in seconds that can pass before being considered a data gap
 const DATAGAP_THRESHOLD = 4 * GRANULARITY;
-
-// unchanged sections only get their last entry's endTime extended once this
-// much time has passed, instead of on every run. must stay well below
-// DATAGAP_THRESHOLD so a missed run doesn't register as a data gap.
-const ENDTIME_REFRESH_INTERVAL = 2 * GRANULARITY;
 
 const TERMS_PER_API_BATCH = 4;
 
@@ -148,6 +144,15 @@ const updateEnrollmentHistories = async (config: Config) => {
     sectionIds.add(sectionId);
   };
 
+  // termId -> when the previous successful run happened. Unchanged sections
+  // are not written, so their last entry is confirmed up to this time.
+  const previousPulls = await EnrollmentPullModel.find({
+    termId: { $in: terms.map((term) => term.id) },
+  }).lean();
+  const lastPulledAtByTerm = new Map(
+    previousPulls.map((pull) => [pull.termId, pull.lastPulledAt])
+  );
+
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
     const termsBatchIds = termsBatch.map((term) => term.id);
@@ -253,16 +258,24 @@ const updateEnrollmentHistories = async (config: Config) => {
               If all of the following are true:
                  1. Latest enrollment entry matches incoming enrollment data using `enrollmentSingularsEqual`
                  2. Latest enrollment entry's granularity matches incoming granularity
-                 3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
+                 3. Latest enrollment entry was last confirmed less than DATAGAP_THRESHOLD ago
 
-              Then: Extend the last entry's endTime using $set, but only once
-              ENDTIME_REFRESH_INTERVAL has passed, so unchanged sections are
-              not rewritten on every run.
+              Then: Leave the document untouched. The entry is treated as
+              lasting until the term's lastPulledAt, which is written once per run.
 
-              Else: Append a new entry with incoming startTime and endTime using $push.
+              Else: Close the last entry at the time it was last confirmed, and
+              append a new entry with incoming startTime and endTime using $push.
             */
             // history is projected to its last entry only
             const lastEntry = existingDoc.history[0];
+
+            // the last time this entry was confirmed: its stored endTime, or
+            // the previous run if that is later
+            const previousPulledAt = lastPulledAtByTerm.get(identifier.termId);
+            const lastConfirmedAt =
+              previousPulledAt && previousPulledAt > lastEntry.endTime
+                ? previousPulledAt
+                : lastEntry.endTime;
 
             // true if enrollment singular data is equal to latest entry
             const dataMatches = enrollmentSingularsEqual(
@@ -275,37 +288,34 @@ const updateEnrollmentHistories = async (config: Config) => {
               lastEntry.granularitySeconds ===
               enrollmentSingular.data.granularitySeconds;
 
-            // true if duration from last entry's end time to current time is less than DATAGAP_THRESHOLD
+            // true if duration from last confirmation to current time is less than DATAGAP_THRESHOLD
             const incomingEndTime = DateTime.fromJSDate(
               enrollmentSingular.data.endTime
             );
-            const lastEntryEndTime = DateTime.fromJSDate(lastEntry.endTime);
-            const secondsSinceLastEntry = incomingEndTime.diff(
-              lastEntryEndTime,
-              "seconds"
-            ).seconds;
             const withinDatagapThreshold =
-              secondsSinceLastEntry <= DATAGAP_THRESHOLD;
+              incomingEndTime.diff(
+                DateTime.fromJSDate(lastConfirmedAt),
+                "seconds"
+              ).seconds <= DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              if (secondsSinceLastEntry >= ENDTIME_REFRESH_INTERVAL) {
-                // Extend the endTime of the last entry using update. The
+              totalUnchanged += 1;
+            } else {
+              if (lastConfirmedAt > lastEntry.endTime) {
+                // Close the last entry at the time it was last confirmed. The
                 // index of the last entry is unknown because history is
-                // projected, so match it by its current endTime instead.
+                // projected, so match it by its stored endTime instead.
                 bulkOps.push({
                   updateOne: {
                     filter: { _id: existingDoc._id },
                     update: {
-                      $set: { "history.$[last].endTime": now.toJSDate() },
+                      $set: { "history.$[last].endTime": lastConfirmedAt },
                     },
                     arrayFilters: [{ "last.endTime": lastEntry.endTime }],
                   },
                 });
-                totalUpdated += 1;
-              } else {
-                totalUnchanged += 1;
               }
-            } else {
+
               // Append a new entry
               bulkOps.push({
                 updateOne: {
@@ -368,6 +378,17 @@ const updateEnrollmentHistories = async (config: Config) => {
 
   log.info(
     `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated, ${totalUnchanged.toLocaleString()} unchanged.`
+  );
+
+  // Record this run, so unchanged sections count as confirmed up to now
+  await EnrollmentPullModel.bulkWrite(
+    terms.map((term) => ({
+      updateOne: {
+        filter: { termId: term.id },
+        update: { $set: { lastPulledAt: now.toJSDate() } },
+        upsert: true,
+      },
+    }))
   );
 
   // Update enrollment fields on denormalized catalog_classes.
@@ -486,6 +507,11 @@ const checkEnrollmentDrop = async (config: Config) => {
     const gapMs =
       new Date(latest.endTime).getTime() - new Date(previous.endTime).getTime();
     if (gapMs > MAX_SNAPSHOT_GAP_MS) continue;
+
+    // Unchanged sections are not written, so latest.endTime no longer moves
+    // forward. Only notify for drops that were recorded recently.
+    const ageMs = Date.now() - new Date(latest.startTime).getTime();
+    if (ageMs > MAX_SNAPSHOT_GAP_MS) continue;
 
     // Condition 2: class is popular
     const currentPct = latest.enrolledCount / latest.maxEnroll;
