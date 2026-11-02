@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "bt-mongo.mongodName" . }}-config
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+data:
+  mongod.conf: |
+    storage:
+      dbPath: /data/db
+    net:
+      port: 27017
+      bindIpAll: true
+    replication:
+      replSetName: {{ .Values.replSetName }}
+    security:
+      authorization: enabled
+      keyFile: /etc/mongod-keyfile/keyfile
+    # Route $search / $vectorSearch and search index management to mongot.
+    # https://www.mongodb.com/docs/search/self-managed/current/installation/docker/
+    setParameter:
+      mongotHost: {{ include "bt-mongo.searchHost" . }}:27028
+      searchIndexManagementHostAndPort: {{ include "bt-mongo.searchHost" . }}:27028
+      skipAuthenticationToSearchIndexManagementServer: false
+      useGrpcForSearch: true
+      searchTLSMode: disabled
+
+  # Idempotent bootstrap, run by the mongod-init sidecar on every pod start. It runs in the mongod pod
+  # so the first user can be created through the localhost exception.
+  init.js: |
+    const env = process.env;
+    const admin = db.getSiblingDB("admin");
+
+    // Fails on a fresh data dir, where no users exist yet.
+    let authenticated = false;
+    try {
+      admin.auth("root", env.MONGO_ROOT_PASSWORD);
+      authenticated = true;
+    } catch (e) {}
+
+    try {
+      rs.status();
+    } catch (e) {
+      if (e.codeName !== "NotYetInitialized") throw e;
+      print(`Initiating replica set ${env.REPL_SET_NAME} with ${env.MONGOD_HOST}`);
+      rs.initiate({ _id: env.REPL_SET_NAME, members: [{ _id: 0, host: env.MONGOD_HOST }] });
+    }
+
+    while (!db.hello().isWritablePrimary) sleep(1000);
+
+    if (!authenticated) {
+      // Localhost exception: only allowed while no users exist.
+      admin.createUser({ user: "root", pwd: env.MONGO_ROOT_PASSWORD, roles: ["root"] });
+      admin.auth("root", env.MONGO_ROOT_PASSWORD);
+      print("Created root user.");
+    }
+
+    // Create or update the service users so password rotations in the Secret take effect.
+    const ensureUser = (user, pwd, roles) => {
+      if (admin.getUser(user)) {
+        admin.updateUser(user, { pwd, roles });
+      } else {
+        admin.createUser({ user, pwd, roles });
+        print(`Created ${user} user.`);
+      }
+    };
+
+    ensureUser("bt", env.MONGO_APP_PASSWORD, [{ role: "readWrite", db: "bt" }]);
+    ensureUser("mongot", env.MONGO_MONGOT_PASSWORD, ["searchCoordinator"]);
+
+    print("mongod-init complete.");

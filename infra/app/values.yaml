@@ -14,6 +14,10 @@ otel:
   serviceName: "backend"
 
 mongoUri: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
+# Secret with the Mongo app user's password (key: app-password), created by the bt-mongo chart.
+# Leave empty for a Mongo without auth (pre-8.3 Bitnami releases).
+mongoAuthSecret: ""
+mongoUser: bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 

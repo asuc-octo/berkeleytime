@@ -1,0 +1,19 @@
+# Dev overrides. Install with:
+#   helm upgrade bt-dev-mongo ./infra/mongo -n <ns> -f values-dev.yaml
+
+env: dev
+
+hostPath: /data/dev/db83
+hostPathSearch: /data/dev/mongot
+
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    memory: 1Gi
+
+searchResources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 512Mi

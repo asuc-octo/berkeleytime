@@ -1,61 +1,51 @@
-# path in host machine. should depend on environment and be different for each mongo pod.
-# Staging: use -f values-staging.yaml (smaller memory + /data/stage/db) instead of copying this file.
-hostPath: /data/prod/db
+# Prod defaults. Staging / dev: use -f values-staging.yaml / -f values-dev.yaml instead of copying this file.
+env: prod
 
-mongodb:
-  commonLabels:
-    env: prod
+# Paths on the host machine. Must be different for each environment.
+# db83 is a fresh data dir for MongoDB 8.3, filled by dump/restore; the Bitnami 8.2 data in
+# /data/<env>/db is left untouched so rollback is just reinstalling the old chart.
+hostPath: /data/prod/db83
+# mongot keeps its Lucene index segments here. Losing it only forces a full re-index.
+hostPathSearch: /data/prod/mongot
 
-  architecture: replicaset
-  arbiter:
-    enabled: false
-  replicaCount: 1
+replSetName: rs0
 
-  auth:
-    enabled: false
+# Self-managed MongoDB Search requires mongod >= 8.3.4 and mongot >= 1.70.1.
+# https://www.mongodb.com/docs/search/self-managed/current/deployment/compatibility-requirements/
+image: mongodb/mongodb-community-server:8.3.11-ubuntu2204
+searchImage: mongodb/mongodb-community-search:1.70.5
+# Used by init containers to fix permissions on hostPath volumes and the keyfile.
+busyboxImage: busybox:1.37
 
-  # MongoDB 8.0 removed storage.journal.enabled; custom config omits it to avoid "Unrecognized option"
-  configuration: |
-    storage:
-      dbPath: /bitnami/mongodb/data/db
-      directoryPerDB: false
-    systemLog:
-      destination: file
-      path: /opt/bitnami/mongodb/logs/mongodb.log
-      logAppend: true
-    net:
-      port: 27017
-      bindIp: 0.0.0.0
-    processManagement:
-      pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
-    replication:
-      replSetName: rs0
+# uid/gid mongod runs as. Data on hostPath is chown'd to this by an init container.
+runAsUser: 1000
+runAsGroup: 1000
 
-  persistence:
-    storageClass: manual
+persistence:
+  size: 10Gi
+  searchSize: 10Gi
 
-    # path in pod. should be same for all mongo pods.
-    size: 10Gi
+resources:
+  limits:
+    memory: 4Gi
+  requests:
+    memory: 2Gi
 
-  # required for persistence. without, data is not saved across pod restarts.
-  volumePermissions:
-    enabled: true
+# mongot is a JVM process; it sizes its heap from the container memory limit.
+searchResources:
+  limits:
+    memory: 2Gi
+  requests:
+    memory: 1Gi
 
-  # Prod-oriented defaults; staging uses values-staging.yaml for lower limits.
-  resources:
-    limits:
-      memory: 4Gi
-    requests:
-      memory: 2Gi
-
-  # Mount migrations ConfigMap at /migrations (same path as Docker Compose).
-  # ConfigMap is templates/migrations-configmap.yaml → {{ .Release.Name }}-migrations.
-  # Bitnami renders extraVolumes with tpl, so this tracks the release name without --set.
-  extraVolumes:
-    - name: migrations
-      configMap:
-        name: "{{ .Release.Name }}-migrations"
-  extraVolumeMounts:
-    - name: migrations
-      mountPath: /migrations
-      readOnly: true
+auth:
+  # Secret holding the keys below. Defaults to "<release>-auth".
+  #   keyfile          replica set keyfile (base64 chars, 6-1024 long)
+  #   root-password    "root" user (root role), used by backups/migrations
+  #   app-password     "bt" user (readWrite on bt), used by backend + datapuller
+  #   mongot-password  "mongot" user (searchCoordinator), used by mongot to sync
+  # Passwords must be URL-safe (they are interpolated into MONGODB_URI); use `openssl rand -hex 32`.
+  secretName: ""
+  # If set, the chart renders a SealedSecret named secretName with this encryptedData
+  # (output of `kubeseal --scope namespace-wide`). Leave empty to manage the Secret out of band.
+  encryptedData: {}
