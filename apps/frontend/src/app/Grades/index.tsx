@@ -209,6 +209,7 @@ function FilterPanel({
     selectedCourse?.number ?? "",
     {
       skip: !selectedCourse,
+      includeFormerNames: true,
     }
   );
 
