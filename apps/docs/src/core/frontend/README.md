@@ -1,171 +1,203 @@
 # Frontend
 
-<!-- toc -->
+We maintain a static, single-page application (SPA) at berkeleytime.com. Once compiled, the application consists of HTML, JavaScript, and CSS files served to visitors. The browser fetches application data from the backend GraphQL service at `berkeleytime.com/api/graphql`.
 
-We maintain a static, single-page application (SPA) at [berkeleytime.com](https://berkeleytime.com). Once compiled, the application consists only of HTML, JavaScript, and CSS files served to visitors. No server generates responses at request time. Instead, the SPA utilizes the browser to fetch data from the backend service hosted at [berkeleytime.com/api/graphql](https://berkeleytime.com/api/graphql).
+Apollo Client uses `persistedOperationFetch` from `@repo/shared` to send persisted operation IDs rather than raw query text.
 
-We originally chose this pattern because most developers are familiar with React, Vue, Svelte, or other SPA frameworks and we did not want to opt for a more opinionated meta-framework like Next.js or Remix for now. However, there are always trade-offs.
+We use React with Vite rather than a meta-framework such as Next.js or Remix. The frontend contains the pages, components, styling, and client-side logic that make up the Berkeleytime web application.
 
-The frontend consists of the design, components, and logic that make up our SPA.
+## Recommended tools
 
-## Recommendations
-
-- Use VSCode
-- Install the [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension
-- Install the [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension
+- VSCode
+- Prettier extension
+- ESLint extension
 
 ## Stack
 
-Berkeleytime is built entirely with [TypeScript](https://www.typescriptlang.org/) and the frontend follows suit with strictly-typed [React](https://react.dev/) built with [Vite](https://vite.dev/). Because we use [Apollo](https://www.apollographql.com/docs) for our GraphQL server, use the [React Apollo client](https://www.apollographql.com/docs/react) for fetching and mutating data on the frontend.
+The frontend uses:
 
-```typescript
-import { useQuery } from "@apollo/client/react";
+- **React and TypeScript** for strictly typed UI development
+- **Vite** for development and production builds
+- **React Router** for client-side routing
+- **Apollo Client** for GraphQL queries and mutations
+- **GraphQL Code Generator** for generated query types
+- **SCSS modules** for component-scoped styling
+- **`@repo/theme`** for shared UI components and theme styling
 
-import { READ_CLASS, ReadClassResponse, Semester } from "@/lib/api";
+## Structure
 
-export const useReadClass = (
-  year: number,
-  semester: Semester,
-  subject: string,
-  courseNumber: string,
-  number: string,
-  options?: Omit<useQuery.Options<ReadClassResponse>, "variables">
-) => {
-  const query = useQuery<ReadClassResponse>(READ_CLASS, {
-    ...options,
-    variables: {
-      year,
-      semester,
-      subject,
-      courseNumber,
-      number,
-    },
-  });
+The frontend lives in a monorepo alongside other applications and shared packages. Turborepo coordinates tasks across the repository according to package dependencies and task configuration.
 
-  return {
-    ...query,
-    data: query.data?.class,
-  };
-};
-```
-
-### Structure
-
-The frontend consists of not only the SPA, but also various packages used to modularize our codebase and separate concerns. These packages are managed by [Turborepo](https://turbo.build/repo/docs), a build system designed for scaling monorepos, but I won't dive too deep into how Turborepo works right now.
-
-```bash
+```text
 apps/
+  frontend/                     # Berkeleytime React SPA
   ...
-  frontend/                     # React SPA served at https://berkeleytime.com
-  ...
+
 packages/
-  ...
-  theme/                        # React design system
-  eslint-config/                # Shared utility package for ESLint configuration files
-  typescript-config/            # Shared utility package for TypeScript configured files
+  theme/                        # Shared design system and UI components
+  shared/                       # Shared helpers, including persisted-operation transport
+  eslint-config/                # Shared ESLint configuration
+  typescript-config/            # Shared TypeScript configuration
   ...
 ```
 
-You can see how the frontend app depends on these packages within the `apps/frontend/package.json`.
+The frontend declares its shared package dependencies in `apps/frontend/package.json`. It consumes the design system through `@repo/theme` and persisted-operation transport through `@repo/shared`.
 
-```json
-{
-  "name": "frontend",
-  // ...
-  "dependencies": {
-    // ...
-    "@repo/theme": "*",
-    "react": "^19.0.0"
-  },
-  "devDependencies": {
-    // ...
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
-    "@types/react": "^19.0.8",
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint": "^9.19.0",
-    "typescript": "^5.7.3",
-    "vite": "6.0.8"
-  }
-}
+For current dependency versions and available scripts, refer to the package configuration.
+
+## Design system
+
+Our shared design system lives in `packages/theme`. It provides reusable components, color and typography tokens, and theme styling to keep interfaces consistent across Berkeleytime.
+
+Use existing components and supported variants as the starting point for frontend work.
+
+### Component foundations
+
+The component library is built on Radix primitives, which provide accessible foundations for UI elements such as dialogs, dropdown menus, and tooltips.
+
+We use **Iconoir** icons and the **Inter** typeface family. Shared theme setup is managed through `ThemeProvider`, with color and typography tokens defined in `ThemeProvider.scss`.
+
+```text
+packages/theme/src/
+  components/
+    ThemeProvider/              # Theme setup, styling, and token definitions
+    Button/
+    Dialog/
+    Tooltip/
+    ...
+  contexts/                     # Design-system contexts
+  hooks/                        # Design-system hooks
+  stories/                      # Storybook stories
+  ...
 ```
 
-### Design system
+### Where components belong
 
-We maintain a design system built on top of [Radix primitives](https://www.radix-ui.com/primitives), a library of unstyled, accessible, pre-built React components like dialogs, dropdown menus, and tooltips. By standardizing components, colors, icons, and other patterns, we can reduce the amount of effort required to build new features or maintain consistency across the frontend.
+Choose a component’s location based on its dependencies and intended reuse:
 
-The design system houses standalone components that do not require any external context. They maintain design consistency and should function whether or not they are used in the context of Berkeleytime. More complex components specific to Berkeleytime, such as for classes or courses, live in the frontend app and will be discussed later.
+| Location | What belongs here |
+|---|---|
+| `packages/theme/src/components` | Reusable UI components that do not depend on Berkeleytime-specific data or business logic |
+| `apps/frontend/src/components` | Reusable Berkeleytime-specific components, such as components that display course or class data |
+| `apps/frontend/src/app` | Pages, views, and components used only within a particular page or feature |
 
-We use [Iconoir icons](https://iconoir.com/) and the [Inter typeface family](https://rsms.me/inter/). These design decisions, and reusable design tokens, are all abstracted away within the theme package and the `ThemeProvider` React component.
+A component can follow Berkeleytime’s visual design and still belong in the shared theme package. The deciding factor is whether it requires application-specific data or logic.
 
-```bash
-# packages/theme/src
-...
-components/                          # React components for the design system
-  ...
-  ThemeProvider/                     # Entry point component
-  Button/
-  Dialog/
-  Tooltip/
-  ...
-contexts/                            # React contexts for the design system
-hooks/                               # React hooks for the design system
-...
-```
+### Tokens and styling values
 
-We built our design system with light and dark themes in mind, and the color tokens will respond accordingly. When building interfaces within Berkeleytime, standard color tokens should be used to ensure consistency depending on the selected theme.
+The theme defines shared **color and typography tokens** in `ThemeProvider.scss`. Refer to that file for exact names and supported values.
+
+`ThemeProvider` imports `@radix-ui/themes/layout.css` and wraps its children in Radix `Theme`, making the shared `--space-*` spacing scale available within that theme. Use those variables for `margin`, `padding`, and `gap` in component SCSS modules. For example, existing frontend code uses `padding-bottom: var(--space-2)`.
+
+`ThemeProvider.scss` does not define custom shared border-radius or shadow tokens. Follow existing component patterns for radius and shadow values, and keep component-specific declarations in the component’s SCSS module.
+
+When styling an interface:
+
+- Reuse defined color and typography tokens.
+- Confirm that a CSS variable exists before referencing it.
+- Follow existing component styling patterns.
+- Use Radix `--space-*` variables for spacing within `ThemeProvider`; keep declarations in component SCSS modules.
+- Follow existing component patterns for local radius and shadow values.
+- Avoid introducing a second naming convention for an existing token category.
+- Do not use fallback values to conceal an undefined token.
+
+Shared token changes can affect multiple components and applications. Check their consumers before changing a token’s value or meaning.
+
+### Light and dark themes
+
+The design system supports light and dark themes. Use semantic color tokens according to their intended roles:
+
+- `--heading-color` for heading text
+- `--paragraph-color` for paragraph text
+- `--foreground-color` for foreground surfaces, such as cards and tooltips
+- `--background-color` for background surfaces
+
+For example:
 
 ```scss
-// packages/theme/components/ThemeProvider/ThemeProvider.module.scss
-
-@mixin light-theme {
-  --foreground-color: var(--light-foreground-color);
-  --background-color: var(--light-background-color);
-  --backdrop-color: var(--light-backdrop-color);
-
-  // ...
+.container {
+  color: var(--heading-color);
+  background-color: var(--foreground-color);
 }
 
-@mixin dark-theme {
-  --foreground-color: var(--dark-foreground-color);
-  --background-color: var(--dark-background-color);
-  --backdrop-color: var(--dark-backdrop-color);
-
-  // ...
-}
-
-body[data-theme="dark"] {
-  @include dark-theme;
-}
-
-body[data-theme="light"] {
-  @include light-theme;
-}
-
-body:not([data-theme]) {
-  @include light-theme;
-
-  @media (prefers-color-scheme: dark) {
-    @include dark-theme;
-  }
+.description {
+  color: var(--paragraph-color);
 }
 ```
 
-### Generated Type System
+Despite its name, `--foreground-color` is a surface color, not a text color.
 
-Berkeleytime uses [GraphQL Code Generator](https://the-guild.dev/graphql/codegen) to automatically generate TypeScript types from GraphQL queries. This provides end-to-end type safety from your queries to your components.
+Let the theme system determine the appropriate values rather than hardcoding separate colors in each component. Check updated interfaces in both light and dark mode, including interactive states, borders, icons, and text contrast.
 
-#### Workflow
+### Working from Figma
 
-1. **Write queries** in `src/lib/api/*.ts` using the `gql` tag
-2. **Run codegen** with `npm run generate`
-3. **Use the generated Document** in your hooks with `useQuery()`
+Figma communicates the intended design. The theme package defines the component APIs and token names available in code.
 
-#### Example
+When implementing a design:
 
-First, define your query in `src/lib/api/courses.ts`:
+1. Check whether an existing theme component supports the required appearance and behavior.
+2. Match colors and typography to defined theme tokens.
+3. Map spacing to the available Radix `--space-*` scale in the component’s SCSS module. Follow existing component patterns for radius and shadows.
+4. Coordinate missing component variants or shared styling needs with the team.
 
-```typescript
+CSS copied from Figma Dev Mode may contain variable names that do not exist in the repository. Translate those references into supported tokens or appropriate component styles before using them.
+
+## Storybook
+
+Storybook provides a reference for shared components, their variants, and common usage patterns. Stories live in:
+
+```text
+packages/theme/src/stories/
+```
+
+Storybook runs as the `storybook` service in the Docker Compose `docs` profile. To start it:
+
+```sh
+docker compose --profile docs up storybook
+```
+
+With the default port prefix, open **http://localhost:3005**.
+
+Port `6006` is the port inside the container, not the default host port. Running `docker compose up` without enabling the `docs` profile does not start Storybook.
+
+Use Storybook to:
+
+- Find existing components before building new ones
+- Understand component properties and variants
+- Review component behavior and visual states
+- Check shared component changes in isolation
+
+When adding or changing a shared component, update its stories to reflect the supported behavior. Include relevant states such as disabled, loading, error, and empty states where applicable.
+
+## Generated type system
+
+Berkeleytime uses GraphQL Code Generator to generate TypeScript types from GraphQL queries. Generated documents provide type inference for query variables and response data.
+
+Frontend query definitions live in `apps/frontend/src/lib/api/*.ts`. Code generation is configured in `apps/frontend/codegen.ts`.
+
+That configuration also lists `packages/shared/queries.ts`, but the file does not exist in the repository and is not a current query source.
+
+### Workflow
+
+1. Write or update a named frontend query or mutation in `apps/frontend/src/lib/api/*.ts` using the `gql` tag.
+2. From `apps/frontend`, run `npm run generate` to regenerate client documents and types.
+3. From the repository root, run `npm run generate:operations` to update the server’s persisted-operation allowlist.
+4. From the repository root, run `npm run check:operations` to check that the generated allowlist is current. CI runs this check too.
+5. Commit the source operation changes and any changed, tracked outputs from the operation generator, including `apps/backend/src/bootstrap/graphql/generated/persistedOperations.ts`, `apps/backend/src/bootstrap/graphql/generated/previousPersistedOperations.ts`, and `apps/semantic-search/app/generated_operations.py` when changed. Frontend client files under `apps/frontend/src/lib/generated/` are ignored by Git; do not force-add them.
+6. Import the generated document from `@/lib/generated/graphql` and use it in an Apollo hook.
+7. Derive reusable response types from generated types when needed.
+
+Frontend type generation alone does not update the server allowlist. A new operation ID that is absent from the server’s allowlist is rejected with `404 Unknown operation`. The backend serving the request must have the updated allowlist.
+
+Do not manually edit generated files. Update the source query or generation configuration and regenerate them instead.
+
+### Define a query
+
+```tsx
+// Illustrative excerpt based on src/lib/api/courses.ts.
+// This file already defines GetCourse; update the existing operation rather
+// than adding another operation with the same name.
+
 import { gql } from "@apollo/client";
 
 export const GET_COURSE = gql`
@@ -179,74 +211,101 @@ export const GET_COURSE = gql`
 `;
 ```
 
-After running `npm run generate`, use the generated `GetCourseDocument` in your hooks:
+### Use the generated document
 
-```typescript
+After completing both generation steps above, use `GetCourseDocument` with Apollo Client:
+
+```tsx
 import { useQuery } from "@apollo/client/react";
-import {
-  GetCourseDocument,
-  GetCourseQuery,
-} from "@/lib/generated/graphql";
 
-// The Document provides full type inference
+import { GetCourseDocument } from "@/lib/generated/graphql";
+
 const query = useQuery(GetCourseDocument, {
-  variables: { subject: "COMPSCI", number: "61A" },
+  variables: {
+    subject: "COMPSCI",
+    number: "61A",
+  },
 });
-
-// query.data is automatically typed as GetCourseQuery
 ```
 
-You can also derive reusable types from the generated query types:
+The generated document provides type inference for the variables and returned data. The application’s Apollo client uses `persistedOperationFetch` from `@repo/shared` to send the operation ID.
 
-```typescript
-import { GetCourseQuery } from "@/lib/generated/graphql";
+### Derive reusable types
 
-// Extract the course type from the query response
+When a component needs a type from a query response, derive it from the generated query type:
+
+```tsx
+import type { GetCourseQuery } from "@/lib/generated/graphql";
+
 export type ICourse = NonNullable<GetCourseQuery["course"]>;
 ```
 
-### Berkeleytime-specific Components
+Reusable query logic can be wrapped in a custom hook when it is shared across components.
 
-A number of the Radix primitives and other commonly-used components have since also been adapted to specifically fit Berkeleytime's needs by the design team. These components should be used whenever possible. A full list of components can be found in `packages/theme/src/components`.
+## Application structure
 
-#### Storybook
+The frontend uses React Router to organize client-side routes.
 
-To view some of these components and common applications, you can go to our Storybook. When running with `docker compose`, this will automatically be hosted at `localhost:6006`.
-
-### Application
-
-I'm sure you've seen a [Vite, React, and TypeScript app](https://vite.dev/guide/#scaffolding-your-first-vite-project) in the wild before, and we tend to follow most common practices, which includes using [React Router](https://reactrouter.com/home).
-
-```bash
-#
-src/
-  app/                    # Views, pages, and scoped components
-  components/             # Reusable components built around Berkeleytime
-  contexts/               # React contexts
-  hooks/                  # React hooks
-  lib/                    # Utility functions and general logic
-    api/                  # GraphQL types and queries
+```text
+apps/frontend/
+  src/
+    app/                        # Pages, views, and scoped components
+    components/                 # Reusable Berkeleytime-specific components
+    contexts/                   # Application React contexts
+    hooks/                      # Application React hooks
+    lib/                        # Utilities and general logic
+      api/                      # GraphQL query and mutation definitions
+      generated/                # Generated GraphQL documents and types
+      ...
+    main.tsx                    # Application bootstrap
+    App.tsx                     # Routing and React entry point
     ...
-  main.tsx
-  App.tsx                 # Routing and React entry point
+  codegen.ts                    # GraphQL Code Generator configuration
   index.html
-  ...
   vite.config.ts
 ```
 
+Keep application data fetching and business logic in the frontend application. Shared design-system components should receive the data and callbacks they need through their public APIs.
+
 ## Conventions
 
-We use [SCSS modules](https://vite.dev/guide/features#css-modules) for scoping styles to components and reducing global CSS clutter. A typical folder (in `src/app` or `src/components`) should be structured like so.
+### Component organization
 
-```bash
-# apps/frontend
-src/app/[COMPONENT]/
+Use SCSS modules to scope styles to components and reduce global CSS clutter.
+
+A typical component folder is structured as follows:
+
+```text
+src/app/[Component]/
   index.tsx
-  [COMPONENT].module.scss
-  ...
-  [CHILD_COMPONENT]/
+  [Component].module.scss
+  [ChildComponent]/
     index.tsx
-    [CHILD_COMPONENT].module.scss
+    [ChildComponent].module.scss
 ```
 
-Child components should be used in your best judgment whenever significant logic must be refactored out of the component for structural or organizational purposes. If child components are reused in multiple pages or components, they should be moved as high up in the file structure as is required or moved to `src/components`.
+Extract child components when doing so makes significant UI or logic easier to understand and maintain.
+
+Keep child components close to their parent when they are only used there. If they are reused, move them to the nearest appropriate shared location or to `src/components`.
+
+### Styling
+
+- Use shared theme components before building custom equivalents.
+- Use defined color and typography tokens.
+- Use the Radix `--space-*` scale for spacing within `ThemeProvider`.
+- Keep component-specific declarations in SCSS modules and follow existing patterns for radius and shadows.
+- Keep shared token definitions and theme behavior in `packages/theme`.
+- Avoid creating local copies of shared component styles.
+- When updating older styles, adopt existing shared patterns where appropriate and verify the result.
+
+### Verifying UI changes
+
+Check changes in the contexts where they will be used:
+
+- Light and dark themes
+- Relevant screen sizes
+- Keyboard navigation and visible focus
+- Applicable loading, empty, error, and disabled states
+- Storybook examples and application pages affected by shared changes
+
+A token or shared component update may affect more than the page being edited. Review those affected uses before merging
