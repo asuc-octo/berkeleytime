@@ -28,6 +28,7 @@ import { getFields, hasFieldPath } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
+import { getLastPulledAt } from "../enrollment/controller";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
@@ -799,9 +800,14 @@ export const getCatalogLegacy = async (
       sectionId: { $in: sectionIds },
     }).lean();
 
+    const lastPulledAt =
+      enrollments.length > 0
+        ? await getLastPulledAt(enrollments[0].termId)
+        : null;
+
     enrollmentMap = enrollments.reduce(
       (acc, enrollment) => {
-        acc[enrollment.sectionId] = formatEnrollment(enrollment);
+        acc[enrollment.sectionId] = formatEnrollment(enrollment, lastPulledAt);
         return acc;
       },
       {} as Record<string, EnrollmentModule.Enrollment | null>
