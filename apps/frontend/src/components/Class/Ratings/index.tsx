@@ -622,7 +622,7 @@ export function RatingsContainer() {
 
                 <div className={styles.ratingsSummary}>
                   <div className={styles.ratingsSummaryTop}>
-                    <p className={styles.ratingsSummaryHeader}>Ratings</p>
+                    <p className={styles.ratingsSummaryHeader}>Student Reviews</p>
                     <div className={styles.ratingsSummaryHeaderRight}>
                       {hasRatings ? (
                         <div className={styles.ratingsHeaderToolbar}>
