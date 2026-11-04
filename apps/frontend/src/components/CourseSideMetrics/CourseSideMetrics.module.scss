@@ -95,6 +95,18 @@
       gap: 24px;
       align-items: center;
     }
+
+    // Let the hover percentile drop to its own line instead of squeezing the
+    // averages into multi-line labels.
+    @media (max-width: 767px) {
+      flex-wrap: wrap;
+      align-items: flex-start;
+      row-gap: 12px;
+
+      .label {
+        white-space: nowrap;
+      }
+    }
   }
 
   .metric {

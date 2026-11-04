@@ -399,7 +399,7 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
   };
 
   return (
-    <Flex direction="row" gap="3">
+    <Flex direction={{ initial: "column", md: "row" }} gap="3">
       <Box flexGrow="1">
         <CourseSelect
           onSelect={handleCourseSelect}
@@ -429,10 +429,12 @@ export default function CourseInput({ outputs, setOutputs }: CourseInputProps) {
       </Box>
       <Flex
         direction={
-          selectedType === InputType.Instructor ? "row" : "row-reverse"
+          selectedType === InputType.Instructor
+            ? { initial: "column", md: "row" }
+            : { initial: "column-reverse", md: "row-reverse" }
         }
         flexGrow="1"
-        gap="4"
+        gap={{ initial: "3", md: "4" }}
       >
         <Box flexGrow="1">
           <Select
