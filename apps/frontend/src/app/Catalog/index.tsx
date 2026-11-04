@@ -135,7 +135,15 @@ function SavedCollectionSection({
           }) ||
           a.number.localeCompare(b.number, undefined, { numeric: true })
         );
-      });
+      })
+      .filter(
+        (savedClass, i, all) =>
+          all.findIndex(
+            (other) =>
+              other.subject === savedClass.subject &&
+              other.courseNumber === savedClass.courseNumber
+          ) === i
+      );
   }, [collectionData]);
 
   const savedClassEntries = useMemo(
@@ -222,10 +230,11 @@ function SavedCollectionSection({
                       <span>
                         {savedClass.subject} {savedClass.courseNumber}
                       </span>
-                      <span className={styles.bookmarkClassHint}>
-                        {savedClass.semester} {savedClass.year}
-                        {isUnavailable && " · Unavailable for term"}
-                      </span>
+                      {isUnavailable && (
+                        <span className={styles.bookmarkUnavailableHint}>
+                          Unavailable for term
+                        </span>
+                      )}
                     </span>
                   </DropdownMenu.Item>
                 );

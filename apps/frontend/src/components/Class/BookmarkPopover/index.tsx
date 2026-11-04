@@ -114,12 +114,8 @@ export default function BookmarkPopover({
       if (!collection._id) continue;
       const hasClass = collection.classes?.some(
         (entry) =>
-          entry.class?.year === classInfo.year &&
-          entry.class?.semester === classInfo.semester &&
-          entry.class?.sessionId === classInfo.sessionId &&
           entry.class?.subject === classInfo.subject &&
-          entry.class?.courseNumber === classInfo.courseNumber &&
-          entry.class?.number === classInfo.classNumber
+          entry.class?.courseNumber === classInfo.courseNumber
       );
       if (hasClass) {
         saved.add(collection._id);
@@ -224,15 +220,27 @@ export default function BookmarkPopover({
 
       try {
         if (currentlySaved) {
-          await removeClassFromCollection({
-            collectionId,
-            year: classInfo.year,
-            semester: classInfo.semester,
-            sessionId: classInfo.sessionId,
-            subject: classInfo.subject,
-            courseNumber: classInfo.courseNumber,
-            classNumber: classInfo.classNumber,
-          });
+          // Saved entries may be other offerings of this course
+          const savedEntries =
+            apiCollections
+              ?.find((c) => c._id === collectionId)
+              ?.classes.filter(
+                (entry) =>
+                  entry.class?.subject === classInfo.subject &&
+                  entry.class?.courseNumber === classInfo.courseNumber
+              ) ?? [];
+          for (const { class: saved } of savedEntries) {
+            if (!saved) continue;
+            await removeClassFromCollection({
+              collectionId,
+              year: saved.year,
+              semester: saved.semester,
+              sessionId: saved.sessionId,
+              subject: saved.subject,
+              courseNumber: saved.courseNumber,
+              classNumber: saved.number,
+            });
+          }
         } else {
           await addClassToCollection({
             collectionId,
@@ -254,7 +262,13 @@ export default function BookmarkPopover({
         });
       }
     },
-    [classInfo, addClassToCollection, removeClassFromCollection, collections]
+    [
+      classInfo,
+      apiCollections,
+      addClassToCollection,
+      removeClassFromCollection,
+      collections,
+    ]
   );
 
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
