@@ -1,10 +1,21 @@
-import { FuzzySearch } from "@repo/common";
-import { CatalogClassModel, type ICatalogClassItem } from "@repo/common/models";
+import { FuzzySearch, parseTermName } from "@repo/common";
+import {
+  CatalogClassModel,
+  EnrollmentPullModel,
+  type ICatalogClassItem,
+  TermModel,
+} from "@repo/common/models";
 
 import { getFormerNamesByCourseId } from "../course/controller";
 
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const MAX_CACHE_ENTRIES = 5;
+// Hot terms are the ones the enrollments puller is updating: they stay cached
+// and reload after each new pull. Other (cold) terms are dropped once idle.
+const HOT_PULL_WINDOW = 60 * 60 * 1000; // pulled within the last hour
+const HOT_TERMS_TTL = 60 * 1000; // re-check which terms are hot every minute
+const MAX_DATA_AGE = 60 * 60 * 1000; // fallback refresh if the puller stops
+const COLD_IDLE_TTL = 10 * 60 * 1000;
+const MAX_COLD_ENTRIES = 2;
+const SWEEP_INTERVAL = 60 * 1000;
 
 // Only the fields catalog search reads, so each cached term stays small:
 // - result cards: fields requested by GetCatalogSearch
@@ -61,6 +72,9 @@ const CATALOG_CACHE_PROJECTION = {
 interface CatalogCacheEntry {
   data: ICatalogClassItem[];
   loadedAt: number;
+  lastUsedAt: number;
+  // The term's lastPulledAt when this data was loaded, if the term was hot
+  pulledAt: number | null;
 }
 
 interface IndexCacheEntry {
@@ -77,24 +91,74 @@ const indexCache = new Map<string, IndexCacheEntry>();
 // instead of each loading the whole term
 const pendingLoads = new Map<string, Promise<ICatalogClassItem[]>>();
 
-const evictOldest = () => {
-  if (catalogCache.size <= MAX_CACHE_ENTRIES) return;
+let hotTerms: { value: Promise<Map<string, number>>; loadedAt: number } | null =
+  null;
 
-  let oldestKey: string | null = null;
-  let oldestTime = Infinity;
+const loadHotTerms = async () => {
+  const pulls = await EnrollmentPullModel.find({
+    lastPulledAt: { $gte: new Date(Date.now() - HOT_PULL_WINDOW) },
+  }).lean();
+  if (pulls.length === 0) return new Map<string, number>();
 
-  for (const [key, entry] of catalogCache) {
-    if (entry.loadedAt < oldestTime) {
-      oldestTime = entry.loadedAt;
-      oldestKey = key;
+  const terms = await TermModel.find({
+    id: { $in: pulls.map((pull) => pull.termId) },
+  })
+    .select({ id: 1, name: 1 })
+    .lean();
+  const nameById = new Map(terms.map((term) => [term.id, term.name]));
+
+  const result = new Map<string, number>();
+  for (const pull of pulls) {
+    const term = parseTermName(nameById.get(pull.termId) ?? "");
+    if (term) {
+      result.set(`${term.year}:${term.semester}`, pull.lastPulledAt.getTime());
     }
   }
+  return result;
+};
 
-  if (oldestKey) {
-    catalogCache.delete(oldestKey);
-    indexCache.delete(oldestKey);
+// "year:semester" -> lastPulledAt for each hot term. Never rejects: if the
+// lookup fails, every term is treated as cold until the next check.
+const getHotTerms = () => {
+  if (!hotTerms || Date.now() - hotTerms.loadedAt >= HOT_TERMS_TTL) {
+    hotTerms = {
+      loadedAt: Date.now(),
+      value: loadHotTerms().catch((error) => {
+        console.error("[CatalogCache] Failed to load hot terms:", error);
+        return new Map<string, number>();
+      }),
+    };
+  }
+  return hotTerms.value;
+};
+
+const removeEntry = (key: string, reason: "idle" | "lru") => {
+  catalogCache.delete(key);
+  indexCache.delete(key);
+  console.log(`[CatalogCache] Evicted ${key} (${reason})`);
+};
+
+// Drop idle cold terms, then the least recently used cold terms until at most
+// maxCold remain. Hot terms are never evicted.
+const evictColdEntries = (hot: Map<string, number>, maxCold: number) => {
+  const now = Date.now();
+  const cold = [...catalogCache]
+    .filter(([key]) => !hot.has(key))
+    .sort(([, a], [, b]) => a.lastUsedAt - b.lastUsedAt);
+
+  for (const [key, entry] of cold) {
+    if (now - entry.lastUsedAt >= COLD_IDLE_TTL) removeEntry(key, "idle");
+  }
+
+  const remaining = cold.filter(([key]) => catalogCache.has(key));
+  while (remaining.length > maxCold) {
+    removeEntry(remaining.shift()![0], "lru");
   }
 };
+
+setInterval(() => {
+  getHotTerms().then((hot) => evictColdEntries(hot, MAX_COLD_ENTRIES));
+}, SWEEP_INTERVAL).unref();
 
 const loadCatalog = (
   key: string,
@@ -110,12 +174,28 @@ const loadCatalog = (
 
   const load = (async () => {
     try {
+      const hot = await getHotTerms();
+
+      // Make room first, so a new cold term never pushes the cache over its cap
+      if (!hot.has(key) && !catalogCache.has(key)) {
+        evictColdEntries(hot, MAX_COLD_ENTRIES - 1);
+      }
+
       const data = (await CatalogClassModel.find({ year, semester })
         .select(CATALOG_CACHE_PROJECTION)
         .lean()) as ICatalogClassItem[];
 
-      catalogCache.set(key, { data, loadedAt: Date.now() });
-      evictOldest();
+      const previous = catalogCache.get(key);
+      // Evicted while refreshing; don't bring it back
+      if (reason === "refresh" && !previous) return data;
+
+      const now = Date.now();
+      catalogCache.set(key, {
+        data,
+        loadedAt: now,
+        lastUsedAt: previous?.lastUsedAt ?? now,
+        pulledAt: hot.get(key) ?? null,
+      });
 
       console.log(
         `[CatalogCache] Loaded ${key}: ${data.length} classes in ${Date.now() - startedAt}ms`
@@ -135,12 +215,20 @@ export const getCachedCatalog = async (
   semester: string
 ): Promise<ICatalogClassItem[]> => {
   const key = `${year}:${semester}`;
-  const cached = catalogCache.get(key);
+  const hot = await getHotTerms();
 
+  // Read the entry after the await, so a refresh that finished meanwhile is
+  // seen and not started again
+  const cached = catalogCache.get(key);
   if (!cached) return loadCatalog(key, year, semester, "miss");
 
-  // Serve the stale copy while a single background load refreshes it
-  if (Date.now() - cached.loadedAt >= CACHE_TTL) {
+  cached.lastUsedAt = Date.now();
+
+  // Serve the cached copy while a single background load refreshes it after
+  // a new enrollments pull, or once the data is too old
+  const pulledAt = hot.get(key);
+  const newPull = pulledAt !== undefined && pulledAt > (cached.pulledAt ?? 0);
+  if (newPull || Date.now() - cached.loadedAt >= MAX_DATA_AGE) {
     loadCatalog(key, year, semester, "refresh").catch((error) => {
       console.error(`[CatalogCache] Refresh of ${key} failed:`, error);
     });
