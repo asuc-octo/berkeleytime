@@ -1,4 +1,4 @@
-import { FuzzySearch, parseTermName } from "@repo/common";
+import { parseTermName } from "@repo/common";
 import {
   CatalogClassModel,
   EnrollmentPullModel,
@@ -7,6 +7,11 @@ import {
 } from "@repo/common/models";
 
 import { getFormerNamesByCourseId } from "../course/controller";
+import {
+  type CatalogSearchIndex,
+  buildCatalogSearchIndex,
+  normalizeCatalogSearchQuery,
+} from "./search-index";
 
 // Hot terms are the ones the enrollments puller is updating: they stay cached
 // and reload after each new pull. Other (cold) terms are dropped once idle.
@@ -18,11 +23,14 @@ const MAX_COLD_ENTRIES = 2;
 const SWEEP_INTERVAL = 60 * 1000;
 const REFRESH_RETRY_BASE_DELAY = 30 * 1000;
 const REFRESH_RETRY_MAX_DELAY = 5 * 60 * 1000;
+const MAX_INDEX_AGE = 60 * 60 * 1000;
+const MAX_CACHED_SEARCHES = 1000;
+const MAX_CACHED_SEARCH_HITS = 1_000_000;
 
 // Only the fields catalog search reads, so each cached term stays small:
 // - result cards: fields requested by GetCatalogSearch
 //   (apps/frontend/src/lib/api/catalog.ts); keep in sync with that query
-// - fuzzy search keys and former names (getSearchIndex)
+// - fuzzy search keys and former names (search-index.ts)
 // - applyInMemoryFilters, matchesCoEHss and sortSearchResults (controller.ts)
 const CATALOG_CACHE_PROJECTION = {
   // Result cards
@@ -83,8 +91,16 @@ interface IndexCacheEntry {
   // The catalog data this index was built from; the index is stale once the
   // catalog entry holds different data
   source: ICatalogClassItem[];
-  index: Promise<FuzzySearch<ICatalogClassItem>>;
+  index: Promise<CatalogSearchIndex>;
+  builtAt: number;
 }
+
+interface SearchCacheEntry {
+  source: ICatalogClassItem[];
+  hits: ICatalogClassItem[];
+}
+
+type CatalogLoadReason = "miss" | "enrollment-refresh" | "expiration-refresh";
 
 interface RefreshRetryState {
   failures: number;
@@ -93,6 +109,9 @@ interface RefreshRetryState {
 
 const catalogCache = new Map<string, CatalogCacheEntry>();
 const indexCache = new Map<string, IndexCacheEntry>();
+// Map iteration order doubles as least-recently-used order.
+const searchCache = new Map<string, SearchCacheEntry>();
+let cachedSearchHits = 0;
 const refreshRetries = new Map<string, RefreshRetryState>();
 
 // In-flight catalog loads, so concurrent requests share one Mongo query
@@ -158,12 +177,42 @@ const getHotTerms = () => {
   return hotTerms.value;
 };
 
+const deleteSearch = (searchKey: string) => {
+  const cached = searchCache.get(searchKey);
+  if (!cached) return;
+  cachedSearchHits -= cached.hits.length;
+  searchCache.delete(searchKey);
+};
+
+const invalidateSearches = (termKey: string) => {
+  for (const searchKey of searchCache.keys()) {
+    if (searchKey.startsWith(`${termKey}:`)) deleteSearch(searchKey);
+  }
+};
+
 const removeEntry = (key: string, reason: "idle" | "lru") => {
   catalogCache.delete(key);
   indexCache.delete(key);
+  invalidateSearches(key);
   refreshRetries.delete(key);
   console.log(`[CatalogCache] Evicted ${key} (${reason})`);
 };
+
+const hasSameCatalogOrder = (
+  previous: ICatalogClassItem[],
+  next: ICatalogClassItem[]
+) =>
+  previous.length === next.length &&
+  previous.every((item, index) => {
+    const nextItem = next[index];
+    return (
+      item.courseId === nextItem.courseId &&
+      item.sessionId === nextItem.sessionId &&
+      item.subject === nextItem.subject &&
+      item.courseNumber === nextItem.courseNumber &&
+      item.number === nextItem.number
+    );
+  });
 
 // Drop idle cold terms, then the least recently used cold terms until at most
 // maxCold remain. Hot terms are never evicted.
@@ -191,7 +240,7 @@ const loadCatalog = (
   key: string,
   year: number,
   semester: string,
-  reason: "miss" | "refresh"
+  reason: CatalogLoadReason
 ): Promise<ICatalogClassItem[]> => {
   const pending = pendingLoads.get(key);
   if (pending) return pending;
@@ -214,7 +263,15 @@ const loadCatalog = (
 
       const previous = catalogCache.get(key);
       // Evicted while refreshing; don't bring it back
-      if (reason === "refresh" && !previous) return data;
+      if (reason !== "miss" && !previous) return data;
+
+      const cachedIndex = indexCache.get(key);
+      const canReuseIndex =
+        reason === "enrollment-refresh" &&
+        previous !== undefined &&
+        cachedIndex?.source === previous.data &&
+        Date.now() - cachedIndex.builtAt < MAX_INDEX_AGE &&
+        hasSameCatalogOrder(previous.data, data);
 
       const now = Date.now();
       catalogCache.set(key, {
@@ -223,8 +280,17 @@ const loadCatalog = (
         lastUsedAt: previous?.lastUsedAt ?? now,
         catalogUpdatedAt: hot.get(key) ?? 0,
       });
-      // Delete the existing index which references previous catalog array.
-      indexCache.delete(key);
+      // Enrollment refreshes only change fields such as seat counts. Reuse the
+      // expensive search index when its refIndexes still line up with the new
+      // catalog array; searches map those indexes to the fresh objects below.
+      // Rebuild it at least hourly so unrelated title/description changes do
+      // not remain invisible while enrollment refreshes keep arriving.
+      if (canReuseIndex && cachedIndex) {
+        cachedIndex.source = data;
+      } else {
+        indexCache.delete(key);
+      }
+      invalidateSearches(key);
       refreshRetries.delete(key);
 
       // Concurrent cold misses can all pass the pre-load capacity check.
@@ -236,7 +302,7 @@ const loadCatalog = (
       );
       return data;
     } catch (error) {
-      if (reason === "refresh") {
+      if (reason !== "miss") {
         const failures = (refreshRetries.get(key)?.failures ?? 0) + 1;
         const delay = Math.min(
           REFRESH_RETRY_BASE_DELAY * 2 ** (failures - 1),
@@ -286,7 +352,11 @@ export const getCachedCatalog = async (
   const retry = refreshRetries.get(key);
   if (refreshNeeded && (!retry || Date.now() >= retry.nextRetryAt)) {
     // loadCatalog records and logs refresh failures once per shared load.
-    loadCatalog(key, year, semester, "refresh").catch(() => undefined);
+    const reason: CatalogLoadReason =
+      Date.now() - cached.loadedAt >= MAX_DATA_AGE
+        ? "expiration-refresh"
+        : "enrollment-refresh";
+    loadCatalog(key, year, semester, reason).catch(() => undefined);
   }
 
   return cached.data;
@@ -294,53 +364,79 @@ export const getCachedCatalog = async (
 
 const buildSearchIndex = async (data: ICatalogClassItem[]) => {
   const formerNamesByCourseId = await getFormerNamesByCourseId();
-
-  const indexedData = data.map((item) => {
-    const formerNames = formerNamesByCourseId.get(item.courseId);
-    if (!formerNames?.length) return item;
-
-    const formerNameVariants = formerNames.flatMap((name) => [
-      name,
-      name.replace(/\s+/g, ""),
-    ]);
-
-    return {
-      ...item,
-      searchableNames: [...(item.searchableNames ?? []), ...formerNameVariants],
-    };
-  });
-
-  return new FuzzySearch<ICatalogClassItem>(indexedData, {
-    keys: [
-      { name: "searchableNames", weight: 10 },
-      { name: "courseTitle", weight: 2 },
-      { name: "courseDescription", weight: 0.5 },
-    ],
-    threshold: 0.6,
-    includeScore: true,
-  });
+  return buildCatalogSearchIndex(data, formerNamesByCourseId);
 };
 
-export const getSearchIndex = async (
-  year: number,
-  semester: string
-): Promise<FuzzySearch<ICatalogClassItem>> => {
-  const key = `${year}:${semester}`;
-  const data = await getCachedCatalog(year, semester);
-
-  // Reuse the index (or the in-progress build) for this exact catalog data
+const getSearchIndexForData = (
+  key: string,
+  data: ICatalogClassItem[]
+): Promise<CatalogSearchIndex> => {
   const cached = indexCache.get(key);
   if (cached && cached.source === data) return cached.index;
 
   const index = buildSearchIndex(data);
 
-  // Only cache it if this data is still the cached catalog for the term
+  // Only cache it if this data is still the cached catalog for the term.
   if (catalogCache.get(key)?.data === data) {
-    indexCache.set(key, { source: data, index });
+    indexCache.set(key, { source: data, index, builtAt: Date.now() });
     index.catch(() => {
       if (indexCache.get(key)?.index === index) indexCache.delete(key);
     });
   }
 
   return index;
+};
+
+/**
+ * Ranked fuzzy-search hits before filtering, sorting, and pagination.
+ * The returned array is shared between callers and must not be mutated.
+ */
+export const searchCatalog = async (
+  year: number,
+  semester: string,
+  query: string
+): Promise<ICatalogClassItem[]> => {
+  const termKey = `${year}:${semester}`;
+  const data = await getCachedCatalog(year, semester);
+  const normalizedQuery = normalizeCatalogSearchQuery(query);
+  const searchKey = `${termKey}:${normalizedQuery}`;
+
+  const cached = searchCache.get(searchKey);
+  if (cached?.source === data) {
+    searchCache.delete(searchKey);
+    searchCache.set(searchKey, cached);
+    return cached.hits;
+  }
+  if (cached) deleteSearch(searchKey);
+
+  const index = await getSearchIndexForData(termKey, data);
+  // The index may have been preserved across an enrollment-only refresh. Its
+  // refIndexes are stable, while `data` contains the current enrollment fields.
+  const hits = index
+    .search(normalizedQuery)
+    .map((result) => data[result.refIndex]);
+
+  // Don't let a search that overlapped a refresh cache stale results.
+  if (
+    catalogCache.get(termKey)?.data === data &&
+    hits.length <= MAX_CACHED_SEARCH_HITS
+  ) {
+    // Another request may have cached this query while the index was building.
+    // Replace it without double-counting its hits.
+    deleteSearch(searchKey);
+    searchCache.set(searchKey, { source: data, hits });
+    cachedSearchHits += hits.length;
+
+    for (const oldestKey of searchCache.keys()) {
+      if (
+        searchCache.size <= MAX_CACHED_SEARCHES &&
+        cachedSearchHits <= MAX_CACHED_SEARCH_HITS
+      ) {
+        break;
+      }
+      deleteSearch(oldestKey);
+    }
+  }
+
+  return hits;
 };
