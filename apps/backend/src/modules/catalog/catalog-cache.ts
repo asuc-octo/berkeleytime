@@ -16,6 +16,8 @@ const MAX_DATA_AGE = 60 * 60 * 1000; // fallback refresh if the puller stops
 const COLD_IDLE_TTL = 10 * 60 * 1000;
 const MAX_COLD_ENTRIES = 2;
 const SWEEP_INTERVAL = 60 * 1000;
+const REFRESH_RETRY_BASE_DELAY = 30 * 1000;
+const REFRESH_RETRY_MAX_DELAY = 5 * 60 * 1000;
 
 // Only the fields catalog search reads, so each cached term stays small:
 // - result cards: fields requested by GetCatalogSearch
@@ -84,8 +86,14 @@ interface IndexCacheEntry {
   index: Promise<FuzzySearch<ICatalogClassItem>>;
 }
 
+interface RefreshRetryState {
+  failures: number;
+  nextRetryAt: number;
+}
+
 const catalogCache = new Map<string, CatalogCacheEntry>();
 const indexCache = new Map<string, IndexCacheEntry>();
+const refreshRetries = new Map<string, RefreshRetryState>();
 
 // In-flight catalog loads, so concurrent requests share one Mongo query
 // instead of each loading the whole term
@@ -153,6 +161,7 @@ const getHotTerms = () => {
 const removeEntry = (key: string, reason: "idle" | "lru") => {
   catalogCache.delete(key);
   indexCache.delete(key);
+  refreshRetries.delete(key);
   console.log(`[CatalogCache] Evicted ${key} (${reason})`);
 };
 
@@ -214,11 +223,29 @@ const loadCatalog = (
         lastUsedAt: previous?.lastUsedAt ?? now,
         catalogUpdatedAt: hot.get(key) ?? 0,
       });
+      refreshRetries.delete(key);
 
       console.log(
         `[CatalogCache] Loaded ${key}: ${data.length} classes in ${Date.now() - startedAt}ms`
       );
       return data;
+    } catch (error) {
+      if (reason === "refresh") {
+        const failures = (refreshRetries.get(key)?.failures ?? 0) + 1;
+        const delay = Math.min(
+          REFRESH_RETRY_BASE_DELAY * 2 ** (failures - 1),
+          REFRESH_RETRY_MAX_DELAY
+        );
+        refreshRetries.set(key, {
+          failures,
+          nextRetryAt: Date.now() + delay,
+        });
+        console.error(
+          `[CatalogCache] Refresh of ${key} failed; retrying in ${delay}ms:`,
+          error
+        );
+      }
+      throw error;
     } finally {
       pendingLoads.delete(key);
     }
@@ -248,10 +275,12 @@ export const getCachedCatalog = async (
   const catalogChanged =
     catalogUpdatedAt !== undefined &&
     catalogUpdatedAt > cached.catalogUpdatedAt;
-  if (catalogChanged || Date.now() - cached.loadedAt >= MAX_DATA_AGE) {
-    loadCatalog(key, year, semester, "refresh").catch((error) => {
-      console.error(`[CatalogCache] Refresh of ${key} failed:`, error);
-    });
+  const refreshNeeded =
+    catalogChanged || Date.now() - cached.loadedAt >= MAX_DATA_AGE;
+  const retry = refreshRetries.get(key);
+  if (refreshNeeded && (!retry || Date.now() >= retry.nextRetryAt)) {
+    // loadCatalog records and logs refresh failures once per shared load.
+    loadCatalog(key, year, semester, "refresh").catch(() => undefined);
   }
 
   return cached.data;
