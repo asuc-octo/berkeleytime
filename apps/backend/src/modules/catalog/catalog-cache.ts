@@ -11,8 +11,19 @@ interface CatalogCacheEntry {
   loadedAt: number;
 }
 
+interface IndexCacheEntry {
+  // The catalog data this index was built from; the index is stale once the
+  // catalog entry holds different data
+  source: ICatalogClassItem[];
+  index: Promise<FuzzySearch<ICatalogClassItem>>;
+}
+
 const catalogCache = new Map<string, CatalogCacheEntry>();
-const indexCache = new Map<string, FuzzySearch<ICatalogClassItem>>();
+const indexCache = new Map<string, IndexCacheEntry>();
+
+// In-flight catalog loads, so concurrent requests share one Mongo query
+// instead of each loading the whole term
+const pendingLoads = new Map<string, Promise<ICatalogClassItem[]>>();
 
 const evictOldest = () => {
   if (catalogCache.size <= MAX_CACHE_ENTRIES) return;
@@ -33,46 +44,61 @@ const evictOldest = () => {
   }
 };
 
+const loadCatalog = (
+  key: string,
+  year: number,
+  semester: string,
+  reason: "miss" | "refresh"
+): Promise<ICatalogClassItem[]> => {
+  const pending = pendingLoads.get(key);
+  if (pending) return pending;
+
+  const startedAt = Date.now();
+  console.log(`[CatalogCache] Loading ${key} (${reason})`);
+
+  const load = (async () => {
+    try {
+      const data = (await CatalogClassModel.find({
+        year,
+        semester,
+      }).lean()) as ICatalogClassItem[];
+
+      catalogCache.set(key, { data, loadedAt: Date.now() });
+      evictOldest();
+
+      console.log(
+        `[CatalogCache] Loaded ${key}: ${data.length} classes in ${Date.now() - startedAt}ms`
+      );
+      return data;
+    } finally {
+      pendingLoads.delete(key);
+    }
+  })();
+
+  pendingLoads.set(key, load);
+  return load;
+};
+
 export const getCachedCatalog = async (
   year: number,
   semester: string
 ): Promise<ICatalogClassItem[]> => {
   const key = `${year}:${semester}`;
   const cached = catalogCache.get(key);
-  const now = Date.now();
 
-  if (cached && now - cached.loadedAt < CACHE_TTL) {
-    return cached.data;
+  if (!cached) return loadCatalog(key, year, semester, "miss");
+
+  // Serve the stale copy while a single background load refreshes it
+  if (Date.now() - cached.loadedAt >= CACHE_TTL) {
+    loadCatalog(key, year, semester, "refresh").catch((error) => {
+      console.error(`[CatalogCache] Refresh of ${key} failed:`, error);
+    });
   }
 
-  // Clear stale index when catalog is refreshed
-  indexCache.delete(key);
-
-  const data = await CatalogClassModel.find({ year, semester }).lean();
-  catalogCache.set(key, { data: data as ICatalogClassItem[], loadedAt: now });
-  evictOldest();
-
-  return data as ICatalogClassItem[];
+  return cached.data;
 };
 
-export const getSearchIndex = async (
-  year: number,
-  semester: string
-): Promise<FuzzySearch<ICatalogClassItem>> => {
-  const key = `${year}:${semester}`;
-  const cached = indexCache.get(key);
-
-  // Index is valid as long as the underlying catalog is still cached and fresh
-  const catalogEntry = catalogCache.get(key);
-  if (
-    cached &&
-    catalogEntry &&
-    Date.now() - catalogEntry.loadedAt < CACHE_TTL
-  ) {
-    return cached;
-  }
-
-  const data = await getCachedCatalog(year, semester);
+const buildSearchIndex = async (data: ICatalogClassItem[]) => {
   const formerNamesByCourseId = await getFormerNamesByCourseId();
 
   const indexedData = data.map((item) => {
@@ -90,7 +116,7 @@ export const getSearchIndex = async (
     };
   });
 
-  const index = new FuzzySearch<ICatalogClassItem>(indexedData, {
+  return new FuzzySearch<ICatalogClassItem>(indexedData, {
     keys: [
       { name: "searchableNames", weight: 10 },
       { name: "courseTitle", weight: 2 },
@@ -99,7 +125,28 @@ export const getSearchIndex = async (
     threshold: 0.6,
     includeScore: true,
   });
+};
 
-  indexCache.set(key, index);
+export const getSearchIndex = async (
+  year: number,
+  semester: string
+): Promise<FuzzySearch<ICatalogClassItem>> => {
+  const key = `${year}:${semester}`;
+  const data = await getCachedCatalog(year, semester);
+
+  // Reuse the index (or the in-progress build) for this exact catalog data
+  const cached = indexCache.get(key);
+  if (cached && cached.source === data) return cached.index;
+
+  const index = buildSearchIndex(data);
+
+  // Only cache it if this data is still the cached catalog for the term
+  if (catalogCache.get(key)?.data === data) {
+    indexCache.set(key, { source: data, index });
+    index.catch(() => {
+      if (indexCache.get(key)?.index === index) indexCache.delete(key);
+    });
+  }
+
   return index;
 };
