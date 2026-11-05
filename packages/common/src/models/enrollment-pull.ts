@@ -14,6 +14,12 @@ export const enrollmentPullSchema = new Schema(
       type: Date,
       required: true,
     },
+    // Updated only after enrollment fields have been successfully written to
+    // catalog_classes. Catalog caches use this instead of lastPulledAt for
+    // pull-triggered refreshes.
+    catalogUpdatedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
