@@ -9,34 +9,34 @@
 .content {
   display: flex;
   flex-direction: column;
-  padding-top: 48px;
-  gap: 48px;
+  padding-top: var(--space-8);
+  gap: var(--space-8);
 
   @media (max-width: 1000px) {
-    padding-top: 16px;
-    gap: 16px;
+    padding-top: var(--space-4);
+    gap: var(--space-4);
   }
 }
 
 .chartAndDataBoard {
   display: flex;
   align-items: flex-start;
-  gap: 48px;
+  gap: var(--space-8);
   flex-wrap: nowrap;
 
   @media (max-width: 1000px) {
     flex-direction: column;
     align-items: stretch;
-    gap: 16px;
+    gap: var(--space-4);
   }
 }
 
 .bottomComponent {
   width: 100%;
-  padding-left: 64px;
+  padding-left: var(--space-9);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .bottomTitle {
@@ -68,7 +68,7 @@
   width: clamp(260px, 24vw, 360px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
   max-height: none;
   overflow: visible;
   align-self: flex-start;
@@ -80,7 +80,7 @@
     flex: none;
     min-width: 0;
     max-width: none;
-    padding-left: 64px;
+    padding-left: var(--space-9);
   }
 }
 

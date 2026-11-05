@@ -23,30 +23,30 @@
   }
 
   h2 {
-    font-size: 1rem;
+    font-size: var(--text-16);
     line-height: 1.5rem;
   }
   p {
-    font-size: 0.875rem;
+    font-size: var(--text-14);
   }
 
   .headerContainer {
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 1rem;
-    gap: 1rem;
+    padding: var(--space-5) var(--space-4);
+    gap: var(--space-4);
 
     &:first-child {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 0.75rem;
+      padding-bottom: var(--space-3);
       border-bottom: 1px solid var(--border-color);
     }
 
     .header {
-      font-size: 1.25rem;
-      font-weight: 600;
+      font-size: var(--text-20);
+      font-weight: var(--font-semibold);
       margin: 0;
       white-space: nowrap;
     }
@@ -58,7 +58,7 @@
       background: none;
       border: none;
       cursor: pointer;
-      padding: 0.25rem;
+      padding: var(--space-1);
       color: var(--heading-color);
       transition: opacity 0.2s ease;
 
@@ -75,7 +75,7 @@
     .grid {
       display: grid;
       grid-template-columns: 2fr 3fr;
-      gap: 0.75rem 1.5rem;
+      gap: var(--space-3) var(--space-5);
     }
 
     .disclaimer {
@@ -95,7 +95,7 @@
 
       .text {
         display: flex;
-        font-size: 0.75rem;
+        font-size: var(--text-12);
         font-weight: var(--font-medium);
         line-height: 1rem;
         color: #999;

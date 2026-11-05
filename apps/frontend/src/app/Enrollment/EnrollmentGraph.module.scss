@@ -25,8 +25,8 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  column-gap: 16px;
-  row-gap: 12px;
+  column-gap: var(--space-4);
+  row-gap: var(--space-3);
   flex-wrap: wrap;
   margin-bottom: 8px;
 }
@@ -34,7 +34,7 @@
 .toggleRow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .toggleRowDisabled {
@@ -58,7 +58,7 @@
   font-size: var(--text-14);
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: var(--space-4);
 }
 
 .emptyGraphMessage {
@@ -81,7 +81,7 @@
 }
 
 .tooltipLabel {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--border-color);
   font-size: var(--text-14);
   font-weight: var(--font-medium);
@@ -93,7 +93,7 @@
 .tooltipItems {
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: var(--space-3);
   gap: 10px;
   line-height: 1.5;
 }
@@ -102,14 +102,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   font-size: var(--text-14);
 }
 
 .tooltipItemLabel {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--heading-color);
   font-weight: var(--font-normal);
 }

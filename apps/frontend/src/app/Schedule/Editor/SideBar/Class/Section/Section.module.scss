@@ -1,7 +1,7 @@
 .root {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   cursor: pointer;
 
   &:hover:not(.blocked):not(.noHover) .title {

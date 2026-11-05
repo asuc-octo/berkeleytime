@@ -1,6 +1,6 @@
 .trigger {
   display: flex;
-  gap: 4px;
+  gap: var(--space-1);
   align-items: center;
   color: var(--label-color);
   font-size: var(--text-14);
