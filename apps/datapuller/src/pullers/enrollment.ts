@@ -447,6 +447,13 @@ const updateEnrollmentHistories = async (config: Config) => {
 
     if (termEnrollments.size > 0) {
       await updateCatalogEnrollment(log, year, semester, termEnrollments);
+
+      // Set catalogUpdatedAt after every catalog update for this term
+      // has completed.
+      await EnrollmentPullModel.updateOne(
+        { termId: term.id },
+        { $set: { catalogUpdatedAt: new Date() } }
+      );
     }
   }
   log.info("Completed catalog cache warming.");
