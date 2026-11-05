@@ -93,6 +93,7 @@ const pendingLoads = new Map<string, Promise<ICatalogClassItem[]>>();
 
 let hotTerms: { value: Promise<Map<string, number>>; loadedAt: number } | null =
   null;
+let lastKnownHotTerms: Map<string, number> | null = null;
 
 const loadHotTerms = async () => {
   const pulls = await EnrollmentPullModel.find({
@@ -122,15 +123,28 @@ const loadHotTerms = async () => {
 
 // Terms are hot when lastPulledAt is recent; each value carries the completed
 // catalog-update timestamp used to trigger a safe refresh. Never rejects: if
-// the lookup fails, every term is treated as cold until the next check.
+// the lookup fails, preserve the last known hot terms instead of evicting them.
 const getHotTerms = () => {
   if (!hotTerms || Date.now() - hotTerms.loadedAt >= HOT_TERMS_TTL) {
     hotTerms = {
       loadedAt: Date.now(),
-      value: loadHotTerms().catch((error) => {
-        console.error("[CatalogCache] Failed to load hot terms:", error);
-        return new Map<string, number>();
-      }),
+      value: loadHotTerms()
+        .then((loaded) => {
+          lastKnownHotTerms = loaded;
+          return loaded;
+        })
+        .catch((error) => {
+          console.error("[CatalogCache] Failed to load hot terms:", error);
+          if (lastKnownHotTerms) return lastKnownHotTerms;
+
+          // Before the first successful lookup, conservatively retain existing
+          // entries.
+          return new Map(
+            [...catalogCache].map(
+              ([key, entry]) => [key, entry.catalogUpdatedAt] as const
+            )
+          );
+        }),
     };
   }
   return hotTerms.value;
