@@ -73,8 +73,8 @@ interface CatalogCacheEntry {
   data: ICatalogClassItem[];
   loadedAt: number;
   lastUsedAt: number;
-  // The term's lastPulledAt when this data was loaded, if the term was hot
-  pulledAt: number | null;
+  // The term's catalogUpdatedAt when this data was loaded, or 0 if unavailable
+  catalogUpdatedAt: number;
 }
 
 interface IndexCacheEntry {
@@ -111,14 +111,18 @@ const loadHotTerms = async () => {
   for (const pull of pulls) {
     const term = parseTermName(nameById.get(pull.termId) ?? "");
     if (term) {
-      result.set(`${term.year}:${term.semester}`, pull.lastPulledAt.getTime());
+      result.set(
+        `${term.year}:${term.semester}`,
+        pull.catalogUpdatedAt?.getTime() ?? 0
+      );
     }
   }
   return result;
 };
 
-// "year:semester" -> lastPulledAt for each hot term. Never rejects: if the
-// lookup fails, every term is treated as cold until the next check.
+// Terms are hot when lastPulledAt is recent; each value carries the completed
+// catalog-update timestamp used to trigger a safe refresh. Never rejects: if
+// the lookup fails, every term is treated as cold until the next check.
 const getHotTerms = () => {
   if (!hotTerms || Date.now() - hotTerms.loadedAt >= HOT_TERMS_TTL) {
     hotTerms = {
@@ -194,7 +198,7 @@ const loadCatalog = (
         data,
         loadedAt: now,
         lastUsedAt: previous?.lastUsedAt ?? now,
-        pulledAt: hot.get(key) ?? null,
+        catalogUpdatedAt: hot.get(key) ?? 0,
       });
 
       console.log(
@@ -225,10 +229,12 @@ export const getCachedCatalog = async (
   cached.lastUsedAt = Date.now();
 
   // Serve the cached copy while a single background load refreshes it after
-  // a new enrollments pull, or once the data is too old
-  const pulledAt = hot.get(key);
-  const newPull = pulledAt !== undefined && pulledAt > (cached.pulledAt ?? 0);
-  if (newPull || Date.now() - cached.loadedAt >= MAX_DATA_AGE) {
+  // catalog denormalization completes, or once the data is too old.
+  const catalogUpdatedAt = hot.get(key);
+  const catalogChanged =
+    catalogUpdatedAt !== undefined &&
+    catalogUpdatedAt > cached.catalogUpdatedAt;
+  if (catalogChanged || Date.now() - cached.loadedAt >= MAX_DATA_AGE) {
     loadCatalog(key, year, semester, "refresh").catch((error) => {
       console.error(`[CatalogCache] Refresh of ${key} failed:`, error);
     });
