@@ -20,6 +20,58 @@ const MAX_CACHED_TERMS = 5;
 const MAX_CACHED_SEARCHES = 1000;
 const MAX_CACHED_SEARCH_HITS = 1_000_000;
 
+// Only the fields catalog search reads, so each cached term stays small:
+// - result cards: fields requested by GetCatalogSearch
+//   (apps/frontend/src/lib/api/catalog.ts); keep in sync with that query
+// - fuzzy search keys and former names (search-index.ts)
+// - applyInMemoryFilters, matchesCoEHss and sortSearchResults (controller.ts)
+const CATALOG_CACHE_PROJECTION = {
+  // Result cards
+  year: 1,
+  semester: 1,
+  sessionId: 1,
+  subject: 1,
+  courseNumber: 1,
+  number: 1,
+  title: 1,
+  unitsMin: 1,
+  unitsMax: 1,
+  courseTitle: 1,
+  allTimeAverageGrade: 1,
+  allTimePassCount: 1,
+  allTimeNoPassCount: 1,
+  enrolledCount: 1,
+  maxEnroll: 1,
+  activeReservedMaxCount: 1,
+  "aggregatedRatings.metrics": 1,
+  "decal.title": 1,
+  "meetings.days": 1,
+  "meetings.startTime": 1,
+  "meetings.endTime": 1,
+
+  // Search
+  courseId: 1,
+  searchableNames: 1,
+  courseDescription: 1,
+
+  // Filters and sorting
+  level: 1,
+  academicOrganization: 1,
+  gradingBasis: 1,
+  primaryOnline: 1,
+  breadthRequirements: 1,
+  universityRequirements: 1,
+  "sectionAttributes.attribute.code": 1,
+  "sectionAttributes.value.code": 1,
+  meetingDays: 1,
+  meetingStartMinutes: 1,
+  meetingEndMinutes: 1,
+  enrollmentStatus: 1,
+  waitlistedCount: 1,
+  maxWaitlist: 1,
+  openSeats: 1,
+};
+
 interface TermEntry {
   data: ICatalogClassItem[];
   formerNamesByCourseId: Map<string, string[]>;
@@ -44,10 +96,9 @@ interface CatalogCacheDeps {
 
 const defaultDeps: CatalogCacheDeps = {
   loadCatalog: async (year, semester) =>
-    (await CatalogClassModel.find({
-      year,
-      semester,
-    }).lean()) as ICatalogClassItem[],
+    (await CatalogClassModel.find({ year, semester })
+      .select(CATALOG_CACHE_PROJECTION)
+      .lean()) as ICatalogClassItem[],
   loadFormerNames: getFormerNamesByCourseId,
   now: Date.now,
   onRefreshError: (key, error) =>
