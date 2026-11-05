@@ -36,10 +36,10 @@ export const CATALOG_SEARCH_OPTIONS = {
 
 export type CatalogSearchIndex = FuzzySearch<ICatalogClassItem>;
 
-export const buildCatalogSearchIndex = (
+export const buildCatalogSearchIndex = async (
   data: ICatalogClassItem[],
   formerNamesByCourseId: Map<string, string[]>
-): CatalogSearchIndex => {
+): Promise<CatalogSearchIndex> => {
   const indexedData = data.map((item) => {
     const formerNames = formerNamesByCourseId.get(item.courseId);
     if (!formerNames?.length) return item;
@@ -55,7 +55,7 @@ export const buildCatalogSearchIndex = (
     };
   });
 
-  return new FuzzySearch<ICatalogClassItem>(
+  return FuzzySearch.createAsync<ICatalogClassItem>(
     indexedData,
     CATALOG_SEARCH_OPTIONS
   );

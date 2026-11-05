@@ -359,6 +359,13 @@ interface KeyRange {
   end: number;
 }
 
+interface NormalizedSearchKey {
+  path: string[];
+  weight: number;
+  match: "fuzzy" | "fuzzyWords" | "word";
+  allWords: boolean;
+}
+
 export class FuzzySearch<T> {
   private list: T[];
   private threshold: number;
@@ -370,19 +377,41 @@ export class FuzzySearch<T> {
   // doesn't affect search results.
   private ranges: KeyRange[] = [];
   private targets: Prepared[] = [];
-  private targetItems: Int32Array;
+  private targetItems = new Int32Array();
   private targetWordStarts: (Uint8Array | null)[] = [];
   private bestScores: Float64Array;
 
-  constructor(list: T[], options: FuzzySearchOptions = {}) {
+  constructor(list: T[], options: FuzzySearchOptions = {}, deferBuild = false) {
     this.list = list;
     this.threshold = options.threshold ?? 0.3;
     this.includeScore = options.includeScore ?? false;
     this.minScore = options.minScore ?? 0;
+    this.bestScores = new Float64Array(list.length);
 
+    if (!deferBuild) this.buildTargets(this.normalizeKeys(options));
+  }
+
+  /**
+   * Build a search index without monopolizing the event loop. The regular
+   * constructor remains synchronous for small client-side indexes.
+   */
+  static async createAsync<T>(
+    list: T[],
+    options: FuzzySearchOptions = {},
+    yieldEvery = 250
+  ): Promise<FuzzySearch<T>> {
+    const search = new FuzzySearch<T>(list, options, true);
+    await search.buildTargetsAsync(
+      search.normalizeKeys(options),
+      Math.max(1, yieldEvery)
+    );
+    return search;
+  }
+
+  private normalizeKeys(options: FuzzySearchOptions): NormalizedSearchKey[] {
     // Normalize keys. Highest weight first, so that lower-weight keys can be
     // skipped for items whose score they can no longer beat.
-    const keys = (options.keys || [])
+    return (options.keys || [])
       .map((key) => (typeof key === "string" ? { name: key, weight: 1 } : key))
       .map((key) => ({
         path: key.name.split("."),
@@ -391,33 +420,42 @@ export class FuzzySearch<T> {
         allWords: key.allWords ?? false,
       }))
       .sort((a, b) => b.weight - a.weight);
+  }
 
+  private addTarget(
+    itemIndex: number,
+    value: unknown,
+    key: NormalizedSearchKey,
+    targetItems: number[]
+  ) {
+    const prepared = prepare(String(value));
+    if (prepared.noSpaces === "") return;
+
+    this.targets.push(prepared);
+    targetItems.push(itemIndex);
+    this.targetWordStarts.push(
+      key.match === "word" || key.allWords
+        ? computeWordStarts(prepared.lower, prepared.noSpaces.length)
+        : null
+    );
+  }
+
+  private buildTargets(keys: NormalizedSearchKey[]) {
     const targetItems: number[] = [];
 
     for (const key of keys) {
       const start = this.targets.length;
 
-      const add = (itemIndex: number, value: unknown) => {
-        const prepared = prepare(String(value));
-        if (prepared.noSpaces === "") return; // never matches
-
-        this.targets.push(prepared);
-        targetItems.push(itemIndex);
-        this.targetWordStarts.push(
-          key.match === "word" || key.allWords
-            ? computeWordStarts(prepared.lower, prepared.noSpaces.length)
-            : null
-        );
-      };
-
-      list.forEach((item, itemIndex) => {
+      this.list.forEach((item, itemIndex) => {
         const value = this.getValueByPath(item, key.path);
 
         if (Array.isArray(value)) {
           // Handle array fields (like alternateNames)
-          for (const arrayItem of value) add(itemIndex, arrayItem);
+          for (const arrayItem of value) {
+            this.addTarget(itemIndex, arrayItem, key, targetItems);
+          }
         } else if (value != null) {
-          add(itemIndex, value);
+          this.addTarget(itemIndex, value, key, targetItems);
         }
       });
 
@@ -431,7 +469,45 @@ export class FuzzySearch<T> {
     }
 
     this.targetItems = Int32Array.from(targetItems);
-    this.bestScores = new Float64Array(list.length);
+  }
+
+  private async buildTargetsAsync(
+    keys: NormalizedSearchKey[],
+    yieldEvery: number
+  ) {
+    const targetItems: number[] = [];
+    let processedItems = 0;
+
+    for (const key of keys) {
+      const start = this.targets.length;
+
+      for (let itemIndex = 0; itemIndex < this.list.length; itemIndex++) {
+        const value = this.getValueByPath(this.list[itemIndex], key.path);
+
+        if (Array.isArray(value)) {
+          for (const arrayItem of value) {
+            this.addTarget(itemIndex, arrayItem, key, targetItems);
+          }
+        } else if (value != null) {
+          this.addTarget(itemIndex, value, key, targetItems);
+        }
+
+        processedItems++;
+        if (processedItems % yieldEvery === 0) {
+          await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        }
+      }
+
+      this.ranges.push({
+        weight: key.weight,
+        match: key.match,
+        allWords: key.allWords,
+        start,
+        end: this.targets.length,
+      });
+    }
+
+    this.targetItems = Int32Array.from(targetItems);
   }
 
   search(query: string): FuzzySearchResult<T>[] {

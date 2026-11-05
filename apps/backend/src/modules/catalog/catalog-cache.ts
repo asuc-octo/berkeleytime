@@ -23,6 +23,7 @@ const MAX_COLD_ENTRIES = 2;
 const SWEEP_INTERVAL = 60 * 1000;
 const REFRESH_RETRY_BASE_DELAY = 30 * 1000;
 const REFRESH_RETRY_MAX_DELAY = 5 * 60 * 1000;
+const MAX_INDEX_AGE = 60 * 60 * 1000;
 const MAX_CACHED_SEARCHES = 1000;
 const MAX_CACHED_SEARCH_HITS = 1_000_000;
 
@@ -91,12 +92,15 @@ interface IndexCacheEntry {
   // catalog entry holds different data
   source: ICatalogClassItem[];
   index: Promise<CatalogSearchIndex>;
+  builtAt: number;
 }
 
 interface SearchCacheEntry {
   source: ICatalogClassItem[];
   hits: ICatalogClassItem[];
 }
+
+type CatalogLoadReason = "miss" | "enrollment-refresh" | "expiration-refresh";
 
 interface RefreshRetryState {
   failures: number;
@@ -194,6 +198,22 @@ const removeEntry = (key: string, reason: "idle" | "lru") => {
   console.log(`[CatalogCache] Evicted ${key} (${reason})`);
 };
 
+const hasSameCatalogOrder = (
+  previous: ICatalogClassItem[],
+  next: ICatalogClassItem[]
+) =>
+  previous.length === next.length &&
+  previous.every((item, index) => {
+    const nextItem = next[index];
+    return (
+      item.courseId === nextItem.courseId &&
+      item.sessionId === nextItem.sessionId &&
+      item.subject === nextItem.subject &&
+      item.courseNumber === nextItem.courseNumber &&
+      item.number === nextItem.number
+    );
+  });
+
 // Drop idle cold terms, then the least recently used cold terms until at most
 // maxCold remain. Hot terms are never evicted.
 const evictColdEntries = (hot: Map<string, number>, maxCold: number) => {
@@ -220,7 +240,7 @@ const loadCatalog = (
   key: string,
   year: number,
   semester: string,
-  reason: "miss" | "refresh"
+  reason: CatalogLoadReason
 ): Promise<ICatalogClassItem[]> => {
   const pending = pendingLoads.get(key);
   if (pending) return pending;
@@ -243,7 +263,15 @@ const loadCatalog = (
 
       const previous = catalogCache.get(key);
       // Evicted while refreshing; don't bring it back
-      if (reason === "refresh" && !previous) return data;
+      if (reason !== "miss" && !previous) return data;
+
+      const cachedIndex = indexCache.get(key);
+      const canReuseIndex =
+        reason === "enrollment-refresh" &&
+        previous !== undefined &&
+        cachedIndex?.source === previous.data &&
+        Date.now() - cachedIndex.builtAt < MAX_INDEX_AGE &&
+        hasSameCatalogOrder(previous.data, data);
 
       const now = Date.now();
       catalogCache.set(key, {
@@ -252,8 +280,16 @@ const loadCatalog = (
         lastUsedAt: previous?.lastUsedAt ?? now,
         catalogUpdatedAt: hot.get(key) ?? 0,
       });
-      // Delete the existing index which references previous catalog array.
-      indexCache.delete(key);
+      // Enrollment refreshes only change fields such as seat counts. Reuse the
+      // expensive search index when its refIndexes still line up with the new
+      // catalog array; searches map those indexes to the fresh objects below.
+      // Rebuild it at least hourly so unrelated title/description changes do
+      // not remain invisible while enrollment refreshes keep arriving.
+      if (canReuseIndex && cachedIndex) {
+        cachedIndex.source = data;
+      } else {
+        indexCache.delete(key);
+      }
       invalidateSearches(key);
       refreshRetries.delete(key);
 
@@ -266,7 +302,7 @@ const loadCatalog = (
       );
       return data;
     } catch (error) {
-      if (reason === "refresh") {
+      if (reason !== "miss") {
         const failures = (refreshRetries.get(key)?.failures ?? 0) + 1;
         const delay = Math.min(
           REFRESH_RETRY_BASE_DELAY * 2 ** (failures - 1),
@@ -316,7 +352,11 @@ export const getCachedCatalog = async (
   const retry = refreshRetries.get(key);
   if (refreshNeeded && (!retry || Date.now() >= retry.nextRetryAt)) {
     // loadCatalog records and logs refresh failures once per shared load.
-    loadCatalog(key, year, semester, "refresh").catch(() => undefined);
+    const reason: CatalogLoadReason =
+      Date.now() - cached.loadedAt >= MAX_DATA_AGE
+        ? "expiration-refresh"
+        : "enrollment-refresh";
+    loadCatalog(key, year, semester, reason).catch(() => undefined);
   }
 
   return cached.data;
@@ -338,23 +378,13 @@ const getSearchIndexForData = (
 
   // Only cache it if this data is still the cached catalog for the term.
   if (catalogCache.get(key)?.data === data) {
-    indexCache.set(key, { source: data, index });
+    indexCache.set(key, { source: data, index, builtAt: Date.now() });
     index.catch(() => {
       if (indexCache.get(key)?.index === index) indexCache.delete(key);
     });
   }
 
   return index;
-};
-
-export const getSearchIndex = async (
-  year: number,
-  semester: string
-): Promise<CatalogSearchIndex> => {
-  const key = `${year}:${semester}`;
-  const data = await getCachedCatalog(year, semester);
-
-  return getSearchIndexForData(key, data);
 };
 
 /**
@@ -380,7 +410,11 @@ export const searchCatalog = async (
   if (cached) deleteSearch(searchKey);
 
   const index = await getSearchIndexForData(termKey, data);
-  const hits = index.search(normalizedQuery).map((result) => result.item);
+  // The index may have been preserved across an enrollment-only refresh. Its
+  // refIndexes are stable, while `data` contains the current enrollment fields.
+  const hits = index
+    .search(normalizedQuery)
+    .map((result) => data[result.refIndex]);
 
   // Don't let a search that overlapped a refresh cache stale results.
   if (
