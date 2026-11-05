@@ -223,7 +223,13 @@ const loadCatalog = (
         lastUsedAt: previous?.lastUsedAt ?? now,
         catalogUpdatedAt: hot.get(key) ?? 0,
       });
+      // Delete the existing index which references previous catalog array.
+      indexCache.delete(key);
       refreshRetries.delete(key);
+
+      // Concurrent cold misses can all pass the pre-load capacity check.
+      // Enforce the cap again after insertion so only the most recent remain.
+      if (!hot.has(key)) evictColdEntries(hot, MAX_COLD_ENTRIES);
 
       console.log(
         `[CatalogCache] Loaded ${key}: ${data.length} classes in ${Date.now() - startedAt}ms`
