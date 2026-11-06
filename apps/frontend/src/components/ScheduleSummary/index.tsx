@@ -81,33 +81,33 @@ export interface SectionColor {
 }
 
 const getSelectedSections = (schedule?: IScheduleListSchedule) => {
-  return (
-    schedule?.classes.flatMap(({ selectedSections, class: _class, color }) =>
-      selectedSections.reduce((acc, section) => {
-        const _section =
-          _class.primarySection?.sectionId === section.sectionId
-            ? _class.primarySection
-            : _class.sections.find(
-                (currentSection) =>
-                  currentSection.sectionId === section.sectionId
-              );
+  const visibleClasses =
+    schedule?.classes.filter(({ hidden }) => !hidden) ?? [];
 
-        return _section
-          ? [
-              ...acc,
-              {
-                section: {
-                  ..._section,
-                  subject: _class.subject,
-                  courseNumber: _class.courseNumber,
-                  classNumber: _class.number,
-                },
-                color: color as Color,
+  return visibleClasses.flatMap(({ selectedSections, class: _class, color }) =>
+    selectedSections.reduce((acc, section) => {
+      const _section =
+        _class.primarySection?.sectionId === section.sectionId
+          ? _class.primarySection
+          : _class.sections.find(
+              (currentSection) => currentSection.sectionId === section.sectionId
+            );
+
+      return _section
+        ? [
+            ...acc,
+            {
+              section: {
+                ..._section,
+                subject: _class.subject,
+                courseNumber: _class.courseNumber,
+                classNumber: _class.number,
               },
-            ]
-          : acc;
-      }, [] as SectionColor[])
-    ) ?? []
+              color: color as Color,
+            },
+          ]
+        : acc;
+    }, [] as SectionColor[])
   );
 };
 
