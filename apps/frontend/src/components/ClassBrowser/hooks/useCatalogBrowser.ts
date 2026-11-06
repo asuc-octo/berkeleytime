@@ -4,7 +4,10 @@ import { useReadSchedules } from "@/hooks/api";
 import useUser from "@/hooks/useUser";
 import { ITerm } from "@/lib/api";
 import { Semester } from "@/lib/generated/graphql";
-import { classConflictsWithSchedule } from "@/lib/schedule/conflict";
+import {
+  classConflictsWithMeetings,
+  getScheduleMeetings,
+} from "@/lib/schedule/conflict";
 
 import { FilterContextType } from "../context/FilterContext";
 import { ListContextType } from "../context/ListContext";
@@ -107,21 +110,23 @@ export default function useCatalogBrowser({
     return schedule;
   }, [filterState.scheduleConflictFilter, schedules, year, semester]);
 
+  const selectedScheduleMeetings = useMemo(
+    () => (selectedSchedule ? getScheduleMeetings(selectedSchedule) : []),
+    [selectedSchedule]
+  );
+
   // Filter classes based on schedule conflicts
   const filteredClasses = useMemo(() => {
     if (!selectedSchedule) return queryResult.classes;
 
-    return queryResult.classes.filter((catalogClass) => {
-      // Get class meetings from the catalog class
-      const meetings = catalogClass.meetings ?? [];
-
-      // Classes without meetings don't conflict
-      if (meetings.length === 0) return true;
-
-      // Keep classes that DON'T conflict with the schedule
-      return !classConflictsWithSchedule(meetings, selectedSchedule);
-    });
-  }, [queryResult.classes, selectedSchedule]);
+    return queryResult.classes.filter(
+      (catalogClass) =>
+        !classConflictsWithMeetings(
+          catalogClass.meetings ?? [],
+          selectedScheduleMeetings
+        )
+    );
+  }, [queryResult.classes, selectedSchedule, selectedScheduleMeetings]);
 
   const filterContextValue: FilterContextType = useMemo(
     () => ({
