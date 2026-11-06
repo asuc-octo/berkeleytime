@@ -72,16 +72,6 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
 
   const effectiveTheme = forcedTheme ?? theme;
   const effectiveSetTheme = forcedTheme ? () => {} : setTheme;
-  // Radix tracks its own appearance separately from our data-theme attribute.
-  // Resolve it from the same inputs the effect below uses, so it never reads a
-  // stale DOM value during render. Today the frontend loads only Radix's
-  // layout.css, so this does not change any pixels; it keeps the wrapper's
-  // state truthful and correct if the colour stylesheet is ever added.
-  const resolvedTheme =
-    effectiveTheme ??
-    (window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light");
 
   return (
     <StackContext value={1000}>
@@ -97,9 +87,7 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
             value={{ theme: effectiveTheme, setTheme: effectiveSetTheme }}
           >
             {/* https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage */}
-            <Theme appearance={resolvedTheme === "dark" ? "dark" : "light"}>
-              {children}
-            </Theme>
+            <Theme>{children}</Theme>
           </ThemeContext>
         </Tooltip.Provider>
       </IconoirProvider>
