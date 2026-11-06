@@ -122,6 +122,35 @@ Use these packages rather than duplicating code across apps.
 5. **Docker**: Development uses Docker Compose. `docker compose up` will setup all services. Use the `--build` flag after significant changes, otherwise hot-reload is enabled.
 6. **Turbo**: Use `npm run dev`, `npm run build`, etc. from root (Turbo handles orchestration)
 
+## Pull Requests and Linear Tickets
+
+Every pull request must link to a Linear ticket. No ticket means no pull request.
+
+The ticket is the durable record of reasoning. Pull request discussion is not durable. Write the ticket for the next person, who joins with no context.
+
+**The ticket must contain:**
+- The problem, in the user's words
+- What the change does
+- Why you chose this approach, and which alternatives you rejected
+- Known limits, and scope you deliberately left out
+
+**Keep these out of the ticket:**
+- A restatement of the diff
+- Review comments and replies
+- Anything that goes stale
+
+Describe behavior and intent. Do not record the edit history.
+
+**How to link:**
+- You create the ticket. Use the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`.
+- Reuse an existing ticket when one already covers the change.
+- Put the identifier and URL in the pull request body, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
+- Put the identifier in the branch name when practical, for example `fix/BER-95-catalog-sort`.
+
+**The test:** a new reader must explain why the change exists. Ask this reader to read only the ticket. If the reader cannot explain it, the ticket is not finished.
+
+Example: [BER-95](https://linear.app/berkeleytime/issue/BER-95) explains why a bug fix and a speed change were one line of code. A diff cannot show that reasoning.
+
 ## Important Notes
 
 - **Generated Code**: Never edit `generated-types/`, `generated-typedefs/`, or `generated/` directories
