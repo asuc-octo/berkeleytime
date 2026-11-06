@@ -18,6 +18,7 @@ import { Button, IconButton, Input, MenuItem, Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Editor/Week";
 import { useUpdateSchedule } from "@/hooks/api";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useSchedule from "@/hooks/useSchedule";
 import { IScheduleClass, IScheduleEvent } from "@/lib/api";
 import { Color, Component, GetClassDocument } from "@/lib/generated/graphql";
@@ -44,6 +45,7 @@ export default function Editor() {
 
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
+  const { trackEvent } = useTracking();
 
   const [expanded, setExpanded] = useState<boolean[]>([]);
   const [currentSection, setCurrentSection] = useState<SectionColor | null>(
@@ -1211,7 +1213,16 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
-        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            trackEvent("schedule_exported", "schedule", schedule._id, {
+              year: schedule.year,
+              semester: schedule.semester,
+            });
+            exportToCalendar(schedule);
+          }}
+        >
           <Upload />
           Export
         </Button>
