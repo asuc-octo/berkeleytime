@@ -95,22 +95,14 @@ export const getScheduleMeetings = (
 };
 
 /**
- * Check if a class's meetings conflict with any meetings in a schedule.
- * Returns true if there is at least one conflict.
- *
- * @param classMeetings - The meetings from the catalog class to check
- * @param schedule - The schedule to check against (non-hidden items only)
+ * Check if any of a class's meetings overlap any meeting already collected for
+ * a schedule. Callers that test many classes against one schedule get the
+ * schedule's meetings once with `getScheduleMeetings` and pass them here.
  */
-export const classConflictsWithSchedule = (
+export const classConflictsWithMeetings = (
   classMeetings: Meeting[],
-  schedule: NonNullable<IScheduleListSchedule>
+  scheduleMeetings: Meeting[]
 ): boolean => {
-  if (classMeetings.length === 0) return false;
-
-  const scheduleMeetings = getScheduleMeetings(schedule);
-  if (scheduleMeetings.length === 0) return false;
-
-  // Check if any class meeting conflicts with any schedule meeting
   for (const classMeeting of classMeetings) {
     for (const scheduleMeeting of scheduleMeetings) {
       if (meetingsOverlap(classMeeting, scheduleMeeting)) {
