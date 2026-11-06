@@ -25,6 +25,7 @@ interface ClassBrowserProps {
   year: number;
   terms?: ITerm[];
   persistent?: boolean;
+  termResolved?: boolean;
 }
 
 export default function ClassBrowser({
@@ -34,6 +35,7 @@ export default function ClassBrowser({
   year,
   terms,
   persistent,
+  termResolved,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -42,6 +44,7 @@ export default function ClassBrowser({
     semester,
     terms,
     persistent,
+    termResolved,
   });
 
   return (

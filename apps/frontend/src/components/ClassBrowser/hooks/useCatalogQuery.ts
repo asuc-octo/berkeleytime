@@ -57,6 +57,7 @@ export interface UseCatalogQueryOptions {
   effectiveOrder: "asc" | "desc";
   filterVariables: ICatalogFilters | undefined;
   semanticSearch?: boolean;
+  skip?: boolean;
 }
 
 export interface UseCatalogQueryReturn {
@@ -80,6 +81,7 @@ export default function useCatalogQuery({
   effectiveOrder,
   filterVariables,
   semanticSearch = false,
+  skip = false,
 }: UseCatalogQueryOptions): UseCatalogQueryReturn {
   const [localPage, setLocalPage] = useState(1);
   const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
@@ -139,7 +141,7 @@ export default function useCatalogQuery({
   );
 
   // Server-side catalog query (always requests first page)
-  const { data, loading, error, fetchMore } = useQuery<
+  const { data, loading, error, fetchMore, previousData } = useQuery<
     GetCatalogSearchQuery,
     GetCatalogSearchQueryVariables
   >(GET_CATALOG_SEARCH, {
@@ -151,6 +153,7 @@ export default function useCatalogQuery({
     // Show cached data instantly, then revalidate in the background.
     fetchPolicy: "cache-and-network",
     notifyOnNetworkStatusChange: true,
+    skip,
   });
 
   // Report a failed catalog search once per distinct error — today a plain
@@ -185,11 +188,16 @@ export default function useCatalogQuery({
     }
   );
 
+  // A new search starts with no cache entry, so Apollo clears `data` for the
+  // duration of the request. Keep showing the previous rows instead of
+  // blanking the list, and treat that as a refresh rather than a fresh load.
+  const isRefreshing = !data && !!previousData;
   const firstPageClasses: ICatalogClassServer[] = useMemo(
-    () => data?.catalogSearch?.results ?? [],
-    [data]
+    () => (data ?? previousData)?.catalogSearch?.results ?? [],
+    [data, previousData]
   );
-  const totalCount: number = data?.catalogSearch?.totalCount ?? 0;
+  const totalCount: number =
+    (data ?? previousData)?.catalogSearch?.totalCount ?? 0;
 
   useEffect(() => {
     if (localPage !== 1) return;
@@ -236,7 +244,10 @@ export default function useCatalogQuery({
     }
   }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
 
-  const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
+  // While the term is unresolved the query is skipped, which is still a load
+  // from the reader's point of view: show skeletons, not an empty state.
+  const isFirstPageLoading =
+    skip || (loading && localPage === 1 && !isLoadingNextPage && !isRefreshing);
   const semanticError =
     semanticSearch && error
       ? (error.graphQLErrors?.[0]?.message ??

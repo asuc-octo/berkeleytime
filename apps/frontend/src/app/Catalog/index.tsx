@@ -340,6 +340,11 @@ export default function Catalog() {
 
   const effectiveTerm = term ?? FALLBACK_TERM;
 
+  // Until the term list arrives the selected term is unknown. Querying the
+  // fallback term would render a full list of the wrong term's classes and
+  // then swap them, so hold the browser on its loading state instead.
+  const isTermResolved = term !== null;
+
   // Every class in the term, used only to resolve saved classes in the
   // collection dropdowns. Expensive for the server, so wait until one is opened.
   const [availabilityRequested, setAvailabilityRequested] = useState(false);
@@ -587,6 +592,7 @@ export default function Catalog() {
               year={effectiveTerm.year}
               terms={terms ?? undefined}
               persistent
+              termResolved={isTermResolved}
             />
           </div>
         ) : (
@@ -616,6 +622,7 @@ export default function Catalog() {
                 year={effectiveTerm.year}
                 terms={terms ?? undefined}
                 persistent
+                termResolved={isTermResolved}
               />
               <div
                 className={styles.drawerCloseTrigger}
