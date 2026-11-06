@@ -15,8 +15,8 @@
 	<style>
 		/* The page owns its background so the first frame is already painted.
 		   The colour is keyed to data-theme, so a theme change repaints without
-		   stale inline state. Each rule falls back to the theme token's literal
-		   value until the stylesheet lands. */
+		   stale inline state. The literal fallbacks repeat --zinc-900 and white
+		   from ThemeProvider.scss for the frames before the stylesheet lands. */
 		html,
 		body {
 			margin: 0;
