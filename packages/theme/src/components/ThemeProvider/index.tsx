@@ -72,6 +72,12 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
 
   const effectiveTheme = forcedTheme ?? theme;
   const effectiveSetTheme = forcedTheme ? () => {} : setTheme;
+  // Radix keeps its own appearance state, separate from our data-theme
+  // attribute. Without it Radix paints an unstyled light surface before our
+  // variables land, which shows as a white frame on first paint.
+  const resolvedTheme =
+    effectiveTheme ??
+    (document.body.getAttribute("data-theme") as ThemeType | null);
 
   return (
     <StackContext value={1000}>
@@ -87,7 +93,9 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
             value={{ theme: effectiveTheme, setTheme: effectiveSetTheme }}
           >
             {/* https://www.radix-ui.com/themes/docs/overview/layout#standalone-usage */}
-            <Theme>{children}</Theme>
+            <Theme appearance={resolvedTheme === "dark" ? "dark" : "light"}>
+              {children}
+            </Theme>
           </ThemeContext>
         </Tooltip.Provider>
       </IconoirProvider>

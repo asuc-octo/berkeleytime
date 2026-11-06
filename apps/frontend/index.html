@@ -32,17 +32,28 @@
 </head>
 
 <body>
+	<style>
+		/* No stylesheet exists yet at this point: all CSS arrives with the JS
+		   bundle, so the first frame would otherwise paint white. */
+		html,
+		body {
+			margin: 0;
+			background-color: #fff;
+		}
+	</style>
 	<script>
 		// Set theme before first paint to prevent color flash (FOUC).
 		// Mirrors ThemeProvider logic: localStorage "theme" → data-theme attribute.
 		(function () {
 			var theme = localStorage.getItem("theme");
-			if (theme === "dark" || theme === "light") {
-				document.body.setAttribute("data-theme", theme);
-			} else {
-				var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-				document.body.setAttribute("data-theme", prefersDark ? "dark" : "light");
-			}
+			var isDark =
+				theme === "dark" ||
+				(theme !== "light" &&
+					window.matchMedia("(prefers-color-scheme: dark)").matches);
+			document.body.setAttribute("data-theme", isDark ? "dark" : "light");
+			document.documentElement.style.backgroundColor = isDark
+				? "#18181b"
+				: "#fff";
 		})();
 	</script>
 	<div id="root"></div>
