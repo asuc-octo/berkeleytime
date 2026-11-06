@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { EmptyPage } from "iconoir-react";
@@ -65,6 +65,29 @@ interface ListProps {
     sessionId: string
   ) => void;
 }
+
+interface CatalogRowProps {
+  catalogClass: ICatalogClassServer;
+  index: number;
+  onSelectIndex: (index: number) => void;
+  measureRef: (node: HTMLDivElement | null) => void;
+}
+
+const CatalogRow = memo(function CatalogRow({
+  catalogClass,
+  index,
+  onSelectIndex,
+  measureRef,
+}: CatalogRowProps) {
+  return (
+    <ClassCard
+      class={adaptForClassCard(catalogClass)}
+      data-index={index}
+      ref={measureRef}
+      onClick={() => onSelectIndex(index)}
+    />
+  );
+});
 
 const LOAD_MORE_THRESHOLD_PX = 320;
 
@@ -139,6 +162,17 @@ export default function List({ onSelect }: ListProps) {
     );
   };
 
+  // Rows compare this prop by identity. The ref carries the newest handler so
+  // the prop value never changes.
+  const latestClickRef = useRef(handleClassClick);
+  useEffect(() => {
+    latestClickRef.current = handleClassClick;
+  });
+  const selectClassAt = useCallback(
+    (index: number) => latestClickRef.current(index),
+    []
+  );
+
   return (
     <div className={styles.root}>
       <div
@@ -170,15 +204,13 @@ export default function List({ onSelect }: ListProps) {
               style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
             >
               {items.map(({ key, index }) => {
-                const _class = classes[index];
-
                 return (
-                  <ClassCard
-                    class={adaptForClassCard(_class)}
-                    data-index={index}
+                  <CatalogRow
+                    catalogClass={classes[index]}
+                    index={index}
                     key={key}
-                    ref={virtualizer.measureElement}
-                    onClick={() => handleClassClick(index)}
+                    onSelectIndex={selectClassAt}
+                    measureRef={virtualizer.measureElement}
                   />
                 );
               })}
