@@ -276,7 +276,7 @@ export default function Catalog() {
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms } = useReadTerms();
+  const { data: terms, error: termsError } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
@@ -340,10 +340,12 @@ export default function Catalog() {
 
   const effectiveTerm = term ?? FALLBACK_TERM;
 
-  // Until the term list arrives the selected term is unknown. Querying the
-  // fallback term would render a full list of the wrong term's classes and
-  // then swap them, so hold the browser on its loading state instead.
-  const isTermResolved = term !== null;
+  // Until the term request settles the selected term is unknown. Querying the
+  // fallback term would render a full list of the wrong term's classes and then
+  // swap them, so hold the browser on its loading state instead. A failed or
+  // empty term request is settled, so the list still reaches its empty state
+  // instead of showing skeletons forever.
+  const isTermPending = !terms && !termsError;
 
   // Every class in the term, used only to resolve saved classes in the
   // collection dropdowns. Expensive for the server, so wait until one is opened.
@@ -592,7 +594,7 @@ export default function Catalog() {
               year={effectiveTerm.year}
               terms={terms ?? undefined}
               persistent
-              termResolved={isTermResolved}
+              termPending={isTermPending}
             />
           </div>
         ) : (
@@ -622,7 +624,7 @@ export default function Catalog() {
                 year={effectiveTerm.year}
                 terms={terms ?? undefined}
                 persistent
-                termResolved={isTermResolved}
+                termPending={isTermPending}
               />
               <div
                 className={styles.drawerCloseTrigger}

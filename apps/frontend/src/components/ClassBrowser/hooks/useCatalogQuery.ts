@@ -49,6 +49,16 @@ const mergeUniqueCatalogClasses = (
   return [...existingClasses, ...uniqueIncomingClasses];
 };
 
+const previousRowsBelongToTerm = (
+  previousData: GetCatalogSearchQuery | undefined,
+  year: number,
+  semester: Semester
+): boolean => {
+  const previousRow = previousData?.catalogSearch?.results?.[0];
+  if (!previousRow) return false;
+  return previousRow.year === year && previousRow.semester === semester;
+};
+
 export interface UseCatalogQueryOptions {
   year: number;
   semester: Semester;
@@ -185,19 +195,26 @@ export default function useCatalogQuery({
         semester: currentSemester,
       },
       fetchPolicy: "cache-first",
+      skip,
     }
   );
 
   // A new search starts with no cache entry, so Apollo clears `data` for the
   // duration of the request. Keep showing the previous rows instead of
   // blanking the list, and treat that as a refresh rather than a fresh load.
-  const isRefreshing = !data && !!previousData;
+  // Only reuse rows from the same term, or the new term's heading would sit
+  // above the old term's classes.
+  const retainedData =
+    data ??
+    (previousRowsBelongToTerm(previousData, currentYear, currentSemester)
+      ? previousData
+      : undefined);
+  const isRefreshing = !data && !!retainedData;
   const firstPageClasses: ICatalogClassServer[] = useMemo(
-    () => (data ?? previousData)?.catalogSearch?.results ?? [],
-    [data, previousData]
+    () => retainedData?.catalogSearch?.results ?? [],
+    [retainedData]
   );
-  const totalCount: number =
-    (data ?? previousData)?.catalogSearch?.totalCount ?? 0;
+  const totalCount: number = retainedData?.catalogSearch?.totalCount ?? 0;
 
   useEffect(() => {
     if (localPage !== 1) return;
