@@ -72,12 +72,14 @@ export function ThemeProvider({ children, forcedTheme }: ThemeProviderProps) {
 
   const effectiveTheme = forcedTheme ?? theme;
   const effectiveSetTheme = forcedTheme ? () => {} : setTheme;
-  // Radix keeps its own appearance state, separate from our data-theme
-  // attribute. Without it Radix paints an unstyled light surface before our
-  // variables land, which shows as a white frame on first paint.
+  // Radix tracks its own appearance, separate from our data-theme attribute.
+  // Resolve it from the same inputs the effect below uses, so it never reads a
+  // stale DOM value during render.
   const resolvedTheme =
     effectiveTheme ??
-    (document.body.getAttribute("data-theme") as ThemeType | null);
+    (window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light");
 
   return (
     <StackContext value={1000}>

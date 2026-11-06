@@ -12,6 +12,27 @@
 		content="Berkeley's online course discovery platform. Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience." />
 	<title>Berkeleytime</title>
 
+	<style>
+		/* The page owns its background so the first frame is already painted.
+		   The colour is keyed to data-theme, so a theme change repaints without
+		   stale inline state. Each rule falls back to the theme token's literal
+		   value until the stylesheet lands. */
+		html,
+		body {
+			margin: 0;
+		}
+
+		body[data-theme="dark"] {
+			background-color: var(--background-color, #18181b);
+			color-scheme: dark;
+		}
+
+		body[data-theme="light"] {
+			background-color: var(--background-color, #fff);
+			color-scheme: light;
+		}
+	</style>
+
 	<!-- Open Graph / Facebook / Discord / LinkedIn / iMessage -->
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://berkeleytime.com/" />
@@ -32,18 +53,9 @@
 </head>
 
 <body>
-	<style>
-		/* No stylesheet exists yet at this point: all CSS arrives with the JS
-		   bundle, so the first frame would otherwise paint white. */
-		html,
-		body {
-			margin: 0;
-			background-color: #fff;
-		}
-	</style>
 	<script>
-		// Set theme before first paint to prevent color flash (FOUC).
-		// Mirrors ThemeProvider logic: localStorage "theme" → data-theme attribute.
+		// Set theme before first paint to prevent color flash (FOUC). The body
+		// background is keyed to data-theme, so this paints the right colour.
 		(function () {
 			var theme = localStorage.getItem("theme");
 			var isDark =
@@ -51,9 +63,6 @@
 				(theme !== "light" &&
 					window.matchMedia("(prefers-color-scheme: dark)").matches);
 			document.body.setAttribute("data-theme", isDark ? "dark" : "light");
-			document.documentElement.style.backgroundColor = isDark
-				? "#18181b"
-				: "#fff";
 		})();
 	</script>
 	<div id="root"></div>
