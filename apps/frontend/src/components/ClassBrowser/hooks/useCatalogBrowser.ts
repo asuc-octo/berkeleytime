@@ -17,6 +17,7 @@ export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {
   year: number;
   semester: Semester;
   terms?: ITerm[];
+  termPending?: boolean;
 }
 
 export interface UseCatalogBrowserReturn {
@@ -38,6 +39,7 @@ export default function useCatalogBrowser({
   semester,
   terms,
   persistent,
+  termPending = false,
 }: UseCatalogBrowserOptions): UseCatalogBrowserReturn {
   const filterState = useCatalogFilters({ persistent });
 
@@ -86,6 +88,7 @@ export default function useCatalogBrowser({
     effectiveOrder: filterState.effectiveOrder,
     filterVariables: filterState.filterVariables,
     semanticSearch: isSemanticMode,
+    skip: termPending,
   });
 
   // Schedule conflict filtering
