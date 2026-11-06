@@ -135,9 +135,15 @@ The ticket is the durable record of reasoning. Pull request discussion is not du
 - What the change does
 
 **A good ticket also covers these, where the change gives you something to say:**
+- Who is affected: the kind of user, page, or flow that hits the problem
+- Evidence: a log line, metric, screenshot, or link to the report that started it
+- Steps to reproduce, for bugs
+- What the user does after the change, from first action to expected result
 - Why you chose this approach, and which alternatives you rejected
 - Known limits, and the scope you left out on purpose
-- Who reported it, or a link to the report or thread that started it
+- Blast radius, and how to undo the change
+- What must land first: other tickets or pull requests
+- Open questions still unsettled, so review aims at them
 - How you will know it works
 
 **Keep these out of the ticket:**
