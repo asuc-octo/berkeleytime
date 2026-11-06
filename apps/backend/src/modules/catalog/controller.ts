@@ -137,9 +137,10 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
   // Build sort
   const sort = buildSort(sortBy, sortOrder);
 
-  // Execute count and find in parallel
+  // Clients read totalCount only on the first page, so later pages skip the count.
+  const isFirstPage = effectivePage === 1;
   const [totalCount, results] = await Promise.all([
-    CatalogClassModel.countDocuments(query),
+    isFirstPage ? CatalogClassModel.countDocuments(query) : Promise.resolve(0),
     CatalogClassModel.find(query)
       .sort(sort)
       .skip(skip)
