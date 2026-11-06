@@ -26,12 +26,12 @@ export const QUOTA_KEY = "tracking:ingest-quota:v1";
 export const readTrackingLimits = (env: Record<string, string | undefined>) => {
   const read = (key: string, fallback: number) => {
     const value = env[key] === undefined ? fallback : Number(env[key]);
-    if (!Number.isSafeInteger(value) || value < 1 || value > 1_000_000_000) {
-      throw new Error(`${key} must be a positive integer at most 1000000000`);
+    if (!Number.isSafeInteger(value) || value < 5 || value > 1_000_000_000) {
+      throw new Error(`${key} must be an integer from 5 through 1000000000`);
     }
     return value;
   };
-  const global = read("TRACKING_GLOBAL_DAILY_EVENT_LIMIT", 100_000);
+  const global = read("TRACKING_GLOBAL_DAILY_EVENT_LIMIT", 1_000_000);
   const ip = read("TRACKING_IP_DAILY_EVENT_LIMIT", 10_000);
   return {
     client: {

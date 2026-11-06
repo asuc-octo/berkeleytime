@@ -32,10 +32,15 @@ test("every redirect reaches its destination during Redis failure and uses serve
   }));
   t.mock.method(
     RouteRedirectModel,
-    "findOneAndUpdate",
-    async (query: { fromPath: string }) => {
+    "findOne",
+    (query: { fromPath: string }) => {
       paths.push(query.fromPath);
-      return { _id: "redirect-id", toPath: "https://example.com/redirect" };
+      return {
+        lean: async () => ({
+          _id: "redirect-id",
+          toPath: "https://example.com/redirect",
+        }),
+      };
     }
   );
   const redis = {
@@ -47,6 +52,7 @@ test("every redirect reaches its destination during Redis failure and uses serve
       throw new Error("offline");
     },
   } as unknown as RedisClientType;
+  t.mock.method(RouteRedirectModel, "findByIdAndUpdate", async () => null);
   const app = express();
   bannerRoutes(app, redis);
   navItemRoutes(app, redis);
@@ -83,13 +89,23 @@ test("every redirect reaches its destination during Redis failure and uses serve
 test("internal destinations work while self and multi-hop loops stop before tracking", async (t) => {
   let destination = "/schedule";
   let queued = 0;
-  t.mock.method(RouteRedirectModel, "findOneAndUpdate", async () => ({
-    _id: "redirect-id",
-    toPath: destination,
-  }));
-  t.mock.method(RouteRedirectModel, "findOne", () => ({
-    lean: async () => (destination === "/other" ? { toPath: "/start" } : null),
-  }));
+  t.mock.method(
+    RouteRedirectModel,
+    "findOne",
+    (query: { fromPath: string }) => ({
+      lean: async () =>
+        query.fromPath === "/start"
+          ? { _id: "redirect-id", toPath: destination }
+          : destination === "/other"
+            ? { toPath: "/start" }
+            : null,
+    })
+  );
+  let increments = 0;
+  t.mock.method(RouteRedirectModel, "findByIdAndUpdate", async () => {
+    increments++;
+    return null;
+  });
   const app = express();
   routeRedirectRoutes(app, {
     eval: async () => {
@@ -110,9 +126,27 @@ test("internal destinations work while self and multi-hop loops stop before trac
     (await fetch(url, { redirect: "manual" })).headers.get("location"),
     "/schedule"
   );
-  for (const path of ["/start", "/go/start", "/other"]) {
+  for (const [path, expected] of [
+    ["catalog", "/catalog"],
+    ["../catalog", "/catalog"],
+    ["/catalog?x=1#details", "/catalog?x=1#details"],
+  ]) {
+    destination = path;
+    assert.equal(
+      (await fetch(url, { redirect: "manual" })).headers.get("location"),
+      expected
+    );
+  }
+  for (const path of [
+    "/start",
+    "/go/start",
+    "/other",
+    "?campaign=fall",
+    "#details",
+  ]) {
     destination = path;
     assert.equal((await fetch(url, { redirect: "manual" })).status, 508);
   }
-  assert.equal(queued, 1);
+  assert.equal(queued, 4);
+  assert.equal(increments, 4);
 });

@@ -16,11 +16,7 @@ export default (app: Application, redis?: RedisClientType) => {
       "/" + (Array.isArray(segments) ? segments.join("/") : segments || "");
 
     try {
-      const redirect = await RouteRedirectModel.findOneAndUpdate(
-        { fromPath },
-        { $inc: { clickCount: 1 } },
-        { new: true }
-      );
+      const redirect = await RouteRedirectModel.findOne({ fromPath }).lean();
 
       if (!redirect || !redirect.toPath) {
         // No matching redirect found, send to home
@@ -30,11 +26,14 @@ export default (app: Application, redis?: RedisClientType) => {
       // Check configured internal chains before navigation. RootWrapper runs
       // again after every full navigation, so its in-memory guard is insufficient.
       const base = new URL(`${req.protocol}://${req.get("host")}`);
+      const original = new URL(req.originalUrl, base);
+      original.pathname = original.pathname.slice(3);
       const visited = new Set([fromPath]);
-      let destination = redirect.toPath;
+      const resolved = new URL(redirect.toPath, original);
+      let destination = resolved;
       for (let hop = 0; hop < 10; hop++) {
-        const url = new URL(destination, base);
-        if (url.host !== base.host) break;
+        const url = destination;
+        if (url.origin !== base.origin) break;
         const path = url.pathname.startsWith("/go/")
           ? "/" +
             url.pathname.slice(4).split("/").map(decodeURIComponent).join("/")
@@ -48,8 +47,15 @@ export default (app: Application, redis?: RedisClientType) => {
         if (!next?.toPath) break;
         if (hop === 9)
           return res.status(508).send("This link has too many redirects.");
-        destination = next.toPath;
+        const nextBase = new URL(url);
+        if (nextBase.pathname.startsWith("/go/"))
+          nextBase.pathname = nextBase.pathname.slice(3);
+        destination = new URL(next.toPath, nextBase);
       }
+
+      await RouteRedirectModel.findByIdAndUpdate(redirect._id, {
+        $inc: { clickCount: 1 },
+      });
 
       if (redis) {
         bufferTrackingEvents(
@@ -71,7 +77,12 @@ export default (app: Application, redis?: RedisClientType) => {
       }
 
       // Immediate redirect to destination
-      return res.redirect(302, redirect.toPath);
+      return res.redirect(
+        302,
+        resolved.origin === base.origin
+          ? resolved.pathname + resolved.search + resolved.hash
+          : resolved.href
+      );
     } catch (error) {
       console.error("Error processing redirect:", error);
       return res.redirect("/");

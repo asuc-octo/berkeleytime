@@ -130,10 +130,37 @@ test("bounds metadata bytes, keys, nesting, and unsafe keys", () => {
 
 test("configuration preserves source reserves and rejects invalid limits", () => {
   assert.deepEqual(readTrackingLimits({}), {
-    client: { daily: 80_000, ipDaily: 8_000, queue: 8_000 },
-    "server-redirect": { daily: 20_000, ipDaily: 2_000, queue: 2_000 },
+    client: { daily: 800_000, ipDaily: 8_000, queue: 8_000 },
+    "server-redirect": { daily: 200_000, ipDaily: 2_000, queue: 2_000 },
   });
-  for (const value of ["", "NaN", "-1", "0", "1.5", "1000000001"]) {
+  for (const key of [
+    "TRACKING_GLOBAL_DAILY_EVENT_LIMIT",
+    "TRACKING_IP_DAILY_EVENT_LIMIT",
+  ]) {
+    for (const value of ["1", "2", "3", "4"])
+      assert.throws(() => readTrackingLimits({ [key]: value }));
+    for (const value of ["5", "6", "1000000000"]) {
+      const limits = readTrackingLimits({ [key]: value });
+      const field = key.includes("GLOBAL") ? "daily" : "ipDaily";
+      assert.ok(limits["server-redirect"][field] > 0);
+      assert.equal(
+        limits.client[field] + limits["server-redirect"][field],
+        Number(value)
+      );
+    }
+  }
+  for (const value of [
+    "",
+    "NaN",
+    "-1",
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "1.5",
+    "1000000001",
+  ]) {
     assert.throws(() =>
       readTrackingLimits({ TRACKING_GLOBAL_DAILY_EVENT_LIMIT: value })
     );

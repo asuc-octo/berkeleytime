@@ -6,9 +6,9 @@ requests can drop some or all events while retaining their success response.
 
 ## Limits
 
-`TRACKING_GLOBAL_DAILY_EVENT_LIMIT` defaults to 100000 and
-`TRACKING_IP_DAILY_EVENT_LIMIT` defaults to 10000. Both must be positive integers
-at most 1000000000. Each is split 80% client / 20% server redirect (rounding the
+`TRACKING_GLOBAL_DAILY_EVENT_LIMIT` defaults to 1000000 and
+`TRACKING_IP_DAILY_EVENT_LIMIT` defaults to 10000. Both must be integers
+from 5 through 1000000000, ensuring neither source has a zero daily reserve. Each is split 80% client / 20% server redirect (rounding the
 redirect share down). The global shares are distributed across 288 five-minute
 UTC windows, with rounding distributed so the windows sum to the configured
 daily shares. Unused allowance expires; sources cannot borrow from each other.

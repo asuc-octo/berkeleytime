@@ -47,9 +47,9 @@ export default function RootWrapper() {
         .split("/")
         .map(encodeURIComponent)
         .join("/");
-      window.location.href = `/go/${path}`;
+      window.location.href = `/go/${path}${location.search}${location.hash}`;
     }
-  }, [location.pathname, redirects, loading]);
+  }, [location.pathname, location.search, location.hash, redirects, loading]);
 
   return (
     <>

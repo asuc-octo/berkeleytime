@@ -31,7 +31,7 @@ frontend:
     tag: prod
 
 backend:
-  trackingGlobalDailyEventLimit: 100000
+  trackingGlobalDailyEventLimit: 1000000
   trackingIpDailyEventLimit: 10000
   replicas: 2
 
