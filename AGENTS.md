@@ -134,6 +134,8 @@ The ticket is the durable record of reasoning. Pull request discussion is not du
 - The problem, in the user's words
 - What the change does
 - Why you chose this approach, and which alternatives you rejected
+
+**Add these only when the change has them:**
 - Known limits, and scope you deliberately left out
 
 **Keep these out of the ticket:**
