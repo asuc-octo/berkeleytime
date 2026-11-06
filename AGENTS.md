@@ -130,13 +130,15 @@ If you receive a pull request with no ticket, do not review it. Ask the author t
 
 The ticket is the durable record of reasoning. Pull request discussion is not durable. Write the ticket for the next person, who joins with no context.
 
-**The ticket must contain:**
+**Every ticket states:**
 - The problem, in the user's words
 - What the change does
 
-**Add these only when the change has them:**
+**A good ticket also covers these, where the change gives you something to say:**
 - Why you chose this approach, and which alternatives you rejected
-- Known limits, and scope you deliberately left out
+- Known limits, and the scope you left out on purpose
+- Who reported it, or a link to the report or thread that started it
+- How you will know it works
 
 **Keep these out of the ticket:**
 - A restatement of the diff
