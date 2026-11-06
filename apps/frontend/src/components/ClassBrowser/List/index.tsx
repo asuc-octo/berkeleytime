@@ -1,4 +1,12 @@
-import { Ref, memo, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Ref,
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { EmptyPage } from "iconoir-react";
@@ -163,9 +171,10 @@ export default function List({ onSelect }: ListProps) {
   };
 
   // Rows compare this prop by identity. The ref carries the newest handler so
-  // the prop value never changes.
+  // the prop value never changes. A layout effect writes it during commit, so
+  // a click can never run the handler from a previous render.
   const latestClickRef = useRef(handleClassClick);
-  useEffect(() => {
+  useLayoutEffect(() => {
     latestClickRef.current = handleClassClick;
   });
   const selectClassAt = useCallback(
