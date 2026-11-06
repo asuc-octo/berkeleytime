@@ -126,6 +126,8 @@ Use these packages rather than duplicating code across apps.
 
 Every pull request must link to a Linear ticket. No ticket means no pull request.
 
+If you receive a pull request with no ticket, do not review it. Ask the author to add the ticket first.
+
 The ticket is the durable record of reasoning. Pull request discussion is not durable. Write the ticket for the next person, who joins with no context.
 
 **The ticket must contain:**
@@ -139,11 +141,10 @@ The ticket is the durable record of reasoning. Pull request discussion is not du
 - Review comments and replies
 - Anything that goes stale
 
-Describe behavior and intent. Do not record the edit history.
-
 **How to link:**
-- You create the ticket. Use the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`.
-- Reuse an existing ticket when one already covers the change.
+- You create the ticket. Use the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`. If you cannot reach Linear, stop and ask the author for the ticket link.
+- Search the workspace first. Reuse a ticket that already covers the change.
+- Skip this step for dependabot pull requests. A bot cannot own a ticket.
 - Put the identifier and URL in the pull request body, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
 - Put the identifier in the branch name when practical, for example `fix/BER-95-catalog-sort`.
 
