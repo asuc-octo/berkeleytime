@@ -329,6 +329,16 @@ catalogClassSchema.index({ year: 1, semester: 1, enrollmentStatus: 1 });
 // Grading basis filter
 catalogClassSchema.index({ year: 1, semester: 1, gradingBasis: 1 });
 
+// Default catalog sort (view count, then course order). Serves the default
+// descending order; the ascending toggle falls back to an in-memory sort.
+catalogClassSchema.index({
+  year: 1,
+  semester: 1,
+  viewCount: -1,
+  subject: 1,
+  courseNumber: 1,
+});
+
 // Enrollment puller primary section lookup
 catalogClassSchema.index({ year: 1, semester: 1, primarySectionId: 1 });
 
