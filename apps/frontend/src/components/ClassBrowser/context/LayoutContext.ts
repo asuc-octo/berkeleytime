@@ -11,8 +11,8 @@ export interface LayoutContextType {
   query: string;
   updateQuery: Dispatch<string>;
   hasActiveFilters: boolean;
-  semester: Semester;
-  year: number;
+  semester: Semester | null;
+  year: number | null;
   aiSearchActive: boolean;
   setAiSearchActive: (active: boolean) => void;
   handleSemanticSearch: () => void;

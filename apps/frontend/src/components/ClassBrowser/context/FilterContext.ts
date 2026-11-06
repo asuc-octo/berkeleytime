@@ -15,8 +15,8 @@ import {
 } from "../browser";
 
 export interface FilterContextType {
-  year: number;
-  semester: Semester;
+  year: number | null;
+  semester: Semester | null;
   terms?: ITerm[];
   units: UnitRange;
   levels: Level[];
