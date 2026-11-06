@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { Ref, memo, useCallback, useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { EmptyPage } from "iconoir-react";
@@ -70,7 +70,7 @@ interface CatalogRowProps {
   catalogClass: ICatalogClassServer;
   index: number;
   onSelectIndex: (index: number) => void;
-  measureRef: (node: HTMLDivElement | null) => void;
+  measureRef: Ref<HTMLDivElement>;
 }
 
 const CatalogRow = memo(function CatalogRow({
