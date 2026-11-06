@@ -1,0 +1,210 @@
+{{- if .Values.alerts.enabled }}
+# Checks the node and prod every few minutes and posts problems to a Slack or
+# Discord webhook: disk, memory and CPU features, node conditions, prod pod restarts and
+# evictions, stale backups and the TLS certificate. Each alert is posted once,
+# repeated every repeatHours while it lasts, and followed by a resolved
+# message. State is kept in a ConfigMap.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-health-alerts
+  namespace: bt
+spec:
+  schedule: {{ .Values.alerts.schedule | quote }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      backoffLimit: 0
+      template:
+        spec:
+          serviceAccountName: bt-k8s-role
+          restartPolicy: Never
+          containers:
+            - name: health-alerts
+              image: alpine/k8s:1.29.11
+              command:
+                - sh
+                - -c
+                - |
+                  set -u
+                  now=$(date +%s)
+                  since=$((now - 10 * 60))
+                  alerts=""
+                  add() { alerts="${alerts}$1|$2
+                  "; }
+
+                  # Disk: /host/hostname is a file on the node's root filesystem
+                  disk=$(df -P /host/hostname | awk 'NR == 2 { sub("%", "", $5); print $5 }')
+                  if [ "${disk:-0}" -ge "$DISK_PERCENT" ]; then
+                    add disk "Node disk is ${disk}% full (alert at ${DISK_PERCENT}%)"
+                  fi
+
+                  # CPU: MongoDB needs AVX; without it mongod dies with SIGILL (Oct 22)
+                  grep -qw avx /proc/cpuinfo || add cpu-avx "Node CPU has no AVX, so MongoDB can't start ($(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2))"
+
+                  # Memory, as a share of allocatable, from metrics-server
+                  memory=$(kubectl top node --no-headers 2>/dev/null | awk '{ sub("%", "", $5); print $1, $5 }')
+                  while read -r node percent; do
+                    if [ -n "$node" ] && [ "$percent" -ge "$MEMORY_PERCENT" ]; then
+                      add "memory-$node" "Node $node memory is ${percent}% used (alert at ${MEMORY_PERCENT}%)"
+                    fi
+                  done <<EOF
+                  $memory
+                  EOF
+
+                  # Node conditions: Ready must be True, every pressure condition False
+                  add_lines() { while IFS= read -r line; do [ -n "$line" ] && alerts="${alerts}${line}
+                  "; done <<EOF
+                  $1
+                  EOF
+                  }
+                  add_lines "$(kubectl get nodes -o json | jq -r '.items[] | .metadata.name as $n
+                    | .status.conditions[] | select((.type == "Ready") != (.status == "True"))
+                    | "node-\($n)-\(.type)|Node \($n): \(.type) is \(.status) (\(.reason))"')"
+
+                  # Prod pods, except Job pods: evictions, recent restarts and
+                  # pods that have been running a while but aren't ready
+                  add_lines "$(kubectl get pods -n bt -o json | jq -r --arg prefix "$POD_PREFIX" --argjson since "$since" '
+                    .items[] | select(.metadata.name | startswith($prefix))
+                    | select(all(.metadata.ownerReferences[]?; .kind != "Job"))
+                    | .metadata.name as $p
+                    | (select(.status.reason == "Evicted")
+                        | "evicted-\($p)|Pod \($p) was evicted: \(.status.message // "")"),
+                      (.status.containerStatuses[]? | .lastState.terminated // empty
+                        | select(.finishedAt != null and (.finishedAt | fromdateiso8601) > $since)
+                        | "restart-\($p)|Pod \($p) restarted (\(.reason // "unknown"), exit code \(.exitCode))"),
+                      (select(.status.phase == "Running"
+                          and ((.status.startTime // "1970-01-01T00:00:00Z") | fromdateiso8601) < $since)
+                        | .status.conditions[]? | select(.type == "Ready" and .status != "True")
+                        | "notready-\($p)|Pod \($p) is running but not ready")')"
+
+                  # Backups: each CronJob must have succeeded within its window
+                  for spec in $BACKUPS; do
+                    name=${spec%%:*}
+                    hours=${spec##*:}
+                    last=$(kubectl get cronjob -n bt "$name" -o jsonpath='{.status.lastSuccessfulTime}' 2>/dev/null)
+                    last_s=$(jq -rn --arg t "$last" 'if $t == "" then 0 else ($t | fromdateiso8601) end')
+                    if [ $((now - last_s)) -gt $((hours * 3600)) ]; then
+                      add "backup-$name" "CronJob $name hasn't succeeded in ${hours}h (last success: ${last:-never})"
+                    fi
+                  done
+
+                  # TLS certificate: must be ready and not about to expire
+                  add_lines "$(kubectl get certificate -n bt "$CERT_NAME" -o json 2>/dev/null | jq -r \
+                    --arg name "$CERT_NAME" --argjson now "$now" --argjson days "$CERT_DAYS" '
+                    (.status.conditions[]? | select(.type == "Ready" and .status != "True")
+                      | "cert-ready|Certificate \($name) is not ready: \(.message)"),
+                    (select(.status.notAfter != null
+                        and ((.status.notAfter | fromdateiso8601) - $now) < $days * 86400)
+                      | "cert-expiry|Certificate \($name) expires \(.status.notAfter)")')"
+
+                  # Post new alerts, repeats and resolutions
+                  prev=$(kubectl get configmap -n bt "$STATE_NAME" -o jsonpath='{.data.state}' 2>/dev/null || true)
+                  state=""
+                  message=""
+                  while IFS='|' read -r key text; do
+                    [ -z "$key" ] && continue
+                    sent=$(printf '%s\n' "$prev" | awk -v k="$key" '$1 == k { print $2 }')
+                    if [ -n "$sent" ] && [ $((now - sent)) -lt $((REPEAT_HOURS * 3600)) ]; then
+                      state="${state}${key} ${sent}
+                  "
+                    else
+                      message="${message}[ALERT] ${text}
+                  "
+                      state="${state}${key} ${now}
+                  "
+                    fi
+                  done <<EOF
+                  $alerts
+                  EOF
+                  for key in $(printf '%s\n' "$prev" | awk '{ print $1 }'); do
+                    printf '%s' "$state" | grep -q "^$key " || message="${message}[RESOLVED] ${key}
+                  "
+                  done
+
+                  if [ -n "$message" ]; then
+                    printf '%s' "$message"
+                    if [ -n "${WEBHOOK_URL:-}" ]; then
+                      text=$(printf 'hozer-51\n%s' "$message" | head -c 1900)
+                      jq -n --arg t "$text" '{ content: $t, text: $t }' \
+                        | curl -fsS -m 10 -H "Content-Type: application/json" -d @- "$WEBHOOK_URL" \
+                        || { echo "Webhook post failed; will retry next run"; exit 1; }
+                    fi
+                  fi
+
+                  kubectl create configmap -n bt "$STATE_NAME" --from-literal=state="$state" \
+                    --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+              env:
+                - name: DISK_PERCENT
+                  value: {{ .Values.alerts.diskPercent | quote }}
+                - name: MEMORY_PERCENT
+                  value: {{ .Values.alerts.memoryPercent | quote }}
+                - name: CERT_DAYS
+                  value: {{ .Values.alerts.certDays | quote }}
+                - name: REPEAT_HOURS
+                  value: {{ .Values.alerts.repeatHours | quote }}
+                - name: POD_PREFIX
+                  value: bt-prod-
+                - name: CERT_NAME
+                  value: bt-cert
+                - name: STATE_NAME
+                  value: {{ .Release.Name }}-health-alerts-state
+                - name: BACKUPS
+                  value: "{{ .Release.Name }}-backup-prod-mongo:3 {{ .Release.Name }}-backup-prod-mongo-public:26"
+                - name: WEBHOOK_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.alerts.webhookSecretName }}
+                      key: url
+                      optional: true
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 32Mi
+                limits:
+                  memory: 128Mi
+              volumeMounts:
+                - name: host-hostname
+                  mountPath: /host/hostname
+                  readOnly: true
+          volumes:
+            # A single file, only so `df` can report the node's root filesystem
+            - name: host-hostname
+              hostPath:
+                path: /etc/hostname
+                type: File
+
+---
+
+# Node status and node metrics are cluster-scoped, so the namespaced
+# bt-k8s-role can't read them
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-health-alerts
+rules:
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["nodes"]
+    verbs: ["get", "list"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-health-alerts
+subjects:
+  - kind: ServiceAccount
+    name: bt-k8s-role
+    namespace: bt
+roleRef:
+  kind: ClusterRole
+  name: {{ .Release.Name }}-health-alerts
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
