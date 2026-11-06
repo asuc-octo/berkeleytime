@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Filter, SortDown, SortUp } from "iconoir-react";
 import { useNavigate } from "react-router-dom";
@@ -9,10 +9,11 @@ import type { Option } from "@repo/theme";
 import { useTracking } from "@/hooks/api/tracking/useTracking";
 import { sortByTermDescending } from "@/lib/classes";
 
-import { Day, EMPTY_DAYS, Level, SortBy } from "../browser";
+import { Level, SortBy } from "../browser";
 import { useFilterContext } from "../context/FilterContext";
 import { useLayoutContext } from "../context/LayoutContext";
 import styles from "./Filters.module.scss";
+import { daysToSelectedFlags, selectedFlagsToDays } from "./daySelection";
 
 type RequirementSelection =
   | { type: "breadth"; value: string }
@@ -78,6 +79,7 @@ export default function Filters() {
     updateUnits,
     levels,
     updateLevels,
+    days,
     updateDays,
     timeRange,
     updateTimeRange,
@@ -106,15 +108,7 @@ export default function Filters() {
   const navigate = useNavigate();
   const { trackEvent } = useTracking();
 
-  const [daysArray, setDaysArray] = useState<boolean[]>(() => [...EMPTY_DAYS]);
-
-  useEffect(() => {
-    const newDays = daysArray.reduce((acc, v, i) => {
-      if (v) acc.push(i.toString() as Day);
-      return acc;
-    }, [] as Day[]);
-    updateDays(newDays);
-  }, [daysArray]);
+  const daysArray = useMemo(() => daysToSelectedFlags(days), [days]);
 
   // Use filter options from server
   const filteredLevels = useMemo(() => {
@@ -223,7 +217,6 @@ export default function Filters() {
     updateGradingFilters([]);
     updateDepartment(null);
     updateUnits([0, 5]);
-    setDaysArray([...EMPTY_DAYS]);
     updateDays([]);
     updateTimeRange([null, null]);
     updateSortBy(SortBy.Relevance);
@@ -442,9 +435,9 @@ export default function Filters() {
         <div className={styles.formControl}>
           <p className={styles.label}>Day and Time</p>
           <DaySelect
-            days={daysArray}
+            days={[...daysArray]}
             updateDays={(v) => {
-              setDaysArray([...v]);
+              updateDays(selectedFlagsToDays(v));
               const selectedCount = v.filter(Boolean).length;
               if (selectedCount > 0) {
                 trackEvent("search_filter_applied", "catalog_filter", "days", {
