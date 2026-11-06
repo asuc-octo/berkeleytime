@@ -9,6 +9,36 @@ import { monitorEventLoopDelay } from "perf_hooks";
 
 const meter = metrics.getMeter("berkeleytime-backend");
 
+export const trackingEventCount = meter.createCounter("tracking.events", {
+  description: "Accepted and dropped tracking events by source and reason",
+});
+export const trackingClockSkewCount = meter.createCounter(
+  "tracking.client_clock",
+  {
+    description:
+      "Client timestamps that are invalid or differ by more than five minutes",
+  }
+);
+export const trackingQuotaResetCount = meter.createCounter(
+  "tracking.quota.initialized",
+  {
+    description:
+      "Quota state initialization, including resets after Redis data loss",
+  }
+);
+export const trackingQueueDepth = meter.createHistogram(
+  "tracking.queue.depth",
+  {
+    description: "Tracking queue depth at admission and flush",
+  }
+);
+export const trackingFlushFailureCount = meter.createCounter(
+  "tracking.flush.failures",
+  {
+    description: "Tracking flush failures and malformed buffered records",
+  }
+);
+
 // ── GraphQL ────────────────────────────────────────────────────────────
 
 export const graphqlOperationDuration = meter.createHistogram(

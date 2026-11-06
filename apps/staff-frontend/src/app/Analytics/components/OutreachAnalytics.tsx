@@ -217,7 +217,7 @@ export function OutreachPanelBlock() {
   );
 
   const chartConfig = createChartConfig(["count"], {
-    labels: { count: "Clicks" },
+    labels: { count: "Observed redirects" },
     colors: { count: "var(--heading-color)" },
   });
 
@@ -248,14 +248,14 @@ export function OutreachPanelBlock() {
 
   return (
     <AnalyticsCard
-      title="Outreach click analytics"
+      title="Server-observed outreach redirects"
       description={
         selectedTarget
           ? `${selectedTarget.typeLabel} · ${selectedTarget.label} (${timeRange})`
           : "Choose a banner, redirect, or targeted ad to view click stats"
       }
       currentValue={selectedTarget ? totalClicks : undefined}
-      currentValueLabel={selectedTarget ? "clicks" : undefined}
+      currentValueLabel={selectedTarget ? "redirects" : undefined}
       showTimeRangeSelector
       timeRange={timeRange}
       onTimeRangeChange={(val) => setTimeRange(val)}
@@ -268,6 +268,10 @@ export function OutreachPanelBlock() {
         </>
       }
     >
+      <p style={{ fontSize: 12, color: "var(--label-color)", margin: "8px 0" }}>
+        Collection is capped and may be incomplete. Automated requests can be
+        included; historical events with unknown source are excluded.
+      </p>
       {!selectedTarget && (
         <div
           style={{
