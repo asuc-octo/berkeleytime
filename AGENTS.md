@@ -145,12 +145,11 @@ The ticket is the durable record of reasoning. Pull request discussion is not du
 - Search the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`, before you create anything. Reuse a ticket that already covers the change. If you cannot reach Linear, stop and ask the author for the ticket link.
 - Otherwise, create the ticket yourself.
 - Skip this step for dependabot pull requests. A bot cannot own a ticket.
+- Title the pull request `[BER-NNNN] <outcome>`, for example `[BER-123] Catalog Lists Load Faster`. Write the outcome, not the implementation.
 - Put the identifier and URL in the pull request body before you open it, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
 - Put the identifier in the branch name when practical, for example `fix/BER-95-catalog-sort`.
 
 **The test:** a new reader must explain why the change exists. Ask this reader to read only the ticket. If the reader cannot explain it, the ticket is not finished.
-
-Example: [BER-95](https://linear.app/berkeleytime/issue/BER-95) explains why a bug fix and a speed change were one line of code. A diff cannot show that reasoning.
 
 ## Important Notes
 
