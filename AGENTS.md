@@ -142,10 +142,10 @@ The ticket is the durable record of reasoning. Pull request discussion is not du
 - Anything that goes stale
 
 **How to link:**
-- You create the ticket. Use the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`. If you cannot reach Linear, stop and ask the author for the ticket link.
-- Search the workspace first. Reuse a ticket that already covers the change.
+- Search the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`, before you create anything. Reuse a ticket that already covers the change. If you cannot reach Linear, stop and ask the author for the ticket link.
+- Otherwise, create the ticket yourself.
 - Skip this step for dependabot pull requests. A bot cannot own a ticket.
-- Put the identifier and URL in the pull request body, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
+- Put the identifier and URL in the pull request body before you open it, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
 - Put the identifier in the branch name when practical, for example `fix/BER-95-catalog-sort`.
 
 **The test:** a new reader must explain why the change exists. Ask this reader to read only the ticket. If the reader cannot explain it, the ticket is not finished.
