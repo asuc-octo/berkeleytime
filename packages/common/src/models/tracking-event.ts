@@ -34,6 +34,14 @@ trackingEventSchema.index({ targetId: 1, timestamp: -1 });
 trackingEventSchema.index({ sessionId: 1, timestamp: -1 });
 // Query by user (all events for a logged-in user)
 trackingEventSchema.index({ userId: 1, timestamp: -1 }, { sparse: true });
+// Expire high-volume hover events after 90 days; other event types are kept
+trackingEventSchema.index(
+  { timestamp: 1 },
+  {
+    expireAfterSeconds: 90 * 24 * 60 * 60,
+    partialFilterExpression: { eventType: "course_result_hovered" },
+  }
+);
 
 export const TrackingEventModel: Model<ITrackingEvent> = model<ITrackingEvent>(
   "trackingevents",
