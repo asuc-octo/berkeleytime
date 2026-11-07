@@ -26,6 +26,11 @@
   align-items: center;
   transition: all 100ms ease-in-out;
   width: fit-content;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
 
   &:hover {
     color: var(--blue-hover);
