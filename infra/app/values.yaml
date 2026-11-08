@@ -48,6 +48,9 @@ backend:
 
 semanticSearch:
   replicas: 1
+  # CPU/memory requests and limits; empty means none (prod). Staging sets
+  # them in cd-stage.yaml so it cannot take resources from prod.
+  resources: {}
   port: 8000
   logLevel: INFO
   defaultYear: 2026
@@ -60,6 +63,9 @@ semanticSearch:
 
 datapuller:
   suspend: false
+  # CPU/memory requests and limits added to every datapuller job; empty means
+  # none (prod). Staging sets them in cd-stage.yaml.
+  resources: {}
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-datapuller

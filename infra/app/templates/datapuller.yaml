@@ -40,8 +40,14 @@ spec:
               resources:
                 requests:
                   ephemeral-storage: "512Mi"
+                  {{- with $root.Values.datapuller.resources.requests }}
+                  {{- toYaml . | nindent 18 }}
+                  {{- end }}
                 limits:
                   ephemeral-storage: "2Gi"
+                  {{- with $root.Values.datapuller.resources.limits }}
+                  {{- toYaml . | nindent 18 }}
+                  {{- end }}
           restartPolicy: OnFailure
 {{ end }}
 
