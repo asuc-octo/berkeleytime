@@ -39,7 +39,7 @@ on:
       - "infra/mongo/**"
       - "infra/redis/**"
       - "infra/releases.json"
-      - "infra/scripts/check-images.sh"
+      - "infra/scripts/**"
       - ".github/workflows/cd-infra.yaml"
   schedule:
     - cron: "23 17 * * 1" # Mondays, 17:23 UTC
@@ -70,7 +70,6 @@ concurrency:
 
 env:
   HELM_VERSION: "3.16.4"
-  HELM_DIFF_VERSION: "v3.9.4"
 
 jobs:
   select:
@@ -126,14 +125,6 @@ jobs:
 
       - name: Build Chart Dependencies
         run: |
-          # Download the release ourselves: GitHub release downloads often
-          # return 504, and `helm plugin install` gives up after one try.
-          curl -fsSL --retry 10 --retry-delay 10 --retry-all-errors --connect-timeout 20 \
-            -o /tmp/helm-diff.tgz \
-            "https://github.com/databus23/helm-diff/releases/download/$HELM_DIFF_VERSION/helm-diff-linux-amd64.tgz"
-          mkdir -p "$(helm env HELM_PLUGINS)"
-          tar -xzf /tmp/helm-diff.tgz -C "$(helm env HELM_PLUGINS)"
-          helm diff version
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build "infra/$CHART"
 
@@ -148,7 +139,7 @@ jobs:
       - name: Check Cluster Access
         run: |
           # Helm stores releases as Secrets labelled owner=helm; reading them is
-          # all helm diff needs from the cluster.
+          # all the diff needs from the cluster.
           if ! out=$(kubectl get secrets --namespace bt -l owner=helm -o name --request-timeout=20s 2>&1); then
             echo "$out"
             echo "::error::The HELM_DIFF_KUBECONFIG secret cannot read Helm releases in namespace bt (expired or revoked token?). Regenerate it with the steps at the top of .github/workflows/cd-infra.yaml."
@@ -169,9 +160,12 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+          # Plain helm get manifest + helm template + diff, no helm-diff
+          # plugin: its GitHub release download returned 504 for minutes at a time.
           code=0
-          helm diff upgrade "$RELEASE" "infra/$CHART" "${args[@]}" \
-            --no-color --context 3 --detailed-exitcode > diff.txt 2>&1 || code=$?
+          values_file=""
+          if [ -n "$VALUES" ]; then values_file="infra/$CHART/$VALUES"; fi
+          infra/scripts/release-diff.sh "$RELEASE" "infra/$CHART" $values_file > diff.txt 2>&1 || code=$?
           cat diff.txt
 
           {
