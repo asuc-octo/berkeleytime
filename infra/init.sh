@@ -40,12 +40,12 @@ helm push ./bt-redis-1.0.0.tgz oci://registry-1.docker.io/octoberkeleytime
 # PRODUCTION
 # ==========
 
-helm install bt-prod-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0 \
-    --set mongodb.resourcesPreset=large
+# bt-base, Mongo and Redis are deployed afterwards by .github/workflows/cd-infra.yaml
+# from infra/{base,mongo,redis}. These installs only create the releases on a
+# new cluster; apply the workflow right after so they match the repository.
+helm install bt-prod-mongo ./infra/mongo --namespace=bt --dependency-update
 
-helm install bt-prod-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
-    --version=1.0.0
+helm install bt-prod-redis ./infra/redis --namespace=bt --dependency-update
 
 helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
     --version=1.0.0 \
@@ -55,14 +55,11 @@ helm install bt-prod-app oci://registry-1.docker.io/octoberkeleytime/bt-app --na
 # STAGING
 # ==========
 
-helm install bt-stage-mongo oci://registry-1.docker.io/octoberkeleytime/bt-mongo --namespace=bt \
-    --version=1.0.0 \
-    --set mongodb.commonLabels.env=stage \
-    --set hostPath=/data/stage/db
+helm install bt-stage-mongo ./infra/mongo --namespace=bt --dependency-update \
+    --values ./infra/mongo/values-staging.yaml
 
-helm install bt-stage-redis oci://registry-1.docker.io/octoberkeleytime/bt-redis --namespace=bt \
-    --version=1.0.0 \
-    --set redis.commonLabels.env=stage
+helm install bt-stage-redis ./infra/redis --namespace=bt --dependency-update \
+    --values ./infra/redis/values-staging.yaml
 
 helm install bt-stage-app oci://registry-1.docker.io/octoberkeleytime/bt-app --namespace=bt \
     --version=0.1.0-stage \
