@@ -53,6 +53,13 @@ semanticSearch:
   defaultYear: 2026
   defaultSemester: "Spring"
 
+  # Node folder mounted at /app/indexes (INDEX_STORAGE_DIR). Every release on
+  # the node must use its own folder, otherwise staging and production share
+  # it. Production keeps the original path; cd-stage.yaml overrides it.
+  # Note: the current engine keeps its vector indexes in Redis (redisUri), not
+  # in this folder, so an empty folder is fine on first start.
+  indexHostPath: /data/semantic-search-indexes
+
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-semantic-search
