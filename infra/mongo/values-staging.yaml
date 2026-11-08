@@ -18,3 +18,20 @@ mongodb:
     requests:
       cpu: null
       memory: 1Gi
+
+  # Staging still runs MongoDB 7.0.5 from the older chart, while production
+  # runs 8.3.4. Moving staging to production's image skips a major version,
+  # which MongoDB does not support, so pin what staging runs today. Upgrade
+  # staging deliberately (7.0 -> 8.0 -> 8.x, or restore it from a production
+  # backup on 8.3.4) before removing these.
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/mongodb
+    tag: 7.0.5
+    digest: ""
+  volumePermissions:
+    image:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: 11-debian-11-r96
+      digest: ""

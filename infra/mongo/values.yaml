@@ -41,14 +41,15 @@ mongodb:
   # different MongoDB major version. Pin the digest of the image that is
   # running (kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[*].imageID}').
   # .github/workflows/cd-infra.yaml refuses to apply while a digest is empty.
+  # Pinned to what bt-prod-mongo ran on 2026-11-08: MongoDB 8.3.4.
   image:
-    digest: ""
+    digest: sha256:c65378e6661b987e22f78f08ecd3708721cb5a9a99705e1e23bbcb36a887c209
 
   # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
     image:
-      digest: ""
+      digest: sha256:d38549182ca4924d9c55bc430d3636e0680b6a327087004c73f73b23d80f0d77
 
   # Prod-oriented defaults; staging uses values-staging.yaml for lower limits.
   # The CPU request is the share mongod is guaranteed when the node is busy.
