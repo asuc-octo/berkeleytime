@@ -37,16 +37,35 @@ mongodb:
     # path in pod. should be same for all mongo pods.
     size: 10Gi
 
+  # The chart defaults to the `latest` tag, so any fresh pull could start a
+  # different MongoDB major version. Pin the digest of the image that is
+  # running (kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[*].imageID}').
+  # .github/workflows/cd-infra.yaml refuses to apply while a digest is empty.
+  image:
+    digest: ""
+
   # required for persistence. without, data is not saved across pod restarts.
   volumePermissions:
     enabled: true
+    image:
+      digest: ""
 
   # Prod-oriented defaults; staging uses values-staging.yaml for lower limits.
+  # The CPU request is the share mongod is guaranteed when the node is busy.
+  # Without one it got the smallest share on the node (about 0.1 core,
+  # inherited from the volume-permissions init container).
   resources:
     limits:
+      cpu: "4"
       memory: 4Gi
     requests:
+      cpu: "2"
       memory: 2Gi
+
+  # The probes run mongosh inside the container; 5s was not enough while the
+  # node was busy, and failed probes take mongod out of service.
+  readinessProbe:
+    timeoutSeconds: 10
 
   # Mount migrations ConfigMap at /migrations (same path as Docker Compose).
   # ConfigMap is templates/migrations-configmap.yaml → {{ .Release.Name }}-migrations.

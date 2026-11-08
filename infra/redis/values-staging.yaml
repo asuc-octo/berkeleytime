@@ -1,0 +1,18 @@
+# Staging overrides, layered on values.yaml.
+# Deployed by .github/workflows/cd-infra.yaml as bt-stage-redis.
+redis:
+  commonLabels:
+    env: stage
+
+  master:
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    configuration: |
+      maxmemory 150mb
+      maxmemory-policy volatile-lru
+      save ""
