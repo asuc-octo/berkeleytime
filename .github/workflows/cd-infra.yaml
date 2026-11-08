@@ -126,15 +126,14 @@ jobs:
 
       - name: Build Chart Dependencies
         run: |
-          # The plugin downloads from GitHub releases, which sometimes returns 5xx
-          for attempt in 1 2 3; do
-            if helm plugin install https://github.com/databus23/helm-diff --version "$HELM_DIFF_VERSION"; then
-              break
-            fi
-            if [ "$attempt" -eq 3 ]; then exit 1; fi
-            helm plugin uninstall diff > /dev/null 2>&1 || true
-            sleep $((attempt * 15))
-          done
+          # Download the release ourselves: GitHub release downloads often
+          # return 504, and `helm plugin install` gives up after one try.
+          curl -fsSL --retry 10 --retry-delay 10 --retry-all-errors --connect-timeout 20 \
+            -o /tmp/helm-diff.tgz \
+            "https://github.com/databus23/helm-diff/releases/download/$HELM_DIFF_VERSION/helm-diff-linux-amd64.tgz"
+          mkdir -p "$(helm env HELM_PLUGINS)"
+          tar -xzf /tmp/helm-diff.tgz -C "$(helm env HELM_PLUGINS)"
+          helm diff version
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build "infra/$CHART"
 
