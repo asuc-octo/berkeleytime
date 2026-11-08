@@ -97,7 +97,16 @@ jobs:
               cpu: '100m'
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
+        # Up to 8 previews share the node with prod, each with its own
+        # semantic-search pod; cap them like staging.
         semanticSearch:
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '256Mi'
+            limits:
+              cpu: '500m'
+              memory: '1Gi'
           image:
             tag: '${{ needs.compute-sha.outputs.sha_short }}'
         datapuller:
