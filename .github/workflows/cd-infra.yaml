@@ -12,6 +12,20 @@
 #     restarts it when its pod spec changes; a Redis restart logs every user out.
 #
 # Releases, charts and values files are listed in infra/releases.json.
+#
+# The diff runs from GitHub with the HELM_DIFF_KUBECONFIG secret: a kubeconfig
+# for the read-only helm-diff-sa service account (infra/base/templates/helm-diff-role.yaml).
+# To regenerate it, on the server:
+#   token=$(kubectl -n bt create token helm-diff-sa --duration=8760h)
+#   kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' > /tmp/ca
+#   server=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-cluster bt --server="$server"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set clusters.bt.certificate-authority-data "$(cat /tmp/ca)"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-credentials helm-diff-sa --token="$token"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-context bt --cluster=bt --user=helm-diff-sa --namespace=bt
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config use-context bt
+# then paste /tmp/helm-diff.kubeconfig into the repository secret and delete
+# the local files. The token expires after a year (or the API server's maximum).
 name: "CD: Infra Releases"
 run-name: >-
   ${{ github.event_name == 'workflow_dispatch'
@@ -112,7 +126,14 @@ jobs:
 
       - name: Build Chart Dependencies
         run: |
-          helm plugin install https://github.com/databus23/helm-diff --version "$HELM_DIFF_VERSION"
+          # Download the release ourselves: GitHub release downloads often
+          # return 504, and `helm plugin install` gives up after one try.
+          curl -fsSL --retry 10 --retry-delay 10 --retry-all-errors --connect-timeout 20 \
+            -o /tmp/helm-diff.tgz \
+            "https://github.com/databus23/helm-diff/releases/download/$HELM_DIFF_VERSION/helm-diff-linux-amd64.tgz"
+          mkdir -p "$(helm env HELM_PLUGINS)"
+          tar -xzf /tmp/helm-diff.tgz -C "$(helm env HELM_PLUGINS)"
+          helm diff version
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm dependency build "infra/$CHART"
 
@@ -123,6 +144,16 @@ jobs:
           mkdir -p ~/.kube
           printf '%s' "$KUBECONFIG_CONTENT" > ~/.kube/config
           chmod 600 ~/.kube/config
+
+      - name: Check Cluster Access
+        run: |
+          # Helm stores releases as Secrets labelled owner=helm; reading them is
+          # all helm diff needs from the cluster.
+          if ! out=$(kubectl get secrets --namespace bt -l owner=helm -o name --request-timeout=20s 2>&1); then
+            echo "$out"
+            echo "::error::The HELM_DIFF_KUBECONFIG secret cannot read Helm releases in namespace bt (expired or revoked token?). Regenerate it with the steps at the top of .github/workflows/cd-infra.yaml."
+            exit 1
+          fi
 
       - name: Diff Against Cluster
         run: |

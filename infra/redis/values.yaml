@@ -9,8 +9,9 @@ redis:
   # The chart defaults to the `latest` tag. Pin the digest of the image that
   # is running (kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[*].imageID}').
   # .github/workflows/cd-infra.yaml refuses to apply while a digest is empty.
+  # Pinned to what bt-prod-redis ran on 2026-11-08.
   image:
-    digest: ""
+    digest: sha256:341edafd5622a1e47e4b3ab379913de84ea4a50d534f40aaa903a3825e0e1cf1
 
   auth:
     enabled: false
