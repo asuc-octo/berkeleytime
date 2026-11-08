@@ -326,7 +326,13 @@ const updateEnrollmentHistories = async (config: Config) => {
                 },
               });
               totalUpdated += 1;
-              markChanged(identifier.termId, identifier.sectionId);
+              // A data gap or granularity change starts a new history entry,
+              // but catalog_classes only stores the numbers. Rewrite the
+              // catalog only when they changed, otherwise a run after a gap
+              // of over an hour rewrites every section.
+              if (!dataMatches) {
+                markChanged(identifier.termId, identifier.sectionId);
+              }
             }
           }
         }
