@@ -1,5 +1,7 @@
-# Staging overrides, layered on values.yaml (prod-oriented defaults).
-# Deployed by .github/workflows/cd-infra.yaml as bt-stage-mongo.
+# Staging overrides. Install with:
+#   helm upgrade bt-stage-mongo ./infra/mongo -n <ns> -f values-staging.yaml
+#
+# Default values.yaml is aimed at prod (hostPath, memory). This file keeps smaller limits for stage.
 
 hostPath: /data/stage/db
 
@@ -7,11 +9,12 @@ mongodb:
   commonLabels:
     env: stage
 
-  # Staging must not take CPU from production on the shared node.
+  # values.yaml sets prod CPU; null removes it so staging keeps no CPU
+  # request or limit until staging gets its own.
   resources:
     limits:
-      cpu: 500m
+      cpu: null
       memory: 2Gi
     requests:
-      cpu: 100m
+      cpu: null
       memory: 1Gi
