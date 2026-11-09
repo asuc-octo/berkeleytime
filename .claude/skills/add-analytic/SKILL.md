@@ -76,6 +76,7 @@ nobody can see it yet** — that's a one-block addition (Path B).
 | `schedule_saved` | `schedule` | schedule id | `hooks/api/schedules/useCreateSchedule.ts` | `SchedulesSavedBlock` |
 | `schedule_generate` | `schedule` | schedule id | `app/Schedule/Editor/GenerateSchedulesDialog` | `SchedulesGeneratedBlock` |
 | `course_result_clicked` | `class` | `subject-courseNumber` | `ClassBrowser/List/index.tsx` | `CourseResultsClickedBlock` |
+| `course_result_hovered` | `class` | `subject-courseNumber` | `ClassBrowser/hooks/useResultHoverTracking.ts` (25% of sessions, mouse only; 90-day TTL) | none |
 | `search_filter_applied` | `catalog_filter` | filter name (`sort`, `level`, `units`, ...) | `ClassBrowser/Filters/index.tsx` | `SearchFiltersAppliedBlock` |
 | `page_error` | `course-discovery` | — | `components/CatalogErrorBoundary` | `PageErrorsBlock` |
 | `data_load_failed` | `course-discovery` | — | `app/Catalog/index.tsx` | `DataLoadFailuresBlock` |
