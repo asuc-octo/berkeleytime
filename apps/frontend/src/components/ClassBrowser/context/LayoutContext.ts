@@ -13,6 +13,7 @@ export interface LayoutContextType {
   hasActiveFilters: boolean;
   semester: Semester;
   year: number;
+  termPending: boolean;
   aiSearchActive: boolean;
   setAiSearchActive: (active: boolean) => void;
   handleSemanticSearch: () => void;

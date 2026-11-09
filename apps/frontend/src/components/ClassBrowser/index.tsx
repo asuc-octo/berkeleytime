@@ -25,6 +25,7 @@ interface ClassBrowserProps {
   year: number;
   terms?: ITerm[];
   persistent?: boolean;
+  termPending?: boolean;
 }
 
 export default function ClassBrowser({
@@ -34,6 +35,7 @@ export default function ClassBrowser({
   year,
   terms,
   persistent,
+  termPending,
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -42,6 +44,7 @@ export default function ClassBrowser({
     semester,
     terms,
     persistent,
+    termPending,
   });
 
   return (
@@ -57,6 +60,7 @@ export default function ClassBrowser({
             hasActiveFilters: browser.hasActiveFilters,
             semester,
             year,
+            termPending: termPending ?? false,
             aiSearchActive: browser.aiSearchActive,
             setAiSearchActive: browser.setAiSearchActive,
             handleSemanticSearch: browser.handleSemanticSearch,

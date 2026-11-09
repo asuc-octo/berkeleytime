@@ -21,6 +21,7 @@ export default function Header() {
     setExpanded,
     semester,
     year,
+    termPending,
     mode,
     hasActiveFilters,
     aiSearchActive,
@@ -57,7 +58,11 @@ export default function Header() {
           name="search"
           onChange={(event) => updateQuery(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={`Search ${semester} ${year} classes...`}
+          placeholder={
+            termPending
+              ? "Search classes..."
+              : `Search ${semester} ${year} classes...`
+          }
           onFocus={() => setExpanded(false)}
           autoFocus
           autoComplete="off"
