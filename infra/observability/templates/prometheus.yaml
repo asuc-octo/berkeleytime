@@ -24,6 +24,15 @@ data:
         static_configs:
           - targets: ["localhost:9090"]
 
+      {{- if .Values.kubeStateMetrics.enabled }}
+      - job_name: "kube-state-metrics"
+        sample_limit: {{ .Values.prometheus.sampleLimit }}
+        static_configs:
+          - targets: ["{{ .Values.kubeStateMetrics.serviceName }}:{{ .Values.kubeStateMetrics.port }}"]
+            labels:
+              environment: {{ .Values.podLogs.environment | quote }}
+      {{- end }}
+
 ---
 
 apiVersion: v1

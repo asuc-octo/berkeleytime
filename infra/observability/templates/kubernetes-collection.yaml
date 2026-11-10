@@ -1,0 +1,273 @@
+{{- if .Values.kubeStateMetrics.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-state-metrics
+  labels:
+    {{- include "bt-observability.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Release.Name }}-kube-state-metrics
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "namespaces"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Release.Name }}-kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ .Release.Name }}-kube-state-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kube-state-metrics
+    namespace: {{ .Release.Namespace }}
+{{- range $namespace := splitList "," .Values.kubeStateMetrics.namespaces }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ $.Release.Name }}-kube-state-metrics
+  namespace: {{ $namespace | trim }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
+    verbs: ["list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $.Release.Name }}-kube-state-metrics
+  namespace: {{ $namespace | trim }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $.Release.Name }}-kube-state-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kube-state-metrics
+    namespace: {{ $.Release.Namespace }}
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  labels:
+    app.kubernetes.io/name: kube-state-metrics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kube-state-metrics
+    spec:
+      serviceAccountName: kube-state-metrics
+      containers:
+        - name: kube-state-metrics
+          image: {{ .Values.kubeStateMetrics.image | quote }}
+          args: ["--resources=pods,nodes,namespaces,deployments,daemonsets,statefulsets,replicasets,jobs,cronjobs", "--namespaces={{ .Values.kubeStateMetrics.namespaces }}", "--metric-labels-allowlist=pods=[app.kubernetes.io/name]"]
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.kubeStateMetrics.port }}
+          resources:
+            {{- toYaml .Values.kubeStateMetrics.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kubeStateMetrics.serviceName }}
+  labels:
+    app.kubernetes.io/name: kube-state-metrics
+spec:
+  selector:
+    app.kubernetes.io/name: kube-state-metrics
+  ports:
+    - name: metrics
+      port: {{ .Values.kubeStateMetrics.port }}
+      targetPort: metrics
+{{- end }}
+
+{{- if .Values.podLogs.enabled }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-pod-logs
+  labels:
+    {{- include "bt-observability.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Release.Name }}-otel-pod-logs
+  namespace: {{ .Values.podLogs.namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-otel-pod-logs
+  namespace: {{ .Values.podLogs.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Release.Name }}-otel-pod-logs
+subjects:
+  - kind: ServiceAccount
+    name: otel-pod-logs
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-pod-logs-config
+data:
+  config.yaml: |
+    receivers:
+      filelog:
+        include: [/var/log/pods/{{ .Values.podLogs.namespace }}_*_*/*/*.log*]
+        start_at: beginning
+        storage: file_storage
+        include_file_path: true
+        force_flush_period: 500ms
+        operators:
+          - id: parse-kubernetes-log-path
+            type: regex_parser
+            regex: '^/var/log/pods/(?P<namespace>[^_]+)_(?P<pod>[^_]+)_(?P<uid>[^/]+)/(?P<container>[^/]+)/'
+            parse_from: attributes["log.file.path"]
+          - id: move-kubernetes-path-metadata
+            type: move
+            from: attributes.namespace
+            to: resource["k8s.namespace.name"]
+          - id: move-kubernetes-pod-metadata
+            type: move
+            from: attributes.pod
+            to: resource["k8s.pod.name"]
+          - id: move-kubernetes-uid-metadata
+            type: move
+            from: attributes.uid
+            to: resource["k8s.pod.uid"]
+          - id: move-kubernetes-container-metadata
+            type: move
+            from: attributes.container
+            to: resource["k8s.container.name"]
+          - id: container-parser
+            type: container
+          - id: multiline-recombine
+            type: recombine
+            combine_field: body
+            is_first_entry: 'body matches "^\\S"'
+            combine_with: "\\n"
+            source_identifier: 'attributes["log.file.path"]'
+          - id: app-json-parser
+            type: json_parser
+            parse_from: body
+            if: 'body matches "^\\s*\\{"'
+            parse_to: attributes
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 256
+        spike_limit_mib: 64
+      k8sattributes:
+        auth_type: serviceAccount
+        filter:
+          namespace: {{ .Values.podLogs.namespace | quote }}
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.uid
+        extract:
+          metadata: [k8s.namespace.name, k8s.pod.name, k8s.pod.uid, k8s.container.name, k8s.node.name, k8s.deployment.name, k8s.statefulset.name, k8s.daemonset.name]
+          labels:
+            - tag_name: service.name
+              key: app.kubernetes.io/name
+              from: pod
+      resource:
+        attributes:
+          - action: insert
+            key: deployment.environment
+            value: {{ .Values.podLogs.environment | quote }}
+          - action: insert
+            key: loki.resource.labels
+            value: k8s.namespace.name,k8s.pod.name,k8s.container.name,k8s.deployment.name,service.name,deployment.environment
+      batch:
+        timeout: 5s
+    extensions:
+      file_storage:
+        directory: /var/lib/otelcol/filelog
+    exporters:
+      loki:
+        endpoint: http://loki:3100/loki/api/v1/push
+        default_labels_enabled:
+          exporter: false
+          job: true
+          instance: false
+          level: true
+    service:
+      extensions: [file_storage]
+      pipelines:
+        logs:
+          receivers: [filelog]
+          processors: [memory_limiter, k8sattributes, resource, batch]
+          exporters: [loki]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-pod-logs
+  labels:
+    app.kubernetes.io/name: otel-pod-logs
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: otel-pod-logs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: otel-pod-logs
+    spec:
+      serviceAccountName: otel-pod-logs
+      tolerations:
+        - operator: Exists
+      containers:
+        - name: collector
+          image: {{ .Values.podLogs.image | quote }}
+          args: ["--config=/etc/otelcol/config.yaml"]
+          resources:
+            {{- toYaml .Values.podLogs.resources | nindent 12 }}
+          volumeMounts:
+            - { name: config, mountPath: /etc/otelcol, readOnly: true }
+            - { name: varlogpods, mountPath: /var/log/pods, readOnly: true }
+            - { name: checkpoints, mountPath: /var/lib/otelcol }
+      volumes:
+        - name: config
+          configMap:
+            name: otel-pod-logs-config
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+            type: Directory
+        - name: checkpoints
+          hostPath:
+            path: /var/lib/otelcol-podlogs
+            type: DirectoryOrCreate
+{{- end }}

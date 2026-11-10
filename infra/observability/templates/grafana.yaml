@@ -51,6 +51,45 @@ data:
 ---
 
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+data:
+  {{- $dashboards := .Files.Glob "dashboards/*.json" }}
+  {{- if not $dashboards }}
+  # Run scripts/sync-observability-dashboards.ps1 before packaging this chart.
+  {{- else }}
+  {{- range $path, $file := $dashboards }}
+  {{ base $path }}: {{ $file | toString | quote }}
+  {{- end }}
+  {{- end }}
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider
+  labels:
+    {{- include "bt-observability.grafanaLabels" . | nindent 4 }}
+data:
+  provider.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'Berkeleytime'
+        orgId: 1
+        folder: 'Berkeleytime'
+        type: file
+        disableDeletion: true
+        editable: false
+        options:
+          path: /var/lib/grafana/dashboards
+
+---
+
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-data
@@ -85,6 +124,7 @@ spec:
         {{- include "bt-observability.grafanaLabels" . | nindent 8 }}
       annotations:
         checksum/datasources: {{ .Values.grafana | toJson | sha256sum }}
+        checksum/dashboards: {{ .Files.Glob "dashboards/*.json" | toJson | sha256sum }}
     spec:
       securityContext:
         fsGroup: 472
@@ -115,6 +155,12 @@ spec:
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
               readOnly: true
+            - name: dashboard-provider
+              mountPath: /etc/grafana/provisioning/dashboards
+              readOnly: true
+            - name: dashboards
+              mountPath: /var/lib/grafana/dashboards
+              readOnly: true
             - name: data
               mountPath: /var/lib/grafana
           readinessProbe:
@@ -131,6 +177,12 @@ spec:
         - name: datasources
           configMap:
             name: grafana-datasources
+        - name: dashboard-provider
+          configMap:
+            name: grafana-dashboard-provider
+        - name: dashboards
+          configMap:
+            name: grafana-dashboards
         - name: data
           persistentVolumeClaim:
             claimName: grafana-data
