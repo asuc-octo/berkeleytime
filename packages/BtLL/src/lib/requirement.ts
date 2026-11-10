@@ -311,29 +311,33 @@ export const orRequirementConstructor = (
   variables: Variables,
   config: BtLLConfig = {}
 ): Data<OrRequirement> => {
-  // {requirements, description} or {requirements, n, description}: at least n met
   const args = argSplit(v.substring(1, v.length - 1));
-  if (args.length !== 2 && args.length !== 3) {
+
+  // With a count n, at least n of the requirements must be met
+  let requirementsStr, requiredStr, descriptionStr;
+
+  if (args.length === 2) {
+    [requirementsStr, descriptionStr] = args;
+  } else if (args.length === 3) {
+    [requirementsStr, requiredStr, descriptionStr] = args;
+  } else {
     throw new Error(
       `OrRequirement expects 2 or 3 arguments, got ${args.length}`
     );
   }
+
   const requirementsData = evaluate(
-    args[0],
+    requirementsStr,
     "List<Requirement>",
     variables,
     config
   );
-  const requiredData =
-    args.length === 3
-      ? evaluate(args[1], "number", variables, config)
-      : undefined;
-  const descriptionData = evaluate(
-    args[args.length - 1],
-    "string",
-    variables,
-    config
-  );
+  const descriptionData = evaluate(descriptionStr, "string", variables, config);
+  let requiredData;
+  if (requiredStr) {
+    requiredData = evaluate(requiredStr, "number", variables, config);
+  }
+
   return createOrRequirement(requirementsData, descriptionData, requiredData);
 };
 

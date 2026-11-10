@@ -7,7 +7,7 @@
  * Then run the generated commands in mongosh:
  *   mongosh <connection-string> --file seed-requirements.js
  */
-import { CATALOG_REQUIREMENTS } from "./catalog_reqs.generated";
+import { CATALOG_REQUIREMENTS } from "./catalog/reqs.generated";
 import {
   APPLIED_MATH_REQ_BTLL,
   BUSINESS_REQ_BTLL,
@@ -201,8 +201,7 @@ const requirements: PlanRequirementSeed[] = [
   },
 ];
 
-// Programs generated from the catalog by import-catalog.ts. A hand-written
-// program for the same major/minor takes precedence.
+// Catalog-generated programs; a hand-written one for the same major/minor wins
 const handWritten = new Set(requirements.map((r) => `${r.major}|${r.minor}`));
 for (const req of CATALOG_REQUIREMENTS) {
   if (handWritten.has(`${req.major}|${req.minor}`)) continue;

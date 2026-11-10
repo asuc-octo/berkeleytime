@@ -1141,8 +1141,6 @@
         "id": "w56dOfQl",
         "name": "Electives",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Complete at least 3 of: AFRICAM 115 AFRICAM C134 AMERSTD C134 ANTHRO 107 ANTHRO 111 ANTHRO 149 ANTHRO 160AC ANTHRO 161 ANTHRO 166 ART 178 BIOENG C171 COGSCI 115 COGSCI 131 COGSCI 132 COGSCI 144 COGSCI 146 COGSCI 150 COGSCI 170 COGSCI 171 COGSCI 172 COGSCI 180 COGSCI 181 COGSCI 182 COGSCI C100 COGSCI C101 COGSCI C103 COGSCI C104 COGSCI C124 COGSCI C126 COGSCI C127 COGSCI C131 COGSCI C140 COGSCI C142 COGSCI C147 COGSCI N100 COMPSCI 160 COMPSCI 170 COMPSCI 176 COMPSCI 186 COMPSCI 188 COMPSCI 189 COMPSCI 287 COMPSCI 288 COMPSCI C100 COMPSCI C280 DATA C100 DATA C104 DATA C140 ECON 119 ECON C110 EDUC 130 EDUC 132 EDUC 140A EDUC 140AC EDUC 224A EDUC C229A ENGLISH 172 ESPM 161 FILM 179 HISTORY C182C HISTORY C184D HISTORY C192 INDENG 170 INFO 103 INFO 146 INFO 159 INFO 188 INFO 213 INFO 232 INFO 290 INFO 290A INFO C103 INFO C262 INFO C265 INTEGBI 139 INTEGBI C143A ISF 100J ISF C100G JOURN C141 LEGALST 181 LEGALST 183 LINGUIS 100 LINGUIS 106 LINGUIS 108 LINGUIS 109 LINGUIS 110 LINGUIS 115 LINGUIS 120 LINGUIS 121 LINGUIS 123 LINGUIS 124 LINGUIS 125 LINGUIS 130 LINGUIS 146 LINGUIS 150 LINGUIS 150A LINGUIS 151 LINGUIS 158 LINGUIS 170 LINGUIS 181 LINGUIS 187 LINGUIS C104 LINGUIS C105 LINGUIS C139 LINGUIS C142 LINGUIS C146 LINGUIS C147 LINGUIS C160 LS 124 LS C160T MATH 110 MCELLBI 163 MECENG C205 MEDIAST 101 MEDIAST 102 MEDIAST 103 MEDIAST 104B MEDIAST 111 MEDIAST 111B MEDIAST 111C MEDIAST 112 MEDIAST C103 MEDIAST C104C MELC 156 MUSIC 108 MUSIC 108M MUSIC 109 MUSIC 109M NATAMST 151 NEU 100A NEU 100B NEU 128 NEU 152 NEU 162 NEU 164 NEU 165 NEU 171L NEU 173L NEU C121 NEU C124 NEU C125 NEU C126 NEUROSC C129 NWMEDIA 190 NWMEDIA C203 NWMEDIA C262 NWMEDIA C265 PBHLTH C129 PHILOS 107 PHILOS 110 PHILOS 122 PHILOS 125 PHILOS 126 PHILOS 128 PHILOS 132 PHILOS 133 PHILOS 135 PHILOS 136 PHILOS 138 PHILOS 140A PHILOS 140B PHILOS 141 PHILOS 151 PHILOS 153 PHILOS 154 PHILOS 170 PHILOS 176 PHILOS 178 PHILOS 185 PHILOS 186 PHILOS 186B PHILOS 188 PHILOS C132 PHILOS W12A POLSCI 161 POLSCI 164A POLSCI C135 PSYCH 101 PSYCH 114 PSYCH 115 PSYCH 117 PSYCH 121 PSYCH 124 PSYCH 125 PSYCH 128 PSYCH 130 PSYCH 131 PSYCH 133 PSYCH 134 PSYCH 135 PSYCH 136 PSYCH 137 PSYCH 140 PSYCH 144 PSYCH 147 PSYCH 150 PSYCH 156 PSYCH 160 PSYCH 163 PSYCH 164 PSYCH 166AC PSYCH 167AC PSYCH 169 PSYCH C111 PSYCH C113 PSYCH C115C PSYCH C116 PSYCH C120 PSYCH C123 PSYCH C124 PSYCH C126 PSYCH C127 PSYCH C143 PSYCH C223 PSYCH N117 PSYCH N120 PSYCH N130 PSYCH N133 PSYCH N140 PSYCH N150 PSYCH N160 PSYCH N162 RHETOR 103A RHETOR 103B RHETOR 110 RHETOR 170 SLAVIC C139 SOCIOL 150 SOCIOL 166 SOCIOL 167 SPANISH 100 SPANISH 166 STAT 133 STAT 134 STAT 155 STAT C100 STAT C140 STS C100 STS C104D UGBA 105 UGBA 136F UGBA 143 UGBA 160 UGBA 167 UGBA 177 UGBA 192AC UGIS 120 VISSCI 265 VISSCI C280"
       }
     ]
@@ -1394,8 +1392,6 @@
         "id": "pLZ324LC",
         "name": "Requirements",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Four courses are required from two different areas: Two courses from one area, and two courses from another area."
       },
       {
@@ -1510,9 +1506,7 @@
       {
         "id": "QAMy9TI7",
         "name": "Fluid Mechanics",
-        "kind": "placeholder",
-        "n": 0,
-        "groups": []
+        "kind": "placeholder"
       },
       {
         "id": "EVOjZ3HD",
@@ -3575,8 +3569,6 @@
         "id": "olf0e1Wb",
         "name": "Courses",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Complete at least 8 of: Any 4-unit POLSCI 100–191-level course (excluding POLSCI 110 and POLSCI 179)"
       }
     ]
@@ -3587,8 +3579,7 @@
     "kind": "minor",
     "flags": [
       "rule descriptions",
-      "course sets",
-      "no resolvable courses in \"Electives\""
+      "free text"
     ],
     "rules": [
       {
@@ -3610,10 +3601,7 @@
       {
         "id": "Vic6QTUX",
         "name": "Electives",
-        "kind": "placeholder",
-        "n": 0,
-        "groups": [],
-        "description": "Students must complete each course with a letter grade of C- or higher."
+        "kind": "placeholder"
       }
     ]
   },
@@ -3693,8 +3681,6 @@
         "id": "4CfgLgiUFB6kROei1WY4",
         "name": "Upper Division",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "8 Upper Division courses are required for the Environmental Economics & Policy Major (3 Core courses + 5 Elective courses). Of these 8 Upper Division courses, students must complete at least 5 Upper Division ENVECON courses. These 5 Upper Division ENVECON courses may be satisfied with both Core Requirement courses and Elective Requirement courses. Courses that are cross-listed with ENVECON will also count towards this 5 Upper Division ENVECON course requirement."
       },
       {
@@ -3866,8 +3852,6 @@
         "id": "qWEnTg2r",
         "name": "Environmental Economics & Policy Major Breadth Requirements",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Environmental Economics & Policy Major Breadth Requirements: The undergraduate breadth requirements provide Berkeley students with a rich and varied educational experience outside of their major program. As the foundation of a liberal arts education, breadth courses give students a view into the intellectual life of the University while introducing them to a multitude of perspectives and approaches to research and scholarship. Engaging students in new disciplines and with peers from other majors, the breadth experience strengthens interdisciplinary connections and provides context that prepares Berkeley graduates to understand and solve the complex issues of their day. The requirement consists of seven distribution areas: Arts and Literature, Biological Science, Historical Studies, International Studies, Philosophy and Values, Physical Science, and Social and Behavioral Sciences. For descriptions of these distribution areas, as well as more information on options to complete breadth, visit the L&S Seven-Course Breadth webpage. Guidelines for Seven-Course Breadth Complete one approved course for each of the seven areas with a minimum grade of C- or P. To find course options for breadth, go to the Class Schedule , select the term of interest, and use the \"Breadth Requirements\" filter to select the breadth area(s) of interest. When selecting a course, keep the following in mind: Some courses may list multiple breadth areas. These are options for which breadth areas the course can satisfy. A course may only be used for one of the approved breadth areas. To satisfy the breadth requirement, complete seven distinct courses, one for each breadth area. Students may use up to two courses from any one academic department to satisfy the Seven-Course Breadth. This includes all subject areas offered by the department and—if a course is cross-listed (indicated by a 'C' prefix)—all other departments offering the course as well. Letters and Science (\"LS\") courses are an exception to this restriction. Students may complete as many LS courses as they wish for the Seven-Course Breadth. This includes LS courses offered through the Discovery and Big Ideas programs. Courses fulfilling American History & Institutions , American Cultures or requirements in the major program may also be applied to the Seven-Course Breadth requirement. Seven-Course Breadth is fulfilled by taking 7 college courses. Exams, such as Advanced Placement and International Baccalaureate, cannot be used to fulfill breadth requirements. Satisfying the Seven Course Breadth Requirement with Transfer Work Students admitted with IGETC Certification or UC Reciprocity have satisfied Quantitative Reasoning. No additional course work is required. All transfer courses must be completed with a grade of C- or better, or the equivalent of a Passed grade on the host campus, in order to be considered for Seven-Course Breadth. To be eligible for consideration, the minimum unit requirement for a course offered from a campus on the semester system is 3.0 units, and for courses offered from campuses on the quarter system, 4.0 units. Students can complete pre-approved breadth courses at a California Community College. Pre-approved courses can be found on ASSIST . Refer to the L&S Transfer Credit page for instructions on how to take transfer credit as an L&S student before enrolling at a California Community College. Successful completion of transferable courses from other higher education institutions (i.e. 2-year or 4-year campus in the U.S. or non-UCEAP courses from abroad) may also be considered. Course descriptions and syllabi will be required to make a breadth determination. For more information on pursuing transfer courses for Seven-Course Breadth at another higher education institution, review L&S’s Transfer Credit: Other Higher Education Institutions webpage. Clos"
       }
     ]
@@ -3885,24 +3869,18 @@
         "id": "WoJXP2bi",
         "name": "Requirements for both specializations",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Lower division courses Chemistry (Select one of the following): CHEM 1A & 1AL General Chemistry and General Chemistry Laboratory CHEM 3A & 3AL Chemical Structure and Reactivity and Organic Chemistry Laboratory Biology BIOLOGY 1B General Biology Lecture and Laboratory [4] Calculus (A-B series required) MATH 16A & MATH 16B Analytic Geometry and Calculus and Analytic Geometry and Calculus MATH 51 & MATH 52 Calculus I Calculus II MATH 10A & MATH 10B Methods of Mathematics: Calculus, Statistics, and Combinatorics and Methods of Mathematics: Calculus, Statistics, and Combinatorics Statistics (Select one of the following): Note: Students who take Math 10A/B are exempt from the Statistics requirement. STAT 20 Introduction to Probability and Statistics [4] STAT 21 Introductory Probability and Statistics for Business [4] ESPM 173 Introduction to Ecological Data Analysis [3] DATA C8 & C88S Foundations of Data Science and Probability and Mathematical Statistics in Data Science Economics (Select one of the following): ENVECON C1 Introduction to Environmental Economics and Policy [4] ECON 1 ___________ ECON 2 Introduction to Economics [4] __________________________ Introduction to Economics (Lecture Format) [4] Physical Science (Select one of the following): GEOG 40 Introduction to Earth System Science [4] or EPS 50 The Planet Earth or GEOG 1 Global Environmental Change GIS (Select one of the following): ESPM 72 Introduction to Geographic Information Systems [3] (offered every other year) or GEOG 80 An Introduction to Geospatial Technologies: Mapping, Space and Power ESPM Core Requirements ESPM Environmental Sciences Core (Select one of the following): ESPM 2 The Biosphere [3] ESPM 6 Environmental Biology [3] ESPM C10 Environmental Issues [4] ESPM 15 Introduction to Environmental Sciences [3] ESPM C46 Climate Change and the Future of California [4] ESPM Social Sciences Core (Select one of the following): ESPM C11 Americans and the Global Forest [4] ESPM C22AC Fire: Past, Present and Future Interactions with the People and Ecosystems of California [4] ESPM 50AC Introduction to Culture and Natural Resource Management [4] ESPM C52 History of Native American Land, Colonialism, and Heritage Preservation [3] ESPM 60 Environmental Policy, Administration, and Law [4] Upper Division Core Courses Upper division requirements for both specializations ESPM 137 Landscape Ecology [3] or ESPM C153 Ecology ESPM 102C Resource Management [4] ESPM 183 Forest Ecosystem Management and Planning [4]"
       },
       {
         "id": "DKpxhcJG",
         "name": "Requirements",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "The Forestry specialization provides students with the ecological, quantitative, and social foundation to be the managers and leaders in the management of forests and forest resources. The Forestry specialization is accredited by the Society of American Foresters and provides four years of qualifying education or professional experience for licensing as a professional forester in California. The goals of the Forestry specialization are very closely associated with the educational requirements of the forestry profession and prepare our students for a variety of careers in forestry or closely related natural resource fields. Course List Code Title Units Forestry Field Program ESPM 105A Sierra Nevada Ecology [4] ESPM 105B Forest Measurements [1] ESPM 105C Silviculture and Utilization [3] ESPM 105D Forest Management and Assessment [3] Forestry Required Courses ESPM 102D Climate and Energy Policy [4] or ESPM 60 Environmental Policy, Administration, and Law ESPM 108A Trees: Taxonomy, Growth, and Structures [3] ESPM 134 Fire, Insects, and Diseases in Forest Ecosystems [3] ESPM 182 Forest Operations Management [3] (offered every other year) ESPM 185 Applied Forest Ecology [4] ESPM 102B Natural Resource Sampling [2] (&) ESPM 102BL Laboratory in Natural Resource Sampling [2] or ESPM C110A Ecological Analysis Forestry Elective Select two: ESPM 116B Grassland and Woodland Ecology 4 ESPM 120 Science of Soils [3] ESPM 121 Development and Classification of Soils [3] ESPM C129 Biometeorology [3] ESPM 130A Forest Hydrology 4 ESPM 131 Soil Microbiology and Biogeochemistry [3] ESPM 157 Data Science in Global Change Ecology [4] ESPM 164 GIS and Environmental Science [3] ESPM C172 Remote Sensing of the Environment [4] ESPM 173 Introduction to Ecological Data Analysis [3] ESPM 174A Applied Time Series Analysis for Ecology and Environmental Sciences 3 ESPM 181A Fire Ecology [3] ESPM 186 Grassland and Woodland Management and Conservation [4] ESPM 190 Seminar in Environmental Issues 3 GEOG 180 Field Methods for Physical Geography [5] GEOG 185 Earth System Remote Sensing [3] GEOG C188 Geographic Information Science 4"
       },
       {
         "id": "kFbAG01b",
         "name": "Requirements",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "The Natural Resource Management specialization provides students with greater flexibility to explore subjects in ecology, physical environment, monitoring and measurement, and management and policy. Students can choose to concentrate their studies in water management, ecology, climates change or design their own concentration based on interest. Choose One: Choice A Either the Forestry Field program (ESPM 105A-D) or Biology and Geomorphology of Tropical Islands (ESPM C107) or UCNRS CA Ecology (BIO/ENVS 188) AND Three additional approved courses by and Ecosystem Management and Forestry Faculty Choice B Design your own six course concentration with NMR faculty approval with at least one elective from each of the following categories Course List Code Title Units Electives by Concentration for Natural Resource Management Specialization Ecosystem Knowledge ESPM 108A Trees: Taxonomy, Growth, and Structures [3] ESPM 108B Environmental Change Genetics [3] ESPM 111 Ecosystem Ecology [4] ESPM 112 Microbial Ecology [3] ESPM 113 Insect Ecology [3] ESPM 114 Wildlife Ecology [3] ESPM C115A Freshwater Ecology [3] ESPM 115C Fish Ecology [3] ESPM 116B Grassland and Woodland Ecology [4] ESPM 120 Science of Soils [3] ESPM 121 Development and Classification of Soils [3] ESPM C129 Biometeorology [3] ESPM 130A Forest Hydrology [4] ESPM 131 Soil Microbiology and Biogeochemistry [3] ESPM C180 Air Pollution [3] INTEGBI 157LF Ecosystems of California [4] Ecosystem Measurement and Assessment ESPM 102B & 102BL Natural Resource Sampling and Laboratory in Natural Resource Sampling ESPM C110A Ecological Analysis [4] ESPM 157 Data Science in Global Change Ecology [4] ESPM 164 GIS and Environmental Science [3] ESPM C172 Remote Sensing of the Environment [4] ESPM 173 Introduction to Ecological Data Analysis [3] ESPM 174A Applied Time Series Analysis for Ecology and Environmental Sciences [3] GEOG 180 Field Methods for Physical Geography [5] GEOG C188 Geographic Information Science [4] Ecosystems Value and Policy ESPM 101A The Politics and Practice of Sustainability Transitions [4] ESPM 102D Climate and Energy Policy [4] ESPM 155AC Sociology and Political Ecology of Agro-Food Systems [4] ESPM 161 Environmental Philosophy and Ethics [4] ESPM 162A Health, Medicine, Society and Environment [4] ESPM 163AC Environmental Justice: Race, Class, Equity, and the Environment [4] ESPM 168 Political Ecology [4] ESPM 169 International Environmental Politics [4] ESPM C176 CLIMATE JUSTICE [4] Ecosystem Management ESPM C103 Principles of Conservation Biology [4] ESPM 106 American Wildlife: Management and Policy in the 21st Century [3] ESPM 134 Fire, Insects, and Diseases in Forest Ecosystems [3] ESPM 152 Global Change Biology [3] ESPM 162 Bioethics and Society [4] ESPM C167 Environmental Health and Development [4] ESPM 181A Fire Ecology [3] ESPM 182 Forest Operations Management [3] ESPM 185 Applied Forest Ecology [4] ESPM 186 Grassland and Woodland Management and Conservation [4]"
       }
     ]
@@ -3920,16 +3898,12 @@
         "id": "oa7U9GHS",
         "name": "Core",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Complete at least 2 of: CHINESE 7A or CHINESE 7B (only one can satisfy the Core requirement) Any CHINESE 100-194 course Any CHINESE 200-296 course"
       },
       {
         "id": "cqkEF7LX",
         "name": "Electives",
         "kind": "placeholder",
-        "n": 0,
-        "groups": [],
         "text": "Complete at least 2 of: CHINESE 7A or CHINESE 7B (only one can satisfy the Elective requirement, and only if it has not been used to satisfy the Core requirement) Any CHINESE 100-194 course Any CHINESE 200-296 course Any JAPANESE 100-194 course Any JAPANESE 200-296 course Any KOREAN 100-194 course Any KOREAN 200-296 course Any EALANG 100-194 course Any EALANG 200-296 course Any TIBETAN 100-194 course Any TIBETAN 200-296 course Any MONGOLN 100-194 course Any MONGOLN 200-296 course"
       }
     ]

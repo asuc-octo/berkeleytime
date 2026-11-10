@@ -67,7 +67,7 @@ export function evaluateEffectiveMet(
         isManuallyNotMet: false,
       };
     } else {
-      // OrRequirement, optionally "at least n of"
+      // OrRequirement: at least `required` (default 1) met
       let metCount = 0;
       let anyManual = false;
       for (const sub of subReqs) {
@@ -77,10 +77,10 @@ export function evaluateEffectiveMet(
           if (subRes.isManuallyMet) anyManual = true;
         }
       }
-      const anyMet = metCount >= (req.required?.data ?? 1);
+      const isMet = metCount >= (req.required?.data ?? 1);
       return {
-        isMet: anyMet,
-        isManuallyMet: anyMet && anyManual,
+        isMet,
+        isManuallyMet: isMet && anyManual,
         isManuallyNotMet: false,
       };
     }
@@ -278,31 +278,33 @@ const renderRequirementDetails = (
 
     const isAnd = req.type?.data === "AndRequirement";
     const isOr = req.type?.data === "OrRequirement";
+    // An OrRequirement with a count shows progress instead of "OR"
     const requiredCount: number | undefined = isOr
       ? req.required?.data
       : undefined;
-    const connector = isAnd
-      ? "AND"
-      : isOr && requiredCount === undefined
-        ? "OR"
-        : null;
+    const isCounted = requiredCount !== undefined;
+    let connector: string | null = null;
+    if (isAnd) connector = "AND";
+    else if (isOr && !isCounted) connector = "OR";
+
+    let completed = 0;
+    if (isCounted) {
+      const met = subRequirements.filter(
+        (sub) => evaluateEffectiveMet(sub, allOverrides).isMet
+      );
+      completed = Math.min(met.length, requiredCount);
+    }
 
     return (
       <div
         style={{ marginTop: "0.25rem", width: "100%", boxSizing: "border-box" }}
       >
-        {requiredCount !== undefined && (
+        {isCounted && (
           <p
             className={styles.metadata}
             style={{ marginLeft: `${textIndent + depth * 24}px` }}
           >
-            {Math.min(
-              subRequirements.filter(
-                (sub) => evaluateEffectiveMet(sub, allOverrides).isMet
-              ).length,
-              requiredCount
-            )}{" "}
-            / {requiredCount} completed
+            {completed} / {requiredCount} completed
           </p>
         )}
         {subRequirements.map((subReq, index) => {

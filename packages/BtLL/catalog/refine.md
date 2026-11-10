@@ -1,12 +1,12 @@
 # Refining a catalog-generated degree program
 
-You are refining one degree program that `packages/BtLL/import-catalog.ts` generated from the Berkeley catalog (Coursedog). The catalog data is often incomplete or wrong. Your job: compare the program with the department's own requirements page and **write an override** that corrects it, justifying every change with the page's URL and a verbatim quote. A human reviews your output afterward.
+You are refining one degree program that `packages/BtLL/catalog/import.ts` generated from the Berkeley catalog (Coursedog). The catalog data is often incomplete or wrong. Your job: compare the program with the department's own requirements page and **write an override** that corrects it, justifying every change with the page's URL and a verbatim quote. A human reviews your output afterward.
 
 The prompt gives you a `programGroupId`. Work from the repository root.
 
 ## Inputs
-- `packages/BtLL/catalog_rules.generated.json`: find the entry whose `programGroupId` matches. It has the program's `name`, `kind` (major/minor), `flags` (known catalog problems) and `rules`. Each rule has a stable `id`, a `name`, a `kind`, a count `n`, and `groups` of course codes. A group is a list of alternatives, any one of which satisfies it. Placeholders carry the catalog's free text in `text`; other rules may have a catalog `description`.
-- `packages/BtLL/catalog-overrides/<programGroupId>.json`, if it exists: a previous refinement. Revise it rather than starting over.
+- `packages/BtLL/catalog/rules.generated.json`: find the entry whose `programGroupId` matches. It has the program's `name`, `kind` (major/minor), `flags` (known catalog problems) and `rules`. Each rule has a stable `id`, a `name` and a `kind`; course rules also have a count `n` and `groups` of course codes. A group is a list of alternatives, any one of which satisfies it. Placeholders carry the catalog's free text in `text`; other rules may have a catalog `description`.
+- `packages/BtLL/catalog/overrides/<programGroupId>.json`, if it exists: a previous refinement. Revise it rather than starting over.
 
 How rules are evaluated: rules are checked in order, and **each course counts toward at most one rule** (the first rule that uses it), unless a rule is `shared`. Requirement sets that every student has (university, campus and college requirements) are handled elsewhere; ignore them.
 
@@ -35,7 +35,7 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 - Course codes are `"SUBJECT NUMBER"` using catalog subject codes (`MATH 104`, `COMPSCI 61A`, `ENGLISH C177`). The generator rejects codes that aren't in the catalog.
 - Grades, GPA, letter-grade and residency rules can't be checked by GradTrak. List them in `notEncoded`.
 - When the department page and the catalog disagree, decide which is right and explain why in `reasoning`.
-- Only edit `packages/BtLL/catalog-overrides/<programGroupId>.json`. Never edit code or generated files.
+- Only edit `packages/BtLL/catalog/overrides/<programGroupId>.json`. Never edit code or generated files.
 
 ## Rule kinds you can write
 - `{ "kind": "allOf", "name", "groups": [[...], ...] }`: every group (its count is implied).
@@ -47,7 +47,7 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 - Any rule may set `"shared": true` if the department says its courses may also count elsewhere.
 
 ## Output
-**`packages/BtLL/catalog-overrides/<programGroupId>.json`**:
+**`packages/BtLL/catalog/overrides/<programGroupId>.json`**:
 ```json
 {
   "programGroupId": "25I071U",
@@ -61,7 +61,7 @@ How rules are evaluated: rules are checked in order, and **each course counts to
   "notEncoded": ["requirements GradTrak can't check: grades, GPA, residency, caps, petitions"]
 }
 ```
-Changes apply in order; `ruleId`/`before` refer to ids in `catalog_rules.generated.json` (a replaced rule keeps its id). Rules are checked in list order, so put specific rules before broad ones such as electives and totals. List each catalog or API query in `sources` precisely enough for a reviewer to repeat it (e.g. how you found "every 4-unit ENGLISH course"). Keep `notStated` and `notEncoded` items to one line each.
+Changes apply in order; `ruleId`/`before` refer to ids in `rules.generated.json` (a replaced rule keeps its id). Rules are checked in list order, so put specific rules before broad ones such as electives and totals. List each catalog or API query in `sources` precisely enough for a reviewer to repeat it (e.g. how you found "every 4-unit ENGLISH course"). Keep `notStated` and `notEncoded` items to one line each.
 
 ## Finish
 Run `npm run import:catalog -w @repo/BtLL`. If it reports an error about your override, fix the override and run it again until it succeeds. Then stop, and reply with a one-paragraph summary.

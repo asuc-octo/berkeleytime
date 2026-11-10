@@ -1,23 +1,25 @@
 /// <reference types="node" />
-/**
- * Runs the refinement agent (headless Claude Code, see refine-catalog.md) for
- * each catalog program, then regenerates.
- * Usage: npm run refine:catalog -w @repo/BtLL [-- <programGroupId>...] [--force]
- */
+// Runs the refinement agent (headless Claude Code, see refine.md) on
+// each catalog program, then regenerates.
+// Usage: npm run refine:catalog -w @repo/BtLL [-- <programGroupId>...] [--force]
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+
+function allProgramIds(): string[] {
+  const rules = JSON.parse(
+    readFileSync(here("./rules.generated.json"), "utf8")
+  );
+  return rules.map((p: { programGroupId: string }) => p.programGroupId);
+}
+
 const args = process.argv.slice(2);
 const force = args.includes("--force");
 const ids = args.filter((a) => !a.startsWith("--"));
-const programs: string[] = ids.length
-  ? ids
-  : JSON.parse(
-      readFileSync(here("./catalog_rules.generated.json"), "utf8")
-    ).map((p: { programGroupId: string }) => p.programGroupId);
-const instructions = readFileSync(here("./refine-catalog.md"), "utf8");
+const programs = ids.length ? ids : allProgramIds();
+const instructions = readFileSync(here("./refine.md"), "utf8");
 
 // Anything else is denied in headless mode
 const allowedTools = [
@@ -26,13 +28,13 @@ const allowedTools = [
   "Read",
   "Glob",
   "Grep",
-  "Edit(packages/BtLL/catalog-overrides/**)",
+  "Edit(packages/BtLL/catalog/overrides/**)",
   "Bash(npm run import:catalog *)",
   "Bash(node -e *)",
 ];
 
 for (const id of programs) {
-  if (!force && existsSync(here(`./catalog-overrides/${id}.json`))) {
+  if (!force && existsSync(here(`./overrides/${id}.json`))) {
     console.log(`- ${id}: already refined (use --force to redo)`);
     continue;
   }
@@ -52,7 +54,7 @@ for (const id of programs) {
       "--allowedTools",
       ...allowedTools,
     ],
-    { cwd: here("../.."), stdio: "inherit" }
+    { cwd: here("../../.."), stdio: "inherit" }
   );
   console.log(
     status === 0 ? `+ ${id}: done` : `! ${id}: claude exited with ${status}`
@@ -60,7 +62,7 @@ for (const id of programs) {
 }
 
 spawnSync("npm", ["run", "import:catalog"], {
-  cwd: here("."),
+  cwd: here(".."),
   stdio: "inherit",
   shell: true,
 });
