@@ -12,6 +12,8 @@ otel:
   collectorEndpoint: "http://otel-collector.bt.svc.cluster.local:4318"
   # Service name for traces/metrics
   serviceName: "backend"
+  # Fraction of new traces kept; downstream spans follow the parent's decision
+  traceSampleRatio: "0.1"
 
 mongoUri: mongodb://bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
