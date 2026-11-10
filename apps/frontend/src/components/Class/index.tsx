@@ -572,21 +572,23 @@ export default function Class({
                     <p className={styles.description}>{classTitle}</p>
                   </Flex>
                   <Flex gap="3">
-                    <Notifications
-                      disabled={userLoading}
-                      classInfo={
-                        _class
-                          ? {
-                              year: _class.year,
-                              semester: _class.semester,
-                              sessionId: _class.sessionId,
-                              subject: _class.subject,
-                              courseNumber: _class.courseNumber,
-                              number: _class.number,
-                            }
-                          : undefined
-                      }
-                    />
+                    <SuspenseBoundary fallback={<></>}>
+                      <Notifications
+                        disabled={userLoading}
+                        classInfo={
+                          _class
+                            ? {
+                                year: _class.year,
+                                semester: _class.semester,
+                                sessionId: _class.sessionId,
+                                subject: _class.subject,
+                                courseNumber: _class.courseNumber,
+                                number: _class.number,
+                              }
+                            : undefined
+                        }
+                      />
+                    </SuspenseBoundary>
                     <AddToSchedulePopover
                       disabled={userLoading}
                       classInfo={
