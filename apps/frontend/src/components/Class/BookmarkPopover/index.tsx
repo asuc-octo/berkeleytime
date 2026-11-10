@@ -8,17 +8,10 @@ import {
 
 import classNames from "classnames";
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
-import {
-  Bookmark,
-  BookmarkSolid,
-  Check,
-  Folder,
-  PinSolid,
-  Plus,
-} from "iconoir-react";
+import { Bookmark, BookmarkSolid, Folder, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { Button, Color, IconButton, Tooltip } from "@repo/theme";
+import { Button, Checkbox, Color, IconButton, Tooltip } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -433,11 +426,8 @@ export default function BookmarkPopover({
                   const collectionFolderStyle = collectionFolderColor
                     ? ({ color: collectionFolderColor } as CSSProperties)
                     : undefined;
-                  const toggleLabel = isSaved
-                    ? `Remove from ${collection.name}`
-                    : `Add to ${collection.name}`;
                   return (
-                    <motion.div
+                    <motion.label
                       key={collection.id}
                       layout
                       initial={isNew ? { opacity: 0, y: 50 } : false}
@@ -447,8 +437,17 @@ export default function BookmarkPopover({
                         opacity: { duration: 0.2 },
                         y: { type: "spring", stiffness: 400, damping: 25 },
                       }}
-                      className={styles.collectionRow}
+                      className={classNames(styles.collectionRow, {
+                        [styles.nested]: !collection.isSystem,
+                      })}
                     >
+                      <Checkbox
+                        checked={isSaved}
+                        disabled={mutatingCollections.has(collection.id)}
+                        onCheckedChange={() =>
+                          handleToggleCollection(collection.id, isSaved)
+                        }
+                      />
                       <span className={styles.collectionName}>
                         <Folder
                           width={16}
@@ -474,28 +473,7 @@ export default function BookmarkPopover({
                           />
                         )}
                       </span>
-                      <Tooltip
-                        title={toggleLabel}
-                        trigger={
-                          <IconButton
-                            className={classNames(styles.bookmark, {
-                              [styles.active]: isSaved,
-                            })}
-                            aria-label={toggleLabel}
-                            disabled={mutatingCollections.has(collection.id)}
-                            onClick={() =>
-                              handleToggleCollection(collection.id, isSaved)
-                            }
-                          >
-                            {isSaved ? (
-                              <Check width={16} height={16} />
-                            ) : (
-                              <Plus width={16} height={16} />
-                            )}
-                          </IconButton>
-                        }
-                      />
-                    </motion.div>
+                    </motion.label>
                   );
                 })}
               </LayoutGroup>
