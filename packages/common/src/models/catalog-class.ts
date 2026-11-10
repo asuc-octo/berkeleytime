@@ -329,6 +329,12 @@ catalogClassSchema.index({ year: 1, semester: 1, enrollmentStatus: 1 });
 // Grading basis filter
 catalogClassSchema.index({ year: 1, semester: 1, gradingBasis: 1 });
 
+// Enrollment puller primary section lookup
+catalogClassSchema.index({ year: 1, semester: 1, primarySectionId: 1 });
+
+// Enrollment puller secondary section lookup
+catalogClassSchema.index({ year: 1, semester: 1, "sections.sectionId": 1 });
+
 // Unique constraint for upserts
 catalogClassSchema.index(
   {
