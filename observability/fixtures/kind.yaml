@@ -1,0 +1,7 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: bt-resources
+nodes:
+  - role: control-plane
+    # Test compatibility target, not a production Kubernetes upgrade proposal.
+    image: kindest/node:v1.30.4

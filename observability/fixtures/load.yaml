@@ -1,0 +1,38 @@
+# Explicitly apply only to kind-bt-resources. Self-terminates after five minutes.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: resource-load
+  namespace: bt
+spec:
+  activeDeadlineSeconds: 360
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: resource-load
+          image: python:3.12.7-alpine3.20
+          resources:
+            requests: {cpu: 100m, memory: 32Mi}
+            limits: {cpu: 250m, memory: 128Mi}
+          command: [python, -u, -c]
+          args:
+            - |
+              import time
+              import urllib.request
+              buffer = bytearray(48 * 1024 * 1024)
+              for i in range(0, len(buffer), 4096): buffer[i] = 1
+              end = time.monotonic() + 300
+              while time.monotonic() < end:
+                  # Synthetic CPU load plus <= 2 nginx requests/s, confined to fixtures.
+                  cycle = time.monotonic() + 0.5
+                  try:
+                      with urllib.request.urlopen("http://resource-nginx:8080/", timeout=1) as response:
+                          response.read()
+                  except Exception:
+                      pass
+                  while time.monotonic() < cycle:
+                      sum(i*i for i in range(1000))
+              print("Bounded resource fixture finished")

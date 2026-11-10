@@ -1,0 +1,400 @@
+rule_files:
+  - ../files/resources.yml
+evaluation_interval: 30s
+tests:
+  - name: deduplicate before workload sums; absent CPU is not zero; Deployment owner
+      resolution
+    interval: 30s
+    input_series:
+      - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="a"}
+        values: 0+15x10
+      - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="b"}
+        values: 0+15x10
+      - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="POD",job="cadvisor",node="test-node",image="pause:test"}
+        values: 0+300x10
+      - series: container_memory_working_set_bytes{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="a"}
+        values: 67108864+0x10
+      - series: container_memory_working_set_bytes{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="b"}
+        values: 67108864+0x10
+      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}
+        values: 1+0x10
+      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",instance="duplicate"}
+        values: 1+0x10
+      - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="backend-abc",uid="pod-1",owner_kind="ReplicaSet",owner_name="backend-rs",owner_is_controller="true"}
+        values: 1+0x10
+      - series: kube_replicaset_owner{deployment_environment="kind",namespace="bt",replicaset="backend-rs",owner_kind="Deployment",owner_name="backend",owner_is_controller="true"}
+        values: 1+0x10
+      - series: kube_pod_container_resource_requests{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",resource="cpu",unit="core"}
+        values: 0.1+0x10
+      - series: kube_pod_container_resource_limits{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",resource="memory",unit="byte"}
+        values: 134217728+0x10
+      - series: up{deployment_environment="kind",job="kube-state-metrics"}
+        values: 1+0x10
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
+        values: 0+3x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
+        values: 0+30x10
+    promql_expr_test:
+      - expr: bt:container_cpu_cores:rate5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_cores:rate5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.5
+      - expr: bt:container_memory_working_set_bytes
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_memory_working_set_bytes",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 67108864
+      - expr: bt:container_cpu_limit_absent:info
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_limit_absent:info",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}'
+            value: 1
+      - expr: bt:container_memory_limit_absent:info
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.1
+      - expr: bt:workload_cpu_cores:rate5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:workload_cpu_cores:rate5m",deployment_environment="kind",namespace="bt",workload="backend",workload_type="Deployment"}'
+            value: 0.5
+      - expr: bt:workload_cpu_requests
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:workload_cpu_requests",deployment_environment="kind",namespace="bt",workload="backend",workload_type="Deployment"}'
+            value: 0.1
+      - expr: bt:container_memory_working_set_bytes / on
+          (deployment_environment,namespace,pod,container) group_left()
+          (bt:container_memory_limits > 0)
+        eval_time: 5m
+        exp_samples:
+          - labels: '{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.5
+  - name: missing state source is unknown; zero denominator gives no throttling ratio
+    interval: 30s
+    input_series:
+      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}
+        values: 1+0x10
+      - series: up{deployment_environment="kind",job="kube-state-metrics"}
+        values: 0+0x10
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
+        values: 0+0x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
+        values: 0+0x10
+    promql_expr_test:
+      - expr: bt:container_cpu_limit_absent:info
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_memory_limit_absent:info
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples: []
+  - name: counter reset remains positive and missing owner does not invent workload
+      usage
+    interval: 30s
+    input_series:
+      - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
+        values: 0 30 60 0 30 60 90 120 150 180 210
+    promql_expr_test:
+      - expr: bt:container_cpu_cores:rate5m > bool 0.8
+        eval_time: 5m
+        exp_samples:
+          - labels: '{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 1
+      - expr: bt:workload_cpu_cores:rate5m
+        eval_time: 5m
+        exp_samples: []
+  - name: direct StatefulSet, standalone ReplicaSet and ownerless pod retain
+      identities
+    interval: 30s
+    input_series:
+      - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="database-0",uid="db-1",owner_kind="StatefulSet",owner_name="database",owner_is_controller="true"}
+        values: 1+0x10
+      - series: kube_pod_info{deployment_environment="kind",namespace="bt",pod="standalone",uid="solo-1"}
+        values: 1+0x10
+      - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="standalone-rs-pod",uid="rs-uid",owner_kind="ReplicaSet",owner_name="standalone-rs",owner_is_controller="true"}
+        values: 1+0x10
+    promql_expr_test:
+      - expr: count by (workload,workload_type) (bt:pod_owner:info)
+        eval_time: 5m
+        exp_samples:
+          - labels: '{workload="database",workload_type="StatefulSet"}'
+            value: 1
+          - labels: '{workload="standalone",workload_type="Pod"}'
+            value: 1
+          - labels: '{workload="standalone-rs",workload_type="ReplicaSet"}'
+            value: 1
+  - name: all dashboard PromQL expressions parse without inventing data
+    interval: 30s
+    input_series: []
+    promql_expr_test:
+      - expr: up{deployment_environment=~"kind"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: time() - max by (deployment_environment, service_name)
+          (timestamp(mongodb_memory_usage_bytes{deployment_environment=~"kind",service_name="mongodb"}))
+        eval_time: 5m
+        exp_samples: []
+      - expr: time() - max by (deployment_environment, service_name)
+          (timestamp(nginx_connections_current{deployment_environment=~"kind",service_name="nginx"}))
+        eval_time: 5m
+        exp_samples: []
+      - expr: process_memory_heap_used_bytes{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: process_memory_rss_bytes{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: process_eventloop_lag_max_milliseconds{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: process_eventloop_lag_p99_milliseconds{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: histogram_quantile(0.95, sum by (le,service_name,pod)
+          (rate(graphql_operation_duration_milliseconds_bucket{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m])))
+        eval_time: 5m
+        exp_samples: []
+      - expr: histogram_quantile(0.95, sum by (le,operation,service_name)
+          (rate(redis_cache_operation_duration_milliseconds_bucket{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m])))
+        eval_time: 5m
+        exp_samples: []
+      - expr: sum by (service_name)
+          (rate(apollo_cache_hit_total{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m]))
+        eval_time: 5m
+        exp_samples: []
+      - expr: sum by (service_name)
+          (rate(apollo_cache_miss_total{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m]))
+        eval_time: 5m
+        exp_samples: []
+      - expr: sum(rate(apollo_cache_hit_total{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m]))
+          /
+          ((sum(rate(apollo_cache_hit_total{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m]))
+          +
+          sum(rate(apollo_cache_miss_total{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}[5m])))
+          > 0)
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_cpu_requests{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_cpu_limits{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+          > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_memory_requests{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:workload_memory_limits{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
+          > 0
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+          / on (deployment_environment,namespace,pod,container) group_left()
+          (bt:container_memory_limits{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+          > 0)
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_throttling:ratio5m{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_limit_absent:info{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_memory_limit_absent:info{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: max by (namespace,persistentvolumeclaim)
+          (kubelet_volume_stats_capacity_bytes{deployment_environment=~"kind",namespace=~".*"})
+        eval_time: 5m
+        exp_samples: []
+      - expr: max by (namespace,persistentvolumeclaim)
+          (kubelet_volume_stats_available_bytes{deployment_environment=~"kind",namespace=~".*"})
+        eval_time: 5m
+        exp_samples: []
+      - expr: max by (namespace,persistentvolumeclaim)
+          (kubelet_volume_stats_available_bytes{deployment_environment=~"kind",namespace=~".*"})
+          / (max by (namespace,persistentvolumeclaim)
+          (kubelet_volume_stats_capacity_bytes{deployment_environment=~"kind",namespace=~".*"})
+          > 0)
+        eval_time: 5m
+        exp_samples: []
+      - expr: node_filesystem_avail_bytes{deployment_environment=~"kind",node=~".*",fstype!~"tmpfs|devtmpfs|overlay|squashfs",mountpoint!~"/run.*"}
+          /
+          (node_filesystem_size_bytes{deployment_environment=~"kind",node=~".*",fstype!~"tmpfs|devtmpfs|overlay|squashfs",mountpoint!~"/run.*"}
+          > 0)
+        eval_time: 5m
+        exp_samples: []
+      - expr: max by (node,condition)
+          (kube_node_status_condition{deployment_environment=~"kind",node=~".*",status="true",condition=~"MemoryPressure|DiskPressure|PIDPressure"})
+        eval_time: 5m
+        exp_samples: []
+      - expr: rate(node_network_receive_bytes_total{deployment_environment=~"kind",node=~".*",device!~"lo|veth.*|docker.*|cni.*|br-.*"}[5m])
+        eval_time: 5m
+        exp_samples: []
+      - expr: rate(node_network_transmit_bytes_total{deployment_environment=~"kind",node=~".*",device!~"lo|veth.*|docker.*|cni.*|br-.*"}[5m])
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",container=~"prometheus|grafana|otel-collector|loki|tempo|node-exporter"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: bt:container_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",container=~"prometheus|grafana|otel-collector|loki|tempo|node-exporter"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: mongodb_memory_usage_bytes{deployment_environment=~"kind",namespace=~".*",service_name="mongodb"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: mongodb_connection_count{deployment_environment=~"kind",namespace=~".*",service_name="mongodb"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: nginx_connections_current{deployment_environment=~"kind",namespace=~".*",service_name="nginx"}
+        eval_time: 5m
+        exp_samples: []
+      - expr: rate(nginx_requests_total{deployment_environment=~"kind",namespace=~".*",service_name="nginx"}[5m])
+        eval_time: 5m
+        exp_samples: []
+  - name: recreated stable-name pod does not inherit the old UID resource limit
+    interval: 30s
+    input_series:
+      - series: kube_pod_container_resource_limits{deployment_environment="kind",namespace="bt",pod="database-0",container="database",uid="old-uid",resource="memory",unit="byte"}
+        values: 134217728+0x10
+      - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="database-0",uid="new-uid",owner_kind="StatefulSet",owner_name="database",owner_is_controller="true"}
+        values: 1+0x10
+    promql_expr_test:
+      - expr: bt:workload_memory_limits
+        eval_time: 5m
+        exp_samples: []
+  - name: throttling pairs each restart incarnation and deduplicates repeated scrapes
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="old",instance="a"}
+        values: 0 120 240 360 480 600 stale
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="old",instance="a"}
+        values: 0 600 1200 1800 2400 3000 stale
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="old",instance="duplicate"}
+        values: 0 120 240 360 480 600 stale
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="old",instance="duplicate"}
+        values: 0 600 1200 1800 2400 3000 stale
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="new",instance="a"}
+        values: _ _ _ _ _ _ 0 60 120 180 240
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="new",instance="a"}
+        values: _ _ _ _ _ _ 0 975 1950 2925 3900
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.125
+  - name: throttling takes both counters from the same duplicate scrape
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0+120x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0+300x10
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="b"}
+        values: 0+60x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="b"}
+        values: 0+600x10
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.1
+  - name: throttling excludes incomplete pairs even when an orphan denominator is
+      largest
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="orphan"}
+        values: 0+120x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="another-orphan"}
+        values: 0+3000x10
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="complete"}
+        values: 0+30x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="complete"}
+        values: 0+300x10
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.1
+  - name: throttling with only mismatched incarnation IDs remains unknown
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="old",instance="a"}
+        values: 0+30x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="new",instance="a"}
+        values: 0+300x10
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples: []
+  - name: zero throttling with positive periods is an observed zero
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0+0x10
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0+300x10
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0
+  - name: throttling rates still handle counter resets
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0 3 6 0 3 6 9 12 15 18 21
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0 30 60 0 30 60 90 120 150 180 210
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.1
+  - name: throttling remains paired when the selected duplicate source changes
+    interval: 30s
+    input_series:
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0 600 1200 1800 2400 3000 3000 3000 3000 3000 3000
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="a"}
+        values: 0 60 120 180 240 300 300 300 300 300 300
+      - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="b"}
+        values: 0 300 600 900 1200 1500 2700 3900 5100 6300 7500
+      - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node",job="cadvisor",id="same",instance="b"}
+        values: 0 60 120 180 240 300 540 780 1020 1260 1500
+    promql_expr_test:
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 2m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.1
+      - expr: bt:container_cpu_throttling:ratio5m
+        eval_time: 5m
+        exp_samples:
+          - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
+            value: 0.2

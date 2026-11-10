@@ -1,0 +1,94 @@
+# Resource recording rules. No alert notifications. Rates precede deduplication.
+groups:
+  - name: bt-resources
+    interval: 30s
+    rules:
+      - record: bt:pod_owner:info
+        expr: |-
+          label_replace(max by (deployment_environment, namespace, pod, uid, replicaset) (label_replace(kube_pod_owner{owner_is_controller="true",owner_kind="ReplicaSet"}, "replicaset", "$1", "owner_name", "(.+)")) * on (deployment_environment, namespace, replicaset) group_left(workload) max by (deployment_environment, namespace, replicaset, workload) (label_replace(kube_replicaset_owner{owner_is_controller="true",owner_kind="Deployment"}, "workload", "$1", "owner_name", "(.+)")), "workload_type", "Deployment", "replicaset", ".+")
+          or on (deployment_environment, namespace, pod, uid)
+          label_replace(label_replace(max by (deployment_environment, namespace, pod, uid, owner_kind, owner_name) (kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "owner_name", "(.+)"), "workload_type", "$1", "owner_kind", "(.+)")
+          or on (deployment_environment, namespace, pod, uid)
+          label_replace(label_replace((max by (deployment_environment, namespace, pod, uid) (kube_pod_info) unless on (deployment_environment, namespace, pod, uid) kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "pod", "(.+)"), "workload_type", "Pod", "pod", ".+")
+      - record: bt:container:info
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_info)
+      - record: bt:container_cpu_cores:rate5m
+        expr: max by (deployment_environment, namespace, pod, container, node)
+          (rate(container_cpu_usage_seconds_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m]))
+      - record: bt:container_memory_working_set_bytes
+        expr: max by (deployment_environment, namespace, pod, container, node)
+          (container_memory_working_set_bytes{job="cadvisor",container!="",container!="POD",pod!=""})
+      - record: bt:container_cpu_requests
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_resource_requests{resource="cpu",unit="core"})
+      - record: bt:container_cpu_limits
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_resource_limits{resource="cpu",unit="core"})
+      - record: bt:container_cpu_limit_absent:info
+        expr: (bt:container:info unless on (deployment_environment, namespace, pod,
+          container, uid) (bt:container_cpu_limits > 0)) and on
+          (deployment_environment) (max by (deployment_environment)
+          (up{job="kube-state-metrics"}) == 1)
+      - record: bt:container_memory_requests
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_resource_requests{resource="memory",unit="byte"})
+      - record: bt:container_memory_limits
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_resource_limits{resource="memory",unit="byte"})
+      - record: bt:container_memory_limit_absent:info
+        expr: (bt:container:info unless on (deployment_environment, namespace, pod,
+          container, uid) (bt:container_memory_limits > 0)) and on
+          (deployment_environment) (max by (deployment_environment)
+          (up{job="kube-state-metrics"}) == 1)
+      # Retain cAdvisor's incarnation ID and full scrape labels until both
+      # counters are paired. Choose one complete scrape per incarnation;
+      # using the greatest total-period rate among duplicate sources.
+      - record: bt:container_cpu_periods:rate5m
+        expr: |-
+          topk by (deployment_environment, namespace, pod, container, node, id) (
+            1,
+            rate(container_cpu_cfs_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+            and
+            rate(container_cpu_cfs_throttled_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+          )
+      - record: bt:container_cpu_throttled_periods:rate5m
+        expr: |-
+          rate(container_cpu_cfs_throttled_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+          and
+          bt:container_cpu_periods:rate5m
+      - record: bt:container_cpu_throttling:ratio5m
+        expr: |-
+          sum by (deployment_environment, namespace, pod, container, node) (
+            bt:container_cpu_throttled_periods:rate5m
+          )
+          /
+          (sum by (deployment_environment, namespace, pod, container, node) (
+            bt:container_cpu_periods:rate5m
+          ) > 0)
+      - record: bt:workload_cpu_cores:rate5m
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_cpu_cores:rate5m * on (deployment_environment,
+          namespace, pod) group_left(uid, workload, workload_type)
+          bt:pod_owner:info)
+      - record: bt:workload_memory_working_set_bytes
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_memory_working_set_bytes * on (deployment_environment,
+          namespace, pod) group_left(uid, workload, workload_type)
+          bt:pod_owner:info)
+      - record: bt:workload_cpu_requests
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_cpu_requests * on (deployment_environment, namespace,
+          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)
+      - record: bt:workload_cpu_limits
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_cpu_limits * on (deployment_environment, namespace, pod,
+          uid) group_left(workload, workload_type) bt:pod_owner:info)
+      - record: bt:workload_memory_requests
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_memory_requests * on (deployment_environment, namespace,
+          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)
+      - record: bt:workload_memory_limits
+        expr: sum by (deployment_environment, namespace, workload, workload_type)
+          (bt:container_memory_limits * on (deployment_environment, namespace,
+          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)

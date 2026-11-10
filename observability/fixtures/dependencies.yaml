@@ -1,0 +1,107 @@
+# Disposable dependencies for the local test cluster only.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-mongodb-init
+  namespace: bt
+data:
+  fixture.js: |
+    db.getSiblingDB("fixture").readings.insertOne({fixture: true});
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-mongodb
+  namespace: bt
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: resource-mongodb}
+  template:
+    metadata:
+      labels: {app: resource-mongodb}
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:7.0.14
+          ports:
+            - {name: mongodb, containerPort: 27017}
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: 500m, memory: 512Mi}
+          volumeMounts:
+            - {name: init, mountPath: /docker-entrypoint-initdb.d, readOnly: true}
+            - {name: data, mountPath: /data/db}
+            - {name: configdb, mountPath: /data/configdb}
+          readinessProbe:
+            tcpSocket: {port: mongodb}
+      volumes:
+        - name: init
+          configMap: {name: resource-mongodb-init}
+        - name: data
+          emptyDir: {}
+        - name: configdb
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-mongodb
+  namespace: bt
+spec:
+  selector: {app: resource-mongodb}
+  ports:
+    - {name: mongodb, port: 27017, targetPort: mongodb}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-nginx
+  namespace: bt
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      location /nginx_status { stub_status; }
+      location / { return 200 "resource fixture\n"; }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-nginx
+  namespace: bt
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: resource-nginx}
+  template:
+    metadata:
+      labels: {app: resource-nginx}
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.26.2
+          ports:
+            - {name: http, containerPort: 8080}
+          resources:
+            requests: {cpu: 50m, memory: 32Mi}
+            # No CPU limit on purpose, exercising the absent-limit case.
+            limits: {memory: 64Mi}
+          volumeMounts:
+            - {name: config, mountPath: /etc/nginx/conf.d, readOnly: true}
+          readinessProbe:
+            httpGet: {path: /, port: http}
+      volumes:
+        - name: config
+          configMap: {name: resource-nginx}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-nginx
+  namespace: bt
+spec:
+  selector: {app: resource-nginx}
+  ports:
+    - {name: http, port: 8080, targetPort: http}

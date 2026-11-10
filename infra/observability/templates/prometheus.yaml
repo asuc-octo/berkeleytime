@@ -7,20 +7,11 @@ metadata:
     {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
 data:
   prometheus.yml: |
-    global:
-      scrape_interval: 15s
-      evaluation_interval: 15s
-
-    scrape_configs:
-      # Scrape OTel Collector's Prometheus exporter endpoint
-      - job_name: "otel-collector"
-        static_configs:
-          - targets: ["otel-collector:9464"]
-
-      # Scrape Prometheus itself
-      - job_name: "prometheus"
-        static_configs:
-          - targets: ["localhost:9090"]
+    {{- include "bt-observability.prometheusConfig" . | nindent 4 }}
+{{- if .Values.resourceMetrics.enabled }}
+  resources.yml: |
+    {{- .Files.Get "files/resources.yml" | nindent 4 }}
+{{- end }}
 
 ---
 
@@ -58,7 +49,8 @@ spec:
       labels:
         {{- include "bt-observability.prometheusLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ .Values.prometheus | toJson | sha256sum }}
+        checksum/config: {{ include "bt-observability.prometheusConfig" . | sha256sum }}
+        checksum/rules: {{ .Files.Get "files/resources.yml" | sha256sum }}
     spec:
       securityContext:
         fsGroup: 65534
@@ -84,6 +76,11 @@ spec:
             - name: config
               mountPath: /etc/prometheus
               readOnly: true
+            {{- if .Values.resourceMetrics.enabled }}
+            - name: rules
+              mountPath: /etc/prometheus/rules
+              readOnly: true
+            {{- end }}
             - name: data
               mountPath: /prometheus
           readinessProbe:
@@ -97,6 +94,14 @@ spec:
               port: 9090
             initialDelaySeconds: 30
       volumes:
+        {{- if .Values.resourceMetrics.enabled }}
+        - name: rules
+          configMap:
+            name: prometheus-config
+            items:
+              - key: resources.yml
+                path: resources.yml
+        {{- end }}
         - name: config
           configMap:
             name: prometheus-config
