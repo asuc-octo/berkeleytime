@@ -1,5 +1,9 @@
 {
   "programGroupId": "25345U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Shakespeare, Pre-1800, Literatures in English and elective lists corrected; seminar also accepts honors; added 12-course and 7-upper-division totals" }
+  ],
   "sources": [
     "https://english.berkeley.edu/major-requirements",
     "https://english.berkeley.edu/undergraduate/major-requirements/faqs",

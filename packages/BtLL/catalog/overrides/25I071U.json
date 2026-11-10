@@ -1,5 +1,9 @@
 {
   "programGroupId": "25I071U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Added the lower-division block; the elective is one upper-division MATH course or one applied-math course" }
+  ],
   "sources": [
     "https://math.berkeley.edu/programs/undergraduate/minoring-mathematics",
     "https://math.berkeley.edu/undergraduate/minor-mathematics (same content)",

@@ -1,5 +1,9 @@
 {
   "programGroupId": "25179U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Six area course lists and the 3 electives match the department; added the 26 upper-division unit minimum" }
+  ],
   "sources": [
     "https://cogsci.berkeley.edu/undergraduate-program/major-program/degree-requirements",
     "https://docs.google.com/spreadsheets/d/1T_Lp-NKmtlJTmzh0ZjwXQJ8AARxt3unaXmpHkxCYa0g (department course list; HTTP 410, not used)",

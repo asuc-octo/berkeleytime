@@ -1,5 +1,9 @@
 {
   "programGroupId": "25I072U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Added lower-division physics (a series choice) and math; 3 electives; 17 upper-division physics units" }
+  ],
   "sources": [
     "https://physics.berkeley.edu/academics/undergraduate-degree/minor-program",
     "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): PHYSICS courses numbered 100-199, excluding 100, H190, 198, S198, 199 and S199 (48 codes)"

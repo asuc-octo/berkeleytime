@@ -51,7 +51,8 @@ async function main() {
     const ov = overrides[i];
     if (ov) {
       rules = applyOverrides(rules, ov, validCodes, label);
-      p.flags.push(`override applied (${ov.changes?.length ?? 0} changes)`);
+      const changes = ov.changes?.length ?? 0;
+      p.flags.push(`override r${ov.revision} applied (${changes} changes)`);
     }
     const code = toBtLL(rules);
     sanityCheck(code, rules, label);

@@ -1,5 +1,9 @@
 {
   "programGroupId": "z5SVnW3RWZv5syG4KuEY",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Free-text placeholders became 11 rules: lower-division science, math and ESPM core, upper-division core, and a specialization choice" }
+  ],
   "sources": [
     "https://nature.berkeley.edu/advising/majors/ecosystem-management-and-forestry",
     "https://docs.google.com/document/d/1aNxj2Uv7cz-tLQEhMsksQAt8quloODPyh86MWKL9XBA/edit (EMF Major Snapshot, read via /export?format=txt)",

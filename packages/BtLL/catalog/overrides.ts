@@ -8,6 +8,28 @@ export function readOverride(programId: string) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
+const hasText = (s: unknown) => typeof s === "string" && s.trim() !== "";
+
+const isHistoryEntry = (h: any, i: number) =>
+  h?.revision === i + 1 &&
+  /^\d{4}-\d{2}-\d{2}$/.test(h.date ?? "") &&
+  hasText(h.request) &&
+  hasText(h.summary);
+
+function checkHistory(ov: any, label: string) {
+  const { history, revision } = ov;
+  const ok =
+    Array.isArray(history) &&
+    history.length > 0 &&
+    history.length === revision &&
+    history.every(isHistoryEntry);
+  if (!ok)
+    throw new Error(
+      `${label} override: revision must equal the number of history entries, ` +
+        "each with revision (1, 2, ...), date (YYYY-MM-DD), request and summary"
+    );
+}
+
 function checkRule(r: any, valid: Set<string>, where: string): Rule {
   const fail = (msg: string): never => {
     throw new Error(`${where}: ${msg}`);
@@ -63,12 +85,12 @@ export function applyOverrides(
   valid: Set<string>,
   label: string
 ) {
+  checkHistory(ov, label);
   const out = [...rules];
   (ov.changes ?? []).forEach((ch: any, i: number) => {
     const where = `${label} override change ${i + 1}`;
     const hasUrl = /^https:\/\//.test(ch.why?.url ?? "");
-    const hasQuote = String(ch.why?.quote ?? "").trim() !== "";
-    if (!hasUrl || !hasQuote)
+    if (!hasUrl || !hasText(ch.why?.quote))
       throw new Error(`${where}: needs why.url (https) and a why.quote`);
     const at = (id: string) => {
       const k = out.findIndex((r) => r.id === id);

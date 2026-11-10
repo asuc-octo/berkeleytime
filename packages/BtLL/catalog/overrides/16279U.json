@@ -1,5 +1,9 @@
 {
   "programGroupId": "16279U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Physics options merged into one choice; the 17 required elective areas became two courses from each of two areas" }
+  ],
   "sources": [
     "https://aero.berkeley.edu/technical-electives/",
     "https://aero.berkeley.edu/curriculum-flowchart/ (Class of 2026)",

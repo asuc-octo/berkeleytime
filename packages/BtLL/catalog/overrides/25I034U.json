@@ -1,5 +1,9 @@
 {
   "programGroupId": "25I034U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "3 advanced core courses plus 2 departmental electives" }
+  ],
   "sources": [
     "https://ealc.berkeley.edu/node/5533",
     "Coursedog course search (POST /cm/ucberkeley_peoplesoft/courses/search/$filters, catalog hMSTjlpIK6VX5nnJn7ZE): CHINESE courses numbered 100-199 (91 courses); checked subject codes (JAPAN exists, JAPANESE doesn't)"

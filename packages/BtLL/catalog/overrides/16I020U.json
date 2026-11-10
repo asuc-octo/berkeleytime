@@ -1,5 +1,9 @@
 {
   "programGroupId": "16I020U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Math prerequisites became a choice; prerequisites, required courses and the 2 structural electives match the department's lists" }
+  ],
   "sources": [
     "https://ce.berkeley.edu/undergrad/cee-minors",
     "https://docs.google.com/document/d/1z5pGGpf65ouojT-uGdpsp_SYqTY1SuvRv8tmB6fEPCw/edit (department instructions for the minor, read via /export?format=txt)",

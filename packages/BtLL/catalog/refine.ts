@@ -2,9 +2,11 @@
 // Runs the refinement agent (headless Claude Code, see refine.md) on
 // each catalog program, then regenerates.
 // Usage: npm run refine:catalog -w @repo/BtLL [-- <programGroupId>...] [--force]
+//        npm run refine:catalog -w @repo/BtLL -- <programGroupId> --fix "<what's wrong>"
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 
 const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
@@ -15,11 +17,23 @@ function allProgramIds(): string[] {
   return rules.map((p: { programGroupId: string }) => p.programGroupId);
 }
 
-const args = process.argv.slice(2);
-const force = args.includes("--force");
-const ids = args.filter((a) => !a.startsWith("--"));
+const { values, positionals: ids } = parseArgs({
+  allowPositionals: true,
+  options: { force: { type: "boolean" }, fix: { type: "string" } },
+});
+const { fix } = values;
+if (fix !== undefined && (ids.length !== 1 || !fix.trim())) {
+  console.error(
+    '--fix needs exactly one programGroupId and a note: -- <id> --fix "..."'
+  );
+  process.exit(1);
+}
+const force = values.force || fix !== undefined;
 const programs = ids.length ? ids : allProgramIds();
 const instructions = readFileSync(here("./refine.md"), "utf8");
+
+const promptFor = (id: string) =>
+  fix ? `Fix catalog program ${id}: ${fix}` : `Refine catalog program ${id}`;
 
 // Anything else is denied in headless mode
 const allowedTools = [
@@ -43,7 +57,7 @@ for (const id of programs) {
     "claude",
     [
       "-p",
-      `Refine catalog program ${id}`,
+      promptFor(id),
       "--model",
       "opus", // Sonnet was noticeably shallower on complex programs
       "--append-system-prompt",

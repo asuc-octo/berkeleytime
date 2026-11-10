@@ -1,5 +1,9 @@
 {
   "programGroupId": "04779U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Upper division: at least 5 upper-division ENVECON courses, plus 5 electives" }
+  ],
   "sources": [
     "https://www.are.berkeley.edu/undergraduate-program/eep-courses (points to the catalog for requirements)",
     "https://undergraduate.catalog.berkeley.edu/programs/04779U/requirements-krhha",

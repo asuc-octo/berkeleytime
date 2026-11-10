@@ -4,6 +4,13 @@ You are refining one degree program that `packages/BtLL/catalog/import.ts` gener
 
 The prompt gives you a `programGroupId`. Work from the repository root.
 
+## Fix requests
+If the prompt is `Fix catalog program <id>: <request>`, a reviewer found a specific problem. Fix only that problem:
+- Change only the rules the request is about. Leave every other change, `sources`, `notStated` and `notEncoded` entry alone.
+- The rules for changes (section 3) still apply. Research the request on the department's pages and justify each edit with a URL and quote.
+- If the department's pages don't support the request, don't change any rules. Say why in the history `summary`, and add the open question to `notStated`.
+- Skip section 2's full checklist.
+
 ## Inputs
 - `packages/BtLL/catalog/rules.generated.json`: find the entry whose `programGroupId` matches. It has the program's `name`, `kind` (major/minor), `flags` (known catalog problems) and `rules`. Each rule has a stable `id`, a `name` and a `kind`; course rules also have a count `n` and `groups` of course codes. A group is a list of alternatives, any one of which satisfies it. Placeholders carry the catalog's free text in `text`; other rules may have a catalog `description`.
 - `packages/BtLL/catalog/overrides/<programGroupId>.json`, if it exists: a previous refinement. Revise it rather than starting over.
@@ -51,6 +58,11 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 ```json
 {
   "programGroupId": "25I071U",
+  "revision": 2,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Added the lower-division block; the elective is now 1 of 2 options" },
+    { "revision": 2, "date": "2026-11-12", "request": "MATH 56 should also count for ...", "summary": "Added MATH 56 to the Lower Division linear algebra slot" }
+  ],
   "sources": ["every page used, plus any catalog or API query used to build a course list"],
   "changes": [
     { "op": "add", "before": "<rule id or null to append>", "rule": { ... }, "why": { "url": "https://...", "quote": "...", "reasoning": "..." } },
@@ -62,6 +74,14 @@ How rules are evaluated: rules are checked in order, and **each course counts to
 }
 ```
 Changes apply in order; `ruleId`/`before` refer to ids in `rules.generated.json` (a replaced rule keeps its id). Rules are checked in list order, so put specific rules before broad ones such as electives and totals. List each catalog or API query in `sources` precisely enough for a reviewer to repeat it (e.g. how you found "every 4-unit ENGLISH course"). Keep `notStated` and `notEncoded` items to one line each.
+
+**Every run adds one `history` entry and increases `revision` by 1.** A new file starts at revision 1. Each entry needs:
+- `revision`: the new number (entries are numbered 1, 2, 3, ...)
+- `date`: today's date, as `YYYY-MM-DD`
+- `request`: `"initial refinement"`, `"full re-refinement"`, or the fix request copied verbatim
+- `summary`: one line describing what changed, or why nothing did
+
+The generator rejects a file whose `revision` doesn't equal its number of history entries. Never edit or remove earlier entries.
 
 ## Finish
 Run `npm run import:catalog -w @repo/BtLL`. If it reports an error about your override, fix the override and run it again until it succeeds. Then stop, and reply with a one-paragraph summary.

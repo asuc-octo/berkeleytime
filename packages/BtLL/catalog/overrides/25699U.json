@@ -1,5 +1,9 @@
 {
   "programGroupId": "25699U",
+  "revision": 1,
+  "history": [
+    { "revision": 1, "date": "2026-10-18", "request": "initial refinement", "summary": "Methods became one either/or rule; history and distribution lists corrected; ten subfield rules became one specialization choice; 8 upper-division courses" }
+  ],
   "sources": [
     "https://polisci.berkeley.edu/node/983",
     "https://polisci.berkeley.edu/sites/default/files/2023-12/History%20Courses%202024_0.pdf",
