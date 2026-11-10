@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { EmptyPage } from "iconoir-react";
+import { EmptyPage, MoreHoriz } from "iconoir-react";
+
+import { Card, Tooltip } from "@repo/theme";
 
 import ClassCard from "@/components/ClassCard";
 import ClassCardSkeleton from "@/components/ClassCard/Skeleton";
@@ -200,11 +202,7 @@ export default function List({ onSelect, previewCards = false }: ListProps) {
                     data-index={index}
                     key={key}
                     ref={virtualizer.measureElement}
-                    onClick={
-                      previewCards
-                        ? () => handleClassPreview(index)
-                        : () => handleClassClick(index)
-                    }
+                    onClick={() => handleClassClick(index)}
                     active={
                       previewCards &&
                       previewOpen &&
@@ -212,6 +210,27 @@ export default function List({ onSelect, previewCards = false }: ListProps) {
                       previewedClass.courseNumber === _class.courseNumber &&
                       previewedClass.number === _class.number &&
                       previewedClass.sessionId === _class.sessionId
+                    }
+                    topRightContent={
+                      previewCards ? (
+                        <Tooltip
+                          title="See details"
+                          trigger={
+                            <Card.ActionIcon
+                              data-action-icon
+                              aria-label={`See details for ${_class.subject} ${_class.courseNumber}`}
+                              style={{ color: "var(--paragraph-color)" }}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                handleClassPreview(index);
+                              }}
+                            >
+                              <MoreHoriz />
+                            </Card.ActionIcon>
+                          }
+                        />
+                      ) : undefined
                     }
                   />
                 );
