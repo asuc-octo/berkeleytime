@@ -1,4 +1,6 @@
+import { performance } from "node:perf_hooks";
 import { parseArgs } from "node:util";
+import { Logger } from "tslog";
 
 import { updateCatalogGradeSummaries } from "./lib/catalog-denormalize";
 import classesPuller from "./pullers/classes";
@@ -20,7 +22,7 @@ const cliArgs = {
 } as const;
 
 const pullerMap: {
-  [key: string]: (config: Config, ...arg: any) => Promise<unknown>;
+  [key: string]: (config: Config) => Promise<unknown>;
 } = {
   courses: coursesPuller.updateCourses,
   decals: decalsPuller.scrapeDeCals,
@@ -41,28 +43,41 @@ const pullerMap: {
 } as const;
 
 const runPuller = async () => {
-  const { values: args } = parseArgs({ options: cliArgs });
+  const logger = new Logger<unknown>({ type: "json", name: "PullerRunner" });
+  const startedAt = performance.now();
+  let puller = "unknown";
+  let stage = "arguments";
 
-  if (!args.puller || !pullerMap[args.puller]) {
-    throw new Error(
-      "Please specify a valid puller argument: " +
-        Object.keys(pullerMap).join(", ")
-    );
-  }
-
-  const { config } = await setup();
-  const logger = config.log.getSubLogger({ name: "PullerRunner" });
   try {
-    logger.info(
-      `Starting ${args.puller} puller with args: ${JSON.stringify(args)}`
-    );
+    const { values: args } = parseArgs({ options: cliArgs });
+    puller = args.puller ?? "unknown";
+    if (!args.puller || !pullerMap[args.puller]) {
+      throw new Error(
+        "Please specify a valid puller argument: " +
+          Object.keys(pullerMap).join(", ")
+      );
+    }
+    logger.info({ event: "run.started", puller });
+    stage = "setup";
+    const { config } = await setup(logger);
 
+    stage = "execution";
     await pullerMap[args.puller](config);
-
-    logger.trace(`${args.puller} puller completed successfully`);
+    logger.info({
+      event: "run.completed",
+      puller,
+      duration_ms: performance.now() - startedAt,
+      message: "Puller execution finished.",
+    });
     process.exit(0);
-  } catch (error: any) {
-    logger.error(`${args.puller} puller failed: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error({
+      event: "run.failed",
+      puller,
+      stage,
+      duration_ms: performance.now() - startedAt,
+      message: error instanceof Error ? error.message : String(error),
+    });
     process.exit(1);
   }
 };

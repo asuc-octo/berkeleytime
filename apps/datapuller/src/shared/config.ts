@@ -42,13 +42,15 @@ export interface Config {
   };
 }
 
-export function loadConfig(): Config {
+export function loadConfig(logger?: Logger<unknown>): Config {
   dotenv.config();
 
-  const log = new Logger({
-    type: "pretty",
-    prettyLogTimeZone: "local",
-  });
+  const log =
+    logger ??
+    new Logger<unknown>({
+      type: "pretty",
+      prettyLogTimeZone: "local",
+    });
 
   log.trace("Loading config...");
 
