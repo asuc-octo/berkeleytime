@@ -35,7 +35,7 @@ if (endpoint) {
     }),
     ...(process.env.K8S_POD_NAME && {
       "k8s.pod.name": process.env.K8S_POD_NAME,
-    })
+    }),
   });
 
   const sdk = new NodeSDK({
