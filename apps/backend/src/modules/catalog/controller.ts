@@ -28,11 +28,12 @@ import { getFields, hasFieldPath } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import type { ClassModule } from "../class/generated-types/module-types";
 import { formatCourse } from "../course/formatter";
+import { getLastPulledAt } from "../enrollment/controller";
 import { formatEnrollment } from "../enrollment/formatter";
 import type { EnrollmentModule } from "../enrollment/generated-types/module-types";
 import type { GradeDistributionModule } from "../grade-distribution/generated-types/module-types";
 import { searchSemantic } from "../semantic-search/client";
-import { getCachedCatalog, getSearchIndex } from "./catalog-cache";
+import { getCachedCatalog, searchCatalog } from "./catalog-cache";
 import { buildCoEHssQuery, matchesCoEHss } from "./coe-hss";
 
 export interface CatalogQueryParams {
@@ -116,7 +117,7 @@ export const getCatalogSearch = async (params: CatalogQueryParams) => {
     });
   }
 
-  // If search is provided, use in-memory Fuse.js index
+  // If search is provided, use the in-memory fuzzy search index
   if (search && search.trim().length > 0) {
     return getCatalogWithSearch({
       year,
@@ -220,9 +221,8 @@ const getCatalogWithSearch = async ({
   limit: number;
   skip: number;
 }) => {
-  const index = await getSearchIndex(year, semester);
-  const hits = index.search(searchTerm);
-  const items = hits.map((r) => r.item);
+  // Ranked hits are cached per query; filters, sort and pagination apply after
+  const items = await searchCatalog(year, semester, searchTerm);
   const filtered = sortSearchResults(
     applyInMemoryFilters(items, filters),
     sortBy,
@@ -799,9 +799,14 @@ export const getCatalogLegacy = async (
       sectionId: { $in: sectionIds },
     }).lean();
 
+    const lastPulledAt =
+      enrollments.length > 0
+        ? await getLastPulledAt(enrollments[0].termId)
+        : null;
+
     enrollmentMap = enrollments.reduce(
       (acc, enrollment) => {
-        acc[enrollment.sectionId] = formatEnrollment(enrollment);
+        acc[enrollment.sectionId] = formatEnrollment(enrollment, lastPulledAt);
         return acc;
       },
       {} as Record<string, EnrollmentModule.Enrollment | null>

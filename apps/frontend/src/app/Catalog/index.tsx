@@ -81,6 +81,8 @@ function SavedCollectionSection({
   index,
   onSelect,
   resolveCurrentTermClass,
+  availabilityLoading,
+  onRequestAvailability,
 }: {
   collection: CollectionSummaryItem;
   index: number;
@@ -88,6 +90,8 @@ function SavedCollectionSection({
   resolveCurrentTermClass: (
     savedClass: SavedClassItem
   ) => SavedClassItem | null;
+  availabilityLoading: boolean;
+  onRequestAvailability: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const { data: collectionData, loading } = useGetCollectionById(
@@ -190,7 +194,14 @@ function SavedCollectionSection({
         },
       }}
     >
-      <DropdownMenu.Root modal={false} open={open} onOpenChange={setOpen}>
+      <DropdownMenu.Root
+        modal={false}
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen);
+          if (nextOpen) onRequestAvailability();
+        }}
+      >
         <DropdownMenu.Trigger asChild>
           <button type="button" className={styles.bookmarkButton}>
             <Folder
@@ -208,7 +219,7 @@ function SavedCollectionSection({
           sideOffset={6}
           className={styles.bookmarkDropdown}
         >
-          {loading ? (
+          {loading || availabilityLoading ? (
             <DropdownMenu.Item disabled>Loading classes...</DropdownMenu.Item>
           ) : sortedSavedClassEntries.length > 0 ? (
             sortedSavedClassEntries.map(
@@ -337,13 +348,24 @@ export default function Catalog() {
 
   const effectiveTerm = term ?? FALLBACK_TERM;
 
-  const { data: identitiesData } = useQuery(GetCatalogClassIdentitiesDocument, {
-    variables: {
-      year: effectiveTerm.year,
-      semester: effectiveTerm.semester as Semester,
-    },
-    fetchPolicy: "cache-and-network",
-  });
+  // Every class in the term, used only to resolve saved classes in the
+  // collection dropdowns. Expensive for the server, so wait until one is opened.
+  const [availabilityRequested, setAvailabilityRequested] = useState(false);
+  const handleRequestAvailability = useCallback(() => {
+    setAvailabilityRequested(true);
+  }, []);
+  const { data: identitiesData, loading: identitiesLoading } = useQuery(
+    GetCatalogClassIdentitiesDocument,
+    {
+      variables: {
+        year: effectiveTerm.year,
+        semester: effectiveTerm.semester as Semester,
+      },
+      fetchPolicy: "cache-and-network",
+      skip: !availabilityRequested,
+    }
+  );
+  const availabilityLoading = identitiesLoading && !identitiesData;
   const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
     () => identitiesData?.catalogClassIdentities ?? [],
     [identitiesData]
@@ -644,6 +666,8 @@ export default function Catalog() {
                             index={index}
                             onSelect={handleSavedClassSelect}
                             resolveCurrentTermClass={resolveCurrentTermClass}
+                            availabilityLoading={availabilityLoading}
+                            onRequestAvailability={handleRequestAvailability}
                           />
                         ))}
                       </AnimatePresence>

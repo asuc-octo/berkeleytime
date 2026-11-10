@@ -10,7 +10,6 @@
   overflow: hidden;
   flex: 1;
   min-height: 0;
-  max-height: 500px;
 }
 
 .container {
@@ -37,9 +36,22 @@
 }
 
 .scrollableContent {
+  --item-height: 241px;
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  max-height: calc(4.5 * var(--item-height, 36px) + 8px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--border-subtle, rgba(150, 150, 150, 0.3));
+  }
 }
 
 .grid {
@@ -69,4 +81,66 @@
 .emptyStateMessage {
   font-size: 12px;
   margin-top: 8px;
+}
+
+.preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--paragraph-color);
+  cursor: pointer;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--label-color);
+}
+
+.caption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--paragraph-color);
+}
+
+.relaxations {
+  margin-top: 16px;
+}
+
+.preview {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #ffffff;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
 }
