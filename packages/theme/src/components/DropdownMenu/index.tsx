@@ -42,14 +42,15 @@ function SubTrigger(props: Primitive.DropdownMenuSubTriggerProps) {
 
 function SubContent({
   className,
+  style,
   ...props
 }: Primitive.DropdownMenuSubContentProps) {
   return (
     <Primitive.Portal>
       <Primitive.SubContent
         {...props}
-        className={styles.content}
-        style={{ left: 0 }}
+        className={classNames(styles.content, className)}
+        style={{ left: 0, ...style }}
       />
     </Primitive.Portal>
   );

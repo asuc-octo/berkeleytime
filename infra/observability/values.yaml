@@ -7,6 +7,37 @@ namespace: bt
 # OpenTelemetry Collector
 collector:
   image: otel/opentelemetry-collector-contrib:0.96.0
+  # Go GC soft limit, ~80% of the memory limit
+  goMemLimit: 200MiB
+  # memory_limiter refuses incoming data above (limitMib - spikeLimitMib)
+  # and forces GC; keep limitMib below the container memory limit
+  memoryLimiter:
+    limitMib: 200
+    spikeLimitMib: 50
+  resources:
+    limits:
+      memory: 256Mi
+      cpu: 500m
+    requests:
+      memory: 128Mi
+      cpu: 100m
+
+# Grafana Tempo (distributed tracing)
+tempo:
+  image: grafana/tempo:2.4.1
+  retention: 24h
+  goMemLimit: 400MiB
+  # Ingestion limits: excess spans are rejected (429) instead of growing memory
+  limits:
+    ingestionRateBytes: 4000000 # ~4MB/s sustained
+    ingestionBurstBytes: 8000000
+    maxTracesPerUser: 5000 # live traces held in memory
+    maxBytesPerTrace: 5000000 # drop single traces larger than 5MB
+    maxActiveSeries: 10000 # metrics generator series cap
+  # hostPath: size is not enforced, only documents the expected usage.
+  # PVCs cannot shrink, so never lower this below the deployed value.
+  storage:
+    size: 10Gi
   resources:
     limits:
       memory: 512Mi
@@ -15,27 +46,26 @@ collector:
       memory: 256Mi
       cpu: 100m
 
-# Grafana Tempo (distributed tracing)
-tempo:
-  image: grafana/tempo:2.4.1
-  storage:
-    size: 10Gi
-  resources:
-    limits:
-      memory: 1Gi
-      cpu: 500m
-    requests:
-      memory: 256Mi
-      cpu: 100m
-
 # Grafana Loki (log aggregation)
 loki:
   image: grafana/loki:3.0.0
+  retention: 24h
+  goMemLimit: 400MiB
+  # Ingestion limits: excess logs are rejected (429) instead of growing memory
+  limits:
+    ingestionRateMb: 4
+    ingestionBurstMb: 8
+    maxGlobalStreamsPerUser: 5000
+    # Query limits: stop a single large Grafana query from exhausting memory
+    maxQuerySeries: 500
+    maxEntriesLimitPerQuery: 5000
+  # hostPath: size is not enforced, only documents the expected usage.
+  # PVCs cannot shrink, so never lower this below the deployed value.
   storage:
     size: 10Gi
   resources:
     limits:
-      memory: 1Gi
+      memory: 512Mi
       cpu: 500m
     requests:
       memory: 256Mi
@@ -44,12 +74,20 @@ loki:
 # Prometheus (metrics)
 prometheus:
   image: prom/prometheus:v2.51.0
-  retention: 15d
+  retention: 7d
+  # Hard disk cap: oldest blocks are deleted once storage exceeds this.
+  # Whichever of retention / retentionSize is hit first wins.
+  retentionSize: 5GB
+  goMemLimit: 600MiB
+  # A scrape returning more series than this fails instead of growing memory
+  sampleLimit: 20000
+  # Max samples a single query may load into memory
+  queryMaxSamples: 5000000
   storage:
     size: 10Gi
   resources:
     limits:
-      memory: 1Gi
+      memory: 768Mi
       cpu: 500m
     requests:
       memory: 256Mi
@@ -60,14 +98,15 @@ grafana:
   image: grafana/grafana:10.4.0
   adminUser: admin
   adminPassword: admin
+  goMemLimit: 200MiB
   storage:
     size: 1Gi
   resources:
     limits:
-      memory: 512Mi
+      memory: 256Mi
       cpu: 500m
     requests:
-      memory: 128Mi
+      memory: 64Mi
       cpu: 100m
   # Optional ingress for external access
   ingress:

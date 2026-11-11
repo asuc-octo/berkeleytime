@@ -29,6 +29,16 @@ Backups are served at `https://backups.berkeleytime.com`:
 - Public: `GET /public/*` 
 - Private: `GET /private/*`
 
+Backups expire automatically via R2 lifecycle rules (`infra/cloudflare/r2-lifecycle.sh`):
+
+| Bucket path | Contents | Kept for |
+| --- | --- | --- |
+| `private/hourly/prod_backup-YYYYMMDDHH.gz` | Every hour | 1 day |
+| `private/daily/prod_backup-YYYYMMDD.gz` | 5 AM backup | 30 days |
+| `private/weekly/prod_backup-YYYYMMDD.gz` | Sunday 5 AM backup | 13 weeks |
+| `private/persistent/prod_backup-YYYYMMDD.gz` | 5 AM backup on the 1st | 2 years |
+| `public/daily/prod_public_backup-YYYYMMDD.gz` | Redacted daily backup | 7 days |
+
 ### Public backup (no auth)
 
 Public backups are meant for local development and include only a redacted subset of the `bt` database. The public backup includes these collections:

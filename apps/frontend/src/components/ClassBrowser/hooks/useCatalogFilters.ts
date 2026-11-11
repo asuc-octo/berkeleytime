@@ -111,7 +111,9 @@ export interface CatalogFilterState {
   timeRange: TimeRange;
   breadths: string[];
   universityRequirements: string[];
+  coeHss: boolean;
   gradingFilters: GradingFilter[];
+  department: string | null;
   sortBy: SortBy;
   reverse: boolean;
   effectiveOrder: "asc" | "desc";
@@ -130,7 +132,9 @@ export interface CatalogFilterUpdaters {
   updateTimeRange: Dispatch<TimeRange>;
   updateBreadths: Dispatch<string[]>;
   updateUniversityRequirements: Dispatch<string[]>;
+  updateCoEHss: Dispatch<boolean>;
   updateGradingFilters: Dispatch<GradingFilter[]>;
+  updateDepartment: Dispatch<string | null>;
   updateSortBy: Dispatch<SortBy>;
   updateEnrollmentFilter: Dispatch<EnrollmentFilter | null>;
   updateOnline: Dispatch<boolean>;
@@ -154,11 +158,13 @@ export default function useCatalogFilters({
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localTimeRange, setLocalTimeRange] = useState<TimeRange>([null, null]);
   const [localBreadths, setLocalBreadths] = useState<string[]>([]);
+  const [localCoEHss, setLocalCoEHss] = useState(false);
   const [localUniversityRequirements, setLocalUniversityRequirements] =
     useState<string[]>([]);
   const [localGradingFilters, setLocalGradingFilters] = useState<
     GradingFilter[]
   >([]);
+  const [localDepartment, setLocalDepartment] = useState<string | null>(null);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localReverse, setLocalReverse] = useState<boolean>(false);
   const [localEnrollmentFilter, setLocalEnrollmentFilter] =
@@ -231,18 +237,23 @@ export default function useCatalogFilters({
     [searchParams, localUniversityRequirements, persistent]
   );
 
-  const gradingFilters = useMemo(
-    () =>
-      persistent
-        ? ((searchParams
-            .get("gradingBases")
-            ?.split(",")
-            .filter((basis) =>
-              Object.values(GradingFilter).includes(basis as GradingFilter)
-            ) ?? []) as GradingFilter[])
-        : localGradingFilters,
-    [searchParams, localGradingFilters, persistent]
-  );
+  const coeHss = persistent ? searchParams.has("coeHss") : localCoEHss;
+
+  const gradingFilters = useMemo(() => {
+    if (!persistent) return localGradingFilters;
+    const raw = searchParams.get("gradingBases");
+    if (!raw) return [];
+    return raw
+      .split(",")
+      .filter((basis) =>
+        Object.values(GradingFilter).includes(basis as GradingFilter)
+      ) as GradingFilter[];
+  }, [searchParams, localGradingFilters, persistent]);
+
+  const department = useMemo(() => {
+    if (!persistent) return localDepartment;
+    return searchParams.get("department") || null;
+  }, [searchParams, localDepartment, persistent]);
 
   const sortBy = useMemo(() => {
     if (persistent) {
@@ -307,11 +318,14 @@ export default function useCatalogFilters({
       filters.gradingFilters = mapGradingFilterToBasisCodes(gradingFilters);
     }
 
+    if (department) filters.departments = [department];
+
     if (breadths.length > 0) filters.breadths = breadths;
     if (universityRequirements.length > 0) {
       filters.universityRequirements = universityRequirements;
     }
 
+    if (coeHss) filters.coeHss = true;
     if (online) filters.online = true;
 
     return Object.keys(filters).length > 0 ? filters : undefined;
@@ -322,8 +336,10 @@ export default function useCatalogFilters({
     timeRange,
     enrollmentFilter,
     gradingFilters,
+    department,
     breadths,
     universityRequirements,
+    coeHss,
     online,
   ]);
 
@@ -336,7 +352,9 @@ export default function useCatalogFilters({
     timeRange[1] !== null ||
     breadths.length > 0 ||
     universityRequirements.length > 0 ||
+    coeHss ||
     gradingFilters.length > 0 ||
+    department !== null ||
     enrollmentFilter !== null ||
     online ||
     sortBy !== SortBy.Relevance ||
@@ -430,7 +448,9 @@ export default function useCatalogFilters({
     timeRange,
     breadths,
     universityRequirements,
+    coeHss,
     gradingFilters,
+    department,
     sortBy,
     reverse: localReverse,
     effectiveOrder,
@@ -445,14 +465,34 @@ export default function useCatalogFilters({
     updateDays: (d) => updateArray("days", setLocalDays, d),
     updateTimeRange: updateTimeRangeFn,
     updateBreadths: (b) => updateArray("breadths", setLocalBreadths, b),
+    updateCoEHss: (value) => updateBoolean("coeHss", setLocalCoEHss, value),
     updateUniversityRequirements: (reqs) =>
       updateArray(
         "universityRequirements",
         setLocalUniversityRequirements,
         reqs
       ),
-    updateGradingFilters: (filters) =>
-      updateArray("gradingBases", setLocalGradingFilters, filters),
+    updateGradingFilters: (filters) => {
+      if (persistent) {
+        if (filters.length === 0) {
+          searchParams.delete("gradingBases");
+        } else {
+          searchParams.set("gradingBases", filters.join(","));
+        }
+        setSearchParams(searchParams);
+        return;
+      }
+      setLocalGradingFilters(filters);
+    },
+    updateDepartment: (value) => {
+      if (persistent) {
+        if (value) searchParams.set("department", value);
+        else searchParams.delete("department");
+        setSearchParams(searchParams);
+        return;
+      }
+      setLocalDepartment(value);
+    },
     updateSortBy,
     updateEnrollmentFilter: (filter) => {
       if (persistent) {

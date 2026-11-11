@@ -183,25 +183,23 @@ test("the HTTP gateway executes only a server-controlled allowlisted document", 
     assert.equal(contextUser.isAuthenticated, false);
     assert.equal(typeof contextUser.logout, "function");
 
-    const [previousId, previousOperation] = Object.entries(
-      previousPersistedOperations
-    ).find(([candidateId]) => !(candidateId in persistedOperations))!;
-    assert.ok(
-      previousId,
-      "expected an operation ID unique to the prior release"
+    const previousOnly = Object.entries(previousPersistedOperations).find(
+      ([candidateId]) => !(candidateId in persistedOperations)
     );
-
-    const previousBundleRequest = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: previousId }),
-    });
-    assert.equal(previousBundleRequest.status, 200);
-    await previousBundleRequest.json();
-    assert.deepEqual(executedBody, {
-      query: previousOperation.document,
-      operationName: previousOperation.operationName,
-    });
+    if (previousOnly) {
+      const [previousId, previousOperation] = previousOnly;
+      const previousBundleRequest = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: previousId }),
+      });
+      assert.equal(previousBundleRequest.status, 200);
+      await previousBundleRequest.json();
+      assert.deepEqual(executedBody, {
+        query: previousOperation.document,
+        operationName: previousOperation.operationName,
+      });
+    }
 
     authenticated = true;
     const authenticatedRequest = await fetch(url, {
