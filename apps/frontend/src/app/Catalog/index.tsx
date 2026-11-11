@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { useQuery } from "@apollo/client/react";
+import { skipToken, useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -43,7 +43,9 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Winter]: 3,
 };
 
-// Fallback term so the catalog UI always renders (query will return 0 results)
+// Fallback term once terms have settled without one (empty list or failed
+// request) so the catalog UI still renders (query will return 0 results).
+// Never used while terms are loading, or it would fetch a real term's classes.
 const FALLBACK_TERM = {
   year: new Date().getFullYear(),
   semester: Semester.Spring as Semester,
@@ -276,7 +278,7 @@ export default function Catalog() {
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms } = useReadTerms();
+  const { data: terms, loading: termsLoading } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
@@ -338,7 +340,8 @@ export default function Catalog() {
     return selectedTerm ?? null;
   }, [terms, year, semester]);
 
-  const effectiveTerm = term ?? FALLBACK_TERM;
+  // null while terms are loading, so nothing is fetched for a guessed term
+  const effectiveTerm = term ?? (termsLoading ? null : FALLBACK_TERM);
 
   // Every class in the term, used only to resolve saved classes in the
   // collection dropdowns. Expensive for the server, so wait until one is opened.
@@ -348,16 +351,16 @@ export default function Catalog() {
   }, []);
   const { data: identitiesData, loading: identitiesLoading } = useQuery(
     GetCatalogClassIdentitiesDocument,
-    {
-      variables: {
-        year: effectiveTerm.year,
-        semester: effectiveTerm.semester as Semester,
-      },
-      fetchPolicy: "cache-and-network",
-      skip: !availabilityRequested,
-    }
+    term && availabilityRequested
+      ? {
+          variables: { year: term.year, semester: term.semester },
+          fetchPolicy: "cache-and-network",
+        }
+      : skipToken
   );
-  const availabilityLoading = identitiesLoading && !identitiesData;
+  // Also loading while terms are, or every saved class would read as unavailable
+  const availabilityLoading =
+    !effectiveTerm || (identitiesLoading && !identitiesData);
   const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
     () => identitiesData?.catalogClassIdentities ?? [],
     [identitiesData]
@@ -376,8 +379,8 @@ export default function Catalog() {
   }, [isDesktop, hasClassSelected]);
 
   const { data: _class, error: classError } = useGetClass(
-    effectiveTerm.year,
-    effectiveTerm.semester as Semester,
+    term?.year as number,
+    term?.semester as Semester,
     sessionId as string,
     subject as string,
     courseNumber as string,
@@ -529,15 +532,15 @@ export default function Catalog() {
       const matchedClass = exactNumberMatch ?? candidates[0];
 
       return {
-        year: effectiveTerm.year,
-        semester: effectiveTerm.semester,
+        year: term.year,
+        semester: term.semester,
         subject: matchedClass.subject,
         courseNumber: matchedClass.courseNumber,
         number: matchedClass.number,
         sessionId: matchedClass.sessionId,
       };
     },
-    [catalogAvailabilityByCourse, effectiveTerm, term]
+    [catalogAvailabilityByCourse, term]
   );
 
   const handleSelect = useCallback(
@@ -553,10 +556,10 @@ export default function Catalog() {
 
       navigate({
         ...location,
-        pathname: `/catalog/${effectiveTerm.year}/${effectiveTerm.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [location, navigate, effectiveTerm, term]
+    [location, navigate, term]
   );
 
   const handleSavedClassSelect = useCallback(
@@ -583,8 +586,8 @@ export default function Catalog() {
             <ClassBrowser
               onSelect={handleSelect}
               forceMode={mode}
-              semester={effectiveTerm.semester}
-              year={effectiveTerm.year}
+              semester={effectiveTerm?.semester ?? null}
+              year={effectiveTerm?.year ?? null}
               terms={terms ?? undefined}
               persistent
             />
@@ -612,8 +615,8 @@ export default function Catalog() {
               <ClassBrowser
                 onSelect={handleSelect}
                 forceMode={mode}
-                semester={effectiveTerm.semester}
-                year={effectiveTerm.year}
+                semester={effectiveTerm?.semester ?? null}
+                year={effectiveTerm?.year ?? null}
                 terms={terms ?? undefined}
                 persistent
               />

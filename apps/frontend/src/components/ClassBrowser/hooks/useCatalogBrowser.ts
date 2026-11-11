@@ -14,8 +14,9 @@ import useCatalogFilters, {
 import useCatalogQuery from "./useCatalogQuery";
 
 export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {
-  year: number;
-  semester: Semester;
+  // null while the term is still being resolved
+  year: number | null;
+  semester: Semester | null;
   terms?: ITerm[];
 }
 
@@ -45,6 +46,7 @@ export default function useCatalogBrowser({
   const [semanticSearchAvailable, setSemanticSearchAvailable] = useState(false);
   useEffect(() => {
     setSemanticSearchAvailable(false);
+    if (year === null || semester === null) return;
     fetch("/api/semantic-search/health")
       .then((r) => r.json())
       .then((data) => {

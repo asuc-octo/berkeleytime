@@ -213,7 +213,7 @@ export default function Filters() {
       .sort(sortByTermDescending);
   }, [terms]);
 
-  const currentTermLabel = `${semester} ${year}`;
+  const currentTermLabel = semester && year ? `${semester} ${year}` : null;
 
   const handleClearFilters = () => {
     updateLevels([]);
