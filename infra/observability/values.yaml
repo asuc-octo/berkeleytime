@@ -24,8 +24,7 @@ collector:
 
 # Grafana Tempo (distributed tracing)
 tempo:
-  # Latest 2.x; 3.x removes the ingester and compactor this config relies on
-  image: grafana/tempo:2.10.10
+  image: grafana/tempo:2.7.2
   retention: 24h
   # Go GC soft limit, ~80% of the memory limit
   goMemLimit: 1200MiB
