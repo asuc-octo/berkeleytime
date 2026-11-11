@@ -17,6 +17,7 @@ import {
   CourseResultsClickedBlock,
   DataLoadFailuresBlock,
   PageErrorsBlock,
+  SchedulesExportedBlock,
   SchedulesGeneratedBlock,
   SchedulesSavedBlock,
   SearchFailuresBlock,
@@ -169,6 +170,9 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <DailySchedulesBlock />
+            </div>
+            <div className={styles.cell}>
+              <SchedulesExportedBlock />
             </div>
             <div className={styles.cell}>
               <SchedulerUtilizationRatioBlock />
