@@ -43,7 +43,6 @@ const adaptForClassCard = (_class: ICatalogClassServer) => {
               pnpPercentage,
             }
           : undefined,
-      aggregatedRatings: _class.aggregatedRatings,
     },
     primarySection: {
       enrollment: {

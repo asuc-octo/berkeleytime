@@ -14,13 +14,6 @@ export const GET_COURSE_TITLE = gql`
       subject
       number
       title
-      aggregatedRatings {
-        metrics {
-          metricName
-          count
-          weightedAverage
-        }
-      }
     }
   }
 `;

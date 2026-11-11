@@ -158,9 +158,6 @@ export default function CourseSelectionCard({
               gradeDistribution,
               unitsMin: courseUnits,
               unitsMax: courseUnits,
-              course: titleData?.aggregatedRatings
-                ? { aggregatedRatings: titleData.aggregatedRatings }
-                : undefined,
             }),
       }}
       headingPrefix={

@@ -46,13 +46,6 @@ export const GET_CATALOG_SEARCH = gql`
         enrolledCount
         maxEnroll
         activeReservedMaxCount
-        aggregatedRatings {
-          metrics {
-            metricName
-            count
-            weightedAverage
-          }
-        }
         decal {
           title
         }
