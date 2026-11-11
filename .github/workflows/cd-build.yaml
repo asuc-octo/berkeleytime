@@ -11,10 +11,23 @@ on:
         description: "Chart build tag"
         required: true
         type: string
+      ref:
+        description: "Commit to build from (defaults to the triggering commit)"
+        type: string
+        default: ""
+      cache_tag:
+        description: "Registry cache tag prefix (defaults to image_tag)"
+        type: string
+        default: ""
+      build_images:
+        description: "Build and push images (false = charts only)"
+        type: boolean
+        default: true
 
 jobs:
   build-push-image:
     name: Build and Push Image
+    if: ${{ inputs.build_images }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -33,17 +46,18 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v7
         with:
-          context: "https://github.com/${{ github.repository }}.git#${{ github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
+          context: "https://github.com/${{ github.repository }}.git#${{ inputs.ref || github.sha }}${{ matrix.image == 'semantic-search' && ':apps/semantic-search' || '' }}"
           file: ${{ matrix.image == 'semantic-search' && './Dockerfile' || format('./apps/{0}/Dockerfile', matrix.image) }}
           target: ${{ matrix.image }}-prod
           tags: ${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}
           cache-from: |
             type=gha
-            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.cache_tag || inputs.image_tag }}-cache
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:main-cache
             type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:prod-cache
           cache-to: |
             type=gha,mode=max
-            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.image_tag }}-cache,mode=max
+            type=registry,ref=${{ secrets.DOCKER_USERNAME }}/bt-${{ matrix.image }}:${{ inputs.cache_tag || inputs.image_tag }}-cache,mode=max
           build-args: |
             VITE_OTEL_ENDPOINT=/otlp
             VITE_SERVICE_VERSION=${{ inputs.image_tag }}
@@ -62,6 +76,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ inputs.ref || github.sha }}
           sparse-checkout: infra
 
       - name: Login to Docker Hub
