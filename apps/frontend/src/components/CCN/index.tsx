@@ -9,9 +9,10 @@ import styles from "./CCN.module.scss";
 interface CCNProps {
   sectionId: string;
   tooltip?: false;
+  showLabel?: boolean;
 }
 
-export default function CCN({ sectionId, tooltip }: CCNProps) {
+export default function CCN({ sectionId, tooltip, showLabel }: CCNProps) {
   const textRef = useRef<HTMLSpanElement>(null);
 
   const [over, setOver] = useState(false);
@@ -51,14 +52,32 @@ export default function CCN({ sectionId, tooltip }: CCNProps) {
           onMouseEnter={() => setOver(true)}
           onMouseLeave={() => setOver(false)}
         >
-          {copied ? (
-            <ClipboardCheck />
-          ) : over ? (
-            <PasteClipboard />
+          {showLabel ? (
+            <>
+              <span className={styles.label}>Class #:</span>
+              <span ref={textRef} className={styles.value}>
+                {sectionId}
+              </span>
+              <span className={styles.iconSlot} aria-hidden>
+                {copied ? (
+                  <ClipboardCheck width={24} height={24} />
+                ) : (
+                  over && <PasteClipboard width={24} height={24} />
+                )}
+              </span>
+            </>
           ) : (
-            <Hashtag />
+            <>
+              {copied ? (
+                <ClipboardCheck />
+              ) : over ? (
+                <PasteClipboard />
+              ) : (
+                <Hashtag />
+              )}
+              <span ref={textRef}>{sectionId}</span>
+            </>
           )}
-          <span ref={textRef}>{sectionId}</span>
         </div>
       }
       title="Class Number"

@@ -9,3 +9,20 @@
   max-width: fit-content;
   white-space: nowrap;
 }
+
+.label {
+  color: var(--paragraph-color);
+}
+
+.value {
+  color: var(--heading-color);
+}
+
+.iconSlot {
+  display: inline-flex;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+}
