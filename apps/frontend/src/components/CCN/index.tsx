@@ -58,7 +58,13 @@ export default function CCN({ sectionId, tooltip, showLabel }: CCNProps) {
               <span ref={textRef} className={styles.value}>
                 {sectionId}
               </span>
-              {copied ? <ClipboardCheck /> : over && <PasteClipboard />}
+              <span className={styles.iconSlot} aria-hidden>
+                {copied ? (
+                  <ClipboardCheck width={24} height={24} />
+                ) : (
+                  over && <PasteClipboard width={24} height={24} />
+                )}
+              </span>
             </>
           ) : (
             <>
