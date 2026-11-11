@@ -47,10 +47,18 @@ spec:
             - name: model-cache
               mountPath: /root/.cache/huggingface
       volumes:
+        {{- /* Per-release folder; see semanticSearch.indexHostPath in values.yaml. */}}
         - name: indexes
           hostPath:
-            path: /data/semantic-search-indexes
+            path: {{ .Values.semanticSearch.indexHostPath }}
             type: DirectoryOrCreate
+        {{- /*
+        Shared across all releases on the node on purpose. It only holds the
+        Hugging Face download of the embedding model (MODEL_NAME in
+        apps/semantic-search/app/engine.py). That cache is keyed by model name
+        and commit, so environments on different models get separate
+        subfolders and never overwrite each other's files.
+        */}}
         - name: model-cache
           hostPath:
             path: /data/semantic-search-model-cache
