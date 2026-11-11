@@ -1,144 +1,18 @@
-import { createHash } from "crypto";
-import type { Request } from "express";
 import type { RedisClientType } from "redis";
 
 import { TrackingEventModel } from "@repo/common/models";
 
-import { getClientIP } from "../../utils/ip";
-
-const REDIS_BUFFER_KEY = "tracking-events-buffer";
-const MAX_BATCH_SIZE = 50;
-const MAX_BUFFER_SIZE = 100_000;
-
-// Rate limiting: max 30 calls per IP per minute
-const RATE_LIMIT_WINDOW_S = 60;
-const RATE_LIMIT_MAX_CALLS = 30;
-
-// Per-event field limits
-const MAX_STRING_FIELD_LEN = 128;
-const MAX_METADATA_BYTES = 1_024;
-const MAX_METADATA_KEYS = 20;
-const MAX_METADATA_DEPTH = 2;
-
-export interface TrackingEventInput {
-  eventType: string;
-  targetType: string;
-  targetId?: string;
-  metadata?: Record<string, unknown>;
-  timestamp: string;
-}
-
-interface BufferedTrackingEvent extends TrackingEventInput {
-  sessionId: string;
-  userId?: string;
-  ipHash: string;
-  userAgent?: string;
-  referrer?: string;
-}
-
-const hashIP = (ip: string): string => {
-  return createHash("sha256").update(ip).digest("hex");
-};
-
-// Allow alphanumeric, underscore, hyphen, dot, colon, slash — covers all real event/target type values
-const sanitizeToken = (s: string, maxLen: number): string =>
-  s.replace(/[^\w\-.:/]/g, "").slice(0, maxLen);
-
-const sanitizeMetadata = (
-  obj: Record<string, unknown>,
-  depth = 0
-): Record<string, unknown> => {
-  if (depth >= MAX_METADATA_DEPTH) return {};
-  const result: Record<string, unknown> = {};
-  let keyCount = 0;
-  for (const [k, v] of Object.entries(obj)) {
-    if (keyCount >= MAX_METADATA_KEYS) break;
-    // Strip MongoDB operator prefix ($) and dot notation to prevent query injection
-    const safeKey = k.replace(/[$.]/g, "_").slice(0, 64);
-    if (typeof v === "string") {
-      result[safeKey] = v.slice(0, 256);
-    } else if (typeof v === "number" || typeof v === "boolean" || v === null) {
-      result[safeKey] = v;
-    } else if (typeof v === "object" && !Array.isArray(v) && v !== null) {
-      result[safeKey] = sanitizeMetadata(
-        v as Record<string, unknown>,
-        depth + 1
-      );
-    } else {
-      result[safeKey] = String(v).slice(0, 256);
-    }
-    keyCount++;
-  }
-  return result;
-};
-
-const sanitizeEvent = (event: TrackingEventInput): TrackingEventInput => {
-  const sanitized: TrackingEventInput = {
-    eventType: sanitizeToken(event.eventType, MAX_STRING_FIELD_LEN),
-    targetType: sanitizeToken(event.targetType, MAX_STRING_FIELD_LEN),
-    targetId: event.targetId
-      ? sanitizeToken(event.targetId, MAX_STRING_FIELD_LEN)
-      : undefined,
-    timestamp: event.timestamp,
-    metadata: undefined,
-  };
-
-  if (event.metadata) {
-    const sanitizedMeta = sanitizeMetadata(event.metadata);
-    if (JSON.stringify(sanitizedMeta).length <= MAX_METADATA_BYTES) {
-      sanitized.metadata = sanitizedMeta;
-    }
-    // Metadata exceeding 1KB after sanitization is dropped entirely
-  }
-
-  return sanitized;
-};
-
-export const bufferTrackingEvents = async (
-  redis: RedisClientType,
-  req: Request,
-  events: TrackingEventInput[]
-): Promise<void> => {
-  if (events.length > MAX_BATCH_SIZE) {
-    throw new Error(`Batch size exceeds maximum of ${MAX_BATCH_SIZE}`);
-  }
-
-  const currentLen = await redis.lLen(REDIS_BUFFER_KEY);
-  if (currentLen >= MAX_BUFFER_SIZE) {
-    console.warn(
-      `[TrackingEvents] Buffer at capacity (${currentLen}), dropping batch of ${events.length}`
-    );
-    return;
-  }
-
-  const ip = getClientIP(req);
-  const ipHash = hashIP(ip);
-
-  const rateLimitKey = `tracking:ratelimit:${ipHash}`;
-  const callCount = await redis.incr(rateLimitKey);
-  if (callCount === 1) await redis.expire(rateLimitKey, RATE_LIMIT_WINDOW_S);
-  if (callCount > RATE_LIMIT_MAX_CALLS) return;
-
-  const userAgent = (req.get("user-agent") || "").slice(0, 500) || undefined;
-  const referrer = req.get("referer") || req.get("referrer") || undefined;
-  const sessionId = req.sessionID || "anonymous";
-  const userId = (req.user as { _id?: string } | undefined)?._id;
-
-  const buffered: BufferedTrackingEvent[] = events.map((event) => ({
-    ...sanitizeEvent(event),
-    sessionId,
-    userId,
-    ipHash,
-    userAgent,
-    referrer,
-  }));
-
-  // Push all events to a single Redis list
-  await redis.rPush(
-    REDIS_BUFFER_KEY,
-    buffered.map((e) => JSON.stringify(e))
-  );
-};
+import {
+  trackingFlushFailureCount,
+  trackingQueueDepth,
+} from "../../lib/metrics";
+import { TRACKING_QUEUE_KEYS, warnTrackingFailure } from "./ingest";
+import {
+  MAX_EVENT_BYTES,
+  OUTREACH_TARGETS,
+  parseClientTimestamp,
+  validateTrackingBatch,
+} from "./validation";
 
 const FLUSH_CHUNK_SIZE = 500;
 
@@ -148,48 +22,86 @@ export const flushTrackingEvents = async (
   let flushed = 0;
   let errors = 0;
 
-  while (true) {
-    const raw = await redis.lRange(REDIS_BUFFER_KEY, 0, FLUSH_CHUNK_SIZE - 1);
-    if (raw.length === 0) break;
+  // Drain both bounded queues; also drain pre-deployment records as unknown.
+  for (const queue of [
+    ...Object.values(TRACKING_QUEUE_KEYS),
+    "tracking-events-buffer",
+  ]) {
+    while (true) {
+      const raw = await redis.lRange(queue, 0, FLUSH_CHUNK_SIZE - 1);
+      if (raw.length === 0) break;
 
-    // Parse individually — one malformed entry discarded, not blocking entire chunk
-    const documents: object[] = [];
-    for (const json of raw) {
-      try {
-        const event = JSON.parse(json) as BufferedTrackingEvent;
-        documents.push({
-          eventType: event.eventType,
-          targetType: event.targetType,
-          targetId: event.targetId,
-          metadata: event.metadata,
-          sessionId: event.sessionId,
-          userId: event.userId,
-          timestamp: new Date(event.timestamp),
-          ipHash: event.ipHash,
-          userAgent: event.userAgent,
-          referrer: event.referrer,
-        });
-      } catch {
-        console.warn("[TrackingEvents Flush] Discarding malformed event");
-        errors++;
+      // Discard malformed records individually so valid records can flush.
+      const documents: object[] = [];
+      for (const json of raw) {
+        try {
+          if (Buffer.byteLength(json) > MAX_EVENT_BYTES)
+            throw new Error("Oversized buffered event");
+          const event = JSON.parse(json);
+          const [validated] = validateTrackingBatch([event]);
+          const timestamp = parseClientTimestamp(validated.timestamp);
+          if (
+            !timestamp ||
+            typeof event.sessionId !== "string" ||
+            !event.sessionId ||
+            event.sessionId.length > 128 ||
+            typeof event.ipHash !== "string" ||
+            !/^[a-f0-9]{64}$/.test(event.ipHash) ||
+            (event.userId != null &&
+              (typeof event.userId !== "string" ||
+                event.userId.length > 128)) ||
+            (event.userAgent != null &&
+              (typeof event.userAgent !== "string" ||
+                event.userAgent.length > 500)) ||
+            (event.referrer != null &&
+              (typeof event.referrer !== "string" ||
+                event.referrer.length > 512)) ||
+            (event.source != null &&
+              event.source !== "client" &&
+              event.source !== "server-redirect")
+          ) {
+            throw new Error("Malformed buffered event");
+          }
+          documents.push({
+            ...validated,
+            sessionId: event.sessionId,
+            userId: event.userId,
+            timestamp: new Date(timestamp),
+            clientTimestamp:
+              typeof event.clientTimestamp === "string" &&
+              parseClientTimestamp(event.clientTimestamp)
+                ? new Date(event.clientTimestamp)
+                : undefined,
+            source: event.source,
+            ipHash: event.ipHash,
+            userAgent: event.userAgent,
+            referrer: event.referrer,
+          });
+        } catch {
+          warnTrackingFailure("discarding malformed buffered event");
+          trackingFlushFailureCount.add(1, { reason: "malformed" });
+          errors++;
+        }
       }
-    }
 
-    if (documents.length > 0) {
-      try {
-        await TrackingEventModel.insertMany(documents, { ordered: false });
-        flushed += documents.length;
-        await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
-      } catch (error) {
-        console.error("[TrackingEvents Flush] insertMany error:", error);
-        errors++;
-        break;
+      if (documents.length > 0) {
+        try {
+          await TrackingEventModel.insertMany(documents, { ordered: false });
+          flushed += documents.length;
+          await redis.lTrim(queue, raw.length, -1);
+        } catch {
+          warnTrackingFailure("Mongo insert failed");
+          trackingFlushFailureCount.add(1, { reason: "mongo" });
+          errors++;
+          break;
+        }
+      } else {
+        await redis.lTrim(queue, raw.length, -1);
       }
-    } else {
-      await redis.lTrim(REDIS_BUFFER_KEY, raw.length, -1);
-    }
 
-    if (raw.length < FLUSH_CHUNK_SIZE) break;
+      if (raw.length < FLUSH_CHUNK_SIZE) break;
+    }
+    trackingQueueDepth.record(await redis.lLen(queue), { source: queue });
   }
 
   return { flushed, errors };
@@ -212,6 +124,16 @@ export const getTrackingEventsTimeSeries = async (
   if (eventType) match.eventType = eventType;
   if (targetType) match.targetType = targetType;
   if (targetId) match.targetId = targetId;
+
+  // Protect every query shape, including click queries without a target filter.
+  // Client and historical outreach claims never become server-observed counts.
+  match.$nor = [
+    {
+      eventType: "click",
+      targetType: { $in: [...OUTREACH_TARGETS] },
+      source: { $ne: "server-redirect" },
+    },
+  ];
 
   if (startDate || endDate) {
     match.timestamp = {};
