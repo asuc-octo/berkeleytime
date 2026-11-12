@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       restore_date:
-        description: "Date of backup to restore (YYYYMMDD)"
+        description: "Backup to restore: YYYYMMDDHH (exact hour, last 24 hours) or YYYYMMDD (latest that day, falling back to daily/weekly/monthly backups)"
         required: true
         type: string
 

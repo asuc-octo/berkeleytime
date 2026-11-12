@@ -29,6 +29,10 @@
       "cache": false,
       "dependsOn": []
     },
+    "test": {
+      "cache": false,
+      "dependsOn": []
+    },
     "start": {
       "dependsOn": [
         "generate",

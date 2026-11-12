@@ -32,6 +32,9 @@ jobs:
           image:
             tag: latest
         backend:
+          resources:
+            requests:
+              cpu: '100m'
           image:
             tag: latest
         semanticSearch:
