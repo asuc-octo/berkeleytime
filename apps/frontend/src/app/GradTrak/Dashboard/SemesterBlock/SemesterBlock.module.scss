@@ -39,7 +39,7 @@ body:not([data-theme]) {
     flex-direction: column;
     align-items: start;
     justify-content: start;
-    background-color: var(--semesterblock-color);
+    background-color: var(--backdrop-color);
     border-radius: 0.5rem;
     width: 226px;
     padding: 16px 8px;
@@ -50,36 +50,73 @@ body:not([data-theme]) {
       width: 90%;
     }
 
-    &[data-open="true"] {
-      background-color: var(--backdrop-color);
-    }
-
     @media (max-width: 600px) {
       width: 100%;
     }
 
-    .action-button {
+    .status-button,
+    .delete-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border-radius: 6px;
+      background: transparent;
       cursor: pointer;
+      color: var(--paragraph-color);
+      transition:
+        background-color 150ms ease-in-out,
+        color 150ms ease-in-out;
+
+      @media (hover: hover) {
+        &:hover {
+          background-color: var(--button-hover-color);
+          color: var(--heading-color);
+        }
+      }
+    }
+
+    .status-button {
+      border: 0;
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    // Plain icon like the trash on the legacy Grades course cards; turns red
+    // on hover since it removes the whole semester.
+    .delete-button {
+      border: 0;
+      color: var(--label-color);
+
+      @media (hover: hover) {
+        &:hover {
+          background-color: transparent;
+          color: var(--red-500);
+        }
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .status {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 7px;
     }
 
     .semester-counter {
       display: flex;
       align-items: baseline;
       gap: 8px;
-
-      .pin {
-        position: relative;
-        top: 2px;
-        cursor: pointer;
-      }
-
-      .status {
-        display: inline-block;
-        width: 7px;
-        height: 7px;
-        border-radius: 7px;
-        background-color: var(--green-500);
-      }
 
       .counter {
         background-color: var(--button-active-color);
@@ -116,15 +153,6 @@ body:not([data-theme]) {
   }
 }
 
-.menu-icon {
-  width: 12px;
-  height: 12px;
-  margin-right: 6px;
-}
-.right-aligned-icon {
-  position: relative;
-  left: 60px;
-}
 .menuStatusColor {
   display: inline-block;
   width: 6px;
