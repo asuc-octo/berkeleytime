@@ -1,7 +1,11 @@
 import { LNS_REQ_BTLL, UC_REQ_BTLL } from "../reference_gradtrak_reqs";
 import { init } from "./interpreter";
 import type { Course } from "./lib/course";
-import { runBipartiteMatch } from "./lib/course_assignment";
+import {
+  isUpperDivision,
+  runBipartiteMatch,
+  runUnitAssignment,
+} from "./lib/course_assignment";
 
 const mkCourse = (number: string): Course => ({
   subject: { data: "CS", type: "string" },
@@ -553,6 +557,84 @@ const TESTS = [
         console.error(error);
         return false;
       }
+    },
+  },
+  {
+    name: "isUpperDivision — true cases",
+    test: () => {
+      const trueCases = [
+        "100",
+        "170",
+        "199",
+        "C100",
+        "170L",
+        "C170A",
+        "N130",
+        "W140B",
+        "170AC",
+      ];
+      return trueCases.every((n) => isUpperDivision(mkCourse(n)));
+    },
+  },
+  {
+    name: "isUpperDivision — false cases",
+    test: () => {
+      const falseCases = ["61", "61A", "99", "200", "C50", "1", "99B"];
+      return falseCases.every((n) => !isUpperDivision(mkCourse(n)));
+    },
+  },
+  {
+    name: "runUnitAssignment — single-major regression",
+    test: () => {
+      // 2 buckets needing 4 units each. Course a (4 units) eligible for both;
+      // course b (4 units) eligible for bucket 1 only. Optimal: a→0, b→1.
+      const a = mkCourse("170");
+      const b = mkCourse("161");
+      const result = runUnitAssignment([[a, b], [b]], [4, 4]);
+      return result[0].length > 0 && result[1].length > 0;
+    },
+  },
+  {
+    name: "runUnitAssignment — bucket needing multiple courses to meet threshold",
+    test: () => {
+      const [a, b, c] = ["100", "110", "120"].map(mkCourse);
+      const result = runUnitAssignment([[a, b, c]], [12]);
+      return result[0].length === 3;
+    },
+  },
+  {
+    name: "runUnitAssignment — zero-unit course cannot satisfy a non-zero threshold",
+    test: () => {
+      const zeroUnit: Course = {
+        ...mkCourse("170"),
+        units: { data: 0, type: "number" },
+      };
+      const result = runUnitAssignment([[zeroUnit]], [4]);
+      return result[0].length === 0;
+    },
+  },
+  {
+    name: "runUnitAssignment — an unmet bucket keeps its partial progress",
+    test: () => {
+      const [a, b, c] = ["161", "162", "164"].map(mkCourse);
+      // One 4-unit course toward 8 units: unmet, but the course still shows.
+      const single = runUnitAssignment([[a]], [8]);
+      // Three 4-unit courses, two 8-unit buckets: one is met, and the third
+      // course counts toward the other.
+      const split = runUnitAssignment(
+        [
+          [a, b, c],
+          [a, b, c],
+        ],
+        [8, 8]
+      );
+      const sizes = split.map((bucket) => bucket.length).sort();
+      return (
+        single[0].length === 1 &&
+        sizes[0] === 1 &&
+        sizes[1] === 2 &&
+        new Set(split.flat()).size === 3
+      );
     },
   },
 ];
