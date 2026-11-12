@@ -27,7 +27,8 @@ jobs:
   boundary:
     if: github.event.pull_request.draft == false
     name: Sanity and API Tests
-    runs-on: ubuntu-latest
+    # Pinned so a new ubuntu-latest can't break Playwright's browser install
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
 
     steps:
@@ -58,4 +59,5 @@ jobs:
 
       - name: Stop test services
         if: always()
-        run: docker compose down --volumes
+        # .env is missing if an earlier step failed before creating it
+        run: if [ -f .env ]; then docker compose down --volumes; fi

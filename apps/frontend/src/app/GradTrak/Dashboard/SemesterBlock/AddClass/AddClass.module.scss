@@ -47,24 +47,29 @@ body {
     max-height: 18rem;
     width: max-content;
     overflow: hidden;
-    --max-visible-items: 3;
     --item-height: 44px;
 
     .list {
       flex: 1 1 auto;
-      max-height: calc(var(--item-height) * var(--max-visible-items));
+      max-height: calc(4.5 * var(--item-height, 36px) + 8px);
       overflow-y: auto;
       list-style-type: none;
       padding: 0;
       margin: 0;
       scrollbar-width: thin;
+      scrollbar-color: var(--border-subtle, rgba(150, 150, 150, 0.3)) transparent;
 
-      &::-webkit-scrollbar-thumb {
-        background-color: #8a8a8a; /* Light gray scrollbar handle */
+      &::-webkit-scrollbar {
+        width: 4px;
       }
 
-      ::-webkit-scrollbar-track {
+      &::-webkit-scrollbar-track {
         background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 9999px;
+        background: var(--border-subtle, rgba(150, 150, 150, 0.3));
       }
 
       .item {

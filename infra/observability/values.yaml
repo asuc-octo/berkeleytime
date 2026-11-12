@@ -24,9 +24,10 @@ collector:
 
 # Grafana Tempo (distributed tracing)
 tempo:
-  image: grafana/tempo:2.4.1
+  image: grafana/tempo:2.7.2
   retention: 24h
-  goMemLimit: 400MiB
+  # Go GC soft limit, ~80% of the memory limit
+  goMemLimit: 1200MiB
   # Ingestion limits: excess spans are rejected (429) instead of growing memory
   limits:
     ingestionRateBytes: 4000000 # ~4MB/s sustained
@@ -38,13 +39,14 @@ tempo:
   # PVCs cannot shrink, so never lower this below the deployed value.
   storage:
     size: 10Gi
+  # Compaction merges several blocks in memory; 512Mi was OOMKilled mid-compaction
   resources:
     limits:
-      memory: 512Mi
-      cpu: 500m
+      memory: 1536Mi
+      cpu: 1000m
     requests:
-      memory: 256Mi
-      cpu: 100m
+      memory: 512Mi
+      cpu: 200m
 
 # Grafana Loki (log aggregation)
 loki:
