@@ -554,8 +554,12 @@ export function Select<T>({
     });
   };
 
-  const selectedOptionLabel =
-    !Array.isArray(activeElem) && activeElem ? activeElem.label : "";
+  // Multi-select comboboxes show a summary of the selection in the input.
+  const selectedOptionLabel = Array.isArray(activeElem)
+    ? activeElem.length > 0
+      ? (selectedLabel ?? getMultiSelectionText(activeElem))
+      : ""
+    : (activeElem?.label ?? "");
 
   const closeCombobox = (next: boolean) => {
     setOpen(next);
