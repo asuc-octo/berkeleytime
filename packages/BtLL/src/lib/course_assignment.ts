@@ -150,6 +150,25 @@ export function runUnitAssignment(
   }
 
   backtrack(sortedCourseIndices, 0);
+
+  // The search only keeps courses placed on the way to its best result, so
+  // an unmet bucket can come back empty. Give each leftover course to an
+  // unmet bucket so partial progress still shows. This never completes a
+  // bucket: if it could, the search would have found that assignment.
+  const used = new Set(bestAssigned.flat());
+  const bestUnits = bestAssigned.map((bucket) =>
+    bucket.reduce((sum, course) => sum + (course.units?.data ?? 0), 0)
+  );
+  for (const ci of sortedCourseIndices) {
+    const course = allCourses[ci];
+    const units = course.units?.data ?? 0;
+    if (used.has(course) || units === 0) continue;
+    const bi = courseEligible[ci].find((b) => bestUnits[b] < thresholds[b]);
+    if (bi === undefined) continue;
+    bestAssigned[bi].push(course);
+    bestUnits[bi] += units;
+  }
+
   return bestAssigned;
 }
 

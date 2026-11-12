@@ -625,6 +625,30 @@ const TESTS = [
     },
   },
   {
+    name: "runUnitAssignment — an unmet bucket keeps its partial progress",
+    test: () => {
+      const [a, b, c] = ["161", "162", "164"].map(mkCourse);
+      // One 4-unit course toward 8 units: unmet, but the course still shows.
+      const single = runUnitAssignment([[a]], [8]);
+      // Three 4-unit courses, two 8-unit buckets: one is met, and the third
+      // course counts toward the other.
+      const split = runUnitAssignment(
+        [
+          [a, b, c],
+          [a, b, c],
+        ],
+        [8, 8]
+      );
+      const sizes = split.map((bucket) => bucket.length).sort();
+      return (
+        single[0].length === 1 &&
+        sizes[0] === 1 &&
+        sizes[1] === 2 &&
+        new Set(split.flat()).size === 3
+      );
+    },
+  },
+  {
     name: "runJointAssignment — UD overlap respects cap=2",
     test: () => {
       // UD course CS 170 eligible for a leaf in each major. With cap=2 both
