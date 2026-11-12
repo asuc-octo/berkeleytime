@@ -4,7 +4,12 @@ import { useApolloClient } from "@apollo/client/react";
 import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowRight } from "iconoir-react";
 
-import { type Data, init } from "@repo/BtLL";
+import {
+  type Data,
+  computeOverlapCap,
+  init,
+  runJointReassignment,
+} from "@repo/BtLL";
 
 import { IPlan, IPlanTerm, ISelectedCourse } from "@/lib/api";
 import { IPlanRequirement } from "@/lib/api/plans";
@@ -627,6 +632,16 @@ export default function BtLLGradTrakInterface({
         }
       };
 
+      // Pass 1: evaluate each requirement's BtLL program.
+      type EvalEntry = {
+        spr: (typeof plan.selectedPlanRequirements)[number];
+        req: NonNullable<
+          (typeof plan.selectedPlanRequirements)[number]["planRequirement"]
+        >;
+        evaluated: RequirementResult[];
+      };
+      const evalEntries: EvalEntry[] = [];
+
       for (const spr of plan.selectedPlanRequirements) {
         if (!spr.planRequirement) continue;
 
@@ -652,50 +667,93 @@ export default function BtLLGradTrakInterface({
         }
 
         if (Array.isArray(evaluated) && evaluated.length > 0) {
-          // Flatten nested requirements onto a continuous index track, starting roots at 0
-          // so existing database overrides aren't broken.
-          let counter = evaluated.length;
+          evalEntries.push({ spr, req, evaluated });
+        }
+      }
 
-          evaluated.forEach((req, index) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (req as any).flatIndex = index;
-          });
-
-          const assignChildren = (reqs: RequirementResult[]) => {
-            for (const req of reqs) {
-              if (
-                req.type?.data === "AndRequirement" ||
-                req.type?.data === "OrRequirement"
-              ) {
-                const subReqs = req.requirements?.data ?? [];
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                subReqs.forEach((sub: any) => {
-                  sub.flatIndex = counter++;
-                });
-                assignChildren(subReqs);
-              }
-            }
-          };
-          assignChildren(evaluated);
-          const totalNodes = counter;
-
-          const currentOverrides = spr.manualOverrides ?? [];
-          const paddedOverrides = Array.from({ length: totalNodes }).map(
-            (_, i) => (i < currentOverrides.length ? currentOverrides[i] : null)
-          );
-
-          const newSpr = {
-            ...spr,
-            manualOverrides: paddedOverrides,
-          };
-
-          groups.push({
-            title: req.name,
-            requirements: evaluated,
-            source: req,
-            selectedPlanRequirement: newSpr,
+      // Joint reassignment: group major trees by major name, compute the
+      // overlap cap from college membership, then run the joint optimizer.
+      // Skipped with fewer than two majors, where there is no overlap to
+      // enforce.
+      const majorTreeMap = new Map<
+        string,
+        { trees: RequirementResult[]; college: string }
+      >();
+      for (const { evaluated, req } of evalEntries) {
+        if (!req.major) continue;
+        const existing = majorTreeMap.get(req.major);
+        if (existing) {
+          existing.trees.push(...evaluated);
+        } else {
+          majorTreeMap.set(req.major, {
+            trees: [...evaluated],
+            college: req.college ?? "",
           });
         }
+      }
+      const majorEntries = Array.from(majorTreeMap.values());
+      const overlapCap = computeOverlapCap(
+        Array.from(majorTreeMap.keys()),
+        majorEntries.map((e) => e.college)
+      );
+      if (majorEntries.length >= 2) {
+        try {
+          runJointReassignment(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            majorEntries.map((e) => e.trees) as any,
+            overlapCap
+          );
+        } catch (error) {
+          console.error("Failed to jointly match double major courses:", error);
+        }
+      }
+
+      // Pass 2: assign flatIndex counters and override bookkeeping now that
+      // course assignments have been finalised by the joint pass.
+      for (const { spr, req, evaluated } of evalEntries) {
+        // Flatten nested requirements onto a continuous index track, starting roots at 0
+        // so existing database overrides aren't broken.
+        let counter = evaluated.length;
+
+        evaluated.forEach((req, index) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (req as any).flatIndex = index;
+        });
+
+        const assignChildren = (reqs: RequirementResult[]) => {
+          for (const req of reqs) {
+            if (
+              req.type?.data === "AndRequirement" ||
+              req.type?.data === "OrRequirement"
+            ) {
+              const subReqs = req.requirements?.data ?? [];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              subReqs.forEach((sub: any) => {
+                sub.flatIndex = counter++;
+              });
+              assignChildren(subReqs);
+            }
+          }
+        };
+        assignChildren(evaluated);
+        const totalNodes = counter;
+
+        const currentOverrides = spr.manualOverrides ?? [];
+        const paddedOverrides = Array.from({ length: totalNodes }).map(
+          (_, i) => (i < currentOverrides.length ? currentOverrides[i] : null)
+        );
+
+        const newSpr = {
+          ...spr,
+          manualOverrides: paddedOverrides,
+        };
+
+        groups.push({
+          title: req.name,
+          requirements: evaluated,
+          source: req,
+          selectedPlanRequirement: newSpr,
+        });
       }
 
       setEvaluatedGroups(groups);
