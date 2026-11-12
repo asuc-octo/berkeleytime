@@ -879,6 +879,45 @@ const TESTS = [
     },
   },
   {
+    name: "runJointAssignment — an unmet leaf keeps its partial progress",
+    test: () => {
+      const [a, b] = ["161", "162"].map(mkCourse);
+      // 2 of 3 courses taken: unmet, but both courses still show.
+      const partial = runJointAssignment(
+        [
+          {
+            ownerIdx: 0,
+            constraint: { kind: "count", threshold: 3 },
+            eligible: [a, b],
+          },
+        ],
+        0
+      );
+      // CS 161 meets major 0's leaf. Major 1's leaf is unmet, but showing
+      // CS 161 there would be an upper-division overlap, and the cap is 0.
+      const capped = runJointAssignment(
+        [
+          {
+            ownerIdx: 0,
+            constraint: { kind: "count", threshold: 1 },
+            eligible: [a],
+          },
+          {
+            ownerIdx: 1,
+            constraint: { kind: "count", threshold: 2 },
+            eligible: [a],
+          },
+        ],
+        0
+      );
+      return (
+        partial[0].length === 2 &&
+        capped[0].length === 1 &&
+        capped[1].length === 0
+      );
+    },
+  },
+  {
     name: "computeOverlapCap — single major → 0",
     test: () => computeOverlapCap(["CS"], ["College of Engineering"]) === 0,
   },

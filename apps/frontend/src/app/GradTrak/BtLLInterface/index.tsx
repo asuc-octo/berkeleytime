@@ -673,7 +673,8 @@ export default function BtLLGradTrakInterface({
 
       // Joint reassignment: group major trees by major name, compute the
       // overlap cap from college membership, then run the joint optimizer.
-      // This is a no-op when there is only one major (overlapCap = 0).
+      // Skipped with fewer than two majors, where there is no overlap to
+      // enforce.
       const majorTreeMap = new Map<
         string,
         { trees: RequirementResult[]; college: string }
@@ -695,8 +696,17 @@ export default function BtLLGradTrakInterface({
         Array.from(majorTreeMap.keys()),
         majorEntries.map((e) => e.college)
       );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      runJointReassignment(majorEntries.map((e) => e.trees) as any, overlapCap);
+      if (majorEntries.length >= 2) {
+        try {
+          runJointReassignment(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            majorEntries.map((e) => e.trees) as any,
+            overlapCap
+          );
+        } catch (error) {
+          console.error("Failed to jointly match double major courses:", error);
+        }
+      }
 
       // Pass 2: assign flatIndex counters and override bookkeeping now that
       // course assignments have been finalised by the joint pass.

@@ -386,6 +386,40 @@ export function runJointAssignment(
 
   backtrack(0, 0, 0);
 
+  // The search prefers fewer course uses, so an unmet leaf comes back empty.
+  // Give leftover courses to unmet leaves so partial progress still shows.
+  // The same rules apply: one leaf per major, and an upper-division overlap
+  // spends budget. This never completes a leaf: if it could, the search
+  // would have found that assignment.
+  const bestAccum = bestAssignment.map((indices, li) =>
+    indices.reduce((sum, ci) => sum + valueOf(li, ci), 0)
+  );
+  const usedByOwner = [new Set<number>(), new Set<number>()];
+  bestAssignment.forEach((indices, li) => {
+    for (const ci of indices) usedByOwner[leaves[li].ownerIdx].add(ci);
+  });
+  let overlaps = [...usedByOwner[0]].filter(
+    (ci) => usedByOwner[1].has(ci) && isUD(allCourses[ci])
+  ).length;
+  for (const ci of courseOrder) {
+    for (const owner of [0, 1] as const) {
+      if (usedByOwner[owner].has(ci)) continue;
+      const eligibleLeaves =
+        owner === 0 ? eligByOwner[ci].o0 : eligByOwner[ci].o1;
+      const li = eligibleLeaves.find(
+        (l) => bestAccum[l] < leaves[l].constraint.threshold
+      );
+      if (li === undefined || valueOf(li, ci) === 0) continue;
+      const cost =
+        usedByOwner[1 - owner].has(ci) && isUD(allCourses[ci]) ? 1 : 0;
+      if (overlaps + cost > overlapCap) continue;
+      bestAssignment[li].push(ci);
+      bestAccum[li] += valueOf(li, ci);
+      usedByOwner[owner].add(ci);
+      overlaps += cost;
+    }
+  }
+
   // Materialize: per-leaf list of Course objects (deduplicated indices →
   // Course refs).
   return bestAssignment.map((indices) => indices.map((ci) => allCourses[ci]));
