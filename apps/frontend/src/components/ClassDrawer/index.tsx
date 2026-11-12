@@ -58,6 +58,7 @@ export default function ClassDrawer({
             year={year}
             sessionId={sessionId}
             dialog
+            scrollWithinContent
           />
         </Dialog.Drawer>
       </Dialog.Portal>

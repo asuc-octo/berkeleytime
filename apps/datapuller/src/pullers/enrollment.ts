@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 
 import { parseTermName } from "@repo/common";
 import {
+  EnrollmentPullModel,
   IEnrollmentSingularItem,
   NewEnrollmentHistoryModel,
   TermModel,
@@ -129,7 +130,28 @@ const updateEnrollmentHistories = async (config: Config) => {
   let totalEnrollmentSingulars = 0;
   let totalInserted = 0;
   let totalUpdated = 0;
+  let totalUnchanged = 0;
   const requirementGroupStats = { present: 0, missing: 0 };
+
+  // termId -> sectionIds whose latest enrollment changed this run
+  const changedSectionsByTerm = new Map<string, Set<string>>();
+  const markChanged = (termId: string, sectionId: string) => {
+    let sectionIds = changedSectionsByTerm.get(termId);
+    if (!sectionIds) {
+      sectionIds = new Set();
+      changedSectionsByTerm.set(termId, sectionIds);
+    }
+    sectionIds.add(sectionId);
+  };
+
+  // termId -> when the previous successful run happened. Unchanged sections
+  // are not written, so their last entry is confirmed up to this time.
+  const previousPulls = await EnrollmentPullModel.find({
+    termId: { $in: terms.map((term) => term.id) },
+  }).lean();
+  const lastPulledAtByTerm = new Map(
+    previousPulls.map((pull) => [pull.termId, pull.lastPulledAt])
+  );
 
   for (let i = 0; i < terms.length; i += TERMS_PER_API_BATCH) {
     const termsBatch = terms.slice(i, i + TERMS_PER_API_BATCH);
@@ -176,10 +198,19 @@ const updateEnrollmentHistories = async (config: Config) => {
         sectionId: es.sectionId,
       }));
 
-      // Pre-fetch existing documents for this batch only
+      // Pre-fetch existing documents for this batch only. Only the last
+      // history entry is needed for comparison, so skip the rest of the array.
       const existingDocs = await NewEnrollmentHistoryModel.find({
         $or: identifiers,
-      }).lean();
+      })
+        .select({
+          termId: 1,
+          sessionId: 1,
+          sectionId: 1,
+          seatReservationTypes: 1,
+          history: { $slice: -1 },
+        })
+        .lean();
 
       // Build a map for O(1) lookups: "termId:sessionId:sectionId" -> doc
       const existingDocsMap = new Map(
@@ -209,6 +240,7 @@ const updateEnrollmentHistories = async (config: Config) => {
             },
           });
           totalInserted += 1;
+          markChanged(identifier.termId, identifier.sectionId);
         } else {
           if (existingDoc.history.length === 0) {
             bulkOps.push({
@@ -220,20 +252,30 @@ const updateEnrollmentHistories = async (config: Config) => {
               },
             });
             totalUpdated += 1;
+            markChanged(identifier.termId, identifier.sectionId);
           } else {
             /*
               If all of the following are true:
                  1. Latest enrollment entry matches incoming enrollment data using `enrollmentSingularsEqual`
                  2. Latest enrollment entry's granularity matches incoming granularity
-                 3. Latest enrollment entry's endTime is less than DATAGAP_THRESHOLD ago
+                 3. Latest enrollment entry was last confirmed less than DATAGAP_THRESHOLD ago
 
-              Then: Extend the last entry's endTime using $set.
+              Then: Leave the document untouched. The entry is treated as
+              lasting until the term's lastPulledAt, which is written once per run.
 
-              Else: Append a new entry with incoming startTime and endTime using $push.
+              Else: Close the last entry at the time it was last confirmed, and
+              append a new entry with incoming startTime and endTime using $push.
             */
-            const lastEntry =
-              existingDoc.history[existingDoc.history.length - 1];
-            const lastIndex = existingDoc.history.length - 1;
+            // history is projected to its last entry only
+            const lastEntry = existingDoc.history[0];
+
+            // the last time this entry was confirmed: its stored endTime, or
+            // the previous run if that is later
+            const previousPulledAt = lastPulledAtByTerm.get(identifier.termId);
+            const lastConfirmedAt =
+              previousPulledAt && previousPulledAt > lastEntry.endTime
+                ? previousPulledAt
+                : lastEntry.endTime;
 
             // true if enrollment singular data is equal to latest entry
             const dataMatches = enrollmentSingularsEqual(
@@ -246,26 +288,34 @@ const updateEnrollmentHistories = async (config: Config) => {
               lastEntry.granularitySeconds ===
               enrollmentSingular.data.granularitySeconds;
 
-            // true if duration from last entry's end time to current time is less than DATAGAP_THRESHOLD
+            // true if duration from last confirmation to current time is less than DATAGAP_THRESHOLD
             const incomingEndTime = DateTime.fromJSDate(
               enrollmentSingular.data.endTime
             );
-            const lastEntryEndTime = DateTime.fromJSDate(lastEntry.endTime);
             const withinDatagapThreshold =
-              incomingEndTime.diff(lastEntryEndTime, "seconds").seconds <=
-              DATAGAP_THRESHOLD;
+              incomingEndTime.diff(
+                DateTime.fromJSDate(lastConfirmedAt),
+                "seconds"
+              ).seconds <= DATAGAP_THRESHOLD;
 
             if (dataMatches && granularityMatches && withinDatagapThreshold) {
-              // Extend the endTime of the last entry using update
-              bulkOps.push({
-                updateOne: {
-                  filter: { _id: existingDoc._id },
-                  update: {
-                    $set: { [`history.${lastIndex}.endTime`]: now.toJSDate() },
-                  },
-                },
-              });
+              totalUnchanged += 1;
             } else {
+              if (lastConfirmedAt > lastEntry.endTime) {
+                // Close the last entry at the time it was last confirmed. The
+                // index of the last entry is unknown because history is
+                // projected, so match it by its stored endTime instead.
+                bulkOps.push({
+                  updateOne: {
+                    filter: { _id: existingDoc._id },
+                    update: {
+                      $set: { "history.$[last].endTime": lastConfirmedAt },
+                    },
+                    arrayFilters: [{ "last.endTime": lastEntry.endTime }],
+                  },
+                });
+              }
+
               // Append a new entry
               bulkOps.push({
                 updateOne: {
@@ -275,8 +325,15 @@ const updateEnrollmentHistories = async (config: Config) => {
                   },
                 },
               });
+              totalUpdated += 1;
+              // A data gap or granularity change starts a new history entry,
+              // but catalog_classes only stores the numbers. Rewrite the
+              // catalog only when they changed, otherwise a run after a gap
+              // of over an hour rewrites every section.
+              if (!dataMatches) {
+                markChanged(identifier.termId, identifier.sectionId);
+              }
             }
-            totalUpdated += 1;
           }
         }
 
@@ -306,6 +363,8 @@ const updateEnrollmentHistories = async (config: Config) => {
                 update: { $set: { seatReservationTypes: incomingTypes } },
               },
             });
+            // activeReservedMaxCount on the catalog depends on these types
+            markChanged(identifier.termId, identifier.sectionId);
           }
         }
       }
@@ -324,20 +383,38 @@ const updateEnrollmentHistories = async (config: Config) => {
   );
 
   log.info(
-    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated.`
+    `Completed updating database with ${totalEnrollmentSingulars.toLocaleString()} enrollments: ${totalInserted.toLocaleString()} inserted, ${totalUpdated.toLocaleString()} updated, ${totalUnchanged.toLocaleString()} unchanged.`
+  );
+
+  // Record this run, so unchanged sections count as confirmed up to now
+  await EnrollmentPullModel.bulkWrite(
+    terms.map((term) => ({
+      updateOne: {
+        filter: { termId: term.id },
+        update: { $set: { lastPulledAt: now.toJSDate() } },
+        upsert: true,
+      },
+    }))
   );
 
   // Update enrollment fields on denormalized catalog_classes.
-  // Re-fetch the latest enrollment snapshot for each term we updated.
+  // Re-fetch the latest enrollment snapshot for sections that changed.
   for (const term of terms) {
     const parsed = parseTermName(term.name);
     if (!parsed) continue;
     const { year, semester } = parsed;
 
-    // Get all enrollment histories for this term
+    const changedSectionIds = changedSectionsByTerm.get(term.id);
+    if (!changedSectionIds || changedSectionIds.size === 0) {
+      log.info(`No enrollment changes for ${term.name}, skipping catalog.`);
+      continue;
+    }
+
+    // Get enrollment histories for changed sections in this term
     const histories = await NewEnrollmentHistoryModel.find({
       year,
       semester,
+      sectionId: { $in: [...changedSectionIds] },
     })
       .select({
         sectionId: 1,
@@ -376,6 +453,13 @@ const updateEnrollmentHistories = async (config: Config) => {
 
     if (termEnrollments.size > 0) {
       await updateCatalogEnrollment(log, year, semester, termEnrollments);
+
+      // Set catalogUpdatedAt after every catalog update for this term
+      // has completed.
+      await EnrollmentPullModel.updateOne(
+        { termId: term.id },
+        { $set: { catalogUpdatedAt: new Date() } }
+      );
     }
   }
   log.info("Completed catalog cache warming.");
@@ -436,6 +520,11 @@ const checkEnrollmentDrop = async (config: Config) => {
     const gapMs =
       new Date(latest.endTime).getTime() - new Date(previous.endTime).getTime();
     if (gapMs > MAX_SNAPSHOT_GAP_MS) continue;
+
+    // Unchanged sections are not written, so latest.endTime no longer moves
+    // forward. Only notify for drops that were recorded recently.
+    const ageMs = Date.now() - new Date(latest.startTime).getTime();
+    if (ageMs > MAX_SNAPSHOT_GAP_MS) continue;
 
     // Condition 2: class is popular
     const currentPct = latest.enrolledCount / latest.maxEnroll;
