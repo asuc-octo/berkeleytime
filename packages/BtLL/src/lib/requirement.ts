@@ -30,6 +30,7 @@ export type AndRequirement = Requirement & {
 
 export type OrRequirement = Requirement & {
   requirements: Data<Array<Requirement>>;
+  required?: Data<number>;
 };
 
 export type NumberRequirement = Requirement & {
@@ -283,10 +284,12 @@ export const andRequirementDefinedFields = [
 // Helper function to create OrRequirement from evaluated Data objects
 const createOrRequirement = (
   requirements: Data<Array<Requirement>>,
-  description: Data<string>
+  description: Data<string>,
+  required?: Data<number>
 ): Data<OrRequirement> => {
+  const met = requirements.data.filter((req: Requirement) => req.result.data);
   const result = {
-    data: requirements.data.some((req: Requirement) => req.result.data),
+    data: met.length >= (required?.data ?? 1),
     type: "boolean" as Type,
   };
   return {
@@ -294,6 +297,7 @@ const createOrRequirement = (
       requirements,
       result,
       description,
+      ...(required && { required }),
       type: { data: "OrRequirement", type: "string" },
     },
     type: "OrRequirement",
@@ -307,21 +311,41 @@ export const orRequirementConstructor = (
   variables: Variables,
   config: BtLLConfig = {}
 ): Data<OrRequirement> => {
-  const [requirements, description] = argSplit(v.substring(1, v.length - 1));
+  const args = argSplit(v.substring(1, v.length - 1));
+
+  // With a count n, at least n of the requirements must be met
+  let requirementsStr, requiredStr, descriptionStr;
+
+  if (args.length === 2) {
+    [requirementsStr, descriptionStr] = args;
+  } else if (args.length === 3) {
+    [requirementsStr, requiredStr, descriptionStr] = args;
+  } else {
+    throw new Error(
+      `OrRequirement expects 2 or 3 arguments, got ${args.length}`
+    );
+  }
+
   const requirementsData = evaluate(
-    requirements,
+    requirementsStr,
     "List<Requirement>",
     variables,
     config
   );
-  const descriptionData = evaluate(description, "string", variables, config);
-  return createOrRequirement(requirementsData, descriptionData);
+  const descriptionData = evaluate(descriptionStr, "string", variables, config);
+  let requiredData;
+  if (requiredStr) {
+    requiredData = evaluate(requiredStr, "number", variables, config);
+  }
+
+  return createOrRequirement(requirementsData, descriptionData, requiredData);
 };
 
 export const orRequirementDefinedFields = [
   "result",
   "description",
   "requirements",
+  "required",
   "type",
 ];
 

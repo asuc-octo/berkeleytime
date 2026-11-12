@@ -67,19 +67,20 @@ export function evaluateEffectiveMet(
         isManuallyNotMet: false,
       };
     } else {
-      // OrRequirement
-      let anyMet = false;
+      // OrRequirement: at least `required` (default 1) met
+      let metCount = 0;
       let anyManual = false;
       for (const sub of subReqs) {
         const subRes = evaluateEffectiveMet(sub, overrides);
         if (subRes.isMet) {
-          anyMet = true;
+          metCount++;
           if (subRes.isManuallyMet) anyManual = true;
         }
       }
+      const isMet = metCount >= (req.required?.data ?? 1);
       return {
-        isMet: anyMet,
-        isManuallyMet: anyMet && anyManual,
+        isMet,
+        isManuallyMet: isMet && anyManual,
         isManuallyNotMet: false,
       };
     }
@@ -277,12 +278,35 @@ const renderRequirementDetails = (
 
     const isAnd = req.type?.data === "AndRequirement";
     const isOr = req.type?.data === "OrRequirement";
-    const connector = isAnd ? "AND" : isOr ? "OR" : null;
+    // An OrRequirement with a count shows progress instead of "OR"
+    const requiredCount: number | undefined = isOr
+      ? req.required?.data
+      : undefined;
+    const isCounted = requiredCount !== undefined;
+    let connector: string | null = null;
+    if (isAnd) connector = "AND";
+    else if (isOr && !isCounted) connector = "OR";
+
+    let completed = 0;
+    if (isCounted) {
+      const met = subRequirements.filter(
+        (sub) => evaluateEffectiveMet(sub, allOverrides).isMet
+      );
+      completed = Math.min(met.length, requiredCount);
+    }
 
     return (
       <div
         style={{ marginTop: "0.25rem", width: "100%", boxSizing: "border-box" }}
       >
+        {isCounted && (
+          <p
+            className={styles.metadata}
+            style={{ marginLeft: `${textIndent + depth * 24}px` }}
+          >
+            {completed} / {requiredCount} completed
+          </p>
+        )}
         {subRequirements.map((subReq, index) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const flatIndex = (subReq as any).flatIndex;
