@@ -1,0 +1,12 @@
+.state {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--label-color);
+}
+
+.error {
+  color: var(--red-500);
+}

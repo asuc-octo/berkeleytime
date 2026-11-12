@@ -14,11 +14,13 @@ data:
     scrape_configs:
       # Scrape OTel Collector's Prometheus exporter endpoint
       - job_name: "otel-collector"
+        sample_limit: {{ .Values.prometheus.sampleLimit }}
         static_configs:
           - targets: ["otel-collector:9464"]
 
       # Scrape Prometheus itself
       - job_name: "prometheus"
+        sample_limit: {{ .Values.prometheus.sampleLimit }}
         static_configs:
           - targets: ["localhost:9090"]
 
@@ -69,8 +71,13 @@ spec:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
             - "--storage.tsdb.retention.time={{ .Values.prometheus.retention }}"
+            - "--storage.tsdb.retention.size={{ .Values.prometheus.retentionSize }}"
             - "--web.enable-lifecycle"
             - "--web.enable-remote-write-receiver"
+            - "--query.max-samples={{ .Values.prometheus.queryMaxSamples }}"
+          env:
+            - name: GOMEMLIMIT
+              value: {{ .Values.prometheus.goMemLimit | quote }}
           ports:
             - name: http
               containerPort: 9090

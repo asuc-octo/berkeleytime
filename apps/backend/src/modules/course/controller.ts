@@ -40,7 +40,7 @@ const buildFormerNamesByCourseId = async () => {
   );
 };
 
-const FORMER_NAMES_CACHE_TTL_MS = 5 * 60 * 1000;
+const FORMER_NAMES_CACHE_TTL_MS = 60 * 60 * 1000;
 
 interface FormerNamesCacheEntry {
   promise: Promise<Map<string, string[]>>;
@@ -290,6 +290,19 @@ export const getCourses = async () => {
         subject: 1,
         number: 1,
         fromDate: -1,
+      },
+    },
+    // Drop large fields the Course type never exposes
+    {
+      $project: {
+        formatsOffered: 0,
+        courseObjectives: 0,
+        studentLearningOutcomes: 0,
+        credit: 0,
+        creditRestriction: 0,
+        repeatability: 0,
+        subjectName: 0,
+        updatedDate: 0,
       },
     },
     // {
