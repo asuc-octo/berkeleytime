@@ -50,12 +50,22 @@ const normalizeEnrollmentSingular = (
   return normalized;
 };
 
-export const formatEnrollment = (enrollment: IEnrollmentHistoryItem) => {
+export const formatEnrollment = (
+  enrollment: IEnrollmentHistoryItem,
+  lastPulledAt?: Date | null
+) => {
   const seatReservationTypes = enrollment.seatReservationTypes ?? [];
   const history =
     enrollment.history?.map((singular) =>
       normalizeEnrollmentSingular(singular, seatReservationTypes)
     ) ?? [];
+
+  // The datapuller does not rewrite unchanged sections, so the last entry
+  // lasts until the most recent successful pull for this term.
+  const last = history[history.length - 1];
+  if (last && lastPulledAt && lastPulledAt.toISOString() > last.endTime) {
+    last.endTime = lastPulledAt.toISOString();
+  }
 
   const output = {
     ...enrollment,
