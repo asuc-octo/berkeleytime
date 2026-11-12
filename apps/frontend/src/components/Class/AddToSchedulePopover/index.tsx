@@ -178,25 +178,28 @@ export default function AddToSchedulePopover({
       }
 
       // Create the schedule with the class already added
-      await createSchedule({
-        name: newScheduleName.trim(),
-        year: classInfo.year,
-        semester: classInfo.semester,
-        sessionId: classInfo.sessionId,
-        public: false,
-        classes: [
-          {
-            subject: classData.class.subject,
-            courseNumber: classData.class.courseNumber,
-            number: classData.class.number,
-            sectionIds: classData.class.primarySection?.sectionId
-              ? [classData.class.primarySection.sectionId]
-              : [],
-            color: getNextClassColor(0),
-            hidden: false,
-          },
-        ],
-      });
+      await createSchedule(
+        {
+          name: newScheduleName.trim(),
+          year: classInfo.year,
+          semester: classInfo.semester,
+          sessionId: classInfo.sessionId,
+          public: false,
+          classes: [
+            {
+              subject: classData.class.subject,
+              courseNumber: classData.class.courseNumber,
+              number: classData.class.number,
+              sectionIds: classData.class.primarySection?.sectionId
+                ? [classData.class.primarySection.sectionId]
+                : [],
+              color: getNextClassColor(0),
+              hidden: false,
+            },
+          ],
+        },
+        "class-page"
+      );
 
       setNewScheduleName("");
       setIsCreateFormOpen(false);

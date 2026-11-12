@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client/react";
+import { skipToken, useQuery } from "@apollo/client/react";
 
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import type {
   ICatalogClassServer,
   ICatalogFilterOptions,
@@ -49,8 +50,9 @@ const mergeUniqueCatalogClasses = (
 };
 
 export interface UseCatalogQueryOptions {
-  year: number;
-  semester: Semester;
+  // null while the term is still being resolved; no requests are sent
+  year: number | null;
+  semester: Semester | null;
   query: string;
   sortBy: SortBy;
   effectiveOrder: "asc" | "desc";
@@ -81,7 +83,12 @@ export default function useCatalogQuery({
   semanticSearch = false,
 }: UseCatalogQueryOptions): UseCatalogQueryReturn {
   const [localPage, setLocalPage] = useState(1);
-  const [classes, setClasses] = useState<ICatalogClassServer[]>([]);
+  // Classes are tagged with the query they belong to, so a list from a
+  // previous term or search is never returned for the current one.
+  const [classState, setClassState] = useState<{
+    key: string;
+    classes: ICatalogClassServer[];
+  }>({ key: "", classes: [] });
   const [isLoadingNextPage, setIsLoadingNextPage] = useState(false);
   const isLoadingNextPageRef = useRef(false);
   const queryGenerationRef = useRef(0);
@@ -114,18 +121,22 @@ export default function useCatalogQuery({
     semanticSearch,
   ]);
 
-  const catalogQueryVariables = useMemo<
-    Omit<GetCatalogSearchQueryVariables, "page" | "pageSize">
-  >(
-    () => ({
-      year: currentYear,
-      semester: currentSemester,
-      search: debouncedQuery || undefined,
-      filters: filterVariables,
-      sortBy: mapSortBy(sortBy),
-      sortOrder: mapSortOrder(effectiveOrder),
-      semanticSearch: semanticSearch || undefined,
-    }),
+  const catalogQueryVariables = useMemo<Omit<
+    GetCatalogSearchQueryVariables,
+    "page" | "pageSize"
+  > | null>(
+    () =>
+      currentYear === null || currentSemester === null
+        ? null
+        : {
+            year: currentYear,
+            semester: currentSemester,
+            search: debouncedQuery || undefined,
+            filters: filterVariables,
+            sortBy: mapSortBy(sortBy),
+            sortOrder: mapSortOrder(effectiveOrder),
+            semanticSearch: semanticSearch || undefined,
+          },
     [
       currentYear,
       currentSemester,
@@ -141,27 +152,55 @@ export default function useCatalogQuery({
   const { data, loading, error, fetchMore } = useQuery<
     GetCatalogSearchQuery,
     GetCatalogSearchQueryVariables
-  >(GET_CATALOG_SEARCH, {
-    variables: {
-      ...catalogQueryVariables,
-      page: 1,
-      pageSize: DEFAULT_PAGE_SIZE,
-    },
-    // Show cached data instantly, then revalidate in the background.
-    fetchPolicy: "cache-and-network",
-    notifyOnNetworkStatusChange: true,
-  });
+  >(
+    GET_CATALOG_SEARCH,
+    catalogQueryVariables
+      ? {
+          variables: {
+            ...catalogQueryVariables,
+            page: 1,
+            pageSize: DEFAULT_PAGE_SIZE,
+          },
+          // Show cached data instantly, then revalidate in the background.
+          fetchPolicy: "cache-and-network",
+          notifyOnNetworkStatusChange: true,
+        }
+      : skipToken
+  );
+  const queryKey = JSON.stringify(catalogQueryVariables);
+
+  // Report a failed catalog search once per distinct error — today a plain
+  // keyword-search failure renders the same "no classes found" empty state
+  // as a genuine zero-result search, so this is the only signal that
+  // distinguishes "search is broken" from "search found nothing".
+  const { trackEvent } = useTracking();
+  const trackedSearchErrorRef = useRef<typeof error>(undefined);
+  useEffect(() => {
+    if (error && trackedSearchErrorRef.current !== error) {
+      trackedSearchErrorRef.current = error;
+      trackEvent("search_failed", "course-discovery", undefined, {
+        message: (
+          error.graphQLErrors?.[0]?.message ??
+          error.message ??
+          ""
+        ).slice(0, 200),
+        semanticSearch,
+      });
+    }
+  }, [error, trackEvent, semanticSearch]);
 
   // Fetch filter options (heavily cached)
   const { data: filterOptionsData } = useQuery(
     GetCatalogFilterOptionsDocument,
-    {
-      variables: {
-        year: currentYear,
-        semester: currentSemester,
-      },
-      fetchPolicy: "cache-first",
-    }
+    currentYear !== null && currentSemester !== null
+      ? {
+          variables: {
+            year: currentYear,
+            semester: currentSemester,
+          },
+          fetchPolicy: "cache-first",
+        }
+      : skipToken
   );
 
   const firstPageClasses: ICatalogClassServer[] = useMemo(
@@ -173,15 +212,26 @@ export default function useCatalogQuery({
   useEffect(() => {
     if (localPage !== 1) return;
 
-    setClasses(firstPageClasses);
+    setClassState({ key: queryKey, classes: firstPageClasses });
     setIsLoadingNextPage(false);
     isLoadingNextPageRef.current = false;
-  }, [firstPageClasses, localPage]);
+  }, [firstPageClasses, localPage, queryKey]);
+
+  // Until the sync effect above runs for a new query, fall back to that
+  // query's own first page (cached data or empty) rather than the old list.
+  const classes =
+    classState.key === queryKey ? classState.classes : firstPageClasses;
 
   const hasNextPage = classes.length < totalCount;
 
   const loadNextPage = useCallback(async () => {
-    if (!hasNextPage || loading || isLoadingNextPageRef.current) return;
+    if (
+      !catalogQueryVariables ||
+      !hasNextPage ||
+      loading ||
+      isLoadingNextPageRef.current
+    )
+      return;
 
     const requestGeneration = queryGenerationRef.current;
     const nextPage = localPage + 1;
@@ -203,8 +253,16 @@ export default function useCatalogQuery({
         nextPageData?.catalogSearch?.results ?? [];
       if (nextPageClasses.length === 0) return;
 
-      setClasses((previousClasses) =>
-        mergeUniqueCatalogClasses(previousClasses, nextPageClasses)
+      setClassState((previous) =>
+        previous.key === queryKey
+          ? {
+              key: queryKey,
+              classes: mergeUniqueCatalogClasses(
+                previous.classes,
+                nextPageClasses
+              ),
+            }
+          : previous
       );
       setLocalPage(nextPage);
     } finally {
@@ -213,9 +271,20 @@ export default function useCatalogQuery({
         setIsLoadingNextPage(false);
       }
     }
-  }, [catalogQueryVariables, fetchMore, hasNextPage, loading, localPage]);
+  }, [
+    catalogQueryVariables,
+    fetchMore,
+    hasNextPage,
+    loading,
+    localPage,
+    queryKey,
+  ]);
 
-  const isFirstPageLoading = loading && localPage === 1 && !isLoadingNextPage;
+  // A skipped query reports loading: false, but an unresolved term should
+  // still show skeletons rather than the empty state.
+  const isFirstPageLoading =
+    !catalogQueryVariables ||
+    (loading && localPage === 1 && !isLoadingNextPage);
   const semanticError =
     semanticSearch && error
       ? (error.graphQLErrors?.[0]?.message ??

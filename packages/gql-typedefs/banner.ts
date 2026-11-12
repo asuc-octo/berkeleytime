@@ -9,6 +9,7 @@ export const bannerTypeDef = gql`
     text: String!
     link: String
     linkText: String
+    hiddenOn: [String!]!
     persistent: Boolean!
     reappearing: Boolean!
     clickCount: Int!
@@ -27,6 +28,7 @@ export const bannerTypeDef = gql`
     text: String
     link: String
     linkText: String
+    hiddenOn: [String!]
     persistent: Boolean
     reappearing: Boolean
     visible: Boolean
@@ -66,6 +68,7 @@ export const bannerTypeDef = gql`
     text: String!
     link: String
     linkText: String
+    hiddenOn: [String!]
     persistent: Boolean!
     reappearing: Boolean!
     visible: Boolean
@@ -78,6 +81,7 @@ export const bannerTypeDef = gql`
     text: String
     link: String
     linkText: String
+    hiddenOn: [String!]
     persistent: Boolean
     reappearing: Boolean
     visible: Boolean

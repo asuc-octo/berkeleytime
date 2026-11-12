@@ -14,8 +14,9 @@ import useCatalogFilters, {
 import useCatalogQuery from "./useCatalogQuery";
 
 export interface UseCatalogBrowserOptions extends UseCatalogFiltersOptions {
-  year: number;
-  semester: Semester;
+  // null while the term is still being resolved
+  year: number | null;
+  semester: Semester | null;
   terms?: ITerm[];
 }
 
@@ -45,6 +46,7 @@ export default function useCatalogBrowser({
   const [semanticSearchAvailable, setSemanticSearchAvailable] = useState(false);
   useEffect(() => {
     setSemanticSearchAvailable(false);
+    if (year === null || semester === null) return;
     fetch("/api/semantic-search/health")
       .then((r) => r.json())
       .then((data) => {
@@ -134,7 +136,9 @@ export default function useCatalogBrowser({
       timeRange: filterState.timeRange,
       breadths: filterState.breadths,
       universityRequirements: filterState.universityRequirements,
+      coeHss: filterState.coeHss,
       gradingFilters: filterState.gradingFilters,
+      department: filterState.department,
       sortBy: filterState.sortBy,
       reverse: filterState.reverse,
       effectiveOrder: filterState.effectiveOrder,
@@ -148,7 +152,9 @@ export default function useCatalogBrowser({
       updateTimeRange: filterState.updateTimeRange,
       updateBreadths: filterState.updateBreadths,
       updateUniversityRequirements: filterState.updateUniversityRequirements,
+      updateCoEHss: filterState.updateCoEHss,
       updateGradingFilters: filterState.updateGradingFilters,
+      updateDepartment: filterState.updateDepartment,
       updateSortBy: filterState.updateSortBy,
       updateEnrollmentFilter: filterState.updateEnrollmentFilter,
       updateOnline: filterState.updateOnline,

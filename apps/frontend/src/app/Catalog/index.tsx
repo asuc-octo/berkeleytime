@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 
-import { useQuery } from "@apollo/client/react";
+import { skipToken, useQuery } from "@apollo/client/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Book, Folder, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -22,6 +22,7 @@ import {
   useGetAllCollections,
   useGetCollectionById,
 } from "@/hooks/api/collections";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useUser from "@/hooks/useUser";
 import { getColorCSSVar } from "@/lib/colors";
 import {
@@ -42,7 +43,9 @@ const SEMESTER_ORDER: Record<Semester, number> = {
   [Semester.Winter]: 3,
 };
 
-// Fallback term so the catalog UI always renders (query will return 0 results)
+// Fallback term once terms have settled without one (empty list or failed
+// request) so the catalog UI still renders (query will return 0 results).
+// Never used while terms are loading, or it would fetch a real term's classes.
 const FALLBACK_TERM = {
   year: new Date().getFullYear(),
   semester: Semester.Spring as Semester,
@@ -80,6 +83,8 @@ function SavedCollectionSection({
   index,
   onSelect,
   resolveCurrentTermClass,
+  availabilityLoading,
+  onRequestAvailability,
 }: {
   collection: CollectionSummaryItem;
   index: number;
@@ -87,6 +92,8 @@ function SavedCollectionSection({
   resolveCurrentTermClass: (
     savedClass: SavedClassItem
   ) => SavedClassItem | null;
+  availabilityLoading: boolean;
+  onRequestAvailability: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const { data: collectionData, loading } = useGetCollectionById(
@@ -181,7 +188,14 @@ function SavedCollectionSection({
         },
       }}
     >
-      <DropdownMenu.Root modal={false} open={open} onOpenChange={setOpen}>
+      <DropdownMenu.Root
+        modal={false}
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen);
+          if (nextOpen) onRequestAvailability();
+        }}
+      >
         <DropdownMenu.Trigger asChild>
           <button type="button" className={styles.bookmarkButton}>
             <Folder
@@ -199,7 +213,7 @@ function SavedCollectionSection({
           sideOffset={6}
           className={styles.bookmarkDropdown}
         >
-          {loading ? (
+          {loading || availabilityLoading ? (
             <DropdownMenu.Item disabled>Loading classes...</DropdownMenu.Item>
           ) : sortedSavedClassEntries.length > 0 ? (
             sortedSavedClassEntries.map(
@@ -264,7 +278,7 @@ export default function Catalog() {
     () => !isDesktop && !hasClassSelected
   );
 
-  const { data: terms } = useReadTerms();
+  const { data: terms, loading: termsLoading } = useReadTerms();
   const { data: collections, loading: collectionsLoading } =
     useGetAllCollections({
       skip: !user,
@@ -326,15 +340,27 @@ export default function Catalog() {
     return selectedTerm ?? null;
   }, [terms, year, semester]);
 
-  const effectiveTerm = term ?? FALLBACK_TERM;
+  // null while terms are loading, so nothing is fetched for a guessed term
+  const effectiveTerm = term ?? (termsLoading ? null : FALLBACK_TERM);
 
-  const { data: identitiesData } = useQuery(GetCatalogClassIdentitiesDocument, {
-    variables: {
-      year: effectiveTerm.year,
-      semester: effectiveTerm.semester as Semester,
-    },
-    fetchPolicy: "cache-and-network",
-  });
+  // Every class in the term, used only to resolve saved classes in the
+  // collection dropdowns. Expensive for the server, so wait until one is opened.
+  const [availabilityRequested, setAvailabilityRequested] = useState(false);
+  const handleRequestAvailability = useCallback(() => {
+    setAvailabilityRequested(true);
+  }, []);
+  const { data: identitiesData, loading: identitiesLoading } = useQuery(
+    GetCatalogClassIdentitiesDocument,
+    term && availabilityRequested
+      ? {
+          variables: { year: term.year, semester: term.semester },
+          fetchPolicy: "cache-and-network",
+        }
+      : skipToken
+  );
+  // Also loading while terms are, or every saved class would read as unavailable
+  const availabilityLoading =
+    !effectiveTerm || (identitiesLoading && !identitiesData);
   const catalogAvailabilityClasses: CatalogAvailabilityClass[] = useMemo(
     () => identitiesData?.catalogClassIdentities ?? [],
     [identitiesData]
@@ -353,8 +379,8 @@ export default function Catalog() {
   }, [isDesktop, hasClassSelected]);
 
   const { data: _class, error: classError } = useGetClass(
-    effectiveTerm.year,
-    effectiveTerm.semester as Semester,
+    term?.year as number,
+    term?.semester as Semester,
     sessionId as string,
     subject as string,
     courseNumber as string,
@@ -363,6 +389,20 @@ export default function Catalog() {
       skip: !subject || !courseNumber || !number || !sessionId || !term,
     }
   );
+
+  // Report a failed class-detail load once per distinct error so a broken
+  // fetch shows up in course-discovery reliability metrics.
+  const { trackEvent } = useTracking();
+  const trackedClassErrorRef = useRef<typeof classError>(undefined);
+  useEffect(() => {
+    if (classError && trackedClassErrorRef.current !== classError) {
+      trackedClassErrorRef.current = classError;
+      trackEvent("data_load_failed", "course-discovery", undefined, {
+        query: "GetClassDetails",
+        message: classError.message?.slice(0, 200),
+      });
+    }
+  }, [classError, trackEvent]);
 
   // Keep reference to last valid class to prevent blank frames during transitions
   const lastClassRef = useRef(_class);
@@ -492,15 +532,15 @@ export default function Catalog() {
       const matchedClass = exactNumberMatch ?? candidates[0];
 
       return {
-        year: effectiveTerm.year,
-        semester: effectiveTerm.semester,
+        year: term.year,
+        semester: term.semester,
         subject: matchedClass.subject,
         courseNumber: matchedClass.courseNumber,
         number: matchedClass.number,
         sessionId: matchedClass.sessionId,
       };
     },
-    [catalogAvailabilityByCourse, effectiveTerm, term]
+    [catalogAvailabilityByCourse, term]
   );
 
   const handleSelect = useCallback(
@@ -516,10 +556,10 @@ export default function Catalog() {
 
       navigate({
         ...location,
-        pathname: `/catalog/${effectiveTerm.year}/${effectiveTerm.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}/${sessionId}`,
       });
     },
-    [location, navigate, effectiveTerm, term]
+    [location, navigate, term]
   );
 
   const handleSavedClassSelect = useCallback(
@@ -546,8 +586,8 @@ export default function Catalog() {
             <ClassBrowser
               onSelect={handleSelect}
               forceMode={mode}
-              semester={effectiveTerm.semester}
-              year={effectiveTerm.year}
+              semester={effectiveTerm?.semester ?? null}
+              year={effectiveTerm?.year ?? null}
               terms={terms ?? undefined}
               persistent
             />
@@ -575,8 +615,8 @@ export default function Catalog() {
               <ClassBrowser
                 onSelect={handleSelect}
                 forceMode={mode}
-                semester={effectiveTerm.semester}
-                year={effectiveTerm.year}
+                semester={effectiveTerm?.semester ?? null}
+                year={effectiveTerm?.year ?? null}
                 terms={terms ?? undefined}
                 persistent
               />
@@ -621,6 +661,8 @@ export default function Catalog() {
                             index={index}
                             onSelect={handleSavedClassSelect}
                             resolveCurrentTermClass={resolveCurrentTermClass}
+                            availabilityLoading={availabilityLoading}
+                            onRequestAvailability={handleRequestAvailability}
                           />
                         ))}
                       </AnimatePresence>

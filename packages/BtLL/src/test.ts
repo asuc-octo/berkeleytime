@@ -1,4 +1,4 @@
-import { LNS_REQ_BTLL } from "../reference_gradtrak_reqs";
+import { LNS_REQ_BTLL, UC_REQ_BTLL } from "../reference_gradtrak_reqs";
 import { init } from "./interpreter";
 import type { Course } from "./lib/course";
 import {
@@ -33,7 +33,7 @@ const TESTS = [
       `;
 
       try {
-        const result = init(testCode, new Map(), { debug: true });
+        const result = init(testCode, new Map(), { debug: false });
         if (result[0] !== false) return false;
         if (result[1] !== true) return false;
         if (result[2] !== true) return false;
@@ -58,7 +58,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -70,7 +70,7 @@ const TESTS = [
     name: "function call test",
     test: () => {
       const testCode = `
-      Function<number>(number) times_three (a, b){
+      Function<number>(number) times_three (a){
         number return add([a, a, a])
       }
       Function<boolean>() main (){ 
@@ -79,7 +79,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== 9) return false;
+        if (init(testCode, new Map(), { debug: false }) !== 9) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -99,16 +99,17 @@ const TESTS = [
       }
       Function<boolean>() main (){ 
         List<number> list [1, 3, 2, 3, 4, 5, 3]
+        // find returns the matched element itself
         number res1 find(list, find_func)
-        // matches three 3s
+        // three 3s in the list
         List<number> res2 filter(list, find_func)
-        // should be 21
+        // 1+3+2+3+4+5+3
         number res3 reduce(list, add_func, 0)
-        boolean return and([equal([res1, length(res2)]), equal([res3, 21])])
+        boolean return and([equal([res1, 3]), equal([length(res2), 3]), equal([res3, 21])])
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -129,7 +130,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -154,7 +155,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -175,7 +176,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -200,7 +201,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -221,7 +222,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -247,7 +248,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -273,7 +274,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -295,7 +296,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -320,7 +321,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -343,7 +344,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -369,7 +370,7 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -395,7 +396,68 @@ const TESTS = [
       }
       `;
       try {
-        if (init(testCode, new Map(), { debug: true }) !== true) return false;
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "if_else and elseifs only evaluate the taken branch",
+    test: () => {
+      const testCode = `
+      Function<number>() explode (){
+        List<number> empty []
+        number return get_attr(get_element(empty, 0), "units")
+      }
+      Function<boolean>() main (){
+        number a if_else(true, 1, explode())
+        number b if_else(false, explode(), 2)
+        number c elseifs([false, true], [explode(), 3, explode()])
+        number d elseifs([false, false], [explode(), explode(), 4])
+        boolean return equal([add([a, b, c, d]), 10])
+      }
+      `;
+      try {
+        if (init(testCode, new Map(), { debug: false }) !== true) return false;
+        return true;
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    },
+  },
+  {
+    name: "UC requirements with fewer than 3 Fall/Spring columns",
+    test: () => {
+      const column = (name: string, semester: string, year: number) => ({
+        name: { data: name, type: "string" },
+        semester: { data: semester, type: "string" },
+        year: { data: year, type: "number" },
+        courses: { data: [], type: "List<Course>" },
+        units: { data: 15, type: "number" },
+      });
+      const columns = [
+        column("Fall 2024", "Fall", 2024),
+        column("Spring 2025", "Spring", 2025),
+      ];
+      const plan = {
+        units: { data: 30, type: "number" },
+        columns: { data: columns, type: "List<Column>" },
+        allCourses: { data: [], type: "List<Course>" },
+      };
+      const variables = new Map<string, any>([
+        ["this", { data: plan, type: "Plan" }],
+        ["columns", { data: columns, type: "List<Column>" }],
+      ]);
+      try {
+        const result = init(UC_REQ_BTLL, variables, { debug: false }) as any[];
+        if (result.length !== 5) return false;
+        const [preSenior, senior] = result[4].requirements.data;
+        if (preSenior.result.data !== false) return false;
+        if (senior.result.data !== true) return false;
         return true;
       } catch (error) {
         console.error(error);
@@ -576,6 +638,7 @@ const test = () => {
     console.log(
       `${redColor}Failed tests\n✗\t${failedTests.join("\n✗\t")}${resetColor}`
     );
+    process.exitCode = 1;
   }
 };
 
