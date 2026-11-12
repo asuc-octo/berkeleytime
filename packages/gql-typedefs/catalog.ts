@@ -31,10 +31,12 @@ export const catalogTypeDef = gql`
     gradingFilters: [String!]
     breadths: [String!]
     universityRequirements: [String!]
+    "College of Engineering Humanities and Social Sciences course eligibility."
+    coeHss: Boolean
     online: Boolean
   }
 
-  type CatalogMeeting {
+  type CatalogMeeting @cacheControl(inheritMaxAge: true) {
     days: [Boolean!]
     startTime: String
     endTime: String
@@ -42,12 +44,12 @@ export const catalogTypeDef = gql`
     instructors: [CatalogInstructor!]!
   }
 
-  type CatalogInstructor {
+  type CatalogInstructor @cacheControl(inheritMaxAge: true) {
     familyName: String
     givenName: String
   }
 
-  type CatalogExam {
+  type CatalogExam @cacheControl(inheritMaxAge: true) {
     date: String
     startTime: String
     endTime: String
@@ -55,12 +57,12 @@ export const catalogTypeDef = gql`
     type: String
   }
 
-  type CatalogSectionAttribute {
-    attribute: SectionAttributeInfo
-    value: SectionAttributeInfo
+  type CatalogSectionAttribute @cacheControl(inheritMaxAge: true) {
+    attribute: SectionAttributeInfo @cacheControl(inheritMaxAge: true)
+    value: SectionAttributeInfo @cacheControl(inheritMaxAge: true)
   }
 
-  type CatalogSectionEnrollment {
+  type CatalogSectionEnrollment @cacheControl(inheritMaxAge: true) {
     enrollmentStatus: String
     enrolledCount: Int
     maxEnroll: Int
@@ -68,7 +70,7 @@ export const catalogTypeDef = gql`
     maxWaitlist: Int
   }
 
-  type CatalogSection {
+  type CatalogSection @cacheControl(inheritMaxAge: true) {
     sectionId: String!
     number: String
     component: String
@@ -81,21 +83,21 @@ export const catalogTypeDef = gql`
     maxWaitlist: Int
   }
 
-  type CatalogDeCal {
+  type CatalogDeCal @cacheControl(inheritMaxAge: true) {
     title: String
   }
 
-  type CatalogMetric {
+  type CatalogMetric @cacheControl(inheritMaxAge: true) {
     metricName: String!
     count: Int!
     weightedAverage: Float!
   }
 
-  type CatalogAggregatedRatings {
+  type CatalogAggregatedRatings @cacheControl(inheritMaxAge: true) {
     metrics: [CatalogMetric!]!
   }
 
-  type CatalogClass {
+  type CatalogClass @cacheControl(inheritMaxAge: true) {
     "Identity"
     year: Int!
     semester: String!
@@ -161,24 +163,25 @@ export const catalogTypeDef = gql`
 
     "Requirement designation"
     requirementDesignation: SectionAttributeInfo
+      @cacheControl(inheritMaxAge: true)
   }
 
-  type CatalogResult {
+  type CatalogResult @cacheControl(inheritMaxAge: true) {
     results: [CatalogClass!]!
     totalCount: Int!
   }
 
-  type CatalogDepartment {
+  type CatalogDepartment @cacheControl(inheritMaxAge: true) {
     code: String!
     name: String!
   }
 
-  type CatalogTimeRange {
+  type CatalogTimeRange @cacheControl(inheritMaxAge: true) {
     minStartTime: String!
     maxEndTime: String!
   }
 
-  type CatalogFilterOptions {
+  type CatalogFilterOptions @cacheControl(inheritMaxAge: true) {
     departments: [CatalogDepartment!]!
     levels: [String!]!
     gradingOptions: [String!]!
@@ -188,12 +191,12 @@ export const catalogTypeDef = gql`
     timeRange: CatalogTimeRange
   }
 
-  type CatalogSemester {
+  type CatalogSemester @cacheControl(inheritMaxAge: true) {
     year: Int!
     semester: String!
   }
 
-  type CatalogClassIdentity {
+  type CatalogClassIdentity @cacheControl(inheritMaxAge: true) {
     subject: String!
     courseNumber: String!
     number: String!
@@ -213,13 +216,16 @@ export const catalogTypeDef = gql`
       page: Int
       pageSize: Int
       semanticSearch: Boolean
-    ): CatalogResult!
+    ): CatalogResult! @cacheControl(maxAge: 300, scope: PUBLIC)
 
     catalogClassIdentities(
       year: Int!
       semester: Semester!
-    ): [CatalogClassIdentity!]!
+    ): [CatalogClassIdentity!]! @cacheControl(maxAge: 300, scope: PUBLIC)
 
-    catalogFilterOptions(year: Int!, semester: Semester!): CatalogFilterOptions!
+    catalogFilterOptions(
+      year: Int!
+      semester: Semester!
+    ): CatalogFilterOptions! @cacheControl(maxAge: 3600, scope: PUBLIC)
   }
 `;
