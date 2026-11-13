@@ -75,6 +75,7 @@ nobody can see it yet** — that's a one-block addition (Path B).
 |---|---|---|---|---|
 | `schedule_saved` | `schedule` | schedule id | `hooks/api/schedules/useCreateSchedule.ts` | `SchedulesSavedBlock` |
 | `schedule_generate` | `schedule` | schedule id | `app/Schedule/Editor/GenerateSchedulesDialog` | `SchedulesGeneratedBlock` |
+| `schedule_exported` | `schedule` | schedule id | `app/Schedule/Editor/index.tsx` (Export button, triggers `exportToCalendar`) | `SchedulesExportedBlock` |
 | `course_result_clicked` | `class` | `subject-courseNumber` | `ClassBrowser/List/index.tsx` | `CourseResultsClickedBlock` |
 | `search_filter_applied` | `catalog_filter` | filter name (`sort`, `level`, `units`, ...) | `ClassBrowser/Filters/index.tsx` | `SearchFiltersAppliedBlock` |
 | `page_error` | `course-discovery` | — | `components/CatalogErrorBoundary` | `PageErrorsBlock` |
