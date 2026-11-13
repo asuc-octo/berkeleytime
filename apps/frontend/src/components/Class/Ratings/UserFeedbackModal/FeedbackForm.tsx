@@ -70,7 +70,9 @@ export function AttendanceForm({
     >
       {ATTENDANCE_QUESTIONS.map(({ type, question }) => (
         <div className={styles.inlineQuestion} key={type}>
-          <h3>{question}</h3>
+          <h3>
+            {question} <RequiredAsterisk />
+          </h3>
           <BooleanOptions
             name={type}
             value={metricData[type] ?? null}
