@@ -4,6 +4,12 @@
 
 .courseCards {
   height: 105px;
+
+  // Cards stack on mobile, so a fixed height would let them overlap the chart.
+  @media (max-width: 767px) {
+    height: auto;
+    min-height: 105px;
+  }
 }
 
 .content {
@@ -37,6 +43,10 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  @media (max-width: 767px) {
+    padding-left: 0;
+  }
 }
 
 .bottomTitle {
@@ -81,6 +91,10 @@
     min-width: 0;
     max-width: none;
     padding-left: 64px;
+  }
+
+  @media (max-width: 767px) {
+    padding-left: 0;
   }
 }
 

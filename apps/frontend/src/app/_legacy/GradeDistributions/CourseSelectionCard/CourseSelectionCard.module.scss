@@ -2,6 +2,11 @@
   min-width: 300px;
   max-width: 330px;
   flex: 1 1 300px;
+
+  @media (max-width: 767px) {
+    min-width: 0;
+    max-width: none;
+  }
 }
 
 .content {
