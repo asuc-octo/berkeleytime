@@ -56,10 +56,14 @@ cloudflared access curl \
   -o "prod_backup-YYYYMMDDHH.gz"
 ```
 
-For monthly persistent backups:
+Hourly backups are kept for 1 day. For older backups, use the daily (30 days),
+weekly (Sundays, 13 weeks), or monthly persistent (1st of the month, 2 years)
+tiers (replace `TIER` with `daily`, `weekly`, or `persistent`):
 
 ```bash
 cloudflared access curl \
-  "https://backups.berkeleytime.com/private/persistent/prod_backup-YYYYMMDD.gz" \
+  "https://backups.berkeleytime.com/private/TIER/prod_backup-YYYYMMDD.gz" \
   -o "prod_backup-YYYYMMDD.gz"
 ```
+
+Retention is configured in `infra/cloudflare/r2-lifecycle.sh`.

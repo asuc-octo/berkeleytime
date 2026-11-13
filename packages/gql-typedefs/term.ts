@@ -39,7 +39,7 @@ export const termTypeDef = gql`
   """
   Session, for example Summer Session A
   """
-  type Session {
+  type Session @cacheControl(inheritMaxAge: true) {
     "Identifiers"
     id: SessionIdentifier!
 
@@ -56,7 +56,7 @@ export const termTypeDef = gql`
   """
   Term
   """
-  type Term {
+  type Term @cacheControl(inheritMaxAge: true) {
     "Identifiers"
     id: TermIdentifier!
     academicCareerCode: AcademicCareerCode!
@@ -76,6 +76,7 @@ export const termTypeDef = gql`
     Query for terms.
     """
     terms(withCatalogData: Boolean): [Term!]!
+      @cacheControl(maxAge: 3600, scope: PUBLIC)
 
     """
     Query for a term.

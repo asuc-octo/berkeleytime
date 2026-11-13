@@ -32,6 +32,7 @@ rule_files:
 {{ end }}
 scrape_configs:
   - job_name: otel-collector
+    sample_limit: {{ .Values.prometheus.sampleLimit }}
     static_configs:
       - targets: [otel-collector:9464]
         labels:
@@ -53,12 +54,14 @@ scrape_configs:
         regex: (.+)
         target_label: pod
   - job_name: prometheus
+    sample_limit: {{ .Values.prometheus.sampleLimit }}
     static_configs:
       - targets: [localhost:9090]
         labels:
           deployment_environment: {{ .Values.environment | quote }}
   # Collector self-metrics are independent of the application metrics exporter.
   - job_name: otel-collector-internal
+    sample_limit: {{ .Values.prometheus.sampleLimit }}
     static_configs:
       - targets: [otel-collector:8888]
         labels:
@@ -80,6 +83,7 @@ scrape_configs:
 {{ if $source.targets }}
 {{ include "bt-observability.requireStaticTargets" $source }}
   - job_name: {{ $source.job }}
+    sample_limit: {{ $.Values.prometheus.sampleLimit }}
     scrape_interval: {{ $.Values.resourceMetrics.scrapeInterval }}
     scrape_timeout: {{ $.Values.resourceMetrics.scrapeTimeout }}
     metrics_path: {{ $source.path }}
@@ -95,6 +99,7 @@ scrape_configs:
 {{ end }}
 {{ if .Values.resourceMetrics.kubeStateMetrics.enabled }}
   - job_name: kube-state-metrics
+    sample_limit: {{ .Values.prometheus.sampleLimit }}
     scrape_interval: {{ .Values.resourceMetrics.scrapeInterval }}
     scrape_timeout: {{ .Values.resourceMetrics.scrapeTimeout }}
     static_configs:
@@ -107,6 +112,7 @@ scrape_configs:
 {{ if .Values.resourceMetrics.nodeExporter.enabled }}
 {{ include "bt-observability.requireStaticTargets" (dict "name" "resourceMetrics.nodeExporter.targets" "targets" .Values.resourceMetrics.nodeExporter.targets) }}
   - job_name: node-exporter
+    sample_limit: {{ .Values.prometheus.sampleLimit }}
     scrape_interval: {{ .Values.resourceMetrics.scrapeInterval }}
     scrape_timeout: {{ .Values.resourceMetrics.scrapeTimeout }}
     static_configs:

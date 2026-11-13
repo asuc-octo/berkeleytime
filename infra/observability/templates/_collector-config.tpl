@@ -53,10 +53,11 @@ processors:
     timeout: 5s
     send_batch_size: 1024
 
+  # Refuses incoming data once memory passes limit_mib - spike_limit_mib.
   memory_limiter:
-    check_interval: 5s
-    limit_mib: 400
-    spike_limit_mib: 100
+    check_interval: 1s
+    limit_mib: {{ .Values.collector.memoryLimiter.limitMib }}
+    spike_limit_mib: {{ .Values.collector.memoryLimiter.spikeLimitMib }}
 
   resource:
     attributes:

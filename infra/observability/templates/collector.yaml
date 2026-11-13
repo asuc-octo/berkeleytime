@@ -34,6 +34,9 @@ spec:
           image: {{ .Values.collector.image }}
           args:
             - "--config=/etc/otelcol/config.yaml"
+          env:
+            - name: GOMEMLIMIT
+              value: {{ .Values.collector.goMemLimit | quote }}
           ports:
             - name: otlp-grpc
               containerPort: 4317

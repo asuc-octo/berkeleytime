@@ -103,6 +103,8 @@ data:
   # OpenTelemetry configuration
   OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.otel.collectorEndpoint | quote }}
   OTEL_SERVICE_NAME: {{ .Values.otel.serviceName | quote }}
+  OTEL_TRACES_SAMPLER: "parentbased_traceidratio"
+  OTEL_TRACES_SAMPLER_ARG: {{ .Values.otel.traceSampleRatio | quote }}
   OTEL_RESOURCE_ATTRIBUTES: "service.version={{ .Values.backend.image.tag }},deployment.environment={{ .Values.env }}"
   {{- end }}
   SEMANTIC_SEARCH_URL: {{ printf "http://%s-svc:%d" (include "bt-app.semanticSearchName" .) (.Values.semanticSearch.port | int) | quote }}
