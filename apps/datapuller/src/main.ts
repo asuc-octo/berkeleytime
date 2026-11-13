@@ -3,6 +3,7 @@ import { parseArgs } from "node:util";
 import { Logger } from "tslog";
 
 import { updateCatalogGradeSummaries } from "./lib/catalog-denormalize";
+import { updateCourseFormerNames } from "./lib/course-former-names";
 import classesPuller from "./pullers/classes";
 import coursesPuller from "./pullers/courses";
 import decalsPuller from "./pullers/decals";
@@ -40,6 +41,8 @@ const pullerMap: {
     migrationsPuller.backfillAggregatedMetricsClassId,
   "catalog-sync-grades": async (config: Config) =>
     updateCatalogGradeSummaries(config.log),
+  "courses-former-names": async (config: Config) =>
+    updateCourseFormerNames(config.log),
 } as const;
 
 const runPuller = async () => {
