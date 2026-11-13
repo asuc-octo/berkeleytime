@@ -1,6 +1,8 @@
 import { FuzzySearch } from "@repo/common";
 import type { ICatalogClassItem } from "@repo/common/models";
 
+import { getCourseKey } from "../course/controller";
+
 export const CATALOG_SEARCH_OPTIONS = {
   keys: [
     { name: "searchableNames", weight: 10 },
@@ -38,10 +40,12 @@ export type CatalogSearchIndex = FuzzySearch<ICatalogClassItem>;
 
 export const buildCatalogSearchIndex = async (
   data: ICatalogClassItem[],
-  formerNamesByCourseId: Map<string, string[]>
+  formerNamesByCourse: Map<string, string[]>
 ): Promise<CatalogSearchIndex> => {
   const indexedData = data.map((item) => {
-    const formerNames = formerNamesByCourseId.get(item.courseId);
+    const formerNames = formerNamesByCourse.get(
+      getCourseKey({ ...item, number: item.courseNumber })
+    );
     if (!formerNames?.length) return item;
 
     const formerNameVariants = formerNames.flatMap((name) => [

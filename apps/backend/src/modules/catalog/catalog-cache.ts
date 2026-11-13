@@ -6,7 +6,7 @@ import {
   TermModel,
 } from "@repo/common/models";
 
-import { getFormerNamesByCourseId } from "../course/controller";
+import { getFormerNameIndex } from "../course/controller";
 import {
   type CatalogSearchIndex,
   buildCatalogSearchIndex,
@@ -363,8 +363,8 @@ export const getCachedCatalog = async (
 };
 
 const buildSearchIndex = async (data: ICatalogClassItem[]) => {
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
-  return buildCatalogSearchIndex(data, formerNamesByCourseId);
+  const { formerNamesByCourse } = await getFormerNameIndex();
+  return buildCatalogSearchIndex(data, formerNamesByCourse);
 };
 
 const getSearchIndexForData = (

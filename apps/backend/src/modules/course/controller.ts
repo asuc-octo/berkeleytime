@@ -15,8 +15,12 @@ export interface CourseListing {
   courseNumber: string;
 }
 
+interface CourseListingTerms extends CourseListing {
+  termIds: string[];
+}
+
 /**
- * Returns the subject/number listings that make up a course's history.
+ * Selects the subject/number listings that make up a course's history.
  *
  * SIS keeps a course's courseId across renames (e.g. "EECS 16B" -> "ELENG
  * 64"), but cross-listed courses share a courseId too, so courseId alone
@@ -25,12 +29,32 @@ export interface CourseListing {
  * a sibling's history stays with the sibling, and (2) it never ran in the
  * same term as this subject, so it isn't a cross-listing running alongside it.
  */
+const selectCourseListings = (
+  listings: CourseListingTerms[],
+  catalogSubjects: Set<string>,
+  subject: string
+): CourseListingTerms[] => {
+  const currentSubject = normalizeSubject(subject);
+
+  const isCurrent = (listing: CourseListing) =>
+    normalizeSubject(listing.subject) === currentSubject;
+
+  const currentTermIds = new Set(
+    listings.filter(isCurrent).flatMap((listing) => listing.termIds)
+  );
+
+  return listings.filter(
+    (listing) =>
+      isCurrent(listing) ||
+      (!catalogSubjects.has(normalizeSubject(listing.subject)) &&
+        !listing.termIds.some((termId) => currentTermIds.has(termId)))
+  );
+};
+
 export const getCourseListings = async (
   courseId: string,
   subject: string
 ): Promise<CourseListing[]> => {
-  const currentSubject = normalizeSubject(subject);
-
   const [listings, catalogSubjects] = await Promise.all([
     ClassModel.aggregate<{ _id: CourseListing; termIds: string[] }>([
       { $match: { courseId } },
@@ -44,124 +68,173 @@ export const getCourseListings = async (
     CourseModel.distinct("subject", { courseId, printInCatalog: true }),
   ]);
 
-  const isCurrent = (listing: CourseListing) =>
-    normalizeSubject(listing.subject) === currentSubject;
-
-  const catalogSubjectSet = new Set(catalogSubjects.map(normalizeSubject));
-  const currentTermIds = new Set(
-    listings.filter(({ _id }) => isCurrent(_id)).flatMap((l) => l.termIds)
-  );
-
-  return listings
-    .filter(
-      ({ _id, termIds }) =>
-        isCurrent(_id) ||
-        (!catalogSubjectSet.has(normalizeSubject(_id.subject)) &&
-          !termIds.some((termId) => currentTermIds.has(termId)))
-    )
-    .map(({ _id }) => _id);
-};
-
-const buildFormerNamesByCourseId = async () => {
-  const classNames = await ClassModel.aggregate<{
-    _id: string;
-    names: string[];
-  }>([
-    {
-      $group: {
-        _id: "$courseId",
-        names: { $addToSet: { $concat: ["$subject", " ", "$courseNumber"] } },
-      },
-    },
-  ]);
-
-  const currentCourses = await CourseModel.find(
-    { printInCatalog: true },
-    { subject: 1, number: 1 }
-  ).lean();
-
-  const currentCourseNames = new Set(
-    currentCourses.map((c) => `${c.subject} ${c.number}`)
-  );
-
-  return new Map(
-    classNames.map(({ _id, names }) => [
-      _id,
-      names.filter((name) => !currentCourseNames.has(name)),
-    ])
-  );
-};
-
-const FORMER_NAMES_CACHE_TTL_MS = 60 * 60 * 1000;
-
-interface FormerNamesCacheEntry {
-  promise: Promise<Map<string, string[]>>;
-  expiresAt: number;
-}
-
-let formerNamesByCourseIdCache: FormerNamesCacheEntry | null = null;
-
-export const getFormerNamesByCourseId = () => {
-  const now = Date.now();
-
-  if (
-    formerNamesByCourseIdCache &&
-    now < formerNamesByCourseIdCache.expiresAt
-  ) {
-    return formerNamesByCourseIdCache.promise;
-  }
-
-  const entry: FormerNamesCacheEntry = {
-    promise: buildFormerNamesByCourseId(),
-    expiresAt: now + FORMER_NAMES_CACHE_TTL_MS,
-  };
-  formerNamesByCourseIdCache = entry;
-
-  void entry.promise.catch(() => {
-    if (formerNamesByCourseIdCache === entry) {
-      formerNamesByCourseIdCache = null;
-    }
-  });
-
-  return entry.promise;
+  return selectCourseListings(
+    listings.map(({ _id, termIds }) => ({ ..._id, termIds })),
+    new Set(catalogSubjects.map(normalizeSubject)),
+    subject
+  ).map(({ subject, courseNumber }) => ({ subject, courseNumber }));
 };
 
 const normalizeCourseNameKey = (name: string) =>
   name.replace(/[,\s]/g, "").toUpperCase();
 
-interface FormerNameIndexCacheEntry {
-  source: Promise<Map<string, string[]>>;
-  promise: Promise<Map<string, string>>;
+interface CourseIdentity {
+  courseId: string;
+  subject: string;
+  number: string;
 }
 
-let courseIdByFormerNameKeyCache: FormerNameIndexCacheEntry | null = null;
+export const getCourseKey = ({ courseId, subject, number }: CourseIdentity) =>
+  `${courseId} ${subject} ${number}`;
 
-const getCourseIdByFormerNameKey = () => {
-  const source = getFormerNamesByCourseId();
+interface FormerNameIndex {
+  formerNamesByCourse: Map<string, string[]>;
+  courseByFormerNameKey: Map<string, CourseIdentity>;
+}
 
-  if (courseIdByFormerNameKeyCache?.source === source) {
-    return courseIdByFormerNameKeyCache.promise;
+const buildFormerNameIndex = async (): Promise<FormerNameIndex> => {
+  const [listingRows, courses] = await Promise.all([
+    ClassModel.aggregate<{
+      _id: CourseListing & { courseId: string };
+      termIds: string[];
+    }>([
+      {
+        $group: {
+          _id: {
+            courseId: "$courseId",
+            subject: "$subject",
+            courseNumber: "$courseNumber",
+          },
+          termIds: { $addToSet: "$termId" },
+        },
+      },
+    ]),
+    CourseModel.find(
+      {},
+      { courseId: 1, subject: 1, number: 1, printInCatalog: 1 }
+    ).lean(),
+  ]);
+
+  const listingsByCourseId = new Map<string, CourseListingTerms[]>();
+  for (const { _id, termIds } of listingRows) {
+    const listings = listingsByCourseId.get(_id.courseId) ?? [];
+    listings.push({
+      subject: _id.subject,
+      courseNumber: _id.courseNumber,
+      termIds,
+    });
+    listingsByCourseId.set(_id.courseId, listings);
+  }
+
+  const catalogSubjectsByCourseId = new Map<string, Set<string>>();
+  const catalogNames = new Set<string>();
+  const ownNameKeys = new Set<string>();
+  for (const course of courses) {
+    ownNameKeys.add(
+      `${course.courseId} ${normalizeCourseNameKey(`${course.subject} ${course.number}`)}`
+    );
+    if (!course.printInCatalog) continue;
+
+    catalogNames.add(`${course.subject} ${course.number}`);
+    const subjects =
+      catalogSubjectsByCourseId.get(course.courseId) ?? new Set();
+    subjects.add(normalizeSubject(course.subject));
+    catalogSubjectsByCourseId.set(course.courseId, subjects);
+  }
+
+  const formerNamesByCourse = new Map<string, string[]>();
+  const courseByFormerNameKey = new Map<string, CourseIdentity>();
+  // When two courses claim a former name, prefer catalog courses, then the
+  // one that ran most recently under its own subject.
+  const claimRanks = new Map<string, [number, string]>();
+
+  for (const course of courses) {
+    const listings = selectCourseListings(
+      listingsByCourseId.get(course.courseId) ?? [],
+      catalogSubjectsByCourseId.get(course.courseId) ?? new Set(),
+      course.subject
+    );
+
+    const ownName = `${course.subject} ${course.number}`;
+    const formerListings = listings.filter((listing) => {
+      const name = `${listing.subject} ${listing.courseNumber}`;
+      return name !== ownName && !catalogNames.has(name);
+    });
+
+    const identity = {
+      courseId: course.courseId,
+      subject: course.subject,
+      number: course.number,
+    };
+    formerNamesByCourse.set(
+      getCourseKey(identity),
+      formerListings.map((l) => `${l.subject} ${l.courseNumber}`)
+    );
+
+    const latestTermId =
+      listings
+        .filter(
+          (l) =>
+            normalizeSubject(l.subject) === normalizeSubject(course.subject)
+        )
+        .flatMap((l) => l.termIds)
+        .sort()
+        .at(-1) ?? "";
+    const rank: [number, string] = [
+      course.printInCatalog ? 1 : 0,
+      latestTermId,
+    ];
+
+    for (const listing of formerListings) {
+      const key = normalizeCourseNameKey(
+        `${listing.subject} ${listing.courseNumber}`
+      );
+
+      // A name with its own course entry under this courseId resolves to
+      // that entry, not to the course that replaced it.
+      if (ownNameKeys.has(`${course.courseId} ${key}`)) continue;
+
+      const claimRank = claimRanks.get(key);
+      if (
+        claimRank &&
+        (claimRank[0] > rank[0] ||
+          (claimRank[0] === rank[0] && claimRank[1] >= rank[1]))
+      )
+        continue;
+
+      claimRanks.set(key, rank);
+      courseByFormerNameKey.set(key, identity);
+    }
+  }
+
+  return { formerNamesByCourse, courseByFormerNameKey };
+};
+
+const FORMER_NAMES_CACHE_TTL_MS = 60 * 60 * 1000;
+
+interface FormerNameIndexCacheEntry {
+  promise: Promise<FormerNameIndex>;
+  expiresAt: number;
+}
+
+let formerNameIndexCache: FormerNameIndexCacheEntry | null = null;
+
+export const getFormerNameIndex = () => {
+  const now = Date.now();
+
+  if (formerNameIndexCache && now < formerNameIndexCache.expiresAt) {
+    return formerNameIndexCache.promise;
   }
 
   const entry: FormerNameIndexCacheEntry = {
-    source,
-    promise: source.then((formerNamesByCourseId) => {
-      const index = new Map<string, string>();
-
-      for (const [courseId, formerNames] of formerNamesByCourseId) {
-        for (const name of formerNames) {
-          index.set(normalizeCourseNameKey(name), courseId);
-        }
-      }
-
-      return index;
-    }),
+    promise: buildFormerNameIndex(),
+    expiresAt: now + FORMER_NAMES_CACHE_TTL_MS,
   };
-  courseIdByFormerNameKeyCache = entry;
+  formerNameIndexCache = entry;
 
   void entry.promise.catch(() => {
-    if (courseIdByFormerNameKeyCache === entry) {
-      courseIdByFormerNameKeyCache = null;
+    if (formerNameIndexCache === entry) {
+      formerNameIndexCache = null;
     }
   });
 
@@ -169,20 +242,18 @@ const getCourseIdByFormerNameKey = () => {
 };
 
 export const getCourse = async (subject: string, number: string) => {
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
+  const { formerNamesByCourse, courseByFormerNameKey } =
+    await getFormerNameIndex();
 
   // Renamed courses (e.g. "EECS 16A" -> "ELENG 66") keep their classes under
   // one courseId, while the defunct name's own course entry has none. Former
   // names never collide with current courses, so resolve them first.
-  const courseIdByFormerNameKey = await getCourseIdByFormerNameKey();
-  const renamedCourseId = courseIdByFormerNameKey.get(
+  const renamedCourse = courseByFormerNameKey.get(
     normalizeCourseNameKey(`${subject} ${number}`)
   );
 
   const course = await CourseModel.findOne(
-    renamedCourseId
-      ? { courseId: renamedCourseId }
-      : { subject: buildSubjectQuery(subject), number }
+    renamedCourse ?? { subject: buildSubjectQuery(subject), number }
   )
     .sort({ fromDate: -1 })
     .lean();
@@ -191,7 +262,7 @@ export const getCourse = async (subject: string, number: string) => {
 
   return {
     ...formatCourse(course as ICourseItem),
-    formerNames: formerNamesByCourseId.get(course.courseId) ?? [],
+    formerNames: formerNamesByCourse.get(getCourseKey(course)) ?? [],
   };
 };
 
@@ -211,11 +282,11 @@ export const getCourseById = async (
       .lean();
 
     if (exactMatch) {
-      const formerNamesByCourseId = await getFormerNamesByCourseId();
+      const { formerNamesByCourse } = await getFormerNameIndex();
 
       return {
         ...formatCourse(exactMatch as ICourseItem),
-        formerNames: formerNamesByCourseId.get(courseId) ?? [],
+        formerNames: formerNamesByCourse.get(getCourseKey(exactMatch)) ?? [],
       };
     }
   }
@@ -227,11 +298,11 @@ export const getCourseById = async (
 
   if (!course) return null;
 
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
+  const { formerNamesByCourse } = await getFormerNameIndex();
 
   return {
     ...formatCourse(course as ICourseItem),
-    formerNames: formerNamesByCourseId.get(courseId) ?? [],
+    formerNames: formerNamesByCourse.get(getCourseKey(course)) ?? [],
   };
 };
 
@@ -400,12 +471,12 @@ export const getCourses = async () => {
   //   }
   // }
 
-  const formerNamesByCourseId = await getFormerNamesByCourseId();
+  const { formerNamesByCourse } = await getFormerNameIndex();
 
   return courses.map((c) => ({
     ...formatCourse(c),
     gradeDistribution: null,
-    formerNames: formerNamesByCourseId.get(c.courseId) ?? [],
+    formerNames: formerNamesByCourse.get(getCourseKey(c)) ?? [],
   })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
     gradeDistribution: CourseModule.Course["gradeDistribution"];
   })[];
