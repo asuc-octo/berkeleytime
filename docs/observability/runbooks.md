@@ -84,13 +84,6 @@ MongoDB memory is server-reported resident/virtual memory, not container working
 set. MongoDB connection categories overlap; nginx active/reading/writing/waiting
 categories also overlap. Do not add all categories into a supposed total.
 
-**Dependency reading age** reports the newest source timestamp for each service
-in the selected environment. It is a global latest-reading check, not a check of
-every instance or namespace. One fresh reading does not prove every source is
-current. Inspect namespace-specific metrics and Collector logs for a stalled
-receiver, connection errors or unsupported collection commands. A reachable
-exporter can retain an old dependency reading.
-
 ## Storage, nodes and monitoring overhead
 
 Investigate reported filesystem or PVC free space below **15% for five minutes**.

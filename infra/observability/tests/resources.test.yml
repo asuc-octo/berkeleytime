@@ -138,14 +138,6 @@ tests:
       - expr: up{deployment_environment=~"kind"}
         eval_time: 5m
         exp_samples: []
-      - expr: time() - max by (deployment_environment, service_name)
-          (timestamp(mongodb_memory_usage_bytes{deployment_environment=~"kind",service_name="mongodb"}))
-        eval_time: 5m
-        exp_samples: []
-      - expr: time() - max by (deployment_environment, service_name)
-          (timestamp(nginx_connections_current{deployment_environment=~"kind",service_name="nginx"}))
-        eval_time: 5m
-        exp_samples: []
       - expr: process_memory_heap_used_bytes{deployment_environment=~"kind",namespace=~".*",service_name=~".*",pod=~".*"}
         eval_time: 5m
         exp_samples: []
