@@ -122,6 +122,45 @@ Use these packages rather than duplicating code across apps.
 5. **Docker**: Development uses Docker Compose. `docker compose up` will setup all services. Use the `--build` flag after significant changes, otherwise hot-reload is enabled.
 6. **Turbo**: Use `npm run dev`, `npm run build`, etc. from root (Turbo handles orchestration)
 
+## Pull Requests and Linear Tickets
+
+Every pull request must link to a Linear ticket. No ticket means no pull request.
+
+If you receive a pull request with no ticket, do not review it. Ask the author to add the ticket first.
+
+The ticket is the durable record of reasoning. Pull request discussion is not durable. Write the ticket for the next person, who joins with no context.
+
+**Every ticket states:**
+- The problem, in the user's words
+- What the change does
+
+**A good ticket also covers these, where the change gives you something to say:**
+- Who is affected: the kind of user, page, or flow that hits the problem
+- Evidence: a log line, metric, screenshot, or link to the report that started it
+- Steps to reproduce, for bugs
+- What the user does after the change, from first action to expected result
+- Why you chose this approach, and which alternatives you rejected
+- Known limits, and the scope you left out on purpose
+- Blast radius, and how to undo the change
+- What must land first: other tickets or pull requests
+- Open questions still unsettled, so review aims at them
+- How you will know it works
+
+**Keep these out of the ticket:**
+- A restatement of the diff
+- Review comments and replies
+- Anything that goes stale
+
+**How to link:**
+- Search the Berkeleytime workspace (`https://linear.app/berkeleytime/`), team key `BER`, before you create anything. Reuse a ticket that already covers the change. If you cannot reach Linear, stop and ask the author for the ticket link.
+- Otherwise, create the ticket yourself.
+- Skip this step for dependabot pull requests. A bot cannot own a ticket.
+- Title the pull request `[BER-NNNN] <outcome>`, for example `[BER-123] Catalog Lists Load Faster`. Write the outcome, not the implementation.
+- Put the identifier and URL in the pull request body before you open it, for example `Linear: https://linear.app/berkeleytime/issue/BER-95`.
+- Put the identifier in the branch name when practical, for example `fix/BER-95-catalog-sort`.
+
+**The test:** a new reader must explain why the change exists. Ask this reader to read only the ticket. If the reader cannot explain it, the ticket is not finished.
+
 ## Important Notes
 
 - **Generated Code**: Never edit `generated-types/`, `generated-typedefs/`, or `generated/` directories
