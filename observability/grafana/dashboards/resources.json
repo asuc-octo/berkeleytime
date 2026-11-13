@@ -884,7 +884,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How does workload CPU compare with reserved CPU and configured limits? Requests are reservations, not caps. Partial limit sums are not workload ceilings. Check the absent-limit table before interpreting limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How does workload CPU compare with reserved CPU and configured limits? Requests are reservations, not caps. Partial limit sums are not workload ceilings. Check individual container limits in Kubernetes before interpreting workload totals. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
         "y": 44,
@@ -1060,7 +1060,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How does workload memory compare with requests and configured limits? Partial limit sums are not a total ceiling. Inspect individual container ratios and absent limits before deciding capacity. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How does workload memory compare with requests and configured limits? Partial limit sums are not a total ceiling. Inspect individual container ratios and configured limits before deciding capacity. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
         "y": 52,
@@ -1323,164 +1323,12 @@
       ]
     },
     {
-      "id": 18,
-      "type": "table",
-      "title": "No CPU limit configured — known containers",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Which known containers lack a positive configured limit? A value of 1 means no limit configured, only while kube-state-metrics is reachable and its required resource families are enabled. Missing state collection stays Unknown; confirm configuration with Kubernetes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 0,
-        "y": 68,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "bt:container_cpu_limit_absent:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
-          "legendFormat": "{{pod}} / {{container}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": false,
-          "instant": true,
-          "format": "table"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "1": {
-                  "text": "No limit configured"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      },
-      "options": {
-        "showHeader": true
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
-      "id": 19,
-      "type": "table",
-      "title": "No MEMORY limit configured — known containers",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Which known containers lack a positive configured limit? A value of 1 means no limit configured, only while kube-state-metrics is reachable and its required resource families are enabled. Missing state collection stays Unknown; confirm configuration with Kubernetes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 12,
-        "y": 68,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "bt:container_memory_limit_absent:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
-          "legendFormat": "{{pod}} / {{container}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": false,
-          "instant": true,
-          "format": "table"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "1": {
-                  "text": "No limit configured"
-                }
-              }
-            }
-          ]
-        },
-        "overrides": []
-      },
-      "options": {
-        "showHeader": true
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
       "id": 20,
       "type": "text",
       "title": "Storage, nodes and network — Kubernetes only",
       "gridPos": {
         "x": 0,
-        "y": 76,
+        "y": 68,
         "w": 24,
         "h": 4
       },
@@ -1500,7 +1348,7 @@
       "description": "Which reported volumes are filling up? Kubelet volume statistics report bytes by PVC; missing statistics mean Unknown, not empty or healthy. Check the storage driver and actual volume mounts. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 80,
+        "y": 72,
         "w": 12,
         "h": 8
       },
@@ -1588,7 +1436,7 @@
       "description": "What fraction of reported PVC capacity remains available? Divide only by positive capacity. Less than 15% for five minutes warrants investigating retention and growth; never infer PVC values from host filesystem values. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 80,
+        "y": 72,
         "w": 12,
         "h": 8
       },
@@ -1675,7 +1523,7 @@
       "description": "How much usable filesystem space remains on each Linux node? Excludes pseudo filesystems. This is node filesystem capacity, not PVC capacity. Investigate sustained free space below 15% and check the mount path. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 88,
+        "y": 80,
         "w": 12,
         "h": 8
       },
@@ -1762,7 +1610,7 @@
       "description": "Is Kubernetes reporting memory, disk or PID pressure? Conditions come from kube-state-metrics and are cluster-level. Check affected nodes and scheduling events rather than attributing pressure to a specific service. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 88,
+        "y": 80,
         "w": 12,
         "h": 8
       },
@@ -1838,7 +1686,7 @@
       "description": "How many bytes per second cross each node interface? Excludes loopback and common virtual bridges/veth; interfaces stay separate to avoid counting overlapping network layers. Check interface topology before summing. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 96,
+        "y": 88,
         "w": 12,
         "h": 8
       },
@@ -1926,7 +1774,7 @@
       "description": "How much memory do the monitoring components use? Selects observability container names independently of workload and pod filters; namespace/environment still apply. Compare with limits before increasing retention or collection volume. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 96,
+        "y": 88,
         "w": 12,
         "h": 8
       },
@@ -2002,7 +1850,7 @@
       "description": "How much CPU do monitoring components use? Selects stack container names independently of workload and pod filters. Compare scrape/query volume before changing intervals or retention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 104,
+        "y": 96,
         "w": 12,
         "h": 8
       },
@@ -2073,7 +1921,7 @@
       "title": "MongoDB and nginx — validated receivers required",
       "gridPos": {
         "x": 0,
-        "y": 112,
+        "y": 104,
         "w": 24,
         "h": 4
       },
@@ -2093,7 +1941,7 @@
       "description": "What memory does MongoDB report? Server-reported resident/virtual memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 116,
+        "y": 108,
         "w": 12,
         "h": 8
       },
@@ -2169,7 +2017,7 @@
       "description": "Are database connections increasing? Gauges show active/current/available connection categories; do not add them together. Check connection pooling and request concurrency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 116,
+        "y": 108,
         "w": 12,
         "h": 8
       },
@@ -2245,7 +2093,7 @@
       "description": "Are connections accumulating at the proxy? Active includes other states, so do not sum categories. Check downstream latency and backend readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 124,
+        "y": 116,
         "w": 12,
         "h": 8
       },
@@ -2321,7 +2169,7 @@
       "description": "How much traffic reaches nginx? Counter rate covers five minutes and may include internal status scraping. Compare with application request rates and readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 124,
+        "y": 116,
         "w": 12,
         "h": 8
       },

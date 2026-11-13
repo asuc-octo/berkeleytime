@@ -86,7 +86,7 @@ spec:
             - {name: http, containerPort: 8080}
           resources:
             requests: {cpu: 50m, memory: 32Mi}
-            # No CPU limit on purpose, exercising the absent-limit case.
+            # No CPU limit configured for this fixture.
             limits: {memory: 64Mi}
           volumeMounts:
             - {name: config, mountPath: /etc/nginx/conf.d, readOnly: true}

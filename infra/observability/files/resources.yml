@@ -10,9 +10,6 @@ groups:
           label_replace(label_replace(max by (deployment_environment, namespace, pod, uid, owner_kind, owner_name) (kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "owner_name", "(.+)"), "workload_type", "$1", "owner_kind", "(.+)")
           or on (deployment_environment, namespace, pod, uid)
           label_replace(label_replace((max by (deployment_environment, namespace, pod, uid) (kube_pod_info) unless on (deployment_environment, namespace, pod, uid) kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "pod", "(.+)"), "workload_type", "Pod", "pod", ".+")
-      - record: bt:container:info
-        expr: max by (deployment_environment, namespace, pod, container, uid)
-          (kube_pod_container_info)
       - record: bt:container_cpu_cores:rate5m
         expr: max by (deployment_environment, namespace, pod, container, node)
           (rate(container_cpu_usage_seconds_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m]))
@@ -25,22 +22,12 @@ groups:
       - record: bt:container_cpu_limits
         expr: max by (deployment_environment, namespace, pod, container, uid)
           (kube_pod_container_resource_limits{resource="cpu",unit="core"})
-      - record: bt:container_cpu_limit_absent:info
-        expr: (bt:container:info unless on (deployment_environment, namespace, pod,
-          container, uid) (bt:container_cpu_limits > 0)) and on
-          (deployment_environment) (max by (deployment_environment)
-          (up{job="kube-state-metrics"}) == 1)
       - record: bt:container_memory_requests
         expr: max by (deployment_environment, namespace, pod, container, uid)
           (kube_pod_container_resource_requests{resource="memory",unit="byte"})
       - record: bt:container_memory_limits
         expr: max by (deployment_environment, namespace, pod, container, uid)
           (kube_pod_container_resource_limits{resource="memory",unit="byte"})
-      - record: bt:container_memory_limit_absent:info
-        expr: (bt:container:info unless on (deployment_environment, namespace, pod,
-          container, uid) (bt:container_memory_limits > 0)) and on
-          (deployment_environment) (max by (deployment_environment)
-          (up{job="kube-state-metrics"}) == 1)
       # Retain cAdvisor's incarnation ID and full scrape labels until both
       # counters are paired. Choose one complete scrape per incarnation;
       # using the greatest total-period rate among duplicate sources.

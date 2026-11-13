@@ -28,7 +28,7 @@ the same period.
 Requests reserve CPU; they are not caps. Exceeding a request does not prove a
 container is overloaded. A workload's configured-limit line sums the limits
 that exist; it is not a total capacity ceiling if some containers are unlimited.
-Inspect the absent-limit tables and individual containers before interpreting it.
+Inspect individual container limits in Kubernetes before interpreting it.
 The backend intentionally has no CPU limit.
 
 ## CPU throttling
@@ -64,8 +64,8 @@ starting proposal, not a production SLO or an instruction to change limits.
   five minutes**. Check whether usage grows steadily and whether Kubernetes
   reports an OOM termination before calling it a memory leak or OOM failure.
 - Missing/zero limits do not provide a valid percentage denominator. The
-  absent-limit table assumes the state collector exposes the resource-limit
-  metric family; an incomplete source cannot establish the actual limit.
+  resource-limit metric family must be available before interpreting configured
+  limits; an incomplete source cannot establish the actual limit.
 - Event-loop max/p99 describe each roughly 15-second collection window, sampled
   at 20 ms resolution. They are not percentiles across the entire displayed hour.
   Investigate p99 above **100 ms for five minutes**, comparing it with GraphQL

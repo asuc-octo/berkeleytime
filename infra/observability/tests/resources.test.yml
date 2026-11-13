@@ -2,8 +2,7 @@ rule_files:
   - ../files/resources.yml
 evaluation_interval: 30s
 tests:
-  - name: deduplicate before workload sums; absent CPU is not zero; Deployment owner
-      resolution
+  - name: deduplicate before workload sums and resolve Deployment owners
     interval: 30s
     input_series:
       - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="a"}
@@ -16,10 +15,6 @@ tests:
         values: 67108864+0x10
       - series: container_memory_working_set_bytes{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="b"}
         values: 67108864+0x10
-      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}
-        values: 1+0x10
-      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",instance="duplicate"}
-        values: 1+0x10
       - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="backend-abc",uid="pod-1",owner_kind="ReplicaSet",owner_name="backend-rs",owner_is_controller="true"}
         values: 1+0x10
       - series: kube_replicaset_owner{deployment_environment="kind",namespace="bt",replicaset="backend-rs",owner_kind="Deployment",owner_name="backend",owner_is_controller="true"}
@@ -28,8 +23,6 @@ tests:
         values: 0.1+0x10
       - series: kube_pod_container_resource_limits{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",resource="memory",unit="byte"}
         values: 134217728+0x10
-      - series: up{deployment_environment="kind",job="kube-state-metrics"}
-        values: 1+0x10
       - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
         values: 0+3x10
       - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
@@ -45,14 +38,6 @@ tests:
         exp_samples:
           - labels: '{__name__="bt:container_memory_working_set_bytes",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
             value: 67108864
-      - expr: bt:container_cpu_limit_absent:info
-        eval_time: 5m
-        exp_samples:
-          - labels: '{__name__="bt:container_cpu_limit_absent:info",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}'
-            value: 1
-      - expr: bt:container_memory_limit_absent:info
-        eval_time: 5m
-        exp_samples: []
       - expr: bt:container_cpu_throttling:ratio5m
         eval_time: 5m
         exp_samples:
@@ -75,24 +60,14 @@ tests:
         exp_samples:
           - labels: '{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
             value: 0.5
-  - name: missing state source is unknown; zero denominator gives no throttling ratio
+  - name: zero denominator gives no throttling ratio
     interval: 30s
     input_series:
-      - series: kube_pod_container_info{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1"}
-        values: 1+0x10
-      - series: up{deployment_environment="kind",job="kube-state-metrics"}
-        values: 0+0x10
       - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
         values: 0+0x10
       - series: container_cpu_cfs_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
         values: 0+0x10
     promql_expr_test:
-      - expr: bt:container_cpu_limit_absent:info
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:container_memory_limit_absent:info
-        eval_time: 5m
-        exp_samples: []
       - expr: bt:container_cpu_throttling:ratio5m
         eval_time: 5m
         exp_samples: []
@@ -207,12 +182,6 @@ tests:
         eval_time: 5m
         exp_samples: []
       - expr: bt:container_cpu_throttling:ratio5m{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:container_cpu_limit_absent:info{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:container_memory_limit_absent:info{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
         eval_time: 5m
         exp_samples: []
       - expr: max by (namespace,persistentvolumeclaim)
