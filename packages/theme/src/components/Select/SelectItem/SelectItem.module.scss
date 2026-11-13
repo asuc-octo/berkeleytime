@@ -24,11 +24,11 @@
   }
 
   &[data-selected="true"] {
-    background-color: var(--blue-500-20);
+    background-color: var(--button-hover-color);
     color: var(--blue-500);
 
     &:hover:not([data-disabled="true"]) {
-      background-color: var(--blue-500-20);
+      background-color: var(--button-hover-color);
     }
 
     .meta {
