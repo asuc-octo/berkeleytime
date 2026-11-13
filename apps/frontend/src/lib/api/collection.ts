@@ -72,6 +72,9 @@ export const GET_ALL_COLLECTIONS = gql`
       lastAdd
       classes {
         class {
+          year
+          semester
+          sessionId
           subject
           courseNumber
           number
