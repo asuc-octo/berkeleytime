@@ -340,6 +340,7 @@ export default function Filters() {
         <div className={styles.formControl}>
           <p className={styles.label}>Requirements</p>
           <Select<RequirementSelection>
+            combobox
             multi
             clearable
             value={selectedRequirements}
