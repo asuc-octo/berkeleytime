@@ -1,28 +1,53 @@
-# Kubernetes workloads dashboard: implementation report
+# Kubernetes workloads dashboard implementation report
 
-## Scope
+## Purpose and scope
 
-The deliverable is a single dashboard, `workloads.json`, plus only the configuration and collection needed to populate its Kubernetes workload and pod-log panels. Dashboard source lives in `observability/grafana/dashboards/workloads.json`. Helm consumes its synchronized chart-local copy in `infra/observability/dashboards/workloads.json`. The dashboard is provisioned locally and through the existing Helm observability chart.
+This report describes the changes on branch `observability-pod-logs` relative to `main` that deliver a version-controlled Grafana dashboard for Kubernetes workload status and pod stdout/stderr. It covers the dashboard, the local Grafana provisioning path, Helm packaging and Kubernetes collection configuration, supporting documentation, and ancillary file changes present on the branch.
 
-## Files changed
+The dashboard source of truth is `observability/grafana/dashboards/workloads.json`. Helm cannot read files outside its chart, so the synchronization script copies that source into `infra/observability/dashboards/workloads.json`. Local Compose provisions the source copy; the Helm chart provisions the chart-local copy. Both use the stable Prometheus and Loki datasource UIDs (`prometheus` and `loki`; the existing `tempo` datasource remains provisioned as well).
 
-| File | What changed and why |
+## New files
+
+| File | Purpose and behavior |
 |---|---|
-| `observability/grafana/dashboards/workloads.json` | The only dashboard. It shows desired/available deployment replicas, ready/unready pods, pod phase and container reasons, restart increases with OOM evidence, Job/CronJob activity, and namespace/workload/pod/service/environment/severity-filtered stdout logs. Every panel explains its question, units, source, delay, and next step. Kubernetes panels clearly say local Compose has no Kubernetes data. |
-| `observability/grafana/provisioning/dashboards/provider.yaml` | Configures local Grafana file provisioning from `/var/lib/grafana/dashboards`. |
-| `docker-compose.observability.yml` | Mounts the dashboard source directory read-only into local Grafana. This lets Compose display the same dashboard, with Kubernetes-only no-data behavior. |
-| `infra/observability/dashboards/workloads.json` | Chart-local copy required because Helm packages chart contents and cannot read an external repository path. Generated from the source JSON by the sync script. |
-| `scripts/sync-observability-dashboards.ps1` | Copies dashboard source JSON into the chart and removes stale packaged JSON. `-Check` compares filenames and SHA-256 hashes so reviewers can detect drift. |
-| `infra/observability/templates/grafana.yaml` | Adds ConfigMaps for the dashboard JSON and provider, mounts both into Grafana, and checksums dashboard files so a dashboard change rolls the Deployment. Datasource UIDs stay `prometheus`, `tempo`, and `loki`. |
-| `infra/observability/templates/prometheus.yaml` | Adds a conditional kube-state-metrics scrape target with the configured environment label. |
-| `infra/observability/templates/kubernetes-collection.yaml` | Adds kube-state-metrics, its namespace-scoped workload Roles and read-only metadata ClusterRole, plus a node Collector DaemonSet. The agent reads only the configured namespace's `/var/log/pods` paths, checkpoints offsets, parses container envelopes and JSON, combines multiline records, enriches Kubernetes metadata, and exports to Loki. Its pod Role is limited to the configured namespace. The existing OTLP gateway remains in place. Kubernetes Events are not collected. |
-| `infra/observability/values.yaml` | Adds enablement, image, namespace, environment, ports, and resource settings for kube-state-metrics and the pod log agent. Defaults use namespace `bt`; set both namespace values for staging. |
-| `docs/observability/README.md` | Documents local startup, dashboard synchronization, collection topology, component/image prerequisites, namespace configuration, duplicate-route precautions, and staging checks. |
-| `docs/observability/metric-inventory.md` | Lists only workload metrics and log labels queried by this dashboard, with units and collection delay. It documents that actual emitted labels still need staging confirmation. |
-| `docs/observability/runbooks.md` | Provides steps for unready/unavailable workloads, restarts/OOM, missing/duplicate pod logs, and local Compose interpretation. |
-| `docs/observability/implementation-report.md` | This file: explains each remaining changed file and its purpose. |
-| `apps/datapuller/src/shared/mongoose.ts` | Keeps the prior security fix that removes the MongoDB connection URI from logs; connection strings must not be logged. Unrelated datapuller dashboard and structured run-event changes were removed. |
+| `observability/grafana/dashboards/workloads.json` | Canonical dashboard JSON for the workloads view. It provides environment, namespace, workload, pod, service, and severity filters; panels for desired/available deployment replicas, ready/unready pods, pod phase/readiness/reasons/restarts, restart increases and OOMKilled evidence, Job/CronJob state, and collected pod stdout/stderr. Descriptions state each panel's question, units, source, expected delay, and next investigation step. Kubernetes panels explicitly explain that local Compose has no Kubernetes data, and absent telemetry is presented as unknown/no data. The Events panel explicitly states Events are not collected. |
+| `infra/observability/dashboards/workloads.json` | Chart-local packaged copy of the canonical JSON. This is an intentional generated duplicate because Helm packages chart files and must not read a repository path outside `infra/observability`. Regenerate and verify it with the sync script. |
+| `observability/grafana/provisioning/dashboards/provider.yaml` | Grafana file-provider configuration for local Compose. It tells Grafana to load dashboard JSON from `/var/lib/grafana/dashboards` into the Berkeleytime folder. |
+| `infra/observability/templates/kubernetes-collection.yaml` | Helm templates for Kubernetes workload-state and pod-log collection. When enabled, this creates kube-state-metrics, the service and RBAC needed to read workload state, plus a node-level OpenTelemetry Collector DaemonSet. The agent tails only the configured namespace's `/var/log/pods` files, persists file offsets on each node, parses the container log envelope and JSON, groups multiline records, enriches records with Kubernetes metadata, and sends logs to Loki. The pod metadata Role is namespace-scoped; kube-state-metrics has workload Roles for configured namespaces and read-only ClusterRole access to nodes/namespaces. Kubernetes Events are deliberately not inferred from pod logs and have no configured source here. |
+| `scripts/sync-observability-dashboards.ps1` | Copies all source dashboard JSON files to the chart's `dashboards` directory and removes stale packaged JSON. With `-Check`, it compares the source and package file sets and SHA-256 hashes, returning a failure for missing, extra, or changed copies. |
+| `docs/observability/README.md` | Explains the dashboard source and chart synchronization workflow, local Compose behavior, collection topology, namespace settings, image/component prerequisites, duplicate-ingestion concern, and staging deployment checks. It calls out that local Compose does not provide Kubernetes metrics or pod logs. |
+| `docs/observability/metric-inventory.md` | Inventories the kube-state-metrics families and Loki labels queried by the dashboard, including intended labels, units, scrape/log delay, stable datasource UIDs, and limitations. It asks operators to verify actual metric and label names in staging rather than assuming they have been validated. |
+| `docs/observability/runbooks.md` | Gives investigation steps for unavailable deployments/unready pods, restarts/OOM, missing or duplicate logs, and interpreting no Kubernetes data in Compose. It clarifies that a restart count alone does not diagnose a crash and that Events are not collected. |
+| `docs/observability/implementation-report.md` | This report: records the purpose and behavior of all dashboard-related new and modified files in this branch. |
 
-## Collection and acceptance boundary
+## Modified files
 
-The node agent and state exporter are configuration only until deployed and exercised in a staging namespace. Verify the exact Collector `0.96.0` image contains the configured components, then confirm stdout metadata, readiness changes, restart metrics, Job completion, rotation, agent restarts, and log persistence after pod exit. Application events must use one ingestion route; events are not inferred from pod logs. No staging evidence or production deployment is included.
+| File | Change and purpose |
+|---|---|
+| `docker-compose.observability.yml` | Adds a read-only mount from `observability/grafana/dashboards` to `/var/lib/grafana/dashboards` in the local Grafana container. The existing observability Compose stack can therefore load the canonical dashboard. Compose has no Kubernetes API, kube-state-metrics, or node pod-log files, so Kubernetes panels remain unavailable locally by design. |
+| `infra/observability/templates/grafana.yaml` | Adds a ConfigMap generated from chart-local dashboard JSON and a ConfigMap containing Grafana's dashboard provider. Mounts these into Grafana and adds a checksum annotation based on packaged dashboards so changing a dashboard triggers a Deployment rollout. Existing datasource provisioning and stable datasource UIDs remain in place. |
+| `infra/observability/templates/prometheus.yaml` | Adds a conditional Prometheus scrape job targeting the kube-state-metrics Service and attaches the configured environment label. This supplies the state metrics consumed by workload panels when kube-state-metrics is enabled. |
+| `infra/observability/values.yaml` | Adds `kubeStateMetrics` and `podLogs` settings: enable flags, pinned images, monitored namespace(s), service/port, environment label, and resource requests/limits. Defaults target namespace `bt` and mark logs as `production`; staging/local-cluster users must set suitable values for their environment. |
+| `apps/datapuller/src/shared/mongoose.ts` | Removes logging of the MongoDB connection URI. This prevents a credential-bearing connection string from being written to logs, consistent with the telemetry security requirement. Connection behavior is unchanged. |
+| `apps/backend/src/lib/logger.ts` | Only import order changed to satisfy the repository's Prettier import sorting; logger behavior did not change. |
+| `apps/backend/src/main.ts` | Only import ordering/formatting changed in the resulting branch diff. The existing instrumentation import and bootstrap behavior are unchanged. |
+| `apps/frontend/src/app/Profile/Notifications/index.tsx` | Prettier-only line wrapping changes. Notification behavior is unchanged. |
+| `apps/frontend/src/components/CourseSearch/browser.ts` | Prettier-only line wrapping changes. Search behavior is unchanged. |
+
+## Dashboard behavior and data flow
+
+1. kube-state-metrics reads Kubernetes objects and exposes workload and pod metrics.
+2. Prometheus scrapes the kube-state-metrics Service every 15 seconds and stores those metrics for the dashboard.
+3. The Collector DaemonSet reads pod stdout/stderr files from each node, checkpoints file offsets under `/var/lib/otelcol-podlogs`, enriches records with pod metadata, and exports them to Loki.
+4. Grafana queries Prometheus for state and restart panels and Loki for pod logs. Dashboard filters constrain queries by the available environment, namespace, workload, pod, service, and severity labels.
+5. In local Compose, only local application observability signals exist. Kubernetes panels identify that limitation and do not interpret missing Kubernetes telemetry as healthy or zero.
+
+## Validation and deployment boundary
+
+The synchronization script's `-Check` mode verifies that the source and packaged dashboard JSON match. Before using this chart in a cluster, render and review the Helm output, verify the exact pinned Collector image (`otel/opentelemetry-collector-contrib:0.96.0`) includes every configured receiver/operator/processor/exporter, and confirm cluster prerequisites such as `/var/log/pods`, hostPath policy, service-account RBAC, persistent storage, and Loki reachability.
+
+The branch adds configuration; it does not establish staging acceptance evidence or perform a production rollout. Staging still needs to verify pod-log metadata, readiness and restart panel updates, Job completion behavior, persistence after pod exit, rotation, agent restarts, and duplicate-ingestion behavior. Events remain unavailable until a separate event collector is configured. The chart's existing persistent-volume template binds claims to namespace `bt` and uses node-local `/data` host paths, so those chart assumptions must be reviewed before installing into another namespace or cluster.
+
+## Changes outside the dashboard implementation
+
+The two frontend formatting changes and the backend import-order changes above are incidental formatter effects from the branch's formatting workflow, not dashboard functionality. The MongoDB URI log removal is a security-relevant telemetry change; it is included because it removes a sensitive value from logs. No datapuller dashboard, run-event instrumentation, or other datapuller feature is part of this deliverable.

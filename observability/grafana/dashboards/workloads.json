@@ -1,6 +1,6 @@
 {
     "uid":  "bt-workloads",
-    "title":  "Berkeleytime â€” Kubernetes workloads",
+    "title":  "Berkeleytime Kubernetes workloads",
     "tags":  [
                  "berkeleytime",
                  "kubernetes",
@@ -120,7 +120,7 @@
                    {
                        "id":  1,
                        "type":  "timeseries",
-                       "title":  "Kubernetes only â€” Desired vs available deployment replicas",
+                       "title":  "Kubernetes only Desired vs available deployment replicas",
                        "datasource":  {
                                           "type":  "prometheus",
                                           "uid":  "prometheus"
@@ -157,7 +157,7 @@
                    {
                        "id":  2,
                        "type":  "timeseries",
-                       "title":  "Kubernetes only â€” Ready and unready pods",
+                       "title":  "Kubernetes only Ready and unready pods",
                        "datasource":  {
                                           "type":  "prometheus",
                                           "uid":  "prometheus"
@@ -194,7 +194,7 @@
                    {
                        "id":  3,
                        "type":  "table",
-                       "title":  "Kubernetes only â€” Pod phase, readiness and restarts",
+                       "title":  "Kubernetes only Pod phase, readiness and restarts",
                        "datasource":  {
                                           "type":  "prometheus",
                                           "uid":  "prometheus"
@@ -292,7 +292,7 @@
                    {
                        "id":  5,
                        "type":  "table",
-                       "title":  "Kubernetes only â€” Job and CronJob state",
+                       "title":  "Kubernetes only Job and CronJob state",
                        "datasource":  {
                                           "type":  "prometheus",
                                           "uid":  "prometheus"
@@ -343,7 +343,7 @@
                    {
                        "id":  6,
                        "type":  "logs",
-                       "title":  "Kubernetes only â€” Collected pod stdout/stderr",
+                       "title":  "Kubernetes only Collected pod stdout/stderr",
                        "datasource":  {
                                           "type":  "loki",
                                           "uid":  "loki"
@@ -371,7 +371,7 @@
                    {
                        "id":  7,
                        "type":  "text",
-                       "title":  "Kubernetes only â€” Events are not collected",
+                       "title":  "Kubernetes only Events are not collected",
                        "gridPos":  {
                                        "h":  4,
                                        "w":  24,
