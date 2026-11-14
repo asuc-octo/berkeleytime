@@ -1,7 +1,7 @@
 {
   "uid": "bt-resources",
   "title": "Berkeleytime — Resources",
-  "description": "Resource and capacity investigation using available telemetry sources. Investigation guide: docs/observability/runbooks.md.",
+  "description": "Resource and capacity investigation using available telemetry sources.",
   "tags": [
     "berkeleytime",
     "resources"
@@ -15,14 +15,7 @@
     "from": "now-1h",
     "to": "now"
   },
-  "links": [
-    {
-      "title": "Investigation guide",
-      "type": "link",
-      "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "targetBlank": true
-    }
-  ],
+  "links": [],
   "templating": {
     "list": [
       {
