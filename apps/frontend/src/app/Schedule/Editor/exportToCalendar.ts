@@ -1,10 +1,24 @@
 import { ISchedule } from "@/lib/api";
 
-const generateICS = (schedule: ISchedule) => {
-  const formatDate = (date: Date) => {
-    return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-  };
+export const CALENDAR_TIME_ZONE = "America/Los_Angeles";
 
+// A weekly recurring calendar entry, shared by the .ics and Google exports
+export interface CalendarEvent {
+  uid: string;
+  summary: string;
+  description: string;
+  location: string;
+  // Local Pacific time of the first occurrence, as YYYYMMDDTHHMMSS
+  start: string;
+  end: string;
+  rrule: string;
+}
+
+const formatDate = (date: Date) => {
+  return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+};
+
+export const getCalendarEvents = (schedule: ISchedule): CalendarEvent[] => {
   const formatTime = (timeStr: string, date: Date) => {
     const [hours, minutes] = timeStr.split(":");
     // Format as local time in Pacific timezone (no UTC conversion, no Z suffix)
@@ -54,30 +68,7 @@ const generateICS = (schedule: ISchedule) => {
     }
   };
 
-  const icsContent = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//BerkeleyTime//Schedule Export//EN",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
-    "BEGIN:VTIMEZONE",
-    "TZID:America/Los_Angeles",
-    "BEGIN:STANDARD",
-    "DTSTART:20071104T020000",
-    "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
-    "TZOFFSETFROM:-0700",
-    "TZOFFSETTO:-0800",
-    "TZNAME:PST",
-    "END:STANDARD",
-    "BEGIN:DAYLIGHT",
-    "DTSTART:20070311T020000",
-    "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
-    "TZOFFSETFROM:-0800",
-    "TZOFFSETTO:-0700",
-    "TZNAME:PDT",
-    "END:DAYLIGHT",
-    "END:VTIMEZONE",
-  ];
+  const events: CalendarEvent[] = [];
 
   schedule.classes?.forEach((scheduleClass) => {
     if (scheduleClass.hidden) return;
@@ -142,19 +133,15 @@ const generateICS = (schedule: ISchedule) => {
             ?.map((i) => `${i.givenName} ${i.familyName}`)
             .join(", ") || "";
 
-        icsContent.push(
-          "BEGIN:VEVENT",
-          `UID:${eventId}@berkeleytime.com`,
-          `DTSTART;TZID=America/Los_Angeles:${formatTime(meeting.startTime, startDate)}`,
-          `DTEND;TZID=America/Los_Angeles:${formatTime(meeting.endTime, startDate)}`,
-          `RRULE:FREQ=WEEKLY;BYDAY=${activeDays.join(",")};UNTIL=${formatDate(endDate)}`,
-          `SUMMARY:${summary}`,
-          `DESCRIPTION:${description}${instructor ? `\nInstructor: ${instructor}` : ""}`,
-          `LOCATION:${location}`,
-          `CREATED:${formatDate(new Date())}`,
-          `LAST-MODIFIED:${formatDate(new Date())}`,
-          "END:VEVENT"
-        );
+        events.push({
+          uid: eventId,
+          summary,
+          description: `${description}${instructor ? `\nInstructor: ${instructor}` : ""}`,
+          location,
+          start: formatTime(meeting.startTime, startDate),
+          end: formatTime(meeting.endTime, startDate),
+          rrule: `RRULE:FREQ=WEEKLY;BYDAY=${activeDays.join(",")};UNTIL=${formatDate(endDate)}`,
+        });
       });
     });
   });
@@ -175,20 +162,61 @@ const generateICS = (schedule: ISchedule) => {
     const startDate = findFirstOccurrenceDate(baseStartDate, activeDayIndices);
     const endDate = new Date(schedule.term?.endDate || new Date());
 
+    events.push({
+      uid: event._id,
+      summary: event.title,
+      description: event.description || "",
+      location: "",
+      start: formatTime(event.startTime, startDate),
+      end: formatTime(event.endTime, startDate),
+      rrule: `RRULE:FREQ=WEEKLY;BYDAY=${activeDays.join(",")};UNTIL=${formatDate(endDate)}`,
+    });
+  });
+
+  return events;
+};
+
+const generateICS = (schedule: ISchedule) => {
+  const icsContent = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//BerkeleyTime//Schedule Export//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VTIMEZONE",
+    `TZID:${CALENDAR_TIME_ZONE}`,
+    "BEGIN:STANDARD",
+    "DTSTART:20071104T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU",
+    "TZOFFSETFROM:-0700",
+    "TZOFFSETTO:-0800",
+    "TZNAME:PST",
+    "END:STANDARD",
+    "BEGIN:DAYLIGHT",
+    "DTSTART:20070311T020000",
+    "RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU",
+    "TZOFFSETFROM:-0800",
+    "TZOFFSETTO:-0700",
+    "TZNAME:PDT",
+    "END:DAYLIGHT",
+    "END:VTIMEZONE",
+  ];
+
+  for (const event of getCalendarEvents(schedule)) {
     icsContent.push(
       "BEGIN:VEVENT",
-      `UID:${event._id}@berkeleytime.com`,
-      `DTSTART;TZID=America/Los_Angeles:${formatTime(event.startTime, startDate)}`,
-      `DTEND;TZID=America/Los_Angeles:${formatTime(event.endTime, startDate)}`,
-      `RRULE:FREQ=WEEKLY;BYDAY=${activeDays.join(",")};UNTIL=${formatDate(endDate)}`,
-      `SUMMARY:${event.title}`,
-      `DESCRIPTION:${event.description || ""}`,
-      `LOCATION:`,
+      `UID:${event.uid}@berkeleytime.com`,
+      `DTSTART;TZID=${CALENDAR_TIME_ZONE}:${event.start}`,
+      `DTEND;TZID=${CALENDAR_TIME_ZONE}:${event.end}`,
+      event.rrule,
+      `SUMMARY:${event.summary}`,
+      `DESCRIPTION:${event.description}`,
+      `LOCATION:${event.location}`,
       `CREATED:${formatDate(new Date())}`,
       `LAST-MODIFIED:${formatDate(new Date())}`,
       "END:VEVENT"
     );
-  });
+  }
 
   icsContent.push("END:VCALENDAR");
   return icsContent.join("\r\n");
