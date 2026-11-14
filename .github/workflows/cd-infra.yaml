@@ -1,0 +1,297 @@
+# Deploys the Helm releases that CD: Deploy to Production/Staging does not:
+# bt-base (backup CronJob, MetalLB, cert issuer), Mongo and Redis.
+# Before this workflow they were installed by hand from infra/init.sh, so
+# changes to infra/base, infra/mongo and infra/redis never reached the cluster.
+#
+#   - Pull requests that touch those charts: posts the diff against what is
+#     deployed to the job summary.
+#   - Weekly: the same diff for every release from main. Fails if the cluster
+#     no longer matches the repository.
+#   - Run workflow (manual): diff, then with "apply" checked, deploys one
+#     release after the environment's approval. Applying Mongo or Redis
+#     restarts it when its pod spec changes; a Redis restart logs every user out.
+#
+# Releases, charts and values files are listed in infra/releases.json.
+#
+# The diff runs from GitHub with the HELM_DIFF_KUBECONFIG secret: a kubeconfig
+# for the read-only helm-diff-sa service account (infra/base/templates/helm-diff-role.yaml).
+# To regenerate it, on the server:
+#   token=$(kubectl -n bt create token helm-diff-sa --duration=8760h)
+#   kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' > /tmp/ca
+#   server=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-cluster bt --server="$server"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set clusters.bt.certificate-authority-data "$(cat /tmp/ca)"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-credentials helm-diff-sa --token="$token"
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-context bt --cluster=bt --user=helm-diff-sa --namespace=bt
+#   KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config use-context bt
+# then paste /tmp/helm-diff.kubeconfig into the repository secret and delete
+# the local files. The token expires after a year (or the API server's maximum).
+name: "CD: Infra Releases"
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch'
+  && format('{0} {1}', inputs.apply && 'Apply' || 'Diff', inputs.release)
+  || format('Infra diff ({0})', github.event_name) }}
+
+on:
+  pull_request:
+    paths:
+      - "infra/base/**"
+      - "infra/mongo/**"
+      - "infra/redis/**"
+      - "infra/releases.json"
+      - "infra/scripts/**"
+      - ".github/workflows/cd-infra.yaml"
+  schedule:
+    - cron: "23 17 * * 1" # Mondays, 17:23 UTC
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release to diff or apply"
+        required: true
+        type: choice
+        options:
+          - bt-base
+          - bt-prod-mongo
+          - bt-prod-redis
+          - bt-stage-mongo
+          - bt-stage-redis
+      apply:
+        description: "Apply after the diff (needs environment approval)"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-infra-${{ github.event_name == 'workflow_dispatch' && inputs.release || github.ref }}
+  cancel-in-progress: false
+
+env:
+  HELM_VERSION: "3.16.4"
+
+jobs:
+  select:
+    name: Select Releases
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: infra
+
+      - name: Select
+        id: select
+        env:
+          RELEASE: ${{ inputs.release }}
+        run: |
+          if [ -n "$RELEASE" ]; then
+            releases=$(jq -c --arg r "$RELEASE" '[.[] | select(.release == $r)]' infra/releases.json)
+          else
+            releases=$(jq -c '.' infra/releases.json)
+          fi
+          if [ "$(jq length <<< "$releases")" -eq 0 ]; then
+            echo "Release $RELEASE is not in infra/releases.json" >&2
+            exit 1
+          fi
+          echo "matrix={\"include\":$releases}" >> "$GITHUB_OUTPUT"
+
+  diff:
+    name: Diff ${{ matrix.release }}
+    needs: [select]
+    # Secrets are not available to pull requests from forks
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.select.outputs.matrix) }}
+    env:
+      RELEASE: ${{ matrix.release }}
+      CHART: ${{ matrix.chart }}
+      VALUES: ${{ matrix.values }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: infra
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v5
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Build Chart Dependencies
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build "infra/$CHART"
+
+      - name: Set up kubeconfig
+        env:
+          KUBECONFIG_CONTENT: ${{ secrets.HELM_DIFF_KUBECONFIG }}
+        run: |
+          mkdir -p ~/.kube
+          printf '%s' "$KUBECONFIG_CONTENT" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Check Cluster Access
+        run: |
+          # Helm stores releases as Secrets labelled owner=helm; reading them is
+          # all the diff needs from the cluster.
+          if ! out=$(kubectl get secrets --namespace bt -l owner=helm -o name --request-timeout=20s 2>&1); then
+            echo "$out"
+            echo "::error::The HELM_DIFF_KUBECONFIG secret cannot read Helm releases in namespace bt (expired or revoked token?). Regenerate it with the steps at the top of .github/workflows/cd-infra.yaml."
+            exit 1
+          fi
+
+      - name: Diff Against Cluster
+        run: |
+          args=(--namespace bt)
+          if [ -n "$VALUES" ]; then args+=(--values "infra/$CHART/$VALUES"); fi
+
+          {
+            echo "### $RELEASE"
+            echo
+            echo "Images:"
+            echo '```'
+            helm template "$RELEASE" "infra/$CHART" "${args[@]}" | infra/scripts/check-images.sh 2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Plain helm get manifest + helm template + diff, no helm-diff
+          # plugin: its GitHub release download returned 504 for minutes at a time.
+          code=0
+          values_file=""
+          if [ -n "$VALUES" ]; then values_file="infra/$CHART/$VALUES"; fi
+          infra/scripts/release-diff.sh "$RELEASE" "infra/$CHART" $values_file > diff.txt 2>&1 || code=$?
+          cat diff.txt
+
+          {
+            if [ "$code" -eq 0 ]; then
+              echo "No changes: the cluster matches the repository."
+            elif [ "$code" -eq 2 ]; then
+              echo "<details><summary>Changes the repository would make</summary>"
+              echo
+              echo '```diff'
+              head -c 60000 diff.txt
+              echo
+              echo '```'
+              echo "</details>"
+            else
+              echo "Diff failed (exit $code):"
+              echo '```'
+              tail -n 40 diff.txt
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then exit "$code"; fi
+          # The weekly run fails when the cluster drifted from main
+          if [ "$code" -eq 2 ] && [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            echo "::error::$RELEASE on the cluster does not match main. Apply it from 'Run workflow'."
+            exit 1
+          fi
+
+  apply:
+    name: Apply ${{ matrix.release }}
+    needs: [select, diff]
+    if: github.event_name == 'workflow_dispatch' && inputs.apply
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJSON(needs.select.outputs.matrix) }}
+    environment: ${{ matrix.environment }}
+    env:
+      RELEASE: ${{ matrix.release }}
+      CHART: ${{ matrix.chart }}
+      VALUES: ${{ matrix.values }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: infra
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v5
+        with:
+          version: ${{ env.HELM_VERSION }}
+
+      - name: Build Chart Dependencies
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm dependency build "infra/$CHART"
+
+      - name: Refuse Unpinned Images
+        run: |
+          args=(--namespace bt)
+          if [ -n "$VALUES" ]; then args+=(--values "infra/$CHART/$VALUES"); fi
+          helm template "$RELEASE" "infra/$CHART" "${args[@]}" | infra/scripts/check-images.sh
+
+      - name: Package and Push Chart
+        id: chart
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          # A version per commit, so the release history says what was deployed
+          version="1.0.0-g${GITHUB_SHA::7}"
+          helm package "infra/$CHART" --version "$version"
+          printf '%s' "$DOCKER_PASSWORD" | helm registry login registry-1.docker.io -u "$DOCKER_USERNAME" --password-stdin
+          helm push "bt-$CHART-$version.tgz" "oci://registry-1.docker.io/$DOCKER_USERNAME"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ -n "$VALUES" ]; then
+            echo "values_b64=$(base64 -w0 "infra/$CHART/$VALUES")" >> "$GITHUB_OUTPUT"
+          else
+            echo "values_b64=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: SSH and Helm Upgrade
+        uses: appleboy/ssh-action@v1.2.5
+        env:
+          CHART_REF: oci://registry-1.docker.io/octoberkeleytime/bt-${{ matrix.chart }}
+          CHART_VERSION: ${{ steps.chart.outputs.version }}
+          VALUES_B64: ${{ steps.chart.outputs.values_b64 }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          command_timeout: 20m
+          envs: RELEASE,CHART_REF,CHART_VERSION,VALUES_B64
+          script: |
+            set -euo pipefail
+            cri=unix:///run/containerd/containerd.sock
+
+            values=$(mktemp)
+            rendered=$(mktemp)
+            trap 'rm -f "$values" "$rendered"' EXIT
+            printf '%s' "$VALUES_B64" | base64 -d > "$values"
+
+            echo "=== Deployed before"
+            helm history "$RELEASE" --namespace bt --max 3 || true
+
+            # Make sure every image is on the node or can be pulled before
+            # anything restarts, so a missing image fails here instead of
+            # leaving the database unable to start.
+            helm template "$RELEASE" "$CHART_REF" --version "$CHART_VERSION" \
+              --namespace bt --values "$values" > "$rendered"
+            for image in $(grep -E '^[[:space:]]*-?[[:space:]]*image:[[:space:]]' "$rendered" \
+                | sed -E 's/^[[:space:]]*-?[[:space:]]*image:[[:space:]]*//; s/["'\'']//g' | sort -u); do
+              if crictl --runtime-endpoint "$cri" inspecti "$image" > /dev/null 2>&1; then
+                echo "on node: $image"
+              else
+                echo "pulling: $image"
+                crictl --runtime-endpoint "$cri" pull "$image"
+              fi
+            done
+
+            if ! helm upgrade "$RELEASE" "$CHART_REF" --version "$CHART_VERSION" \
+                --namespace bt --values "$values" --wait --timeout 10m; then
+              echo "=== Upgrade failed. Pods:"
+              kubectl -n bt get pods -l "app.kubernetes.io/instance=$RELEASE" -o wide || true
+              echo "Roll back with: helm rollback $RELEASE --namespace bt"
+              exit 1
+            fi
+
+            echo "=== Deployed after"
+            helm history "$RELEASE" --namespace bt --max 3
