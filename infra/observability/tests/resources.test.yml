@@ -2,7 +2,7 @@ rule_files:
   - ../files/resources.yml
 evaluation_interval: 30s
 tests:
-  - name: deduplicate before workload sums and resolve Deployment owners
+  - name: deduplicate container scrapes and resolve Deployment owners
     interval: 30s
     input_series:
       - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test",instance="a"}
@@ -19,8 +19,6 @@ tests:
         values: 1+0x10
       - series: kube_replicaset_owner{deployment_environment="kind",namespace="bt",replicaset="backend-rs",owner_kind="Deployment",owner_name="backend",owner_is_controller="true"}
         values: 1+0x10
-      - series: kube_pod_container_resource_requests{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",resource="cpu",unit="core"}
-        values: 0.1+0x10
       - series: kube_pod_container_resource_limits{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",uid="pod-1",resource="memory",unit="byte"}
         values: 134217728+0x10
       - series: container_cpu_cfs_throttled_periods_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
@@ -43,16 +41,6 @@ tests:
         exp_samples:
           - labels: '{__name__="bt:container_cpu_throttling:ratio5m",deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
             value: 0.1
-      - expr: bt:workload_cpu_cores:rate5m
-        eval_time: 5m
-        exp_samples:
-          - labels: '{__name__="bt:workload_cpu_cores:rate5m",deployment_environment="kind",namespace="bt",workload="backend",workload_type="Deployment"}'
-            value: 0.5
-      - expr: bt:workload_cpu_requests
-        eval_time: 5m
-        exp_samples:
-          - labels: '{__name__="bt:workload_cpu_requests",deployment_environment="kind",namespace="bt",workload="backend",workload_type="Deployment"}'
-            value: 0.1
       - expr: bt:container_memory_working_set_bytes / on
           (deployment_environment,namespace,pod,container) group_left()
           (bt:container_memory_limits > 0)
@@ -71,8 +59,7 @@ tests:
       - expr: bt:container_cpu_throttling:ratio5m
         eval_time: 5m
         exp_samples: []
-  - name: counter reset remains positive and missing owner does not invent workload
-      usage
+  - name: CPU usage remains positive after a counter reset
     interval: 30s
     input_series:
       - series: container_cpu_usage_seconds_total{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",job="cadvisor",node="test-node",image="backend:test"}
@@ -83,9 +70,6 @@ tests:
         exp_samples:
           - labels: '{deployment_environment="kind",namespace="bt",pod="backend-abc",container="backend",node="test-node"}'
             value: 1
-      - expr: bt:workload_cpu_cores:rate5m
-        eval_time: 5m
-        exp_samples: []
   - name: direct StatefulSet, standalone ReplicaSet and ownerless pod retain
       identities
     interval: 30s
@@ -152,27 +136,7 @@ tests:
       - expr: bt:container_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
         eval_time: 5m
         exp_samples: []
-      - expr: bt:workload_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:workload_cpu_requests{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:workload_cpu_limits{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-          > 0
-        eval_time: 5m
-        exp_samples: []
       - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:workload_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:workload_memory_requests{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: bt:workload_memory_limits{deployment_environment=~"kind",namespace=~".*",workload=~".*"}
-          > 0
         eval_time: 5m
         exp_samples: []
       - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
@@ -182,14 +146,6 @@ tests:
         eval_time: 5m
         exp_samples: []
       - expr: bt:container_cpu_throttling:ratio5m{deployment_environment=~"kind",namespace=~".*",pod=~".*"}
-        eval_time: 5m
-        exp_samples: []
-      - expr: max by (namespace,persistentvolumeclaim)
-          (kubelet_volume_stats_capacity_bytes{deployment_environment=~"kind",namespace=~".*"})
-        eval_time: 5m
-        exp_samples: []
-      - expr: max by (namespace,persistentvolumeclaim)
-          (kubelet_volume_stats_available_bytes{deployment_environment=~"kind",namespace=~".*"})
         eval_time: 5m
         exp_samples: []
       - expr: max by (namespace,persistentvolumeclaim)
@@ -209,39 +165,19 @@ tests:
           (kube_node_status_condition{deployment_environment=~"kind",node=~".*",status="true",condition=~"MemoryPressure|DiskPressure|PIDPressure"})
         eval_time: 5m
         exp_samples: []
-      - expr: rate(node_network_receive_bytes_total{deployment_environment=~"kind",node=~".*",device!~"lo|veth.*|docker.*|cni.*|br-.*"}[5m])
-        eval_time: 5m
-        exp_samples: []
-      - expr: rate(node_network_transmit_bytes_total{deployment_environment=~"kind",node=~".*",device!~"lo|veth.*|docker.*|cni.*|br-.*"}[5m])
-        eval_time: 5m
-        exp_samples: []
       - expr: bt:container_memory_working_set_bytes{deployment_environment=~"kind",namespace=~".*",container=~"prometheus|grafana|otel-collector|loki|tempo|node-exporter"}
         eval_time: 5m
         exp_samples: []
       - expr: bt:container_cpu_cores:rate5m{deployment_environment=~"kind",namespace=~".*",container=~"prometheus|grafana|otel-collector|loki|tempo|node-exporter"}
         eval_time: 5m
         exp_samples: []
-      - expr: mongodb_memory_usage_bytes{deployment_environment=~"kind",namespace=~".*",service_name="mongodb"}
+      - expr: mongodb_memory_usage_bytes{deployment_environment=~"kind",namespace=~".*",service_name="mongodb",type="resident"}
         eval_time: 5m
         exp_samples: []
       - expr: mongodb_connection_count{deployment_environment=~"kind",namespace=~".*",service_name="mongodb"}
         eval_time: 5m
         exp_samples: []
-      - expr: nginx_connections_current{deployment_environment=~"kind",namespace=~".*",service_name="nginx"}
-        eval_time: 5m
-        exp_samples: []
       - expr: rate(nginx_requests_total{deployment_environment=~"kind",namespace=~".*",service_name="nginx"}[5m])
-        eval_time: 5m
-        exp_samples: []
-  - name: recreated stable-name pod does not inherit the old UID resource limit
-    interval: 30s
-    input_series:
-      - series: kube_pod_container_resource_limits{deployment_environment="kind",namespace="bt",pod="database-0",container="database",uid="old-uid",resource="memory",unit="byte"}
-        values: 134217728+0x10
-      - series: kube_pod_owner{deployment_environment="kind",namespace="bt",pod="database-0",uid="new-uid",owner_kind="StatefulSet",owner_name="database",owner_is_controller="true"}
-        values: 1+0x10
-    promql_expr_test:
-      - expr: bt:workload_memory_limits
         eval_time: 5m
         exp_samples: []
   - name: throttling pairs each restart incarnation and deduplicates repeated scrapes

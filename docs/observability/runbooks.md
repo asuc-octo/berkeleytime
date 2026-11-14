@@ -8,7 +8,7 @@ problem. The dashboard does not send notifications or change resource limits.
 
 - Select the intended environment, namespace and time range. Namespace/pod
   selections apply to application and container panels; workload selection
-  applies to workload comparisons, and node selection applies to node panels.
+  narrows the available pod choices, and node selection applies to node panels.
 - Check **Collection targets**. `up=1` means Prometheus reached that scrape
   endpoint; it does not prove every Collector receiver or dependency is healthy.
 - Allow approximately 15–60 seconds for export/batching/scraping. Five-minute
@@ -16,7 +16,7 @@ problem. The dashboard does not send notifications or change resource limits.
 - **Unknown / No data** means a source or calculation is unavailable. It is not
   equivalent to zero usage, an unlimited container, or a healthy dependency.
 - Local Compose supplies application and nginx telemetry. Kubernetes CPU,
-  container memory, workload, node and PVC panels require their existing metric
+  container memory, node and PVC panels require their existing metric
   sources to be configured. Local MongoDB collection is not configured.
 
 ## CPU usage and configured allocations
@@ -26,9 +26,8 @@ five-minute window. Compare usage with GraphQL latency and node pressure during
 the same period.
 
 Requests reserve CPU; they are not caps. Exceeding a request does not prove a
-container is overloaded. A workload's configured-limit line sums the limits
-that exist; it is not a total capacity ceiling if some containers are unlimited.
-Inspect individual container limits in Kubernetes before interpreting it.
+container is overloaded. Inspect individual container requests and limits in
+Kubernetes when investigating CPU pressure.
 The backend intentionally has no CPU limit.
 
 ## CPU throttling
@@ -80,9 +79,9 @@ Redis command. Compare latency with response-cache hits and misses. A hit ratio
 needs positive traffic and both counter families; absent/idle data is not 0% or
 100% cache effectiveness.
 
-MongoDB memory is server-reported resident/virtual memory, not container working
-set. MongoDB connection categories overlap; nginx active/reading/writing/waiting
-categories also overlap. Do not add all categories into a supposed total.
+MongoDB memory is server-reported resident memory, distinct from container
+working set. MongoDB connection categories overlap; do not add all categories
+into a supposed total.
 
 ## Storage, nodes and monitoring overhead
 
@@ -96,10 +95,6 @@ Node pressure conditions describe shared infrastructure. Check the workloads on
 that node before attributing pressure to a service. Node-exporter reports Linux
 node metrics; in a kind cluster that node is a container in Docker's environment,
 not the entire laptop.
-
-Network charts show bytes per second per interface. Interfaces can cover
-overlapping traffic; do not blindly sum them or combine host and container
-network totals.
 
 Use the monitoring-stack CPU/memory panels to inspect Collector, Prometheus,
 Grafana, Loki and Tempo overhead. Compare collection frequency, series counts,

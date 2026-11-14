@@ -101,7 +101,7 @@
       },
       {
         "name": "workload",
-        "label": "Workload (comparison panels)",
+        "label": "Workload (pod choices)",
         "type": "query",
         "datasource": {
           "type": "prometheus",
@@ -192,7 +192,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "Resource pressure is evidence to investigate, not proof of a cause. **Compose has no Kubernetes, node, or PVC data.** Those panels should show Unknown / No data.\n\nEnvironment applies throughout; namespace/pod apply to application/container panels; workload applies to workload comparisons; service applies to backend process/API/cache panels; node applies to node panels. Dependencies have their own service identities. No limit configured is different from missing collection. [Investigation guide](https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md)."
+        "content": "Resource pressure is evidence to investigate, not proof of a cause. **Compose has no Kubernetes, node, or PVC data.** Those panels should show Unknown / No data.\n\nEnvironment applies throughout; namespace/pod apply to application/container panels; workload narrows the available pod choices; service applies to backend process/API/cache panels; node applies to node panels. Dependencies have their own service identities. No limit configured is different from missing collection. [Investigation guide](https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md)."
       }
     },
     {
@@ -788,7 +788,7 @@
     {
       "id": 11,
       "type": "text",
-      "title": "Kubernetes containers and workloads",
+      "title": "Kubernetes containers",
       "gridPos": {
         "x": 0,
         "y": 40,
@@ -797,7 +797,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "Unavailable in Compose. CPU is in cores (1 = one CPU core); memory is bytes. Workload comparisons require Developer 3’s kube-state-metrics. CPU limits can intentionally be absent. Workload limit lines are sums of configured limits, **not a total ceiling when any container is unlimited**."
+        "content": "Unavailable in Compose. CPU is in cores (1 = one CPU core); memory is bytes. CPU limits can intentionally be absent; the backend has no CPU limit configured."
       }
     },
     {
@@ -808,7 +808,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Which containers use CPU? Rate CPU seconds over five minutes, then deduplicate scrape series before graphing. Namespace and pod filters apply; workload filter applies only to workload panels. Check requests and node contention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Which containers use CPU? Rate CPU seconds over five minutes, then deduplicate scrape series before graphing. Namespace and pod filters apply; workload selection narrows the available pod choices. Check requests and node contention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
         "y": 44,
@@ -877,106 +877,6 @@
       ]
     },
     {
-      "id": 13,
-      "type": "timeseries",
-      "title": "Workload CPU: usage, requests, configured limits",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "How does workload CPU compare with reserved CPU and configured limits? Requests are reservations, not caps. Partial limit sums are not workload ceilings. Check individual container limits in Kubernetes before interpreting workload totals. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 12,
-        "y": 44,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "bt:workload_cpu_cores:rate5m{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}",
-          "legendFormat": "usage {{workload}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "B",
-          "expr": "bt:workload_cpu_requests{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}",
-          "legendFormat": "request {{workload}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "C",
-          "expr": "bt:workload_cpu_limits{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"} > 0",
-          "legendFormat": "configured limits {{workload}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "cores",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
       "id": 14,
       "type": "timeseries",
       "title": "Container working set",
@@ -986,8 +886,8 @@
       },
       "description": "Which containers retain memory? Container working set differs from process RSS and heap. Compare with per-container limits, then inspect growth over time. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
-        "x": 0,
-        "y": 52,
+        "x": 12,
+        "y": 44,
         "w": 12,
         "h": 8
       },
@@ -996,106 +896,6 @@
           "refId": "A",
           "expr": "bt:container_memory_working_set_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
           "legendFormat": "{{pod}} / {{container}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
-      "id": 15,
-      "type": "timeseries",
-      "title": "Workload memory: working set, requests, configured limits",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "How does workload memory compare with requests and configured limits? Partial limit sums are not a total ceiling. Inspect individual container ratios and configured limits before deciding capacity. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 12,
-        "y": 52,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "bt:workload_memory_working_set_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}",
-          "legendFormat": "working set {{workload}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "B",
-          "expr": "bt:workload_memory_requests{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}",
-          "legendFormat": "request {{workload}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "C",
-          "expr": "bt:workload_memory_limits{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"} > 0",
-          "legendFormat": "configured limits {{workload}}",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -1163,7 +963,7 @@
       "description": "How close is a container to its memory limit? Denominator is its positive configured limit; missing/zero limits produce no percentage. 85% sustained for five minutes is an investigation proposal, not a diagnosis. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 60,
+        "y": 52,
         "w": 12,
         "h": 8
       },
@@ -1250,7 +1050,7 @@
       "description": "How often is CPU quota exhausted? Ratio sums paired throttled-period rates over paired total-period rates across container incarnations in the five-minute window. Duplicate scrapes count once per cAdvisor id. This is not percent CPU time lost. No positive denominator or unsupported counters returns no data. Investigate >10% sustained for five minutes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 60,
+        "y": 52,
         "w": 12,
         "h": 8
       },
@@ -1325,10 +1125,10 @@
     {
       "id": 20,
       "type": "text",
-      "title": "Storage, nodes and network — Kubernetes only",
+      "title": "Storage and nodes — Kubernetes only",
       "gridPos": {
         "x": 0,
-        "y": 68,
+        "y": 60,
         "w": 24,
         "h": 4
       },
@@ -1336,94 +1136,6 @@
         "mode": "markdown",
         "content": "Node data is cluster-level and ignores namespace/service/workload filters. In kind, nodes are Linux containers; these readings do not describe all macOS capacity. PVC metrics depend on storage-driver support; hostPath often supplies no volume statistics."
       }
-    },
-    {
-      "id": 21,
-      "type": "timeseries",
-      "title": "PVC capacity and free space",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Which reported volumes are filling up? Kubelet volume statistics report bytes by PVC; missing statistics mean Unknown, not empty or healthy. Check the storage driver and actual volume mounts. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 0,
-        "y": 72,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "max by (namespace,persistentvolumeclaim) (kubelet_volume_stats_capacity_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\"})",
-          "legendFormat": "capacity {{namespace}}/{{persistentvolumeclaim}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "B",
-          "expr": "max by (namespace,persistentvolumeclaim) (kubelet_volume_stats_available_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\"})",
-          "legendFormat": "free {{namespace}}/{{persistentvolumeclaim}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
     },
     {
       "id": 22,
@@ -1435,8 +1147,8 @@
       },
       "description": "What fraction of reported PVC capacity remains available? Divide only by positive capacity. Less than 15% for five minutes warrants investigating retention and growth; never infer PVC values from host filesystem values. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
-        "x": 12,
-        "y": 72,
+        "x": 0,
+        "y": 64,
         "w": 12,
         "h": 8
       },
@@ -1522,8 +1234,8 @@
       },
       "description": "How much usable filesystem space remains on each Linux node? Excludes pseudo filesystems. This is node filesystem capacity, not PVC capacity. Investigate sustained free space below 15% and check the mount path. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
-        "x": 0,
-        "y": 80,
+        "x": 12,
+        "y": 64,
         "w": 12,
         "h": 8
       },
@@ -1609,8 +1321,8 @@
       },
       "description": "Is Kubernetes reporting memory, disk or PID pressure? Conditions come from kube-state-metrics and are cluster-level. Check affected nodes and scheduling events rather than attributing pressure to a specific service. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
-        "x": 12,
-        "y": 80,
+        "x": 0,
+        "y": 72,
         "w": 12,
         "h": 8
       },
@@ -1676,94 +1388,6 @@
       ]
     },
     {
-      "id": 25,
-      "type": "timeseries",
-      "title": "Node network throughput by interface",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "How many bytes per second cross each node interface? Excludes loopback and common virtual bridges/veth; interfaces stay separate to avoid counting overlapping network layers. Check interface topology before summing. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 0,
-        "y": 88,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "rate(node_network_receive_bytes_total{deployment_environment=~\"$environment\",node=~\"$node\",device!~\"lo|veth.*|docker.*|cni.*|br-.*\"}[5m])",
-          "legendFormat": "receive {{node}} {{device}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        },
-        {
-          "refId": "B",
-          "expr": "rate(node_network_transmit_bytes_total{deployment_environment=~\"$environment\",node=~\"$node\",device!~\"lo|veth.*|docker.*|cni.*|br-.*\"}[5m])",
-          "legendFormat": "transmit {{node}} {{device}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
       "id": 26,
       "type": "timeseries",
       "title": "Observability stack working set",
@@ -1774,7 +1398,7 @@
       "description": "How much memory do the monitoring components use? Selects observability container names independently of workload and pod filters; namespace/environment still apply. Compare with limits before increasing retention or collection volume. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 88,
+        "y": 72,
         "w": 12,
         "h": 8
       },
@@ -1850,7 +1474,7 @@
       "description": "How much CPU do monitoring components use? Selects stack container names independently of workload and pod filters. Compare scrape/query volume before changing intervals or retention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 96,
+        "y": 80,
         "w": 12,
         "h": 8
       },
@@ -1921,7 +1545,7 @@
       "title": "MongoDB and nginx — validated receivers required",
       "gridPos": {
         "x": 0,
-        "y": 104,
+        "y": 88,
         "w": 24,
         "h": 4
       },
@@ -1933,22 +1557,22 @@
     {
       "id": 29,
       "type": "timeseries",
-      "title": "MongoDB resident / virtual memory",
+      "title": "MongoDB resident memory",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "What memory does MongoDB report? Server-reported resident/virtual memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "What memory does MongoDB report? Server-reported resident memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 0,
-        "y": 108,
+        "y": 92,
         "w": 12,
         "h": 8
       },
       "targets": [
         {
           "refId": "A",
-          "expr": "mongodb_memory_usage_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"mongodb\"}",
+          "expr": "mongodb_memory_usage_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"mongodb\",type=\"resident\"}",
           "legendFormat": "{{type}}",
           "datasource": {
             "type": "prometheus",
@@ -2017,7 +1641,7 @@
       "description": "Are database connections increasing? Gauges show active/current/available connection categories; do not add them together. Check connection pooling and request concurrency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
         "x": 12,
-        "y": 108,
+        "y": 92,
         "w": 12,
         "h": 8
       },
@@ -2026,82 +1650,6 @@
           "refId": "A",
           "expr": "mongodb_connection_count{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"mongodb\"}",
           "legendFormat": "{{type}}",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "range": true,
-          "instant": false,
-          "format": "time_series"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "noValue": "Unknown / No data",
-          "decimals": 2,
-          "color": {
-            "mode": "palette-classic"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
-    },
-    {
-      "id": 31,
-      "type": "timeseries",
-      "title": "nginx current connections",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "Are connections accumulating at the proxy? Active includes other states, so do not sum categories. Check downstream latency and backend readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-      "gridPos": {
-        "x": 0,
-        "y": 116,
-        "w": 12,
-        "h": 8
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "expr": "nginx_connections_current{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"nginx\"}",
-          "legendFormat": "{{state}}",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
@@ -2168,8 +1716,8 @@
       },
       "description": "How much traffic reaches nginx? Counter rate covers five minutes and may include internal status scraping. Compare with application request rates and readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
       "gridPos": {
-        "x": 12,
-        "y": 116,
+        "x": 0,
+        "y": 100,
         "w": 12,
         "h": 8
       },

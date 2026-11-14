@@ -16,15 +16,6 @@ groups:
       - record: bt:container_memory_working_set_bytes
         expr: max by (deployment_environment, namespace, pod, container, node)
           (container_memory_working_set_bytes{job="cadvisor",container!="",container!="POD",pod!=""})
-      - record: bt:container_cpu_requests
-        expr: max by (deployment_environment, namespace, pod, container, uid)
-          (kube_pod_container_resource_requests{resource="cpu",unit="core"})
-      - record: bt:container_cpu_limits
-        expr: max by (deployment_environment, namespace, pod, container, uid)
-          (kube_pod_container_resource_limits{resource="cpu",unit="core"})
-      - record: bt:container_memory_requests
-        expr: max by (deployment_environment, namespace, pod, container, uid)
-          (kube_pod_container_resource_requests{resource="memory",unit="byte"})
       - record: bt:container_memory_limits
         expr: max by (deployment_environment, namespace, pod, container, uid)
           (kube_pod_container_resource_limits{resource="memory",unit="byte"})
@@ -53,29 +44,3 @@ groups:
           (sum by (deployment_environment, namespace, pod, container, node) (
             bt:container_cpu_periods:rate5m
           ) > 0)
-      - record: bt:workload_cpu_cores:rate5m
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_cpu_cores:rate5m * on (deployment_environment,
-          namespace, pod) group_left(uid, workload, workload_type)
-          bt:pod_owner:info)
-      - record: bt:workload_memory_working_set_bytes
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_memory_working_set_bytes * on (deployment_environment,
-          namespace, pod) group_left(uid, workload, workload_type)
-          bt:pod_owner:info)
-      - record: bt:workload_cpu_requests
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_cpu_requests * on (deployment_environment, namespace,
-          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)
-      - record: bt:workload_cpu_limits
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_cpu_limits * on (deployment_environment, namespace, pod,
-          uid) group_left(workload, workload_type) bt:pod_owner:info)
-      - record: bt:workload_memory_requests
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_memory_requests * on (deployment_environment, namespace,
-          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)
-      - record: bt:workload_memory_limits
-        expr: sum by (deployment_environment, namespace, workload, workload_type)
-          (bt:container_memory_limits * on (deployment_environment, namespace,
-          pod, uid) group_left(workload, workload_type) bt:pod_owner:info)
