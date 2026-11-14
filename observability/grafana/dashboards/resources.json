@@ -192,7 +192,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "Resource pressure is evidence to investigate, not proof of a cause. **Compose has no Kubernetes, node, or PVC data.** Those panels should show Unknown / No data.\n\nEnvironment applies throughout; namespace/pod apply to application/container panels; workload narrows the available pod choices; service applies to backend process/API/cache panels; node applies to node panels. Dependencies have their own service identities. No limit configured is different from missing collection. [Investigation guide](https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md)."
+        "content": "Resource pressure is evidence to investigate, not proof of a cause. **Compose has no Kubernetes, node, or PVC data.** Those panels should show Unknown / No data.\n\nEnvironment applies throughout; namespace/pod apply to application/container panels; workload narrows the available pod choices; service applies to backend process/API/cache panels; node applies to node panels. Dependencies have their own service identities. No limit configured is different from missing collection."
       }
     },
     {
@@ -203,7 +203,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Is each configured scrape endpoint reachable? This checks scraping only, not successful receiver collection or whole-stack health. In Compose, Kubernetes targets are absent. Check Targets and Collector logs when a source is missing. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Is each configured scrape endpoint reachable? This checks scraping only, not successful receiver collection or whole-stack health. In Compose, Kubernetes targets are absent. Check Targets and Collector logs when a source is missing. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 4,
@@ -263,13 +263,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 4,
@@ -294,7 +288,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How much memory does the backend process use? Heap is JavaScript memory; RSS includes other resident allocations. Compare with container working set and its memory limit, then investigate allocation or GC behavior. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How much memory does the backend process use? Heap is JavaScript memory; RSS includes other resident allocations. Compare with container working set and its memory limit, then investigate allocation or GC behavior. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 16,
@@ -366,13 +360,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 6,
@@ -382,7 +370,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Is the backend pausing? Max and p99 cover each 15-second export window, sampled at 20 ms resolution. Compare sustained increases with GraphQL latency; investigate GC and synchronous work. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Is the backend pausing? Max and p99 cover each 15-second export window, sampled at 20 ms resolution. Compare sustained increases with GraphQL latency; investigate GC and synchronous work. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 16,
@@ -461,13 +449,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 7,
@@ -477,7 +459,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Does application latency rise alongside resource use? Histogram p95 is calculated over five-minute rates, grouped by service and pod. Check traffic mix, event loop and dependency latency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Does application latency rise alongside resource use? Histogram p95 is calculated over five-minute rates, grouped by service and pod. Check traffic mix, event loop and dependency latency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 24,
@@ -537,13 +519,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 8,
@@ -553,7 +529,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Is the backend cache waiting on Redis? Histogram p95 covers instrumented get/set/delete operations over five minutes, not all Redis commands. Compare by operation and check Redis reachability and load. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Is the backend cache waiting on Redis? Histogram p95 covers instrumented get/set/delete operations over five minutes, not all Redis commands. Compare by operation and check Redis reachability and load. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 24,
@@ -613,13 +589,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 9,
@@ -629,7 +599,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Are cache hits or misses changing? Five-minute rates count instrumented response cache outcomes. Check traffic mix and cache invalidation; idle traffic produces zero rates when counters exist. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Are cache hits or misses changing? Five-minute rates count instrumented response cache outcomes. Check traffic mix and cache invalidation; idle traffic produces zero rates when counters exist. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 32,
@@ -701,13 +671,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 10,
@@ -717,7 +681,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "What fraction of cache lookups hit? Denominator is hits plus misses over five minutes. No traffic or a missing counter returns no ratio, never a fabricated 0% or 100%. Check activity before interpreting. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "What fraction of cache lookups hit? Denominator is hits plus misses over five minutes. No traffic or a missing counter returns no ratio, never a fabricated 0% or 100%. Check activity before interpreting. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 32,
@@ -777,13 +741,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 11,
@@ -808,7 +766,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Which containers use CPU? Rate CPU seconds over five minutes, then deduplicate scrape series before graphing. Namespace and pod filters apply; workload selection narrows the available pod choices. Check requests and node contention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Which containers use CPU? Rate CPU seconds over five minutes, then deduplicate scrape series before graphing. Namespace and pod filters apply; workload selection narrows the available pod choices. Check requests and node contention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 44,
@@ -868,13 +826,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 14,
@@ -884,7 +836,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Which containers retain memory? Container working set differs from process RSS and heap. Compare with per-container limits, then inspect growth over time. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Which containers retain memory? Container working set differs from process RSS and heap. Compare with per-container limits, then inspect growth over time. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 44,
@@ -944,13 +896,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 16,
@@ -960,7 +906,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How close is a container to its memory limit? Denominator is its positive configured limit; missing/zero limits produce no percentage. 85% sustained for five minutes is an investigation proposal, not a diagnosis. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How close is a container to its memory limit? Denominator is its positive configured limit; missing/zero limits produce no percentage. 85% sustained for five minutes is an investigation proposal, not a diagnosis. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 52,
@@ -1031,13 +977,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 17,
@@ -1047,7 +987,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How often is CPU quota exhausted? Ratio sums paired throttled-period rates over paired total-period rates across container incarnations in the five-minute window. Duplicate scrapes count once per cAdvisor id. This is not percent CPU time lost. No positive denominator or unsupported counters returns no data. Investigate >10% sustained for five minutes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How often is CPU quota exhausted? Ratio sums paired throttled-period rates over paired total-period rates across container incarnations in the five-minute window. Duplicate scrapes count once per cAdvisor id. This is not percent CPU time lost. No positive denominator or unsupported counters returns no data. Investigate >10% sustained for five minutes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 52,
@@ -1114,13 +1054,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 20,
@@ -1145,7 +1079,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "What fraction of reported PVC capacity remains available? Divide only by positive capacity. Less than 15% for five minutes warrants investigating retention and growth; never infer PVC values from host filesystem values. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "What fraction of reported PVC capacity remains available? Divide only by positive capacity. Less than 15% for five minutes warrants investigating retention and growth; never infer PVC values from host filesystem values. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 64,
@@ -1216,13 +1150,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 23,
@@ -1232,7 +1160,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How much usable filesystem space remains on each Linux node? Excludes pseudo filesystems. This is node filesystem capacity, not PVC capacity. Investigate sustained free space below 15% and check the mount path. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How much usable filesystem space remains on each Linux node? Excludes pseudo filesystems. This is node filesystem capacity, not PVC capacity. Investigate sustained free space below 15% and check the mount path. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 64,
@@ -1303,13 +1231,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 24,
@@ -1319,7 +1241,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Is Kubernetes reporting memory, disk or PID pressure? Conditions come from kube-state-metrics and are cluster-level. Check affected nodes and scheduling events rather than attributing pressure to a specific service. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Is Kubernetes reporting memory, disk or PID pressure? Conditions come from kube-state-metrics and are cluster-level. Check affected nodes and scheduling events rather than attributing pressure to a specific service. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 72,
@@ -1379,13 +1301,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 26,
@@ -1395,7 +1311,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How much memory do the monitoring components use? Selects observability container names independently of workload and pod filters; namespace/environment still apply. Compare with limits before increasing retention or collection volume. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How much memory do the monitoring components use? Selects observability container names independently of workload and pod filters; namespace/environment still apply. Compare with limits before increasing retention or collection volume. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 72,
@@ -1455,13 +1371,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 27,
@@ -1471,7 +1381,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How much CPU do monitoring components use? Selects stack container names independently of workload and pod filters. Compare scrape/query volume before changing intervals or retention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How much CPU do monitoring components use? Selects stack container names independently of workload and pod filters. Compare scrape/query volume before changing intervals or retention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 80,
@@ -1531,13 +1441,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 28,
@@ -1562,7 +1466,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "What memory does MongoDB report? Server-reported resident memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "What memory does MongoDB report? Server-reported resident memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 92,
@@ -1622,13 +1526,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 30,
@@ -1638,7 +1536,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Are database connections increasing? Gauges show active/current/available connection categories; do not add them together. Check connection pooling and request concurrency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "Are database connections increasing? Gauges show active/current/available connection categories; do not add them together. Check connection pooling and request concurrency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 12,
         "y": 92,
@@ -1698,13 +1596,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     },
     {
       "id": 32,
@@ -1714,7 +1606,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "How much traffic reaches nginx? Counter rate covers five minutes and may include internal status scraping. Compare with application request rates and readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples. Next steps: https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
+      "description": "How much traffic reaches nginx? Counter rate covers five minutes and may include internal status scraping. Compare with application request rates and readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
       "gridPos": {
         "x": 0,
         "y": 100,
@@ -1774,13 +1666,7 @@
           "sort": "desc"
         }
       },
-      "links": [
-        {
-          "title": "Investigation guide",
-          "url": "https://github.com/asuc-octo/berkeleytime/blob/main/docs/observability/runbooks.md",
-          "targetBlank": true
-        }
-      ]
+      "links": []
     }
   ]
 }
