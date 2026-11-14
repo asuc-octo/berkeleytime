@@ -3,15 +3,18 @@
 <!-- toc -->
 
 ## Introduction
+
 ### What is the Domain Name System (DNS)?
 
 The DNS is a system used across to internet to associate domains, such as `berkeleytime.com`, with IP addresses, such as `123.123.123.123`. Internet browsers use the DNS protocol to translate common domains to IP addresses to know where to route packets.
 
 UC Berkeley classes that cover how a DNS work include:
+
 - [CS 168 (Internet Architecture)](https://www2.eecs.berkeley.edu/Courses/CS168/)
 - [CS 161 (Computer Security)](https://www2.eecs.berkeley.edu/Courses/CS161/)
 
 Learn more about DNSs:
+
 - [CS 168 Textbook - DNS](https://textbook.cs168.io/applications/dns.html)
 - [What is DNS? | How DNS works](https://www.cloudflare.com/learning/dns/what-is-dns/)
 
@@ -20,10 +23,12 @@ Learn more about DNSs:
 A TLS Certificate secures connections between internet browsers and web servers by authenticating web servers, exchanging keys to encrypt data packets, and providing integrity guarantees over the connection. Connections to websites secured with TLS certificates typically use HTTPS instead of HTTP.
 
 UC Berkeley classes that cover how TLS Certificates work include:
+
 - [CS 161 (Computer Security)](https://www2.eecs.berkeley.edu/Courses/CS161/)
 - [CS 168 (Internet Architecture)](https://www2.eecs.berkeley.edu/Courses/CS168/)
 
 Learn more about SSL/TLS (SSL is the predecessor to TLS):
+
 - [What is an SSL Certificate?](https://www.cloudflare.com/learning/ssl/what-is-an-ssl-certificate/)
 - [What is SSL? | SSL definition](https://www.cloudflare.com/learning/ssl/what-is-ssl/)
 
@@ -45,7 +50,7 @@ Recall from [An HTTP Request's Life](./onboarding.md#an-http-requests-life), `in
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    # ...
+  # ...
 spec:
   ingressClassName: nginx
   tls:
@@ -67,7 +72,6 @@ spec:
 This example `Ingress` resource maps packets routed to `berkeleytime.com/` to the frontend service and maps packets routed to `berkeleytime.com/api` to the backend service.
 
 The `ingressClassName` instructs `ingress-nginx` to manage this `Ingress` resource as one of its reverse proxy destinations.
-
 
 ### Certificate Manager
 

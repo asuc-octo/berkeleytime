@@ -30,9 +30,9 @@ services:
     image: otel/opentelemetry-collector-contrib:0.96.0
     command: ["--config=/etc/otelcol/config.yaml"]
     ports:
-      - "4317:4317"    # OTLP gRPC receiver
-      - "4318:4318"    # OTLP HTTP receiver
-      - "9464:9464"    # Prometheus metrics exporter
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+      - "9464:9464" # Prometheus metrics exporter
     volumes:
       - ./observability/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
     depends_on:
@@ -64,7 +64,7 @@ services:
     image: grafana/tempo:2.4.1
     command: ["-config.file=/etc/tempo/tempo.yaml"]
     ports:
-      - "${DEV_PORT_PREFIX:-30}09:3200"    # Tempo HTTP API (query traces)
+      - "${DEV_PORT_PREFIX:-30}09:3200" # Tempo HTTP API (query traces)
     volumes:
       - ./observability/tempo.yaml:/etc/tempo/tempo.yaml:ro
       - tempo-data:/tmp/tempo

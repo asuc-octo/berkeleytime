@@ -1,17 +1,14 @@
 #!/usr/bin/env node
-
 import { randomBytes } from "node:crypto";
 import { chmodSync, readFileSync, writeFileSync } from "node:fs";
 
 const envPath = process.argv[2] ?? ".env";
 const contentState = { value: readFileSync(envPath, "utf8") };
 const values = new Map(
-  contentState.value
-    .split(/\r?\n/)
-    .flatMap((line) => {
-      const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
-      return match ? [[match[1], match[2]]] : [];
-    })
+  contentState.value.split(/\r?\n/).flatMap((line) => {
+    const match = line.match(/^([A-Z0-9_]+)=(.*)$/);
+    return match ? [[match[1], match[2]]] : [];
+  })
 );
 
 const generated = [];
@@ -60,7 +57,10 @@ if (missing("MONGODB_URI") || values.get("MONGODB_URI") === legacyMongoUri) {
 if (missing("REDIS_URI") || values.get("REDIS_URI") === legacyRedisUri) {
   set("REDIS_URI", `redis://:${redisPassword}@redis:6379`);
 }
-if (missing("S3_SECRET_ACCESS_KEY") || values.get("S3_SECRET_ACCESS_KEY") === "password") {
+if (
+  missing("S3_SECRET_ACCESS_KEY") ||
+  values.get("S3_SECRET_ACCESS_KEY") === "password"
+) {
   set("S3_SECRET_ACCESS_KEY", minioPassword);
 }
 if (missing("S3_ACCESS_KEY_ID") || values.get("S3_ACCESS_KEY_ID") === "root") {

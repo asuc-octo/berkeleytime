@@ -1,7 +1,7 @@
 {
   "extends": "@repo/typescript-config/node.json",
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": true
   },
   "include": ["src", "../shared/staff.ts"]
 }

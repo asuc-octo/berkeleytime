@@ -59,7 +59,7 @@ With specific prompts, we risk sacrificing a potentially more optimal solution a
 ### Always Test
 
 - **Run the app.** After agent-generated changes, use the feature yourself (run the frontend, hit the backend, run the datapullers locally etc.)
-- **Use the existing pipeline.** Run type-check, lint, and build (`npm run type-check`, `npm run lint`, `npm run build` / Turbo) and fix any failures. This is also done automatically pre-push. 
+- **Use the existing pipeline.** Run type-check, lint, and build (`npm run type-check`, `npm run lint`, `npm run build` / Turbo) and fix any failures. This is also done automatically pre-push.
 
 ### Never Settle
 

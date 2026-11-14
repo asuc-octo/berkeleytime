@@ -41,6 +41,7 @@ The backend codebase has a simple folder layout, as described below.
 ```
 
 Here is a list of services bootstrapped by the files in `src/bootstrap`:
+
 - **Web Server Framework:** [ExpressJS](https://expressjs.com/)
 - **GraphQL Server:** [Apollo Server](https://www.apollographql.com/docs/apollo-server)
 - **Authentication:** [Passport](https://www.passportjs.org/)
@@ -78,16 +79,13 @@ The above diagram shows a simplified request-to-response pipeline within a modul
 1. A [GraphQL request](https://graphql.org/learn/queries/) is sent to the backend server. A request looks like a JSON skeleton, containing only keys but no values. The request is "routed" to the specific module.[^2]
 
 2. The **resolver** handles the request by calling the specific controller method necessary.
-
-    - For more information on how the resolver should be designed, it is recommended to consult the [Apollo Server documentation on resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers).
+   - For more information on how the resolver should be designed, it is recommended to consult the [Apollo Server documentation on resolvers](https://www.apollographql.com/docs/apollo-server/data/resolvers).
 
 3. The **controller** queries the Mongo database, using user input to filter documents.
-
-    - We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^3] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
+   - We use [Mongoose](https://mongoosejs.com/) as an abstraction layer between our application logic and MongoDB queries.[^3] Both [Mongoose docs](https://mongoosejs.com/docs/index.html) and [MongoDB docs](https://www.mongodb.com/docs/manual/crud/) on queries are valuable resources.
 
 4. The **formatter** translates the DB response from a database type, from `berkeleytime/packages/common/src/models`, into a GraphQL type, from `[module]/generated_types/module-types.ts`.
-
-    - Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
+   - Note that not all modules have a formatter because the database type and GraphQL type are sometimes identical.
 
 5. Finally, the result is returned as a [GraphQL response](https://graphql.org/learn/response/) in the shape of a JSON, matching the query from step 1.[^4]
 
@@ -154,22 +152,25 @@ A model file will contain TypeScript types mirroring the database model, a Mongo
 // packages/common/src/models/term.ts
 
 // defines TypeScript type for nested object
-export interface ISessionItem { /* ... */ }
+export interface ISessionItem {
+  /* ... */
+}
 
 // defines TypeScript type for term object
-export interface ITermItem { /* ... */ }
+export interface ITermItem {
+  /* ... */
+}
 
 // defines Mongoose schema using TypeScript type
-const termSchema = new Schema<ITermItem>({ /* ... */ });
+const termSchema = new Schema<ITermItem>({
+  /* ... */
+});
 
 // defines database indexes
-termSchema.index( /* ... */ );
+termSchema.index(/* ... */);
 
 // creates Mongo model instance
-export const TermModel: Model<ITermItem> = model<ITermItem>(
-  "Term",
-  termSchema
-);
+export const TermModel: Model<ITermItem> = model<ITermItem>("Term", termSchema);
 ```
 
 ### Testing the API
@@ -181,10 +182,10 @@ not raw GraphQL documents or Apollo Sandbox requests. Add a named `gql`
 document to an approved client source, run `npm run generate:operations`, and
 test it through the shared persisted-operation transport. Review the repository
 security guide before changing this boundary. For GraphQL concepts, see:
+
 - [schemas and types](https://graphql.org/learn/schema/)
 - [queries](https://graphql.org/learn/queries/)
 - [mutations](https://graphql.org/learn/mutations/)
-
 
 ## Internal HTTP Service
 

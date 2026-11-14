@@ -30,7 +30,7 @@
   - [DNS & Certificates](./core/infrastructure/dns-certificates.md)
   - [Runbooks](./core/infrastructure/runbooks.md)
 
- - [API Sandbox](./core/api-sandbox/README.md)
+- [API Sandbox](./core/api-sandbox/README.md)
 
 - [Packages](./core/packages/README.md)
   - [@repo/BtLL](./core/BtLL/README.md)
@@ -54,8 +54,7 @@
 
 - [DeCal Classes](./features/decal-classes.md)
 
-<!--
----
+## <!--
 
 # Fall 2024 Pods
 

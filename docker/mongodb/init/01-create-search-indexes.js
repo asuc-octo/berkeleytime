@@ -7,22 +7,16 @@ db.createCollection("catalog_classes");
 
 const existing = db.catalog_classes.getSearchIndexes("catalog_search");
 if (existing.length === 0) {
-  db.catalog_classes.createSearchIndex(
-    "catalog_search",
-    {
-      mappings: {
-        dynamic: false,
-        fields: {
-          searchableNames: [
-            { type: "autocomplete" },
-            { type: "string" }
-          ],
-          courseTitle: { type: "string" },
-          courseDescription: { type: "string" }
-        }
-      }
-    }
-  );
+  db.catalog_classes.createSearchIndex("catalog_search", {
+    mappings: {
+      dynamic: false,
+      fields: {
+        searchableNames: [{ type: "autocomplete" }, { type: "string" }],
+        courseTitle: { type: "string" },
+        courseDescription: { type: "string" },
+      },
+    },
+  });
   print("Created catalog_search index.");
 } else {
   print("catalog_search index already exists, skipping.");

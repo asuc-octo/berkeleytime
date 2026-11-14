@@ -3,8 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: tempo-config
-  labels:
-    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.tempoLabels" . | nindent 4 } }
 data:
   tempo.yaml: |
     stream_over_http_enabled: true
@@ -56,29 +55,25 @@ data:
           max_bytes_per_trace: {{ .Values.tempo.limits.maxBytesPerTrace }}
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: tempo-data
-  labels:
-    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.tempoLabels" . | nindent 4 } }
 spec:
   storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.tempo.storage.size }}
+      storage: { { .Values.tempo.storage.size } }
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tempo
-  labels:
-    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.tempoLabels" . | nindent 4 } }
 spec:
   replicas: 1
   strategy:
@@ -88,19 +83,18 @@ spec:
       app.kubernetes.io/name: tempo
   template:
     metadata:
-      labels:
-        {{- include "bt-observability.tempoLabels" . | nindent 8 }}
+      labels: { { - include "bt-observability.tempoLabels" . | nindent 8 } }
       annotations:
-        checksum/config: {{ .Values.tempo | toJson | sha256sum }}
+        checksum/config: { { .Values.tempo | toJson | sha256sum } }
     spec:
       containers:
         - name: tempo
-          image: {{ .Values.tempo.image }}
+          image: { { .Values.tempo.image } }
           args:
             - "-config.file=/etc/tempo/tempo.yaml"
           env:
             - name: GOMEMLIMIT
-              value: {{ .Values.tempo.goMemLimit | quote }}
+              value: { { .Values.tempo.goMemLimit | quote } }
           ports:
             - name: http
               containerPort: 3200
@@ -114,8 +108,7 @@ spec:
             - name: otlp-http
               containerPort: 4318
               protocol: TCP
-          resources:
-            {{- toYaml .Values.tempo.resources | nindent 12 }}
+          resources: { { - toYaml .Values.tempo.resources | nindent 12 } }
           volumeMounts:
             - name: config
               mountPath: /etc/tempo
@@ -141,13 +134,11 @@ spec:
             claimName: tempo-data
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: tempo
-  labels:
-    {{- include "bt-observability.tempoLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.tempoLabels" . | nindent 4 } }
 spec:
   type: ClusterIP
   selector:

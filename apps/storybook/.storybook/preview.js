@@ -10,10 +10,10 @@ const preview = {
 
     backgrounds: {
       options: {
-        dark: { name: 'Dark', value: '#18181b' },
-        light: { name: 'Light', value: '#f1f5f9' },
-        dark_backdrop: { name: 'Dark Backdrop', value: '#09090b' },
-        light_backdrop: { name: 'Light Backdrop', value: '#f8fafc' },
+        dark: { name: "Dark", value: "#18181b" },
+        light: { name: "Light", value: "#f1f5f9" },
+        dark_backdrop: { name: "Dark Backdrop", value: "#09090b" },
+        light_backdrop: { name: "Light Backdrop", value: "#f8fafc" },
       },
     },
     a11y: {
@@ -24,7 +24,7 @@ const preview = {
     },
     initialGlobals: {
       // 👇 Set the initial background color
-      backgrounds: { value: 'dark' },
+      backgrounds: { value: "dark" },
     },
   },
 };

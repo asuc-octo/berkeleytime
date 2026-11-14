@@ -266,7 +266,7 @@ services:
     restart: always
     volumes:
       - ./apps/docs:/apps/docs
-      
+
   # if using staff photos in dev, use --profile dev
   minio:
     image: ${MINIO_IMAGE:?Set MINIO_IMAGE in .env}
@@ -281,7 +281,7 @@ services:
     networks:
       - bt
     volumes:
-      - 'minio:/data/minio'
+      - "minio:/data/minio"
     command: minio server /data/minio --console-address ":9090"
   createbuckets:
     image: ${MINIO_MC_IMAGE:?Set MINIO_MC_IMAGE in .env}

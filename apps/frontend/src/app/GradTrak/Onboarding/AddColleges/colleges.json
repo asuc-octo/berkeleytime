@@ -1,19 +1,19 @@
 {
-    "colleges": [
-        "Business",
-        "Chemistry",
-        "Computing, Data Science & Society",
-        "Education",
-        "Engineering",
-        "Environmental Design",
-        "Information",
-        "Journalism",
-        "Law",
-        "Letters & Science",
-        "Natural Resources",
-        "Optometry",
-        "Public Health",
-        "Public Policy",
-        "Social Welfare"
-    ]
+  "colleges": [
+    "Business",
+    "Chemistry",
+    "Computing, Data Science & Society",
+    "Education",
+    "Engineering",
+    "Environmental Design",
+    "Information",
+    "Journalism",
+    "Law",
+    "Letters & Science",
+    "Natural Resources",
+    "Optometry",
+    "Public Health",
+    "Public Policy",
+    "Social Welfare"
+  ]
 }

@@ -6,16 +6,16 @@ Berkeleytime uses a monorepo architecture managed by [Turborepo](https://turbo.b
 
 ## Overview
 
-| Package | Description |
-|---------|-------------|
-| [@repo/BtLL](../BtLL/README.md) | Berkeleytime Logical Language: interpreted DSL for academic requirements (GradTrak) |
-| [@repo/common](./common.md) | Shared database models, TypeScript types, and utilities |
-| [@repo/theme](./theme.md) | React design system with Radix UI components |
-| [@repo/shared](./shared.md) | Shared utilities, metrics, and rating configurations |
-| [@repo/gql-typedefs](./gql-typedefs.md) | GraphQL type definitions shared across apps |
-| [@repo/sis-api](./sis-api.md) | Auto-generated TypeScript client for UC Berkeley SIS APIs |
-| [@repo/eslint-config](./eslint-config.md) | Shared ESLint configuration |
-| [@repo/typescript-config](./typescript-config.md) | Shared TypeScript configuration presets |
+| Package                                           | Description                                                                         |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [@repo/BtLL](../BtLL/README.md)                   | Berkeleytime Logical Language: interpreted DSL for academic requirements (GradTrak) |
+| [@repo/common](./common.md)                       | Shared database models, TypeScript types, and utilities                             |
+| [@repo/theme](./theme.md)                         | React design system with Radix UI components                                        |
+| [@repo/shared](./shared.md)                       | Shared utilities, metrics, and rating configurations                                |
+| [@repo/gql-typedefs](./gql-typedefs.md)           | GraphQL type definitions shared across apps                                         |
+| [@repo/sis-api](./sis-api.md)                     | Auto-generated TypeScript client for UC Berkeley SIS APIs                           |
+| [@repo/eslint-config](./eslint-config.md)         | Shared ESLint configuration                                                         |
+| [@repo/typescript-config](./typescript-config.md) | Shared TypeScript configuration presets                                             |
 
 ## Package Dependencies
 

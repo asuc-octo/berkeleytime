@@ -31,14 +31,14 @@ export default [
 
 The configuration includes:
 
-| Plugin | Purpose |
-|--------|---------|
-| `@eslint/js` | Core JavaScript rules |
-| `typescript-eslint` | TypeScript-specific rules |
-| `eslint-config-prettier` | Disables formatting rules (handled by Prettier) |
-| `eslint-plugin-react-hooks` | React Hooks rules |
-| `eslint-plugin-react-refresh` | React Fast Refresh compatibility |
-| `eslint-plugin-css-modules` | CSS Modules best practices |
+| Plugin                        | Purpose                                         |
+| ----------------------------- | ----------------------------------------------- |
+| `@eslint/js`                  | Core JavaScript rules                           |
+| `typescript-eslint`           | TypeScript-specific rules                       |
+| `eslint-config-prettier`      | Disables formatting rules (handled by Prettier) |
+| `eslint-plugin-react-hooks`   | React Hooks rules                               |
+| `eslint-plugin-react-refresh` | React Fast Refresh compatibility                |
+| `eslint-plugin-css-modules`   | CSS Modules best practices                      |
 
 ## IDE Integration
 

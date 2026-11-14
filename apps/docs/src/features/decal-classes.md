@@ -81,4 +81,3 @@ This data flows through the stack as follows:
   - and render contact information as `Name: email` pairs.
 
 Overall, the DeCal feature lets Berkeleytime present rich, up‑to‑date information for student‑run courses without requiring any manual data entry in our database.
-

@@ -13,7 +13,7 @@ docker compose -f docker-compose.api-sandbox.yml up --build
 
 The sandbox will be available at [http://localhost:3009](http://localhost:3009), assuming your `DEV_BASE_PORT` environment variable is `30`.
 
-```
+````
 
 ## Features
 
@@ -40,9 +40,10 @@ SIS_COURSE_APP_ID=your_course_api_id
 SIS_COURSE_APP_KEY=your_course_api_key
 SIS_TERM_APP_ID=your_term_api_id
 SIS_TERM_APP_KEY=your_term_api_key
-```
+````
 
 The sandbox uses the appropriate credentials based on the selected API type:
+
 - **Classes API** uses `SIS_CLASS_APP_ID` / `SIS_CLASS_APP_KEY`
 - **Courses API** uses `SIS_COURSE_APP_ID` / `SIS_COURSE_APP_KEY`
 - **Terms API** uses `SIS_TERM_APP_ID` / `SIS_TERM_APP_KEY`
@@ -58,27 +59,27 @@ You can also enter credentials manually in the UI. Any manual changes will overr
 
 ### Classes API (`/v1/classes`)
 
-| Endpoint | Description |
-|----------|-------------|
-| `getClasses` | Get class data (requires term-id or cs-course-id) |
-| `getClassSections` | Get class section data |
-| `getClassDescriptors` | Get allowable code/descriptor pairs |
-| `getClassSectionDescriptors` | Get class section descriptors |
+| Endpoint                     | Description                                       |
+| ---------------------------- | ------------------------------------------------- |
+| `getClasses`                 | Get class data (requires term-id or cs-course-id) |
+| `getClassSections`           | Get class section data                            |
+| `getClassDescriptors`        | Get allowable code/descriptor pairs               |
+| `getClassSectionDescriptors` | Get class section descriptors                     |
 
 ### Courses API (`/v5/courses`)
 
-| Endpoint | Description |
-|----------|-------------|
-| `getCourses` | Get course catalog data |
-| `getCourseById` | Get course by ID or display name |
-| `getCoursesV4` | Get courses using v4 API (more parameters) |
+| Endpoint        | Description                                |
+| --------------- | ------------------------------------------ |
+| `getCourses`    | Get course catalog data                    |
+| `getCourseById` | Get course by ID or display name           |
+| `getCoursesV4`  | Get courses using v4 API (more parameters) |
 
 ### Terms API (`/v2/terms`)
 
-| Endpoint | Description |
-|----------|-------------|
-| `getTerms` | Get terms by query parameters |
-| `getTermById` | Get term by ID |
+| Endpoint      | Description                   |
+| ------------- | ----------------------------- |
+| `getTerms`    | Get terms by query parameters |
+| `getTermById` | Get term by ID                |
 
 ## Pagination
 

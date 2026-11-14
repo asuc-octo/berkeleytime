@@ -18,6 +18,7 @@ tests/
 ### Prerequisites
 
 1. Ensure you have docker-compose running with all services:
+
    ```bash
    docker compose up
    ```
@@ -73,9 +74,10 @@ npx playwright test --debug tests/sanity/smoke.spec.ts
 - **When to run**: Every PR
 
 Example:
+
 ```typescript
-test('homepage loads successfully', async ({ page }) => {
-  await page.goto('/');
+test("homepage loads successfully", async ({ page }) => {
+  await page.goto("/");
   await expect(page).toHaveTitle(/Berkeleytime/i);
 });
 ```
@@ -88,12 +90,13 @@ test('homepage loads successfully', async ({ page }) => {
 - **When to run**: Every PR
 
 Example:
+
 ```typescript
-test('can query courses', async ({ request }) => {
-  const response = await request.post('/api/graphql', {
+test("can query courses", async ({ request }) => {
+  const response = await request.post("/api/graphql", {
     data: persistedOperationBySource(
-      'apps/frontend/src/lib/api/courses.ts',
-      'GetCourses'
+      "apps/frontend/src/lib/api/courses.ts",
+      "GetCourses"
     ),
   });
   expect(response.ok()).toBeTruthy();
@@ -111,11 +114,12 @@ test('can query courses', async ({ request }) => {
 - **When to run**: Can run on PR or separately
 
 Example:
+
 ```typescript
-test('can search and view course details', async ({ page }) => {
-  await page.goto('/');
-  await page.getByPlaceholder(/search/i).fill('CS 61A');
-  await page.getByTestId('course-result').first().click();
+test("can search and view course details", async ({ page }) => {
+  await page.goto("/");
+  await page.getByPlaceholder(/search/i).fill("CS 61A");
+  await page.getByTestId("course-result").first().click();
   await expect(page).toHaveURL(/course/);
 });
 ```
@@ -125,6 +129,7 @@ test('can search and view course details', async ({ page }) => {
 ### Pull Request Tests
 
 When you open a PR, GitHub Actions automatically:
+
 1. Checks out your code
 2. Runs `docker compose up --build` to build your changes
 3. Runs sanity tests against the built code
@@ -138,6 +143,7 @@ See [`.github/workflows/ci-playwright.yaml`](../.github/workflows/ci-playwright.
 - **CI (Pull Requests)**: Tests run against the code in the PR (built fresh via docker-compose)
 
 The `TEST_ENV` environment variable controls this:
+
 - `TEST_ENV=local` (default): Uses your existing docker-compose
 - `TEST_ENV=ci`: Starts fresh docker-compose in CI
 
@@ -148,8 +154,8 @@ For tests that need specific data (courses, users, ratings), add fixtures in `te
 ```typescript
 // tests/fixtures/test-data.ts
 export const sampleCourses = [
-  { code: 'CS 61A', name: 'Structure and Interpretation of Computer Programs' },
-  { code: 'CS 61B', name: 'Data Structures' },
+  { code: "CS 61A", name: "Structure and Interpretation of Computer Programs" },
+  { code: "CS 61B", name: "Data Structures" },
 ];
 ```
 
@@ -178,13 +184,16 @@ npx playwright codegen http://localhost:3000
 ## Troubleshooting
 
 ### Tests fail with "net::ERR_CONNECTION_REFUSED"
+
 - Ensure `docker compose up` is running
 - Check that frontend is accessible at http://localhost:3000
 
 ### API tests fail with 401/403
+
 - Check if the endpoint requires authentication
 - Add test auth tokens or mock authentication in `tests/fixtures/`
 
 ### Tests timeout
+
 - Increase timeout in test: `test.setTimeout(60000)`
 - Or in config: Update `timeout` in `playwright.config.ts`

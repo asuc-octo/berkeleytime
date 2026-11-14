@@ -18,6 +18,7 @@ Use the `run-migration.sh` script from your server (where kubectl/helm are confi
 ```
 
 The script will:
+
 1. Sync migration `.js` files into the Helm chart's ConfigMap
 2. Run `helm upgrade` to update the ConfigMap in the cluster
 3. Execute the migration via `kubectl exec` into the MongoDB pod

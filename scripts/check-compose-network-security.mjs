@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 import { execFileSync } from "node:child_process";
 
 const envPath = process.argv[2];
@@ -17,7 +16,9 @@ const failures = [];
 for (const [service, definition] of Object.entries(config.services ?? {})) {
   for (const port of definition.ports ?? []) {
     if (port.host_ip !== "127.0.0.1") {
-      failures.push(`${service} publishes ${port.published} without a loopback host IP`);
+      failures.push(
+        `${service} publishes ${port.published} without a loopback host IP`
+      );
     }
   }
 }
@@ -28,12 +29,17 @@ if (!redisArgs.includes("--requirepass")) {
 }
 
 const mongoEnvironment = config.services?.mongodb?.environment ?? {};
-if (!mongoEnvironment.MONGODB_INITDB_ROOT_USERNAME || !mongoEnvironment.MONGODB_INITDB_ROOT_PASSWORD) {
+if (
+  !mongoEnvironment.MONGODB_INITDB_ROOT_USERNAME ||
+  !mongoEnvironment.MONGODB_INITDB_ROOT_PASSWORD
+) {
   failures.push("mongodb does not configure root authentication");
 }
 
 if (failures.length) {
-  throw new Error(`Compose security checks failed:\n- ${failures.join("\n- ")}`);
+  throw new Error(
+    `Compose security checks failed:\n- ${failures.join("\n- ")}`
+  );
 }
 
 console.log("Compose network and database authentication checks passed.");

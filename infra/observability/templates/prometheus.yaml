@@ -3,8 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
-  labels:
-    {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.prometheusLabels" . | nindent 4 } }
 data:
   prometheus.yml: |
     global:
@@ -34,29 +33,25 @@ data:
       {{- end }}
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-data
-  labels:
-    {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.prometheusLabels" . | nindent 4 } }
 spec:
   storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.prometheus.storage.size }}
+      storage: { { .Values.prometheus.storage.size } }
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
-  labels:
-    {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.prometheusLabels" . | nindent 4 } }
 spec:
   replicas: 1
   strategy:
@@ -67,15 +62,15 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "bt-observability.prometheusLabels" . | nindent 8 }}
+        { { - include "bt-observability.prometheusLabels" . | nindent 8 } }
       annotations:
-        checksum/config: {{ .Values.prometheus | toJson | sha256sum }}
+        checksum/config: { { .Values.prometheus | toJson | sha256sum } }
     spec:
       securityContext:
         fsGroup: 65534
       containers:
         - name: prometheus
-          image: {{ .Values.prometheus.image }}
+          image: { { .Values.prometheus.image } }
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
@@ -86,13 +81,12 @@ spec:
             - "--query.max-samples={{ .Values.prometheus.queryMaxSamples }}"
           env:
             - name: GOMEMLIMIT
-              value: {{ .Values.prometheus.goMemLimit | quote }}
+              value: { { .Values.prometheus.goMemLimit | quote } }
           ports:
             - name: http
               containerPort: 9090
               protocol: TCP
-          resources:
-            {{- toYaml .Values.prometheus.resources | nindent 12 }}
+          resources: { { - toYaml .Values.prometheus.resources | nindent 12 } }
           securityContext:
             runAsUser: 65534
             runAsGroup: 65534
@@ -121,13 +115,11 @@ spec:
             claimName: prometheus-data
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: prometheus
-  labels:
-    {{- include "bt-observability.prometheusLabels" . | nindent 4 }}
+  labels: { { - include "bt-observability.prometheusLabels" . | nindent 4 } }
 spec:
   type: ClusterIP
   selector:

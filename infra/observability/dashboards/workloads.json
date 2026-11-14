@@ -1,393 +1,377 @@
 {
-    "uid":  "bt-workloads",
-    "title":  "Berkeleytime Kubernetes workloads",
-    "tags":  [
-                 "berkeleytime",
-                 "kubernetes",
-                 "workloads"
-             ],
-    "timezone":  "browser",
-    "schemaVersion":  39,
-    "version":  1,
-    "refresh":  "30s",
-    "time":  {
-                 "from":  "now-6h",
-                 "to":  "now"
-             },
-    "description":  "Kubernetes only. Local Compose has no Kubernetes data; no data is Unknown, not healthy or zero.",
-    "templating":  {
-                       "list":  [
-                                    {
-                                        "name":  "environment",
-                                        "label":  "Environment",
-                                        "type":  "query",
-                                        "datasource":  {
-                                                           "type":  "prometheus",
-                                                           "uid":  "prometheus"
-                                                       },
-                                        "query":  "label_values(kube_pod_info, environment)",
-                                        "refresh":  2,
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    },
-                                    {
-                                        "name":  "namespace",
-                                        "label":  "Namespace",
-                                        "type":  "query",
-                                        "datasource":  {
-                                                           "type":  "prometheus",
-                                                           "uid":  "prometheus"
-                                                       },
-                                        "query":  "label_values(kube_pod_info{environment=~\"$environment\"}, namespace)",
-                                        "refresh":  2,
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    },
-                                    {
-                                        "name":  "workload",
-                                        "label":  "Workload",
-                                        "type":  "query",
-                                        "datasource":  {
-                                                           "type":  "prometheus",
-                                                           "uid":  "prometheus"
-                                                       },
-                                        "query":  "label_values(kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\"}, deployment)",
-                                        "refresh":  2,
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    },
-                                    {
-                                        "name":  "pod",
-                                        "label":  "Pod",
-                                        "type":  "query",
-                                        "datasource":  {
-                                                           "type":  "prometheus",
-                                                           "uid":  "prometheus"
-                                                       },
-                                        "query":  "label_values(kube_pod_info{namespace=~\"$namespace\",environment=~\"$environment\"}, pod)",
-                                        "refresh":  2,
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    },
-                                    {
-                                        "name":  "service",
-                                        "label":  "Service",
-                                        "type":  "query",
-                                        "datasource":  {
-                                                           "type":  "prometheus",
-                                                           "uid":  "prometheus"
-                                                       },
-                                        "query":  "label_values(kube_pod_labels{namespace=~\"$namespace\",environment=~\"$environment\"}, label_app_kubernetes_io_name)",
-                                        "refresh":  2,
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    },
-                                    {
-                                        "name":  "severity",
-                                        "label":  "Severity",
-                                        "type":  "custom",
-                                        "query":  "debug,info,warn,error",
-                                        "includeAll":  true,
-                                        "allValue":  ".*",
-                                        "current":  {
-                                                        "text":  "All",
-                                                        "value":  "$__all"
-                                                    }
-                                    }
-                                ]
-                   },
-    "panels":  [
-                   {
-                       "id":  1,
-                       "type":  "timeseries",
-                       "title":  "Kubernetes only Desired vs available deployment replicas",
-                       "datasource":  {
-                                          "type":  "prometheus",
-                                          "uid":  "prometheus"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "sum by (namespace,deployment) (kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"})",
-                                           "legendFormat":  "desired {{namespace}}/{{deployment}}",
-                                           "refId":  "A"
-                                       },
-                                       {
-                                           "expr":  "sum by (namespace,deployment) (kube_deployment_status_replicas_available{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"})",
-                                           "legendFormat":  "available {{namespace}}/{{deployment}}",
-                                           "refId":  "B"
-                                       }
-                                   ],
-                       "fieldConfig":  {
-                                           "defaults":  {
-                                                            "unit":  "short",
-                                                            "noValue":  "Unknown / No data"
-                                                        },
-                                           "overrides":  [
-
-                                                         ]
-                                       },
-                       "gridPos":  {
-                                       "h":  8,
-                                       "w":  12,
-                                       "x":  0,
-                                       "y":  0
-                                   },
-                       "description":  "Question: Do deployments have their requested replicas available? Units: replicas. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect the pod state table, events, and workload logs. Local Compose has no Kubernetes data; no data is unknown."
-                   },
-                   {
-                       "id":  2,
-                       "type":  "timeseries",
-                       "title":  "Kubernetes only Ready and unready pods",
-                       "datasource":  {
-                                          "type":  "prometheus",
-                                          "uid":  "prometheus"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "sum by (namespace) (kube_pod_status_ready{condition=\"true\",namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "legendFormat":  "ready {{namespace}}",
-                                           "refId":  "A"
-                                       },
-                                       {
-                                           "expr":  "sum by (namespace) (kube_pod_status_ready{condition=\"false\",namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "legendFormat":  "unready {{namespace}}",
-                                           "refId":  "B"
-                                       }
-                                   ],
-                       "fieldConfig":  {
-                                           "defaults":  {
-                                                            "unit":  "short",
-                                                            "noValue":  "Unknown / No data"
-                                                        },
-                                           "overrides":  [
-
-                                                         ]
-                                       },
-                       "gridPos":  {
-                                       "h":  8,
-                                       "w":  12,
-                                       "x":  12,
-                                       "y":  0
-                                   },
-                       "description":  "Question: How many pods are ready or explicitly unready? Units: pods. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect pod phase and container waiting reasons. Local Compose has no Kubernetes data; no data is unknown."
-                   },
-                   {
-                       "id":  3,
-                       "type":  "table",
-                       "title":  "Kubernetes only Pod phase, readiness and restarts",
-                       "datasource":  {
-                                          "type":  "prometheus",
-                                          "uid":  "prometheus"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Pending\"}) or max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Failed\"}) or max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Running\"})",
-                                           "format":  "table",
-                                           "refId":  "A"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,pod,condition) (kube_pod_status_ready{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
-                                           "format":  "table",
-                                           "refId":  "B"
-                                       },
-                                       {
-                                           "expr":  "sum by (namespace,pod,container) (kube_pod_container_status_restarts_total{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
-                                           "format":  "table",
-                                           "refId":  "C"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,pod,container,reason) (kube_pod_container_status_waiting_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
-                                           "format":  "table",
-                                           "refId":  "D"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,pod,container,reason) (kube_pod_container_status_terminated_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
-                                           "format":  "table",
-                                           "refId":  "E"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,pod,label_app_kubernetes_io_name) (kube_pod_labels{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",label_app_kubernetes_io_name=~\"$service\"})",
-                                           "format":  "table",
-                                           "refId":  "F"
-                                       },
-                                       {
-                                           "expr":  "(max by (namespace,pod,owner_name) (kube_pod_owner{namespace=~\"$namespace\",environment=~\"$environment\",owner_kind=\"ReplicaSet\"}) * on (namespace,owner_name) group_left (deployment) label_replace(label_replace(max by (namespace,replicaset,owner_name) (kube_replicaset_owner{namespace=~\"$namespace\",environment=~\"$environment\",owner_kind=\"Deployment\"}), \"deployment\", \"$1\", \"owner_name\", \"(.+)\"), \"owner_name\", \"$1\", \"replicaset\", \"(.+)\")) and on (namespace,deployment) (kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"} \u003e= 0)",
-                                           "format":  "table",
-                                           "refId":  "G"
-                                       }
-                                   ],
-                       "fieldConfig":  {
-                                           "defaults":  {
-                                                            "noValue":  "Unknown / No data"
-                                                        },
-                                           "overrides":  [
-
-                                                         ]
-                                       },
-                       "gridPos":  {
-                                       "h":  9,
-                                       "w":  24,
-                                       "x":  0,
-                                       "y":  8
-                                   },
-                       "description":  "Question: Which pods are pending/failed, ready/unready, restarting, waiting, or recently terminated, and which service label owns them? Units: phase/readiness/reason state and cumulative restarts. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect pod logs and cluster events. Restart count alone does not mean a crash. Local Compose has no Kubernetes data; no data is unknown."
-                   },
-                   {
-                       "id":  4,
-                       "type":  "timeseries",
-                       "title":  "Kubernetes only Restart increases (OOM evidence when reported)",
-                       "datasource":  {
-                                          "type":  "prometheus",
-                                          "uid":  "prometheus"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "sum by (namespace,pod,container) (increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"}[$__rate_interval]))",
-                                           "legendFormat":  "{{namespace}}/{{pod}} {{container}}",
-                                           "refId":  "A"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,pod,container) (kube_pod_container_status_last_terminated_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",reason=\"OOMKilled\"})",
-                                           "legendFormat":  "OOMKilled {{namespace}}/{{pod}} {{container}}",
-                                           "refId":  "B"
-                                       }
-                                   ],
-                       "fieldConfig":  {
-                                           "defaults":  {
-                                                            "unit":  "short",
-                                                            "noValue":  "Unknown / No data"
-                                                        },
-                                           "overrides":  [
-
-                                                         ]
-                                       },
-                       "gridPos":  {
-                                       "h":  8,
-                                       "w":  12,
-                                       "x":  0,
-                                       "y":  17
-                                   },
-                       "description":  "Question: Are container restart counters increasing, and is last termination reported as OOMKilled? Units: restarts in range and boolean reason. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: correlate the restart with logs and resource history. A restart is not automatically a crash. Local Compose has no Kubernetes data; no data is unknown."
-                   },
-                   {
-                       "id":  5,
-                       "type":  "table",
-                       "title":  "Kubernetes only Job and CronJob state",
-                       "datasource":  {
-                                          "type":  "prometheus",
-                                          "uid":  "prometheus"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "max by (namespace,job_name) (kube_job_status_active{namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "format":  "table",
-                                           "refId":  "A"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,job_name) (kube_job_status_succeeded{namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "format":  "table",
-                                           "refId":  "B"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,job_name) (kube_job_status_failed{namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "format":  "table",
-                                           "refId":  "C"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,cronjob) (kube_cronjob_spec_suspend{namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "format":  "table",
-                                           "refId":  "D"
-                                       },
-                                       {
-                                           "expr":  "max by (namespace,cronjob) (kube_cronjob_next_schedule_time{namespace=~\"$namespace\",environment=~\"$environment\"})",
-                                           "format":  "table",
-                                           "refId":  "E"
-                                       }
-                                   ],
-                       "fieldConfig":  {
-                                           "defaults":  {
-                                                            "noValue":  "Unknown / No data"
-                                                        },
-                                           "overrides":  [
-
-                                                         ]
-                                       },
-                       "gridPos":  {
-                                       "h":  8,
-                                       "w":  12,
-                                       "x":  12,
-                                       "y":  17
-                                   },
-                       "description":  "Question: Are batch jobs active, completed, failed, and are CronJobs suspended or overdue for their next schedule? Units: job counts / suspension state / Unix timestamp. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect the Job pod logs and CronJob schedule. Completed Jobs are not treated as unhealthy long-running services. Local Compose has no Kubernetes data; no data is unknown."
-                   },
-                   {
-                       "id":  6,
-                       "type":  "logs",
-                       "title":  "Kubernetes only Collected pod stdout/stderr",
-                       "datasource":  {
-                                          "type":  "loki",
-                                          "uid":  "loki"
-                                      },
-                       "targets":  [
-                                       {
-                                           "expr":  "{k8s_namespace_name=~\"$namespace\",k8s_pod_name=~\"$pod\",k8s_deployment_name=~\"$workload\",service_name=~\"$service\",deployment_environment=~\"$environment\"} | json | severity=~\"$severity\"",
-                                           "refId":  "A"
-                                       }
-                                   ],
-                       "options":  {
-                                       "showTime":  true,
-                                       "showLabels":  true,
-                                       "sortOrder":  "Descending",
-                                       "wrapLogMessage":  true
-                                   },
-                       "gridPos":  {
-                                       "h":  9,
-                                       "w":  24,
-                                       "x":  0,
-                                       "y":  25
-                                   },
-                       "description":  "Question: What did the selected namespace, workload, pod, and service write to stdout/stderr, filtered by severity? Units: log events. Data source: Loki via node-level Collector filelog receiver. Expected delay: usually under 30 seconds. Next: inspect the container\u0027s previous termination reason, readiness probe, and related traces. Deployment logs carry namespace, pod, container, workload, service, and environment labels; Jobs may not have a deployment label. Local Compose has no Kubernetes pod logs; no data is unknown."
-                   },
-                   {
-                       "id":  7,
-                       "type":  "text",
-                       "title":  "Kubernetes only Events are not collected",
-                       "gridPos":  {
-                                       "h":  4,
-                                       "w":  24,
-                                       "x":  0,
-                                       "y":  34
-                                   },
-                       "options":  {
-                                       "mode":  "markdown",
-                                       "content":  "This chart does not configure a Kubernetes Events source. Inspect recent scheduling, probe, and backoff events with `kubectl describe pod`. Events are not inferred from pod logs. Local Compose has no Kubernetes Events."
-                                   },
-                       "description":  "Question: Are recent Kubernetes Events available? Units: none. Data source: none; Events collection is not enabled. Expected delay: unavailable. Next: inspect with kubectl or add a separate event receiver. Local Compose has no Kubernetes Events."
-                   }
-               ],
-    "annotations":  {
-                        "list":  [
-
-                                 ]
-                    }
+  "uid": "bt-workloads",
+  "title": "Berkeleytime Kubernetes workloads",
+  "tags": ["berkeleytime", "kubernetes", "workloads"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "description": "Kubernetes only. Local Compose has no Kubernetes data; no data is Unknown, not healthy or zero.",
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(kube_pod_info, environment)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(kube_pod_info{environment=~\"$environment\"}, namespace)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "workload",
+        "label": "Workload",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\"}, deployment)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "pod",
+        "label": "Pod",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(kube_pod_info{namespace=~\"$namespace\",environment=~\"$environment\"}, pod)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "query": "label_values(kube_pod_labels{namespace=~\"$namespace\",environment=~\"$environment\"}, label_app_kubernetes_io_name)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      },
+      {
+        "name": "severity",
+        "label": "Severity",
+        "type": "custom",
+        "query": "debug,info,warn,error",
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Kubernetes only Desired vs available deployment replicas",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (namespace,deployment) (kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"})",
+          "legendFormat": "desired {{namespace}}/{{deployment}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (namespace,deployment) (kube_deployment_status_replicas_available{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"})",
+          "legendFormat": "available {{namespace}}/{{deployment}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "description": "Question: Do deployments have their requested replicas available? Units: replicas. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect the pod state table, events, and workload logs. Local Compose has no Kubernetes data; no data is unknown."
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Kubernetes only Ready and unready pods",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (namespace) (kube_pod_status_ready{condition=\"true\",namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "legendFormat": "ready {{namespace}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (namespace) (kube_pod_status_ready{condition=\"false\",namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "legendFormat": "unready {{namespace}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "description": "Question: How many pods are ready or explicitly unready? Units: pods. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect pod phase and container waiting reasons. Local Compose has no Kubernetes data; no data is unknown."
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Kubernetes only Pod phase, readiness and restarts",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Pending\"}) or max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Failed\"}) or max by (namespace,pod,phase) (kube_pod_status_phase{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",phase=\"Running\"})",
+          "format": "table",
+          "refId": "A"
+        },
+        {
+          "expr": "max by (namespace,pod,condition) (kube_pod_status_ready{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
+          "format": "table",
+          "refId": "B"
+        },
+        {
+          "expr": "sum by (namespace,pod,container) (kube_pod_container_status_restarts_total{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
+          "format": "table",
+          "refId": "C"
+        },
+        {
+          "expr": "max by (namespace,pod,container,reason) (kube_pod_container_status_waiting_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
+          "format": "table",
+          "refId": "D"
+        },
+        {
+          "expr": "max by (namespace,pod,container,reason) (kube_pod_container_status_terminated_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"})",
+          "format": "table",
+          "refId": "E"
+        },
+        {
+          "expr": "max by (namespace,pod,label_app_kubernetes_io_name) (kube_pod_labels{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",label_app_kubernetes_io_name=~\"$service\"})",
+          "format": "table",
+          "refId": "F"
+        },
+        {
+          "expr": "(max by (namespace,pod,owner_name) (kube_pod_owner{namespace=~\"$namespace\",environment=~\"$environment\",owner_kind=\"ReplicaSet\"}) * on (namespace,owner_name) group_left (deployment) label_replace(label_replace(max by (namespace,replicaset,owner_name) (kube_replicaset_owner{namespace=~\"$namespace\",environment=~\"$environment\",owner_kind=\"Deployment\"}), \"deployment\", \"$1\", \"owner_name\", \"(.+)\"), \"owner_name\", \"$1\", \"replicaset\", \"(.+)\")) and on (namespace,deployment) (kube_deployment_spec_replicas{namespace=~\"$namespace\",environment=~\"$environment\",deployment=~\"$workload\"} \u003e= 0)",
+          "format": "table",
+          "refId": "G"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Unknown / No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "description": "Question: Which pods are pending/failed, ready/unready, restarting, waiting, or recently terminated, and which service label owns them? Units: phase/readiness/reason state and cumulative restarts. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect pod logs and cluster events. Restart count alone does not mean a crash. Local Compose has no Kubernetes data; no data is unknown."
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Kubernetes only Restart increases (OOM evidence when reported)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "sum by (namespace,pod,container) (increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\"}[$__rate_interval]))",
+          "legendFormat": "{{namespace}}/{{pod}} {{container}}",
+          "refId": "A"
+        },
+        {
+          "expr": "max by (namespace,pod,container) (kube_pod_container_status_last_terminated_reason{namespace=~\"$namespace\",environment=~\"$environment\",pod=~\"$pod\",reason=\"OOMKilled\"})",
+          "legendFormat": "OOMKilled {{namespace}}/{{pod}} {{container}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "description": "Question: Are container restart counters increasing, and is last termination reported as OOMKilled? Units: restarts in range and boolean reason. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: correlate the restart with logs and resource history. A restart is not automatically a crash. Local Compose has no Kubernetes data; no data is unknown."
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Kubernetes only Job and CronJob state",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "expr": "max by (namespace,job_name) (kube_job_status_active{namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "format": "table",
+          "refId": "A"
+        },
+        {
+          "expr": "max by (namespace,job_name) (kube_job_status_succeeded{namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "format": "table",
+          "refId": "B"
+        },
+        {
+          "expr": "max by (namespace,job_name) (kube_job_status_failed{namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "format": "table",
+          "refId": "C"
+        },
+        {
+          "expr": "max by (namespace,cronjob) (kube_cronjob_spec_suspend{namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "format": "table",
+          "refId": "D"
+        },
+        {
+          "expr": "max by (namespace,cronjob) (kube_cronjob_next_schedule_time{namespace=~\"$namespace\",environment=~\"$environment\"})",
+          "format": "table",
+          "refId": "E"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "noValue": "Unknown / No data"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "description": "Question: Are batch jobs active, completed, failed, and are CronJobs suspended or overdue for their next schedule? Units: job counts / suspension state / Unix timestamp. Data source: Prometheus kube-state-metrics. Expected delay: 15â€“45 seconds. Next: inspect the Job pod logs and CronJob schedule. Completed Jobs are not treated as unhealthy long-running services. Local Compose has no Kubernetes data; no data is unknown."
+    },
+    {
+      "id": 6,
+      "type": "logs",
+      "title": "Kubernetes only Collected pod stdout/stderr",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "targets": [
+        {
+          "expr": "{k8s_namespace_name=~\"$namespace\",k8s_pod_name=~\"$pod\",k8s_deployment_name=~\"$workload\",service_name=~\"$service\",deployment_environment=~\"$environment\"} | json | severity=~\"$severity\"",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "description": "Question: What did the selected namespace, workload, pod, and service write to stdout/stderr, filtered by severity? Units: log events. Data source: Loki via node-level Collector filelog receiver. Expected delay: usually under 30 seconds. Next: inspect the container\u0027s previous termination reason, readiness probe, and related traces. Deployment logs carry namespace, pod, container, workload, service, and environment labels; Jobs may not have a deployment label. Local Compose has no Kubernetes pod logs; no data is unknown."
+    },
+    {
+      "id": 7,
+      "type": "text",
+      "title": "Kubernetes only Events are not collected",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "This chart does not configure a Kubernetes Events source. Inspect recent scheduling, probe, and backoff events with `kubectl describe pod`. Events are not inferred from pod logs. Local Compose has no Kubernetes Events."
+      },
+      "description": "Question: Are recent Kubernetes Events available? Units: none. Data source: none; Events collection is not enabled. Expected delay: unavailable. Next: inspect with kubectl or add a separate event receiver. Local Compose has no Kubernetes Events."
+    }
+  ],
+  "annotations": {
+    "list": []
+  }
 }

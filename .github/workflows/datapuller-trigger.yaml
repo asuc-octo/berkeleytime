@@ -9,7 +9,7 @@ on:
         required: true
         type: choice
         options:
-          - terms-all 
+          - terms-all
           - decals
           - terms-nearby
           - courses

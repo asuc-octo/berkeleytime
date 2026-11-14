@@ -38,7 +38,7 @@ packages/theme/
 Wrap your application with `ThemeProvider` and import components:
 
 ```tsx
-import { ThemeProvider, Button, Dialog, Tooltip } from "@repo/theme";
+import { Button, Dialog, ThemeProvider, Tooltip } from "@repo/theme";
 
 function App() {
   return (
@@ -70,17 +70,17 @@ Berkeleytime uses the nine-step spacing scale provided by Radix Themes. These to
 
 At 100% scaling, the tokens match the following sizes:
 
-| Step | CSS token | Size |
-|------|-----------|------|
-| 1 | `--space-1` | 4px |
-| 2 | `--space-2` | 8px |
-| 3 | `--space-3` | 12px |
-| 4 | `--space-4` | 16px |
-| 5 | `--space-5` | 24px |
-| 6 | `--space-6` | 32px |
-| 7 | `--space-7` | 40px |
-| 8 | `--space-8` | 48px |
-| 9 | `--space-9` | 64px |
+| Step | CSS token   | Size |
+| ---- | ----------- | ---- |
+| 1    | `--space-1` | 4px  |
+| 2    | `--space-2` | 8px  |
+| 3    | `--space-3` | 12px |
+| 4    | `--space-4` | 16px |
+| 5    | `--space-5` | 24px |
+| 6    | `--space-6` | 32px |
+| 7    | `--space-7` | 40px |
+| 8    | `--space-8` | 48px |
+| 9    | `--space-9` | 64px |
 
 Use this scale for padding, margins, and gaps to keep spacing consistent. Radix adjusts these values when theme scaling changes. The CSS variables are available inside `ThemeProvider`.
 
@@ -127,16 +127,16 @@ For design files, use Inter Variable to match the product. The font stylesheet u
 The shared `Text`, `Heading`, and `Label` components expose a nine-step size scale with the following values:
 
 | Step (`size`) | Font size |
-|---------------|-----------|
-| `1` | 12px |
-| `2` | 14px |
-| `3` | 16px |
-| `4` | 18px |
-| `5` | 20px |
-| `6` | 24px |
-| `7` | 28px |
-| `8` | 35px |
-| `9` | 60px |
+| ------------- | --------- |
+| `1`           | 12px      |
+| `2`           | 14px      |
+| `3`           | 16px      |
+| `4`           | 18px      |
+| `5`           | 20px      |
+| `6`           | 24px      |
+| `7`           | 28px      |
+| `8`           | 35px      |
+| `9`           | 60px      |
 
 These sizes are available as `--font-sizes-1` through `--font-sizes-9`, defined on `:root` in `packages/theme/src/components/ThemeProvider/ThemeProvider.scss`. They match the existing sizes in `packages/theme/src/components/Text/Text.module.scss`. Unlike Radix spacing, these font-size tokens use fixed pixel values and do not change with Radix theme scaling. Load `ThemeProvider` to include the stylesheet.
 
@@ -152,11 +152,11 @@ The current shared styles set **line-height to `1.25`** for every size and do no
 
 ### Font weight
 
-| `weight` | Value |
-|----------|-------|
-| `regular` | 400 |
-| `medium` | 500 |
-| `bold` | 700 |
+| `weight`  | Value |
+| --------- | ----- |
+| `regular` | 400   |
+| `medium`  | 500   |
+| `bold`    | 700   |
 
 `Text` defaults to size `2` and regular weight. `Heading` defaults to size `2` and medium weight. `Label` defaults to size `1` and regular weight.
 
@@ -167,9 +167,15 @@ import { Heading, Label, Text } from "@repo/theme";
 
 // Render inside ThemeProvider.
 <>
-  <Heading as="h2" size="6" weight="bold">Course details</Heading>
-  <Text size="3" weight="regular">Explore this course and its requirements.</Text>
-  <Label as="span" size="1" weight="medium">Last updated today</Label>
+  <Heading as="h2" size="6" weight="bold">
+    Course details
+  </Heading>
+  <Text size="3" weight="regular">
+    Explore this course and its requirements.
+  </Text>
+  <Label as="span" size="1" weight="medium">
+    Last updated today
+  </Label>
 </>;
 ```
 
@@ -181,13 +187,13 @@ Choose the HTML element explicitly when semantics matter: `Heading` renders a pa
 
 ## Core Dependencies
 
-| Dependency | Purpose |
-|------------|---------|
-| `radix-ui` | Unstyled, accessible UI primitives |
-| `@radix-ui/themes` | Pre-built Radix theme components |
-| `iconoir-react` | Icon library |
-| `cmdk` | Command palette component |
-| `classnames` | Conditional CSS class utility |
+| Dependency         | Purpose                            |
+| ------------------ | ---------------------------------- |
+| `radix-ui`         | Unstyled, accessible UI primitives |
+| `@radix-ui/themes` | Pre-built Radix theme components   |
+| `iconoir-react`    | Icon library                       |
+| `cmdk`             | Command palette component          |
+| `classnames`       | Conditional CSS class utility      |
 
 ## Available Components
 

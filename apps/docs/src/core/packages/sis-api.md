@@ -35,15 +35,15 @@ packages/sis-api/
 Import and use the generated API clients:
 
 ```typescript
-import { CoursesAPI } from "@repo/sis-api/courses";
 import { ClassesAPI } from "@repo/sis-api/classes";
+import { CoursesAPI } from "@repo/sis-api/courses";
 import { TermsAPI } from "@repo/sis-api/terms";
 
 // Initialize client with API credentials
 const coursesApi = new CoursesAPI({
   headers: {
-    "app_id": process.env.SIS_APP_ID,
-    "app_key": process.env.SIS_APP_KEY,
+    app_id: process.env.SIS_APP_ID,
+    app_key: process.env.SIS_APP_KEY,
   },
 });
 
@@ -71,11 +71,11 @@ generateApi({
 
 ## Available APIs
 
-| API | Description | Primary Use |
-|-----|-------------|-------------|
+| API          | Description         | Primary Use                                     |
+| ------------ | ------------------- | ----------------------------------------------- |
 | `CoursesAPI` | Course catalog data | Course information, descriptions, prerequisites |
-| `ClassesAPI` | Class offerings | Sections, instructors, meeting times |
-| `TermsAPI` | Academic terms | Term dates, sessions |
+| `ClassesAPI` | Class offerings     | Sections, instructors, meeting times            |
+| `TermsAPI`   | Academic terms      | Term dates, sessions                            |
 
 ## API Credentials
 

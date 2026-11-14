@@ -48,6 +48,7 @@ The main dashboard provides tools for managing Berkeleytime team members:
 Staff membership also controls access to **private Mongo backups** at `https://backups.berkeleytime.com/private/*`. When a user is added as staff, their email is added to the Cloudflare Zero Trust Access group that protects those backups; when they are removed from staff, their email is removed from that group. To backfill existing staff into the Access group, use the GraphQL mutation `syncCloudflareStaffAccess` (staff-only). See [Runbooks — Cloudflare Access staff backup sync](../infrastructure/runbooks.md#cloudflare-access-staff-backup-sync).
 
 Each staff member can have multiple semester roles with:
+
 - Role type (Engineering, Design, etc.)
 - Leadership flag
 - Pod/team assignment
@@ -57,13 +58,13 @@ Each staff member can have multiple semester roles with:
 
 The analytics section provides insights into platform usage:
 
-| Dashboard | Metrics |
-|-----------|---------|
-| General | Unique visitors, requests, user growth, signup patterns |
-| Scheduler | Schedules created, daily trends, classes per schedule |
-| Ratings | Rating counts, course distribution, score trends |
-| GradTrak | Plans created, major/minor distribution |
-| Bookmarks | Collection usage, bookmark trends |
+| Dashboard | Metrics                                                 |
+| --------- | ------------------------------------------------------- |
+| General   | Unique visitors, requests, user growth, signup patterns |
+| Scheduler | Schedules created, daily trends, classes per schedule   |
+| Ratings   | Rating counts, course distribution, score trends        |
+| GradTrak  | Plans created, major/minor distribution                 |
+| Bookmarks | Collection usage, bookmark trends                       |
 
 ### Banners
 

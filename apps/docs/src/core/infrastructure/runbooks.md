@@ -26,18 +26,18 @@
 
 Backups are served at `https://backups.berkeleytime.com`:
 
-- Public: `GET /public/*` 
+- Public: `GET /public/*`
 - Private: `GET /private/*`
 
 Backups expire automatically via R2 lifecycle rules (`infra/cloudflare/r2-lifecycle.sh`):
 
-| Bucket path | Contents | Kept for |
-| --- | --- | --- |
-| `private/hourly/prod_backup-YYYYMMDDHH.gz` | Every hour | 1 day |
-| `private/daily/prod_backup-YYYYMMDD.gz` | 5 AM backup | 30 days |
-| `private/weekly/prod_backup-YYYYMMDD.gz` | Sunday 5 AM backup | 13 weeks |
-| `private/persistent/prod_backup-YYYYMMDD.gz` | 5 AM backup on the 1st | 2 years |
-| `public/daily/prod_public_backup-YYYYMMDD.gz` | Redacted daily backup | 7 days |
+| Bucket path                                   | Contents               | Kept for |
+| --------------------------------------------- | ---------------------- | -------- |
+| `private/hourly/prod_backup-YYYYMMDDHH.gz`    | Every hour             | 1 day    |
+| `private/daily/prod_backup-YYYYMMDD.gz`       | 5 AM backup            | 30 days  |
+| `private/weekly/prod_backup-YYYYMMDD.gz`      | Sunday 5 AM backup     | 13 weeks |
+| `private/persistent/prod_backup-YYYYMMDD.gz`  | 5 AM backup on the 1st | 2 years  |
+| `public/daily/prod_public_backup-YYYYMMDD.gz` | Redacted daily backup  | 7 days   |
 
 ### Public backup (no auth)
 
@@ -58,12 +58,14 @@ curl -f -o "prod-backup.gz" "https://backups.berkeleytime.com/public/daily/prod_
 ### Private backup (Cloudflare Access)
 
 First, install the Cloudflare command line tool:
+
 ```sh
 brew install cloudflare/cloudflare/cloudflared
 cloudflared access login https://backups.berkeleytime.com
 ```
 
 You can then fetch the backup
+
 ```sh
 cloudflared access curl \
   "https://backups.berkeleytime.com/private/hourly/prod_backup-$(TZ=America/Los_Angeles date -v -6H +%Y%m%d%H).gz" \
@@ -71,7 +73,9 @@ cloudflared access curl \
 ```
 
 ### Copy Data Into Container
+
 Reproduced from local development:
+
 ```sh
 docker cp ./prod-backup.gz berkeleytime-mongodb-1:/tmp/prod-backup.gz
 docker exec berkeleytime-mongodb-1 mongorestore --drop --gzip --archive=/tmp/prod-backup.gz

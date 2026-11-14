@@ -5,7 +5,7 @@ metadata:
 spec:
   secretName: bt-cert
   issuerRef:
-    name: {{ .Values.issuerName }}
+    name: { { .Values.issuerName } }
     kind: Issuer
   dnsNames:
     - berkeleytime.com

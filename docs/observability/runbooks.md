@@ -25,4 +25,3 @@
 ## Local Compose interpretation
 
 Local Compose does not run Kubernetes collection. Kubernetes-only panels should state that explicitly. **Unknown / No data** is not a healthy/zero result. Check the local Collector and Prometheus targets only for signals actually configured in Compose.
-

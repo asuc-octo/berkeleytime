@@ -183,10 +183,8 @@ After running `npm run generate`, use the generated `GetCourseDocument` in your 
 
 ```typescript
 import { useQuery } from "@apollo/client/react";
-import {
-  GetCourseDocument,
-  GetCourseQuery,
-} from "@/lib/generated/graphql";
+
+import { GetCourseDocument, GetCourseQuery } from "@/lib/generated/graphql";
 
 // The Document provides full type inference
 const query = useQuery(GetCourseDocument, {

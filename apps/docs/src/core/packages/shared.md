@@ -20,7 +20,7 @@ packages/shared/
 ## Usage
 
 ```typescript
-import { MetricName, METRIC_MAPPINGS, METRIC_ORDER } from "@repo/shared";
+import { METRIC_MAPPINGS, METRIC_ORDER, MetricName } from "@repo/shared";
 
 // Access metric configuration
 const usefulnessConfig = METRIC_MAPPINGS[MetricName.Usefulness];
@@ -36,14 +36,14 @@ const status = usefulnessConfig.getStatus(4.5);
 
 The package defines the rating metrics used throughout Berkeleytime:
 
-| Metric | Description | Rating Scale |
-|--------|-------------|--------------|
-| `Usefulness` | Course benefit for growth | Very Useful → Not Useful |
-| `Difficulty` | Challenge level | Very Hard → Very Easy |
-| `Workload` | Time/effort required | Very Heavy → Very Light |
-| `Attendance` | Attendance requirement | Required / Not Required |
-| `Recording` | Lecture recording availability | Recorded / Not Recorded |
-| `Recommended` | Overall recommendation | Recommended / Not Recommended |
+| Metric        | Description                    | Rating Scale                  |
+| ------------- | ------------------------------ | ----------------------------- |
+| `Usefulness`  | Course benefit for growth      | Very Useful → Not Useful      |
+| `Difficulty`  | Challenge level                | Very Hard → Very Easy         |
+| `Workload`    | Time/effort required           | Very Heavy → Very Light       |
+| `Attendance`  | Attendance requirement         | Required / Not Required       |
+| `Recording`   | Lecture recording availability | Recorded / Not Recorded       |
+| `Recommended` | Overall recommendation         | Recommended / Not Recommended |
 
 ## Metric Configuration
 

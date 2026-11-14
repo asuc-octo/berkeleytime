@@ -21,7 +21,7 @@ ingester:
 
 compactor:
   compaction:
-    block_retention: 1h    # Short retention for local dev
+    block_retention: 1h # Short retention for local dev
 
 storage:
   trace:

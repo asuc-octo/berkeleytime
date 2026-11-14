@@ -11,15 +11,15 @@ metadata:
   name: helm-diff-role
   namespace: bt
 rules:
-- apiGroups: [""]
-  resources: ["pods", "services", "configmaps", "secrets"]
-  verbs: ["get", "list"]
-- apiGroups: ["apps"]
-  resources: ["deployments", "statefulsets"]
-  verbs: ["get", "list"]
-- apiGroups: ["networking.k8s.io"]
-  resources: ["ingresses"]
-  verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -28,9 +28,9 @@ metadata:
   name: helm-diff-rolebinding
   namespace: bt
 subjects:
-- kind: ServiceAccount
-  name: helm-diff-sa
-  namespace: bt
+  - kind: ServiceAccount
+    name: helm-diff-sa
+    namespace: bt
 roleRef:
   kind: Role
   name: helm-diff-role

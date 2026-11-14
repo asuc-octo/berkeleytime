@@ -36,6 +36,7 @@ The docs should be available at `http://localhost:3000/` with live reload. To ki
 
 > [!TIP]
 > To change the port from the above `3000`, modify the `docker run` command as follows, replacing the `XXXX` with your desired port:
+>
 > ```sh
 > docker run --publish XXXX:3000 --volume ./docs:/docs "docs:dev"
 > ```
@@ -72,9 +73,9 @@ To add new pages to the docs, check out the [`mdBook` guide](https://rust-lang.g
 
 2. Add this file to `SUMMARY.md`. The indentation indicates which section your file will go under. For example:
 
-    ```md
-    - [Infrastructure](./infrastructure/README.md)
-        - [My New File's Title](./infrastructure/my-new-file.md)
-    ```
+   ```md
+   - [Infrastructure](./infrastructure/README.md)
+     - [My New File's Title](./infrastructure/my-new-file.md)
+   ```
 
 3. Add content to your file and see the results!

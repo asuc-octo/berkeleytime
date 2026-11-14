@@ -30,14 +30,20 @@ while (plans.hasNext()) {
   const reqIds = new Set();
 
   // UC requirements
-  const ucReq = db.planrequirements.findOne({ isUcReq: true, isOfficial: true });
+  const ucReq = db.planrequirements.findOne({
+    isUcReq: true,
+    isOfficial: true,
+  });
   if (ucReq) {
     reqIds.add(ucReq._id.toString());
   }
 
   // College requirements
   for (const college of colleges) {
-    const collegeReq = db.planrequirements.findOne({ college, isOfficial: true });
+    const collegeReq = db.planrequirements.findOne({
+      college,
+      isOfficial: true,
+    });
     if (collegeReq) {
       reqIds.add(collegeReq._id.toString());
     }
@@ -46,10 +52,7 @@ while (plans.hasNext()) {
   // Major/minor requirements
   db.planrequirements
     .find({
-      $or: [
-        { major: { $in: majors } },
-        { minor: { $in: minors } },
-      ],
+      $or: [{ major: { $in: majors } }, { minor: { $in: minors } }],
       isOfficial: true,
     })
     .forEach((r) => {
@@ -61,12 +64,15 @@ while (plans.hasNext()) {
     manualOverrides: [],
   }));
 
-  db.plans.updateOne(
-    { _id: plan._id },
-    { $set: { selectedPlanRequirements } }
-  );
+  db.plans.updateOne({ _id: plan._id }, { $set: { selectedPlanRequirements } });
   updated++;
-  print("Updated plan " + plan.userEmail + " with " + selectedPlanRequirements.length + " selected requirement(s).");
+  print(
+    "Updated plan " +
+      plan.userEmail +
+      " with " +
+      selectedPlanRequirements.length +
+      " selected requirement(s)."
+  );
 }
 
 print("Done. Updated " + updated + " plan(s).");

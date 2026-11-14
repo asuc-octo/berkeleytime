@@ -1,6 +1,5 @@
 # Data
 
-
 <!-- toc -->
 
 ## Why is Data Important at Berkeleytime?
@@ -60,4 +59,3 @@ The [Term API v2](https://developers.api.berkeley.edu/api/232) provides data abo
 
 - **Terms** are time periods during which classes are offered. Terms at Berkeley typically fall under the Spring and Fall semesters, but Berkeley also offers a Summer term and previously offered a Winter term (in the 1900s). Terms are most always associated with at least one session.
 - **Sessions** are more granular time periods within a semester during which groups of classes are offered. The Spring and Fall semesters at Berkeley consist only of a single session that spans the entire semester, but the Summer term consists of [multiple sessions of varying lengths](https://summer.berkeley.edu/registration/schedule#deadlines) depending on the year.
-

@@ -36,11 +36,11 @@ Extend the appropriate config in your app's `tsconfig.json`:
 
 ## Available Configs
 
-| Config | Use Case |
-|--------|----------|
-| `base.json` | Shared settings inherited by all configs |
-| `node.json` | Backend services and Node.js packages |
-| `vite.json` | Vite-based React applications |
+| Config       | Use Case                                 |
+| ------------ | ---------------------------------------- |
+| `base.json`  | Shared settings inherited by all configs |
+| `node.json`  | Backend services and Node.js packages    |
+| `vite.json`  | Vite-based React applications            |
 | `react.json` | Legacy React config (prefer `vite.json`) |
 
 ## Base Configuration
@@ -54,8 +54,8 @@ The base config includes settings for:
 
 ## Included Plugins
 
-| Plugin | Purpose |
-|--------|---------|
+| Plugin                          | Purpose                                          |
+| ------------------------------- | ------------------------------------------------ |
 | `typescript-plugin-css-modules` | Provides type definitions for CSS module imports |
 
 This plugin enables autocomplete and type checking for SCSS/CSS module classes:

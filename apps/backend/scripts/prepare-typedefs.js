@@ -1,64 +1,83 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const sourceDir = path.join(__dirname, '../../../packages/gql-typedefs');
-const modulesDir = path.join(__dirname, '../src/modules');
+const sourceDir = path.join(__dirname, "../../../packages/gql-typedefs");
+const modulesDir = path.join(__dirname, "../src/modules");
 
 // Get all .ts files from packages/gql-typedefs (excluding index.ts and package.json)
-const typedefFiles = fs.readdirSync(sourceDir)
-  .filter(file => file.endsWith('.ts') && file !== 'index.ts')
-  .map(file => file.replace('.ts', ''))
+const typedefFiles = fs
+  .readdirSync(sourceDir)
+  .filter((file) => file.endsWith(".ts") && file !== "index.ts")
+  .map((file) => file.replace(".ts", ""))
   .sort();
 
 // Get all module directories from backend/src/modules (excluding non-module directories)
-const excludedDirs = ['cache', 'generated-types', 'semantic-search'];
-const moduleDirs = fs.readdirSync(modulesDir, { withFileTypes: true })
-  .filter(dirent => dirent.isDirectory() && !excludedDirs.includes(dirent.name))
-  .map(dirent => dirent.name)
+const excludedDirs = ["cache", "generated-types", "semantic-search"];
+const moduleDirs = fs
+  .readdirSync(modulesDir, { withFileTypes: true })
+  .filter(
+    (dirent) => dirent.isDirectory() && !excludedDirs.includes(dirent.name)
+  )
+  .map((dirent) => dirent.name)
   .sort();
 
 // Typedefs that provide types used by other modules but don't have their own module
 // (e.g., cloudflare and stats types are used by the analytics module)
-const sharedTypedefs = ['cloudflare', 'stats'];
+const sharedTypedefs = ["cloudflare", "stats"];
 
 // Check for mismatches
-const missingTypedefs = moduleDirs.filter(module => !typedefFiles.includes(module));
-const missingModules = typedefFiles.filter(typedef => !moduleDirs.includes(typedef) && !sharedTypedefs.includes(typedef));
+const missingTypedefs = moduleDirs.filter(
+  (module) => !typedefFiles.includes(module)
+);
+const missingModules = typedefFiles.filter(
+  (typedef) =>
+    !moduleDirs.includes(typedef) && !sharedTypedefs.includes(typedef)
+);
 
 if (missingTypedefs.length > 0 || missingModules.length > 0) {
-  console.error('Error: Mismatch between typedef files and module directories');
+  console.error("Error: Mismatch between typedef files and module directories");
   if (missingTypedefs.length > 0) {
-    console.error(`  Modules without typedef files: ${missingTypedefs.join(', ')}`);
+    console.error(
+      `  Modules without typedef files: ${missingTypedefs.join(", ")}`
+    );
   }
   if (missingModules.length > 0) {
-    console.error(`  Typedef files without modules: ${missingModules.join(', ')}`);
+    console.error(
+      `  Typedef files without modules: ${missingModules.join(", ")}`
+    );
   }
   process.exit(1);
 }
 
 // Copy each schema file to its corresponding module's typedefs directory
 // Skip shared typedefs that don't have their own module
-typedefFiles.filter(module => !sharedTypedefs.includes(module)).forEach((module) => {
-  const sourceFile = path.join(sourceDir, `${module}.ts`);
-  const targetDir = path.join(modulesDir, module, 'generated-typedefs');
-  const targetFile = path.join(targetDir, `${module}.ts`);
+typedefFiles
+  .filter((module) => !sharedTypedefs.includes(module))
+  .forEach((module) => {
+    const sourceFile = path.join(sourceDir, `${module}.ts`);
+    const targetDir = path.join(modulesDir, module, "generated-typedefs");
+    const targetFile = path.join(targetDir, `${module}.ts`);
 
-  // Create typedefs directory if it doesn't exist
-  if (!fs.existsSync(targetDir)) {
-    fs.mkdirSync(targetDir, { recursive: true });
-  }
+    // Create typedefs directory if it doesn't exist
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
 
-  // Copy the file
-  if (fs.existsSync(sourceFile)) {
-    fs.copyFileSync(sourceFile, targetFile);
-  } else {
-    console.error(`Error: ${sourceFile} does not exist`);
-    process.exit(1);
-  }
-});
+    // Copy the file
+    if (fs.existsSync(sourceFile)) {
+      fs.copyFileSync(sourceFile, targetFile);
+    } else {
+      console.error(`Error: ${sourceFile} does not exist`);
+      process.exit(1);
+    }
+  });
 
 // Copy shared typedefs to the analytics module (they contain types used by analytics)
-const analyticsTypedefsDir = path.join(modulesDir, 'analytics', 'generated-typedefs');
+const analyticsTypedefsDir = path.join(
+  modulesDir,
+  "analytics",
+  "generated-typedefs"
+);
 if (!fs.existsSync(analyticsTypedefsDir)) {
   fs.mkdirSync(analyticsTypedefsDir, { recursive: true });
 }
@@ -70,5 +89,4 @@ sharedTypedefs.forEach((typedef) => {
   }
 });
 
-console.log('Schema files copied successfully');
-
+console.log("Schema files copied successfully");

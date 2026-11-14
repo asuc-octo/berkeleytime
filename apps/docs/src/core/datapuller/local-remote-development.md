@@ -2,7 +2,7 @@
 
 ## Local Development
 
-The `datapuller` inserts data into the Mongo database. Thus, to test locally, a Mongo instance must first be running locally and be accessible to the `datapuller` container. To run a specific puller, the `datapuller` must first be built, then the specific puller must be passed as a command[^1]. After modifying any code, the container *must* be re-built for changes to be reflected.
+The `datapuller` inserts data into the Mongo database. Thus, to test locally, a Mongo instance must first be running locally and be accessible to the `datapuller` container. To run a specific puller, the `datapuller` must first be built, then the specific puller must be passed as a command[^1]. After modifying any code, the container _must_ be re-built for changes to be reflected.
 
 ```sh
 # ./berkeleytime
@@ -20,6 +20,7 @@ docker run --volume ./.env:/datapuller/apps/datapuller/.env \
 ```
 
 The valid pullers are:
+
 - `courses`
 - `sections-active`
 - `sections-last-five-years`
@@ -34,7 +35,8 @@ The valid pullers are:
 - `decals`
 
 > [!TIP]
->  If you do not need any other services (backend, frontend), then you can run a Mongo instance independently from the `docker-compose.yml` configuration. However, the below commands do not allow data persistence.
+> If you do not need any other services (backend, frontend), then you can run a Mongo instance independently from the `docker-compose.yml` configuration. However, the below commands do not allow data persistence.
+>
 > ```sh
 > # Run a Mongo instance. The name flag changes the MONGO_URI.
 > # Here, it would be mongodb://mongodb:27017/bt?replicaSet=rs0.

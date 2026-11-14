@@ -36,7 +36,7 @@ packages/common/
 Import models and types from the package:
 
 ```typescript
-import { CourseModel, ICourseItem, ClassModel, IClassItem } from "@repo/common";
+import { ClassModel, CourseModel, IClassItem, ICourseItem } from "@repo/common";
 
 // Query courses
 const courses = await CourseModel.find({ subject: "COMPSCI" });
@@ -82,16 +82,16 @@ export const TermModel: Model<ITermItem> = model<ITermItem>("Term", termSchema);
 
 ## Available Models
 
-| Model | Description |
-|-------|-------------|
-| `ClassModel` | Individual class offerings per semester |
-| `CourseModel` | Course information (subject, number, title, description) |
-| `SectionModel` | Class sections with meetings and instructors |
-| `TermModel` | Academic terms and sessions |
-| `UserModel` | User accounts and authentication |
-| `RatingModel` | Course ratings submitted by students |
-| `GradeDistributionModel` | Historical grade distributions |
-| `ScheduleModel` | User-created schedules |
-| `PlanModel` | Multi-year academic plans |
-| `EnrollmentHistoryModel` | Enrollment data over time |
-| `CollectionModel` | User-curated course collections |
+| Model                    | Description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| `ClassModel`             | Individual class offerings per semester                  |
+| `CourseModel`            | Course information (subject, number, title, description) |
+| `SectionModel`           | Class sections with meetings and instructors             |
+| `TermModel`              | Academic terms and sessions                              |
+| `UserModel`              | User accounts and authentication                         |
+| `RatingModel`            | Course ratings submitted by students                     |
+| `GradeDistributionModel` | Historical grade distributions                           |
+| `ScheduleModel`          | User-created schedules                                   |
+| `PlanModel`              | Multi-year academic plans                                |
+| `EnrollmentHistoryModel` | Enrollment data over time                                |
+| `CollectionModel`        | User-curated course collections                          |
