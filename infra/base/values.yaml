@@ -4,3 +4,15 @@ acme:
   server: https://acme-v02.api.letsencrypt.org/directory
   cloudflareApiTokenSecretName: cloudflare-api-token-secret
 ipAddressRange: 169.229.226.51-169.229.226.51
+
+# Cluster health alerts (templates/cluster-health-alerts.yaml)
+alerts:
+  enabled: true
+  schedule: "*/5 * * * *"
+  diskPercent: 70
+  memoryPercent: 85
+  certDays: 14
+  repeatHours: 6
+  # Secret in the bt namespace with key `url`: a Slack or Discord incoming
+  # webhook. Until it exists, alerts only go to the job's log.
+  webhookSecretName: bt-health-alerts-webhook
