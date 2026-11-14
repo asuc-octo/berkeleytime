@@ -11,6 +11,7 @@ import { ICatalogClassServer } from "@/lib/api/catalog";
 import Header from "../Header";
 import { useLayoutContext } from "../context/LayoutContext";
 import { useListContext } from "../context/ListContext";
+import { useResultHoverTracking } from "../hooks/useResultHoverTracking";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./List.module.scss";
 
@@ -79,6 +80,8 @@ export default function List({ onSelect }: ListProps) {
 
   const catalogScrollRef = useRef<HTMLDivElement>(null);
 
+  const hoverTracking = useResultHoverTracking(query, aiSearchActive);
+
   useEffect(() => {
     const scrollElement = catalogScrollRef.current;
     if (!scrollElement) return;
@@ -121,6 +124,7 @@ export default function List({ onSelect }: ListProps) {
   const handleClassClick = (index: number) => {
     const selected = classes[index];
     if (!selected) return;
+    hoverTracking.onClick(index);
     trackEvent(
       "course_result_clicked",
       "class",
@@ -179,6 +183,10 @@ export default function List({ onSelect }: ListProps) {
                     key={key}
                     ref={virtualizer.measureElement}
                     onClick={() => handleClassClick(index)}
+                    onPointerEnter={(event) =>
+                      hoverTracking.onPointerEnter(event, index, _class)
+                    }
+                    onPointerLeave={() => hoverTracking.onPointerLeave(index)}
                   />
                 );
               })}
