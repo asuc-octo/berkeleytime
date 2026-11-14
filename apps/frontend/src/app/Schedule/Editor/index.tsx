@@ -18,6 +18,7 @@ import { Button, IconButton, Input, MenuItem, Tooltip } from "@repo/theme";
 
 import Week from "@/app/Schedule/Editor/Week";
 import { useUpdateSchedule } from "@/hooks/api";
+import { useTracking } from "@/hooks/api/tracking/useTracking";
 import useSchedule from "@/hooks/useSchedule";
 import { IScheduleClass, IScheduleEvent } from "@/lib/api";
 import { Color, Component, GetClassDocument } from "@/lib/generated/graphql";
@@ -37,6 +38,7 @@ import exportToCalendar from "./exportToCalendar";
 
 export default function Editor() {
   const { schedule, editing } = useSchedule();
+  const { trackEvent } = useTracking();
 
   useEffect(() => {
     addRecent(RecentType.Schedule, schedule);
@@ -1211,7 +1213,16 @@ export default function Editor() {
             Clone
           </Button>
         </CloneDialog>
-        <Button variant="secondary" onClick={() => exportToCalendar(schedule)}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            trackEvent("schedule_export", "schedule", schedule._id, {
+              classCount: schedule.classes.filter((item) => !item.hidden)
+                .length,
+            });
+            exportToCalendar(schedule);
+          }}
+        >
           <Upload />
           Export
         </Button>
