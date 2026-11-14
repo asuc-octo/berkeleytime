@@ -41,6 +41,8 @@ spec:
                   if [ ${#restore_date} -eq 10 ]; then
                     primary_key="hourly/prod_backup-${restore_date}.gz"
                   elif [ ${#restore_date} -eq 8 ]; then
+                    # Prefer the latest hourly backup of that day; once hourly
+                    # backups expire (1d), fall back to the longer-lived tiers
                     date_prefix="${restore_date}"
                     latest_hourly_obj=$(
                       aws s3 ls "s3://$BUCKET_NAME/hourly/" \
@@ -49,12 +51,29 @@ spec:
                         grep "^prod_backup-${date_prefix}" | \
                         sort | \
                         tail -n 1
-                    )
+                    ) || true
 
+                    primary_key=""
                     if [ -n "$latest_hourly_obj" ]; then
                       primary_key="hourly/${latest_hourly_obj}"
                     else
-                      echo "No hourly backups found for RESTORE_DATE=$restore_date"
+                      for tier in daily weekly persistent; do
+                        key="$tier/prod_backup-${restore_date}.gz"
+                        if aws s3 ls "s3://$BUCKET_NAME/$key" \
+                          --endpoint-url="$endpoint_url" > /dev/null 2>&1; then
+                          primary_key="$key"
+                          break
+                        fi
+                      done
+                    fi
+
+                    if [ -z "$primary_key" ]; then
+                      echo "No backups found for RESTORE_DATE=$restore_date"
+                      echo "Available daily/weekly/persistent backups:"
+                      for tier in daily weekly persistent; do
+                        aws s3 ls "s3://$BUCKET_NAME/$tier/" \
+                          --endpoint-url="$endpoint_url" | awk -v t="$tier" '{print "  " t "/" $4}'
+                      done
                       exit 1
                     fi
                   else

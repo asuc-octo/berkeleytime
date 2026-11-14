@@ -34,6 +34,7 @@ import {
 import { OutreachPanelBlock } from "./components/OutreachAnalytics";
 import {
   AverageScoresOverTimeBlock,
+  ClassesWithReviewsBlock,
   CourseDistributionBlock,
   CourseRatingsDistributionBlock,
   OptionalResponseRatioBlock,
@@ -42,6 +43,7 @@ import {
   RecentRatingsBlock,
   ScoreDistributionBlock,
   UniqueUsersGrowthBlock,
+  WrittenReviewsCountBlock,
 } from "./components/RatingsAnalytics";
 import {
   ClassesPerScheduleBlock,
@@ -210,6 +212,12 @@ export default function Analytics() {
             </div>
             <div className={styles.cell}>
               <RecentRatingsBlock />
+            </div>
+            <div className={styles.cell}>
+              <WrittenReviewsCountBlock />
+            </div>
+            <div className={styles.cell}>
+              <ClassesWithReviewsBlock />
             </div>
           </>
         )}

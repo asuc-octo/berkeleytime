@@ -21,8 +21,9 @@ interface ClassBrowserProps {
     sessionId: string
   ) => void;
   forceMode?: CatalogLayoutMode;
-  semester: Semester;
-  year: number;
+  // null while the term is still being resolved; the list shows skeletons
+  semester: Semester | null;
+  year: number | null;
   terms?: ITerm[];
   persistent?: boolean;
 }

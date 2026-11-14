@@ -57,7 +57,11 @@ export default function Header() {
           name="search"
           onChange={(event) => updateQuery(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={`Search ${semester} ${year} classes...`}
+          placeholder={
+            semester && year
+              ? `Search ${semester} ${year} classes...`
+              : "Search classes..."
+          }
           onFocus={() => setExpanded(false)}
           autoFocus
           autoComplete="off"
