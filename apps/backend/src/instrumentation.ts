@@ -30,6 +30,12 @@ if (endpoint) {
     "service.name": process.env.OTEL_SERVICE_NAME || "backend",
     "service.version": process.env.SERVICE_VERSION || "0.1.0",
     "deployment.environment": process.env.DEPLOYMENT_ENVIRONMENT || "local",
+    ...(process.env.K8S_NAMESPACE_NAME && {
+      "k8s.namespace.name": process.env.K8S_NAMESPACE_NAME,
+    }),
+    ...(process.env.K8S_POD_NAME && {
+      "k8s.pod.name": process.env.K8S_POD_NAME,
+    }),
   });
 
   const sdk = new NodeSDK({

@@ -1,0 +1,1665 @@
+{
+  "uid": "bt-resources",
+  "title": "Berkeleytime — Resources",
+  "description": "Resource and capacity investigation using available telemetry sources.",
+  "tags": [
+    "berkeleytime",
+    "resources"
+  ],
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "links": [],
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(up, deployment_environment)",
+        "query": {
+          "query": "label_values(up, deployment_environment)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": false,
+        "includeAll": false,
+        "current": {
+          "selected": false,
+          "text": "local",
+          "value": "local"
+        },
+        "options": []
+      },
+      {
+        "name": "namespace",
+        "label": "Namespace",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(kube_pod_info{deployment_environment=~\"$environment\"}, namespace)",
+        "query": {
+          "query": "label_values(kube_pod_info{deployment_environment=~\"$environment\"}, namespace)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      },
+      {
+        "name": "service",
+        "label": "Backend service",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(process_memory_rss_bytes{deployment_environment=~\"$environment\"}, service_name)",
+        "query": {
+          "query": "label_values(process_memory_rss_bytes{deployment_environment=~\"$environment\"}, service_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      },
+      {
+        "name": "workload",
+        "label": "Workload (pod choices)",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(bt:pod_owner:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\"}, workload)",
+        "query": {
+          "query": "label_values(bt:pod_owner:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\"}, workload)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      },
+      {
+        "name": "pod",
+        "label": "Pod (container/backend panels)",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(bt:pod_owner:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}, pod)",
+        "query": {
+          "query": "label_values(bt:pod_owner:info{deployment_environment=~\"$environment\",namespace=~\"$namespace\",workload=~\"$workload\"}, pod)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      },
+      {
+        "name": "node",
+        "label": "Node (node panels)",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(up{deployment_environment=~\"$environment\"}, node)",
+        "query": {
+          "query": "label_values(up{deployment_environment=~\"$environment\"}, node)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "options": []
+      }
+    ]
+  },
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "How to read this dashboard",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Resource pressure is evidence to investigate, not proof of a cause. **Compose has no Kubernetes, node, or PVC data.** Those panels should show Unknown / No data.\n\nEnvironment applies throughout; namespace/pod apply to application/container panels; workload narrows the available pod choices; service applies to backend process/API/cache panels; node applies to node panels. Dependencies have their own service identities. No limit configured is different from missing collection."
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Collection targets (1 = reachable; 0 = failed)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Is each configured scrape endpoint reachable? This checks scraping only, not successful receiver collection or whole-stack health. In Compose, Kubernetes targets are absent. Check Targets and Collector logs when a source is missing. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "up{deployment_environment=~\"$environment\"}",
+          "legendFormat": "{{job}} {{instance}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "title": "Backend and Redis — available in Compose",
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Heap/RSS measure the Node process, separately from container memory. Event-loop percentiles describe each export window; they are not percentiles over the entire selected time range. Service, namespace and pod filters apply here."
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Backend heap and RSS",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How much memory does the backend process use? Heap is JavaScript memory; RSS includes other resident allocations. Compare with container working set and its memory limit, then investigate allocation or GC behavior. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "process_memory_heap_used_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}",
+          "legendFormat": "heap {{service_name}} {{pod}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        },
+        {
+          "refId": "B",
+          "expr": "process_memory_rss_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}",
+          "legendFormat": "RSS {{service_name}} {{pod}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Event-loop delay",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Is the backend pausing? Max and p99 cover each 15-second export window, sampled at 20 ms resolution. Compare sustained increases with GraphQL latency; investigate GC and synchronous work. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "process_eventloop_lag_max_milliseconds{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}",
+          "legendFormat": "max {{pod}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        },
+        {
+          "refId": "B",
+          "expr": "process_eventloop_lag_p99_milliseconds{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}",
+          "legendFormat": "p99 {{pod}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "value": 100,
+                "color": "yellow"
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "GraphQL p95 latency",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Does application latency rise alongside resource use? Histogram p95 is calculated over five-minute rates, grouped by service and pod. Check traffic mix, event loop and dependency latency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (le,service_name,pod) (rate(graphql_operation_duration_milliseconds_bucket{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m])))",
+          "legendFormat": "GraphQL p95 {{service_name}} {{pod}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Redis operation p95 latency",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Is the backend cache waiting on Redis? Histogram p95 covers instrumented get/set/delete operations over five minutes, not all Redis commands. Compare by operation and check Redis reachability and load. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum by (le,operation,service_name) (rate(redis_cache_operation_duration_milliseconds_bucket{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m])))",
+          "legendFormat": "{{operation}} {{service_name}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Response cache activity",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Are cache hits or misses changing? Five-minute rates count instrumented response cache outcomes. Check traffic mix and cache invalidation; idle traffic produces zero rates when counters exist. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (service_name) (rate(apollo_cache_hit_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m]))",
+          "legendFormat": "hits {{service_name}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        },
+        {
+          "refId": "B",
+          "expr": "sum by (service_name) (rate(apollo_cache_miss_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m]))",
+          "legendFormat": "misses {{service_name}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Response cache hit ratio — traffic required",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "What fraction of cache lookups hit? Denominator is hits plus misses over five minutes. No traffic or a missing counter returns no ratio, never a fabricated 0% or 100%. Check activity before interpreting. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(apollo_cache_hit_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m])) / ((sum(rate(apollo_cache_hit_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m])) + sum(rate(apollo_cache_miss_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=~\"$service\",pod=~\"$pod\"}[5m]))) > 0)",
+          "legendFormat": "hit ratio",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 11,
+      "type": "text",
+      "title": "Kubernetes containers",
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Unavailable in Compose. CPU is in cores (1 = one CPU core); memory is bytes. CPU limits can intentionally be absent; the backend has no CPU limit configured."
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "Container CPU usage",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Which containers use CPU? Rate CPU seconds over five minutes, then deduplicate scrape series before graphing. Namespace and pod filters apply; workload selection narrows the available pod choices. Check requests and node contention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 44,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_cpu_cores:rate5m{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cores",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "Container working set",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Which containers retain memory? Container working set differs from process RSS and heap. Compare with per-container limits, then inspect growth over time. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 44,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_memory_working_set_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 16,
+      "type": "timeseries",
+      "title": "Container memory / configured limit",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How close is a container to its memory limit? Denominator is its positive configured limit; missing/zero limits produce no percentage. 85% sustained for five minutes is an investigation proposal, not a diagnosis. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 52,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_memory_working_set_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"} / on (deployment_environment,namespace,pod,container) group_left() (bt:container_memory_limits{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"} > 0)",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "value": 0.85,
+                "color": "yellow"
+              },
+              {
+                "value": 0.95,
+                "color": "red"
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "CPU throttled periods / total periods",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How often is CPU quota exhausted? Ratio sums paired throttled-period rates over paired total-period rates across container incarnations in the five-minute window. Duplicate scrapes count once per cAdvisor id. This is not percent CPU time lost. No positive denominator or unsupported counters returns no data. Investigate >10% sustained for five minutes. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 52,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_cpu_throttling:ratio5m{deployment_environment=~\"$environment\",namespace=~\"$namespace\",pod=~\"$pod\"}",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "value": 0.1,
+                "color": "yellow"
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 20,
+      "type": "text",
+      "title": "Storage and nodes — Kubernetes only",
+      "gridPos": {
+        "x": 0,
+        "y": 60,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Node data is cluster-level and ignores namespace/service/workload filters. In kind, nodes are Linux containers; these readings do not describe all macOS capacity. PVC metrics depend on storage-driver support; hostPath often supplies no volume statistics."
+      }
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "PVC free / capacity",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "What fraction of reported PVC capacity remains available? Divide only by positive capacity. Less than 15% for five minutes warrants investigating retention and growth; never infer PVC values from host filesystem values. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 64,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (namespace,persistentvolumeclaim) (kubelet_volume_stats_available_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\"}) / (max by (namespace,persistentvolumeclaim) (kubelet_volume_stats_capacity_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\"}) > 0)",
+          "legendFormat": "{{namespace}}/{{persistentvolumeclaim}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.15
+              },
+              {
+                "color": "green",
+                "value": 0.25
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 23,
+      "type": "timeseries",
+      "title": "Node filesystem free / size",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How much usable filesystem space remains on each Linux node? Excludes pseudo filesystems. This is node filesystem capacity, not PVC capacity. Investigate sustained free space below 15% and check the mount path. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 64,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "node_filesystem_avail_bytes{deployment_environment=~\"$environment\",node=~\"$node\",fstype!~\"tmpfs|devtmpfs|overlay|squashfs\",mountpoint!~\"/run.*\"} / (node_filesystem_size_bytes{deployment_environment=~\"$environment\",node=~\"$node\",fstype!~\"tmpfs|devtmpfs|overlay|squashfs\",mountpoint!~\"/run.*\"} > 0)",
+          "legendFormat": "{{node}} {{mountpoint}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.15
+              },
+              {
+                "color": "green",
+                "value": 0.25
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 24,
+      "type": "timeseries",
+      "title": "Node pressure conditions (1 = active)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Is Kubernetes reporting memory, disk or PID pressure? Conditions come from kube-state-metrics and are cluster-level. Check affected nodes and scheduling events rather than attributing pressure to a specific service. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 72,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max by (node,condition) (kube_node_status_condition{deployment_environment=~\"$environment\",node=~\"$node\",status=\"true\",condition=~\"MemoryPressure|DiskPressure|PIDPressure\"})",
+          "legendFormat": "{{node}} {{condition}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "Observability stack working set",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How much memory do the monitoring components use? Selects observability container names independently of workload and pod filters; namespace/environment still apply. Compare with limits before increasing retention or collection volume. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 72,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_memory_working_set_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",container=~\"prometheus|grafana|otel-collector|loki|tempo|node-exporter\"}",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 27,
+      "type": "timeseries",
+      "title": "Observability stack CPU",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How much CPU do monitoring components use? Selects stack container names independently of workload and pod filters. Compare scrape/query volume before changing intervals or retention. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 80,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "bt:container_cpu_cores:rate5m{deployment_environment=~\"$environment\",namespace=~\"$namespace\",container=~\"prometheus|grafana|otel-collector|loki|tempo|node-exporter\"}",
+          "legendFormat": "{{pod}} / {{container}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "cores",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 28,
+      "type": "text",
+      "title": "MongoDB and nginx — validated receivers required",
+      "gridPos": {
+        "x": 0,
+        "y": 88,
+        "w": 24,
+        "h": 4
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Dependency panels use their own service identities and ignore backend service/workload/pod selections. In Kubernetes they honor namespace; node selection does not apply. Inspect Collector logs for collection errors before trusting an unchanged reading."
+      }
+    },
+    {
+      "id": 29,
+      "type": "timeseries",
+      "title": "MongoDB resident memory",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "What memory does MongoDB report? Server-reported resident memory is distinct from container working set. Check source availability and compare with container limits. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 92,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "mongodb_memory_usage_bytes{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"mongodb\",type=\"resident\"}",
+          "legendFormat": "{{type}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "MongoDB connections",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Are database connections increasing? Gauges show active/current/available connection categories; do not add them together. Check connection pooling and request concurrency. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 12,
+        "y": 92,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "mongodb_connection_count{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"mongodb\"}",
+          "legendFormat": "{{type}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    },
+    {
+      "id": 32,
+      "type": "timeseries",
+      "title": "nginx requests per second",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "How much traffic reaches nginx? Counter rate covers five minutes and may include internal status scraping. Compare with application request rates and readiness. Source: Prometheus. Collection/export delay: approximately 15–60 seconds; five-minute rates need traffic and multiple samples.",
+      "gridPos": {
+        "x": 0,
+        "y": 100,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "rate(nginx_requests_total{deployment_environment=~\"$environment\",namespace=~\"$namespace\",service_name=\"nginx\"}[5m])",
+          "legendFormat": "nginx requests/s",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "range": true,
+          "instant": false,
+          "format": "time_series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "noValue": "Unknown / No data",
+          "decimals": 2,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "links": []
+    }
+  ]
+}

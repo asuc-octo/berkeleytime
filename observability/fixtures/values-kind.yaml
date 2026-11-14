@@ -1,0 +1,23 @@
+# Test only: install into namespace bt in the disposable bt-resources kind cluster.
+environment: kind
+namespace: bt
+grafana:
+  ingress:
+    enabled: false
+resourceMetrics:
+  enabled: true
+  namespaces: [bt]
+mongodb:
+  enabled: true
+  endpoint: resource-mongodb:27017
+dependencies:
+  nginx:
+    enabled: true
+    endpoint: http://resource-nginx:8080/nginx_status
+# Existing manual hostPath PVs are used only for this single-node test.
+prometheus:
+  storage: {size: 1Gi}
+tempo:
+  storage: {size: 1Gi}
+loki:
+  storage: {size: 1Gi}
