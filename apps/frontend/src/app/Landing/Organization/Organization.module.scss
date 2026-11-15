@@ -1,163 +1,187 @@
 @use "../../../mixins" as *;
+@use "../grid" as *;
 
 $breakpoint: 660px;
-$section-spacing: 48px;
 
+// Sits on the landing gradient, so theme text and border colors go white here
 .root {
-  background-color: var(--foreground-color);
+  position: relative;
+  color: white;
+  --heading-color: white;
+  --paragraph-color: rgb(255 255 255 / 85%);
+  --border-color: white;
+  --button-hover-color: rgb(255 255 255 / 20%);
+
+  // Same grid patch and fade as the top of the page, mirrored like the Figma:
+  // brightest in the bottom-right corner, fading out toward the top-left
+  &::before {
+    @include grid-overlay(right bottom);
+    inset: 0;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background-image: linear-gradient(
+      298.58deg,
+      rgb(255 255 255 / 20%) 0%,
+      rgb(255 255 255 / 0%) 97.88%
+    );
+    background-size: 1067px 864px;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    mask-repeat: repeat;
+  }
+
+  > * {
+    position: relative;
+  }
 }
 
-.aboutSection {
-  padding: $section-spacing 40px;
-  box-sizing: border-box;
+// Get Involved
+
+.involved,
+.memorial,
+.supporters {
+  // Figma's Inter uses the standard (text) letterforms at every size
+  font-optical-sizing: none;
+}
+
+.involved {
   width: 100%;
+  max-width: calc(720px + 80px);
+  margin: 0 auto;
+  padding: 124px 40px 0;
+  box-sizing: border-box;
+
+  @media (max-width: $breakpoint) {
+    padding: 48px 24px 0;
+  }
 }
 
-.aboutContent {
+.involvedTitle {
+  margin-bottom: 24px;
+  font-size: 64px;
+  font-weight: var(--font-bold);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-align: center;
+
+  @media (max-width: $breakpoint) {
+    font-size: 44px;
+  }
+}
+
+.accordion.accordion {
+  > *,
+  > *:last-child {
+    border-bottom: 1px solid white;
+  }
+
+  a {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      color: white;
+      opacity: 0.8;
+    }
+  }
+
+  .trigger {
+    padding: 18px 0 16px;
+    font-size: 24px;
+    font-weight: var(--font-normal);
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: white;
+
+    // The plus asset replaces the default chevron
+    > svg {
+      display: none;
+    }
+
+    &[data-state="open"] .plus {
+      transform: rotate(45deg);
+    }
+
+    @media (max-width: $breakpoint) {
+      padding: 14px 0 12px;
+      font-size: 20px;
+    }
+  }
+}
+
+.plus {
+  flex-shrink: 0;
+  display: block;
+  transition: transform 200ms ease;
+}
+
+// In memory
+
+.memorial {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 13px;
+  padding: 111px 40px 0;
   text-align: center;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
+
+  @media (max-width: $breakpoint) {
+    padding: 64px 24px 0;
+  }
 }
 
-.aboutTitle {
-  color: var(--heading-color);
-  font-size: 32px;
-  font-weight: var(--font-medium);
-  line-height: 1.25;
-  margin: 0 0 16px 0;
-}
-
-.aboutText {
-  font-size: var(--text-16);
-  color: var(--paragraph-color);
+.memorialTitle {
+  font-size: 35px;
+  font-weight: var(--font-bold);
   line-height: 1.5;
-  margin: 0;
-  max-width: 500px;
-}
-
-.aboutButton {
-  margin-top: 20px;
-}
-
-.wrapper {
-  padding: 0 40px;
-}
-
-.getInvolvedBox {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 24px;
-  width: 100%;
-  font-size: var(--text-18);
-  padding: $section-spacing 0;
-  box-sizing: border-box;
+  letter-spacing: 0.02em;
 
   @media (max-width: $breakpoint) {
-    flex-direction: column;
-    gap: 24px;
-    align-items: center;
-    text-align: center;
+    font-size: 26px;
   }
 }
 
-.getInvolvedTitle {
-  flex: 1;
-  min-width: 180px;
-
-  @media (max-width: $breakpoint) {
-    min-width: unset;
-  }
-}
-
-.heading {
-  color: var(--heading-color);
-  font-size: 32px;
-  font-weight: var(--font-medium);
-  line-height: 1.25;
-}
-
-.description {
-  margin-top: 8px;
-  max-width: 400px;
+.memorialText {
+  max-width: 597px;
   font-size: var(--text-16);
-  color: var(--paragraph-color);
   line-height: 1.5;
-
-  @media (max-width: $breakpoint) {
-    display: none;
-  }
+  letter-spacing: 0.02em;
 }
 
-.accordion {
-  flex: 1;
-  max-width: 680px;
-  text-align: left;
+// Supported by
 
-  @media (max-width: $breakpoint) {
-    max-width: 100%;
-    width: 100%;
-  }
-}
-
-.sponsorsSection {
-  padding: $section-spacing 40px;
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.sponsorsContent {
+.supporters {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
+  gap: 9px;
+  padding: 28px 40px 85px;
+
+  @media (max-width: $breakpoint) {
+    padding: 32px 24px 48px;
+  }
 }
 
-.sponsorsTitle {
-  color: var(--heading-color);
-  font-size: 32px;
-  font-weight: var(--font-medium);
-  line-height: 1.25;
-  margin: 0 0 16px 0;
-  text-align: center;
+.supportersTitle {
+  font-size: 20px;
+  font-weight: var(--font-bold);
+  line-height: 1.172;
+  letter-spacing: 0.02em;
 }
 
-.sponsorsText {
-  font-size: var(--text-16);
-  color: var(--paragraph-color);
-  line-height: 1.5;
-  margin: 0 0 32px 0;
-  max-width: 400px;
-  text-align: center;
-}
-
-.sponsorsLogos {
+.supportersLogos {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 32px;
   flex-wrap: wrap;
-  flex: 1;
-  max-width: 680px;
-
-  @media (max-width: $breakpoint) {
-    max-width: 100%;
-    width: 100%;
-    gap: 20px;
-    justify-content: center;
-  }
+  align-items: center;
+  justify-content: center;
+  gap: 24px 27px;
+  // Smaller than the Figma frame; scales every logo and gap together
+  zoom: 0.8;
 }
 
 .sponsorLink {
   display: block;
-  text-decoration: none;
   transition: opacity 0.2s ease;
 
   &:hover {
@@ -165,102 +189,63 @@ $section-spacing: 48px;
   }
 }
 
-.ocfContainer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+.asucSeal {
+  position: relative;
+  display: block;
+  width: 94px;
+  height: 93px;
+  overflow: hidden;
 
-  &:hover {
-    background-color: var(--background-color);
+  img {
+    position: absolute;
+    left: -23.13%;
+    top: -9.04%;
+    width: 148.03%;
+    height: 187.92%;
+    max-width: none;
   }
+}
+
+.ocfLogo,
+.techFundLogo {
+  display: block;
+  background-color: white;
+  mask-repeat: no-repeat;
 }
 
 .ocfLogo {
-  height: 45px;
-  width: auto;
+  width: 95.015px;
+  height: 51.42px;
+  mask-image: url("../assets/ocf-mask.png");
+  mask-size: 93.338px 47.508px;
+  mask-position: 1.677px 1.118px;
+}
+
+.techFundLogo {
+  width: 108.23px;
+  height: 67.228px;
+  mask-image: url("../assets/tech-fund-mask.png");
+  mask-size: 104.167px 65.012px;
+  mask-position: 5.91px -4.063px;
+}
+
+.mechanizeLogo {
   display: block;
-}
-
-.ocfText {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
-
-.ocfHostedOn {
-  font-size: 12px;
-  color: var(--paragraph-color);
-  font-weight: 400;
-}
-
-.ocfName {
-  font-size: 24px;
-  color: var(--heading-color);
-  font-weight: 700;
-}
-
-.mechanizeContainer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: var(--background-color);
-  }
-}
-
-.mechanizeLogoLight,
-.mechanizeLogoDark {
   height: 40px;
   width: auto;
-  display: block;
 }
 
-.mechanizeName {
-  font-size: 20px;
-  color: var(--heading-color);
-  font-weight: 500;
-}
+// Footer: keep the shared component, just recolor its divider and text
 
-.mechanizeLogoDark {
-  display: none;
+.footer {
+  // Theme switcher: its selected pill is the theme foreground, so give that
+  // icon the theme's own heading color instead of the white set above
+  [role="tablist"] {
+    --heading-color: var(--light-heading-color);
+    --label-color: rgb(255 255 255 / 75%);
 
-  @include dark-mode {
-    display: block;
-  }
-}
-
-.mechanizeLogoLight {
-  @include dark-mode {
-    display: none;
-  }
-}
-
-.asucLogoLight,
-.asucLogoDark {
-  height: 60px;
-  width: auto;
-  display: block;
-}
-
-.asucLogoDark {
-  display: none;
-
-  @include dark-mode {
-    display: block;
-  }
-}
-
-.asucLogoLight {
-  @include dark-mode {
-    display: none;
+    @include dark-mode {
+      --heading-color: var(--dark-heading-color);
+    }
   }
 }
