@@ -172,6 +172,81 @@ To use it:
 
 The diff output is formatted as collapsible sections for each resource, with a raw diff available at the bottom for debugging.
 
+> [!NOTE]
+> Changes to `infra/base`, `infra/mongo` and `infra/redis` are also diffed automatically on every pull request by the **CD: Infra Releases** workflow. See [Deploying Infra Releases](#deploying-infra-releases).
+
+## Deploying Infra Releases
+
+The app, AG, staff and observability charts are deployed by the `CD: Deploy to ...` workflows. The other Helm releases are deployed by the **CD: Infra Releases** workflow (`.github/workflows/cd-infra.yaml`). For how it works and why it diffs before it applies, see [Infra Releases](./cicd-workflow.md#infra-releases).
+
+| Release | Chart | Environment |
+| --- | --- | --- |
+| `bt-base` | `infra/base` | production |
+| `bt-prod-mongo` | `infra/mongo` | production |
+| `bt-prod-redis` | `infra/redis` | production |
+| `bt-stage-mongo` | `infra/mongo` (`values-staging.yaml`) | staging |
+| `bt-stage-redis` | `infra/redis` (`values-staging.yaml`) | staging |
+
+The list lives in `infra/releases.json`.
+
+### Reading a diff
+
+The workflow compares what a release has deployed (`helm get manifest`) with what the repository would deploy (`helm template`). Kubernetes Secrets are left out of the output.
+
+- **Pull requests** that touch `infra/base`, `infra/mongo`, `infra/redis`, `infra/releases.json` or `infra/scripts`: open the run from the pull request's Checks tab and read the diff in the job summary.
+- **Every Monday**: the diff runs for every release from `main`. The run **fails if the cluster no longer matches the repository**.
+- **Run workflow**: diffs one release, and applies it if you ask.
+
+The summary shows either `No changes: the cluster matches the repository.` or the changes the repository would make. It also lists every image and whether it is pinned. Applying is refused while any image has no fixed tag or digest (no tag, or the `latest` tag).
+
+### Applying a release
+
+1. Go to **Actions → CD: Infra Releases → Run workflow**. Run it from `main`: the Monday check compares the cluster with `main`, so applying from another branch makes it fail.
+2. Pick the release in **Release to diff or apply** and check **Apply after the diff**.
+3. When the diff finishes, read it in the job summary. Approve the `production` or `staging` deployment only if the changes are the ones you expect.
+4. After approval, the workflow packages the chart with a version that identifies the commit and pushes it to the registry. Then, over SSH on `hozer-51`, it checks that every image is on the node (pulling it if not) and runs `helm upgrade --wait --timeout 10m`.
+5. Check that the pods are running: `k get pods -l app.kubernetes.io/instance=<release>`.
+
+> [!IMPORTANT]
+> Mongo and Redis restart when their pod spec changes, and a Redis restart logs every user out. Apply production Mongo and Redis at a quiet hour, and apply the matching staging release first.
+
+If the upgrade fails, the job prints the pods and the rollback command. To roll back, run this on `hozer-51`:
+
+```sh
+helm rollback <release> --namespace bt
+```
+
+> [!NOTE]
+> Don't change these releases by hand (`kubectl edit`, `redis-cli CONFIG SET`, ...). The next apply overwrites the change, and the Monday check fails until the repository matches the cluster. Change the chart or values in the repository instead.
+
+## Regenerating the `HELM_DIFF_KUBECONFIG` Secret
+
+The diff jobs (and the `/helm-diff` pull request command) read the cluster from GitHub Actions with the `HELM_DIFF_KUBECONFIG` repository secret. It holds a kubeconfig for the read-only `helm-diff-sa` service account (`infra/base/templates/helm-diff-role.yaml`). The token inside expires after a year (or the API server's maximum). When it does, the jobs fail at **Check Cluster Access** with:
+
+> The HELM_DIFF_KUBECONFIG secret cannot read Helm releases in namespace bt (expired or revoked token?)
+
+To regenerate it, SSH into `hozer-51` and run:
+
+```sh
+token=$(kubectl -n bt create token helm-diff-sa --duration=8760h)
+kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' > /tmp/ca
+server=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-cluster bt --server="$server"
+KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set clusters.bt.certificate-authority-data "$(cat /tmp/ca)"
+KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-credentials helm-diff-sa --token="$token"
+KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config set-context bt --cluster=bt --user=helm-diff-sa --namespace=bt
+KUBECONFIG=/tmp/helm-diff.kubeconfig kubectl config use-context bt
+```
+
+Then:
+
+1. Copy the contents of `/tmp/helm-diff.kubeconfig` into the `HELM_DIFF_KUBECONFIG` secret (**Settings → Secrets and variables → Actions**).
+2. Delete the local files: `rm /tmp/ca /tmp/helm-diff.kubeconfig`.
+3. Run **CD: Infra Releases** for any release with **Apply after the diff** unchecked, and check that **Check Cluster Access** passes.
+
+> [!WARNING]
+> `helm-diff-sa` cannot change anything, but it can read the Secrets in the `bt` namespace (Helm stores release records in Secrets). Treat the kubeconfig as a credential: don't paste it into chats, issues or logs, and delete the local copies.
+
 ## Uninstall ALL development helm releases
 
 ```sh
