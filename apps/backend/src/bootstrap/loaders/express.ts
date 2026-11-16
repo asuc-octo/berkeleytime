@@ -3,6 +3,7 @@ import compression from "compression";
 import cors from "cors";
 import { type Application, json } from "express";
 import helmet from "helmet";
+import mongoose from "mongoose";
 import { RedisClientType } from "redis";
 
 import { config } from "../../../../../packages/common/src/utils/config";
@@ -88,6 +89,26 @@ export default async (
 
   // load tracking beacon route
   trackingRoutes(app, redis);
+
+  // Public health check for uptime monitors. Unlike /healthz (the pod probe),
+  // it fails when MongoDB or Redis can't be reached, so an outage behind a
+  // healthy frontend still shows up.
+  app.get("/health", async (_, res) => {
+    const check = (ping: () => Promise<unknown>) =>
+      Promise.race([
+        ping().then(() => "ok"),
+        new Promise((resolve) => setTimeout(() => resolve("timeout"), 2000)),
+      ]).catch(() => "error");
+
+    const [mongo, cache] = await Promise.all([
+      check(() => mongoose.connection.db!.admin().ping()),
+      check(() => redis.ping()),
+    ]);
+
+    res
+      .status(mongo === "ok" && cache === "ok" ? 200 : 503)
+      .json({ mongo, redis: cache });
+  });
 
   // load semantic search routes
   app.use("/semantic-search", semanticSearchRoutes(redis));
