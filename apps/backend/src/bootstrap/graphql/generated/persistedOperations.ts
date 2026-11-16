@@ -134,12 +134,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/ratings.ts"],
   },
-  "1ca3cf6917e03729d6cddb6fdb92a508daa862d82c0ff3c29c06686bb8339cd8": {
-    operationName: "GetCatalogSearch",
-    document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
-    variableNames: ["year","semester","search","filters","sortBy","sortOrder","page","pageSize","semanticSearch"],
-    sources: ["apps/frontend/src/lib/api/catalog.ts"],
-  },
   "21d99c424cfd188b983652d4c063b3f6ec79d463006d91688eb0141541de6be6": {
     operationName: "TrackEvents",
     document: "mutation TrackEvents($events:[TrackingEventInput!]!){trackEvents(events:$events)}",
@@ -187,6 +181,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query ReadSchedule($id:ID!){schedule(id:$id){_id name public createdBy year semester sessionId term{startDate endDate __typename}events{_id title description startTime endTime days color hidden __typename}classes{class{subject courseNumber number unitsMax unitsMin course{title gradeDistribution{average distribution{letter count __typename}__typename}__typename}primarySection{sectionId subject courseNumber classNumber number startDate endDate component enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}sections{sectionId subject courseNumber classNumber number startDate endDate component enrollment{latest{status enrolledCount maxEnroll waitlistedCount maxWaitlist __typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}exams{date type location startTime endTime __typename}__typename}__typename}selectedSections{sectionId __typename}color hidden locked blockedSections lockedComponents __typename}__typename}}",
     variableNames: ["id"],
     sources: ["apps/frontend/src/lib/api/schedules.ts"],
+  },
+  "2793848278c2ff2ae50e95382aa697aa75b4d919d0d40ef02dbb0d2c6c8b3fec": {
+    operationName: "GetCourseTitle",
+    document: "query GetCourseTitle($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number title __typename}}",
+    variableNames: ["subject","number"],
+    sources: ["apps/frontend/src/lib/api/courses.ts"],
   },
   "2a46e76e5ab360ebf15893a02ec92a49305ab08e6fa8cd318866fdf5795326e8": {
     operationName: "UpdateSelectedPlanRequirements",
@@ -650,12 +650,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: ["id"],
     sources: ["apps/ag-frontend/src/lib/api/curated-classes.ts","apps/frontend/src/lib/api/curated-classes.ts"],
   },
-  "b5e8487e1e4701fa3a5b109925a67dc711511fac6b6b159d66d0303f367e7496": {
-    operationName: "GetCourseTitle",
-    document: "query GetCourseTitle($subject:String!$number:CourseNumber!){course(subject:$subject number:$number){courseId subject number title aggregatedRatings{metrics{metricName count weightedAverage __typename}__typename}__typename}}",
-    variableNames: ["subject","number"],
-    sources: ["apps/frontend/src/lib/api/courses.ts"],
-  },
   "b6901c13a13258df5f94f75c25ea0d3e9f2e4e023fb3f3421b7384c7780db0ea": {
     operationName: "AllNavItemsForStaff",
     document: "query AllNavItemsForStaff{allNavItemsForStaff{id label url badgeText order visible clickCount createdAt updatedAt __typename}}",
@@ -805,6 +799,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "mutation DeleteNavItem($navItemId:ID!){deleteNavItem(navItemId:$navItemId)}",
     variableNames: ["navItemId"],
     sources: ["apps/staff-frontend/src/lib/api/nav-item.ts"],
+  },
+  "f5c72605666bd4f6bf9b1b0f7231085b4dfe26baea2daf92713c79fb8a24dc77": {
+    operationName: "GetCatalogSearch",
+    document: "query GetCatalogSearch($year:Int!$semester:Semester!$search:String$filters:CatalogFilters$sortBy:CatalogSortBy$sortOrder:SortOrder$page:Int$pageSize:Int$semanticSearch:Boolean){catalogSearch(year:$year semester:$semester search:$search filters:$filters sortBy:$sortBy sortOrder:$sortOrder page:$page pageSize:$pageSize semanticSearch:$semanticSearch){results{year semester sessionId subject courseNumber number title unitsMin unitsMax courseTitle allTimeAverageGrade allTimePassCount allTimeNoPassCount enrolledCount maxEnroll activeReservedMaxCount decal{title __typename}meetings{days startTime endTime __typename}__typename}totalCount __typename}}",
+    variableNames: ["year","semester","search","filters","sortBy","sortOrder","page","pageSize","semanticSearch"],
+    sources: ["apps/frontend/src/lib/api/catalog.ts"],
   },
   "f66f83ec4a6f2c6f99856ee6e3bcebd6877b1df61841333251be242cb44e0b99": {
     operationName: "GetPlan",
