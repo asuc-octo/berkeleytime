@@ -1,96 +1,162 @@
-@import "../../../_mixins.scss";
-
-@mixin hero-gradient($accent, $background) {
-  background: linear-gradient(
-    to bottom,
-    #{$background} 0%,
-    color-mix(in srgb, #{$background} 100%, #{$accent}) 5%,
-    color-mix(in srgb, #{$background} 85%, #{$accent}) 12%,
-    color-mix(in srgb, #{$background} 70%, #{$accent}) 22%,
-    color-mix(in srgb, #{$background} 50%, #{$accent}) 35%,
-    color-mix(in srgb, #{$background} 30%, #{$accent}) 48%,
-    color-mix(in srgb, #{$background} 15%, #{$accent}) 60%,
-    color-mix(in srgb, #{$background} 5%, #{$accent}) 72%,
-    #{$accent} 85%,
-    #{$accent} 100%
-  );
-}
-
+// Vertical rhythm mirrors the Figma "mid morning" frame (1520px wide). The
+// text starts on the same left edge as the feature rows below (their 55px
+// padding around a centered 1400px column), and the right padding reserves
+// the tower's footprint so the copy wraps before reaching it.
 .root {
-  height: calc(100svh - var(--header-height, 90px) + 16px);
-  display: flex;
-  align-items: flex-end;
-  @include hero-gradient(var(--blue-500), var(--foreground-color));
-  padding: 48px;
+  --text-inset: max(55px, (100vw - 1400px) / 2);
+  --tower-top: -44px;
+  --tower-right: 147px;
+  --tower-scale: 1;
+  --tower-gap: 40px;
+  --tower-reserve: calc(
+    var(--tower-right) + 314.002px * var(--tower-scale) + var(--tower-gap)
+  );
+
   position: relative;
-  isolation: isolate;
+  padding: 173px var(--tower-reserve) 146px var(--text-inset);
+  // Figma's Inter uses the standard (text) letterforms at every size
+  font-optical-sizing: none;
 
-  @include dark-mode {
-    @include hero-gradient(var(--blue-800), var(--foreground-color));
+  @media (width <= 1200px) {
+    --tower-right: 48px;
+    --tower-scale: 0.75;
   }
 
-  // Noise overlay
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url("./noise.svg");
-    background-size: 150px 150px;
-    background-repeat: repeat;
-    filter: contrast(300%);
-    opacity: 0.4;
-    @include dark-mode {
-      opacity: 0;
-    }
-    mix-blend-mode: overlay;
-    pointer-events: none;
-  }
-
+  // Below desktop width the spire would sit behind the nav, so the tower
+  // starts just below it instead and still reaches behind the wave
   @media (width <= 992px) {
-    padding: 24px;
+    --tower-top: 16px;
+    --text-inset: 24px;
+    --tower-right: 24px;
+    --tower-scale: 0.55;
+    --tower-gap: 24px;
+    padding-top: 96px;
+    padding-bottom: 96px;
   }
 
   @media (width <= 700px) {
-    height: 40svh;
-    min-height: 220px;
+    --tower-right: 12px;
+    --tower-scale: 0.3;
+    --tower-gap: 12px;
+    padding-top: 48px;
+    padding-bottom: 64px;
   }
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .heading {
-  font-size: 48px;
-  color: white;
-  font-weight: 600;
+  font-size: 81.87px;
+  font-weight: var(--font-bold);
   line-height: 1.1;
-  position: relative;
-
-  @media (width <= 700px) {
-    font-size: 32px;
-  }
-}
-
-.tabletBreak {
-  display: none;
+  letter-spacing: 0.01em;
+  color: white;
 
   @media (width <= 992px) {
-    display: block;
+    font-size: 64px;
+  }
+
+  // "Berkeleytime!" is ~7x the font size wide and can't wrap, so on phones
+  // the size follows the space left beside the tower
+  @media (width <= 700px) {
+    font-size: min(
+      44px,
+      calc((100vw - var(--text-inset) - var(--tower-reserve)) / 7)
+    );
   }
 }
 
+.description {
+  margin-top: 27px;
+  max-width: 795px;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: white;
+
+  @media (width <= 700px) {
+    font-size: var(--text-16);
+  }
+}
+
+// Same proportions as the nav's Sign in button (13px text, 32px tall, 12px
+// side padding, 4px corners), scaled up to this 24px text
+.button {
+  margin-top: 35px;
+  height: 59px;
+  padding: 0 22px;
+  border-radius: 7px;
+  font-size: 24px;
+  font-weight: var(--font-bold);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+
+  &[data-variant="primary"] {
+    background-color: rgb(255 255 255 / 30%);
+
+    &:hover {
+      background-color: rgb(255 255 255 / 40%);
+    }
+
+    &:active {
+      background-color: rgb(255 255 255 / 20%);
+    }
+  }
+
+  @media (width <= 700px) {
+    height: 44px;
+    padding: 0 17px;
+    border-radius: 6px;
+    font-size: var(--text-18);
+  }
+}
+
+// Sather Tower: layers sized from their SVG roots, positioned relative to the
+// 314 x 1622.56 group. Extends behind the features section, which covers it.
 .tower {
   position: absolute;
-  right: 100px;
-  bottom: 0;
-  height: 80%;
+  top: var(--tower-top);
+  right: var(--tower-right);
+  width: 314.002px;
+  height: 1622.56px;
   pointer-events: none;
+  transform: scale(var(--tower-scale));
+  transform-origin: top right;
 
   @media (width <= 992px) {
-    right: 24px;
+    opacity: 0.6;
   }
 
-  @media (width <= 700px) {
-    right: 24px;
-    height: 70%;
+  img {
+    position: absolute;
+    display: block;
+    max-width: none;
   }
+}
+
+.towerBody {
+  top: 0;
+  left: 0;
+}
+
+.towerSpire {
+  top: 344.14px;
+  left: 269.14px;
+}
+
+.towerLight {
+  top: 375.68px;
+  left: 175.22px;
+  mix-blend-mode: screen;
+}
+
+.towerLightTop {
+  top: 57.48px;
+  left: 150.69px;
+  mix-blend-mode: screen;
 }

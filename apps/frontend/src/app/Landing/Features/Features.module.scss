@@ -1,0 +1,393 @@
+@use "sass:math";
+@use "../../../mixins" as *;
+
+// Collages are laid out on the Figma 885px-wide image column and scale with it
+$collage-width: 885;
+
+@mixin place($x, $y, $w, $h, $collage-height) {
+  left: math.percentage(math.div($x, $collage-width));
+  top: math.percentage(math.div($y, $collage-height));
+  width: math.percentage(math.div($w, $collage-width));
+  height: math.percentage(math.div($h, $collage-height));
+}
+
+// Positions an image inside its frame the way Figma crops it
+@mixin crop($left, $top, $w, $h) {
+  position: absolute;
+  left: $left;
+  top: $top;
+  width: $w;
+  height: $h;
+  max-width: none;
+}
+
+// The wave fill ends at x=1521 of the 1590px asset, so stretch it past the edge
+$wave-scale: 1.052;
+
+// The section's white body; the wave edges above and below come from the
+// wave-background asset, used as a mask so the fill follows the theme.
+.root {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+  margin: calc(100vw * #{$wave-scale} * 283 / 1590) 0
+    calc(100vw * #{$wave-scale} * 132 / 1590);
+  padding: 0 55px 139px;
+  background-color: var(--foreground-color);
+  font-optical-sizing: none;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: -0.4%;
+    width: $wave-scale * 100%;
+    background-color: var(--foreground-color);
+    mask-image: url("../assets/wave-background.svg");
+    mask-size: 100% auto;
+    mask-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  &::before {
+    bottom: calc(100% - 1px);
+    aspect-ratio: 1590 / 283;
+    mask-position: top;
+  }
+
+  &::after {
+    top: calc(100% - 1px);
+    aspect-ratio: 1590 / 132;
+    mask-position: bottom;
+  }
+
+  @media (width <= 992px) {
+    gap: 64px;
+    padding: 24px 24px 64px;
+  }
+}
+
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 885fr) minmax(0, 435fr);
+  column-gap: 80px;
+  align-items: start;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (width <= 992px) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 32px;
+    max-width: 640px;
+  }
+}
+
+// Collages
+
+.collage {
+  position: relative;
+  width: 100%;
+
+  > * {
+    position: absolute;
+  }
+}
+
+.shot,
+.card {
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: white;
+}
+
+.shot {
+  box-shadow: 0 0 25px 0 #f5f5f5;
+
+  > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include dark-mode {
+    box-shadow: 0 0 25px 0 rgb(0 0 0 / 30%);
+  }
+}
+
+.card {
+  filter: drop-shadow(0 0 12.5px #f5f5f5);
+
+  > div {
+    position: absolute;
+    overflow: hidden;
+  }
+
+  @include dark-mode {
+    filter: drop-shadow(0 0 12.5px rgb(0 0 0 / 30%));
+  }
+}
+
+.crop {
+  position: absolute;
+  overflow: hidden;
+}
+
+// Scheduler
+
+.scheduler {
+  aspect-ratio: 885 / 473;
+}
+
+.schedulerSidebar {
+  @include place(0, 61, 319, 351, 473);
+  border-radius: 20px;
+
+  .crop {
+    left: math.percentage(math.div(36, 319));
+    top: math.percentage(math.div(44, 351));
+    width: math.percentage(math.div(247, 319));
+    height: math.percentage(math.div(263, 351));
+
+    img {
+      @include crop(-6.4%, -41.33%, 341.23%, 182.44%);
+    }
+  }
+}
+
+.schedulerMain {
+  @include place(335, 0, 550, 473, 473);
+
+  > img {
+    @include crop(-0.11%, 0, 100.11%, 100.13%);
+  }
+}
+
+// Catalog
+
+.catalog {
+  aspect-ratio: 885 / 632;
+}
+
+.catalogFilters {
+  @include place(0, 0, 274, 424, 632);
+  border-radius: 14px;
+}
+
+.catalogResults {
+  @include place(156, 310, 275, 322, 632);
+  border-radius: 14px;
+}
+
+.catalogClass {
+  @include place(336, 31, 549, 462, 632);
+  border-radius: 14px;
+}
+
+.catalogPatch {
+  @include place(821, 158, 64, 41, 632);
+  background-color: white;
+}
+
+// Grades
+
+.grades {
+  aspect-ratio: 885 / 360;
+}
+
+.gradesCardA {
+  @include place(546, 10, 176, 200, 360);
+  border-radius: 14px;
+
+  > img {
+    @include crop(-5.05%, -3.82%, 113.72%, 107.64%);
+  }
+}
+
+.gradesMain {
+  @include place(0, 0, 527, 360, 360);
+}
+
+.gradesChart {
+  left: 0;
+  top: math.percentage(math.div(89, 360));
+  width: 100%;
+  height: math.percentage(math.div(271, 360));
+  border-radius: 16px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.gradesHeader {
+  left: 0;
+  top: 0;
+  width: math.percentage(math.div(419, 527));
+  height: math.percentage(math.div(89, 360));
+  border-radius: 16px;
+
+  img {
+    @include crop(-1.81%, 0, 105.01%, 100%);
+  }
+}
+
+.gradesPatch {
+  right: math.percentage(math.div(147, 527));
+  bottom: math.percentage(math.div(12, 360));
+  width: math.percentage(math.div(341, 527));
+  height: math.percentage(math.div(24, 360));
+  background-color: white;
+}
+
+.gradesCardB {
+  @include place(678, 149, 176, 201, 360);
+  border-radius: 14px;
+}
+
+// Enrollment
+
+.enrollment {
+  aspect-ratio: 885 / 365;
+}
+
+.enrollmentMain {
+  @include place(0, 0, 528, 365, 365);
+}
+
+.enrollmentChart {
+  left: 0;
+  top: math.percentage(math.div(83, 365));
+  width: 100%;
+  height: math.percentage(math.div(282, 365));
+  border-radius: 16px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.enrollmentHeader {
+  left: math.percentage(math.div(17, 528));
+  top: 0;
+  width: math.percentage(math.div(394, 528));
+  height: math.percentage(math.div(83, 365));
+
+  img {
+    @include crop(-1.81%, 0, 108.07%, 104.61%);
+  }
+}
+
+.enrollmentCardA {
+  @include place(549, 154, 184, 161, 365);
+}
+
+.enrollmentCardB {
+  @include place(675, 13, 184, 169, 365);
+}
+
+.enrollmentCardBImage {
+  right: 0;
+  top: math.percentage(math.div(7, 169));
+  width: 100%;
+  height: math.percentage(math.div(161, 169));
+  border-radius: 16px;
+
+  img {
+    @include crop(2.29%, 4.87%, 103.27%, 93.26%);
+  }
+}
+
+// Text column
+// One auto-layout for every row: the same gap between badge, copy and button,
+// and the same gap between title and description. (The Figma frames each use
+// slightly different values; these are the Scheduler frame's.)
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+
+  // Stacked under the collage, the Figma offsets against the image no longer apply
+  @media (width <= 992px) {
+    margin-top: 0 !important;
+  }
+}
+
+.schedulerText {
+  margin-top: 102px;
+}
+
+.catalogText {
+  margin-top: 188px;
+}
+
+.gradesText {
+  margin-top: 68px;
+}
+
+.enrollmentText {
+  margin-top: 72px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 17px;
+  border-radius: 7px;
+  font-family: "DM Sans", Inter, sans-serif;
+  font-size: var(--text-12);
+  font-weight: var(--font-bold);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: var(--neutral-700);
+
+  @include dark-mode {
+    color: var(--heading-color);
+  }
+}
+
+.title {
+  font-size: var(--text-28);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.02em;
+
+  @media (width <= 700px) {
+    font-size: 24px !important;
+  }
+}
+
+.description {
+  max-width: 435px;
+  font-size: var(--text-16);
+  letter-spacing: 0.02em;
+}
+
+// Same proportions as the nav's Sign in button (13px text, 32px tall, 12px
+// side padding, 4px corners), scaled up to this 16px text
+.button {
+  height: 40px;
+  padding: 0 15px;
+  border-radius: 5px;
+  font-size: var(--text-16);
+  font-weight: var(--font-bold);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}

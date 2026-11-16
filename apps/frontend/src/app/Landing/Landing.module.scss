@@ -1,11 +1,95 @@
+@use "./grid" as *;
+@use "../../mixins" as *;
+
+$sky-top: rgb(118 166 255);
+$sky-end: rgb(79 180 255);
+
+// The top edge of the page gradient runs from ~90% (left) to 100% (right) of
+// the way between the 74% and 102.37% stops, so the nav reuses that slice
+@mixin top-edge($from, $to) {
+  background-color: $from;
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, $from 44%, $to),
+    color-mix(in srgb, $from 8%, $to)
+  );
+}
+
 .root {
+  position: relative;
   display: flex;
   flex-direction: column;
-  background-color: var(--background-color);
+  overflow-x: clip;
+  // The top 74%+ is the Figma gradient as-is (the nav matches it); below that
+  // the Figma frame is flat, so it deepens toward the bottom-left and picks up
+  // a cyan glow in the bottom-right, echoing the top of the page
+  background-image:
+    radial-gradient(
+      ellipse 70% 35% at 100% 100%,
+      rgb(79 180 255 / 60%),
+      transparent 70%
+    ),
+    linear-gradient(
+      20.29deg,
+      rgb(58 112 232) 0%,
+      rgb(96 148 250) 30%,
+      $sky-top 74%,
+      $sky-end 102.37%
+    );
+  background-color: $sky-top;
+
+  @include dark-mode {
+    background-image:
+      radial-gradient(
+        ellipse 70% 35% at 100% 100%,
+        rgb(37 99 235 / 45%),
+        transparent 70%
+      ),
+      linear-gradient(
+        20.29deg,
+        var(--blue-950) 0%,
+        var(--blue-900) 30%,
+        var(--blue-800) 74%,
+        var(--blue-700) 102.37%
+      );
+    background-color: var(--blue-800);
+  }
+
+  &::before {
+    @include grid-overlay(0 4px);
+    top: -4px;
+    left: 0;
+  }
 }
 
 .stickyHeader {
   position: sticky;
   top: 0;
   z-index: var(--z-nav-header);
+  isolation: isolate;
+
+  // Transparent at the top of the page so the grid shows through, as in
+  // Figma; the solid fill fades in once the page is scrolled
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 200ms ease;
+    @include top-edge($sky-top, $sky-end);
+
+    @include dark-mode {
+      @include top-edge(var(--blue-800), var(--blue-700));
+    }
+  }
+
+  &[data-scrolled]::before {
+    opacity: 1;
+  }
+
+  // NavigationBar's invert mode pads only the top
+  > :last-child {
+    padding-bottom: 12px;
+  }
 }

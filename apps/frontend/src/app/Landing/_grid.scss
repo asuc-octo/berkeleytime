@@ -1,0 +1,18 @@
+// Faint grid texture from the Figma frame: a white fade masked by the grid image
+@mixin grid-overlay($mask-position) {
+  content: "";
+  position: absolute;
+  width: 1067px;
+  height: 864px;
+  border-radius: 5px;
+  background-image: linear-gradient(
+    118.58deg,
+    rgb(255 255 255 / 20%) 0%,
+    rgb(255 255 255 / 0%) 97.88%
+  );
+  mask-image: url("./assets/grid-mask.png");
+  mask-size: 1510px 882px;
+  mask-position: $mask-position;
+  mask-repeat: no-repeat;
+  pointer-events: none;
+}
