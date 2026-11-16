@@ -78,7 +78,9 @@ export function UserFeedbackModal({
   initialUserClass = null,
 
   onSubmitPopupChange,
-
+  userRatedClasses = [],
+  disableRatedCourses = true,
+  lockedCourse = null,
   onError,
 }: UserFeedbackModalProps) {
   const { data: termsData, loading: termsLoading } = useReadTerms();
@@ -498,6 +500,17 @@ export function UserFeedbackModal({
           >
             <RatingFormBody
               selectedCourse={selectedCourse}
+              onCourseSelect={
+                !lockedCourse && !initialSelectedCourse
+                  ? (course) => {
+                      setSelectedCourse(course);
+                      setSelectedTerm(null);
+                      hasAutoSelected.current = false;
+                    }
+                  : undefined
+              }
+              userRatedClasses={userRatedClasses}
+              disableRatedCourses={disableRatedCourses}
               selectedTerm={selectedTerm}
               onTermSelect={setSelectedTerm}
               termOptions={termOptions}
