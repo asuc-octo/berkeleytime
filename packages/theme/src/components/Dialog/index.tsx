@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { ComponentPropsWithoutRef, forwardRef, useMemo } from "react";
 
 import { FlexProps, Heading, Text, Theme } from "@radix-ui/themes";
 import classNames from "classnames";
@@ -16,6 +16,25 @@ function Overlay({ className, style, ...props }: Primitive.DialogOverlayProps) {
 
   return (
     <Primitive.Overlay
+      {...props}
+      className={classNames(styles.overlay, className)}
+      style={{
+        ...style,
+        zIndex: stack + 99,
+      }}
+    />
+  );
+}
+
+function PassiveOverlay({
+  className,
+  style,
+  ...props
+}: ComponentPropsWithoutRef<"div">) {
+  const stack = useStack();
+
+  return (
+    <div
       {...props}
       className={classNames(styles.overlay, className)}
       style={{
@@ -152,6 +171,7 @@ function Footer({ children, ...props }: FlexProps) {
 export const Dialog = {
   ...Primitive,
   Overlay,
+  PassiveOverlay,
   Content,
   Card,
   Drawer,
