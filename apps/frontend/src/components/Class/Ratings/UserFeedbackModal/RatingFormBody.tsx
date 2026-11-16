@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { REVIEWER_GRADE_OPTIONS } from "@repo/shared";
 import { Flex, Select } from "@repo/theme";
 
+import CourseSelect, { CourseOption } from "@/components/CourseSelect";
 import { Semester } from "@/lib/generated/graphql";
 
 import { MetricData } from "../metricsUtil";
@@ -31,7 +32,10 @@ interface QuestionNumbers {
 }
 
 interface RatingFormBodyProps {
-  selectedCourse: { subject: string; number: string } | null;
+  selectedCourse: CourseOption | null;
+  onCourseSelect?: (course: CourseOption | null) => void;
+  userRatedClasses: Array<{ subject: string; courseNumber: string }>;
+  disableRatedCourses: boolean;
   selectedTerm: string | null;
   onTermSelect: (term: string | null) => void;
   termOptions: Term[];
@@ -49,6 +53,9 @@ interface RatingFormBodyProps {
 
 export function RatingFormBody({
   selectedCourse,
+  onCourseSelect,
+  userRatedClasses,
+  disableRatedCourses,
   selectedTerm,
   onTermSelect,
   termOptions,
@@ -67,6 +74,24 @@ export function RatingFormBody({
     <Flex direction="column">
       <div className={styles.mainSection}>
         <Flex direction="column" style={{ gap: "32px", padding: "24px 0" }}>
+          {onCourseSelect && (
+            <div className={styles.formGroup}>
+              <div className={styles.questionPair}>
+                <h3>
+                  What course are you rating? <RequiredAsterisk />
+                </h3>
+                <div style={{ width: "100%" }}>
+                  <CourseSelect
+                    selectedCourse={selectedCourse}
+                    onSelect={onCourseSelect}
+                    onClear={() => onCourseSelect(null)}
+                    ratedCourses={userRatedClasses}
+                    disableRatedCourses={disableRatedCourses}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           <ReviewContentForm
             reviewContent={reviewContent}
             setReviewContent={setReviewContent}
