@@ -12,6 +12,9 @@ import { config } from "../../../../../packages/common/src/utils/config";
 const LOGIN_ROUTE = "/login";
 const LOGIN_REDIRECT_ROUTE = "/login/redirect";
 const LOGOUT_ROUTE = "/logout";
+// The login OAuth client also authorizes Google Calendar export in the
+// browser. A client ID is public, so it's safe to hand out.
+const GOOGLE_CLIENT_ROUTE = "/login/google-client";
 
 // route need to be added as authorized origins/redirect uris in google cloud console
 // OAuth requires an absolute callback URL (e.g. https://berkeleytime.com/api/login/redirect)
@@ -167,6 +170,15 @@ export default async (app: Application, redis: RedisClientType) => {
       const parsedRedirectURI = safeRedirect(redirectURI);
 
       res.redirect(parsedRedirectURI ?? SUCCESS_REDIRECT);
+    });
+  });
+
+  app.get(GOOGLE_CLIENT_ROUTE, (_req, res) => {
+    const clientId = config.GOOGLE_CLIENT_ID;
+    res.json({
+      clientId: clientId?.endsWith(".apps.googleusercontent.com")
+        ? clientId
+        : null,
     });
   });
 
