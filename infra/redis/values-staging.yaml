@@ -1,0 +1,5 @@
+# Staging overrides, layered on values.yaml.
+# Deployed by .github/workflows/cd-infra.yaml as bt-stage-redis.
+redis:
+  commonLabels:
+    env: stage

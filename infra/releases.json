@@ -1,0 +1,32 @@
+[
+  {
+    "release": "bt-base",
+    "chart": "base",
+    "values": "",
+    "environment": "production"
+  },
+  {
+    "release": "bt-prod-mongo",
+    "chart": "mongo",
+    "values": "",
+    "environment": "production"
+  },
+  {
+    "release": "bt-prod-redis",
+    "chart": "redis",
+    "values": "",
+    "environment": "production"
+  },
+  {
+    "release": "bt-stage-mongo",
+    "chart": "mongo",
+    "values": "values-staging.yaml",
+    "environment": "staging"
+  },
+  {
+    "release": "bt-stage-redis",
+    "chart": "redis",
+    "values": "values-staging.yaml",
+    "environment": "staging"
+  }
+]
