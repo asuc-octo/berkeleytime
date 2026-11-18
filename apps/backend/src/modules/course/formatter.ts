@@ -35,6 +35,7 @@ export function formatCourse(course: ICourseItem) {
     mostRecentClass: null,
     gradeDistribution: null,
     crossListing: course.crossListing ?? [],
+    formerNames: course.formerNames ?? [],
     requiredCourses: course.preparation?.requiredCourses ?? [],
     requirements: course.preparation?.requiredText ?? null,
     allTimeAverageGrade: course.allTimeAverageGrade ?? null,

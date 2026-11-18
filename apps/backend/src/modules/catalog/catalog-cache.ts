@@ -1,12 +1,12 @@
 import { parseTermName } from "@repo/common";
 import {
   CatalogClassModel,
+  CourseModel,
   EnrollmentPullModel,
   type ICatalogClassItem,
   TermModel,
 } from "@repo/common/models";
 
-import { getFormerNameIndex } from "../course/controller";
 import {
   type CatalogSearchIndex,
   buildCatalogSearchIndex,
@@ -363,7 +363,19 @@ export const getCachedCatalog = async (
 };
 
 const buildSearchIndex = async (data: ICatalogClassItem[]) => {
-  const { formerNamesByCourse } = await getFormerNameIndex();
+  const coursesWithFormerNames = await CourseModel.find(
+    {
+      courseId: { $in: [...new Set(data.map((item) => item.courseId))] },
+      "formerNames.0": { $exists: true },
+    },
+    { courseId: 1, subject: 1, number: 1, formerNames: 1 }
+  ).lean();
+  const formerNamesByCourse = new Map(
+    coursesWithFormerNames.map((course) => [
+      `${course.courseId} ${course.subject} ${course.number}`,
+      course.formerNames ?? [],
+    ])
+  );
   return buildCatalogSearchIndex(data, formerNamesByCourse);
 };
 
