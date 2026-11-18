@@ -221,6 +221,18 @@ export function SchedulesGeneratedBlock() {
   );
 }
 
+export function SchedulesExportedBlock() {
+  return (
+    <EventCard
+      title="Schedules exported"
+      description="Times the scheduler Export button downloaded a calendar file"
+      eventType="schedule_export"
+      targetType="schedule"
+      valueLabel="exports"
+    />
+  );
+}
+
 export function CourseResultsClickedBlock() {
   return (
     <EventCard
