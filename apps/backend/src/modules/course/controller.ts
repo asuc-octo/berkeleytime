@@ -1,4 +1,10 @@
 import {
+  type CourseListing,
+  computeFormerNames,
+  normalizeCourseNameKey,
+  selectCourseListings,
+} from "@repo/common";
+import {
   ClassModel,
   CourseModel,
   IClassItem,
@@ -9,47 +15,6 @@ import { buildSubjectQuery, normalizeSubject } from "../../utils/subject";
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
 import { CourseModule } from "./generated-types/module-types";
-
-export interface CourseListing {
-  subject: string;
-  courseNumber: string;
-}
-
-interface CourseListingTerms extends CourseListing {
-  termIds: string[];
-}
-
-/**
- * Selects the subject/number listings that make up a course's history.
- *
- * SIS keeps a course's courseId across renames (e.g. "EECS 16B" -> "ELENG
- * 64"), but cross-listed courses share a courseId too, so courseId alone
- * over-matches. A listing under another subject counts as a former name only
- * if (1) no current catalog course with this courseId uses that subject, so
- * a sibling's history stays with the sibling, and (2) it never ran in the
- * same term as this subject, so it isn't a cross-listing running alongside it.
- */
-const selectCourseListings = (
-  listings: CourseListingTerms[],
-  catalogSubjects: Set<string>,
-  subject: string
-): CourseListingTerms[] => {
-  const currentSubject = normalizeSubject(subject);
-
-  const isCurrent = (listing: CourseListing) =>
-    normalizeSubject(listing.subject) === currentSubject;
-
-  const currentTermIds = new Set(
-    listings.filter(isCurrent).flatMap((listing) => listing.termIds)
-  );
-
-  return listings.filter(
-    (listing) =>
-      isCurrent(listing) ||
-      (!catalogSubjects.has(normalizeSubject(listing.subject)) &&
-        !listing.termIds.some((termId) => currentTermIds.has(termId)))
-  );
-};
 
 export const getCourseListings = async (
   courseId: string,
@@ -74,9 +39,6 @@ export const getCourseListings = async (
     subject
   ).map(({ subject, courseNumber }) => ({ subject, courseNumber }));
 };
-
-const normalizeCourseNameKey = (name: string) =>
-  name.replace(/[,\s]/g, "").toUpperCase();
 
 interface CourseIdentity {
   courseId: string;
@@ -115,97 +77,23 @@ const buildFormerNameIndex = async (): Promise<FormerNameIndex> => {
     ).lean(),
   ]);
 
-  const listingsByCourseId = new Map<string, CourseListingTerms[]>();
-  for (const { _id, termIds } of listingRows) {
-    const listings = listingsByCourseId.get(_id.courseId) ?? [];
-    listings.push({
-      subject: _id.subject,
-      courseNumber: _id.courseNumber,
-      termIds,
-    });
-    listingsByCourseId.set(_id.courseId, listings);
-  }
-
-  const catalogSubjectsByCourseId = new Map<string, Set<string>>();
-  const catalogNames = new Set<string>();
-  const ownNameKeys = new Set<string>();
-  for (const course of courses) {
-    ownNameKeys.add(
-      `${course.courseId} ${normalizeCourseNameKey(`${course.subject} ${course.number}`)}`
-    );
-    if (!course.printInCatalog) continue;
-
-    catalogNames.add(`${course.subject} ${course.number}`);
-    const subjects =
-      catalogSubjectsByCourseId.get(course.courseId) ?? new Set();
-    subjects.add(normalizeSubject(course.subject));
-    catalogSubjectsByCourseId.set(course.courseId, subjects);
-  }
+  const results = computeFormerNames(
+    listingRows.map(({ _id, termIds }) => ({ ..._id, termIds })),
+    courses
+  );
 
   const formerNamesByCourse = new Map<string, string[]>();
   const courseByFormerNameKey = new Map<string, CourseIdentity>();
-  // When two courses claim a former name, prefer catalog courses, then the
-  // one that ran most recently under its own subject.
-  const claimRanks = new Map<string, [number, string]>();
-
-  for (const course of courses) {
-    const listings = selectCourseListings(
-      listingsByCourseId.get(course.courseId) ?? [],
-      catalogSubjectsByCourseId.get(course.courseId) ?? new Set(),
-      course.subject
-    );
-
-    const ownName = `${course.subject} ${course.number}`;
-    const formerListings = listings.filter((listing) => {
-      const name = `${listing.subject} ${listing.courseNumber}`;
-      return name !== ownName && !catalogNames.has(name);
-    });
-
+  courses.forEach((course, index) => {
+    const { formerNames, formerNameKeys } = results[index];
     const identity = {
       courseId: course.courseId,
       subject: course.subject,
       number: course.number,
     };
-    formerNamesByCourse.set(
-      getCourseKey(identity),
-      formerListings.map((l) => `${l.subject} ${l.courseNumber}`)
-    );
-
-    const latestTermId =
-      listings
-        .filter(
-          (l) =>
-            normalizeSubject(l.subject) === normalizeSubject(course.subject)
-        )
-        .flatMap((l) => l.termIds)
-        .sort()
-        .at(-1) ?? "";
-    const rank: [number, string] = [
-      course.printInCatalog ? 1 : 0,
-      latestTermId,
-    ];
-
-    for (const listing of formerListings) {
-      const key = normalizeCourseNameKey(
-        `${listing.subject} ${listing.courseNumber}`
-      );
-
-      // A name with its own course entry under this courseId resolves to
-      // that entry, not to the course that replaced it.
-      if (ownNameKeys.has(`${course.courseId} ${key}`)) continue;
-
-      const claimRank = claimRanks.get(key);
-      if (
-        claimRank &&
-        (claimRank[0] > rank[0] ||
-          (claimRank[0] === rank[0] && claimRank[1] >= rank[1]))
-      )
-        continue;
-
-      claimRanks.set(key, rank);
-      courseByFormerNameKey.set(key, identity);
-    }
-  }
+    formerNamesByCourse.set(getCourseKey(identity), formerNames);
+    for (const key of formerNameKeys) courseByFormerNameKey.set(key, identity);
+  });
 
   return { formerNamesByCourse, courseByFormerNameKey };
 };
