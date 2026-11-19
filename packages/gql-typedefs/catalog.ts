@@ -168,6 +168,11 @@ export const catalogTypeDef = gql`
 
   type CatalogResult @cacheControl(inheritMaxAge: true) {
     results: [CatalogClass!]!
+
+    """
+    Total matching classes. Without a search, populated only when page is 1
+    and 0 otherwise.
+    """
     totalCount: Int!
   }
 
