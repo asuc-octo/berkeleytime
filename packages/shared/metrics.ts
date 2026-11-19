@@ -21,6 +21,8 @@ export const REQUIRED_METRICS = [
   MetricName.Usefulness,
   MetricName.Difficulty,
   MetricName.Workload,
+  MetricName.Attendance,
+  MetricName.Recording,
 ];
 
 export const METRIC_MAPPINGS = {
