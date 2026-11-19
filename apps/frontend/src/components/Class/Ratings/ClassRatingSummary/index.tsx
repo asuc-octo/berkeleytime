@@ -45,12 +45,30 @@ export default function ClassRatingSummary({
     storageKey ? localStorage.getItem(storageKey) === "true" : false
   );
 
+  const [helpfulCount, setHelpfulCount] = useState(
+    classReview.helpfulCount ?? 0
+  );
+
   const handleHelpful = async () => {
     if (!classReview.reviewId || !storageKey) return;
     const next = !hasVoted;
+    const prevCount = helpfulCount;
     setHasVoted(next);
+    setHelpfulCount(Math.max(0, prevCount + (next ? 1 : -1)));
     localStorage.setItem(storageKey, String(next));
-    await voteHelpful({ variables: { reviewId: classReview.reviewId } });
+    try {
+      const { data } = await voteHelpful({
+        variables: { reviewId: classReview.reviewId },
+      });
+      // Server count is the number of unique voters
+      if (typeof data?.voteReviewHelpful === "number") {
+        setHelpfulCount(data.voteReviewHelpful);
+      }
+    } catch {
+      setHasVoted(!next);
+      setHelpfulCount(prevCount);
+      localStorage.setItem(storageKey, String(!next));
+    }
   };
 
   const rawGrade = classReview.reviewerGrade;
@@ -128,6 +146,9 @@ export default function ClassRatingSummary({
               onClick={handleHelpful}
             >
               Helpful
+              {helpfulCount > 0 && (
+                <span className={styles.helpfulCount}>{helpfulCount}</span>
+              )}
             </button>
             {/* <button className={styles.reportButton}>Report</button> */}
           </div>

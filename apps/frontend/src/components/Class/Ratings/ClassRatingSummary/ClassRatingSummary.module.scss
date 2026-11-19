@@ -152,6 +152,14 @@
         background-color: var(--blue-500-20);
         color: var(--blue-badge);
       }
+
+      .helpfulCount {
+        font-size: var(--text-12, 12px);
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        color: inherit;
+        opacity: 0.8;
+      }
     }
 
     .reportButton {
