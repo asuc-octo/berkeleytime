@@ -1,11 +1,19 @@
 name: "CD: Deploy to Production"
-run-name: "Deployed `${{ github.sha }}` with AG and staff frontends"
+run-name: "Deploy ${{ inputs.sha || 'current staging' }} to production"
 
 concurrency: production
 
+# Production never builds images. It deploys the images staging already built
+# and ran, identified by the first 7 characters of their commit SHA. Rolling
+# back is running this workflow again with an older SHA.
 on:
   workflow_dispatch:
     inputs:
+      sha:
+        description: "Commit on main to deploy (empty = whatever staging runs now)"
+        required: false
+        type: string
+        default: ""
       deploy_observability:
         description: "Deploy observability stack"
         required: true
@@ -13,8 +21,87 @@ on:
         default: false
 
 jobs:
+  resolve:
+    name: Resolve commit and verify images
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+      tag: ${{ steps.resolve.outputs.tag }}
+
+    steps:
+      - name: Read staging image tag
+        if: ${{ inputs.sha == '' }}
+        id: staging
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          capture_stdout: true
+          script: |
+            set -e
+            # Refuse to promote a staging release that is not fully healthy.
+            kubectl -n bt rollout status --timeout=10s deployment bt-stage-app-backend >&2
+            kubectl -n bt rollout status --timeout=10s deployment bt-stage-app-frontend >&2
+            kubectl -n bt get deployment bt-stage-app-backend \
+              -o jsonpath='{.spec.template.spec.containers[0].image}' | sed 's/.*://'
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve commit
+        id: resolve
+        env:
+          INPUT_SHA: ${{ inputs.sha }}
+          STAGING_TAG: ${{ steps.staging.outputs.stdout }}
+        run: |
+          set -euo pipefail
+          # The image tag is the last line the staging step printed.
+          ref=$(printf '%s\n' "${INPUT_SHA:-$STAGING_TAG}" | sed '/^[[:space:]]*$/d' | tail -n 1 | tr -d '[:space:]')
+          if [ -z "$ref" ]; then
+            echo "::error::No commit given and no staging image tag found"
+            exit 1
+          fi
+
+          sha=$(git rev-parse --verify --quiet "${ref}^{commit}") || {
+            echo "::error::$ref is not a known commit"
+            exit 1
+          }
+          if ! git merge-base --is-ancestor "$sha" origin/main; then
+            echo "::error::$sha is not on main; only commits on main can go to production"
+            exit 1
+          fi
+
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+          echo "tag=${sha::7}" >> $GITHUB_OUTPUT
+          echo "Deploying $sha (image tag ${sha::7})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Verify images exist
+        env:
+          TAG: ${{ steps.resolve.outputs.tag }}
+          REPO: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          missing=0
+          for image in backend frontend datapuller semantic-search ag-frontend staff-frontend; do
+            if ! docker manifest inspect "$REPO/bt-$image:$TAG" > /dev/null; then
+              echo "::error::$REPO/bt-$image:$TAG not found. Has this commit been built by the staging workflow?"
+              missing=1
+            fi
+          done
+          exit $missing
+
   branch-check:
     name: Environment Check
+    needs: [resolve]
     runs-on: ubuntu-latest
     environment: production
 
@@ -22,27 +109,70 @@ jobs:
       - name: Pass
         run: echo "Passed check"
 
-  build-push:
-    name: Build and Push Images and Charts
-    needs: [branch-check]
+  build-push-chart:
+    name: Build and Push Charts
+    needs: [resolve, branch-check]
     uses: ./.github/workflows/cd-build.yaml
     with:
-      image_tag: prod
+      image_tag: ${{ needs.resolve.outputs.tag }}
       chart_ver: "1.0.0"
+      ref: ${{ needs.resolve.outputs.sha }}
+      build_images: false
     secrets: inherit
 
   deploy:
     name: SSH and Deploy
-    needs: [build-push]
+    needs: [resolve, build-push-chart]
     uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: production
       name: bt-prod-app
       version: "1.0.0"
+      image_tag: ${{ needs.resolve.outputs.tag }}
+      rollback_on_failure: true
+      watch_minutes: 10
       values: |
         host: berkeleytime.com
+        frontend:
+          image:
+            tag: '${{ needs.resolve.outputs.tag }}'
+        backend:
+          image:
+            tag: '${{ needs.resolve.outputs.tag }}'
+        semanticSearch:
+          image:
+            tag: '${{ needs.resolve.outputs.tag }}'
+        datapuller:
+          image:
+            tag: '${{ needs.resolve.outputs.tag }}'
       host: berkeleytime.com
       deploy_staff: true
       deploy_ag: true
       deploy_observability: ${{ inputs.deploy_observability }}
     secrets: inherit
+
+  # Keep the `prod` tag pointing at what production runs, for anything that
+  # still installs the charts with their default values (e.g. infra/init.sh).
+  retag-prod:
+    name: Point prod tag at deployed images
+    needs: [resolve, deploy]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Retag
+        env:
+          TAG: ${{ needs.resolve.outputs.tag }}
+          REPO: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          for image in backend frontend datapuller semantic-search ag-frontend staff-frontend; do
+            docker buildx imagetools create --tag "$REPO/bt-$image:prod" "$REPO/bt-$image:$TAG"
+          done

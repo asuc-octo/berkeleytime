@@ -1,0 +1,106 @@
+name: "CD: Promote Staging to Production"
+
+# Every hour, promote what staging runs to production once it has been on
+# staging for SOAK_HOURS without problems. cd-prod deploys the same images
+# (no rebuild) and rolls back on its own if the release is unhealthy.
+#
+# A new merge restarts the soak clock, so a burst of merges delays promotion
+# until main has been quiet on staging for SOAK_HOURS.
+
+concurrency: promote
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      skip_soak:
+        description: "Promote now, without waiting for the soak period"
+        type: boolean
+        default: false
+
+permissions:
+  actions: write
+  contents: read
+
+env:
+  SOAK_HOURS: 4
+  STAGING_URL: https://staging.berkeleytime.com/
+
+jobs:
+  promote:
+    name: Promote if ready
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Read staging and production state
+        id: cluster
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          capture_stdout: true
+          script: |
+            healthy=yes
+            kubectl -n bt rollout status --timeout=10s deployment bt-stage-app-backend >&2 || healthy=no
+            kubectl -n bt rollout status --timeout=10s deployment bt-stage-app-frontend >&2 || healthy=no
+            tag() {
+              kubectl -n bt get deployment "$1" -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null | sed 's/.*://'
+            }
+            echo "stage=$(tag bt-stage-app-backend)"
+            echo "prod=$(tag bt-prod-app-backend)"
+            echo "stage_healthy=$healthy"
+
+      - name: Decide and trigger
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLUSTER: ${{ steps.cluster.outputs.stdout }}
+          SKIP_SOAK: ${{ inputs.skip_soak || false }}
+        run: |
+          set -euo pipefail
+          field() { printf '%s\n' "$CLUSTER" | grep "^$1=" | tail -n 1 | cut -d= -f2 | tr -d '[:space:]'; }
+          skip() { echo "::notice::Not promoting: $1"; echo "Not promoting: $1" >> $GITHUB_STEP_SUMMARY; exit 0; }
+
+          stage=$(field stage)
+          prod=$(field prod)
+          healthy=$(field stage_healthy)
+          echo "staging=$stage production=$prod staging_healthy=$healthy"
+
+          [ -n "$stage" ] || skip "could not read the staging image tag"
+          [ "$healthy" = "yes" ] || { echo "::warning::Staging is not healthy"; skip "staging is not healthy"; }
+          [ "$stage" != "$prod" ] || skip "production already runs $stage"
+
+          # The commit on staging, and when its staging deploy finished.
+          read -r sha updated < <(gh run list -R "$GITHUB_REPOSITORY" --workflow cd-stage.yaml \
+            --branch main --status success --limit 1 \
+            --json headSha,updatedAt --jq '.[0] | "\(.headSha) \(.updatedAt)"')
+          [ "${sha::7}" = "$stage" ] || skip "staging runs $stage but the latest successful staging deploy is ${sha::7}"
+
+          age=$(( $(date +%s) - $(date -d "$updated" +%s) ))
+          if [ "$SKIP_SOAK" != "true" ] && [ "$age" -lt $(( SOAK_HOURS * 3600 )) ]; then
+            skip "$stage has been on staging for $(( age / 60 )) minutes, waiting for ${SOAK_HOURS}h"
+          fi
+
+          # Never retry a commit production already rejected; a human must
+          # merge a fix or run cd-prod by hand.
+          rejected=$(gh run list -R "$GITHUB_REPOSITORY" --workflow cd-prod.yaml --limit 50 \
+            --json displayTitle,conclusion \
+            --jq "[.[] | select(.displayTitle | contains(\"$sha\")) | select(.conclusion == \"failure\")] | length")
+          if [ "$rejected" -gt 0 ]; then
+            echo "::warning::A production deploy of $sha already failed and was rolled back"
+            skip "a production deploy of $sha already failed"
+          fi
+
+          active=$(gh run list -R "$GITHUB_REPOSITORY" --workflow cd-prod.yaml --limit 10 \
+            --json status --jq '[.[] | select(.status != "completed")] | length')
+          [ "$active" -eq 0 ] || skip "a production deploy is already running or waiting"
+
+          curl -fsS --max-time 15 -o /dev/null "$STAGING_URL" || {
+            echo "::warning::Staging smoke check failed"
+            skip "staging smoke check failed"
+          }
+
+          echo "Promoting $sha to production" | tee -a $GITHUB_STEP_SUMMARY
+          gh workflow run cd-prod.yaml -R "$GITHUB_REPOSITORY" --ref main \
+            -f sha="$sha" -f deploy_observability=false

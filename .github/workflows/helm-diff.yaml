@@ -106,9 +106,14 @@ jobs:
           echo "#### App Chart Changes" >> diff_output.md
           echo "" >> diff_output.md
           echo "Raw App Chart Diff:" >> /tmp/raw_diffs.log
+          # Production pins image tags to commit SHAs at deploy time; reuse the
+          # live values so the diff only shows chart changes from this PR.
+          helm get values bt-prod-app --namespace=bt -o yaml > /tmp/prod-values.yaml 2>/dev/null \
+            || echo "{}" > /tmp/prod-values.yaml
           helm diff upgrade bt-prod-app ./infra/app \
             --install \
             --namespace=bt \
+            --values /tmp/prod-values.yaml \
             --set host=berkeleytime.com \
             --version 1.0.0 2>&1 | tee -a /tmp/raw_diffs.log | process_diff
 

@@ -23,6 +23,10 @@ on:
         description: "Helm chart override values (yaml)"
         required: true
         type: string
+      image_tag:
+        description: "Image tag for the staff and AG frontends (defaults to the chart's value)"
+        type: string
+        default: ""
       deploy_staff:
         description: "Deploy staff dashboard (prod only)"
         type: boolean
@@ -35,6 +39,14 @@ on:
         description: "Deploy observability stack (prod only)"
         type: boolean
         default: false
+      rollback_on_failure:
+        description: "Roll every release back to its previous revision if any step fails"
+        type: boolean
+        default: false
+      watch_minutes:
+        description: "Minutes to watch pod health after deploying; a failure triggers rollback (0 = skip)"
+        type: number
+        default: 0
 
 jobs:
   deploy:
@@ -51,48 +63,126 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          command_timeout: 15m
+          command_timeout: 40m
           script: |
             set -e  # Exit immediately if a command fails
 
-            # Check if helm chart exists
-            helm status ${{ inputs.name }} --namespace=bt &>/dev/null && status=true || status=false
+            NAME="${{ inputs.name }}"
+            ROLLBACK="${{ inputs.rollback_on_failure }}"
+            WATCH_MINUTES="${{ inputs.watch_minutes }}"
+            REGISTRY="oci://registry-1.docker.io/octoberkeleytime"
 
-            # Upgrade helm chart, or install if not exists
-            helm upgrade ${{ inputs.name }} oci://registry-1.docker.io/octoberkeleytime/bt-app \
+            VALUES_FILE=$(mktemp)
+            trap 'rm -f "$VALUES_FILE"' EXIT
+            cat > "$VALUES_FILE" <<'BT_VALUES_EOF'
+            ${{ inputs.values }}
+            BT_VALUES_EOF
+
+            # Releases upgraded so far, as "name:previous-revision", rolled back
+            # in reverse order if a later step fails.
+            ROLLBACK_TARGETS=()
+
+            # Latest revision of a release that reached the "deployed" state.
+            last_good_revision() {
+              helm history "$1" --namespace=bt 2>/dev/null | awk '/ deployed /{r=$1} END{print r}'
+            }
+
+            # Tag of the image a deployment currently runs ("" if none).
+            current_tag() {
+              kubectl -n bt get deployment "$1" -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null | sed 's/.*://'
+            }
+
+            remember_release() {
+              local rev
+              rev=$(last_good_revision "$1")
+              if [ -n "$rev" ]; then
+                ROLLBACK_TARGETS+=("$1:$rev")
+              fi
+            }
+
+            debug_info() {
+              echo "=== Pods ==="
+              kubectl -n bt get pods -l app.kubernetes.io/instance=$NAME -o wide || true
+              echo "=== Pod descriptions ==="
+              kubectl -n bt describe pods -l app.kubernetes.io/instance=$NAME | tail -200 || true
+              echo "=== Pod logs ==="
+              kubectl -n bt logs -l app.kubernetes.io/instance=$NAME --tail=100 --all-containers=true 2>/dev/null || true
+            }
+
+            fail() {
+              echo "=== $1 ==="
+              debug_info
+              if [ "$ROLLBACK" = "true" ]; then
+                for (( i=${#ROLLBACK_TARGETS[@]}-1; i>=0; i-- )); do
+                  release="${ROLLBACK_TARGETS[$i]%%:*}"
+                  revision="${ROLLBACK_TARGETS[$i]##*:}"
+                  echo "=== Rolling back $release to revision $revision ==="
+                  helm rollback "$release" "$revision" --namespace=bt --wait --timeout 10m \
+                    || echo "!!! Rollback of $release failed, manual intervention required"
+                done
+              fi
+              exit 1
+            }
+
+            # Check if helm chart exists
+            helm status $NAME --namespace=bt &>/dev/null && status=true || status=false
+            remember_release $NAME
+
+            # Phase 1: upgrade the chart but keep the frontend and semantic
+            # search on their current images, so the backend rolls first and
+            # becomes healthy before any persisted-operation client switches.
+            PIN_ARGS=()
+            if [ $status = true ]; then
+              frontend_tag=$(current_tag $NAME-frontend)
+              semantic_tag=$(current_tag $NAME-semantic-search)
+              [ -n "$frontend_tag" ] && PIN_ARGS+=(--set-string "frontend.image.tag=$frontend_tag")
+              [ -n "$semantic_tag" ] && PIN_ARGS+=(--set-string "semanticSearch.image.tag=$semantic_tag")
+            fi
+
+            helm upgrade $NAME $REGISTRY/bt-app \
               --install \
               --version=${{ inputs.version }} \
               --namespace=bt \
-              --values <(echo "${{ inputs.values }}")
+              --values "$VALUES_FILE" \
+              "${PIN_ARGS[@]}" \
+              || fail "Helm upgrade (backend phase) failed"
 
-            # Roll the backend first and require it to become healthy before
-            # switching any persisted-operation clients.
+            # Restart so a redeploy of the same tag still pulls a fresh image.
             if [ $status = true ]; then
-              kubectl -n bt rollout restart deployment ${{ inputs.name }}-backend
+              kubectl -n bt rollout restart deployment $NAME-backend
             fi
 
-            if ! kubectl -n bt rollout status --timeout=300s deployment ${{ inputs.name }}-backend; then
-              echo "=== Backend deployment failed, collecting debug info ==="
-              kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} -o wide
-              echo "=== Pod descriptions ==="
-              kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }} | tail -200
-              echo "=== Pod logs ==="
-              kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }} --tail=100 --all-containers=true 2>/dev/null || true
-              exit 1
+            kubectl -n bt rollout status --timeout=300s deployment $NAME-backend \
+              || fail "Backend deployment failed"
+
+            # Phase 2: release the frontend and semantic search pins.
+            if [ ${#PIN_ARGS[@]} -gt 0 ]; then
+              helm upgrade $NAME $REGISTRY/bt-app \
+                --version=${{ inputs.version }} \
+                --namespace=bt \
+                --values "$VALUES_FILE" \
+                || fail "Helm upgrade (frontend phase) failed"
             fi
 
             if [ $status = true ]; then
-              kubectl -n bt rollout restart deployment ${{ inputs.name }}-frontend
-              kubectl -n bt rollout restart deployment ${{ inputs.name }}-semantic-search 2>/dev/null || true
+              kubectl -n bt rollout restart deployment $NAME-frontend
+              kubectl -n bt rollout restart deployment $NAME-semantic-search 2>/dev/null || true
             fi
-            kubectl -n bt rollout status --timeout=300s deployment ${{ inputs.name }}-frontend
+            kubectl -n bt rollout status --timeout=300s deployment $NAME-frontend \
+              || fail "Frontend deployment failed"
 
             # Deploy observability stack if requested
             if [ "${{ inputs.deploy_observability }}" = "true" ]; then
-              helm upgrade bt-observability oci://registry-1.docker.io/octoberkeleytime/bt-observability \
+              helm upgrade bt-observability $REGISTRY/bt-observability \
                 --install \
                 --version=${{ inputs.version }} \
-                --namespace=bt
+                --namespace=bt \
+                || fail "Observability deployment failed"
+            fi
+
+            FRONTEND_TAG_ARGS=()
+            if [ -n "${{ inputs.image_tag }}" ]; then
+              FRONTEND_TAG_ARGS=(--set-string "frontend.image.tag=${{ inputs.image_tag }}")
             fi
 
             # Deploy AG only after the backend gateway is healthy.
@@ -100,55 +190,95 @@ jobs:
               echo "Deploying AG dashboard..."
 
               helm status bt-ag --namespace=bt &>/dev/null && ag_status=true || ag_status=false
+              remember_release bt-ag
 
-              helm upgrade bt-ag oci://registry-1.docker.io/octoberkeleytime/bt-ag \
+              helm upgrade bt-ag $REGISTRY/bt-ag \
                 --install \
                 --version=${{ inputs.version }} \
-                --namespace=bt
+                --namespace=bt \
+                "${FRONTEND_TAG_ARGS[@]}" \
+                || fail "AG helm upgrade failed"
 
               if [ $ag_status = true ]; then
                 kubectl -n bt rollout restart deployment bt-ag-frontend
               fi
 
-              kubectl -n bt rollout status --timeout=300s deployment bt-ag-frontend
+              kubectl -n bt rollout status --timeout=300s deployment bt-ag-frontend \
+                || fail "AG deployment failed"
             fi
 
             # Deploy staff dashboard if requested
             if [ "${{ inputs.deploy_staff }}" = "true" ]; then
               echo "Deploying staff dashboard..."
 
-              # Check if staff helm chart exists
               helm status bt-staff --namespace=bt &>/dev/null && staff_status=true || staff_status=false
+              remember_release bt-staff
 
-              # Upgrade staff helm chart, or install if not exists
-              helm upgrade bt-staff oci://registry-1.docker.io/octoberkeleytime/bt-staff \
+              helm upgrade bt-staff $REGISTRY/bt-staff \
                 --install \
                 --version=${{ inputs.version }} \
-                --namespace=bt
+                --namespace=bt \
+                "${FRONTEND_TAG_ARGS[@]}" \
+                || fail "Staff helm upgrade failed"
 
-              # Restart deployment if helm chart existed
               if [ $staff_status = true ]; then
                 kubectl -n bt rollout restart deployment bt-staff-frontend
               fi
 
-              # Check container status
-              kubectl -n bt rollout status --timeout=300s deployment bt-staff-frontend
+              kubectl -n bt rollout status --timeout=300s deployment bt-staff-frontend \
+                || fail "Staff deployment failed"
             fi
 
             # Semantic search must become ready; /health returns 503 after a
             # terminal index-build failure, so a broken internal consumer can
             # no longer be reported as a successful deployment.
             echo "=== Checking semantic-search status ==="
-            kubectl -n bt get pods -l app.kubernetes.io/instance=${{ inputs.name }} | grep semantic || true
+            kubectl -n bt get pods -l app.kubernetes.io/instance=$NAME | grep semantic || true
 
-            kubectl -n bt rollout status --timeout=600s deployment ${{ inputs.name }}-semantic-search
+            kubectl -n bt rollout status --timeout=600s deployment $NAME-semantic-search \
+              || fail "Semantic-search deployment failed"
             echo "Semantic-search deployed successfully"
 
             echo "=== Semantic-search logs ==="
-            kubectl -n bt logs -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
+            kubectl -n bt logs -l app.kubernetes.io/instance=$NAME,app.kubernetes.io/name=semantic-search --tail=100 2>/dev/null || echo "No logs available yet"
 
-            echo "=== Semantic-search pod describe ==="
-            kubectl -n bt describe pods -l app.kubernetes.io/instance=${{ inputs.name }},app.kubernetes.io/name=semantic-search 2>/dev/null | tail -50 || true
+            # Post-deploy watch: every 30s, check that the backend and frontend
+            # have no unavailable replicas and that no container has restarted.
+            # Three consecutive bad checks roll everything back.
+            if [ "$WATCH_MINUTES" -gt 0 ]; then
+              restart_total() {
+                kubectl -n bt get pods -l "app.kubernetes.io/instance=$NAME,app.kubernetes.io/name in (backend,frontend)" \
+                  -o jsonpath='{range .items[*]}{range .status.containerStatuses[*]}{.restartCount}{"\n"}{end}{end}' \
+                  | awk '{s+=$1} END{print s+0}'
+              }
+              unavailable() {
+                kubectl -n bt get deployment "$1" -o jsonpath='{.status.unavailableReplicas}' 2>/dev/null
+              }
+
+              echo "=== Watching $NAME for $WATCH_MINUTES minutes ==="
+              baseline=$(restart_total)
+              bad=0
+              end=$(( $(date +%s) + WATCH_MINUTES * 60 ))
+              while [ "$(date +%s)" -lt "$end" ]; do
+                sleep 30
+                reason=""
+                for d in $NAME-backend $NAME-frontend; do
+                  u=$(unavailable $d)
+                  if [ -n "$u" ] && [ "$u" != "0" ]; then reason="$d has $u unavailable replica(s)"; fi
+                done
+                now=$(restart_total)
+                if [ "$now" -gt "$baseline" ]; then reason="container restarts went from $baseline to $now"; fi
+
+                if [ -n "$reason" ]; then
+                  bad=$((bad + 1))
+                  echo "Health check failed ($bad/3): $reason"
+                  [ $bad -ge 3 ] && fail "Post-deploy health watch failed: $reason"
+                else
+                  bad=0
+                fi
+              done
+              echo "Post-deploy health watch passed"
+            fi
 
       - name: Output Summary
         run: |

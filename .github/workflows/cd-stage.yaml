@@ -10,39 +10,55 @@ on:
     paths-ignore: ["docs/**"]
 
 jobs:
+  compute-tag:
+    name: Compute image tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+
+    steps:
+      # Images are tagged with the first 7 characters of the commit so that
+      # production can later deploy the exact image staging ran. See cd-prod.
+      - name: Set vars
+        id: vars
+        run: echo "tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
   build-push:
     name: Build and Push Images and Charts
+    needs: [compute-tag]
     uses: ./.github/workflows/cd-build.yaml
     with:
-      image_tag: latest
+      image_tag: ${{ needs.compute-tag.outputs.tag }}
+      cache_tag: main
       chart_ver: 0.1.0-stage
     secrets: inherit
 
   deploy:
     name: SSH and Deploy
-    needs: [build-push]
+    needs: [compute-tag, build-push]
     uses: ./.github/workflows/cd-deploy.yaml
     with:
       environment: staging
       name: bt-stage-app
       version: 0.1.0-stage
+      rollback_on_failure: true
       values: |
         env: stage
         frontend:
           image:
-            tag: latest
+            tag: '${{ needs.compute-tag.outputs.tag }}'
         backend:
           resources:
             requests:
               cpu: '100m'
           image:
-            tag: latest
+            tag: '${{ needs.compute-tag.outputs.tag }}'
         semanticSearch:
           image:
-            tag: latest
+            tag: '${{ needs.compute-tag.outputs.tag }}'
         datapuller:
           image:
-            tag: latest
+            tag: '${{ needs.compute-tag.outputs.tag }}'
         host: staging.berkeleytime.com
         mongoUri: mongodb://bt-stage-mongo-mongodb-0.bt-stage-mongo-mongodb-headless.bt.svc.cluster.local:27017/bt
         redisUri: redis://bt-stage-redis-master.bt.svc.cluster.local:6379
