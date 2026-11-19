@@ -796,17 +796,17 @@ function ComingSoonAccordion({
 
   return (
     <div className={styles.accordion}>
-      <div className={styles.header}>
+      {/* The whole header toggles; the arrow button's click bubbles up here. */}
+      <div
+        className={styles.header}
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
         <div className={styles.titleContainer}>
           <div className={styles.title}>
             {title} {type === "major" ? "Major" : "Minor"}
           </div>
         </div>
-        <button
-          className={styles.toggle}
-          onClick={() => setIsExpanded((prev) => !prev)}
-          aria-expanded={isExpanded}
-        >
+        <button className={styles.toggle} aria-expanded={isExpanded}>
           {isExpanded ? (
             <NavArrowDown className={styles.icon} />
           ) : (
@@ -898,15 +898,15 @@ function BtLLRequirementsAccordion({
 
   return (
     <div className={styles.accordion}>
-      <div className={styles.header}>
+      {/* The whole header toggles; the arrow button's click bubbles up here. */}
+      <div
+        className={styles.header}
+        onClick={() => setIsExpanded((prev) => !prev)}
+      >
         <div className={styles.titleContainer}>
           <div className={styles.title}>{title}</div>
         </div>
-        <button
-          className={styles.toggle}
-          onClick={() => setIsExpanded((prev) => !prev)}
-          aria-expanded={isExpanded}
-        >
+        <button className={styles.toggle} aria-expanded={isExpanded}>
           {isExpanded ? (
             <NavArrowDown className={styles.icon} />
           ) : (
