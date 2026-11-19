@@ -3,8 +3,8 @@
   color: var(--paragraph-color);
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-bottom: 12px;
+  gap: var(--space-5);
+  padding-bottom: var(--space-3);
 
   @media (max-width: 1000px) {
     flex-direction: column;
@@ -16,7 +16,7 @@
   .classInfo {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
 
     @media (max-width: 1000px) {
       display: none;
@@ -30,7 +30,7 @@
         font-size: var(--text-18);
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--space-2);
       }
     }
 
@@ -51,14 +51,14 @@
     @media (max-width: 1000px) {
       display: inline-flex;
       align-items: center;
-      gap: 24px;
-      margin-bottom: 12px;
+      gap: var(--space-5);
+      margin-bottom: var(--space-3);
       flex-wrap: wrap;
 
       .compactTitleLeft {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: var(--space-2);
       }
 
       .compactCourseTitle {
@@ -88,11 +88,11 @@
   .metricGroup {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 
     @media (max-width: 1000px) {
       flex-direction: row;
-      gap: 24px;
+      gap: var(--space-5);
       align-items: center;
     }
   }
@@ -100,6 +100,6 @@
   .metric {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
   }
 }
