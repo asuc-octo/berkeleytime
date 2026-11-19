@@ -3,7 +3,7 @@ import type { RedisClientType } from "redis";
 
 import { TargetedMessageModel } from "@repo/common/models";
 
-import { bufferTrackingEvents } from "../tracking/controller";
+import { bufferTrackingEvents } from "../tracking/ingest";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Redirect-based click tracking for targeted messages
@@ -34,23 +34,28 @@ export default (app: Application, redis?: RedisClientType) => {
         : undefined;
 
       if (redis) {
-        bufferTrackingEvents(redis, req, [
-          {
-            eventType: "click",
-            targetType: "targeted-message",
-            targetId: messageId,
-            metadata: matchedCourse
-              ? {
-                  courseId: courseIdParam,
-                  subject: matchedCourse.subject,
-                  courseNumber: matchedCourse.courseNumber,
-                  semester: semesterParam,
-                  year: yearParam ? Number(yearParam) : undefined,
-                }
-              : undefined,
-            timestamp: new Date().toISOString(),
-          },
-        ]).catch((error) => {
+        bufferTrackingEvents(
+          redis,
+          req,
+          [
+            {
+              eventType: "click",
+              targetType: "targeted-message",
+              targetId: messageId,
+              metadata: matchedCourse
+                ? {
+                    courseId: courseIdParam,
+                    subject: matchedCourse.subject,
+                    courseNumber: matchedCourse.courseNumber,
+                    semester: semesterParam,
+                    year: yearParam ? Number(yearParam) : undefined,
+                  }
+                : undefined,
+              timestamp: new Date().toISOString(),
+            },
+          ],
+          "server-redirect"
+        ).catch((error) => {
           console.error(
             "Error buffering targeted-message tracking event:",
             error

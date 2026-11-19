@@ -3,7 +3,7 @@ import type { RedisClientType } from "redis";
 
 import { NavItemModel } from "@repo/common/models";
 
-import { bufferTrackingEvents } from "../tracking/controller";
+import { bufferTrackingEvents } from "../tracking/ingest";
 
 export default (app: Application, redis?: RedisClientType) => {
   // Redirect-based click tracking for nav items
@@ -24,15 +24,20 @@ export default (app: Application, redis?: RedisClientType) => {
       }
 
       if (redis) {
-        bufferTrackingEvents(redis, req, [
-          {
-            eventType: "click",
-            targetType: "nav-item",
-            targetId: navItemId,
-            metadata: { label: navItem.label, url: navItem.url },
-            timestamp: new Date().toISOString(),
-          },
-        ]).catch((error) => {
+        bufferTrackingEvents(
+          redis,
+          req,
+          [
+            {
+              eventType: "click",
+              targetType: "nav-item",
+              targetId: navItemId,
+              metadata: { label: navItem.label, url: navItem.url },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+          "server-redirect"
+        ).catch((error) => {
           console.error("Error buffering nav item tracking event:", error);
         });
       }

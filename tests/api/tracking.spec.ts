@@ -9,7 +9,7 @@ const TRACK_EVENTS = `
 `;
 
 const validEvent = {
-  eventType: "click",
+  eventType: "search_click",
   targetType: "course",
   targetId: "abc123",
   metadata: { source: "test" },
@@ -54,6 +54,37 @@ test.describe("Tracking beacon endpoint", () => {
     expect(response.status()).toBe(400);
   });
 
+  test("rejects unknown event/target pairs and malformed event shapes", async ({
+    request,
+  }) => {
+    for (const event of [
+      null,
+      { ...validEvent, eventType: "invented" },
+      { ...validEvent, targetType: "banner" },
+      { ...validEvent, metadata: [] },
+    ]) {
+      const response = await request.post("/api/tracking/beacon", {
+        data: { events: [event] },
+      });
+      expect(response.status()).toBe(400);
+    }
+  });
+
+  test("accepts client clock drift and invalid client timestamps", async ({
+    request,
+  }) => {
+    for (const timestamp of [
+      "not-a-date",
+      "2000-01-01T00:00:00Z",
+      "2099-01-01T00:00:00Z",
+    ]) {
+      const response = await request.post("/api/tracking/beacon", {
+        data: { events: [{ ...validEvent, timestamp }] },
+      });
+      expect(response.status()).toBe(204);
+    }
+  });
+
   test("maintains the 204 beacon contract across repeated calls", async ({
     request,
   }) => {
@@ -74,6 +105,15 @@ test.describe("Tracking beacon endpoint", () => {
 });
 
 test.describe("Tracking GraphQL mutation", () => {
+  test("trackEvents rejects unsupported event types", async ({ request }) => {
+    const response = await request.post("/api/graphql", {
+      data: persistedOperation(TRACK_EVENTS, {
+        events: [{ ...validEvent, eventType: "invented" }],
+      }),
+    });
+    const { errors } = await response.json();
+    expect(errors[0].extensions.code).toBe("BAD_USER_INPUT");
+  });
   test("trackEvents returns true for valid batch", async ({ request }) => {
     const response = await request.post("/api/graphql", {
       data: persistedOperation(TRACK_EVENTS, { events: [validEvent] }),

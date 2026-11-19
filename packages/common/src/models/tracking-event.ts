@@ -8,6 +8,8 @@ export interface ITrackingEvent {
   sessionId: string;
   userId?: string;
   timestamp: Date;
+  clientTimestamp?: Date;
+  source?: "client" | "server-redirect";
   ipHash: string;
   userAgent?: string;
   referrer?: string;
@@ -21,6 +23,9 @@ const trackingEventSchema = new Schema<ITrackingEvent>({
   sessionId: { type: String, required: true },
   userId: { type: String },
   timestamp: { type: Date, required: true, default: Date.now },
+  clientTimestamp: { type: Date },
+  // Missing means historical/unknown. Never default historical records to trusted.
+  source: { type: String, enum: ["client", "server-redirect"] },
   ipHash: { type: String, required: true },
   userAgent: { type: String, maxlength: 500 },
   referrer: { type: String },

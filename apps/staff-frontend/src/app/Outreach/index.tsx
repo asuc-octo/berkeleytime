@@ -778,7 +778,7 @@ export default function Outreach() {
                   )}
                   <div className={styles.cardBottom}>
                     <span className={styles.meta}>
-                      {banner.clickCount} click
+                      Unverified: {banner.clickCount} click
                       {banner.clickCount !== 1 ? "s" : ""} • {banner.viewCount}{" "}
                       view
                       {banner.viewCount !== 1 ? "s" : ""} •{" "}
@@ -874,7 +874,7 @@ export default function Outreach() {
                   </a>
                   <div className={styles.cardBottom}>
                     <span className={styles.meta}>
-                      {navItem.clickCount} click
+                      Unverified: {navItem.clickCount} click
                       {navItem.clickCount !== 1 ? "s" : ""} • Position:{" "}
                       {navItem.order} • Created:{" "}
                       {(() => {
@@ -952,7 +952,7 @@ export default function Outreach() {
                   </a>
                   <div className={styles.cardBottom}>
                     <span className={styles.meta}>
-                      {redirect.clickCount} click
+                      Unverified: {redirect.clickCount} click
                       {redirect.clickCount !== 1 ? "s" : ""} • Created:{" "}
                       {(() => {
                         if (!redirect.createdAt) return "Invalid Date";
@@ -1082,7 +1082,7 @@ export default function Outreach() {
                   </div>
                   <div className={styles.cardBottom}>
                     <span className={styles.meta}>
-                      {message.clickCount} click
+                      Unverified: {message.clickCount} click
                       {message.clickCount !== 1 ? "s" : ""} •{" "}
                       {message.dismissCount} dismissal
                       {message.dismissCount !== 1 ? "s" : ""} • Created:{" "}

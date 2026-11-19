@@ -129,7 +129,7 @@ function EventCard({
   return (
     <AnalyticsCard
       title={title}
-      description={`${description} (${timeRange})`}
+      description={`${description} (${timeRange}) · Unverified client events; capped collection may be incomplete`}
       currentValue={total}
       currentValueLabel={valueLabel}
       showTimeRangeSelector
