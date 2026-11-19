@@ -58,7 +58,10 @@
 
   .ratingContent {
     margin-top: 16px;
-    margin-left: 161px;
+    // Matches the header's vertical inset so expanded sections look balanced
+    padding-bottom: 6px;
+    // Title column width + header gap, so rows line up with the status badge
+    margin-left: 148px;
     animation: slideDown 200ms ease forwards;
     color: var(--paragraph-color);
 
@@ -76,13 +79,13 @@
       }
 
       .metric {
-        width: 24px;
+        width: 16px;
+        flex-shrink: 0;
         color: var(--paragraph-color);
+        font-size: var(--text-14);
         font-weight: var(--font-medium);
-        text-align: center;
+        text-align: left;
         opacity: 0;
-        gap: 10px;
-        font-size: var(--text-16);
         animation: fadeIn 200ms ease forwards;
         animation-delay: calc(var(--delay) + 50ms);
         user-select: none;
@@ -101,7 +104,7 @@
 
         .bar {
           height: 100%;
-          background-color: var(--slate-600);
+          background-color: var(--blue-500);
           border-radius: 4px;
           width: 0;
           transform-origin: left;
@@ -110,25 +113,23 @@
           transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1), ease;
           transition-delay: var(--width-delay, 0ms), 0ms;
           will-change: width, background-color;
-
-          @include dark-mode {
-            background-color: var(--zinc-200);
-          }
         }
         .inactiveBar {
-          background-color: var(--slate-400);
+          background-color: var(--blue-300);
 
           @include dark-mode {
-            background-color: var(--zinc-500);
+            background-color: var(--blue-600);
           }
         }
       }
 
-      .count {
-        width: 24px;
+      .percentage {
+        width: 40px;
+        flex-shrink: 0;
         color: var(--paragraph-color);
-        font-size: var(--text-16);
-        text-align: center;
+        font-size: var(--text-14);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
         opacity: 0;
         animation: fadeIn 200ms ease forwards;
         animation-delay: calc(var(--delay) + 100ms);
