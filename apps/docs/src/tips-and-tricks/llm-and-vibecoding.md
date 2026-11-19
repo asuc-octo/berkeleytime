@@ -4,16 +4,16 @@ This repo is set up to work well with AI-assisted development. Cursor, Claude Co
 
 ## Repo Features for AI-Assisted Development
 
-### Cursorrules (`.cursorrules`)
+### Repo Rules (`AGENTS.md`)
 
-The repo includes a **`.cursorrules`** file at the repo root. It describes:
+The repo includes an **`AGENTS.md`** file at the repo root. It describes:
 
 - **Architecture**: Monorepo layout (apps, packages, infra), backend module structure, frontend folder layout.
 - **Tech stack**: Backend (Node, Express, Apollo, MongoDB, Redis), frontend (React, Vite, Apollo, SCSS modules), and shared packages.
 - **Conventions**: TypeScript/GraphQL usage, SCSS modules, file naming, where to put new code.
 - **Workflow**: Type generation, lint/format, Docker, Turbo commands.
 
-When you (or an agent) work in this repo, Cursor and other tools that read `.cursorrules` get this context automatically. That reduces wrong-path suggestions (e.g. putting resolvers in the wrong place or editing generated types). Keep `.cursorrules` updated when the project's patterns change.
+When you (or an agent) work in this repo, Cursor, Claude Code, Codex, Gemini CLI, and other tools that read `AGENTS.md` get this context automatically. That reduces wrong-path suggestions (e.g. putting resolvers in the wrong place or editing generated types). Keep `AGENTS.md` updated when the project's patterns change.
 
 ### Git Worktree Support & Parameterized Ports
 
