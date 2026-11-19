@@ -1,5 +1,10 @@
 # Berkeleytime Logical Language (BtLL)
 
+> **VS Code / Cursor users:** install the **BtLL Linter** extension for syntax
+> highlighting and inline diagnostics while you write BtLL code. See
+> [`btll-linter/README.md`](../../btll-linter/README.md) for installation
+> instructions.
+
 Berkeleytime Logical Language (BtLL) is a new interpreted programming language designed for logical operations and data manipulation. It features a simple, type-safe syntax with support for functions, lists, and various built-in operations.
 
 ## Overview

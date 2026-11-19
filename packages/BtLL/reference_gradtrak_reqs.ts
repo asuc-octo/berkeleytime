@@ -10,6 +10,7 @@
  */
 
 export const UC_REQ_BTLL = `
+// BtLL
 Function<boolean>(Course) elw_finder (course){
   string university_requirement get_attr(course, "universityRequirement")
   boolean return equal([university_requirement, "ELRC"])
@@ -68,6 +69,7 @@ Function<boolean>() main (){
 `;
 
 export const RNC_BTLL = `
+// BtLL
 Function<List<Requirement>>(List<Course>) rc_requirements (courses){
   // R&C A
   List<Course> rca_courses filter(courses, (c) {
@@ -88,6 +90,7 @@ Function<List<Requirement>>(List<Course>) rc_requirements (courses){
 `;
 
 export const SEVEN_BREADTHS_BTLL = `
+// BtLL
 Function<List<Requirement>>(List<Course>) seven_breadths_requirements (courses){
   // Collect all eligible courses per breadth category (unfiltered)
   List<Course> arts_and_lit_eligible filter(courses, (c) {
@@ -190,7 +193,9 @@ Function<List<Requirement>>(List<Course>) seven_breadths_requirements (courses){
 }
 `;
 
-export const COE_REQ_BTLL = `${RNC_BTLL}
+export const COE_REQ_BTLL = `
+// BtLL
+${RNC_BTLL}
 Function<boolean>(Course) hss_finder (course){
   List<string> breadth_requirements get_attr(course, "breadthRequirements")
   // physical and biological sciences are not included in H/SS
@@ -228,7 +233,9 @@ Function<List<Requirement>>() main (){
 }
 `;
 
-export const CDSS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
+export const CDSS_REQ_BTLL = `
+// BtLL 
+${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
 Function<List<Requirement>>() main (){
   // 7 course breadth & essential skills matcher
   List<Course> courses get_attr(this, "allCourses")
@@ -336,6 +343,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const LNS_QR_BTLL = `
+// BtLL
 Function<List<Requirement>>(List<Course>) lns_qr_requirements (courses){
   // pulled from https://lsadvising.berkeley.edu/quantitative-reasoning
   List<Course> qr_courses filter(courses, (c) {
@@ -395,6 +403,7 @@ Function<List<Requirement>>(List<Course>) lns_qr_requirements (courses){
 `;
 
 export const LNS_LANG_BTLL = `
+// BtLL
 Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
   // Language Requirement: second-semester college level or equivalent
   // pulled from https://lsadvising.berkeley.edu/ls-language-requirement
@@ -412,7 +421,8 @@ Function<List<Requirement>>(List<Course>) lns_language_requirements (courses){
 `;
 
 // R&C, Quantitative Reasoning, L&S Language Requirement, 7 Breadths
-export const LNS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}${LNS_QR_BTLL}${LNS_LANG_BTLL}
+export const LNS_REQ_BTLL = `// BtLL
+${SEVEN_BREADTHS_BTLL}${RNC_BTLL}${LNS_QR_BTLL}${LNS_LANG_BTLL}
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
   
@@ -439,7 +449,8 @@ Function<List<Requirement>>() main (){
 }
 `;
 
-export const EDU_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}
+export const EDU_REQ_BTLL = `// BtLL
+${SEVEN_BREADTHS_BTLL}
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
   
@@ -457,12 +468,15 @@ Function<List<Requirement>>() main (){
 `;
 
 export const ENVDES_REQ_BTLL = `
+// BtLL
 `;
 
 export const CHEMISTRY_REQ_BTLL = `
+// BtLL
 `;
 
-export const RCNR_REQ_BTLL = `${RNC_BTLL}
+export const RCNR_REQ_BTLL = `// BtLL
+${RNC_BTLL}
 Function<boolean>(Course) is_upper_div_course (course){
   string number get_attr(course, "number")
   boolean return or([regex_match(number, "^1[0-9][0-9]"), regex_match(number, "^2[0-9][0-9]"), regex_match(number, "^C1[0-9][0-9]"), regex_match(number, "^C2[0-9][0-9]"), regex_match(number, "^W1[0-9][0-9]"), regex_match(number, "^W2[0-9][0-9]"), regex_match(number, "^N1[0-9][0-9]"), regex_match(number, "^N2[0-9][0-9]")])
@@ -512,6 +526,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const EECS_REQ_BTLL = `
+// BtLL
 Function<boolean>(Course) eecs_upper_div_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
@@ -546,7 +561,6 @@ Function<boolean>(Course) eecs_upper_div_finder (course){
 
   boolean return or([is_eecs, is_eleng, is_compsci_194_valid, is_compsci_special, is_compsci_294_valid, is_eleng_229a, is_info_valid])
 }
-
 
 Function<boolean>(Course) eecs_lower_div_finder (course){
   string subject get_attr(course, "subject")
@@ -732,6 +746,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const MECHE_REQ_BTLL = `
+// BtLL
 Function<boolean>(Course) meceng_upper_div_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
@@ -850,7 +865,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const COMPSCI_REQ_BTLL = `
-
+// BtLL
 Function<boolean>(Course) design_upper_div_finder (course) {
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
@@ -1203,6 +1218,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const DATASCI_REQ_BTLL = `
+// BtLL
 Function<boolean>(Course) data_c100_finder (course){
   string subject get_attr(course, "subject")
   string number get_attr(course, "number")
@@ -2652,6 +2668,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const APPLIED_MATH_REQ_BTLL = `
+// BtLL
 Function<NCoursesRequirement>() eval_actuarial_science (){
   List<Course> courses get_attr(this, "allCourses")
   // Pool: MATH 128B, STAT 134 or 140, STAT 135, STAT 151A, ECON 141
@@ -2908,6 +2925,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const ECON_REQ_BTLL = `
+// BtLL
 Function<boolean>(Course) econ_elective_inside_finder (course){
   List<Course> list [
     {"ECON C102"}, {"ENVECON C102"},
@@ -3054,7 +3072,8 @@ Function<List<Requirement>>() main (){
 }
 `;
 
-export const HAAS_REQ_BTLL = `${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
+export const HAAS_REQ_BTLL = `// BtLL
+${SEVEN_BREADTHS_BTLL}${RNC_BTLL}
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
 
@@ -3076,6 +3095,7 @@ Function<List<Requirement>>() main (){
 `;
 
 export const BUSINESS_REQ_BTLL = `
+// BtLL
 Function<List<Requirement>>() main (){
   List<Course> courses get_attr(this, "allCourses")
 
