@@ -38,6 +38,7 @@ jobs:
           image:
             tag: latest
         semanticSearch:
+          indexHostPath: /data/stage/semantic-search-indexes
           image:
             tag: latest
         datapuller:
