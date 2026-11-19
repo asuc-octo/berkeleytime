@@ -11,7 +11,7 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Bookmark, BookmarkSolid, Folder, PinSolid, Plus } from "iconoir-react";
 import { Popover } from "radix-ui";
 
-import { Button, Color, IconButton, Tooltip } from "@repo/theme";
+import { Button, Checkbox, Color, IconButton, Tooltip } from "@repo/theme";
 
 import CollectionNameInput from "@/components/CollectionNameInput";
 import {
@@ -108,8 +108,7 @@ export default function BookmarkPopover({
       const hasClass = collection.classes?.some(
         (entry) =>
           entry.class?.subject === classInfo.subject &&
-          entry.class?.courseNumber === classInfo.courseNumber &&
-          entry.class?.number === classInfo.classNumber
+          entry.class?.courseNumber === classInfo.courseNumber
       );
       if (hasClass) {
         saved.add(collection._id);
@@ -214,15 +213,27 @@ export default function BookmarkPopover({
 
       try {
         if (currentlySaved) {
-          await removeClassFromCollection({
-            collectionId,
-            year: classInfo.year,
-            semester: classInfo.semester,
-            sessionId: classInfo.sessionId,
-            subject: classInfo.subject,
-            courseNumber: classInfo.courseNumber,
-            classNumber: classInfo.classNumber,
-          });
+          // Saved entries may be other offerings of this course
+          const savedEntries =
+            apiCollections
+              ?.find((c) => c._id === collectionId)
+              ?.classes.filter(
+                (entry) =>
+                  entry.class?.subject === classInfo.subject &&
+                  entry.class?.courseNumber === classInfo.courseNumber
+              ) ?? [];
+          for (const { class: saved } of savedEntries) {
+            if (!saved) continue;
+            await removeClassFromCollection({
+              collectionId,
+              year: saved.year,
+              semester: saved.semester,
+              sessionId: saved.sessionId,
+              subject: saved.subject,
+              courseNumber: saved.courseNumber,
+              classNumber: saved.number,
+            });
+          }
         } else {
           await addClassToCollection({
             collectionId,
@@ -244,7 +255,13 @@ export default function BookmarkPopover({
         });
       }
     },
-    [classInfo, addClassToCollection, removeClassFromCollection, collections]
+    [
+      classInfo,
+      apiCollections,
+      addClassToCollection,
+      removeClassFromCollection,
+      collections,
+    ]
   );
 
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
@@ -410,7 +427,7 @@ export default function BookmarkPopover({
                     ? ({ color: collectionFolderColor } as CSSProperties)
                     : undefined;
                   return (
-                    <motion.div
+                    <motion.label
                       key={collection.id}
                       layout
                       initial={isNew ? { opacity: 0, y: 50 } : false}
@@ -420,8 +437,17 @@ export default function BookmarkPopover({
                         opacity: { duration: 0.2 },
                         y: { type: "spring", stiffness: 400, damping: 25 },
                       }}
-                      className={styles.collectionRow}
+                      className={classNames(styles.collectionRow, {
+                        [styles.nested]: !collection.isSystem,
+                      })}
                     >
+                      <Checkbox
+                        checked={isSaved}
+                        disabled={mutatingCollections.has(collection.id)}
+                        onCheckedChange={() =>
+                          handleToggleCollection(collection.id, isSaved)
+                        }
+                      />
                       <span className={styles.collectionName}>
                         <Folder
                           width={16}
@@ -447,18 +473,7 @@ export default function BookmarkPopover({
                           />
                         )}
                       </span>
-                      <IconButton
-                        className={classNames(styles.bookmark, {
-                          [styles.active]: isSaved,
-                        })}
-                        disabled={mutatingCollections.has(collection.id)}
-                        onClick={() =>
-                          handleToggleCollection(collection.id, isSaved)
-                        }
-                      >
-                        <Plus width={16} height={16} />
-                      </IconButton>
-                    </motion.div>
+                    </motion.label>
                   );
                 })}
               </LayoutGroup>

@@ -141,7 +141,15 @@ function SavedCollectionSection({
           }) ||
           a.number.localeCompare(b.number, undefined, { numeric: true })
         );
-      });
+      })
+      .filter(
+        (savedClass, i, all) =>
+          all.findIndex(
+            (other) =>
+              other.subject === savedClass.subject &&
+              other.courseNumber === savedClass.courseNumber
+          ) === i
+      );
   }, [collectionData]);
 
   const savedClassEntries = useMemo(
