@@ -27,6 +27,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "bt-app.semanticSearchName" . }}-env
+          {{- with .Values.semanticSearch.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           startupProbe:
             httpGet:
               path: /health

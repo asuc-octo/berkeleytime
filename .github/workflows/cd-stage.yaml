@@ -32,15 +32,59 @@ jobs:
           image:
             tag: latest
         backend:
+          # One pod is enough for staging; prod runs two.
+          replicas: 1
           resources:
             requests:
               cpu: '100m'
           image:
             tag: latest
         semanticSearch:
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '256Mi'
+            limits:
+              cpu: '500m'
+              memory: '1Gi'
           image:
             tag: latest
+        # Staging shares the node with prod, so its jobs are capped and run
+        # an hour after prod's instead of at the same minute. Enrollment runs
+        # hourly instead of every 15 minutes, off prod's :00/:15/:30/:45.
         datapuller:
+          resources:
+            requests:
+              cpu: '50m'
+              memory: '256Mi'
+            limits:
+              cpu: '1'
+              memory: '2Gi'
+          cronjobs:
+            terms-all:
+              schedule: '0 5 1 * *'
+            terms-nearby:
+              schedule: '0 5,17 2-31 * *'
+            courses:
+              schedule: '5 5,17 * * *'
+            sections-l5y:
+              schedule: '10 5 1 * *'
+            sections-active:
+              schedule: '15 5,17 2-31 * *'
+            classes-l5y:
+              schedule: '20 5 1 * *'
+            classes-active:
+              schedule: '45 5,17 2-31 * *'
+            decals:
+              schedule: '28 5 * * *'
+            grades-l5y:
+              schedule: '35 5 1 * *'
+            grades-recent:
+              schedule: '30 5 2-31 * *'
+            enrollments:
+              schedule: '7 * * * *'
+            enrollment-timeframe:
+              schedule: '40 5 * * *'
           image:
             tag: latest
         host: staging.berkeleytime.com

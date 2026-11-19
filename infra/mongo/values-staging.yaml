@@ -9,14 +9,14 @@ mongodb:
   commonLabels:
     env: stage
 
-  # values.yaml sets prod CPU; null removes it so staging keeps no CPU
-  # request or limit until staging gets its own.
+  # Staging must not take CPU from production on the shared node. Before
+  # this, staging Mongo had no CPU limit and used more CPU than prod.
   resources:
     limits:
-      cpu: null
+      cpu: 500m
       memory: 2Gi
     requests:
-      cpu: null
+      cpu: 100m
       memory: 1Gi
 
   # Staging still runs MongoDB 7.0.5 from the older chart, while production

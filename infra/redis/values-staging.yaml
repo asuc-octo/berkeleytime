@@ -3,3 +3,17 @@
 redis:
   commonLabels:
     env: stage
+
+  # Smaller than prod; staging used about 110Mi.
+  master:
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+    configuration: |
+      maxmemory 150mb
+      maxmemory-policy volatile-lru
+      save ""
