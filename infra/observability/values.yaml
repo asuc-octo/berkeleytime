@@ -3,6 +3,8 @@
 
 # Global settings
 namespace: bt
+# Independent of the namespace; set explicitly for every environment.
+environment: prod
 
 # OpenTelemetry Collector
 collector:
@@ -129,4 +131,31 @@ backend:
 
 # MongoDB reference (for collector mongodb receiver)
 mongodb:
+  enabled: false
   endpoint: bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local:27017
+
+# Use metric endpoints that are already available on the internal network.
+# No Kubernetes API discovery or account setup is provisioned by this chart.
+resourceMetrics:
+  enabled: false
+  namespaces: [bt]
+  scrapeInterval: 30s
+  scrapeTimeout: 10s
+  kubelet:
+    enabled: false
+    # Enabling requires metricsTargets or cadvisorTargets with real endpoints and node labels.
+    metricsPath: /metrics
+    cadvisorPath: /metrics/cadvisor
+  # Reuse Developer 3's existing instance.
+  kubeStateMetrics:
+    enabled: false
+    target: kube-state-metrics:8080
+  nodeExporter:
+    # Enabling requires targets with real endpoints and node labels.
+    enabled: false
+
+# Optional receivers for existing reachable dependency endpoints.
+dependencies:
+  nginx:
+    # Add the status endpoint when enabling collection.
+    enabled: false

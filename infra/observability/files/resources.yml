@@ -1,0 +1,46 @@
+# Resource recording rules. No alert notifications. Rates precede deduplication.
+groups:
+  - name: bt-resources
+    interval: 30s
+    rules:
+      - record: bt:pod_owner:info
+        expr: |-
+          label_replace(max by (deployment_environment, namespace, pod, uid, replicaset) (label_replace(kube_pod_owner{owner_is_controller="true",owner_kind="ReplicaSet"}, "replicaset", "$1", "owner_name", "(.+)")) * on (deployment_environment, namespace, replicaset) group_left(workload) max by (deployment_environment, namespace, replicaset, workload) (label_replace(kube_replicaset_owner{owner_is_controller="true",owner_kind="Deployment"}, "workload", "$1", "owner_name", "(.+)")), "workload_type", "Deployment", "replicaset", ".+")
+          or on (deployment_environment, namespace, pod, uid)
+          label_replace(label_replace(max by (deployment_environment, namespace, pod, uid, owner_kind, owner_name) (kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "owner_name", "(.+)"), "workload_type", "$1", "owner_kind", "(.+)")
+          or on (deployment_environment, namespace, pod, uid)
+          label_replace(label_replace((max by (deployment_environment, namespace, pod, uid) (kube_pod_info) unless on (deployment_environment, namespace, pod, uid) kube_pod_owner{owner_is_controller="true"}), "workload", "$1", "pod", "(.+)"), "workload_type", "Pod", "pod", ".+")
+      - record: bt:container_cpu_cores:rate5m
+        expr: max by (deployment_environment, namespace, pod, container, node)
+          (rate(container_cpu_usage_seconds_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m]))
+      - record: bt:container_memory_working_set_bytes
+        expr: max by (deployment_environment, namespace, pod, container, node)
+          (container_memory_working_set_bytes{job="cadvisor",container!="",container!="POD",pod!=""})
+      - record: bt:container_memory_limits
+        expr: max by (deployment_environment, namespace, pod, container, uid)
+          (kube_pod_container_resource_limits{resource="memory",unit="byte"})
+      # Retain cAdvisor's incarnation ID and full scrape labels until both
+      # counters are paired. Choose one complete scrape per incarnation;
+      # using the greatest total-period rate among duplicate sources.
+      - record: bt:container_cpu_periods:rate5m
+        expr: |-
+          topk by (deployment_environment, namespace, pod, container, node, id) (
+            1,
+            rate(container_cpu_cfs_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+            and
+            rate(container_cpu_cfs_throttled_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+          )
+      - record: bt:container_cpu_throttled_periods:rate5m
+        expr: |-
+          rate(container_cpu_cfs_throttled_periods_total{job="cadvisor",container!="",container!="POD",pod!=""}[5m])
+          and
+          bt:container_cpu_periods:rate5m
+      - record: bt:container_cpu_throttling:ratio5m
+        expr: |-
+          sum by (deployment_environment, namespace, pod, container, node) (
+            bt:container_cpu_throttled_periods:rate5m
+          )
+          /
+          (sum by (deployment_environment, namespace, pod, container, node) (
+            bt:container_cpu_periods:rate5m
+          ) > 0)

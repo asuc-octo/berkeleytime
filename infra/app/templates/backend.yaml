@@ -27,6 +27,14 @@ spec:
             - secretRef:
                 name: {{ include "bt-app.backendName" . }}-secret
           env:
+            {{- if .Values.otel.enabled }}
+            - name: K8S_NAMESPACE_NAME
+              valueFrom:
+                fieldRef: {fieldPath: metadata.namespace}
+            - name: K8S_POD_NAME
+              valueFrom:
+                fieldRef: {fieldPath: metadata.name}
+            {{- end }}
             # Cap the V8 old-space heap below the container memory limit so GC
             # runs proactively at a predictable bound instead of letting the
             # heap grow toward node RAM and thrash in back-to-back full GCs.

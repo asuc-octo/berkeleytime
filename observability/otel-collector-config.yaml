@@ -1,5 +1,5 @@
 # OpenTelemetry Collector configuration
-# Receives telemetry from the backend and frontend, scrapes nginx and MongoDB metrics.
+# Receives telemetry from the backend and frontend, scrapes nginx metrics.
 # Exports traces to Tempo, logs to Loki, and metrics to Prometheus.
 
 receivers:
@@ -15,11 +15,7 @@ receivers:
     endpoint: "http://nginx:8090/nginx_status"
     collection_interval: 10s
 
-  # Connects to MongoDB and collects server statistics
-  mongodb:
-    hosts:
-      - endpoint: "mongodb:27017"
-    collection_interval: 10s
+# MongoDB metrics can be supplied by an existing source.
 
 connectors:
   # Derives metrics from spans — produces counters/histograms per span name.
@@ -35,6 +31,9 @@ connectors:
         buckets: [5, 10, 25, 50, 100, 250, 500, 1000]
 
 processors:
+  resource/nginx:
+    attributes:
+      - {action: upsert, key: service.name, value: nginx}
   # Batching reduces export overhead
   batch:
     timeout: 5s
@@ -81,6 +80,9 @@ exporters:
     verbosity: basic
 
 service:
+  telemetry:
+    metrics:
+      address: "0.0.0.0:8888"
   pipelines:
     traces:
       receivers: [otlp]
@@ -91,6 +93,10 @@ service:
       processors: [memory_limiter, resource, batch]
       exporters: [loki]
     metrics:
-      receivers: [otlp, spanmetrics, nginx, mongodb]
+      receivers: [otlp, spanmetrics]
       processors: [memory_limiter, resource, batch]
+      exporters: [prometheus]
+    metrics/nginx:
+      receivers: [nginx]
+      processors: [memory_limiter, resource, resource/nginx, batch]
       exporters: [prometheus]
