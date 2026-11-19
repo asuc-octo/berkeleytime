@@ -22,6 +22,7 @@ import Units from "@/components/Units";
 import { IClass, IClassCourse } from "@/lib/api";
 import { IEnrollmentSingular } from "@/lib/api/enrollment";
 import { Color, Semester } from "@/lib/generated/graphql";
+import { formatClassNumber, formatSectionLabel } from "@/lib/section";
 
 import styles from "./ClassCard.module.scss";
 
@@ -36,15 +37,6 @@ const formatSemester = (semester: Semester): string => {
     default:
       return semester;
   }
-};
-
-const formatClassNumber = (number: string | undefined | null): string => {
-  if (!number) return "";
-  const num = parseInt(number, 10);
-  if (isNaN(num)) return number;
-  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
-  if (num > 99) return num.toString();
-  return num.toString().padStart(2, "0");
 };
 
 type BaseClassFields = Pick<
@@ -78,6 +70,7 @@ type ClassCardClass = Partial<BaseClassFields> & {
   semester?: Semester;
   course?: Partial<CourseSummary> | null;
   decal?: { title?: string | null } | null;
+  primaryComponent?: string | null;
   primarySection?: {
     enrollment?: {
       latest?: Partial<EnrollmentSnapshot> | null;
@@ -132,6 +125,10 @@ export default function ClassCard({
   const gradeDistribution =
     _class?.course?.gradeDistribution ?? _class?.gradeDistribution;
   const formattedClassNumber = formatClassNumber(_class?.number);
+  const sectionLabel = formatSectionLabel(
+    _class?.primaryComponent,
+    _class?.number
+  );
 
   const activeReservedMaxCount =
     _class?.primarySection?.enrollment?.latest?.activeReservedMaxCount ?? 0;
@@ -186,7 +183,7 @@ export default function ClassCard({
                           <>
                             {" "}
                             <span className={styles.sectionNumber}>
-                              #{formattedClassNumber}
+                              {sectionLabel}
                             </span>
                           </>
                         )}
@@ -199,7 +196,7 @@ export default function ClassCard({
                         <>
                           {" "}
                           <span className={styles.sectionNumber}>
-                            #{formattedClassNumber}
+                            {sectionLabel}
                           </span>
                         </>
                       )}

@@ -55,7 +55,7 @@ import {
   Semester,
 } from "@/lib/generated/graphql";
 import { RecentType, addRecent } from "@/lib/recent";
-import { getExternalLink } from "@/lib/section";
+import { formatSectionLabel, getExternalLink } from "@/lib/section";
 import { getRatingErrorMessage } from "@/utils/ratingErrorMessages";
 
 import SuspenseBoundary from "../SuspenseBoundary";
@@ -140,15 +140,6 @@ const ratingsTabClasses: RatingsTabClasses = {
 const METRIC_NAMES = Object.values(MetricName) as MetricName[];
 type ClassTab = "overview" | "sections" | "ratings" | "grades" | "enrollment";
 const DEFAULT_TAB: ClassTab = "overview";
-
-const formatClassNumber = (number: string | undefined | null): string => {
-  if (!number) return "";
-  const num = parseInt(number, 10);
-  if (isNaN(num)) return number;
-  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
-  if (num > 99) return num.toString();
-  return num.toString().padStart(2, "0");
-};
 
 export default function Class({
   year,
@@ -554,7 +545,10 @@ export default function Class({
                     <h1 className={styles.heading}>
                       {_class.subject} {_class.courseNumber}{" "}
                       <span className={styles.sectionNumber}>
-                        #{formatClassNumber(_class.number)}
+                        {formatSectionLabel(
+                          primarySection?.component,
+                          _class.number
+                        )}
                       </span>
                       {_class.decal != null && _class.decal.title != null && (
                         <Badge

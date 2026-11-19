@@ -58,6 +58,28 @@ export const getExternalLink = (
   return `https://classes.berkeley.edu/content/${yearOrClass}-${semester.toLowerCase()}-${subject.toLowerCase()}-${courseNumber}-${sectionNumber}-${kind.toLowerCase()}-${sectionNumber}`;
 };
 
+export const formatClassNumber = (number: string | undefined | null): string => {
+  if (!number) return "";
+  const num = parseInt(number, 10);
+  if (isNaN(num)) return number;
+  // If > 99, show as-is. Otherwise pad to 2 digits with leading zeros
+  if (num > 99) return num.toString();
+  return num.toString().padStart(2, "0");
+};
+
+const COMPONENT_LABELS: Record<string, string> = {
+  DIS: "DISC",
+};
+
+export const formatSectionLabel = (
+  component: string | undefined | null,
+  number: string | undefined | null
+): string => {
+  const formattedNumber = formatClassNumber(number);
+  if (!component) return formattedNumber;
+  return `${COMPONENT_LABELS[component] ?? component} ${formattedNumber}`;
+};
+
 export const colors = [
   "var(--red-500)",
   "var(--orange-500)",
