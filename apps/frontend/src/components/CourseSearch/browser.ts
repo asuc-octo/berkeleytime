@@ -12,7 +12,8 @@ export const initialize = (
   }[]
 ) => {
   const list = courses.map((course) => {
-    const { title, subject, departmentNicknames, formerNames, number } = course;
+    const { title, subject, departmentNicknames, formerNames, number } =
+      course;
 
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
@@ -59,7 +60,10 @@ export const initialize = (
       ),
       ...(formerNames ?? [])
         .filter(Boolean)
-        .flatMap((formerName) => [formerName, formerName.replace(/\s+/g, "")]),
+        .flatMap((formerName) => [
+          formerName,
+          formerName.replace(/\s+/g, ""),
+        ]),
     ];
 
     return {
