@@ -16,7 +16,7 @@ spec:
           serviceAccountName: bt-k8s-role
           containers:
             - name: backup-prod-mongo
-              image: alpine/k8s:1.29.11
+              image: docker.io/jayanacpc/bt-mongo-backup@sha256:29559e20c2fd7c4a1ba2383d20ebdd43763907f046665bb54ea5894b94966aea
               command:
                 - sh
                 - -c
@@ -34,17 +34,14 @@ spec:
                   backup_timestamp=$(date +%Y%m%d%H)
                   day_of_week=$(date +%u) # 7 = Sunday
 
-                  # Find production MongoDB pod
-                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
-
-                  # Dump production MongoDB state
+                  # Dump directly from the backup container using CPU-compatible tools.
                   echo "Dumping prod MongoDB state..."
-                  kubectl exec --namespace=bt \
-                    "$prod_pod" -- mongodump --archive=/tmp/prod_backup.gz --gzip
-                  kubectl cp --namespace=bt \
-                    "$prod_pod:/tmp/prod_backup.gz" /tmp/prod_backup.gz
-                  kubectl exec --namespace=bt \
-                    "$prod_pod" -- rm /tmp/prod_backup.gz
+                  mongodump \
+                    --host=bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local \
+                    --port=27017 \
+                    --numParallelCollections=1 \
+                    --archive=/tmp/prod_backup.gz \
+                    --gzip
 
                   # Upload production MongoDB backup
                   # Retention is enforced by R2 lifecycle rules per prefix
