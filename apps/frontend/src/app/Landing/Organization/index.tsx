@@ -46,26 +46,6 @@ export default function Organization() {
           </div>
           <div className={styles.sponsorsLogos}>
             <a
-              href="https://berkeleytime.com/go/about-mechanize"
-              className={styles.sponsorLink}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className={styles.mechanizeContainer}>
-                <img
-                  src="/images/mechanize-light-mode.png"
-                  alt="Mechanize"
-                  className={styles.mechanizeLogoLight}
-                />
-                <img
-                  src="/images/mechanize-dark-mode.png"
-                  alt="Mechanize"
-                  className={styles.mechanizeLogoDark}
-                />
-                <span className={styles.mechanizeName}>Mechanize, Inc.</span>
-              </div>
-            </a>
-            <a
               href="https://www.ocf.berkeley.edu/"
               className={styles.sponsorLink}
               target="_blank"
