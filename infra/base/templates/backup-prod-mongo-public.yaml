@@ -16,7 +16,7 @@ spec:
           serviceAccountName: bt-k8s-role
           containers:
             - name: backup-prod-mongo-public
-              image: alpine/k8s:1.29.11
+              image: docker.io/jayanacpc/bt-mongo-backup@sha256:29559e20c2fd7c4a1ba2383d20ebdd43763907f046665bb54ea5894b94966aea
               command:
                 - sh
                 - -c
@@ -29,18 +29,18 @@ spec:
                   }
                   trap cleanup EXIT
 
-                  # Find production MongoDB pod
-                  prod_pod=$(kubectl get pods -o custom-columns=NAME:.metadata.name --no-headers -n bt | grep 'bt-prod-mongo')
-
                   # Date for daily public backup filename (YYYYMMDD)
                   backup_date=$(date +%Y%m%d)
 
                   echo "Dumping public MongoDB collections..."
-                  kubectl exec --namespace=bt \
-                    "$prod_pod" -- mongodump \
+                  mongodump \
+                    --host=bt-prod-mongo-mongodb-0.bt-prod-mongo-mongodb-headless.bt.svc.cluster.local \
+                    --port=27017 \
+                    --numParallelCollections=1 \
                     --db bt \
                     --excludeCollection users \
                     --excludeCollection plans \
+                    --excludeCollection plans_duplicate_archive_pr2_20260909 \
                     --excludeCollection planterms \
                     --excludeCollection labels \
                     --excludeCollection majorreqs \
@@ -58,16 +58,9 @@ spec:
                     --excludeCollection semester-roles \
                     --excludeCollection staff-members \
                     --excludeCollection targetedmessages \
-                    --archive=/tmp/prod_public_backup.gz \
+                    --excludeCollection trackingevents \
+                    --archive="/tmp/prod_public_backup-$backup_date.gz" \
                     --gzip
-
-                  # Copy archive out of Mongo pod
-                  kubectl cp --namespace=bt \
-                    "$prod_pod:/tmp/prod_public_backup.gz" "/tmp/prod_public_backup-$backup_date.gz"
-
-                  # Remove archive from Mongo pod
-                  kubectl exec --namespace=bt \
-                    "$prod_pod" -- rm /tmp/prod_public_backup.gz
 
                   # Upload sanitized backup to public S3/R2 bucket
                   echo "Uploading public backup to s3 bucket..."
