@@ -1,8 +1,17 @@
+# Prod-oriented defaults; staging layers values-staging.yaml on top.
+# Deployed by .github/workflows/cd-infra.yaml as bt-prod-redis.
 redis:
   commonLabels:
     env: prod
 
   architecture: standalone
+
+  # The chart defaults to the `latest` tag. Pin the digest of the image that
+  # is running (kubectl get pod <pod> -o jsonpath='{.status.containerStatuses[*].imageID}').
+  # .github/workflows/cd-infra.yaml refuses to apply while a digest is empty.
+  # Pinned to what bt-prod-redis ran on 2026-11-08.
+  image:
+    digest: sha256:341edafd5622a1e47e4b3ab379913de84ea4a50d534f40aaa903a3825e0e1cf1
 
   auth:
     enabled: false
@@ -10,7 +19,18 @@ redis:
   master:
     persistence:
       enabled: false
+    # Without explicit resources the chart applied its "nano" preset (192Mi),
+    # and Redis was OOM-killed on Oct 22, logging every user out.
+    # maxmemory stays well below the memory limit so Redis evicts keys
+    # instead of being killed.
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
     configuration: |
-      maxmemory 140mb
+      maxmemory 350mb
       maxmemory-policy volatile-lru
       save ""
