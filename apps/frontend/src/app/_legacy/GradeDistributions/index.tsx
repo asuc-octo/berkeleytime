@@ -98,6 +98,8 @@ const transformGradeDistributionData = (
   return Array.from(letterMap.values());
 };
 
+const NARROW_TICK = { fontSize: "var(--text-12)" };
+
 type GradeChartProps = {
   data: Array<{ letter: string; [key: number]: number }>;
   filteredOutputs: Output[];
@@ -142,8 +144,22 @@ const GradeChart = memo(
               vertical={false}
               stroke="var(--border-color)"
             />
-            <XAxis dataKey="letter" fill="var(--label-color)" tickMargin={8} />
-            <YAxis tickFormatter={(v) => formatters.percent(v, 1)} />
+            <XAxis
+              dataKey="letter"
+              fill="var(--label-color)"
+              tickMargin={8}
+              // Keep every grade label visible on narrow charts instead of
+              // letting recharts drop ones that would collide.
+              interval={0}
+              tick={chartWidth < 500 ? NARROW_TICK : undefined}
+            />
+            <YAxis
+              width={chartWidth < 500 ? 40 : undefined}
+              tickFormatter={(v) =>
+                formatters.percent(v, chartWidth < 500 ? 0 : 1)
+              }
+              tick={chartWidth < 500 ? NARROW_TICK : undefined}
+            />
             {filteredOutputs.length > 0 && (
               <ChartTooltip
                 content={(props) => {
