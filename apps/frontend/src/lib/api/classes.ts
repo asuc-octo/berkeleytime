@@ -253,6 +253,9 @@ export const GET_CLASS_DETAILS = gql`
       unitsMax
       unitsMin
       finalExam
+      requirementDesignation {
+        description
+      }
       decal {
         title
       }
@@ -287,6 +290,11 @@ export const GET_CLASS_DETAILS = gql`
           value {
             description
             formalDescription
+          }
+        }
+        breadthAttributes: sectionAttributes(attributeCode: "GE") {
+          value {
+            description
           }
         }
         exams {

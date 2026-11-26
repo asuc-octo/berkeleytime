@@ -72,6 +72,27 @@ export default function Overview() {
     [_class.primarySection?.sectionAttributes]
   );
 
+  // Requirements this class fulfills, shown regardless of catalog filters.
+  const fulfilledRequirements = useMemo(() => {
+    const university = _class.requirementDesignation?.description?.trim();
+    const breadths = [
+      ...new Set(
+        (_class.primarySection?.breadthAttributes ?? [])
+          .map((attribute) => attribute.value?.description?.trim())
+          .filter((description): description is string => !!description)
+      ),
+    ];
+    return [
+      ...(university ? [{ label: "University", values: [university] }] : []),
+      ...(breadths.length > 0
+        ? [{ label: "L&S Breadth", values: breadths }]
+        : []),
+    ];
+  }, [
+    _class.requirementDesignation?.description,
+    _class.primarySection?.breadthAttributes,
+  ]);
+
   const prereqs = useMemo(() => {
     if (course.requirements && course.requirements.trim()) {
       return course.requirements;
@@ -193,6 +214,19 @@ export default function Overview() {
             <Flex direction="column" gap="2">
               <p className={styles.label}>Prerequisites</p>
               <p className={styles.description}>{prereqs}</p>
+            </Flex>
+          )}
+          {fulfilledRequirements.length > 0 && (
+            <Flex direction="column" gap="2">
+              <p className={styles.label}>Fulfills Requirements</p>
+              <p className={styles.description}>
+                {fulfilledRequirements.map(({ label, values }, index) => (
+                  <span key={label}>
+                    {label}: {values.join(", ")}
+                    {index < fulfilledRequirements.length - 1 && <br />}
+                  </span>
+                ))}
+              </p>
             </Flex>
           )}
           <Flex direction="column" gap="2">

@@ -782,6 +782,12 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     variableNames: [],
     sources: ["apps/frontend/src/lib/api/terms.ts"],
   },
+  "eeea77d0cf2c489bab4bf38a1e98c06c81b62709485777bbfa2e621e1da45878": {
+    operationName: "GetClassDetails",
+    document: "query GetClassDetails($year:Int!$semester:Semester!$sessionId:SessionIdentifier!$subject:String!$courseNumber:CourseNumber!$number:ClassNumber!){class(year:$year semester:$semester sessionId:$sessionId subject:$subject courseNumber:$courseNumber number:$number){year semester subject sessionId courseNumber courseId number unitsMax unitsMin finalExam requirementDesignation{description __typename}decal{title __typename}course{title description requirements aggregatedRatings(metricNames:[Attendance Recording]){metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}gradeDistribution{average pnpPercentage __typename}__typename}primarySection{sectionId component sectionAttributes(attributeCode:\"NOTE\"){attribute{code formalDescription __typename}value{description formalDescription __typename}__typename}breadthAttributes:sectionAttributes(attributeCode:\"GE\"){value{description __typename}__typename}exams{date startTime endTime location type __typename}enrollment{latest{endTime enrolledCount maxEnroll waitlistedCount maxWaitlist activeReservedMaxCount seatReservationCount{enrolledCount maxEnroll requirementGroup{description __typename}isValid __typename}__typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}__typename}decal{syllabus description syllabusUrl applicationUrl applicationDueDate instructors{name email __typename}__typename}__typename}}",
+    variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
+    sources: ["apps/frontend/src/lib/api/classes.ts"],
+  },
   "ef3a260a0e8b4a6e32dcef6bc90c7193b333e9c9d3e552b484b986e1f440b397": {
     operationName: "GetCourses",
     document: "query GetCourses{courses{courseId subject number title gradeDistribution{average distribution{letter count __typename}__typename}academicCareer finalExam gradingBasis typicallyOffered primaryInstructionMethod __typename}}",
@@ -817,12 +823,6 @@ export const persistedOperations: Readonly<Record<string, PersistedOperation>> =
     document: "query GradTrakAnalyticsData{gradTrakAnalyticsData{planId userEmail majors minors colleges totalCourses startYear createdAt __typename}}",
     variableNames: [],
     sources: ["apps/staff-frontend/src/lib/api/analytics.ts"],
-  },
-  "f91a5ed8c1e0a14186c41c0cb4c4ecfa105f35929a402f43e279c59cbb59fc84": {
-    operationName: "GetClassDetails",
-    document: "query GetClassDetails($year:Int!$semester:Semester!$sessionId:SessionIdentifier!$subject:String!$courseNumber:CourseNumber!$number:ClassNumber!){class(year:$year semester:$semester sessionId:$sessionId subject:$subject courseNumber:$courseNumber number:$number){year semester subject sessionId courseNumber courseId number unitsMax unitsMin finalExam decal{title __typename}course{title description requirements aggregatedRatings(metricNames:[Attendance Recording]){metrics{metricName count weightedAverage categories{value count __typename}__typename}__typename}gradeDistribution{average pnpPercentage __typename}__typename}primarySection{sectionId component sectionAttributes(attributeCode:\"NOTE\"){attribute{code formalDescription __typename}value{description formalDescription __typename}__typename}exams{date startTime endTime location type __typename}enrollment{latest{endTime enrolledCount maxEnroll waitlistedCount maxWaitlist activeReservedMaxCount seatReservationCount{enrolledCount maxEnroll requirementGroup{description __typename}isValid __typename}__typename}__typename}meetings{days location endTime startTime instructors{familyName givenName __typename}__typename}__typename}decal{syllabus description syllabusUrl applicationUrl applicationDueDate instructors{name email __typename}__typename}__typename}}",
-    variableNames: ["year","semester","sessionId","subject","courseNumber","number"],
-    sources: ["apps/frontend/src/lib/api/classes.ts"],
   },
   "f9f55962e91983ad5bfdf01e45f3966353f4457161795d7b38669887dfb99e4b": {
     operationName: "GetCatalogClassIdentities",
