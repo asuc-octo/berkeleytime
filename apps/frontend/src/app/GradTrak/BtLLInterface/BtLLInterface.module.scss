@@ -4,14 +4,16 @@
   align-items: flex-start;
   align-self: stretch;
   border-bottom: 1px solid var(--border-color);
-  padding: 1rem;
-  gap: 0.5rem;
 
+  // Padding lives on the header (not the accordion) so the whole bar,
+  // including its padding, is clickable.
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     align-self: stretch;
+    padding: 1rem;
+    cursor: pointer;
 
     .titleContainer {
       flex-grow: 1;
@@ -73,6 +75,9 @@
     align-items: stretch;
     width: 100%;
     gap: 0.5rem;
+    // Header already has 1rem bottom padding; keep the old 0.5rem gap.
+    margin-top: -0.5rem;
+    padding: 0 1rem 1rem;
 
     .item {
       display: flex;
