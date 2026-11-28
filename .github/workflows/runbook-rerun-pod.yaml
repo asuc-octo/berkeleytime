@@ -1,0 +1,248 @@
+name: "Runbook: Rerun Kubernetes Pod"
+run-name: "Rerun ${{ inputs.deployment }} (by ${{ github.actor }})"
+
+# Deletes a deployment's pods one at a time. Kubernetes recreates each deleted
+# pod automatically; we wait for every replacement to be Ready before moving on.
+# Logs from the old pods are printed first, since they are lost once a pod is
+# deleted.
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment:
+        description: "Service whose pods will be rerun"
+        required: true
+        type: choice
+        options:
+          - bt-prod-app-backend
+          - bt-stage-app-backend
+
+# Never run two reruns of the same service at once.
+concurrency:
+  group: rerun-pod-${{ inputs.deployment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DEPLOYMENT: ${{ inputs.deployment }}
+
+jobs:
+  rerun:
+    name: Rerun ${{ inputs.deployment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: "1. Before: current pod status"
+        id: before
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOYMENT
+          capture_stdout: true
+          script: |
+            set -euo pipefail
+            case "$DEPLOYMENT" in
+              bt-prod-app-backend|bt-stage-app-backend) ;;
+              *) echo "::error::Unsupported deployment: $DEPLOYMENT"; exit 1 ;;
+            esac
+            SELECTOR=$(kubectl -n bt get deployment "$DEPLOYMENT" \
+              -o go-template='{{range $k, $v := .spec.selector.matchLabels}}{{$k}}={{$v}},{{end}}')
+            SELECTOR=${SELECTOR%,}
+
+            kubectl -n bt get deployment "$DEPLOYMENT"
+            echo
+            kubectl -n bt get pods -l "$SELECTOR"
+
+      - name: "2. Old pod logs (saved before deleting)"
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOYMENT
+          script: |
+            set -euo pipefail
+            case "$DEPLOYMENT" in
+              bt-prod-app-backend|bt-stage-app-backend) ;;
+              *) echo "::error::Unsupported deployment: $DEPLOYMENT"; exit 1 ;;
+            esac
+            SELECTOR=$(kubectl -n bt get deployment "$DEPLOYMENT" \
+              -o go-template='{{range $k, $v := .spec.selector.matchLabels}}{{$k}}={{$v}},{{end}}')
+            SELECTOR=${SELECTOR%,}
+
+            for pod in $(kubectl -n bt get pods -l "$SELECTOR" -o jsonpath='{.items[*].metadata.name}'); do
+              echo "::group::$pod: last 200 log lines"
+              kubectl -n bt logs "$pod" --all-containers --timestamps --tail=200 || echo "(no logs available)"
+              echo "::endgroup::"
+
+              # If the pod has crashed before, the previous container's logs
+              # usually explain why.
+              restarts=0
+              for r in $(kubectl -n bt get pod "$pod" -o jsonpath='{.status.containerStatuses[*].restartCount}'); do
+                restarts=$((restarts + r))
+              done
+              if [ "$restarts" -gt 0 ]; then
+                echo "::group::$pod: logs from before its last crash ($restarts restarts)"
+                kubectl -n bt logs "$pod" --all-containers --timestamps --tail=200 --previous || echo "(no previous logs available)"
+                echo "::endgroup::"
+              fi
+            done
+
+      - name: "3. Delete pods one at a time and wait for replacements"
+        id: rerun
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOYMENT
+          command_timeout: 20m
+          script: |
+            set -euo pipefail
+            case "$DEPLOYMENT" in
+              bt-prod-app-backend|bt-stage-app-backend) ;;
+              *) echo "::error::Unsupported deployment: $DEPLOYMENT"; exit 1 ;;
+            esac
+            SELECTOR=$(kubectl -n bt get deployment "$DEPLOYMENT" \
+              -o go-template='{{range $k, $v := .spec.selector.matchLabels}}{{$k}}={{$v}},{{end}}')
+            SELECTOR=${SELECTOR%,}
+
+            # One line per pod: ready|phase|deletionTimestamp|name. Sorting puts
+            # unhealthy pods first, so we never delete the last healthy pod
+            # while a broken one is still around.
+            pod_rows=$(kubectl -n bt get pods -l "$SELECTOR" \
+              -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}|{.status.phase}|{.metadata.deletionTimestamp}|{.metadata.name}{"\n"}{end}' \
+              | sort)
+
+            # Only rerun live pods. Pods already being deleted, and finished
+            # leftovers (e.g. Evicted), have no replacement to wait for.
+            old_pods=$(echo "$pod_rows" \
+              | awk -F'|' 'NF == 4 && $3 == "" && $2 != "Failed" && $2 != "Succeeded" {print $4}')
+
+            if [ -z "$old_pods" ]; then
+              echo "::error::No running pods found for $DEPLOYMENT"
+              exit 1
+            fi
+
+            # Pods that are Ready, not being deleted, and not one of the old pods.
+            ready_new_pods() {
+              kubectl -n bt get pods -l "$SELECTOR" \
+                -o jsonpath='{range .items[*]}{.metadata.name}|{.metadata.deletionTimestamp}|{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' \
+                | awk -F'|' '$2 == "" && $3 == "True" {print $1}' \
+                | grep -vxF "$old_pods" || true
+            }
+
+            deleted=0
+            for pod in $old_pods; do
+              echo "::group::Rerunning $pod"
+              if ! kubectl -n bt delete pod "$pod" --wait=true --timeout=120s; then
+                echo "::endgroup::"
+                echo "::error::Could not delete $pod. Stopping without touching any other pods."
+                exit 1
+              fi
+              deleted=$((deleted + 1))
+
+              echo "Waiting up to 5 minutes for the replacement pod to be Ready..."
+              deadline=$((SECONDS + 300))
+              while [ "$(ready_new_pods | grep -c . || true)" -lt "$deleted" ]; do
+                if [ "$SECONDS" -ge "$deadline" ]; then
+                  echo "::endgroup::"
+                  echo "::error::Replacement for $pod was not Ready within 5 minutes. Stopping without touching any other pods."
+                  echo "=== Current pods ==="
+                  kubectl -n bt get pods -l "$SELECTOR" -o wide
+                  echo "=== Pod descriptions ==="
+                  kubectl -n bt describe pods -l "$SELECTOR" | tail -150
+                  exit 1
+                fi
+                sleep 5
+              done
+
+              echo "Replacement for $pod is Ready."
+              echo "::endgroup::"
+            done
+
+            echo "All $deleted pod(s) for $DEPLOYMENT were rerun and are Ready."
+
+      - name: "4. After: new pod status"
+        id: after
+        if: always()
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOYMENT
+          capture_stdout: true
+          script: |
+            set -euo pipefail
+            case "$DEPLOYMENT" in
+              bt-prod-app-backend|bt-stage-app-backend) ;;
+              *) echo "::error::Unsupported deployment: $DEPLOYMENT"; exit 1 ;;
+            esac
+            SELECTOR=$(kubectl -n bt get deployment "$DEPLOYMENT" \
+              -o go-template='{{range $k, $v := .spec.selector.matchLabels}}{{$k}}={{$v}},{{end}}')
+            SELECTOR=${SELECTOR%,}
+
+            kubectl -n bt get deployment "$DEPLOYMENT"
+            echo
+            kubectl -n bt get pods -l "$SELECTOR"
+
+      - name: "5. New pod logs"
+        if: always()
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: DEPLOYMENT
+          script: |
+            set -euo pipefail
+            case "$DEPLOYMENT" in
+              bt-prod-app-backend|bt-stage-app-backend) ;;
+              *) echo "::error::Unsupported deployment: $DEPLOYMENT"; exit 1 ;;
+            esac
+            SELECTOR=$(kubectl -n bt get deployment "$DEPLOYMENT" \
+              -o go-template='{{range $k, $v := .spec.selector.matchLabels}}{{$k}}={{$v}},{{end}}')
+            SELECTOR=${SELECTOR%,}
+
+            for pod in $(kubectl -n bt get pods -l "$SELECTOR" -o jsonpath='{.items[*].metadata.name}'); do
+              echo "::group::$pod: startup logs"
+              kubectl -n bt logs "$pod" --all-containers --timestamps --tail=100 || echo "(no logs available)"
+              echo "::endgroup::"
+            done
+
+      - name: "6. Summary"
+        if: always()
+        env:
+          ACTOR: ${{ github.actor }}
+          RESULT: ${{ steps.rerun.outcome }}
+          BEFORE: ${{ steps.before.outputs.stdout }}
+          AFTER: ${{ steps.after.outputs.stdout }}
+        run: |
+          # The SSH action adds its own banner lines to captured output.
+          clean() { grep -v -e '^=\{5,\}' -e 'Successfully executed commands' || true; }
+          BEFORE=$(echo "$BEFORE" | clean)
+          AFTER=$(echo "$AFTER" | clean)
+          {
+            if [ "$RESULT" = "success" ]; then
+              echo "# :white_check_mark: Reran \`$DEPLOYMENT\`"
+            else
+              echo "# :x: Rerun of \`$DEPLOYMENT\` did not finish"
+            fi
+            echo
+            echo "Started by **$ACTOR**. Expand the numbered steps below to see the full logs."
+            echo
+            echo "### Before"
+            echo '```'
+            echo "${BEFORE:-(not available)}"
+            echo '```'
+            echo "### After"
+            echo '```'
+            echo "${AFTER:-(not available)}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
